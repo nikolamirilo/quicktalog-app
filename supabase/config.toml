@@ -1,0 +1,37 @@
+project_id = "pro_01k11h4bv62fv5vx936tm5wge0"
+
+[api]
+enabled = true
+port = 54321
+# Expose the public schema, which contains your users and subscriptions tables
+schemas = ["public"]
+# Include extensions for additional functionality (e.g., UUID for user IDs)
+extra_search_path = ["public", "extensions"]
+# Limit payload size to prevent large queries; adjust as needed
+max_rows = 1000
+
+[db]
+port = 54322
+# Use PostgreSQL 15 to match common Supabase deployments
+major_version = 15
+
+[auth]
+enabled = true
+# Base URL for your production website
+site_url = "https://quicktalog.app"
+# Allow redirects to both production and test environments
+additional_redirect_urls = ["https://quicktalog.app", "https://test.quicktalog.app"]
+# Token expiry (1 hour default is fine for most use cases)
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+# Allow email signups to map Paddle customer_id to user emails
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.email]
+enable_signup = true
+# Require email confirmation for security (recommended for Paddle integration)
+enable_confirmations = true
+# Prevent frequent email sends to avoid abuse
+max_frequency = "1s"

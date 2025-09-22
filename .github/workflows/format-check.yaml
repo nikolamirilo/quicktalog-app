@@ -1,0 +1,29 @@
+name: Format Check
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Check number of changed files (push only)
+        if: ${{ github.event_name == 'push' }}
+        id: filecount
+        run: |
+          git fetch origin ${{ github.event.before }}
+          COUNT=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | wc -l)
+          echo "changed_files=$COUNT" >> $GITHUB_OUTPUT
+      - name: Run format check if >1000 files changed and push
+        if: ${{ fromJson(steps.filecount.outputs.changed_files) > 1000 && github.event_name == 'push' }}
+        run: npm run format:check
