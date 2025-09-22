@@ -12,16 +12,21 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { tiers } from "@/constants/pricing"
 import { statusOrder } from "@/constants/sort"
+import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client"
 import { ServiceCatalogue } from "@/types"
 import { OverviewProps } from "@/types/components"
 import { Status } from "@/types/enums"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { QRCodeSVG } from "qrcode.react"
 import { useEffect, useState } from "react"
 import { BiScan } from "react-icons/bi"
+import { BsQrCodeScan } from "react-icons/bs"
+import { FaRegCircleCheck } from "react-icons/fa6"
 import { FiCopy, FiEdit, FiInfo, FiMoreVertical, FiTrash2 } from "react-icons/fi"
+import { ImEmbed2 } from "react-icons/im"
 import { IoCreateOutline } from "react-icons/io5"
-import { LuSquareMenu } from "react-icons/lu"
+import { LuShare2, LuSquareMenu } from "react-icons/lu"
 import { RiSparkling2Line } from "react-icons/ri"
 import { TbBrandGoogleAnalytics, TbFileAnalytics } from "react-icons/tb"
 import { VscActivateBreakpoints } from "react-icons/vsc"
@@ -40,6 +45,7 @@ const Overview = ({
   const [currentMetric, setCurrentMetric] = useState("")
   const [itemToDelete, setItemToDelete] = useState<string | null>(null)
   const [isDeleteMultipleModalOpen, setIsDeleteMultipleModalOpen] = useState(false)
+  const [isLinkCopied, setIsLinkCopied] = useState(false)
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null)
   const router = useRouter()
   const matchedTier = tiers.find((tier) => tier.id == planId)
@@ -280,6 +286,62 @@ const Overview = ({
                     <DropdownMenuContent
                       align="end"
                       className="bg-product-background border border-product-border rounded-xl shadow-lg">
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setIsLinkCopied(true)
+                          navigator.clipboard.writeText(
+                            `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`
+                          )
+                          setTimeout(() => {
+                            setIsLinkCopied(false)
+                          }, 3000)
+                        }}
+                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
+                        <span className="flex items-center gap-2">
+                          {isLinkCopied ? (
+                            <FaRegCircleCheck color="green" size={18} />
+                          ) : (
+                            <LuShare2 size={18} />
+                          )}
+                          {isLinkCopied === true ? "Copied" : `Share`}
+                        </span>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onClick={() => handleDownloadPng(catalogue.name)}
+                        disabled={isModalOpen}
+                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
+                        <span className="flex items-center gap-2">
+                          <BsQrCodeScan size={18} />
+                          QR Code
+                        </span>
+                      </DropdownMenuItem>
+                      <div
+                        id="qr-code"
+                        className="p-2 sm:p-3 bg-white rounded-xl shadow-sm border border-product-border hidden">
+                        <QRCodeSVG
+                          value={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`}
+                          size={100}
+                          className="w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36"
+                          bgColor="white"
+                          fgColor="black"
+                        />
+                      </div>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          handleDownloadHTML(
+                            catalogue.name,
+                            `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`
+                          )
+                        }
+                        disabled={isModalOpen}
+                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
+                        <span className="flex items-center gap-2">
+                          <ImEmbed2 size={18} />
+                          Embed
+                        </span>
+                      </DropdownMenuItem>
                       <Link href={`/admin/items/${catalogue.name}/edit`} passHref>
                         <DropdownMenuItem
                           asChild
