@@ -17,6 +17,15 @@ body {
   @apply scroll-smooth;
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 .product {
   --product-background: #ffffff;
   --product-foreground: #171717;

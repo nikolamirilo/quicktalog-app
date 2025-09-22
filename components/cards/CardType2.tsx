@@ -1,7 +1,7 @@
 "use client"
 import { Record } from "@/types"
-import Image from "next/image"
 import { memo, useMemo } from "react"
+import { OptimizedImage } from "../common/OptimizedImage"
 
 const CardType2 = memo(({ record, currency }: { record: Record; currency: string }) => {
   const slugId = useMemo(() => record.name?.replace(/\s+/g, "-").toLowerCase() || "", [record.name])
@@ -12,13 +12,10 @@ const CardType2 = memo(({ record, currency }: { record: Record; currency: string
       aria-labelledby={`item-title-${slugId}`}
       tabIndex={0}>
       <div className="aspect-[4/3] bg-gray-100 relative w-full">
-        <Image
+        <OptimizedImage
           src={record.image}
           alt={`Image of ${record.name}`}
-          fill
           className="object-cover"
-          priority={false}
-          loading="lazy"
         />
       </div>
 
