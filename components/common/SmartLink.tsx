@@ -9,11 +9,14 @@ type SmartLinkProps = {
 }
 
 const SmartLink: React.FC<SmartLinkProps> = ({ href, children, className, ariaLabel }) => {
-  const isExternal = href.startsWith("http") || href.startsWith("www.")
+  const isExternal =
+    /^https?:\/\//.test(href) ||
+    /^www\./.test(href) ||
+    (/^[^\/]+\.[^\/]+/.test(href) && !href.startsWith("/"))
+
+  const finalHref = isExternal ? (href.startsWith("http") ? href : `https://${href}`) : href
 
   if (isExternal) {
-    const finalHref = href.startsWith("http") ? href : `https://${href}`
-
     return (
       <a
         href={finalHref}
@@ -27,7 +30,7 @@ const SmartLink: React.FC<SmartLinkProps> = ({ href, children, className, ariaLa
   }
 
   return (
-    <Link href={href} className={className} aria-label={ariaLabel}>
+    <Link href={finalHref} className={className} aria-label={ariaLabel}>
       {children}
     </Link>
   )
