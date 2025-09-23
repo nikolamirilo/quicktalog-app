@@ -10,7 +10,7 @@ export default async function EditServicesPage({ params }: { params: Promise<{ n
   const { data, error } = await supabase.from("catalogues").select("*").eq("name", name).single()
 
   if (error || !data) {
-    return <div className="p-8 text-center text-red-600">Failed to load restaurant data.</div>
+    return <div className="p-8 text-center text-red-600">Failed to load catalog data. Please refresh the page and try again.</div>
   }
 
   // Transform DB data to ServicesFormData shape
