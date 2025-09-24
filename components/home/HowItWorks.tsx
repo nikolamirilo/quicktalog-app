@@ -10,7 +10,13 @@ const containerVariants: Variants = {
   onscreen: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring" as const, bounce: 0.2, duration: 0.9, delayChildren: 0.15, staggerChildren: 0.15 },
+    transition: {
+      type: "spring" as const,
+      bounce: 0.2,
+      duration: 0.9,
+      delayChildren: 0.15,
+      staggerChildren: 0.15,
+    },
   },
 }
 
@@ -24,7 +30,13 @@ const cardVariants: Variants = {
   },
 }
 
-type SimpleStep = { step: string; title: string; description: string; image: string; icon: React.ReactNode }
+type SimpleStep = {
+  step: string
+  title: string
+  description: string
+  image: string
+  icon: React.ReactNode
+}
 
 const StepCard: React.FC<{ step: SimpleStep; index: number }> = ({ step }) => {
   const [isHovered, setIsHovered] = useState(false)
@@ -60,7 +72,9 @@ const StepCard: React.FC<{ step: SimpleStep; index: number }> = ({ step }) => {
         </div>
         <div className="flex flex-col p-4 sm:p-5 gap-2">
           <h3 className="text-lg font-bold font-lora">{step.title}</h3>
-          <p className="text-sm text-product-foreground-accent leading-relaxed font-lora">{step.description}</p>
+          <p className="text-sm text-product-foreground-accent leading-relaxed font-lora">
+            {step.description}
+          </p>
         </div>
       </div>
     </motion.div>
@@ -78,22 +92,28 @@ const HowItWorks: React.FC = () => {
     },
     {
       step: "2",
-      title: "Build your price list",
-      description: "Create categories and add services or products with pricing to build your professional price list.",
+      title: "Build your catalogue",
+      description:
+        "Create categories and add services or products with pricing to build your professional price list.",
       icon: <MdOutlineLocalOffer className="w-8 h-8" />,
       image: "/images/card3.svg",
     },
     {
       step: "3",
       title: "Publish & share",
-      description: "Go live and share your link or QR code anywhere.",
+      description: "Go live and share your catalogue with the world!",
       icon: <FiShare2 className="w-8 h-8" />,
       image: "/images/card5.svg",
     },
   ]
 
   return (
-    <motion.div className="w-full" variants={containerVariants} initial="offscreen" whileInView="onscreen" viewport={{ once: true }}>
+    <motion.div
+      className="w-full"
+      variants={containerVariants}
+      initial="offscreen"
+      whileInView="onscreen"
+      viewport={{ once: true }}>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {steps.map((step, index) => (
           <motion.div key={step.step} variants={cardVariants}>

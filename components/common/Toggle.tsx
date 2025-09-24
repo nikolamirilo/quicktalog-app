@@ -59,7 +59,7 @@ const Toggle = () => {
                   letterSpacing: "var(--letter-spacing-body)",
                 }}
                 onClick={() => setLayout(layoutOption.key)}>
-                <span className="relative z-10 truncate">{layoutOption.label}</span>
+                <span className="relative z-10">{layoutOption.label}</span>
                 {layout === layoutOption.key && (
                   <div
                     className="absolute inset-0 rounded-xl opacity-20 blur-sm"

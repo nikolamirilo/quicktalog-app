@@ -1,6 +1,6 @@
 "use client"
-import { Record } from "@/types"
-import { memo, useMemo } from "react"
+import { Record } from "@/types";
+import { memo, useMemo } from "react";
 
 const CardType3 = memo(({ record, currency }: { record: Record; currency: string }) => {
   const slugId = useMemo(() => record.name?.replace(/\s+/g, "-").toLowerCase() || "", [record.name])
