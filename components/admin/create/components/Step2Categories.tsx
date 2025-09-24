@@ -25,7 +25,6 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
   const [isCategoryDeletionConfirmed, setIsCategoryDeletionConfirmed] = React.useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false)
 
-
   const sortedServices = React.useMemo(() => {
     return formData.services
       .map((service, originalIndex) => ({ ...service, originalIndex }))
@@ -45,7 +44,6 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
   const handleDragLeave = () => {
     setDragOverItem(null)
   }
-
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropDisplayIndex: number) => {
     e.preventDefault()
@@ -108,8 +106,6 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
 
   return (
     <>
-
-
       <Card
         className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-product-shadow rounded-2xl"
         type="form">
@@ -136,16 +132,19 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, displayIndex)}
               onDragEnd={handleDragEnd}
-              className={`transition-all duration-200 ${draggedItem === displayIndex ? "opacity-50 scale-95" : "opacity-100 scale-100"
-                } ${dragOverItem === displayIndex && draggedItem !== displayIndex
+              className={`transition-all duration-200 ${
+                draggedItem === displayIndex ? "opacity-50 scale-95" : "opacity-100 scale-100"
+              } ${
+                dragOverItem === displayIndex && draggedItem !== displayIndex
                   ? "transform scale-105 shadow-lg"
                   : ""
-                }`}>
+              }`}>
               <Card
-                className={`bg-product-background/50 bg-product-background border border-product-border shadow-product-shadow rounded-xl cursor-move ${dragOverItem === displayIndex && draggedItem !== displayIndex
-                  ? "border-product-primary border-2 bg-product-primary/5"
-                  : ""
-                  }`}
+                className={`bg-product-background/50 bg-product-background border border-product-border shadow-product-shadow rounded-xl cursor-move ${
+                  dragOverItem === displayIndex && draggedItem !== displayIndex
+                    ? "border-product-primary border-2 bg-product-primary/5"
+                    : ""
+                }`}
                 type="form">
                 <div
                   className="flex justify-between items-center p-6 cursor-pointer"
@@ -174,8 +173,9 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
                       <Trash2 className="h-4 w-4" />
                     </Button>
                     <ChevronDown
-                      className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
-                        }`}
+                      className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
                     />
                   </div>
                 </div>
@@ -210,10 +210,11 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
                         {layouts.map((layoutOption) => (
                           <div
                             key={layoutOption.key}
-                            className={`relative cursor-pointer rounded-xl border-2 p-2 transition-all duration-200 hover:shadow-product-hover-shadow ${category.layout === layoutOption.key
-                              ? "border-product-primary shadow-product-shadow bg-product-primary/5"
-                              : "border-product-border hover:border-product-primary/50"
-                              }`}
+                            className={`relative cursor-pointer rounded-xl border-2 p-2 transition-all duration-200 hover:shadow-product-hover-shadow ${
+                              category.layout === layoutOption.key
+                                ? "border-product-primary shadow-product-shadow bg-product-primary/5"
+                                : "border-product-border hover:border-product-primary/50"
+                            }`}
                             onClick={() =>
                               handleCategoryChangeWrapper(displayIndex, "layout", layoutOption.key)
                             }>
@@ -239,8 +240,8 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
         <Button
           type="button"
           onClick={handleAddCategory}
-          className="px-6 py-3 text-base font-medium bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
-          <Plus className="h-5 w-5 mr-2" /> Add New Category
+          className="px-6 py-3 text-base text-wrap font-medium bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
+          <Plus className="h-5 w-5" /> New Category
         </Button>
       </Card>
       <InformModal

@@ -69,14 +69,14 @@ const Hero: React.FC = () => {
               }
             }}
             variant="cta"
-            className="h-14 px-8 py-4 text-lg max-w-56"
+            className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
             aria-label="Create your digital catalog">
             Start Creating Now
           </Button>
           <Link href="/demo">
             <Button
               variant="outline"
-              className="h-14 border-2 border-product-primary px-8 py-4 text-lg max-w-56"
+              className="h-14 border-2 border-product-primary px-8 py-4 text-lg text-wrap min-w-56 w-fit"
               aria-label="Try the catalog demo">
               <FiPlay className="mr-2 h-5 w-5" />
               Try Demo

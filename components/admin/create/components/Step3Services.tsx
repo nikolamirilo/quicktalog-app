@@ -69,8 +69,9 @@ const Step3Services: React.FC<Step3ServicesProps> = ({
                 {category.name || "N/A"}
               </h3>
               <ChevronDown
-                className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${expandedCategory === categoryIndex ? "rotate-180" : ""
-                  }`}
+                className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${
+                  expandedCategory === categoryIndex ? "rotate-180" : ""
+                }`}
               />
             </div>
 
@@ -103,8 +104,9 @@ const Step3Services: React.FC<Step3ServicesProps> = ({
                             <Trash2 className="h-4 w-4" />
                           </Button>
                           <ChevronDown
-                            className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
-                              }`}
+                            className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${
+                              isExpanded ? "rotate-180" : ""
+                            }`}
                           />
                         </div>
                       </div>
@@ -188,7 +190,9 @@ const Step3Services: React.FC<Step3ServicesProps> = ({
                                 </Label>
 
                                 <ImageDropzone
-                                  image={imagePreviews[`${categoryIndex}-${itemIndex}`] || item.image}
+                                  image={
+                                    imagePreviews[`${categoryIndex}-${itemIndex}`] || item.image
+                                  }
                                   setIsUploading={setIsUploading}
                                   removeImage={() => {
                                     setImagePreviews((prev) => {
@@ -224,9 +228,8 @@ const Step3Services: React.FC<Step3ServicesProps> = ({
                   type="button"
                   onClick={() => handleAddItem(categoryIndex)}
                   disabled={isUploading}
-                  className="px-6 py-3 text-base font-medium bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
-                  <Plus className="h-5 w-5 mr-2" /> Add New Item to{" "}
-                  {category.name || "this Category"}
+                  className="px-6 py-3 text-base text-wrap font-medium bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
+                  <Plus className="h-5 w-5" /> New Item
                 </Button>
               </div>
             )}
