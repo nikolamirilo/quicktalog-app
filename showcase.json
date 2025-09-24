@@ -23,7 +23,6 @@
     }
   ],
   "configuration": {
-    "emailButtonNavbar": true,
     "ctaNavbar": {
       "label": "Book Table",
       "url": "https://plato-restoran.com/book"

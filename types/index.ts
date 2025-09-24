@@ -98,7 +98,6 @@ export type Partner = {
 }
 
 export type Configuration = {
-  emailButtonNavbar?: boolean
   ctaNavbar?: {
     enabled: boolean
     label: string
@@ -214,7 +213,6 @@ export type ContactItem = {
 export type HeaderData = {
   email: string
   phone: string
-  emailButtonNavbar?: boolean
   ctaNavbar?: any
 }
 

@@ -57,7 +57,6 @@ export type CatalogueHeaderProps = {
   data?: {
     email?: string
     phone?: string
-    emailButtonNavbar?: boolean
     ctaNavbar?: {
       enabled: boolean
       label: string

@@ -74,13 +74,6 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
         newErrors["ctaNavbar-url"] = "Invalid URL format"
       }
     }
-    if (formData.configuration?.emailButtonNavbar) {
-      const hasEmail = formData.contact?.some((contact) => contact.type === "email")
-      if (!hasEmail) {
-        newErrors["emailButtonNavbar"] =
-          "Email contact must be added to enable Email Button in Navbar"
-      }
-    }
 
     formData.contact?.forEach((contact, index) => {
       if (!contact.value.trim()) {
@@ -131,17 +124,9 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
     }))
   }
 
-  const handleToggle = (name: "ctaFooter" | "ctaNavbar" | "emailButtonNavbar" | "newsletter") => {
+  const handleToggle = (name: "ctaFooter" | "ctaNavbar" | "newsletter") => {
     setFormData((prev) => {
-      if (name === "emailButtonNavbar") {
-        return {
-          ...prev,
-          configuration: {
-            ...prev.configuration,
-            emailButtonNavbar: !prev.configuration?.emailButtonNavbar,
-          },
-        }
-      } else if (name === "newsletter") {
+      if (name === "newsletter") {
         return {
           ...prev,
           configuration: {
@@ -419,23 +404,6 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
                 disabled={isFreePlan ? isFreePlan : isProPlan ? isProPlan : false}
               />
             </div>
-          </div>
-        )}
-
-        {(formData.configuration?.emailButtonNavbar || !isFreePlan) && (
-          <div className="space-y-3 md:col-span-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-product-foreground font-medium font-body">
-                Email button in Navbar
-              </Label>
-              <Switch
-                checked={!!formData.configuration?.emailButtonNavbar}
-                onCheckedChange={() => handleToggle("emailButtonNavbar")}
-              />
-            </div>
-            {errors?.["emailButtonNavbar"] && (
-              <p className="text-red-500 text-sm">{errors["emailButtonNavbar"]}</p>
-            )}
           </div>
         )}
 
