@@ -142,7 +142,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-3">
           <Label htmlFor="name" className="text-product-foreground font-medium font-body">
-            Name<span className="text-red-500 ml-1">*</span>
+            Catalogue Name<span className="text-red-500 ml-1">*</span>
           </Label>
           <div className="relative">
             <Input
@@ -193,7 +193,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 
         <div className="space-y-3">
           <Label htmlFor="title" className="text-product-foreground font-medium font-body">
-            Title<span className="text-red-500 ml-1">*</span>
+            Catalogue Title<span className="text-red-500 ml-1">*</span>
           </Label>
           <Input
             id="title"
@@ -213,7 +213,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 
         <div className="space-y-3">
           <Label htmlFor="subtitle" className="text-product-foreground font-medium font-body">
-            Subtitle
+            Catalogue Description
           </Label>
           <Textarea
             id="subtitle"
@@ -238,7 +238,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
         </div>
 
         <div className="space-y-4 col-span-full">
-          <Label htmlFor="theme" className="text-product-foreground font-medium text-lg font-body">
+          <Label htmlFor="theme" className="text-product-foreground font-medium font-body">
             Theme<span className="text-red-500 ml-1">*</span>
           </Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">

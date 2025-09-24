@@ -1,11 +1,11 @@
 "use client"
 
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog"
 import Image from "next/image"
 
@@ -17,18 +17,22 @@ interface ItemInfoModalProps {
     description: string
     price: number
     image?: string
+    currency: string
   }
 }
 
-export default function ItemInfoModal({ 
-  isOpen, 
-  onClose, 
+export default function ItemInfoModal({
+  isOpen,
+  onClose,
   item = {
     name: "Chocolate Cake",
-    description: "Decadent layers of rich chocolate cake filled with creamy chocolate ganache, topped with chocolate frosting and chocolate shavings.",
+    currency: "$",
+    description:
+      "Decadent layers of rich chocolate cake filled with creamy chocolate ganache, topped with chocolate frosting and chocolate shavings.",
     price: 4.99,
-    image: "https://sugargeekshow.com/wp-content/uploads/2023/10/easy_chocolate_cake_slice-500x500.jpg"
-  }
+    image:
+      "https://sugargeekshow.com/wp-content/uploads/2023/10/easy_chocolate_cake_slice-500x500.jpg",
+  },
 }: ItemInfoModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -48,7 +52,7 @@ export default function ItemInfoModal({
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
         )}
-        
+
         {/* Content Section */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 sm:p-6">
@@ -64,11 +68,12 @@ export default function ItemInfoModal({
             {/* Price Section */}
             <div className="mt-6 pt-4 border-t border-product-border">
               <div className="flex items-center justify-center sm:justify-between flex-col sm:flex-row gap-2 sm:gap-0">
-                <span className="text-xs sm:text-sm text-product-foreground-accent uppercase tracking-wide font-medium">Price</span>
+                <span className="text-xs sm:text-sm text-product-foreground-accent uppercase tracking-wide font-medium">
+                  Price
+                </span>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs sm:text-sm text-product-foreground-accent">€</span>
-                  <span className="text-2xl sm:text-3xl font-bold text-product-primary tabular-nums">
-                    {item.price.toFixed(2)}
+                  <span className="text-xl sm:text-2xl font-bold text-product-primary tabular-nums">
+                    {item.price.toFixed(2)} {item.currency}
                   </span>
                 </div>
               </div>

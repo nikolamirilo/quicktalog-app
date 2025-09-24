@@ -4,144 +4,187 @@ import { NextRequest, NextResponse } from "next/server"
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
-    // Adjusted time window to cover last 24 hours only, avoiding future timestamps
-    const startDate = new Date(new Date().setDate(new Date().getDate() - 1))
-    const endDate = new Date()
-
-    // Fetch from PostHog with parameterized query for safety
+    const startDate = new Date(new Date().setDate(new Date().getDate() - 2))
+    const endDate = new Date(new Date().setDate(new Date().getDate() + 1))
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_POSTHOG_HOST}/api/projects/${process.env.POSTHOG_PROJECT_ID}/query/`,
+      `${process.env.NEXT_PUBLIC_POSTHOG_HOST}/api/projects/${process.env.POSTHOG_PROJECT_ID!}/query/`,
       {
         method: "POST",
         headers: {
-          // Fixed typo in environment variable name
-          Authorization: `Bearer ${process.env.POSTHOG_API_KEY}`,
+          Authorization: `Bearer ${process.env.POSTHOG_API_KEY!}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           query: {
             kind: "HogQLQuery",
-            // Parameterized query to avoid injection risks
-            query: `
-              SELECT 
-                toDate(timestamp) AS date,
-                formatDateTime(timestamp, '%H:00') AS hour,
-                properties.$current_url AS current_url,
-                COUNT(*) AS pageview_count,
-                COUNT(DISTINCT properties.distinct_id) AS unique_visitors
-              FROM events
-              WHERE event = '$pageview'
-                AND properties.$current_url NOT ILIKE '%admin%'
-                AND properties.$current_url LIKE '%/catalogues/%'
-                AND properties.$current_url NOT ILIKE '%localhost%'
-                AND properties.$current_url NOT ILIKE '%//test.%'
-                AND timestamp >= toDateTime(:startDate)
-                AND timestamp < toDateTime(:endDate)
-              GROUP BY date, hour, current_url
-              ORDER BY date DESC, hour DESC
-            `,
-            parameters: {
-              startDate: startDate.toISOString().replace("Z", "000Z"),
-              endDate: endDate.toISOString().replace("Z", "000Z"),
-            },
+            query: `SELECT 
+    toDate(timestamp) AS date,
+    formatDateTime(timestamp, '%H:00') AS hour,
+    properties.$current_url AS current_url,
+    COUNT(*) AS pageview_count,
+    COUNT(DISTINCT properties.distinct_id) AS unique_visitors
+FROM events
+WHERE event = '$pageview'
+  AND properties.$current_url NOT ILIKE '%admin%'
+  AND properties.$current_url LIKE '%/catalogues/%'
+  AND properties.$current_url NOT ILIKE '%localhost%'
+  AND properties.$current_url NOT ILIKE '%//test.%'
+  AND timestamp >= toDateTime('${startDate.toISOString().replace("Z", "000Z")}') 
+  AND timestamp < toDateTime('${endDate.toISOString().replace("Z", "000Z")}')
+GROUP BY date, hour, current_url
+ORDER BY date DESC, hour DESC`,
           },
         }),
         cache: "no-store",
       }
     )
 
-    // Check for PostHog API errors
-    if (!res.ok) {
-      throw new Error(`PostHog API request failed: ${res.statusText}`)
-    }
-
     const eventsData = await res.json()
-    const analyticsData = eventsData.results
-      .map(([date, hour, current_url, pageview_count, unique_visitors]) => ({
-        date,
-        hour,
-        current_url: current_url?.split("?")[0] || current_url,
-        pageview_count,
-        unique_visitors,
-      }))
-      .filter((item) => item.pageview_count > 0 || item.unique_visitors > 0)
 
-    // Extract unique restaurant names
+    const analyticsData = eventsData.results
+      .map(([date, hour, current_url, pageview_count, unique_visitors]) => {
+        const clean_url = current_url?.split("?")[0] || current_url
+        return {
+          date,
+          hour,
+          current_url: clean_url,
+          pageview_count,
+          unique_visitors,
+        }
+      })
+      .filter((item) => !(item.pageview_count === 0 && item.unique_visitors === 0))
+
+    // 1. Extract unique restaurant names from analyticsData
     const catalogueNames = [
       ...new Set(
         analyticsData
-          .map((item) => item.current_url.match(/\/catalogues\/([^/]+)/)?.[1])
+          .map((item) => {
+            const match = item.current_url.match(/\/catalogues\/([^/]+)/)
+            return match ? match[1] : null
+          })
           .filter(Boolean)
       ),
     ]
 
-    // Query catalogues
+    // 2. Query all relevant catalogues in one go
     const { data: catalogues, error: catalogueError } = await supabase
       .from("catalogues")
       .select("name, created_by")
       .in("name", catalogueNames)
 
     if (catalogueError) {
-      // Improved error handling with specific message
-      throw new Error(`Supabase catalogue query failed: ${catalogueError.message}`)
+      return NextResponse.json({ error: catalogueError.message }, { status: 500 })
     }
 
-    // Create map for user IDs
-    const nameToUserId = Object.fromEntries(catalogues.map((r) => [r.name, r.created_by]))
+    // 3. Create a map for quick lookup
+    const nameToUserId = {}
+    ;(catalogues || []).forEach((r) => {
+      nameToUserId[r.name] = r.created_by
+    })
 
-    // Add user_id and log missing mappings
+    // 4. Add user_id to each analytics row
     const analyticsDataWithUserId = analyticsData.map((item) => {
-      const restaurantName = item.current_url.match(/\/catalogues\/([^/]+)/)?.[1]
+      const match = item.current_url.match(/\/catalogues\/([^/]+)/)
+      const restaurantName = match ? match[1] : null
       return {
         ...item,
         user_id: restaurantName ? nameToUserId[restaurantName] : null,
       }
     })
 
-    // Log missing catalogue mappings for debugging
-    const missingCatalogues = analyticsDataWithUserId
-      .filter((item) => !item.user_id)
-      .map((item) => item.current_url)
-    if (missingCatalogues.length > 0) {
-      console.warn("Missing catalogue mappings for URLs:", missingCatalogues)
+    // 5. Process each record individually to handle additive behavior
+    const processedResults = []
+    const errors = []
+
+    for (const item of analyticsDataWithUserId) {
+      try {
+        // Check if record exists
+        const { data: existing, error: selectError } = await supabase
+          .from("analytics")
+          .select("pageview_count, unique_visitors")
+          .eq("date", item.date)
+          .eq("hour", item.hour)
+          .eq("current_url", item.current_url)
+          .maybeSingle() // Use maybeSingle instead of single to avoid errors when no record found
+
+        if (selectError) {
+          errors.push({ item, error: selectError })
+          continue
+        }
+
+        if (existing) {
+          // Record exists - add to existing values
+          const { data, error } = await supabase
+            .from("analytics")
+            .update({
+              pageview_count: existing.pageview_count + item.pageview_count,
+              unique_visitors: existing.unique_visitors + item.unique_visitors,
+              user_id: item.user_id, // Update user_id in case it changed
+            })
+            .eq("date", item.date)
+            .eq("hour", item.hour)
+            .eq("current_url", item.current_url)
+
+          if (error) {
+            errors.push({ item, error })
+          } else {
+            processedResults.push({
+              action: "updated",
+              item,
+              previous: existing,
+              newValues: {
+                pageview_count: existing.pageview_count + item.pageview_count,
+                unique_visitors: existing.unique_visitors + item.unique_visitors,
+              },
+            })
+          }
+        } else {
+          // Record doesn't exist - insert new
+          const { data, error } = await supabase.from("analytics").insert([item])
+
+          if (error) {
+            errors.push({ item, error })
+          } else {
+            processedResults.push({ action: "inserted", item })
+          }
+        }
+      } catch (err) {
+        errors.push({ item, error: err })
+      }
     }
 
-    // Bulk upsert to improve performance
-    const { data, error } = await supabase.from("analytics").upsert(analyticsDataWithUserId, {
-      onConflict: "analytics_unique_date_hour_url",
-    })
-
-    if (error) {
-      // Improved error handling for upsert
-      console.error("Supabase upsert error:", error)
+    if (errors.length > 0) {
+      console.error("Processing errors:", errors)
       return NextResponse.json(
-        { error: "Failed to process some records", details: error.message },
-        { status: 500 }
-      )
+        {
+          error: "Some records failed to process",
+          details: errors,
+          successful: processedResults,
+        },
+        { status: 207 }
+      ) // 207 = Multi-Status
     }
 
-    // Simplified response with key metrics
-    return NextResponse.json({
-      message: "Analytics processed successfully",
-      options: {
-        startDate: startDate.toISOString().replace("Z", "000Z"),
-        endDate: endDate.toISOString().replace("Z", "000Z"),
-      },
-      processedRecords: analyticsDataWithUserId.length,
-      summary: {
-        total: analyticsDataWithUserId.length,
-        missingCatalogues: missingCatalogues.length,
-      },
-    })
-  } catch (error) {
-    // Enhanced error logging and response
-    console.error("Error in analytics function:", {
-      message: error.message,
-      stack: error.stack,
-    })
     return NextResponse.json(
-      { error: "Failed to process analytics", details: error.message },
-      { status: 500 }
+      {
+        message: "Analytics processed successfully with additive behavior",
+        options: {
+          startDate: startDate.toISOString().replace("Z", "000Z"),
+          endDate: endDate.toISOString().replace("Z", "000Z"),
+        },
+        inputData: analyticsData,
+        processedResults: processedResults,
+        summary: {
+          total: analyticsDataWithUserId.length,
+          inserted: processedResults.filter((r) => r.action === "inserted").length,
+          updated: processedResults.filter((r) => r.action === "updated").length,
+          failed: errors.length,
+        },
+      },
+      { status: 200 }
     )
+  } catch (error) {
+    console.error("Error in analytics function:", error)
+    return new Response("Error occurred while processing analytics.", { status: 500 })
   }
 }
