@@ -341,7 +341,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-product-foreground font-medium font-body">
-                Button in Footer
+                Footer Action Link
               </Label>
               <Switch
                 checked={!!formData.configuration?.ctaFooter?.enabled}
@@ -377,7 +377,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-product-foreground font-medium font-body">
-                Button in Navbar
+                Header Action Link
               </Label>
               <Switch
                 checked={!!formData.configuration?.ctaNavbar?.enabled}
