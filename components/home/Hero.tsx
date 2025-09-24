@@ -79,7 +79,7 @@ const Hero: React.FC = () => {
               className="h-14 border-2 border-product-primary px-8 py-4 text-lg max-w-56"
               aria-label="Try the catalog demo">
               <FiPlay className="mr-2 h-5 w-5" />
-              Try It Yourself
+              Try Demo
             </Button>
           </Link>
         </div>

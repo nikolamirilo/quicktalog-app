@@ -220,7 +220,7 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
                             <img
                               src={layoutOption.image}
                               alt={layoutOption.label}
-                              className="w-full aspect-[4/5] object-contain rounded-lg"
+                              className="w-full aspect-[3/4] object-contain rounded-lg"
                             />
                             <p className="text-center text-sm mt-2 font-medium text-product-foreground font-body">
                               {layoutOption.label}
