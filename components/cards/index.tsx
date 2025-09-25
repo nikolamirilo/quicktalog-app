@@ -12,11 +12,13 @@ const CardsSwitcher = ({
   record,
   currency,
   i,
+  theme,
 }: {
   variant: string
   record: Record
   currency: string
   i: number
+  theme?: string
 }) => {
   // Validate record data
   if (!record || !record.name || record.price === undefined) {
@@ -109,6 +111,8 @@ const CardsSwitcher = ({
         onClose={() => setIsModalOpen(false)}
         item={validatedRecord}
         currency={currency}
+        theme={theme}
+        variant={variant}
       />
     </>
   )

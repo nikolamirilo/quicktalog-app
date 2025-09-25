@@ -46,6 +46,7 @@ const page: React.FC = () => {
                 servicesData={data.services}
                 currency={data.currency}
                 type="demo"
+                theme={theme}
               />
             )}
             <Footer />

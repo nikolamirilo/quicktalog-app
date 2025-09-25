@@ -30,6 +30,7 @@ interface ServicesSectionProps {
   servicesData: ServiceItem[]
   currency: string
   type: "demo" | "item"
+  theme?: string
 }
 
 const processSectionsData = (servicesData: ServiceItem[]): ProcessedSection[] => {
@@ -61,7 +62,7 @@ const processSectionsData = (servicesData: ServiceItem[]): ProcessedSection[] =>
   }
 }
 
-const ServicesSection = ({ servicesData, currency, type }: ServicesSectionProps) => {
+const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectionProps) => {
   const { layout } = useMainContext()
   const [expandedSections, setExpandedSections] = useState<{
     [key: string]: boolean
@@ -194,6 +195,7 @@ const ServicesSection = ({ servicesData, currency, type }: ServicesSectionProps)
                             record={record}
                             currency={getCurrencySymbol(currency)}
                             i={i}
+                            theme={theme}
                           />
                         </SwiperSlide>
                       ))}
@@ -210,6 +212,7 @@ const ServicesSection = ({ servicesData, currency, type }: ServicesSectionProps)
                           record={record}
                           currency={getCurrencySymbol(currency)}
                           i={i}
+                          theme={theme}
                         />
                       ))}
                     </div>
