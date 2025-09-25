@@ -21,7 +21,7 @@ const Support = ({
       </p>
 
       {/* Beta Program Notice */}
-      <div className="bg-gradient-to-r from-product-primary/10 to-product-primary/5 border border-product-primary rounded-2xl p-6 text-center">
+      {/* <div className="bg-gradient-to-r from-product-primary/10 to-product-primary/5 border border-product-primary rounded-2xl p-6 text-center">
         <h2 className="text-xl font-semibold text-product-foreground mb-2">
           🚀 Join Our Beta Program
         </h2>
@@ -29,7 +29,7 @@ const Support = ({
           Get priority support and help shape the future of Quicktalog. Share your feedback with us
           until December 31, 2025.
         </p>
-      </div>
+      </div> */}
 
       {/* Support Options */}
       <div className="grid gap-8">
