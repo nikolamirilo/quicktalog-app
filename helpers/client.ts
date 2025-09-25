@@ -79,7 +79,6 @@ export function cleanValue(value: any) {
 export const buildHeaderData = (item: ServiceCatalogue): HeaderData => ({
   email: getContactValue(item.contact, "email") || "",
   phone: getContactValue(item.contact, "phone") || "",
-  emailButtonNavbar: item.configuration?.emailButtonNavbar,
   ctaNavbar: item.configuration?.ctaNavbar,
 })
 

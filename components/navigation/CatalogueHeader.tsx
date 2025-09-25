@@ -30,7 +30,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({ type = "default", dat
         )
       )
     } else if (type === "custom" && data) {
-      if (data?.emailButtonNavbar && data?.email) {
+      if (data?.email) {
         links.push(
           createContactLink(
             `mailto:${data?.email}`,

@@ -1,4 +1,7 @@
+"use client"
 import { Record } from "@/types"
+import { useState } from "react"
+import ItemDetailModal from "../modals/ItemDetailModal"
 import CardType1 from "./CardType1"
 import CardType2 from "./CardType2"
 import CardType3 from "./CardType3"
@@ -9,11 +12,13 @@ const CardsSwitcher = ({
   record,
   currency,
   i,
+  theme,
 }: {
   variant: string
   record: Record
   currency: string
   i: number
+  theme?: string
 }) => {
   // Validate record data
   if (!record || !record.name || record.price === undefined) {
@@ -28,28 +33,89 @@ const CardsSwitcher = ({
     )
   }
 
-  // Ensure price is a number
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const price = typeof record.price === "number" ? record.price : parseFloat(record.price) || 0
 
-  // Create a validated record
   const validatedRecord = {
     ...record,
     price,
     image: record.image || "/placeholder-image.jpg",
   }
 
-  switch (variant) {
-    case "variant_1":
-      return <CardType1 key={i} record={validatedRecord} currency={currency} />
-    case "variant_2":
-      return <CardType2 key={i} record={validatedRecord} currency={currency} />
-    case "variant_3":
-      return <CardType3 key={i} record={validatedRecord} currency={currency} />
-    case "variant_4":
-      return <CardType4 key={i} record={validatedRecord} currency={currency} />
-    default:
-      return <CardType1 key={i} record={validatedRecord} currency={currency} />
+  // Helper function to pick card component
+  const renderCard = () => {
+    switch (variant) {
+      case "variant_1":
+        return (
+          <CardType1
+            key={i}
+            record={validatedRecord}
+            currency={currency}
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+          />
+        )
+      case "variant_2":
+        return (
+          <CardType2
+            key={i}
+            record={validatedRecord}
+            currency={currency}
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+          />
+        )
+      case "variant_3":
+        return (
+          <CardType3
+            key={i}
+            record={validatedRecord}
+            currency={currency}
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+          />
+        )
+      case "variant_4":
+        return (
+          <CardType4
+            key={i}
+            record={validatedRecord}
+            currency={currency}
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+          />
+        )
+      default:
+        return (
+          <CardType1
+            key={i}
+            record={validatedRecord}
+            currency={currency}
+            onClick={() => {
+              setIsModalOpen(true)
+            }}
+          />
+        )
+    }
   }
+
+  return (
+    <>
+      {renderCard()}
+      <ItemDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        item={validatedRecord}
+        currency={currency}
+        theme={theme}
+        variant={variant}
+      />
+    </>
+  )
 }
 
 export default CardsSwitcher
