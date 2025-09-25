@@ -31,13 +31,13 @@ export default function ItemDetailModal({ isOpen, onClose, item, currency, theme
         <DialogContent className={`text-card-text max-w-sm w-[90vw] sm:max-w-md sm:w-full p-0 bg-card-bg border border-card-border shadow-lg rounded-2xl overflow-hidden fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] flex flex-col ${theme || ''}`}>
         {/* Image Section - Only show for variants that have images */}
         {item.image && variant !== "variant_3" && (
-          <div className="relative w-full h-fit max-h-80 bg-card-bg/10 flex-shrink-0">
+          <div className="relative w-full h-80 bg-card-bg/10 flex-shrink-0 overflow-hidden">
             <Image
               src={item.image}
               alt={item.name}
               width={400}
-              height={300}
-              className="w-full h-auto max-h-80 object-contain"
+              height={320}
+              className="w-full h-full object-cover"
               sizes="(max-width: 640px) 90vw, 400px"
               priority
             />
@@ -102,13 +102,13 @@ export default function ItemDetailModal({ isOpen, onClose, item, currency, theme
               priority
             />
           )}
-          <button
+          {/* <button
             onClick={() => setIsImageZoomed(false)}
             className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors duration-200 backdrop-blur-sm"
             aria-label="Close zoom"
           >
             ✕
-          </button>
+          </button> */}
         </div>
       </DialogContent>
     </Dialog>
