@@ -1,6 +1,7 @@
 // components/admin/dashboard/Dashboard.tsx
 "use client"
 import Loader from "@/components/navigation/Loader"
+import { Button } from "@/components/ui/button"
 import { useDashboardData } from "@/hooks/useDashboardData"
 import { DashboardProps } from "@/types/components"
 import { Suspense, lazy, useState } from "react"
@@ -59,6 +60,20 @@ export default function Dashboard({ user, usage, pricingPlan }: ImprovedDashboar
                 </div>
               ) : (
                 <section className="animate-fade-in">
+                     <div className="bg-gradient-to-r items-center justify-center from-product-primary/10 to-product-primary/5 border border-product-primary rounded-2xl p-6 gap-3 flex flex-col text-center mb-4">
+                      <h2 className="text-xl font-semibold text-product-foreground">
+                        🚀 Join Our Beta Community
+                      </h2>
+                      <p className="text-product-foreground-accen text-sm">
+                        Be the first to shape the future of Quicktalog. Get priority support, early updates, and share your feedback
+                        directly with our team in our Discord group. Open until December 31, 2025.
+                      </p>
+                      <div className="flex justify-center w-[50%]">
+                      <Button variant="cta" asChild>
+                        <a href="https://discord.gg/t6bdJQGG">Join on Discord</a>
+                      </Button>
+                      </div>
+                  </div>
                   <Overview
                     user={user}
                     usage={usage}
