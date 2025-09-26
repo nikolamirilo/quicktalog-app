@@ -230,3 +230,14 @@ export const handleDownloadPng = (restaurantName: string) => {
   }
   img.src = url
 }
+
+export const generateUniqueSlug = async (name: string) => {
+  const slug = name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // replace multiple spaces with single dash
+    .replace(/-+/g, "-") // collapse multiple dashes
+    .replace(/^-|-$/g, "") // remove leading/trailing dash
+
+  return slug
+}

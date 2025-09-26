@@ -1,10 +1,9 @@
-import { fetchImageFromUnsplash } from "@/helpers/client"
+import { fetchImageFromUnsplash, generateUniqueSlug } from "@/helpers/client"
 import {
   createErrorResponse,
   extractJSONFromResponse,
   GeneratedData,
   generatePromptForAI,
-  generateUniqueSlug,
   GenerationRequest,
   insertCatalogueData,
 } from "@/utils/ai_prompt"
@@ -56,10 +55,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Generate unique slug
-    const catalogueSlug = await generateUniqueSlug(supabase, formData.name)
+    const catalogueSlug = await generateUniqueSlug(formData.name)
 
-    // Insert data into database
     await insertCatalogueData(supabase, formData, generatedData, user.id, catalogueSlug)
 
     return NextResponse.json({

@@ -6,9 +6,10 @@ import LimitsModal from "@/components/modals/LimitsModal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { defaultServiceCatalogueData } from "@/constants"
-import { cleanValue } from "@/helpers/client"
+import { cleanValue, generateUniqueSlug } from "@/helpers/client"
 import { revalidateCataloguesData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
+import { NavigationGuard } from "@/hooks/useBeforeUnload"
 import { ContactInfo, ServicesFormData, ServicesItem } from "@/types"
 import { ServicesFormBaseProps } from "@/types/components"
 import { useUser } from "@clerk/nextjs"
@@ -34,6 +35,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({})
   const [isUploading, setIsUploading] = useState(false)
   const [expandedCategory, setExpandedCategory] = useState<number | null>(null)
+  const [isDirty, setIsDirty] = useState(false)
   const [expandedItem, setExpandedItem] = useState<{
     categoryIndex: number
     itemIndex: number
@@ -42,6 +44,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
 
   const handleStepChange = (step: number) => {
     setCurrentStep(step)
+    setIsDirty(true)
   }
 
   // Sidebar button styling function
@@ -86,6 +89,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+    setIsDirty(true)
   }
   const handleReorderCategories = (newOrder: ServicesFormData["services"]) => {
     setFormData((prev) => ({
@@ -233,6 +237,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
       })
       return { ...prev, services: newServices }
     })
+    setIsDirty(true)
   }
 
   const handleAddContact = () => {
@@ -253,8 +258,8 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
     const updatedContact = [...formData.contact]
     updatedContact[index] = { ...updatedContact[index], [field]: value }
     setFormData((prev) => ({ ...prev, contact: updatedContact }))
+    setIsDirty(true)
   }
-
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
   const [step2Error, setStep2Error] = useState<string>("")
@@ -429,12 +434,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
         }
       }
 
-      const serviceCatalogueSlug = formData.name
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-") // replace multiple spaces with single dash
-        .replace(/-+/g, "-") // collapse multiple dashes
-        .replace(/^-|-$/g, "") // remove leading/trailing dash
+      const serviceCatalogueSlug = generateUniqueSlug(formData.name)
 
       const submissionData = {
         name: serviceCatalogueSlug,
@@ -471,6 +471,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
           name: user.firstName || "",
         }
         revalidateCataloguesData(finalSlug)
+        setIsDirty(false)
         if (type === "create") {
           await sendNewCatalogueEmail(contactData, formData.name, finalSlug)
         }
@@ -504,7 +505,6 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
       setIsSubmitting(false)
     }
   }
-
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -579,6 +579,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
           getSidebarButtonClass={getSidebarButtonClass}
         />
       )}
+      <NavigationGuard isDirty={isDirty} />
 
       {/* Main Content */}
       <div className="flex-1 w-full">
