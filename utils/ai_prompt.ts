@@ -46,11 +46,6 @@ export const extractJSONFromResponse = (response: string): GeneratedData => {
   return parsedData
 }
 
-export const generateUniqueSlug = async (supabase: any, baseName: string): Promise<string> => {
-  const baseSlug = baseName.toLowerCase().replace(/\s+/g, "-")
-  return baseSlug
-}
-
 export const processImagesForServices = async (services: ServicesCategory[]): Promise<void> => {
   // Use Promise.all for concurrent image fetching instead of sequential
   const imagePromises = services
