@@ -33,7 +33,7 @@ const baseSchema = {
 
 export function generatePromptForCategoryDetection(ocrText: string): string {
   return `
-    Role: You are an expert in analyzing service catalogs and menus to identify categories.
+    Role: You are an expert in analyzing digital catalogs, menus and price lists to identify categories.
     Your task is to analyze the provided OCR text and split it into logical category chunks.
     
     OCR Text: ${ocrText}
@@ -41,7 +41,7 @@ export function generatePromptForCategoryDetection(ocrText: string): string {
     IMPORTANT REQUIREMENTS:
     1. Return ONLY a JSON object with this structure: { "chunks": ["chunk1", "chunk2", ...] }
     2. Each chunk should contain all text related to one category (including the category name)
-    3. Identify categories like: breakfast, lunch, dinner, drinks, appetizers, desserts, wellness services, beauty treatments, etc.
+    3. Identify product/service categories like: breakfast, lunch, dinner, drinks, appetizers, desserts, wellness services, beauty treatments, laptops, mobile phones, etc.
     4. If no clear categories are found, group similar items together logically
     5. Each chunk should be a complete text section that includes:
        - The category name/title

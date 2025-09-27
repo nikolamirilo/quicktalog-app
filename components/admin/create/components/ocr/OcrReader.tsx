@@ -1,6 +1,7 @@
 "use client"
 import { logOcrUsage } from "@/actions/usage"
 import { Button } from "@/components/ui/button"
+import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
 import { OCRImageData } from "@/types"
@@ -159,13 +160,13 @@ const OcrReader = ({ formData, setServiceCatalogueUrl, setShowSuccessModal }) =>
     setIsSubmitting(true)
     setServiceCatalogueUrl("")
 
-    console.log({ ocr_text: combinedText, formData: formData })
-
+    const slug = await generateUniqueSlug(formData.name)
+    const data = { ...formData, name: slug }
     try {
       const response = await fetch("/api/items/ocr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ocr_text: combinedText, formData: formData }),
+        body: JSON.stringify({ ocr_text: combinedText, formData: data }),
       })
 
       if (response.ok) {

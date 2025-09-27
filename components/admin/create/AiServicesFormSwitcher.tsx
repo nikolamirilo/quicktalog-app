@@ -149,9 +149,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
         type="form">
         <CardHeader className="p-6 sm:p-8">
           <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-product-foreground font-heading">
-            {type === "ai_prompt"
-              ? "AI Business Catalogue Generator"
-              : "Catalogue OCR import"}
+            {type === "ai_prompt" ? "AI Business Catalogue Generator" : "Catalogue OCR import"}
           </CardTitle>
           <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body">
             {type === "ai_prompt"
@@ -171,6 +169,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
               touched={touched}
               setTouched={setTouched}
               setErrors={setErrors}
+              type="create"
             />
 
             {type === "ai_prompt" ? (

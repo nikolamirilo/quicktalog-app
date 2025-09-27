@@ -24,7 +24,6 @@ const Step1General: React.FC<Step1GeneralProps> = ({
   const normalize = (str: string) => str.trim().toLowerCase().replace(/\s+/g, "-")
 
   const nameExists = useMemo(() => {
-    // Only check for name existence in create flow
     if (type !== "create" || !formData.name || !names.length) return false
     return names.some((n) => normalize(n.name) === normalize(formData.name))
   }, [formData.name, names, type])
@@ -46,7 +45,6 @@ const Step1General: React.FC<Step1GeneralProps> = ({
       setTouched((prev: any) => ({ ...prev, name: true }))
     }
 
-    // ✅ Validation: only letters, numbers, and spaces
     const isValid = /^[a-zA-Z0-9\s]*$/.test(newName)
 
     if (!isValid && setErrors) {
