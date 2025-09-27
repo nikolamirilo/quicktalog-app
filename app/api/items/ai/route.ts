@@ -1,4 +1,4 @@
-import { fetchImageFromUnsplash, generateUniqueSlug } from "@/helpers/client"
+import { fetchImageFromUnsplash } from "@/helpers/client"
 import {
   createErrorResponse,
   extractJSONFromResponse,
@@ -55,8 +55,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const catalogueSlug = await generateUniqueSlug(formData.name)
-
+    const catalogueSlug = formData.name
     await insertCatalogueData(supabase, formData, generatedData, user.id, catalogueSlug)
 
     return NextResponse.json({

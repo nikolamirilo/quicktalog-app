@@ -5,6 +5,7 @@ import LimitsModal from "@/components/modals/LimitsModal"
 import SuccessModal from "@/components/modals/SuccessModal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
 import { UserData } from "@/types"
@@ -94,10 +95,13 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
         return
       }
 
+      const slug = await generateUniqueSlug(formData.name)
+      const data = { ...formData, name: slug }
+
       const response = await fetch("/api/items/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formData: formData, prompt }),
+        body: JSON.stringify({ formData: data, prompt }),
       })
 
       const contactData = {
