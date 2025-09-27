@@ -52,7 +52,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
       "ocr-ai-import": "AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
       "ai-catalogue-generation": "AI assistance that helps create catalog content. Describe your services and the AI generates professional descriptions and organizes items into categories for your catalog.",
       "newsletter": "Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
-      "custom-features": "Advanced functionality including API access, custom integrations, and specialized features tailored to specific business requirements beyond standard catalog features."
+      "custom-features": "Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features."
     }
     return explanations[feature] || "Information about this feature."
   }
