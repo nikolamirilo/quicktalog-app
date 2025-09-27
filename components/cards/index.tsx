@@ -34,7 +34,7 @@ const CardsSwitcher = ({
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const price = typeof record.price === "number" ? record.price : parseFloat(record.price) || 0
+  const price = record.price.toLocaleString() || 0
 
   const validatedRecord = {
     ...record,
