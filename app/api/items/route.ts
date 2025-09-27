@@ -80,8 +80,6 @@ export async function PATCH(request: Request) {
       configuration,
       status,
     } = await request.json()
-
-    // Update the service catalogue record
     const { data, error } = await supabase
       .from("catalogues")
       .update({
