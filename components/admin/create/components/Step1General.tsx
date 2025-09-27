@@ -1,4 +1,5 @@
 "use client"
+import InformModal from "@/components/modals/InformModal"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -7,6 +8,7 @@ import { themes } from "@/constants"
 import type { Step1GeneralProps } from "@/types/components"
 import { AlertCircle, CheckCircle, FileText } from "lucide-react"
 import React, { useEffect, useMemo, useState } from "react"
+import { FiInfo } from "react-icons/fi"
 import { CurrencySelect } from "./common/CurrencySelect"
 
 const Step1General: React.FC<Step1GeneralProps> = ({
@@ -20,6 +22,8 @@ const Step1General: React.FC<Step1GeneralProps> = ({
   type,
 }) => {
   const [names, setNames] = useState([])
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
+  const [currentField, setCurrentField] = useState("")
 
   const normalize = (str: string) => str.trim().toLowerCase().replace(/\s+/g, "-")
 
@@ -129,6 +133,19 @@ const Step1General: React.FC<Step1GeneralProps> = ({
     getAllNames()
   }, [type])
 
+  const getFieldExplanation = (field: string): string => {
+    const explanations: { [key: string]: string } = {
+      "catalog-name": "This is your catalog's unique identifier that appears in the URL (e.g., quicktalog.app/catalogues/your-catalog-name) and is displayed on your dashboard. It must be unique and can only contain letters, numbers, and spaces. This name helps you identify your catalog in the admin panel.",
+      "catalog-title": "This is the main heading that visitors will see at the top of your catalog page. It's the prominent title that introduces your services to customers and appears as the main heading on your public catalog page."
+    }
+    return explanations[field] || "Information about this field."
+  }
+
+  const handleInfoClick = (field: string) => {
+    setCurrentField(field)
+    setIsInfoModalOpen(true)
+  }
+
   return (
     <Card
       className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-md rounded-2xl"
@@ -139,9 +156,17 @@ const Step1General: React.FC<Step1GeneralProps> = ({
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-3">
-          <Label htmlFor="name" className="text-product-foreground font-medium font-body">
-            Catalogue Name<span className="text-red-500 ml-1">*</span>
-          </Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="name" className="text-product-foreground font-medium font-body">
+              Catalogue Name<span className="text-red-500 ml-1">*</span>
+            </Label>
+            <button
+              type="button"
+              onClick={() => handleInfoClick("catalog-name")}
+              className="hover:text-product-primary transition-colors duration-200 z-10">
+              <FiInfo size={16} />
+            </button>
+          </div>
           <div className="relative">
             <Input
               id="name"
@@ -190,9 +215,17 @@ const Step1General: React.FC<Step1GeneralProps> = ({
         </div>
 
         <div className="space-y-3">
-          <Label htmlFor="title" className="text-product-foreground font-medium font-body">
-            Catalogue Title<span className="text-red-500 ml-1">*</span>
-          </Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="title" className="text-product-foreground font-medium font-body">
+              Catalogue Title<span className="text-red-500 ml-1">*</span>
+            </Label>
+            <button
+              type="button"
+              onClick={() => handleInfoClick("catalog-title")}
+              className="hover:text-product-primary transition-colors duration-200 z-10">
+              <FiInfo size={16} />
+            </button>
+          </div>
           <Input
             id="title"
             type="text"
@@ -269,6 +302,16 @@ const Step1General: React.FC<Step1GeneralProps> = ({
           )}
         </div>
       </div>
+
+      <InformModal
+        isOpen={isInfoModalOpen}
+        onConfirm={() => setIsInfoModalOpen(false)}
+        onCancel={() => setIsInfoModalOpen(false)}
+        title={`${currentField.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Explained`}
+        message={getFieldExplanation(currentField)}
+        confirmText="Got it!"
+        cancelText=""
+      />
     </Card>
   )
 }

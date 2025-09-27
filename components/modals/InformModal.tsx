@@ -40,7 +40,7 @@ export default function InformModal({
       }}>
       <AlertDialogContent className="text-product-foreground w-[95vw] max-w-md mx-auto p-6 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl">
         <AlertDialogHeader className="space-y-3">
-          <AlertDialogTitle className="text-xl font-bold text-product-foreground font-heading">{title}</AlertDialogTitle>
+          <AlertDialogTitle className="text-xl font-bold text-product-foreground font-heading mb-3">{title}</AlertDialogTitle>
           <AlertDialogDescription className="text-product-foreground-accent text-base leading-relaxed">{message}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="pt-4 border-t border-product-border">

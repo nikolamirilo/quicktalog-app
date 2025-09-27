@@ -1,4 +1,5 @@
 "use client"
+import InformModal from "@/components/modals/InformModal"
 import { Button } from "@/components/ui/button"
 import { tiers } from "@/constants/pricing"
 import { formatPrice } from "@/helpers/client"
@@ -8,6 +9,7 @@ import clsx from "clsx"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { BsFillCheckCircleFill } from "react-icons/bs"
+import { FiInfo } from "react-icons/fi"
 
 interface PricingColumnProps {
   tier: PricingPlan
@@ -21,22 +23,44 @@ interface PricingColumnProps {
 
 const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, billingCycle, paddle, priceId, user }) => {
   const [isHovered, setIsHovered] = useState(false)
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
+  const [currentFeature, setCurrentFeature] = useState("")
   const router = useRouter()
   const getFeatureList = (features: PricingPlan["features"]) => {
     return [
-      features.support,
-      `${features.catalogues} ${features.catalogues > 1 ? "catalogues" : "catalogue"}`,
-      `${features.analytics} analytics`,
-      `${features.traffic_limit.toLocaleString()} traffic limit`,
-      `${features.customization} customization`,
-      features.ocr_ai_import == 0 ? null : `${features.ocr_ai_import} OCR AI imports`,
-      features.ai_catalogue_generation == 0 ? null : `${features.ai_catalogue_generation} AI catalogue generations`,
-      features.newsletter ? "Newsletter" : null,
-      features.custom_features ? "Custom features" : null,
+      { text: features.support, type: "support" },
+      { text: `${features.catalogues} ${features.catalogues > 1 ? "catalogues" : "catalogue"}`, type: "catalogues" },
+      { text: `${features.analytics} analytics`, type: "analytics" },
+      { text: `${features.traffic_limit.toLocaleString()} traffic limit`, type: "traffic-limit" },
+      { text: `${features.customization} customization`, type: "customization" },
+      features.ocr_ai_import == 0 ? null : { text: `${features.ocr_ai_import} OCR AI imports`, type: "ocr-ai-import" },
+      features.ai_catalogue_generation == 0 ? null : { text: `${features.ai_catalogue_generation} AI catalogue generations`, type: "ai-catalogue-generation" },
+      features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,
+      features.custom_features ? { text: "Custom features", type: "custom-features" } : null,
     ].filter(Boolean)
   }
   const displayPrice = price ? formatPrice(price) : "N/A"
   const cycleLabel = billingCycle === "yearly" ? "/year" : "/month"
+
+  const getFeatureExplanation = (feature: string): string => {
+    const explanations: { [key: string]: string } = {
+      "support": "Technical assistance when you need help. Email support provides responses within 24-48 hours. Priority Support includes email, live chat, and scheduled calls for immediate assistance.",
+      "catalogues": "Number of digital catalogs you can create. Each catalog displays your services with pricing, descriptions, images, and contact information on a shareable public page.",
+      "analytics": "Track visitor engagement on your catalogs. Basic analytics show page views and visitor counts. Advanced analytics provide detailed insights on popular services and visitor behavior patterns.",
+      "traffic-limit": "Monthly page view allowance across all your catalogs. This counts every time someone visits your catalog pages. Higher limits accommodate more customer traffic.",
+      "customization": "Branding control for your catalogs. Basic includes themes and colors. Moderate adds logo upload. Advanced provides full branding with legal information, contact details, and action buttons.",
+      "ocr-ai-import": "AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
+      "ai-catalogue-generation": "AI assistance that helps create catalog content. Describe your services and the AI generates professional descriptions and organizes items into categories for your catalog.",
+      "newsletter": "Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
+      "custom-features": "Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features."
+    }
+    return explanations[feature] || "Information about this feature."
+  }
+
+  const handleInfoClick = (feature: string) => {
+    setCurrentFeature(feature)
+    setIsInfoModalOpen(true)
+  }
 
   return (
     <div
@@ -129,9 +153,17 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
               <div className="flex-shrink-0 w-5 h-5 bg-product-primary/10 rounded-full flex items-center justify-center mr-3 mt-0.5">
                 <BsFillCheckCircleFill className="w-3 h-3 text-product-primary" />
               </div>
-              <span className="text-sm text-product-foreground-accent leading-relaxed font-lora">
-                {feature}
-              </span>
+              <div className="flex items-center gap-2 flex-grow">
+                <span className="text-sm text-product-foreground-accent leading-relaxed font-lora">
+                  {feature.text}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick(feature.type)}
+                  className="hover:text-product-primary transition-colors duration-200 z-10 flex-shrink-0">
+                  <FiInfo size={14} />
+                </button>
+              </div>
             </li>
           ))}
         </ul>
@@ -145,6 +177,16 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
           </div>
         </div>
       )}
+
+      <InformModal
+        isOpen={isInfoModalOpen}
+        onConfirm={() => setIsInfoModalOpen(false)}
+        onCancel={() => setIsInfoModalOpen(false)}
+        title={`${currentFeature.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Explained`}
+        message={getFeatureExplanation(currentFeature)}
+        confirmText="Got it!"
+        cancelText=""
+      />
     </div>
   )
 }
