@@ -166,7 +166,7 @@ a {
 
   /* Simplified Header and Footer colors using theme's best colors */
   --header-bg: #ffffff;
-  --footer-bg: #e6e6e6;
+  --footer-bg: #ffffff;
   --header-text: #1a1a1a;
   --footer-text: #1a1a1a;
   --header-border: #d9d9d9;
@@ -219,7 +219,7 @@ a {
   --section-hover: #343545;
 
   /* Simplified Header and Footer colors using theme's best colors */
-  --header-bg: #3a3b55;
+  --header-bg: #2a2b39;
   --footer-bg: #2a2b39;
   --header-text: #f8f8f1;
   --footer-text: #f8f8f1;
@@ -273,7 +273,7 @@ a {
   --section-hover: #ece8c5;
 
   /* Updated Header and Footer for more contrast */
-  --header-bg: #ebe9d9;
+  --header-bg: #ffffff;
   --footer-bg: #ffffff;
   --header-text: #354834;
   --footer-text: #354834;
@@ -328,7 +328,7 @@ a {
   --section-hover: #333333;
 
   /* Enhanced Header and Footer colors for better sophistication */
-  --header-bg: #2a2a2a;
+  --header-bg: #1f1f1f;
   --footer-bg: #1f1f1f;
   --header-text: #ffffff;
   --footer-text: #fafafa;
@@ -382,7 +382,7 @@ a {
   --section-hover: #2d2d55;
 
   /* Enhanced Header and Footer colors for better professionalism */
-  --header-bg: #252542;
+  --header-bg: #1e1e35;
   --footer-bg: #1e1e35;
   --header-text: #ffffff;
   --footer-text: #f3f3f3;

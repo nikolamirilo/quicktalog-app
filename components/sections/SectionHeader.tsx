@@ -21,45 +21,56 @@ const SectionHeader = ({
       type="button"
       variant="section-header"
       aria-label={`${isExpanded ? "Collapse" : "Expand"} ${title} section`}
+      className="group relative overflow-hidden will-change-transform"
       style={{
         background: "var(--section-header-gradient)",
         fontFamily: "var(--font-family-heading)",
         fontWeight: "var(--font-weight-heading)",
         letterSpacing: "var(--letter-spacing-heading)",
+        // Use transform3d to enable hardware acceleration
+        transform: "translate3d(0, 0, 0)",
       }}>
-      {/* Gradient overlay on hover */}
+      {/* Simplified hover effect - single gradient overlay */}
       <div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-section-header-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        aria-hidden="true"></div>
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-section-header-accent/8 to-transparent 
+          opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out"
+        style={{ willChange: "opacity" }}
+        aria-hidden="true"
+      />
 
-      <span className="relative inline-block z-10">
-        <span className="relative">
+      {/* Title with simplified underline animation */}
+      <span className="relative z-10">
+        <span className="relative inline-block">
           {title}
-          {/* Animated underline */}
           <span
-            className="absolute left-0 -bottom-1 h-[3px] w-0 bg-section-header-accent 
-              transition-all duration-500 ease-out group-hover:w-full rounded-full"
-            aria-hidden="true"></span>
+            className="absolute left-0 -bottom-1 h-0.5 bg-section-header-accent rounded-full
+              transition-all duration-200 ease-out origin-left"
+            style={{
+              width: isExpanded ? "100%" : "0%",
+              willChange: "width",
+            }}
+            aria-hidden="true"
+          />
         </span>
       </span>
 
-      {/* Icon with enhanced styling */}
+      {/* Optimized icon container */}
       <div className="relative z-10 flex items-center">
         <div
-          className="w-8 h-8 bg-section-header-accent/10 rounded-full flex items-center justify-center mr-2 group-hover:bg-section-header-accent/20 transition-colors duration-300"
+          className="w-7 h-7 bg-section-header-accent/10 rounded-full flex items-center justify-center
+            group-hover:bg-section-header-accent/15 transition-colors duration-150 ease-out"
+          style={{ willChange: "background-color" }}
           aria-hidden="true">
           <FiChevronDown
-            className={`text-2xl text-section-header-accent transition-all duration-300 
-              ${isExpanded ? "rotate-180 scale-110" : "rotate-0 scale-100"}`}
+            className="text-lg text-section-header-accent transition-transform duration-200 ease-out"
+            style={{
+              transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+              willChange: "transform",
+            }}
             aria-hidden="true"
           />
         </div>
       </div>
-
-      {/* Subtle glow effect */}
-      <div
-        className="absolute inset-0 rounded-2xl bg-section-header-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl"
-        aria-hidden="true"></div>
     </Button>
   )
 }

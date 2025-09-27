@@ -5,7 +5,7 @@ import { Status } from "./enums"
 export type Record = {
   name: string
   description: string
-  price: number
+  price: number | string
   image: string
 }
 export type CookiePreferences = {
@@ -78,7 +78,7 @@ export type ServicesFormData = Omit<ServiceCatalogue, "id" | "created_by" | "">
 export type Service = {
   name: string
   image: string
-  price: number
+  price: number | string
   description: string
 }
 

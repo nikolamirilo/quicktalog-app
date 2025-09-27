@@ -96,7 +96,7 @@ export const insertCatalogueData = async (
   // Insert prompt data
   const { error: promptError } = await supabase
     .from("prompts")
-    .insert([{ user_id: userId, service_catalogue: slug }])
+    .insert([{ user_id: userId, catalogue: slug }])
 
   if (promptError) {
     console.warn("Failed to insert prompt data:", promptError.message)
@@ -152,7 +152,7 @@ export function generatePromptForAI(inputText: string, formData: any) {
     6. Name all items in full name of the dish e.g. "Spaghetti Carbonara", "Caesar Salad", "Pizza Margarita" etc.
     7. Ensure the JSON is valid and well-formed
     8. Set order for each category starting from 1. Order items in logical way. They will be displayed in this ascending order.
-    9. Wherecver you have string it should be valid string. It should not contain any special character like /,-,",' etc."
+    9. Wherever you have string it should be valid string. It should not contain any special character like /,-,",' etc."
     `
 }
 

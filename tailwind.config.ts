@@ -70,6 +70,7 @@ export default withUt(
           "footer-bg": "var(--footer-bg, var(--section-bg))",
           "footer-text": "var(--footer-text, var(--section-heading))",
           "footer-border": "var(--footer-border, var(--section-border))",
+          "header-bg": "var(--header-bg)",
 
           /* Section Header Variables */
           "section-header-bg": "var(--section-header-bg)",

@@ -1,23 +1,25 @@
 "use client"
 import ImageDropzone from "@/components/common/ImageDropzone"
+import InformModal from "@/components/modals/InformModal"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { contactTypes } from "@/constants"
 import { Partner } from "@/types"
 import type { Step4BrandingProps } from "@/types/components"
 import { Lock, Plus, Tag, Trash2 } from "lucide-react"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
+import { FiInfo } from "react-icons/fi"
 import { IoDiamondOutline } from "react-icons/io5"
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -38,6 +40,8 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 }) => {
   const isFreePlan = userData?.pricing_plan.id === 0
   const isProPlan = userData?.pricing_plan.id === 1
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
+  const [currentField, setCurrentField] = useState("")
 
   useEffect(() => {
     const newErrors: { [key: string]: string } = {}
@@ -214,6 +218,27 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
   const usedContactTypes = formData.contact?.map((c) => c.type) || []
 
+  const getFieldExplanation = (field: string): string => {
+    const explanations: { [key: string]: string } = {
+      "legal-name": "This is your business's legal name that will appear in the footer of your catalogue. It helps establish credibility and provides official business information to visitors.",
+      "legal-address": "Your business address will be displayed in the footer section of your catalogue. This helps visitors know your physical location and adds trust to your business.",
+      "terms-and-conditions": "A link to your terms and conditions page. This will appear in the footer of your catalogue and is important for legal compliance and user trust.",
+      "privacy-policy": "A link to your privacy policy page. This will appear in the footer of your catalogue and is required for GDPR compliance and user data protection.",
+      "logo": "Your business logo will be displayed in the header of your catalogue, replacing the default Quicktalog logo. This helps with brand recognition and professional appearance.",
+      "footer-action-link": "A call-to-action button that appears in the footer of your catalogue. This can direct visitors to contact you, book services, or visit your main website.",
+      "header-action-link": "A call-to-action button that appears in the header/navigation area of your catalogue. This provides easy access to important actions like booking or contacting you.",
+      "newsletter": "Enables a newsletter signup form in the footer of your catalogue. This helps you collect email addresses for marketing and customer communication.",
+      "contact-information": "Contact details like email, phone, and social media links that will appear in the footer of your catalogue. This makes it easy for visitors to reach you.",
+      "partners": "Partner logos and information that will be displayed in the footer of your catalogue. This helps showcase business partnerships and adds credibility to your services."
+    }
+    return explanations[field] || "Information about this field."
+  }
+
+  const handleInfoClick = (field: string) => {
+    setCurrentField(field)
+    setIsInfoModalOpen(true)
+  }
+
   return (
     <Card className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-md rounded-2xl">
       <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
@@ -235,9 +260,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
         <div className="space-y-3">
           {(formData.legal?.name || !isFreePlan) && (
             <>
-              <Label htmlFor="legal-name" className="text-product-foreground font-medium font-body">
-                Legal Name
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="legal-name" className="text-product-foreground font-medium font-body">
+                  Legal Name
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick("legal-name")}
+                  className="hover:text-product-primary transition-colors duration-200 z-10">
+                  <FiInfo size={16} />
+                </button>
+              </div>
               <Input
                 id="legal-name"
                 name="legal.name"
@@ -250,9 +283,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
           )}
           {(formData.legal?.address || !isFreePlan) && (
             <>
-              <Label htmlFor="address" className="text-product-foreground font-medium font-body">
-                Address
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="address" className="text-product-foreground font-medium font-body">
+                  Address
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick("legal-address")}
+                  className="hover:text-product-primary transition-colors duration-200 z-10">
+                  <FiInfo size={16} />
+                </button>
+              </div>
               <Input
                 id="address"
                 name="legal.address"
@@ -265,11 +306,19 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
           )}
           {(formData.legal?.terms_and_conditions || !isFreePlan) && (
             <>
-              <Label
-                htmlFor="terms-and-conditions"
-                className="text-product-foreground font-medium font-body">
-                Terms & Conditions Link
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label
+                  htmlFor="terms-and-conditions"
+                  className="text-product-foreground font-medium font-body">
+                  Terms & Conditions Link
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick("terms-and-conditions")}
+                  className="hover:text-product-primary transition-colors duration-200 z-10">
+                  <FiInfo size={16} />
+                </button>
+              </div>
               <Input
                 id="terms-and-conditions"
                 name="terms-and-conditions"
@@ -285,11 +334,19 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
           )}
           {(formData.legal?.privacy_policy || !isFreePlan) && (
             <>
-              <Label
-                htmlFor="privacy-policy"
-                className="text-product-foreground font-medium font-body">
-                Privacy Policy Link
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label
+                  htmlFor="privacy-policy"
+                  className="text-product-foreground font-medium font-body">
+                  Privacy Policy Link
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick("privacy-policy")}
+                  className="hover:text-product-primary transition-colors duration-200 z-10">
+                  <FiInfo size={16} />
+                </button>
+              </div>
               <Input
                 id="privacy-policy"
                 name="privacy-policy"
@@ -307,9 +364,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
         {(formData.logo || !isFreePlan) && (
           <div className="space-y-3">
-            <Label htmlFor="logo" className="text-product-foreground font-medium font-body">
-              Logo
-            </Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="logo" className="text-product-foreground font-medium font-body">
+                Logo
+              </Label>
+              <button
+                type="button"
+                onClick={() => handleInfoClick("logo")}
+                className="hover:text-product-primary transition-colors duration-200 z-10">
+                <FiInfo size={16} />
+              </button>
+            </div>
 
             <ImageDropzone
               setIsUploading={setIsUploading}
@@ -325,9 +390,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
         {(formData.configuration?.ctaFooter?.enabled || !isFreePlan) && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-product-foreground font-medium font-body">
-                Footer Action Link
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label className="text-product-foreground font-medium font-body">
+                  Footer Action Link
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick("footer-action-link")}
+                  className="hover:text-product-primary transition-colors duration-200 z-10">
+                  <FiInfo size={16} />
+                </button>
+              </div>
               <Switch
                 checked={!!formData.configuration?.ctaFooter?.enabled}
                 onCheckedChange={() => handleToggle("ctaFooter")}
@@ -361,9 +434,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
         {(formData.configuration?.ctaNavbar?.enabled || !isFreePlan) && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-product-foreground font-medium font-body">
-                Header Action Link
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label className="text-product-foreground font-medium font-body">
+                  Header Action Link
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick("header-action-link")}
+                  className="hover:text-product-primary transition-colors duration-200 z-10">
+                  <FiInfo size={16} />
+                </button>
+              </div>
               <Switch
                 checked={!!formData.configuration?.ctaNavbar?.enabled}
                 onCheckedChange={() => handleToggle("ctaNavbar")}
@@ -397,7 +478,15 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
         {(formData.configuration?.newsletter?.enabled || !isFreePlan) && (
           <div className="space-y-3 md:col-span-2">
             <div className="flex items-center justify-between">
-              <Label className="text-product-foreground font-medium font-body">Newsletter</Label>
+              <div className="flex items-center gap-2">
+                <Label className="text-product-foreground font-medium font-body">Newsletter</Label>
+                <button
+                  type="button"
+                  onClick={() => handleInfoClick("newsletter")}
+                  className="hover:text-product-primary transition-colors duration-200 z-10">
+                  <FiInfo size={16} />
+                </button>
+              </div>
               <Switch
                 checked={!!formData.configuration?.newsletter?.enabled}
                 onCheckedChange={() => handleToggle("newsletter")}
@@ -409,9 +498,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
         {(formData.contact && formData.contact.length > 0) || !isFreePlan ? (
           <div className="space-y-6 col-span-full">
-            <h3 className="text-xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-              <Tag className="h-6 w-6 text-product-primary" /> Contact Information
-            </h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+                <Tag className="h-6 w-6 text-product-primary" /> Contact Information
+              </h3>
+              <button
+                type="button"
+                onClick={() => handleInfoClick("contact-information")}
+                className="hover:text-product-primary transition-colors duration-200 z-10">
+                <FiInfo size={16} />
+              </button>
+            </div>
             {formData.contact?.map((contact, index) => (
               <div
                 key={index}
@@ -481,9 +578,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
         {(formData.partners && formData.partners.length > 0) || !isFreePlan ? (
           <div className="space-y-6 col-span-full">
-            <h3 className="text-xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-              <Tag className="h-6 w-6 text-product-primary" /> Partners
-            </h3>
+            <div className="flex items-center gap-3">
+              <h3 className="text-xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+                <Tag className="h-6 w-6 text-product-primary" /> Partners
+              </h3>
+              <button
+                type="button"
+                onClick={() => handleInfoClick("partners")}
+                className="hover:text-product-primary transition-colors duration-200 z-10">
+                <FiInfo size={16} />
+              </button>
+            </div>
             {formData.partners?.map((partner, index) => (
               <div
                 key={index}
@@ -555,6 +660,16 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
           </div>
         ) : null}
       </div>
+
+      <InformModal
+        isOpen={isInfoModalOpen}
+        onConfirm={() => setIsInfoModalOpen(false)}
+        onCancel={() => setIsInfoModalOpen(false)}
+        title={`${currentField.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Explained`}
+        message={getFieldExplanation(currentField)}
+        confirmText="Got it!"
+        cancelText=""
+      />
     </Card>
   )
 }

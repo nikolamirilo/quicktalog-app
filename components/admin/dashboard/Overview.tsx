@@ -283,9 +283,35 @@ const Overview = ({
                         />
                       </Button>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent
                       align="end"
                       className="bg-product-background border border-product-border rounded-xl shadow-lg">
+                      <Link href={`/admin/items/${catalogue.name}/edit`} passHref>
+                        <DropdownMenuItem
+                          asChild
+                          className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
+                          <div className="flex items-center gap-2">
+                            <FiEdit size={18} /> Edit
+                          </div>
+                        </DropdownMenuItem>
+                      </Link>
+                      <DropdownMenuItem
+                        onClick={() =>
+                          handleupdateItemStatus(
+                            catalogue.id,
+                            catalogue.status === "active" ? "inactive" : "active"
+                          )
+                        }
+                        disabled={duplicatingId === catalogue.id}
+                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
+                        <span className="flex items-center gap-2">
+                          <VscActivateBreakpoints size={18} />
+                          {duplicatingId === catalogue.id
+                            ? "Loading..."
+                            : `${catalogue.status === "active" ? "Deactivate" : "Activate"}`}
+                        </span>
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.preventDefault()
@@ -304,7 +330,7 @@ const Overview = ({
                           ) : (
                             <LuShare2 size={18} />
                           )}
-                          {isLinkCopied === true ? "Copied" : `Share`}
+                          {isLinkCopied === true ? "Link Copied" : `Share`}
                         </span>
                       </DropdownMenuItem>
 
@@ -342,31 +368,7 @@ const Overview = ({
                           Embed
                         </span>
                       </DropdownMenuItem>
-                      <Link href={`/admin/items/${catalogue.name}/edit`} passHref>
-                        <DropdownMenuItem
-                          asChild
-                          className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                          <div className="flex items-center gap-2">
-                            <FiEdit size={18} /> Edit
-                          </div>
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleupdateItemStatus(
-                            catalogue.id,
-                            catalogue.status === "active" ? "inactive" : "active"
-                          )
-                        }
-                        disabled={duplicatingId === catalogue.id}
-                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                        <span className="flex items-center gap-2">
-                          <VscActivateBreakpoints size={18} />
-                          {duplicatingId === catalogue.id
-                            ? "Loading..."
-                            : `Set to ${catalogue.status === "active" ? "inactive" : "active"}`}
-                        </span>
-                      </DropdownMenuItem>
+
                       <DropdownMenuItem
                         onClick={() => handleDuplicateCatalogue(catalogue.id)}
                         disabled={

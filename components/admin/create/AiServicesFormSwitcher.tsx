@@ -5,6 +5,7 @@ import LimitsModal from "@/components/modals/LimitsModal"
 import SuccessModal from "@/components/modals/SuccessModal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
 import { UserData } from "@/types"
@@ -94,10 +95,13 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
         return
       }
 
+      const slug = await generateUniqueSlug(formData.name)
+      const data = { ...formData, name: slug }
+
       const response = await fetch("/api/items/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formData: formData, prompt }),
+        body: JSON.stringify({ formData: data, prompt }),
       })
 
       const contactData = {
@@ -149,9 +153,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
         type="form">
         <CardHeader className="p-6 sm:p-8">
           <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-product-foreground font-heading">
-            {type === "ai_prompt"
-              ? "AI Business Catalogue Generator"
-              : "Catalogue OCR import"}
+            {type === "ai_prompt" ? "AI Business Catalogue Generator" : "Catalogue OCR import"}
           </CardTitle>
           <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body">
             {type === "ai_prompt"
@@ -171,6 +173,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
               touched={touched}
               setTouched={setTouched}
               setErrors={setErrors}
+              type="create"
             />
 
             {type === "ai_prompt" ? (
