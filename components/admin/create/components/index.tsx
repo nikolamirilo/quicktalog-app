@@ -434,7 +434,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
         }
       }
 
-      const serviceCatalogueSlug = generateUniqueSlug(formData.name)
+      const serviceCatalogueSlug = await generateUniqueSlug(formData.name)
 
       const submissionData = {
         name: serviceCatalogueSlug,
