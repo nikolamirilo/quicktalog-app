@@ -21,7 +21,15 @@ interface PricingColumnProps {
   user: User
 }
 
-const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, billingCycle, paddle, priceId, user }) => {
+const PricingColumn: React.FC<PricingColumnProps> = ({
+  tier,
+  highlight,
+  price,
+  billingCycle,
+  paddle,
+  priceId,
+  user,
+}) => {
   const [isHovered, setIsHovered] = useState(false)
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const [currentFeature, setCurrentFeature] = useState("")
@@ -29,12 +37,22 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
   const getFeatureList = (features: PricingPlan["features"]) => {
     return [
       { text: features.support, type: "support" },
-      { text: `${features.catalogues} ${features.catalogues > 1 ? "catalogues" : "catalogue"}`, type: "catalogues" },
+      {
+        text: `${features.catalogues} ${features.catalogues > 1 ? "catalogues" : "catalogue"}`,
+        type: "catalogues",
+      },
       { text: `${features.analytics} analytics`, type: "analytics" },
       { text: `${features.traffic_limit.toLocaleString()} traffic limit`, type: "traffic-limit" },
       { text: `${features.customization} customization`, type: "customization" },
-      features.ocr_ai_import == 0 ? null : { text: `${features.ocr_ai_import} OCR AI imports`, type: "ocr-ai-import" },
-      features.ai_catalogue_generation == 0 ? null : { text: `${features.ai_catalogue_generation} AI catalogue generations`, type: "ai-catalogue-generation" },
+      features.ocr_ai_import == 0
+        ? null
+        : { text: `${features.ocr_ai_import} OCR AI imports`, type: "ocr-ai-import" },
+      features.ai_catalogue_generation == 0
+        ? null
+        : {
+            text: `${features.ai_catalogue_generation} AI catalogue generations`,
+            type: "ai-catalogue-generation",
+          },
       features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,
       features.custom_features ? { text: "Custom features", type: "custom-features" } : null,
     ].filter(Boolean)
@@ -44,15 +62,24 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
 
   const getFeatureExplanation = (feature: string): string => {
     const explanations: { [key: string]: string } = {
-      "support": "Technical assistance when you need help. Email support provides responses within 24-48 hours. Priority Support includes email, live chat, and scheduled calls for immediate assistance.",
-      "catalogues": "Number of digital catalogs you can create. Each catalog displays your services with pricing, descriptions, images, and contact information on a shareable public page.",
-      "analytics": "Track visitor engagement on your catalogs. Basic analytics show page views and visitor counts. Advanced analytics provide detailed insights on popular services and visitor behavior patterns.",
-      "traffic-limit": "Monthly page view allowance across all your catalogs. This counts every time someone visits your catalog pages. Higher limits accommodate more customer traffic.",
-      "customization": "Branding control for your catalogs. Basic includes themes and colors. Moderate adds logo upload. Advanced provides full branding with legal information, contact details, and action buttons.",
-      "ocr-ai-import": "AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
-      "ai-catalogue-generation": "AI assistance that helps create catalog content. Describe your services and the AI generates professional descriptions and organizes items into categories for your catalog.",
-      "newsletter": "Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
-      "custom-features": "Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features."
+      support:
+        "Technical assistance when you need help. Email support provides responses within 24-48 hours. Priority Support includes email, live chat, and scheduled calls for immediate assistance.",
+      catalogues:
+        "Number of digital catalogs you can create. Each catalog displays your services with pricing, descriptions, images, and contact information on a shareable public page.",
+      analytics:
+        "Track visitor engagement on your catalogs. Basic analytics show page views and visitor counts. Advanced analytics provide detailed insights on popular services and visitor behavior patterns.",
+      "traffic-limit":
+        "Monthly page view allowance across all your catalogs. This counts every time someone visits your catalog pages. Higher limits accommodate more customer traffic.",
+      customization:
+        "Branding control for your catalogs. Basic includes themes and colors. Moderate adds logo upload. Advanced provides full branding with legal information, contact details, and action buttons.",
+      "ocr-ai-import":
+        "AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
+      "ai-catalogue-generation":
+        "AI assistance that helps create catalog content. Describe your services and the AI generates professional descriptions and organizes items into categories for your catalog.",
+      newsletter:
+        "Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
+      "custom-features":
+        "Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
     }
     return explanations[feature] || "Information about this feature."
   }
@@ -68,7 +95,8 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
         "group relative w-full max-w-sm mx-auto bg-product-background text-product-foreground rounded-2xl border border-product-border lg:max-w-full transition-all duration-300 ease-out h-full flex flex-col",
         {
           "shadow-[var(--product-shadow)] hover:shadow-[var(--product-hover-shadow)]": !highlight,
-          "shadow-[var(--product-hover-shadow)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.18)]": highlight,
+          "shadow-[var(--product-hover-shadow)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.18)]":
+            highlight,
           "hover:scale-[1.02] hover:-translate-y-1": true,
         }
       )}
@@ -106,38 +134,36 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
           className="w-full py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-[1.02]"
           onClick={() => {
             if (user) {
-              const matchedTier = tiers.find((tier) => Object.values(tier.priceId).includes(user.plan_id))
+              const matchedTier = tiers.find((tier) =>
+                Object.values(tier.priceId).includes(user.plan_id)
+              )
               if (tier.name === matchedTier.name) {
                 alert("You currently have this plan")
               } else {
                 paddle.Checkout.open({
-                  items: [
-                    { priceId: priceId, quantity: 1 }
-                  ],
-                  customer: user?.email
-                    ? { email: user.email }
-                    : undefined,
+                  items: [{ priceId: priceId, quantity: 1 }],
+                  customer: user?.email ? { email: user.email } : undefined,
                   settings: {
                     successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/checkout/success`,
-                  }
+                  },
                 })
               }
             } else {
               router.push("/auth")
             }
+          }}>
+          {user
+            ? (() => {
+                const currentTier = tiers.find((t) =>
+                  Object.values(t.priceId).includes(user.plan_id)
+                )
 
-          }}
-        >
-          {user ? (() => {
-            const currentTier = tiers.find(t =>
-              Object.values(t.priceId).includes(user.plan_id)
-            );
+                if (!currentTier) return "Get Started"
 
-            if (!currentTier) return "Get Started";
-
-            if (currentTier.name === tier.name) return "Current Plan";
-            return currentTier.id > tier.id ? "Downgrade" : "Upgrade";
-          })() : "Get Started"}
+                if (currentTier.name === tier.name) return "Current Plan"
+                return currentTier.id > tier.id ? "Downgrade" : "Upgrade"
+              })()
+            : "Get Started"}
         </Button>
       </div>
 
@@ -182,7 +208,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({ tier, highlight, price, b
         isOpen={isInfoModalOpen}
         onConfirm={() => setIsInfoModalOpen(false)}
         onCancel={() => setIsInfoModalOpen(false)}
-        title={`${currentFeature.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Explained`}
+        title={`${currentFeature.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
         message={getFeatureExplanation(currentFeature)}
         confirmText="Got it!"
         cancelText=""

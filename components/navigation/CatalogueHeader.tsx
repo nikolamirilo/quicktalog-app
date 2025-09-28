@@ -119,13 +119,13 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({ type = "default", dat
                 role="group"
                 aria-label="Contact options">
                 {contactLinks.map((linkProps, index) => (
-                  <SmartLink
+                  <Link
                     key={index}
                     href={linkProps.href}
                     className={linkProps.className}
                     aria-label={linkProps.label}>
                     {linkProps.icon}
-                  </SmartLink>
+                  </Link>
                 ))}
               </div>
             )}
