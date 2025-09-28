@@ -5,6 +5,8 @@ import LimitsModal from "@/components/modals/LimitsModal"
 import SuccessModal from "@/components/modals/SuccessModal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
@@ -31,6 +33,8 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
     currency: "",
     subtitle: "",
   })
+  const [shouldGenerateImages, setShouldGenerateImages] = useState<boolean>(false)
+  console.log(shouldGenerateImages)
   const [prompt, setPrompt] = useState("")
   const { user } = useUser()
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
@@ -101,7 +105,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
       const response = await fetch("/api/items/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ formData: data, prompt }),
+        body: JSON.stringify({ formData: data, prompt, shouldGenerateImages }),
       })
 
       const contactData = {
@@ -142,6 +146,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
       })
     } finally {
       setIsSubmitting(false)
+      setShouldGenerateImages(false)
       await revalidateData()
     }
   }
@@ -151,11 +156,11 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
       <Card
         className="w-full h-full bg-transparent border-0 shadow-none rounded-none backdrop-blur-none"
         type="form">
-        <CardHeader className="p-6 sm:p-8">
+        <CardHeader className="p-6">
           <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-product-foreground font-heading">
-            {type === "ai_prompt" ? "AI Business Catalogue Generator" : "Catalogue OCR import"}
+            {type === "ai_prompt" ? "AI Catalogue Generator" : "Catalogue OCR scan & import"}
           </CardTitle>
-          <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body">
+          <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body max-w-[600px] mx-auto">
             {type === "ai_prompt"
               ? "Generate stunning service catalogues"
               : "Import your existing service catalogues"}{" "}
@@ -178,6 +183,20 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
 
             {type === "ai_prompt" ? (
               <>
+                <div className="space-y-3 md:col-span-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-product-foreground font-medium font-body">
+                        Generate Images?
+                      </Label>
+                    </div>
+                    <Switch
+                      className="bg-blue-500"
+                      checked={shouldGenerateImages}
+                      onCheckedChange={() => setShouldGenerateImages(!shouldGenerateImages)}
+                    />
+                  </div>
+                </div>
                 <PromptInput
                   prompt={prompt}
                   touched={touched}

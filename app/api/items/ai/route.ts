@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   try {
     // Early validation and parsing
     const body = (await req.json()) as GenerationRequest
-    const { prompt, formData } = body
+    const { prompt, formData, shouldGenerateImages } = body
 
     if (!prompt?.trim()) {
       return createErrorResponse("Prompt is required", 400)
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     }
 
     for (const category of generatedData.services) {
-      if (category.layout != "variant_3") {
+      if (category.layout != "variant_3" && shouldGenerateImages == true) {
         for (const item of category.items) {
           item.image = await fetchImageFromUnsplash(item.name)
         }
