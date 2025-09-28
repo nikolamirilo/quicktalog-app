@@ -13,6 +13,7 @@ export interface GenerationRequest {
     theme: string
     subtitle: string
   }
+  shouldGenerateImages?: boolean
 }
 
 export interface GeneratedData {

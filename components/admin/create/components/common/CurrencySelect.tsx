@@ -47,11 +47,13 @@ export function CurrencySelect({
         <SelectValue placeholder="Select currency" />
       </SelectTrigger>
       <SelectContent>
-        {currencies.map((currency) => (
-          <SelectItem key={currency.value} value={currency.value} className="cursor-pointer">
-            {currency.label} ({currency.symbol})
-          </SelectItem>
-        ))}
+        {currencies
+          .sort((a, b) => a.label.localeCompare(b.label))
+          .map((currency) => (
+            <SelectItem key={currency.value} value={currency.value} className="cursor-pointer">
+              {currency.label} ({currency.symbol})
+            </SelectItem>
+          ))}
       </SelectContent>
     </Select>
   )
