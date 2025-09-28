@@ -135,8 +135,10 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 
   const getFieldExplanation = (field: string): string => {
     const explanations: { [key: string]: string } = {
-      "catalog-name": "This is your catalog's unique identifier that appears in the URL (e.g., quicktalog.app/catalogues/your-catalog-name) and is displayed on your dashboard. It must be unique and can only contain letters, numbers, and spaces. This name helps you identify your catalog in the admin panel.",
-      "catalog-title": "This is the main heading that visitors will see at the top of your catalog page. It's the prominent title that introduces your services to customers and appears as the main heading on your public catalog page."
+      "catalog-name":
+        "This is your catalog's unique identifier that appears in the URL (e.g., quicktalog.app/catalogues/your-catalog-name) and is displayed on your dashboard. It must be unique and can only contain letters, numbers, and spaces. This name helps you identify your catalog in the admin panel.",
+      "catalog-title":
+        "This is the main heading that visitors will see at the top of your catalog page. It's the prominent title that introduces your services to customers and appears as the main heading on your public catalog page.",
     }
     return explanations[field] || "Information about this field."
   }
@@ -175,7 +177,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
               name="name"
               value={formData.name}
               onChange={handleNameChange}
-              placeholder="e.g., Five Guys"
+              placeholder="e.g. Burger House"
               className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
                 errors?.name
                   ? "border-red-500 focus:border-red-500"
@@ -232,7 +234,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
             name="title"
             value={formData.title || ""}
             onChange={handleInputChange}
-            placeholder="e.g., Our Delicious Offerings"
+            placeholder="e.g. Our Delicious Menu"
             className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
           />
           {touched?.title && errors?.title && (
@@ -251,14 +253,14 @@ const Step1General: React.FC<Step1GeneralProps> = ({
             name="subtitle"
             value={formData.subtitle || ""}
             onChange={handleInputChange}
-            placeholder="A short tagline or description"
+            placeholder="Add a catchy intro for your catalogue"
             className="h-32 border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
           />
         </div>
 
         <div className="space-y-3">
           <Label htmlFor="currency" className="text-product-foreground font-medium font-body">
-            Currency (e.g., USD, EUR)<span className="text-red-500 ml-1">*</span>
+            Currency<span className="text-red-500 ml-1">*</span>
           </Label>
           <CurrencySelect value={formData.currency} onChange={handleCurrencyChange} />
           {touched?.currency && errors?.currency && (
@@ -307,7 +309,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
         isOpen={isInfoModalOpen}
         onConfirm={() => setIsInfoModalOpen(false)}
         onCancel={() => setIsInfoModalOpen(false)}
-        title={`${currentField.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Explained`}
+        title={`${currentField.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
         message={getFieldExplanation(currentField)}
         confirmText="Got it!"
         cancelText=""

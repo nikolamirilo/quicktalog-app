@@ -13,8 +13,9 @@ import { NavigationGuard } from "@/hooks/useBeforeUnload"
 import { ContactInfo, ServicesFormData, ServicesItem } from "@/types"
 import { ServicesFormBaseProps } from "@/types/components"
 import { useUser } from "@clerk/nextjs"
-import { ArrowLeft, ArrowRight, Edit, Plus } from "lucide-react"
+import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 import React, { useEffect, useState } from "react"
+import { MdOutlinePublishedWithChanges } from "react-icons/md"
 import SuccessModal from "../../../modals/SuccessModal"
 import EditFormMobileTabs from "../EditFormMobileTabs"
 import EditFormSidebar from "../EditFormSidebar"
@@ -34,7 +35,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
   const [serviceCatalogueUrl, setServiceCatalogueUrl] = useState("")
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({})
   const [isUploading, setIsUploading] = useState(false)
-  const [expandedCategory, setExpandedCategory] = useState<number | null>(null)
+  const [expandedCategory, setExpandedCategory] = useState<number | null>(0)
   const [isDirty, setIsDirty] = useState(false)
   const [expandedItem, setExpandedItem] = useState<{
     categoryIndex: number
@@ -671,17 +672,17 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
                       disabled={isSubmitting || !isStepValid(currentStep) || isUploading}
                       className="sm:ml-auto flex items-center justify-center px-8 py-3 text-base font-semibold bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
                       {type === "edit" ? (
-                        <Edit className="h-5 w-5 mr-2" />
+                        <Edit className="h-5 w-5" />
                       ) : (
-                        <Plus className="h-5 w-5 mr-2" />
+                        <MdOutlinePublishedWithChanges className="h-5 w-5" />
                       )}
                       {isSubmitting
                         ? type === "edit"
                           ? "Saving..."
-                          : "Creating..."
+                          : "Publishing..."
                         : type === "edit"
                           ? "Save Changes"
-                          : "Create Catalogue"}
+                          : "Publish"}
                     </Button>
                   )}
                 </div>
