@@ -5,12 +5,12 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { layouts } from "@/constants"
-import type { Step2ServicesSectionsProps } from "@/types/components"
+import type { Step2CategoriesProps } from "@/types/components"
 import { ChevronDown, GripVertical, Plus, Trash2 } from "lucide-react"
 import * as React from "react"
 import { TbCategory } from "react-icons/tb"
 
-const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
+const Step2Categories: React.FC<Step2CategoriesProps> = ({
   formData,
   handleAddCategory,
   handleRemoveCategory,
@@ -261,4 +261,4 @@ const Step2ServicesSections: React.FC<Step2ServicesSectionsProps> = ({
   )
 }
 
-export default Step2ServicesSections
+export default Step2Categories

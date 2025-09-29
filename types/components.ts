@@ -122,7 +122,7 @@ export type Step1GeneralProps = {
   type?: string
 }
 
-export type Step2ServicesSectionsProps = {
+export type Step2CategoriesProps = {
   formData: {
     services: ServicesCategory[]
   }
@@ -134,7 +134,7 @@ export type Step2ServicesSectionsProps = {
   setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export type Step3ServicesProps = {
+export type Step3ItemsProps = {
   formData: ServiceCatalogue
   handleAddItem: (categoryIndex: number) => void
   handleRemoveItem: (categoryIndex: number, itemIndex: number) => void
@@ -154,6 +154,10 @@ export type Step3ServicesProps = {
   setExpandedItem: React.Dispatch<
     React.SetStateAction<{ categoryIndex: number; itemIndex: number } | null>
   >
+}
+export type Step5AppearanceProps = {
+  formData: ServiceCatalogue
+  setFormData: React.Dispatch<React.SetStateAction<ServicesFormData>>
 }
 
 export type Step4BrandingProps = {

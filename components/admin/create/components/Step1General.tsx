@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { themes } from "@/constants"
 import type { Step1GeneralProps } from "@/types/components"
 import { AlertCircle, CheckCircle, FileText } from "lucide-react"
 import React, { useEffect, useMemo, useState } from "react"
@@ -31,10 +30,6 @@ const Step1General: React.FC<Step1GeneralProps> = ({
     if (type !== "create" || !formData.name || !names.length) return false
     return names.some((n) => normalize(n.name) === normalize(formData.name))
   }, [formData.name, names, type])
-
-  const handleThemeChange = (value: string) => {
-    setFormData((prev: any) => ({ ...prev, theme: value }))
-  }
 
   const handleCurrencyChange = (value: string) => {
     setFormData((prev: any) => ({ ...prev, currency: value }))
@@ -156,9 +151,9 @@ const Step1General: React.FC<Step1GeneralProps> = ({
         <FileText className="text-product-primary" size={28} />
         General Information
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
             <Label htmlFor="name" className="text-product-foreground font-medium font-body">
               Catalogue Name<span className="text-red-500 ml-1">*</span>
             </Label>
@@ -214,37 +209,49 @@ const Step1General: React.FC<Step1GeneralProps> = ({
               {errors.name}
             </div>
           )}
-        </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="title" className="text-product-foreground font-medium font-body">
-              Catalogue Title<span className="text-red-500 ml-1">*</span>
-            </Label>
-            <button
-              type="button"
-              onClick={() => handleInfoClick("catalog-title")}
-              className="hover:text-product-primary transition-colors duration-200 z-10">
-              <FiInfo size={16} />
-            </button>
-          </div>
-          <Input
-            id="title"
-            type="text"
-            name="title"
-            value={formData.title || ""}
-            onChange={handleInputChange}
-            placeholder="e.g. Our Delicious Menu"
-            className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
-          />
-          {touched?.title && errors?.title && (
-            <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-              {errors.title}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="title" className="text-product-foreground font-medium font-body">
+                Catalogue Title<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <button
+                type="button"
+                onClick={() => handleInfoClick("catalog-title")}
+                className="hover:text-product-primary transition-colors duration-200 z-10">
+                <FiInfo size={16} />
+              </button>
             </div>
-          )}
+            <Input
+              id="title"
+              type="text"
+              name="title"
+              value={formData.title || ""}
+              onChange={handleInputChange}
+              placeholder="e.g. Our Delicious Menu"
+              className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
+            />
+            {touched?.title && errors?.title && (
+              <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
+                {errors.title}
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="currency" className="text-product-foreground font-medium font-body">
+              Currency<span className="text-red-500 ml-1">*</span>
+            </Label>
+            <CurrencySelect value={formData.currency} onChange={handleCurrencyChange} />
+            {touched?.currency && errors?.currency && (
+              <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
+                {errors.currency}
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col h-full gap-3">
           <Label htmlFor="subtitle" className="text-product-foreground font-medium font-body">
             Catalogue Description
           </Label>
@@ -254,54 +261,8 @@ const Step1General: React.FC<Step1GeneralProps> = ({
             value={formData.subtitle || ""}
             onChange={handleInputChange}
             placeholder="Add a catchy intro for your catalogue"
-            className="h-32 border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
+            className="flex-1 border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
           />
-        </div>
-
-        <div className="space-y-3">
-          <Label htmlFor="currency" className="text-product-foreground font-medium font-body">
-            Currency<span className="text-red-500 ml-1">*</span>
-          </Label>
-          <CurrencySelect value={formData.currency} onChange={handleCurrencyChange} />
-          {touched?.currency && errors?.currency && (
-            <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-              {errors.currency}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-4 col-span-full">
-          <Label htmlFor="theme" className="text-product-foreground font-medium font-body">
-            Theme<span className="text-red-500 ml-1">*</span>
-          </Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {themes.map((themeOption) => (
-              <div
-                key={themeOption.key}
-                className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-product-hover-shadow ${
-                  formData.theme === themeOption.key
-                    ? "border-product-primary shadow-product-shadow bg-product-primary/5"
-                    : "border-product-border hover:border-product-primary/50"
-                }`}
-                onClick={() => handleThemeChange(themeOption.key)}>
-                <div className="aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100">
-                  <img
-                    src={themeOption.image}
-                    alt={themeOption.label}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <p className="text-center text-base mt-3 font-medium text-product-foreground font-body">
-                  {themeOption.label}
-                </p>
-              </div>
-            ))}
-          </div>
-          {touched?.theme && errors?.theme && (
-            <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-              {errors.theme}
-            </div>
-          )}
         </div>
       </div>
 

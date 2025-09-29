@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { getCurrencySymbol } from "@/helpers/client"
-import type { Step3ServicesProps } from "@/types/components"
+import type { Step3ItemsProps } from "@/types/components"
 import { ChevronDown, Plus, Trash2 } from "lucide-react"
-import React from "react"
+import React, { useEffect } from "react"
 import { MdOutlineLocalOffer } from "react-icons/md"
 
-const Step3Services: React.FC<Step3ServicesProps> = ({
+const Step3Items: React.FC<Step3ItemsProps> = ({
   formData,
   handleAddItem,
   handleRemoveItem,
@@ -41,6 +41,10 @@ const Step3Services: React.FC<Step3ServicesProps> = ({
       setExpandedItem({ categoryIndex, itemIndex })
     }
   }
+
+  useEffect(() => {
+    setExpandedItem({ categoryIndex: 0, itemIndex: 0 })
+  }, [])
 
   return (
     <Card
@@ -240,4 +244,4 @@ const Step3Services: React.FC<Step3ServicesProps> = ({
   )
 }
 
-export default Step3Services
+export default Step3Items
