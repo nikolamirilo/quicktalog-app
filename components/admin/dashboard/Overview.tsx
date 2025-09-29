@@ -23,7 +23,16 @@ import { useEffect, useState } from "react"
 import { BiScan } from "react-icons/bi"
 import { BsQrCodeScan } from "react-icons/bs"
 import { FaRegCircleCheck } from "react-icons/fa6"
-import { FiCopy, FiEdit, FiInfo, FiMoreVertical, FiTrash2 } from "react-icons/fi"
+import {
+  FiCopy,
+  FiCpu,
+  FiEdit,
+  FiFileText,
+  FiInfo,
+  FiMoreVertical,
+  FiTool,
+  FiTrash2,
+} from "react-icons/fi"
 import { ImEmbed2 } from "react-icons/im"
 import { IoCreateOutline } from "react-icons/io5"
 import { LuShare2, LuSquareMenu } from "react-icons/lu"
@@ -64,9 +73,29 @@ const Overview = ({
       setIsModalOpen(false)
     }
   }
+  const sourceConfig: Record<
+    string,
+    { label: string; className: string; Icon: React.ElementType }
+  > = {
+    builder: {
+      label: "Builder",
+      className: "bg-blue-100 text-blue-700",
+      Icon: FiTool,
+    },
+    ai_prompt: {
+      label: "AI Prompt",
+      className: "bg-purple-100 text-purple-700",
+      Icon: FiCpu,
+    },
+    ocr_import: {
+      label: "OCR Import",
+      className: "bg-yellow-100 text-orange-700",
+      Icon: FiFileText,
+    },
+  }
 
   const statusColors: Record<string, string> = {
-    active: "text-white bg-green-700",
+    active: "text-white bg-[#00875A]",
     inactive: "text-white bg-product-secondary",
     draft: "text-white bg-product-primary",
   }
@@ -397,13 +426,33 @@ const Overview = ({
                 </div>
 
                 {/* Card content */}
-                <div className="font-bold text-sm sm:text-base md:text-lg lg:text-xl text-product-foreground break-words font-heading">
+                <div className="font-heading font-bold text-sm sm:text-base md:text-lg lg:text-xl text-product-foreground break-words">
                   {catalogue.name}
                 </div>
-                <Badge
-                  className={`${statusColors[catalogue.status] || "bg-gray-100 text-gray-700"} w-fit`}>
-                  {catalogue.status.toUpperCase()}
-                </Badge>
+
+                <div className="flex flex-row gap-2 items-center">
+                  <Badge
+                    className={`${statusColors[catalogue.status] || "bg-gray-100 text-gray-700"} w-fit rounded`}>
+                    {catalogue.status.toUpperCase()}
+                  </Badge>
+
+                  {(() => {
+                    const source = sourceConfig[catalogue.source] || {
+                      label: catalogue.source,
+                      className: "bg-gray-100 text-gray-700",
+                      Icon: FiFileText,
+                    }
+                    const { label, className, Icon } = source
+                    return (
+                      <span
+                        className={`${className} flex items-center gap-1 w-fit rounded px-2 py-0.5 text-xs font-medium`}>
+                        <Icon className="w-3.5 h-3.5" />
+                        {label}
+                      </span>
+                    )
+                  })()}
+                </div>
+
                 <div className="text-product-foreground-accent text-xs 2xl:text-sm break-words">
                   Updated:{" "}
                   {new Date(catalogue.updated_at).toLocaleString("en-US", {

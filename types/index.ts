@@ -71,6 +71,7 @@ export type ServiceCatalogue = {
   configuration?: Configuration
   created_at?: string
   updated_at?: string
+  source?: string
 }
 
 export type ServicesFormData = Omit<ServiceCatalogue, "id" | "created_by" | "">

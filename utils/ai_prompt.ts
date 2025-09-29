@@ -86,6 +86,7 @@ export const insertCatalogueData = async (
     configuration: {},
     contact: [],
     services: generatedData.services,
+    source: "ai_prompt",
   }
 
   const { error } = await supabase.from("catalogues").insert([catalogueData]).select()
