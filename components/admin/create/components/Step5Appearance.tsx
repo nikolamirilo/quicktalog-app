@@ -90,8 +90,11 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
           </div>
         </div>
         {/* Preview Container with Navigation */}
-        <div className="relative">
+        <div className="relative flex flex-col gap-3 w-full">
           {/* Swiper Container */}
+          <h3 className="text-xl sm:text-2xl text-product-foreground flex items-center gap-3 font-bold w-full mx-auto justify-center">
+            Preview
+          </h3>
           <BrowserFrame url={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${formData.name}`}>
             <Swiper
               modules={[Navigation, Pagination]}

@@ -1,6 +1,6 @@
 export default function BrowserFrame({ url = "myapp.local", children, isLoading = false }) {
   return (
-    <div className="max-w-[1400px] mx-auto">
+    <div className="max-w-[1400px] w-full mx-auto">
       <div className="border border-gray-200 rounded-2xl overflow-hidden flex flex-col w-full h-[800px] shadow-2xl bg-white transform transition-all duration-700">
         {/* Browser Top Bar */}
         <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200">
