@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
 
     // Generate AI response
-    const generationPrompt = generatePromptForAI(prompt, formData)
+    const generationPrompt = generatePromptForAI(prompt, formData, shouldGenerateImages)
     const aiResponse = await chatCompletion(generationPrompt)
 
     // Parse and validate AI response

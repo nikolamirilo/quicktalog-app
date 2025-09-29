@@ -39,7 +39,9 @@ const CardsSwitcher = ({
   const validatedRecord = {
     ...record,
     price,
-    image: record.image || "/placeholder-image.jpg",
+    image:
+      record.image ||
+      "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbLZJd0wWMZP0cAtUu7EI5sD2VGw41vjTYyfKL",
   }
 
   // Helper function to pick card component

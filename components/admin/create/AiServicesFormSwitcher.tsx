@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { themes } from "@/constants"
 import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
@@ -20,15 +21,15 @@ import PromptInput from "./components/ai/PromptInput"
 import OcrReader from "./components/ocr/OcrReader"
 import Step1General from "./components/Step1General"
 
-interface AiServicesFormSwitcherProps {
+interface AiItemsFormSwitcherProps {
   type: "ai_prompt" | "ocr_import"
   userData: UserData
 }
 
-export default function AiServicesFormSwitcher({ type, userData }: AiServicesFormSwitcherProps) {
+export default function AiItemsFormSwitcher({ type, userData }: AiItemsFormSwitcherProps) {
   const [formData, setFormData] = useState({
     name: "",
-    theme: "",
+    theme: "theme-elegant",
     title: "",
     currency: "",
     subtitle: "",
@@ -60,8 +61,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
     if (!formData.title.trim()) newErrors.title = "Title is required."
     if (!formData.currency.trim()) newErrors.currency = "Currency is required."
     if (!formData.theme.trim()) newErrors.theme = "Theme is required."
-    if (type === "ai_prompt" && !prompt.trim())
-      newErrors.prompt = "Services description is required."
+    if (type === "ai_prompt" && !prompt.trim()) newErrors.prompt = "Items description is required."
     setErrors(newErrors)
     setTouched({
       name: true,
@@ -72,7 +72,9 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
     })
     return Object.keys(newErrors).length === 0 && !hasErrors
   }
-
+  const handleThemeChange = (value: string) => {
+    setFormData((prev: any) => ({ ...prev, theme: value }))
+  }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!validate()) return
@@ -164,7 +166,7 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
             {type === "ai_prompt"
               ? "Generate stunning service catalogues"
               : "Import your existing service catalogues"}{" "}
-            of your services in minutes. Perfect for restaurants, salons, gyms, and more.
+            of your Items in minutes. Perfect for restaurants, salons, gyms, and more.
           </CardDescription>
         </CardHeader>
 
@@ -180,6 +182,39 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
               setErrors={setErrors}
               type="create"
             />
+            <div className="space-y-4 col-span-full">
+              <Label htmlFor="theme" className="text-product-foreground font-medium font-body">
+                Theme<span className="text-red-500 ml-1">*</span>
+              </Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {themes.map((themeOption) => (
+                  <div
+                    key={themeOption.key}
+                    className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-product-hover-shadow ${
+                      formData.theme === themeOption.key
+                        ? "border-product-primary shadow-product-shadow bg-product-primary/5"
+                        : "border-product-border hover:border-product-primary/50"
+                    }`}
+                    onClick={() => handleThemeChange(themeOption.key)}>
+                    <div className="aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100">
+                      <img
+                        src={themeOption.image}
+                        alt={themeOption.label}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <p className="text-center text-base mt-3 font-medium text-product-foreground font-body">
+                      {themeOption.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              {touched?.theme && errors?.theme && (
+                <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
+                  {errors.theme}
+                </div>
+              )}
+            </div>
 
             {type === "ai_prompt" ? (
               <>

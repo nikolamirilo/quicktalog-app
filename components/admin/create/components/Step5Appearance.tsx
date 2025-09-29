@@ -58,6 +58,12 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
     }
   }
 
+  React.useEffect(() => {
+    if (formData.theme && formData.theme != "") {
+      setTheme(formData.theme)
+    }
+  }, [])
+
   return (
     <>
       <Card
