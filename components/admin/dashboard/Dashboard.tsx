@@ -62,7 +62,7 @@ export default function Dashboard({ user, usage, pricingPlan }: ImprovedDashboar
                 <section className="animate-fade-in">
                      <div className="bg-gradient-to-r items-center justify-center from-product-primary/10 to-product-primary/5 border border-product-primary rounded-2xl p-6 gap-3 flex flex-col text-center mb-4">
                       <h2 className="text-xl font-semibold text-product-foreground">
-                        🚀 Join Our Beta Community
+                        Join Our Beta Community
                       </h2>
                       <p className="text-product-foreground-accen text-sm">
                         Be the first to shape the future of Quicktalog. Get priority support, early updates, and share your feedback
