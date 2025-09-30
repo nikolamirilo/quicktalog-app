@@ -2,13 +2,13 @@
 
 import { sendNewCatalogueEmail } from "@/actions/email"
 import { getUserData } from "@/actions/users"
-import Step1General from "@/components/admin/create/components/Step1General"
-import Step2Categories from "@/components/admin/create/components/Step2Categories"
-import Step3Items from "@/components/admin/create/components/Step3Items"
-import Step4Branding from "@/components/admin/create/components/Step4Branding"
-import Step5Appearance from "@/components/admin/create/components/Step5Appearance"
-import EditFormMobileTabs from "@/components/admin/create/EditFormMobileTabs"
-import EditFormSidebar from "@/components/admin/create/EditFormSidebar"
+import EditFormMobileTabs from "@/components/admin/create/components/EditFormMobileTabs"
+import EditFormSidebar from "@/components/admin/create/components/EditFormSidebar"
+import Step1General from "@/components/admin/create/components/steps/Step1General"
+import Step2Categories from "@/components/admin/create/components/steps/Step2Categories"
+import Step3Items from "@/components/admin/create/components/steps/Step3Items"
+import Step4Branding from "@/components/admin/create/components/steps/Step4Branding"
+import Step5Appearance from "@/components/admin/create/components/steps/Step5Appearance"
 import LimitsModal from "@/components/modals/LimitsModal"
 import SuccessModal from "@/components/modals/SuccessModal"
 import { Button } from "@/components/ui/button"
@@ -19,13 +19,13 @@ import { revalidateCataloguesData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
 import { NavigationGuard } from "@/hooks/useBeforeUnload"
 import { ContactInfo, ServicesFormData, ServicesItem } from "@/types"
-import { ServicesFormBaseProps } from "@/types/components"
+import { BuilderProps } from "@/types/components"
 import { useUser } from "@clerk/nextjs"
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 import React, { useEffect, useState } from "react"
 import { MdOutlinePublishedWithChanges } from "react-icons/md"
 
-function TestServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBaseProps) {
+function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   const [formData, setFormData] = useState<ServicesFormData>(
     initialData || defaultServiceCatalogueData
   )
@@ -711,4 +711,4 @@ function TestServicesForm({ type, initialData, onSuccess, userData }: ServicesFo
     </>
   )
 }
-export default TestServicesForm
+export default Builder

@@ -4,10 +4,9 @@ import { sendNewCatalogueEmail } from "@/actions/email"
 import LimitsModal from "@/components/modals/LimitsModal"
 import SuccessModal from "@/components/modals/SuccessModal"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { themes } from "@/constants"
 import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
@@ -16,17 +15,13 @@ import { useUser } from "@clerk/nextjs"
 import Link from "next/link"
 import React, { useState } from "react"
 import { RiSparkling2Line } from "react-icons/ri"
-import PromptExamples from "./components/ai/PromptExamples"
-import PromptInput from "./components/ai/PromptInput"
-import OcrReader from "./components/ocr/OcrReader"
-import Step1General from "./components/Step1General"
+import FormHeader from "./components/FormHeader"
+import PromptExamples from "./components/PromptExamples"
+import PromptInput from "./components/PromptInput"
+import Step1General from "./components/steps/Step1General"
+import ThemeSelect from "./components/ThemeSelect"
 
-interface AiItemsFormSwitcherProps {
-  type: "ai_prompt" | "ocr_import"
-  userData: UserData
-}
-
-export default function AiItemsFormSwitcher({ type, userData }: AiItemsFormSwitcherProps) {
+export default function AIBuilder({ userData }: { userData: UserData }) {
   const [formData, setFormData] = useState({
     name: "",
     theme: "theme-elegant",
@@ -61,20 +56,18 @@ export default function AiItemsFormSwitcher({ type, userData }: AiItemsFormSwitc
     if (!formData.title.trim()) newErrors.title = "Title is required."
     if (!formData.currency.trim()) newErrors.currency = "Currency is required."
     if (!formData.theme.trim()) newErrors.theme = "Theme is required."
-    if (type === "ai_prompt" && !prompt.trim()) newErrors.prompt = "Items description is required."
+    if (!prompt.trim()) newErrors.prompt = "Items description is required."
     setErrors(newErrors)
     setTouched({
       name: true,
       title: true,
       currency: true,
       theme: true,
-      ...(type === "ai_prompt" && { prompt: true }),
+      prompt: true,
     })
     return Object.keys(newErrors).length === 0 && !hasErrors
   }
-  const handleThemeChange = (value: string) => {
-    setFormData((prev: any) => ({ ...prev, theme: value }))
-  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!validate()) return
@@ -158,18 +151,10 @@ export default function AiItemsFormSwitcher({ type, userData }: AiItemsFormSwitc
       <Card
         className="w-full h-full bg-transparent border-0 shadow-none rounded-none backdrop-blur-none"
         type="form">
-        <CardHeader className="p-6">
-          <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-product-foreground font-heading">
-            {type === "ai_prompt" ? "AI Catalogue Generator" : "Catalogue OCR scan & import"}
-          </CardTitle>
-          <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body max-w-[600px] mx-auto">
-            {type === "ai_prompt"
-              ? "Generate stunning catalogues"
-              : "Import your existing catalogues"}{" "}
-            of your Items in minutes. Perfect for restaurants, salons, gyms, and more.
-          </CardDescription>
-        </CardHeader>
-
+        <FormHeader
+          title="AI Catalogue Generator"
+          subtitle="Generate stunning catalogues in minutes. Perfect for restaurants, salons, gyms, and more."
+        />
         <CardContent className="p-6 sm:p-8 pt-0">
           <form onSubmit={handleSubmit} className="space-y-6">
             <Step1General
@@ -182,89 +167,49 @@ export default function AiItemsFormSwitcher({ type, userData }: AiItemsFormSwitc
               setErrors={setErrors}
               type="create"
             />
-            <div className="space-y-4 col-span-full">
-              <Label htmlFor="theme" className="text-product-foreground font-medium font-body">
-                Theme<span className="text-red-500 ml-1">*</span>
-              </Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {themes.map((themeOption) => (
-                  <div
-                    key={themeOption.key}
-                    className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-product-hover-shadow ${
-                      formData.theme === themeOption.key
-                        ? "border-product-primary shadow-product-shadow bg-product-primary/5"
-                        : "border-product-border hover:border-product-primary/50"
-                    }`}
-                    onClick={() => handleThemeChange(themeOption.key)}>
-                    <div className="aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100">
-                      <img
-                        src={themeOption.image}
-                        alt={themeOption.label}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <p className="text-center text-base mt-3 font-medium text-product-foreground font-body">
-                      {themeOption.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              {touched?.theme && errors?.theme && (
-                <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-                  {errors.theme}
+            <ThemeSelect
+              formData={formData}
+              setFormData={setFormData}
+              touched={touched}
+              errors={errors}
+            />
+
+            <div className="space-y-3 md:col-span-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Label className="text-product-foreground font-medium font-body">
+                    Generate Images?
+                  </Label>
                 </div>
-              )}
+                <Switch
+                  className="bg-blue-500"
+                  checked={shouldGenerateImages}
+                  onCheckedChange={() => setShouldGenerateImages(!shouldGenerateImages)}
+                />
+              </div>
             </div>
 
-            {type === "ai_prompt" ? (
-              <>
-                <div className="space-y-3 md:col-span-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Label className="text-product-foreground font-medium font-body">
-                        Generate Images?
-                      </Label>
-                    </div>
-                    <Switch
-                      className="bg-blue-500"
-                      checked={shouldGenerateImages}
-                      onCheckedChange={() => setShouldGenerateImages(!shouldGenerateImages)}
-                    />
-                  </div>
+            <PromptInput prompt={prompt} touched={touched} errors={errors} setPrompt={setPrompt} />
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              variant="cta"
+              className="h-12 font-medium rounded-lg">
+              {isSubmitting ? (
+                <div className="flex items-center gap-2 animate-pulse">
+                  <RiSparkling2Line size={20} className="animate-spin" />
+                  Creating Your Catalogue...
                 </div>
-                <PromptInput
-                  prompt={prompt}
-                  touched={touched}
-                  errors={errors}
-                  setPrompt={setPrompt}
-                />
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  variant="cta"
-                  className="h-12 font-medium rounded-lg">
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2 animate-pulse">
-                      <RiSparkling2Line size={20} className="animate-spin" />
-                      Creating Your Catalogue...
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <RiSparkling2Line size={20} />
-                      Generate Catalogue
-                    </div>
-                  )}
-                </Button>
-              </>
-            ) : type === "ocr_import" ? (
-              <OcrReader
-                formData={formData}
-                setShowSuccessModal={setShowSuccessModal}
-                setServiceCatalogueUrl={setCatalogueUrl}
-              />
-            ) : null}
+              ) : (
+                <div className="flex items-center gap-2">
+                  <RiSparkling2Line size={20} />
+                  Generate Catalogue
+                </div>
+              )}
+            </Button>
           </form>
-          {type === "ai_prompt" && <PromptExamples setPrompt={setPrompt} disabled={isSubmitting} />}
+          <PromptExamples setPrompt={setPrompt} disabled={isSubmitting} />
         </CardContent>
       </Card>
 

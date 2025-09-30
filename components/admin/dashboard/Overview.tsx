@@ -13,7 +13,7 @@ import {
 import { tiers } from "@/constants/pricing"
 import { statusOrder } from "@/constants/sort"
 import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client"
-import { ServiceCatalogue } from "@/types"
+import { Catalogue } from "@/types"
 import { OverviewProps } from "@/types/components"
 import { Status } from "@/types/enums"
 import Link from "next/link"
@@ -296,7 +296,7 @@ const Overview = ({
               if (statusDiff !== 0) return statusDiff
               return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
             })
-            .map((catalogue: ServiceCatalogue) => (
+            .map((catalogue: Catalogue) => (
               <Card
                 key={catalogue.id}
                 className="p-2 md:p-5 flex flex-col gap-2 sm:gap-3 lg:gap-4 relative bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow hover:scale-[1.02] transition-all duration-200 animate-fade-in">

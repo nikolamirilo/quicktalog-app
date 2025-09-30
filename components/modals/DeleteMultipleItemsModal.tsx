@@ -11,13 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ServiceCatalogue } from "@/types"
+import { Catalogue } from "@/types"
 import { useState } from "react"
 import { FiAlertTriangle, FiTrash2 } from "react-icons/fi"
 
 interface DeleteMultipleItemsModalProps {
   isOpen: boolean
-  catalogues: ServiceCatalogue[]
+  catalogues: Catalogue[]
   onConfirm: (selectedIds: string[]) => Promise<void>
   maxAllowed: number
 }
@@ -86,10 +86,11 @@ const DeleteMultipleItemsModal = ({
           {catalogues.map((catalogue) => (
             <Card
               key={catalogue.id}
-              className={`p-4 flex items-center gap-4 w-[45%] transition-all duration-200 ${selectedIds.includes(catalogue.id)
-                ? "border-red-500 bg-red-50/50"
-                : "border-product-border bg-product-background hover:shadow-product-hover-shadow"
-                }`}>
+              className={`p-4 flex items-center gap-4 w-[45%] transition-all duration-200 ${
+                selectedIds.includes(catalogue.id)
+                  ? "border-red-500 bg-red-50/50"
+                  : "border-product-border bg-product-background hover:shadow-product-hover-shadow"
+              }`}>
               <Checkbox
                 id={catalogue.id}
                 checked={selectedIds.includes(catalogue.id)}
@@ -105,8 +106,9 @@ const DeleteMultipleItemsModal = ({
                     {catalogue.name}
                   </h3>
                   <Badge
-                    className={`${statusColors[catalogue.status] || "bg-gray-100 text-gray-700"
-                      } shrink-0`}>
+                    className={`${
+                      statusColors[catalogue.status] || "bg-gray-100 text-gray-700"
+                    } shrink-0`}>
                     {catalogue.status.toUpperCase()}
                   </Badge>
                 </div>

@@ -1,6 +1,6 @@
 // LD JSON Schema constants for structured data
 
-import { ServiceCatalogue } from "@/types"
+import { Catalogue } from "@/types"
 import { faqs } from "./details"
 
 // Organization schema
@@ -244,7 +244,7 @@ export const authenticationPageSchema = {
   ],
 }
 
-export function generateCatalogueSchema(item: ServiceCatalogue) {
+export function generateCatalogueSchema(item: Catalogue) {
   return {
     "@context": "https://schema.org",
     "@type": "WebPage",

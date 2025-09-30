@@ -1,10 +1,10 @@
-import { ServiceCatalogue } from "@/types"
+import { Catalogue } from "@/types"
 import { MetadataRoute } from "next"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!
 
-  let catalogues: ServiceCatalogue[] = []
+  let catalogues: Catalogue[] = []
   try {
     const res = await fetch(`${baseUrl}/api/items`, {
       method: "GET",
@@ -85,11 +85,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const catalogueUrls: MetadataRoute.Sitemap = hasCatalogues
     ? catalogues.map((catalogue) => ({
-      url: `${baseUrl}/catalogues/${catalogue.name}`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    }))
+        url: `${baseUrl}/catalogues/${catalogue.name}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly",
+        priority: 0.9,
+      }))
     : []
 
   return [...staticUrls, ...catalogueUrls]

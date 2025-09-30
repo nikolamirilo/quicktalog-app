@@ -1,4 +1,4 @@
-import { ContactItem, FooterData, HeaderData, ServiceCatalogue } from "@/types"
+import { Catalogue, ContactItem, FooterData, HeaderData } from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -76,13 +76,13 @@ export function cleanValue(value: any) {
 
   return value
 }
-export const buildHeaderData = (item: ServiceCatalogue): HeaderData => ({
+export const buildHeaderData = (item: Catalogue): HeaderData => ({
   email: getContactValue(item.contact, "email") || "",
   phone: getContactValue(item.contact, "phone") || "",
   ctaNavbar: item.configuration?.ctaNavbar,
 })
 
-export const buildFooterData = (item: ServiceCatalogue): FooterData => ({
+export const buildFooterData = (item: Catalogue): FooterData => ({
   name: item.name || "",
   partners: item.partners,
   email: getContactValue(item.contact, "email"),

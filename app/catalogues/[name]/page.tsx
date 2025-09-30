@@ -6,7 +6,7 @@ import ServicesSection from "@/components/sections/ServicesSection"
 import { DARK_THEMES } from "@/constants"
 import { generateCatalogueMetadata } from "@/constants/metadata"
 import { buildFooterData, buildHeaderData } from "@/helpers/client"
-import { ServiceCatalogue } from "@/types"
+import { Catalogue } from "@/types"
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
@@ -112,7 +112,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
       console.warn("No data found for the service catalogue")
     }
 
-    const item = data as ServiceCatalogue
+    const item = data as Catalogue
 
     if (!item.title || !item.services) {
       console.warn("Invalid service catalogue data:", item)
@@ -197,7 +197,12 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
             <section
               className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pt-8 sm:pt-12 md:pt-16 pb-8 min-h-[60vh]"
               aria-label="Services and items">
-              <ServicesSection servicesData={item.services} currency={item.currency} type="item" theme={item.theme} />
+              <ServicesSection
+                servicesData={item.services}
+                currency={item.currency}
+                type="item"
+                theme={item.theme}
+              />
             </section>
           </main>
 

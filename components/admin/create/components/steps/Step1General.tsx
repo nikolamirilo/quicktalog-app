@@ -8,7 +8,7 @@ import type { Step1GeneralProps } from "@/types/components"
 import { AlertCircle, CheckCircle, FileText } from "lucide-react"
 import React, { useEffect, useMemo, useState } from "react"
 import { FiInfo } from "react-icons/fi"
-import { CurrencySelect } from "./common/CurrencySelect"
+import { CurrencySelect } from "../CurrencySelect"
 
 const Step1General: React.FC<Step1GeneralProps> = ({
   formData,
