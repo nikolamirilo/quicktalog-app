@@ -1,7 +1,14 @@
-export default function BrowserFrame({ url = "myapp.local", children, isLoading = false }) {
+export default function BrowserFrame({ 
+  url = "myapp.local", 
+  children, 
+  isLoading = false, 
+  floatingControls = null,
+  mobileToggle = null,
+  isMobileView = false
+}) {
   return (
-    <div className="max-w-[1400px] w-full mx-auto">
-      <div className="border border-gray-200 rounded-2xl overflow-hidden flex flex-col w-full h-[800px] shadow-2xl bg-white transform transition-all duration-700">
+    <div className={`${isMobileView ? 'max-w-[375px]' : 'max-w-[1000px]'} w-full mx-auto transition-all duration-500 ease-in-out`}>
+      <div className={`border border-gray-200 rounded-2xl overflow-hidden flex flex-col w-full ${isMobileView ? 'h-[600px]' : 'h-[600px]'} shadow-2xl bg-white transform transition-all duration-500 ease-in-out relative`}>
         {/* Browser Top Bar */}
         <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200">
           {/* Traffic Light Buttons */}
@@ -120,12 +127,34 @@ export default function BrowserFrame({ url = "myapp.local", children, isLoading 
 
           {/* Content with subtle entrance animation */}
           <div
-            className={`h-full bg-white transition-opacity duration-700 ${
+            className={`h-full bg-white transition-all duration-500 ease-in-out ${
               isLoading ? "opacity-50" : "opacity-100"
             }`}>
-            {children}
+            <div 
+              className="h-full transition-all duration-500 ease-in-out"
+              style={{
+                maxWidth: isMobileView ? '375px' : '100%',
+                margin: isMobileView ? '0 auto' : '0',
+                transition: 'max-width 500ms ease-in-out, margin 500ms ease-in-out'
+              }}>
+              {children}
+            </div>
           </div>
         </div>
+        
+        {/* Floating Controls */}
+        {floatingControls && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-500 ease-in-out" style={{ position: 'absolute', bottom: '1rem', left: '50%', transform: 'translateX(-50%)', zIndex: 20 }}>
+            {floatingControls}
+          </div>
+        )}
+        
+        {/* Mobile Toggle */}
+        {mobileToggle && (
+          <div className="absolute bottom-4 right-4 z-20 transition-all duration-500 ease-in-out">
+            {mobileToggle}
+          </div>
+        )}
       </div>
     </div>
   )
