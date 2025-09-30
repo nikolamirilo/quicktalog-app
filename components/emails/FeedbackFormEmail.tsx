@@ -65,7 +65,7 @@ export const FeedbackFormEmail = ({
             <Row>
               <Column align="center">
                 <Img
-                  src="https://quicktalog.app/logo.svg"
+                  src="https://www.quicktalog.app/logo.svg"
                   width="120"
                   height="40"
                   alt="Quicktalog Logo"
@@ -176,11 +176,11 @@ export const FeedbackFormEmail = ({
                 Contact Support
               </Link>
               <span style={footerSeparator}>•</span>
-              <Link href="https://quicktalog.app/help" style={footerLink}>
+              <Link href="https://www.quicktalog.app/help" style={footerLink}>
                 Help Center
               </Link>
               <span style={footerSeparator}>•</span>
-              <Link href="https://quicktalog.app" style={footerLink}>
+              <Link href="https://www.quicktalog.app" style={footerLink}>
                 Website
               </Link>
             </div>

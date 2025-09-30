@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { layouts } from "@/constants"
 import type { Step2CategoriesProps } from "@/types/components"
-import { ChevronDown, GripVertical, Plus, Trash2 } from "lucide-react"
+import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react"
 import * as React from "react"
+import { FaPen } from "react-icons/fa6"
 import { TbCategory } from "react-icons/tb"
 
 const Step2Categories: React.FC<Step2CategoriesProps> = ({
@@ -19,11 +20,10 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
   expandedCategory,
   setExpandedCategory,
 }) => {
-  const [draggedItem, setDraggedItem] = React.useState<number | null>(null)
-  const [dragOverItem, setDragOverItem] = React.useState<number | null>(null)
   const [currentCategoryIndex, setCurrentCategoryIndex] = React.useState(0)
   const [isCategoryDeletionConfirmed, setIsCategoryDeletionConfirmed] = React.useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false)
+  const [editableCategoryIndex, setEditableCategoryIndex] = React.useState<number | null>(null)
 
   const sortedServices = React.useMemo(() => {
     return formData.services
@@ -31,33 +31,13 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
       .sort((a, b) => a.order - b.order)
   }, [formData.services])
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, displayIndex: number) => {
-    setDraggedItem(displayIndex)
-    e.dataTransfer.effectAllowed = "move"
-  }
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, displayIndex: number) => {
-    e.preventDefault()
-    setDragOverItem(displayIndex)
-  }
-
-  const handleDragLeave = () => {
-    setDragOverItem(null)
-  }
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropDisplayIndex: number) => {
-    e.preventDefault()
-
-    if (draggedItem === null || draggedItem === dropDisplayIndex) {
-      setDraggedItem(null)
-      setDragOverItem(null)
-      return
-    }
+  const handleMoveUp = (displayIndex: number) => {
+    if (displayIndex === 0) return
 
     const reorderedServices = [...sortedServices]
-
-    const [movedItem] = reorderedServices.splice(draggedItem, 1)
-    reorderedServices.splice(dropDisplayIndex, 0, movedItem)
+    const temp = reorderedServices[displayIndex]
+    reorderedServices[displayIndex] = reorderedServices[displayIndex - 1]
+    reorderedServices[displayIndex - 1] = temp
 
     const finalServices = reorderedServices.map((service, index) => ({
       ...service,
@@ -69,14 +49,26 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
     if (handleReorderCategories) {
       handleReorderCategories(cleanedServices)
     }
-
-    setDraggedItem(null)
-    setDragOverItem(null)
   }
 
-  const handleDragEnd = () => {
-    setDraggedItem(null)
-    setDragOverItem(null)
+  const handleMoveDown = (displayIndex: number) => {
+    if (displayIndex === sortedServices.length - 1) return
+
+    const reorderedServices = [...sortedServices]
+    const temp = reorderedServices[displayIndex]
+    reorderedServices[displayIndex] = reorderedServices[displayIndex + 1]
+    reorderedServices[displayIndex + 1] = temp
+
+    const finalServices = reorderedServices.map((service, index) => ({
+      ...service,
+      order: index,
+    }))
+
+    const cleanedServices = finalServices.map(({ originalIndex, ...service }) => service)
+
+    if (handleReorderCategories) {
+      handleReorderCategories(cleanedServices)
+    }
   }
 
   const toggleCategory = (displayIndex: number) => {
@@ -104,10 +96,14 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
     }
   }
 
+  const toggleEditable = (displayIndex: number) => {
+    setEditableCategoryIndex(editableCategoryIndex === displayIndex ? null : displayIndex)
+  }
+
   return (
     <>
       <Card
-        className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-product-shadow rounded-2xl"
+        className="space-y-8 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-product-shadow rounded-2xl"
         type="form">
         <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
           <TbCategory className="text-product-primary" size={32} />
@@ -116,48 +112,85 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
 
         {sortedServices.length > 0 && (
           <div className="text-sm text-product-foreground-accent font-body mb-4">
-            💡 Tip: Drag and drop categories using the grip handle to reorder them
+            💡 Tip: Use the arrow buttons to reorder categories
           </div>
         )}
 
         {sortedServices.map((category, displayIndex) => {
           const isExpanded = expandedCategory === category.originalIndex
+          const isEditable = editableCategoryIndex === displayIndex
 
           return (
             <div
               key={`category-${category.originalIndex}-${category.order}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, displayIndex)}
-              onDragOver={(e) => handleDragOver(e, displayIndex)}
-              onDragLeave={handleDragLeave}
-              onDrop={(e) => handleDrop(e, displayIndex)}
-              onDragEnd={handleDragEnd}
-              className={`transition-all duration-200 ${
-                draggedItem === displayIndex ? "opacity-50 scale-95" : "opacity-100 scale-100"
-              } ${
-                dragOverItem === displayIndex && draggedItem !== displayIndex
-                  ? "transform scale-105 shadow-lg"
-                  : ""
-              }`}>
+              className="transition-all duration-200">
               <Card
-                className={`bg-product-background/50 bg-product-background border border-product-border shadow-product-shadow rounded-xl cursor-move ${
-                  dragOverItem === displayIndex && draggedItem !== displayIndex
-                    ? "border-product-primary border-2 bg-product-primary/5"
-                    : ""
-                }`}
+                className="bg-product-background/50 bg-product-background border border-product-border shadow-product-shadow rounded-xl"
                 type="form">
                 <div
-                  className="flex justify-between items-center p-6 cursor-pointer"
+                  className="flex justify-between items-center p-2 sm:p-6 cursor-pointer"
                   onClick={() => toggleCategory(displayIndex)}>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-product-border/50 transition-colors"
-                      onMouseDown={(e) => e.stopPropagation()}>
-                      <GripVertical className="h-5 w-5 text-product-foreground-accent" />
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="flex flex-col gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleMoveUp(displayIndex)
+                        }}
+                        disabled={displayIndex === 0}
+                        className={`p-1 rounded hover:bg-product-border/50 transition-colors ${
+                          displayIndex === 0 ? "opacity-30 cursor-not-allowed" : ""
+                        }`}
+                        aria-label="Move up">
+                        <ChevronUp className="h-4 w-4 text-product-foreground-accent" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleMoveDown(displayIndex)
+                        }}
+                        disabled={displayIndex === sortedServices.length - 1}
+                        className={`p-1 rounded hover:bg-product-border/50 transition-colors ${
+                          displayIndex === sortedServices.length - 1
+                            ? "opacity-30 cursor-not-allowed"
+                            : ""
+                        }`}
+                        aria-label="Move down">
+                        <ChevronDown className="h-4 w-4 text-product-foreground-accent" />
+                      </button>
                     </div>
-                    <h3 className="text-xl font-bold text-product-foreground font-heading">
-                      {category.name || `Category ${displayIndex + 1}`}
-                    </h3>
+                    <div
+                      className="relative flex-1 max-w-[200px]"
+                      onClick={(e) => e.stopPropagation()}>
+                      <Input
+                        type="text"
+                        placeholder="e.g., Breakfast, Main Courses"
+                        value={category.name}
+                        onChange={(e) =>
+                          handleCategoryChangeWrapper(displayIndex, "name", e.target.value)
+                        }
+                        className={`w-full !text-lg font-medium px-3 py-2 pr-10 rounded-lg border-2 transition-all ${
+                          isEditable
+                            ? "border-product-primary bg-white focus:ring-2 focus:ring-product-primary/20 focus:none outline-none"
+                            : "border-transparent bg-transparent cursor-default pointer-events-none"
+                        }`}
+                        required
+                        readOnly={!isEditable}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => toggleEditable(displayIndex)}
+                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md transition-colors ${
+                          isEditable
+                            ? "text-product-primary hover:bg-product-primary/10"
+                            : "text-gray-400 hover:text-product-primary hover:bg-gray-100"
+                        }`}
+                        aria-label="Edit category name">
+                        <FaPen size={14} />
+                      </button>
+                    </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <Button
@@ -181,30 +214,12 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
                 </div>
                 {isExpanded && (
                   <div className="p-6 pt-0 space-y-6">
-                    <div className="space-y-3">
-                      <Label
-                        htmlFor={`category-name-${displayIndex}`}
-                        className="text-product-foreground font-medium font-body">
-                        Name<span className="text-red-500 ml-1">*</span>
-                      </Label>
-                      <Input
-                        id={`category-name-${displayIndex}`}
-                        type="text"
-                        placeholder="e.g., Breakfast, Main Courses"
-                        value={category.name}
-                        onChange={(e) =>
-                          handleCategoryChangeWrapper(displayIndex, "name", e.target.value)
-                        }
-                        className="border-product-border focus:border-product-primary focus:ring-product-primary/20"
-                        required
-                      />
-                    </div>
                     {/* Layout Selection for this category */}
                     <div className="space-y-4">
                       <Label
                         htmlFor={`category-layout-${displayIndex}`}
                         className="text-product-foreground font-medium font-body">
-                        Layout<span className="text-red-500 ml-1">*</span>
+                        Category Layout<span className="text-red-500 ml-1">*</span>
                       </Label>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         {layouts.map((layoutOption) => (

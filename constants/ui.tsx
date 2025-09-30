@@ -19,6 +19,7 @@ import {
   FiClock,
   FiEdit3,
   FiExternalLink,
+  FiLayers,
   FiPieChart,
   FiSettings,
   FiShare2,
@@ -28,6 +29,9 @@ import {
   FiUsers,
   FiZap,
 } from "react-icons/fi"
+import { IoDiamondOutline } from "react-icons/io5"
+import { MdOutlineLocalOffer } from "react-icons/md"
+import { PiPaintBrushDuotone } from "react-icons/pi"
 import { RiGamepadLine, RiHeartPulseLine, RiScissorsLine, RiStore2Line } from "react-icons/ri"
 
 import { IStats } from "@/types/components"
@@ -232,5 +236,33 @@ export const footerFeatures = [
     icon: <FiExternalLink className="w-4 h-4" />,
     title: "QR Code Sharing",
     description: "One-click sharing",
+  },
+]
+
+export const editSteps = [
+  {
+    value: 1,
+    label: "General",
+    icon: <FiEdit3 size={18} />,
+  },
+  {
+    value: 2,
+    label: "Categories",
+    icon: <FiLayers size={18} />,
+  },
+  {
+    value: 3,
+    label: "Items",
+    icon: <MdOutlineLocalOffer size={18} />,
+  },
+  {
+    value: 4,
+    label: "Branding",
+    icon: <IoDiamondOutline size={18} />,
+  },
+  {
+    value: 5,
+    label: "Appearance",
+    icon: <PiPaintBrushDuotone size={18} />,
   },
 ]

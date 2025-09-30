@@ -601,12 +601,12 @@ function TestServicesForm({ type, initialData, onSuccess, userData }: ServicesFo
                 {currentStep === 1
                   ? "General Information"
                   : currentStep === 2
-                    ? "Service Categories"
+                    ? "Manage Categories"
                     : currentStep === 3
-                      ? "Service Items"
+                      ? "Manage Items"
                       : currentStep === 4
                         ? "Branding & Contact"
-                        : "Appearance"}
+                        : "Choose Appearance"}
               </CardDescription>
               <div className="flex justify-center space-x-3 mt-6">
                 {[1, 2, 3, 4, 5].map((step) => (

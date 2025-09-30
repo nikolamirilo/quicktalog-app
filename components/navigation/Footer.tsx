@@ -123,7 +123,7 @@ const Footer: React.FC = () => {
 
               {/* Website icon */}
               <a
-                href="https://quicktalog.app"
+                href="https://www.quicktalog.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visit our website"

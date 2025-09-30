@@ -28,14 +28,14 @@ export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
     const { error } = await supabase.from("catalogues").delete().in("id", ids)
 
     if (error) {
-      console.error("Failed to delete service catalogues:", error.message)
+      console.error("Failed to delete catalogues:", error.message)
       return false
     }
 
     await revalidateData()
     return true
   } catch (err) {
-    console.error("Unexpected error while deleting service catalogues:", err)
+    console.error("Unexpected error while deleting catalogues:", err)
     return false
   }
 }

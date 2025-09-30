@@ -1,37 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { FiEdit3, FiLayers, FiSettings } from "react-icons/fi"
-import { IoDiamondOutline } from "react-icons/io5"
-import { PiPaintBrushDuotone } from "react-icons/pi"
-
-const editSteps = [
-  {
-    value: 1,
-    label: "General",
-    icon: <FiEdit3 size={18} />,
-  },
-  {
-    value: 2,
-    label: "Categories",
-    icon: <FiLayers size={18} />,
-  },
-  {
-    value: 3,
-    label: "Services",
-    icon: <FiSettings size={18} />,
-  },
-  {
-    value: 4,
-    label: "Branding",
-    icon: <IoDiamondOutline size={18} />,
-  },
-  {
-    value: 5,
-    label: "Appearance",
-    icon: <PiPaintBrushDuotone size={18} />,
-  },
-]
+import { editSteps } from "@/constants/ui"
 
 interface EditFormMobileTabsProps {
   currentStep: number

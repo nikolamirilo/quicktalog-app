@@ -164,8 +164,8 @@ export default function AiItemsFormSwitcher({ type, userData }: AiItemsFormSwitc
           </CardTitle>
           <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body max-w-[600px] mx-auto">
             {type === "ai_prompt"
-              ? "Generate stunning service catalogues"
-              : "Import your existing service catalogues"}{" "}
+              ? "Generate stunning catalogues"
+              : "Import your existing catalogues"}{" "}
             of your Items in minutes. Perfect for restaurants, salons, gyms, and more.
           </CardDescription>
         </CardHeader>

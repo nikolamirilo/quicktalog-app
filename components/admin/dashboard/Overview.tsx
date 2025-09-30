@@ -163,7 +163,9 @@ const Overview = ({
           </div>
           <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
             <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-product-foreground mb-1 font-heading">
-              Welcome back, {`${user.name}` || "User"}!{" "}
+              {user?.name && user.name !== "Unknown User"
+                ? `Welcome back, ${user.name}!`
+                : "Welcome back!"}
             </div>
             <div className="text-product-foreground-accent flex items-center gap-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl break-words font-body">
               {user.email}
@@ -514,11 +516,11 @@ const Overview = ({
         title={`${currentMetric} Explained`}
         message={
           currentMetric === "Total Views"
-            ? "This shows the total number of times your service catalogues have been viewed by visitors. It includes all page visits across all your catalogues."
+            ? "This shows the total number of times your catalogues have been viewed by visitors. It includes all page visits across all your catalogues."
             : currentMetric === "Unique Visitors"
-              ? "This represents the number of unique individuals who have visited your service catalogues. Each person is counted only once, regardless of how many times they visit."
+              ? "This represents the number of unique individuals who have visited your catalogues. Each person is counted only once per day, regardless of how many times they visit your catalogue on that day."
               : currentMetric === "Total Items"
-                ? "This displays the total number of service catalogues you have created. Each catalogue represents a different business or service offering."
+                ? "This displays the total number of catalogues you have created. Each catalogue represents a different business or service offering."
                 : currentMetric === "Newsletter"
                   ? "This shows how many people have subscribed to your newsletter service. These are users who have opted in to receive updates from you."
                   : "Select a metric to see its explanation."

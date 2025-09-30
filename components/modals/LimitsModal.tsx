@@ -84,7 +84,7 @@ const LimitsModal = ({
                 </p>
               </div>
 
-              <Link href="https://quicktalog.app" target="_blank">
+              <Link href="https://www.quicktalog.app" target="_blank">
                 <Button variant="cta" className="w-full">
                   Get Started Today
                 </Button>

@@ -10,12 +10,12 @@ export const metadata: Metadata = generatePageMetadata("terms")
 
 export default function TermsAndConditionsPage() {
   const termsPageSchema = getPageSchema("terms")
-  
+
   return (
     <>
-      <script 
-        type="application/ld+json" 
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(termsPageSchema) }} 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(termsPageSchema) }}
       />
       <Navbar />
       <div className="max-w-3xl mx-auto px-4 py-36">
@@ -23,7 +23,7 @@ export default function TermsAndConditionsPage() {
 
         <p className="mb-4">
           Welcome to Quicktalog (
-          <a href="https://quicktalog.app" className="text-product-primary underline">
+          <a href="https://www.quicktalog.app" className="text-product-primary underline">
             quicktalog.app
           </a>
           ), your go-to software-as-a-service (SaaS) platform for creating and sharing
@@ -43,7 +43,7 @@ export default function TermsAndConditionsPage() {
           <li>
             All purchases for Quicktalog products and subscription plans must be made directly
             through our official website (
-            <a href="https://quicktalog.app" className="text-product-primary underline">
+            <a href="https://www.quicktalog.app" className="text-product-primary underline">
               quicktalog.app
             </a>
             ).
