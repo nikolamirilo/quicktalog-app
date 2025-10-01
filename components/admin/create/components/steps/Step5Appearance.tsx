@@ -76,19 +76,6 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
           <PiPaintBrushDuotone className="text-product-primary" size={32} />
           Appearance
         </h2>
-        <div className="flex flex-col gap-3 mt-5">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="currtheme-inputency" className="text-product-foreground text-lg">
-              Select Theme<span className="text-red-500 ml-1">*</span>
-            </Label>
-            <button
-              type="button"
-              onClick={() => setIsInfoModalOpen(true)}
-              className="hover:text-product-primary transition-colors duration-200 z-10">
-              <FiInfo size={16} />
-            </button>
-          </div>
-        </div>
         {/* Preview Container with Navigation */}
         <div className="relative flex flex-col gap-4 w-full">
           {/* Enhanced Control Panel */}
@@ -97,18 +84,26 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
             <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200">
               <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <PiPaintBrushDuotone className="text-product-primary" size={16} />
-                Customize Preview
+                Customize Catalog
               </h4>
             </div>
             
             {/* Control Panel Content */}
             <div className="p-4">
               <div className="space-y-4">
-                {/* Theme Section Title */}
+                {/* Theme Selection Label */}
                 <div className="text-center">
-                  <h5 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                    Theme
-                  </h5>
+                  <div className="flex items-center justify-center gap-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Select Theme<span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <button
+                      type="button"
+                      onClick={() => setIsInfoModalOpen(true)}
+                      className="hover:text-product-primary transition-colors duration-200 z-10">
+                      <FiInfo size={16} />
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Clickable Theme Grid */}
