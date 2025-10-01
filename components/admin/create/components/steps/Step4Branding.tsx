@@ -7,11 +7,11 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { contactTypes } from "@/constants"
@@ -262,7 +262,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
             <>
               <div className="flex items-center gap-2">
                 <Label htmlFor="legal-name" className="text-product-foreground font-medium font-body">
-                  Legal Name
+                  Legal Business Name
                 </Label>
                 <button
                   type="button"
@@ -285,7 +285,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
             <>
               <div className="flex items-center gap-2">
                 <Label htmlFor="address" className="text-product-foreground font-medium font-body">
-                  Address
+                  Business Address
                 </Label>
                 <button
                   type="button"

@@ -109,10 +109,11 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
                             onChange={(e) =>
                               handleItemChange(categoryIndex, itemIndex, "name", e.target.value)
                             }
+                            onClick={() => !isEditable && toggleEditable(itemIndex)}
                             className={`w-full !text-lg font-medium px-3 py-2 pr-10 rounded-lg border-2 transition-all ${
                               isEditable
                                 ? "border-product-primary bg-white focus:ring-2 focus:ring-product-primary/20 focus:none outline-none"
-                                : "border-transparent bg-transparent cursor-default pointer-events-none"
+                                : "border-transparent bg-transparent cursor-pointer pointer-events-auto"
                             }`}
                             required
                             readOnly={!isEditable}
