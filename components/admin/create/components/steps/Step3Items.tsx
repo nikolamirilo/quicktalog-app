@@ -162,9 +162,8 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
                                 id={`item-price-${categoryIndex}-${itemIndex}`}
                                 type="number"
                                 step="0.01"
-                                min="0"
-                                placeholder="0.00"
-                                value={item.price || ""}
+                                placeholder="0"
+                                value={item.price || 0}
                                 onChange={(e) =>
                                   handleItemChange(
                                     categoryIndex,

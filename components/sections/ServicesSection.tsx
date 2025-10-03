@@ -120,7 +120,10 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
   }
 
   return (
-    <main className={`max-w-6xl mx-auto py-5 px-4 ${theme ? theme : ""}`} role="main" aria-label="Services and items">
+    <main
+      className={`max-w-6xl mx-auto py-5 px-4 ${theme ? theme : ""}`}
+      role="main"
+      aria-label="Services and items">
       {sectionsData.map((item) => {
         // The 'layout' variable now comes directly from the context or from the item data
         const currentLayout = type === "demo" ? layout : item.layout
