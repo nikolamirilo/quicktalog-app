@@ -6,13 +6,11 @@ import { Card } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { themes } from "@/constants"
 import { useMainContext } from "@/context/MainContext"
-import { toTitleCase } from "@/helpers/client"
 import type { Step5AppearanceProps } from "@/types/components"
 import * as React from "react"
 import { FiInfo } from "react-icons/fi"
 import { MdDesktopMac, MdPhoneAndroid } from "react-icons/md"
 import { PiPaintBrushDuotone } from "react-icons/pi"
-import { TbChevronLeft, TbChevronRight } from "react-icons/tb"
 import type { Swiper as SwiperType } from "swiper"
 import "swiper/css"
 import "swiper/css/navigation"
@@ -74,25 +72,97 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
       <Card
         className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-product-shadow rounded-2xl"
         type="form">
-        <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-          <PiPaintBrushDuotone className="text-product-primary" size={32} />
-          Appearance
-        </h2>
-        <div className="flex flex-col gap-3 mt-5">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="currtheme-inputency" className="text-product-foreground text-lg">
-              Select Theme<span className="text-red-500 ml-1">*</span>
-            </Label>
-            <button
-              type="button"
-              onClick={() => setIsInfoModalOpen(true)}
-              className="hover:text-product-primary transition-colors duration-200 z-10">
-              <FiInfo size={16} />
-            </button>
-          </div>
-        </div>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+                    <PiPaintBrushDuotone className="text-product-primary" size={32} />
+                    Appearance
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setIsInfoModalOpen(true)}
+                    className="hover:text-product-primary transition-colors duration-200 z-10">
+                    <FiInfo size={20} />
+                  </button>
+                </div>
         {/* Preview Container with Navigation */}
-        <div className="relative flex flex-col gap-3 w-full">
+        <div className="relative flex flex-col gap-4 w-full">
+          {/* Enhanced Control Panel */}
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            {/* Control Panel Header */}
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <PiPaintBrushDuotone className="text-product-primary" size={16} />
+                Customize Catalog
+              </h4>
+            </div>
+            
+            {/* Control Panel Content */}
+            <div className="p-4">
+              <div className="space-y-4">
+                {/* Theme Selection Label */}
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <Label className="text-sm font-medium text-gray-700">
+                      Select Theme<span className="text-red-500 ml-1">*</span>
+                    </Label>
+                    <button
+                      type="button"
+                      onClick={() => setIsInfoModalOpen(true)}
+                      className="hover:text-product-primary transition-colors duration-200 z-10">
+                      <FiInfo size={16} />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Clickable Theme Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                  {themes.map((themeItem, index) => (
+                    <button
+                      key={themeItem.key}
+                      type="button"
+                      onClick={() => {
+                        setTheme(themeItem.key)
+                        handleThemeChange(themeItem.key)
+                        if (swiperInstance) {
+                          swiperInstance.slideTo(index)
+                        }
+                      }}
+                      className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${themeItem.key} ${
+                        theme === themeItem.key
+                          ? 'border-product-primary shadow-md'
+                          : 'hover:shadow-sm'
+                      }`}
+                      style={{
+                        borderColor: theme === themeItem.key ? 'var(--product-primary)' : 'var(--section-border)',
+                        backgroundColor: 'var(--background)',
+                        color: 'var(--foreground)',
+                        fontFamily: 'var(--font-family-body)'
+                      }}>
+                      <div className="text-center">
+                        <div 
+                          className="w-8 h-8 mx-auto mb-2 rounded-full border-2"
+                          style={{
+                            backgroundColor: 'var(--primary)',
+                            borderColor: 'var(--foreground)'
+                          }}></div>
+                        <div 
+                          className="text-xs font-medium" 
+                          style={{ 
+                            color: 'var(--heading)',
+                            fontFamily: 'var(--font-family-heading)',
+                            fontWeight: 'var(--font-weight-heading)',
+                            letterSpacing: 'var(--letter-spacing-heading)'
+                          }}>
+                          {themeItem.label}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Swiper Container */}
           <h3 className="text-xl sm:text-2xl text-product-foreground flex items-center gap-3 font-bold w-full mx-auto justify-center">
             Preview {isMobileView ? 'Mobile' : 'Desktop'}
@@ -100,30 +170,6 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
           <BrowserFrame 
             url={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${formData.name}`}
             isMobileView={isMobileView}
-            floatingControls={
-              <div className={`flex items-center bg-white/95 backdrop-blur-sm border border-gray-200 rounded-full shadow-lg ${isMobileView ? 'gap-2 px-2 py-1' : 'gap-4 px-4 py-2'}`}>
-                <button
-                  onClick={goToPrevious}
-                  className={`bg-product-primary shadow-lg rounded-full transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${isMobileView ? 'p-1' : 'p-2'}`}
-                  aria-label="Previous theme">
-                  <TbChevronLeft size={isMobileView ? 16 : 20} className="text-white" />
-                </button>
-                <div className={`flex flex-col items-center ${isMobileView ? 'min-w-0 flex-shrink' : ''}`}>
-                  <span className={`font-medium text-gray-700 ${isMobileView ? 'text-xs px-1' : 'text-sm px-2'}`}>
-                    {toTitleCase(theme.split("-").join(" "))}
-                  </span>
-                  <span className={`text-gray-500 ${isMobileView ? 'text-xs' : 'text-xs'}`}>
-                    Theme {currentThemeIndex + 1} of {themes.length}
-                  </span>
-                </div>
-                <button
-                  onClick={goToNext}
-                  className={`bg-product-primary shadow-lg rounded-full transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${isMobileView ? 'p-1' : 'p-2'}`}
-                  aria-label="Next theme">
-                  <TbChevronRight size={isMobileView ? 16 : 20} className="text-white" />
-                </button>
-              </div>
-            }
             mobileToggle={
               <button
                 type="button"
@@ -175,7 +221,7 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
 
                       {/* Services Section */}
                       <section
-                        className={`flex-1 w-full max-w-7xl mx-auto pt-8 pb-8 min-h-[60vh] ${isMobileView ? 'px-2 sm:px-2 md:px-2 lg:px-2' : 'lg:px-8 sm:pt-12 md:pt-16'}`}
+                        className={`flex-1 w-full max-w-7xl mx-auto pt-8 pb-8 min-h-[60vh] ${isMobileView ? 'px-0 sm:px-0 md:px-0 lg:px-0' : 'lg:px-8 sm:pt-12 md:pt-16'}`}
                         aria-label="Services and items">
                         <ServicesSection
                           servicesData={item.services}
@@ -190,28 +236,18 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
               ))}
             </Swiper>
           </BrowserFrame>
-          <div className="mt-6 flex justify-center">
-            <div className="bg-gray-50 border border-gray-200 rounded-lg px-6 py-3">
-              <div className="text-center">
-                <div className="text-gray-600 text-sm mb-1">Selected Theme</div>
-                <div className="text-gray-900 text-lg font-medium">
-                  {toTitleCase(theme.split("-").join(" "))}
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </Card>
 
-      <InformModal
-        isOpen={isInfoModalOpen}
-        onConfirm={() => setIsInfoModalOpen(false)}
-        onCancel={() => setIsInfoModalOpen(false)}
-        title="Theme Selection Explained"
-        message="Click the arrows or swipe through our themes to preview your catalogue. Each theme offers a unique visual style, colors, and typography for your digital catalogue, allowing you to choose the perfect look that matches your brand."
-        confirmText="Got it!"
-        cancelText=""
-      />
+              <InformModal
+                isOpen={isInfoModalOpen}
+                onConfirm={() => setIsInfoModalOpen(false)}
+                onCancel={() => setIsInfoModalOpen(false)}
+                title="Appearance Explained"
+                message="This step lets you customize the visual appearance of your catalogue. You can choose from different themes that change the colors, fonts, and overall styling of your catalogue. Each theme button shows you exactly how your catalogue will look with that theme applied. You can preview both desktop and mobile versions to see how your catalogue will appear to visitors."
+                confirmText="Got it!"
+                cancelText=""
+              />
     </>
   )
 }

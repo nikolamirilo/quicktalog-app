@@ -4,7 +4,7 @@ const PromptInput = ({ prompt, touched, errors, setPrompt }) => {
   return (
     <div className="space-y-6">
       <label htmlFor="prompt" className="text-sm font-medium text-product-foreground">
-        Items Description<span className="text-red-500 ml-1">*</span>
+        Prompt<span className="text-red-500 ml-1">*</span>
       </label>
       <Textarea
         id="prompt"

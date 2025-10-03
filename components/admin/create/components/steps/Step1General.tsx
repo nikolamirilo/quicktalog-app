@@ -130,10 +130,12 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 
   const getFieldExplanation = (field: string): string => {
     const explanations: { [key: string]: string } = {
+      "general-information":
+        "This step sets up the basic information for your catalogue. You'll define the catalogue name (used in the URL), heading, currency for pricing, and an optional description. The catalogue name must be unique and will be used to create your public URL. This information forms the foundation of your digital catalogue.",
       "catalog-name":
         "This is your catalog's unique identifier that appears in the URL (e.g., quicktalog.app/catalogues/your-catalog-name) and is displayed on your dashboard. It must be unique and can only contain letters, numbers, and spaces. This name helps you identify your catalog in the admin panel.",
       "catalog-title":
-        "This is the main heading that visitors will see at the top of your catalog page. It's the prominent title that introduces your services to customers and appears as the main heading on your public catalog page.",
+        "This is the main heading that visitors will see at the top of your catalog page. It's the prominent heading that introduces your services to customers and appears as the main heading on your public catalog page.",
     }
     return explanations[field] || "Information about this field."
   }
@@ -147,10 +149,18 @@ const Step1General: React.FC<Step1GeneralProps> = ({
     <Card
       className="space-y-8 bg-product-background/95 border-0 border-product-border shadow-md rounded-2xl"
       type="form">
-      <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-        <FileText className="text-product-primary" size={28} />
-        General Information
-      </h2>
+      <div className="flex items-center gap-3">
+        <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+          <FileText className="text-product-primary" size={28} />
+          General Information
+        </h2>
+        <button
+          type="button"
+          onClick={() => handleInfoClick("general-information")}
+          className="hover:text-product-primary transition-colors duration-200 z-10">
+          <FiInfo size={20} />
+        </button>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
@@ -213,7 +223,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <Label htmlFor="title" className="text-product-foreground font-medium font-body">
-                Catalogue Title<span className="text-red-500 ml-1">*</span>
+                Catalogue Heading<span className="text-red-500 ml-1">*</span>
               </Label>
               <button
                 type="button"
@@ -270,7 +280,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
         isOpen={isInfoModalOpen}
         onConfirm={() => setIsInfoModalOpen(false)}
         onCancel={() => setIsInfoModalOpen(false)}
-        title={`${currentField.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
+        title={`${currentField.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()).replace("Catalog Title", "Catalog Heading")} Explained`}
         message={getFieldExplanation(currentField)}
         confirmText="Got it!"
         cancelText=""

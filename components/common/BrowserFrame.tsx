@@ -1,14 +1,84 @@
 export default function BrowserFrame({ 
   url = "myapp.local", 
   children, 
-  isLoading = false, 
-  floatingControls = null,
+  isLoading = false,
   mobileToggle = null,
   isMobileView = false
 }) {
   return (
     <div className={`${isMobileView ? 'max-w-[375px]' : 'max-w-[1000px]'} w-full mx-auto transition-all duration-500 ease-in-out`}>
-      <div className={`border border-gray-200 rounded-2xl overflow-hidden flex flex-col w-full ${isMobileView ? 'h-[600px]' : 'h-[600px]'} shadow-2xl bg-white transform transition-all duration-500 ease-in-out relative`}>
+      {isMobileView ? (
+        // Enhanced iPhone Frame
+        <div className="relative">
+          {/* iPhone frame with enhanced styling */}
+          <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-[2.5rem] p-2 shadow-2xl">
+            {/* Outer bezel */}
+            <div className="bg-gradient-to-br from-gray-600 to-gray-800 rounded-[2.25rem] p-1">
+              {/* Inner bezel */}
+              <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-[2rem] p-1">
+                {/* Screen bezel */}
+                <div className="bg-black rounded-[1.75rem] p-0.5">
+                  {/* Screen */}
+                  <div className="bg-black rounded-[1.5rem] overflow-hidden relative shadow-inner">
+                    {/* Subtle Status Bar */}
+                    <div className="bg-black/90 text-white pt-2 pb-1 px-4 text-xs flex justify-between items-center backdrop-blur-sm">
+                      <div className="flex items-center gap-0.5">
+                        <div className="w-1 h-1 bg-white rounded-full"></div>
+                        <div className="w-1 h-1 bg-white rounded-full"></div>
+                        <div className="w-1 h-1 bg-white rounded-full"></div>
+                        <div className="w-1 h-1 bg-white rounded-full"></div>
+                      </div>
+                      <div className="text-xs font-semibold">9:41</div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-4 h-2 border border-white rounded-sm flex items-center justify-center">
+                          <div className="w-2.5 h-1 bg-white rounded-sm"></div>
+                        </div>
+                        <div className="w-6 h-3 border border-white rounded-sm flex items-center justify-center">
+                          <div className="w-4 h-1.5 bg-white rounded-sm"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Full Screen Content Area */}
+                    <div className="h-[580px] overflow-auto relative">
+                      {isLoading && (
+                        <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 transition-opacity duration-300">
+                          <div className="text-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600 mx-auto mb-3"></div>
+                            <p className="text-gray-600 text-sm">Loading content...</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className={`h-full transition-all duration-500 ease-in-out ${
+                        isLoading ? "opacity-50" : "opacity-100"
+                      }`}>
+                        <div className="h-full transition-all duration-500 ease-in-out">
+                          {children}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Subtle Home Indicator */}
+                    <div className="bg-black/90 py-1 backdrop-blur-sm">
+                      <div className="w-28 h-1 bg-white/80 rounded-full mx-auto shadow-sm"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile Toggle with enhanced padding */}
+          {mobileToggle && (
+            <div className="absolute bottom-6 right-6 z-20 transition-all duration-500 ease-in-out">
+              {mobileToggle}
+            </div>
+          )}
+        </div>
+      ) : (
+        // Desktop Browser Frame
+        <div className={`border border-gray-200 rounded-2xl overflow-hidden flex flex-col w-full h-[600px] shadow-2xl bg-white transform transition-all duration-500 ease-in-out relative`}>
         {/* Browser Top Bar */}
         <div className="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-3 border-b border-gray-200">
           {/* Traffic Light Buttons */}
@@ -113,6 +183,7 @@ export default function BrowserFrame({
           </button>
         </div>
 
+
         {/* Content Area */}
         <div className="flex-1 bg-gray-50 overflow-auto relative">
           {/* Loading Overlay */}
@@ -142,20 +213,14 @@ export default function BrowserFrame({
           </div>
         </div>
         
-        {/* Floating Controls */}
-        {floatingControls && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-500 ease-in-out" style={{ position: 'absolute', bottom: '1rem', left: '50%', transform: 'translateX(-50%)', zIndex: 20 }}>
-            {floatingControls}
-          </div>
-        )}
-        
-        {/* Mobile Toggle */}
-        {mobileToggle && (
-          <div className="absolute bottom-4 right-4 z-20 transition-all duration-500 ease-in-out">
-            {mobileToggle}
-          </div>
-        )}
-      </div>
+          {/* Mobile Toggle */}
+          {mobileToggle && (
+            <div className="absolute bottom-4 right-4 z-20 transition-all duration-500 ease-in-out">
+              {mobileToggle}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
