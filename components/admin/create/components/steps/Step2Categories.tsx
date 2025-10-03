@@ -9,6 +9,7 @@ import type { Step2CategoriesProps } from "@/types/components"
 import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react"
 import * as React from "react"
 import { FaPen } from "react-icons/fa6"
+import { FiInfo } from "react-icons/fi"
 import { TbCategory } from "react-icons/tb"
 
 const Step2Categories: React.FC<Step2CategoriesProps> = ({
@@ -24,6 +25,7 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
   const [isCategoryDeletionConfirmed, setIsCategoryDeletionConfirmed] = React.useState(false)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false)
   const [editableCategoryIndex, setEditableCategoryIndex] = React.useState<number | null>(null)
+  const [isInfoModalOpen, setIsInfoModalOpen] = React.useState(false)
 
   const sortedServices = React.useMemo(() => {
     return formData.services
@@ -105,10 +107,18 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
       <Card
         className="space-y-8 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-product-shadow rounded-2xl"
         type="form">
-        <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-          <TbCategory className="text-product-primary" size={32} />
-          Add Categories
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+            <TbCategory className="text-product-primary" size={32} />
+            Add Categories
+          </h2>
+          <button
+            type="button"
+            onClick={() => setIsInfoModalOpen(true)}
+            className="hover:text-product-primary transition-colors duration-200 z-10">
+            <FiInfo size={20} />
+          </button>
+        </div>
 
         {sortedServices.length > 0 && (
           <div className="text-sm text-product-foreground-accent font-body mb-4">
@@ -272,6 +282,15 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
         }}
         title="Delete Category"
         message="Are you sure you want to delete this category and its related items? This action cannot be undone."
+      />
+      <InformModal
+        isOpen={isInfoModalOpen}
+        onConfirm={() => setIsInfoModalOpen(false)}
+        onCancel={() => setIsInfoModalOpen(false)}
+        title="Add Categories Explained"
+        message="This step helps you organize your services into categories. Categories group related items together (like 'Appetizers', 'Main Courses', 'Desserts'). You can reorder categories using the arrow buttons, and each category can have its own layout style. Categories make it easier for customers to navigate your catalogue and find what they're looking for."
+        confirmText="Got it!"
+        cancelText=""
       />
     </>
   )

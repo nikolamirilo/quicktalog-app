@@ -174,22 +174,18 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
               errors={errors}
             />
 
-            <div className="space-y-3 md:col-span-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Label className="text-product-foreground font-medium font-body">
-                    Generate Images?
-                  </Label>
-                </div>
-                <Switch
-                  className="bg-blue-500"
-                  checked={shouldGenerateImages}
-                  onCheckedChange={() => setShouldGenerateImages(!shouldGenerateImages)}
-                />
-              </div>
-            </div>
-
             <PromptInput prompt={prompt} touched={touched} errors={errors} setPrompt={setPrompt} />
+            
+            <div className="flex items-center gap-2">
+              <Label className="text-sm text-product-foreground font-medium">
+                Generate Images?
+              </Label>
+              <Switch
+                className="bg-blue-500"
+                checked={shouldGenerateImages}
+                onCheckedChange={() => setShouldGenerateImages(!shouldGenerateImages)}
+              />
+            </div>
 
             <Button
               type="submit"

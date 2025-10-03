@@ -1,5 +1,6 @@
 "use client"
 import ImageDropzone from "@/components/common/ImageDropzone"
+import InformModal from "@/components/modals/InformModal"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,6 +11,7 @@ import type { Step3ItemsProps } from "@/types/components"
 import { ChevronDown, Plus, Trash2 } from "lucide-react"
 import React, { useEffect } from "react"
 import { FaPen } from "react-icons/fa6"
+import { FiInfo } from "react-icons/fi"
 import { MdOutlineLocalOffer } from "react-icons/md"
 
 const Step3Items: React.FC<Step3ItemsProps> = ({
@@ -27,6 +29,7 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
   setExpandedItem,
 }) => {
   const [editableCategoryIndex, setEditableCategoryIndex] = React.useState<number | null>(null)
+  const [isInfoModalOpen, setIsInfoModalOpen] = React.useState(false)
   const toggleCategory = (index: number) => {
     setExpandedCategory(expandedCategory === index ? null : index)
     setExpandedItem(null)
@@ -56,10 +59,18 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
     <Card
       className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-product-shadow rounded-2xl"
       type="form">
-      <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-        <MdOutlineLocalOffer className="text-product-primary" size={32} />
-        Add Items
-      </h2>
+      <div className="flex items-center gap-3">
+        <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+          <MdOutlineLocalOffer className="text-product-primary" size={32} />
+          Add Items
+        </h2>
+        <button
+          type="button"
+          onClick={() => setIsInfoModalOpen(true)}
+          className="hover:text-product-primary transition-colors duration-200 z-10">
+          <FiInfo size={20} />
+        </button>
+      </div>
       {formData.services.length === 0 ? (
         <div className="text-center p-8 bg-product-background/50 bg-product-background rounded-xl border border-product-border">
           <p className="text-product-foreground-accent text-lg font-body">
@@ -257,6 +268,15 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
           </Card>
         ))
       )}
+      <InformModal
+        isOpen={isInfoModalOpen}
+        onConfirm={() => setIsInfoModalOpen(false)}
+        onCancel={() => setIsInfoModalOpen(false)}
+        title="Add Items Explained"
+        message="This step is where you add the actual services or products to your categories. For each item, you can set the name, price, description, and upload an image. Items are organized under the categories you created in Step 2. You can expand each category to add multiple items, and each item can have detailed descriptions and pricing information."
+        confirmText="Got it!"
+        cancelText=""
+      />
     </Card>
   )
 }

@@ -1,12 +1,12 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client"
 import { SuccessModalProps } from "@/types/components"
@@ -18,7 +18,7 @@ import { FiCheckCircle, FiHome } from "react-icons/fi"
 import { ImEmbed2 } from "react-icons/im"
 import { IoMdCheckmark, IoMdOpen } from "react-icons/io"
 import { IoQrCode, IoShareSocialOutline } from "react-icons/io5"
-import { MdContentCopy } from "react-icons/md"
+import { MdCheck, MdContentCopy } from "react-icons/md"
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
   isOpen = false,
@@ -28,6 +28,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 }) => {
   const [fullURL, setFullURL] = useState("")
   const [copied, setCopied] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
 
   const handleCopyCode = async () => {
     await navigator.clipboard.writeText(iframeCode)
@@ -79,9 +80,29 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
               <h4 className="text-xs sm:text-sm md:text-base font-semibold text-product-foreground font-body">
                 Share instantly
               </h4>
+              <button
+                onClick={async () => {
+                  await navigator.clipboard.writeText(fullURL)
+                  setLinkCopied(true)
+                  setTimeout(() => setLinkCopied(false), 2000) // reset after 2s
+                }}
+                className="p-1 hover:bg-product-background rounded transition-colors"
+                title={linkCopied ? "Link copied!" : "Copy link"}>
+                {linkCopied ? (
+                  <MdCheck className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
+                ) : (
+                  <MdContentCopy className="w-3 h-3 sm:w-4 sm:h-4 text-product-foreground-accent hover:text-product-primary" />
+                )}
+              </button>
             </div>
             <p className="text-xs text-product-foreground-accent text-center font-body">
-              Use the QR code below for quick access
+              Copy the link above
+            </p>
+            <p className="text-xs text-product-foreground-accent text-center font-body font-semibold">
+              OR
+            </p>
+            <p className="text-xs text-product-foreground-accent text-center font-body">
+              Use the QR code below to share your catalog
             </p>
             <div
               id="qr-code"
@@ -114,6 +135,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
             <p className="text-xs text-product-foreground-accent text-center font-body">
               Copy the code to add to your website
             </p>
+            <div className="flex flex-col items-center justify-end flex-1 gap-2 sm:gap-3 md:gap-4">
             <div
               ref={codeRef}
               className="bg-gray-900 rounded-xl p-2 sm:p-3 md:p-4 text-xs overflow-x-auto font-mono border border-gray-700 transition-all duration-200 text-gray-300 leading-relaxed max-h-28 sm:max-h-32 md:max-h-44">
@@ -141,6 +163,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
               className="bg-product-background text-xs">
               <FaCode className="w-3 h-3 sm:w-4 sm:h-4" /> Download HTML code
             </Button>
+            </div>
           </div>
         </div>
 

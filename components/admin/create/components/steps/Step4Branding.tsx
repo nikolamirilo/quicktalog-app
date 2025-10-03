@@ -220,6 +220,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
   const getFieldExplanation = (field: string): string => {
     const explanations: { [key: string]: string } = {
+      "define-branding": "This step allows you to customize your catalogue's branding and business information. You can add your logo, business details, contact information, legal links, and call-to-action buttons. This helps make your catalogue look professional and trustworthy while providing visitors with all the information they need to contact you or learn more about your business.",
       "legal-name": "This is your business's legal name that will appear in the footer of your catalogue. It helps establish credibility and provides official business information to visitors.",
       "legal-address": "Your business address will be displayed in the footer section of your catalogue. This helps visitors know your physical location and adds trust to your business.",
       "terms-and-conditions": "A link to your terms and conditions page. This will appear in the footer of your catalogue and is important for legal compliance and user trust.",
@@ -241,10 +242,18 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
   return (
     <Card className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-md rounded-2xl">
-      <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-        <IoDiamondOutline className="text-product-primary" size={28} />
-        Define Branding
-      </h2>
+      <div className="flex items-center gap-3">
+        <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+          <IoDiamondOutline className="text-product-primary" size={28} />
+          Define Branding
+        </h2>
+        <button
+          type="button"
+          onClick={() => handleInfoClick("define-branding")}
+          className="hover:text-product-primary transition-colors duration-200 z-10">
+          <FiInfo size={20} />
+        </button>
+      </div>
 
       {isFreePlan && (
         <Alert className="border-amber-200 bg-amber-50">

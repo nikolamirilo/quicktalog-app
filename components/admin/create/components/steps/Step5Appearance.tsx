@@ -72,10 +72,18 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
       <Card
         className="space-y-8 p-4 sm:p-4 bg-product-background/95 border-0 border-product-border shadow-product-shadow rounded-2xl"
         type="form">
-        <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
-          <PiPaintBrushDuotone className="text-product-primary" size={32} />
-          Appearance
-        </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-product-foreground flex items-center gap-3 font-heading">
+                    <PiPaintBrushDuotone className="text-product-primary" size={32} />
+                    Appearance
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setIsInfoModalOpen(true)}
+                    className="hover:text-product-primary transition-colors duration-200 z-10">
+                    <FiInfo size={20} />
+                  </button>
+                </div>
         {/* Preview Container with Navigation */}
         <div className="relative flex flex-col gap-4 w-full">
           {/* Enhanced Control Panel */}
@@ -231,15 +239,15 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
         </div>
       </Card>
 
-      <InformModal
-        isOpen={isInfoModalOpen}
-        onConfirm={() => setIsInfoModalOpen(false)}
-        onCancel={() => setIsInfoModalOpen(false)}
-        title="Theme Selection Explained"
-        message="Click on any theme button above to instantly preview your catalogue with that theme's styling. Each theme button shows you the actual colors, fonts, and visual style that will be applied to your catalogue. You can also swipe through themes in the preview window below."
-        confirmText="Got it!"
-        cancelText=""
-      />
+              <InformModal
+                isOpen={isInfoModalOpen}
+                onConfirm={() => setIsInfoModalOpen(false)}
+                onCancel={() => setIsInfoModalOpen(false)}
+                title="Appearance Explained"
+                message="This step lets you customize the visual appearance of your catalogue. You can choose from different themes that change the colors, fonts, and overall styling of your catalogue. Each theme button shows you exactly how your catalogue will look with that theme applied. You can preview both desktop and mobile versions to see how your catalogue will appear to visitors."
+                confirmText="Got it!"
+                cancelText=""
+              />
     </>
   )
 }
