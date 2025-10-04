@@ -1,45 +1,23 @@
 "use client"
 import { deleteItem, deleteMultipleItems, duplicateItem, updateItemStatus } from "@/actions/items"
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { tiers } from "@/constants/pricing"
 import { statusOrder } from "@/constants/sort"
-import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client"
 import { Catalogue } from "@/types"
 import { OverviewProps } from "@/types/components"
 import { Status } from "@/types/enums"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { QRCodeSVG } from "qrcode.react"
 import { useEffect, useState } from "react"
 import { BiScan } from "react-icons/bi"
-import { BsQrCodeScan } from "react-icons/bs"
-import { FaRegCircleCheck } from "react-icons/fa6"
-import {
-  FiCopy,
-  FiCpu,
-  FiEdit,
-  FiFileText,
-  FiInfo,
-  FiMoreVertical,
-  FiTool,
-  FiTrash2,
-} from "react-icons/fi"
-import { ImEmbed2 } from "react-icons/im"
+import { FiCpu, FiFileText, FiInfo, FiTool } from "react-icons/fi"
 import { IoCreateOutline } from "react-icons/io5"
-import { LuShare2, LuSquareMenu } from "react-icons/lu"
+import { LuSquareMenu } from "react-icons/lu"
 import { RiSparkling2Line } from "react-icons/ri"
-import { TbBrandGoogleAnalytics, TbFileAnalytics } from "react-icons/tb"
-import { VscActivateBreakpoints } from "react-icons/vsc"
+import { TbFileAnalytics } from "react-icons/tb"
 import InformModal from "../../modals/InformModal"
+import DashboardItem from "./components/DashboardItem"
 
 const Overview = ({
   user,
@@ -111,7 +89,7 @@ const Overview = ({
       setDuplicatingId(null)
     }
   }
-  async function handleupdateItemStatus(id: string, status: Status) {
+  async function handleUpdateItemStatus(id: string, status: Status) {
     try {
       await updateItemStatus(id, status)
       await refreshAll()
@@ -296,201 +274,22 @@ const Overview = ({
               if (statusDiff !== 0) return statusDiff
               return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
             })
-            .map((catalogue: Catalogue) => (
-              <Card
-                key={catalogue.id}
-                className="p-2 md:p-5 flex flex-col gap-2 sm:gap-3 lg:gap-4 relative bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow hover:scale-[1.02] transition-all duration-200 animate-fade-in">
-                {/* Three dots menu moved to top */}
-                <div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 z-10">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 p-0 text-product-foreground hover:text-product-primary hover:bg-product-background/50 transition-colors duration-200">
-                        <FiMoreVertical
-                          size={14}
-                          className="sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]"
-                        />
-                      </Button>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent
-                      align="end"
-                      className="bg-product-background border border-product-border rounded-xl shadow-lg">
-                      <Link href={`/admin/items/${catalogue.name}/edit`} passHref>
-                        <DropdownMenuItem
-                          asChild
-                          className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                          <div className="flex items-center gap-2">
-                            <FiEdit size={18} /> Edit
-                          </div>
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleupdateItemStatus(
-                            catalogue.id,
-                            catalogue.status === "active" ? "inactive" : "active"
-                          )
-                        }
-                        disabled={duplicatingId === catalogue.id}
-                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                        <span className="flex items-center gap-2">
-                          <VscActivateBreakpoints size={18} />
-                          {duplicatingId === catalogue.id
-                            ? "Loading..."
-                            : `${catalogue.status === "active" ? "Deactivate" : "Activate"}`}
-                        </span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.preventDefault()
-                          setIsLinkCopied(true)
-                          navigator.clipboard.writeText(
-                            `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`
-                          )
-                          setTimeout(() => {
-                            setIsLinkCopied(false)
-                          }, 3000)
-                        }}
-                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                        <span className="flex items-center gap-2">
-                          {isLinkCopied ? (
-                            <FaRegCircleCheck color="green" size={18} />
-                          ) : (
-                            <LuShare2 size={18} />
-                          )}
-                          {isLinkCopied === true ? "Link Copied" : `Share`}
-                        </span>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem
-                        onClick={() => handleDownloadPng(catalogue.name)}
-                        disabled={isModalOpen}
-                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                        <span className="flex items-center gap-2">
-                          <BsQrCodeScan size={18} />
-                          QR Code
-                        </span>
-                      </DropdownMenuItem>
-                      <div
-                        id="qr-code"
-                        className="p-2 sm:p-3 bg-white rounded-xl shadow-sm border border-product-border hidden">
-                        <QRCodeSVG
-                          value={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`}
-                          size={100}
-                          className="w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36"
-                          bgColor="white"
-                          fgColor="black"
-                        />
-                      </div>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleDownloadHTML(
-                            catalogue.name,
-                            `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`
-                          )
-                        }
-                        disabled={isModalOpen}
-                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                        <span className="flex items-center gap-2">
-                          <ImEmbed2 size={18} />
-                          Embed
-                        </span>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem
-                        onClick={() => handleDuplicateCatalogue(catalogue.id)}
-                        disabled={
-                          usage.catalogues >= matchedTier.features.catalogues
-                            ? true
-                            : false || duplicatingId === catalogue.id
-                        }
-                        className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-                        <span className="flex items-center gap-2">
-                          <FiCopy size={18} />
-                          {duplicatingId === catalogue.id ? "Loading..." : "Duplicate"}
-                        </span>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteItem(catalogue.id)}
-                        disabled={isModalOpen}
-                        className="text-red-400 hover:bg-red-50 cursor-pointer">
-                        <span className="flex items-center gap-2">
-                          <FiTrash2 size={18} />
-                          Delete
-                        </span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-
-                {/* Card content */}
-                <div className="font-heading font-bold text-sm sm:text-base md:text-lg lg:text-xl text-product-foreground break-words">
-                  {catalogue.name}
-                </div>
-
-                <div className="flex flex-row gap-2 items-center">
-                  <Badge
-                    className={`${statusColors[catalogue.status] || "bg-gray-100 text-gray-700"} w-fit rounded`}>
-                    {catalogue.status.toUpperCase()}
-                  </Badge>
-
-                  {(() => {
-                    const source = sourceConfig[catalogue.source] || {
-                      label: catalogue.source,
-                      className: "bg-gray-100 text-gray-700",
-                      Icon: FiFileText,
-                    }
-                    const { label, className, Icon } = source
-                    return (
-                      <span
-                        className={`${className} flex items-center gap-1 w-fit rounded px-2 py-0.5 text-xs font-medium`}>
-                        <Icon className="w-3.5 h-3.5" />
-                        {label}
-                      </span>
-                    )
-                  })()}
-                </div>
-
-                <div className="text-product-foreground-accent text-xs 2xl:text-sm break-words">
-                  Updated:{" "}
-                  {new Date(catalogue.updated_at).toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-                <div className="text-product-foreground-accent text-xs 2xl:text-sm break-words">
-                  Created:{" "}
-                  {new Date(catalogue.created_at).toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-
-                <div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
-                  <Link href={`/catalogues/${catalogue.name}`} className="w-full">
-                    <Button className="w-full">
-                      <LuSquareMenu size={12} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-                      <span className="ml-1">View Catalogue</span>
-                    </Button>
-                  </Link>
-                  <Link href={`/admin/items/${catalogue.name}/analytics`} className="w-full">
-                    <Button variant="outline" className="w-full">
-                      <TbBrandGoogleAnalytics size={12} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
-                      <span className="ml-1">Analytics</span>
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
+            .map((catalogue: Catalogue, index: number) => (
+              <DashboardItem
+                key={index}
+                catalogue={catalogue}
+                duplicatingId={duplicatingId}
+                handleUpdateItemStatus={handleUpdateItemStatus}
+                setIsLinkCopied={setIsLinkCopied}
+                isLinkCopied={isLinkCopied}
+                isModalOpen={isModalOpen}
+                handleDuplicateCatalogue={handleDuplicateCatalogue}
+                handleDeleteItem={handleDeleteItem}
+                usage={usage}
+                matchedTier={matchedTier}
+                statusColors={statusColors}
+                sourceConfig={sourceConfig}
+              />
             ))}
         </div>
       </section>
