@@ -115,8 +115,8 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
                           onClick={(e) => e.stopPropagation()}>
                           <Input
                             type="text"
-                            placeholder="e.g., Breakfast, Main Courses"
                             value={item.name}
+                            placeholder={`Item ${itemIndex + 1}`}
                             onChange={(e) =>
                               handleItemChange(categoryIndex, itemIndex, "name", e.target.value)
                             }

@@ -343,9 +343,9 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
             isValid = false
             break
           }
-          if (item.price <= 0) {
+          if (item.price < 0) {
             setStep3Error(
-              `Price for item "${item.name}" in category "${category.name}" must be greater than 0.`
+              `Price for item "${item.name}" in category "${category.name}" must be 0 or greater than 0.`
             )
             isValid = false
             break

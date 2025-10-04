@@ -176,7 +176,7 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
                       onClick={(e) => e.stopPropagation()}>
                       <Input
                         type="text"
-                        placeholder="e.g., Breakfast, Main Courses"
+                        placeholder={`Category ${displayIndex + 1}`}
                         value={category.name}
                         onChange={(e) =>
                           handleCategoryChangeWrapper(displayIndex, "name", e.target.value)
