@@ -2,7 +2,6 @@
 import { deleteItem, deleteMultipleItems, duplicateItem, updateItemStatus } from "@/actions/items"
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { tiers } from "@/constants/pricing"
 import { statusOrder } from "@/constants/sort"
 import { Catalogue } from "@/types"
@@ -11,13 +10,15 @@ import { Status } from "@/types/enums"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { BiScan } from "react-icons/bi"
-import { FiCpu, FiFileText, FiInfo, FiTool } from "react-icons/fi"
+import { FiCpu, FiFileText, FiTool } from "react-icons/fi"
 import { IoCreateOutline } from "react-icons/io5"
 import { LuSquareMenu } from "react-icons/lu"
 import { RiSparkling2Line } from "react-icons/ri"
 import { TbFileAnalytics } from "react-icons/tb"
 import InformModal from "../../modals/InformModal"
 import DashboardItem from "./components/DashboardItem"
+import OverallAnalytics from "./components/OverallAnalytics"
+import UserProfile from "./components/UserProfile"
 
 const Overview = ({
   user,
@@ -125,103 +126,17 @@ const Overview = ({
   }, [hasExcessCatalogues])
   return (
     <div className="max-w-5xl space-y-6">
-      <section className="mb-8 sm:mb-12 bg-product-background rounded-3xl shadow-product-shadow border border-product-border flex flex-col md:flex-row md:items-center gap-4 sm:gap-6 md:gap-8 items-center relative overflow-hidden animate-fade-in p-4 sm:p-6 md:p-8 lg:p-10 text-sm sm:text-base md:text-lg lg:text-xl">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-product-primary/20 to-product-primary-accent/20 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-product-primary/20 to-product-primary-accent/20 rounded-full blur-2xl"></div>
-        <div className="flex flex-col items-center md:flex-row md:items-center w-full gap-4 sm:gap-6 md:gap-8 z-10">
-          <div className="relative flex-shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32">
-            <img
-              src={user.image}
-              alt="Profile"
-              width={128}
-              height={128}
-              className="rounded-full ring-4 ring-product-primary/30 shadow-lg w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 object-cover"
-            />
-            <div className="absolute -bottom-1 -right-1 sm:-bottom-1 sm:-right-0 w-4 h-4 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-green-500 rounded-full border-2 border-product-background"></div>
-          </div>
-          <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-            <div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-product-foreground mb-1 font-heading">
-              {user?.name && user.name !== "Unknown User"
-                ? `Welcome back, ${user.name}!`
-                : "Welcome back!"}
-            </div>
-            <div className="text-product-foreground-accent flex items-center gap-2 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl break-words font-body">
-              {user.email}
-            </div>
-          </div>
-        </div>
-      </section>
+      <UserProfile user={user} />
 
       <section className="mb-8 sm:mb-12 animate-fade-in">
         <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
           <TbFileAnalytics className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" /> Dashboard
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          <Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
-            <button
-              onClick={() => {
-                setIsInfoModalOpen(true)
-                setCurrentMetric("Total Views")
-              }}
-              className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary">
-              <FiInfo size={20} />
-            </button>
-            <div className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-product-foreground mb-2 text-center">
-              Total Views
-            </div>
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-product-primary">
-              {overallAnalytics.totalPageViews}
-            </div>
-          </Card>
-          <Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
-            <button
-              onClick={() => {
-                setIsInfoModalOpen(true)
-                setCurrentMetric("Unique Visitors")
-              }}
-              className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary">
-              <FiInfo size={20} />
-            </button>
-            <div className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-product-foreground mb-2 text-center">
-              Unique Visitors
-            </div>
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-product-primary">
-              {overallAnalytics.totalUniqueVisitors}
-            </div>
-          </Card>
-          <Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
-            <button
-              onClick={() => {
-                setIsInfoModalOpen(true)
-                setCurrentMetric("Total Items")
-              }}
-              className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary">
-              <FiInfo size={20} />
-            </button>
-            <div className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-product-foreground mb-2 text-center">
-              Total Items
-            </div>
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-product-primary">
-              {overallAnalytics.totalServiceCatalogues}
-            </div>
-          </Card>
-          <Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
-            <button
-              onClick={() => {
-                setIsInfoModalOpen(true)
-                setCurrentMetric("Newsletter")
-              }}
-              className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary">
-              <FiInfo size={20} />
-            </button>
-            <div className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-product-foreground mb-2 text-center">
-              Newsletter
-            </div>
-            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-product-primary">
-              {overallAnalytics.totalNewsletterSubscriptions}
-            </div>
-          </Card>
-        </div>
+        <OverallAnalytics
+          setIsInfoModalOpen={setIsInfoModalOpen}
+          setCurrentMetric={setCurrentMetric}
+          overallAnalytics={overallAnalytics}
+        />
       </section>
       {/* Catalogues */}
       <section className="mb-8 sm:mb-12 animate-fade-in">
