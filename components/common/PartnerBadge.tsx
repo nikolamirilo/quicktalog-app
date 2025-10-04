@@ -25,6 +25,7 @@ export default function PartnerBadge({
             height={32}
             className="w-8 h-8 rounded-full"
             onError={() => setImageError(true)}
+            unoptimized
           />
         )}
       </div>

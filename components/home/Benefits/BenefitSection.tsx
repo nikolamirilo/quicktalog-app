@@ -100,6 +100,7 @@ const BenefitSection: React.FC<Props> = ({ benefit, imageAtRight }: Props) => {
               height="762"
               quality={100}
               className="lg:ml-0"
+              unoptimized
             />
           </div>
         </div>

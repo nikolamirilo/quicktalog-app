@@ -105,6 +105,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({ type = "default", dat
                 width={type === "default" ? 120 : 100}
                 height={40}
                 className="w-auto h-[7vh] object-cover"
+                priority
               />
             </Link>
           </div>

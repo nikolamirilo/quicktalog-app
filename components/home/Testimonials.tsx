@@ -15,6 +15,7 @@ const Testimonials: React.FC = () => {
               width={50}
               height={50}
               className="rounded-full shadow-md"
+              unoptimized
             />
             <div className="ml-4">
               <h3 className="text-lg font-semibold text-product-secondary">{testimonial.name}</h3>

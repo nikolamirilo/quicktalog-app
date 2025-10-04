@@ -63,12 +63,13 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({ type = "default", dat
                     width={type === "default" ? 120 : 100}
                     height={40}
                     className="w-auto h-[7vh] object-cover"
+                    unoptimized
                   />
                   {type === "default" && (
                     <p className="text-sm text-card-description">Digital Catalogue Platform</p>
                   )}
                   {type === "custom" && (
-                    <div className="ml-4">
+                    <div className="ml-0 sm:ml-2 lg:ml-4">
                       <h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-200 font-heading font-weight-heading tracking-heading text-section-heading">
                         {data?.legal?.name}
                       </h3>
