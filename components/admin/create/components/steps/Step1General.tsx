@@ -4,8 +4,9 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { generateUniqueSlug } from "@/helpers/client"
 import type { Step1GeneralProps } from "@/types/components"
-import { AlertCircle, CheckCircle, FileText } from "lucide-react"
+import { AlertCircle, CheckCircle, FileText, Link2 } from "lucide-react"
 import React, { useEffect, useMemo, useState } from "react"
 import { FiInfo } from "react-icons/fi"
 import { CurrencySelect } from "../CurrencySelect"
@@ -23,6 +24,7 @@ const Step1General: React.FC<Step1GeneralProps> = ({
   const [names, setNames] = useState([])
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const [currentField, setCurrentField] = useState("")
+  const [previewUrl, setPreviewUrl] = useState("")
 
   const normalize = (str: string) => str.trim().toLowerCase().replace(/\s+/g, "-")
 
@@ -98,6 +100,12 @@ const Step1General: React.FC<Step1GeneralProps> = ({
       }
     }
   }
+
+  useEffect(() => {
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL!
+    const slug = generateUniqueSlug(formData.name)
+    setPreviewUrl(`${baseURL}/catalogues/${slug}`)
+  }, [formData.name])
 
   useEffect(() => {
     if (type !== "create") return
@@ -275,12 +283,27 @@ const Step1General: React.FC<Step1GeneralProps> = ({
           />
         </div>
       </div>
-
+      {type === "create" && formData.name != "" ? (
+        <div className="mt-2 p-3 bg-gray-100 border border-gray-200 rounded-lg">
+          <div className="flex items-start gap-2">
+            <Link2 className="text-product-primary" size={25} />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-product-foreground font-medium mb-1">
+                Your catalogue URL will be:
+              </p>
+              <p className="text-sm text-product-primary font-mono break-all">{previewUrl}</p>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <InformModal
         isOpen={isInfoModalOpen}
         onConfirm={() => setIsInfoModalOpen(false)}
         onCancel={() => setIsInfoModalOpen(false)}
-        title={`${currentField.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()).replace("Catalog Title", "Catalog Heading")} Explained`}
+        title={`${currentField
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase())
+          .replace("Catalog Title", "Catalog Heading")} Explained`}
         message={getFieldExplanation(currentField)}
         confirmText="Got it!"
         cancelText=""

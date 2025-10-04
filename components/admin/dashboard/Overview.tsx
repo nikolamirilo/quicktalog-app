@@ -7,6 +7,7 @@ import { statusOrder } from "@/constants/sort"
 import { Catalogue } from "@/types"
 import { OverviewProps } from "@/types/components"
 import { Status } from "@/types/enums"
+import { Star } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { BiScan } from "react-icons/bi"
@@ -177,6 +178,26 @@ const Overview = ({
             Scan & Import Catalogue
           </Button>
         </div>
+        {usage.catalogues >= matchedTier.features.catalogues && (
+          <div className="flex flex-col sm:flex-row items-center mb-6 justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl p-6 shadow-lg">
+            <div className="text-center sm:text-left">
+              <h2 className="text-xl font-bold text-product-foreground flex items-center gap-2">
+                <Star className="w-5 h-5 text-product-primary" />
+                You have reached your limit
+              </h2>
+              <p className="text-product-foreground-accent text-sm mt-1">
+                Get more catalogues, features, and higher limits.
+              </p>
+            </div>
+            <Button
+              variant="default"
+              onClick={() => router.push("/pricing")}
+              className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <Star className="w-4 h-4" />
+              Upgrade plan
+            </Button>
+          </div>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
           {catalogues.length === 0 && (
             <div className="col-span-full text-product-foreground-accent text-base sm:text-lg">

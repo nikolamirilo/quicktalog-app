@@ -231,7 +231,7 @@ export const handleDownloadPng = (restaurantName: string) => {
   img.src = url
 }
 
-export const generateUniqueSlug = async (name: string) => {
+export const generateUniqueSlug = (name: string) => {
   const slug = name
     .toLowerCase()
     .trim()

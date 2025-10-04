@@ -160,7 +160,7 @@ const OcrReader = ({ formData, setServiceCatalogueUrl, setShowSuccessModal }) =>
     setIsSubmitting(true)
     setServiceCatalogueUrl("")
 
-    const slug = await generateUniqueSlug(formData.name)
+    const slug = generateUniqueSlug(formData.name)
     const data = { ...formData, name: slug }
     try {
       const response = await fetch("/api/items/ocr", {

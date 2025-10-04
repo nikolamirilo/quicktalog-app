@@ -431,7 +431,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
         }
       }
 
-      const serviceCatalogueSlug = await generateUniqueSlug(formData.name)
+      const serviceCatalogueSlug = generateUniqueSlug(formData.name)
 
       const submissionData = {
         name: serviceCatalogueSlug,

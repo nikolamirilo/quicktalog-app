@@ -94,7 +94,7 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
         return
       }
 
-      const slug = await generateUniqueSlug(formData.name)
+      const slug = generateUniqueSlug(formData.name)
       const data = { ...formData, name: slug }
 
       const response = await fetch("/api/items/ai", {
@@ -175,7 +175,7 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
             />
 
             <PromptInput prompt={prompt} touched={touched} errors={errors} setPrompt={setPrompt} />
-            
+
             <div className="flex items-center gap-2">
               <Label className="text-sm text-product-foreground font-medium">
                 Generate Images?

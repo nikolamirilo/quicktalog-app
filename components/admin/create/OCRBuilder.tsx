@@ -77,7 +77,7 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
         return
       }
 
-      const slug = await generateUniqueSlug(formData.name)
+      const slug = generateUniqueSlug(formData.name)
       const data = { ...formData, name: slug }
 
       const response = await fetch("/api/items/ocr", {
