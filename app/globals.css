@@ -3,6 +3,29 @@
 @tailwind utilities;
 @layer theme, base, clerk, components, utilities;
 
+/* Swiper Custom Styles */
+.theme-swiper {
+  padding: 20px 0;
+}
+
+.theme-swiper .swiper-slide {
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-swiper .swiper-slide-active {
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.theme-swiper .swiper-slide-prev,
+.theme-swiper .swiper-slide-next {
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
 *,
 button:hover {
   -webkit-tap-highlight-color: transparent !important;
@@ -891,4 +914,96 @@ body > div[class*="cl-userButtonPopoverCard"] > div {
   font-family: var(--font-family-heading, "Lora", serif) !important;
   font-weight: var(--font-weight-heading, 600) !important;
   letter-spacing: var(--letter-spacing-heading, -0.02em) !important;
+}
+
+/* Mobile Preview Styles - Force mobile responsive behavior */
+.mobile-preview .grid {
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.mobile-preview .md\:grid-cols-2 {
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.mobile-preview .flex-wrap {
+  flex-direction: column !important;
+}
+
+.mobile-preview .justify-start {
+  align-items: center !important;
+}
+
+.mobile-preview .swiper-slide {
+  width: 160px !important;
+}
+
+.mobile-preview .sm\:\!w-\[220px\] {
+  width: 160px !important;
+}
+
+.mobile-preview .md\:\!w-\[260px\] {
+  width: 160px !important;
+}
+
+.mobile-preview .lg\:\!w-\[320px\] {
+  width: 160px !important;
+}
+
+/* Force mobile font sizes in mobile preview to match actual mobile specs */
+.mobile-preview h1 {
+  font-size: 30px !important;
+}
+
+.mobile-preview h2 {
+  font-size: 20px !important;
+}
+
+.mobile-preview h3,
+.mobile-preview h5 {
+  font-size: 16px !important;
+}
+
+.mobile-preview p {
+  font-size: 14px !important;
+}
+
+.mobile-preview span {
+  font-size: 16px !important;
+}
+
+/* Override responsive font sizes in mobile preview */
+.mobile-preview .sm\:text-\[22px\] {
+  font-size: 16px !important;
+}
+
+.mobile-preview .sm\:text-\[18px\] {
+  font-size: 16px !important;
+}
+
+.mobile-preview .sm\:text-\[16px\] {
+  font-size: 14px !important;
+}
+
+.mobile-preview .sm\:text-\[15px\] {
+  font-size: 14px !important;
+}
+
+.mobile-preview .sm\:text-\[14px\] {
+  font-size: 14px !important;
+}
+
+.mobile-preview .md\:text-\[22px\] {
+  font-size: 16px !important;
+}
+
+.mobile-preview .md\:text-\[18px\] {
+  font-size: 16px !important;
+}
+
+.mobile-preview .md\:text-\[16px\] {
+  font-size: 14px !important;
+}
+
+.mobile-preview .md\:text-\[14px\] {
+  font-size: 14px !important;
 }

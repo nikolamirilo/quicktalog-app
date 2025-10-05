@@ -1,5 +1,5 @@
 import { getUserData } from "@/actions/users"
-import ServicesFormSwitcher from "@/components/admin/create/ServicesFormSwitcher"
+import Builder from "@/components/admin/create/Builder"
 import Navbar from "@/components/navigation/Navbar"
 import { ContactInfo, ServicesFormData } from "@/types"
 import { createClient } from "@/utils/supabase/server"
@@ -50,7 +50,7 @@ export default async function EditServicesPage({ params }: { params: Promise<{ n
       <Navbar />
       <div className="w-full min-h-screen px-4 sm:px-4 relative md:px-6 lg:px-8 pt-32 pb-12 bg-gradient-to-br from-product-background to-hero-product-background animate-fade-in">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8">
-          <ServicesFormSwitcher type="edit" initialData={initialData} userData={userData} />
+          <Builder type="edit" initialData={initialData} userData={userData} />
         </div>
       </div>
     </div>

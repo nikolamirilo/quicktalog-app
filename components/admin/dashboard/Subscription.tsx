@@ -5,20 +5,20 @@ import { formatPrice } from "@/helpers/client"
 import { usePaddlePrices } from "@/hooks/usePaddelPrices"
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js"
 import {
-  BarChart3,
-  Calendar,
-  CheckCircle,
-  Clock,
-  CreditCard,
-  DollarSign,
-  Eye,
-  Mail,
-  Settings,
-  Shield,
-  Sparkles,
-  Star,
-  X,
-  Zap,
+    BarChart3,
+    Calendar,
+    CheckCircle,
+    Clock,
+    CreditCard,
+    DollarSign,
+    Eye,
+    Mail,
+    Settings,
+    Shield,
+    Sparkles,
+    Star,
+    X,
+    Zap,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -161,7 +161,27 @@ export default function Subscription({
         Overview
       </h2>
 
-      {/* Main Plan Card */}
+      {/* Upgrade plan - moved to top and made to pop */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl p-6 shadow-lg">
+        <div className="text-center sm:text-left">
+          <h2 className="text-xl font-bold text-product-foreground flex items-center gap-2">
+            <Star className="w-5 h-5 text-product-primary" />
+            Upgrade your plan
+          </h2>
+          <p className="text-product-foreground-accent text-sm mt-1">
+            Get more features, higher limits, and premium support.
+          </p>
+        </div>
+        <Button
+          variant="default"
+          onClick={() => router.push("/pricing")}
+          className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Star className="w-4 h-4" />
+          Upgrade plan
+        </Button>
+      </div>
+
+      {/* Main Plan Card with merged manage subscription */}
       <Card
         className="overflow-hidden border-product-border"
         style={{ boxShadow: "var(--product-shadow)" }}>
@@ -230,6 +250,30 @@ export default function Subscription({
               </div>
             </div>
           </div>
+
+          {/* Manage subscription merged into the main card */}
+          <div className="mt-6 pt-6 border-t border-product-border">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-center sm:text-left">
+                <h3 className="text-lg font-semibold text-product-foreground">
+                  Manage your subscription
+                </h3>
+                <p className="text-product-foreground-accent text-sm mt-1">
+                  Update billing details, check transactions or cancel subscription.
+                </p>
+              </div>
+              <Button
+                variant="default"
+                disabled={pricingPlan.id === 0}
+                className="w-fit min-w-56"
+                onClick={() =>
+                  router.push("https://customer-portal.paddle.com/cpl_01k11h2axbrhg4fzmw2zey50x0")
+                }>
+                <MdOutlineSettings className="w-4 h-4" />
+                Manage subscription
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -285,46 +329,6 @@ export default function Subscription({
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-5 w-full">
-        {/* Manage subscription */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-product-background border border-product-border rounded-2xl p-6">
-          <div className="text-center sm:text-left">
-            <h2 className="text-lg font-semibold text-product-foreground">
-              Manage your subscription
-            </h2>
-            <p className="text-product-foreground-accent text-sm mt-1">
-              Update billing details, check transactions or cancel subscription.
-            </p>
-          </div>
-          <Button
-            variant="default"
-            disabled={pricingPlan.id === 0}
-            className="w-fit min-w-56"
-            onClick={() =>
-              router.push("https://customer-portal.paddle.com/cpl_01k11h2axbrhg4fzmw2zey50x0")
-            }>
-            <MdOutlineSettings className="w-4 h-4" />
-            Manage subscription
-          </Button>
-        </div>
-
-        {/* Upgrade plan */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-product-background border border-product-border rounded-2xl p-6">
-          <div className="text-center sm:text-left">
-            <h2 className="text-lg font-semibold text-product-foreground">Upgrade your plan</h2>
-            <p className="text-product-foreground-accent text-sm mt-1">
-              Get more features, higher limits, and premium support.
-            </p>
-          </div>
-          <Button
-            variant="default"
-            onClick={() => router.push("/pricing")}
-            className="w-fit min-w-56">
-            <Star className="w-4 h-4" />
-            Upgrade plan
-          </Button>
-        </div>
-      </div>
     </div>
   )
 }

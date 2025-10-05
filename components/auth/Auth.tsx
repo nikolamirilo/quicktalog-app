@@ -25,6 +25,7 @@ export default function Auth() {
   }, [mode])
 
   const handleConsentConfirm = () => {
+    localStorage.setItem("consent", "true")
     setShowConsentModal(false)
     setShowSignupForm(true)
   }
@@ -42,16 +43,23 @@ export default function Auth() {
             {showSignupForm && (
               <>
                 {mode === "signup" ? (
-                  <SignUp forceRedirectUrl="/admin/dashboard" />
+                  <SignUp
+                    forceRedirectUrl="/admin/dashboard"
+                    signInUrl="/auth?mode=signin"
+                    routing="hash"
+                  />
                 ) : (
-                  <SignIn forceRedirectUrl="/admin/dashboard" />
+                  <SignIn
+                    forceRedirectUrl="/admin/dashboard"
+                    signUpUrl="/auth?mode=signup"
+                    routing="hash"
+                  />
                 )}
               </>
             )}
           </div>
         </div>
       </div>
-
       <ConsentModal
         isOpen={showConsentModal}
         onConfirm={handleConsentConfirm}

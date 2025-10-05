@@ -71,7 +71,7 @@ const Pricing: React.FC = () => {
   }, [clerkUser?.id])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mx-4">
       {/* Segmented toggle */}
       <div className="flex items-center justify-center">
         <div className="relative inline-flex w-[260px] bg-product-background border border-product-border rounded-full p-1 shadow-sm">

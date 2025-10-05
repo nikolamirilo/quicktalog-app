@@ -18,9 +18,9 @@ major_version = 15
 [auth]
 enabled = true
 # Base URL for your production website
-site_url = "https://quicktalog.app"
+site_url = "https://www.quicktalog.app"
 # Allow redirects to both production and test environments
-additional_redirect_urls = ["https://quicktalog.app", "https://test.quicktalog.app"]
+additional_redirect_urls = ["https://www.quicktalog.app", "https://test.quicktalog.app"]
 # Token expiry (1 hour default is fine for most use cases)
 jwt_expiry = 3600
 enable_refresh_token_rotation = true

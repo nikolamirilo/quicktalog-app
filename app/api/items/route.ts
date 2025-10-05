@@ -138,7 +138,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.from("catalogues").select(type === "name" ? "name" : "*")
 
     if (error) {
-      console.error("Error retreiving service catalogues:", error)
+      console.error("Error retreiving catalogues:", error)
       return new Response(JSON.stringify({ error: error.message }), {
         status: 500,
         headers: { "Content-Type": "application/json" },

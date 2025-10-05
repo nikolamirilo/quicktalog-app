@@ -36,7 +36,7 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
           <Row>
             <Column align="center">
               <Img
-                src={`https://quicktalog.app/images/logo.png`}
+                src={`https://www.quicktalog.app/images/logo.png`}
                 width="120"
                 height="40"
                 alt="Quicktalog Logo"

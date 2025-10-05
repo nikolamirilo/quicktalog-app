@@ -53,10 +53,11 @@ export const MobileNavLink = ({ href, children, icon: Icon, onClick }: MobileNav
   return (
     <Link href={href} onClick={onClick}>
       <button
-        className={`w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 ${isActive
-          ? "bg-product-hover-background text-product-primary border border-product-primary shadow-sm font-semibold"
-          : "hover:bg-navbar-button-hover-bg hover:text-navbar-button-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-navbar-button-hover-border hover:font-bold"
-          }`}>
+        className={`w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 ${
+          isActive
+            ? "bg-product-hover-background text-product-primary border border-product-primary shadow-sm font-semibold"
+            : "hover:bg-navbar-button-hover-bg hover:text-navbar-button-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-navbar-button-hover-border hover:font-bold"
+        }`}>
         {Icon && (
           <Icon
             size={18}
@@ -86,7 +87,7 @@ const Navbar = () => {
             height={160}
             className="h-[7vh] w-auto rounded-full"
             style={{ width: "auto", height: "7vh" }}
-            priority //
+            priority
           />
         </Link>
       </div>
@@ -122,8 +123,9 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       <div
-        className={`mobile-menu fixed flex flex-col top-0 right-0 h-screen w-80 bg-product-background  z-50 transform transition-transform duration-300 ease-in-out ${mobileOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`mobile-menu fixed flex flex-col top-0 right-0 h-screen w-80 bg-product-background  z-50 transform transition-transform duration-300 ease-in-out ${
+          mobileOpen ? "translate-x-0" : "translate-x-full"
+        }`}
         style={{ willChange: "transform" }}>
         {/* Mobile menu header */}
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100">
@@ -146,10 +148,7 @@ const Navbar = () => {
             Contact
           </MobileNavLink>
 
-          <MobileNavLink
-            href="/demo"
-            icon={FaRegCirclePlay}
-            onClick={() => setMobileOpen(false)}>
+          <MobileNavLink href="/demo" icon={FaRegCirclePlay} onClick={() => setMobileOpen(false)}>
             Demo
           </MobileNavLink>
 

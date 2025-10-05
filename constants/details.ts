@@ -2,7 +2,7 @@ import { ITestimonial } from "@/types/components"
 
 export const siteDetails = {
   siteName: "Quicktalog",
-  siteUrl: "https://quicktalog.app/",
+  siteUrl: "https://www.quicktalog.app/",
   metadata: {
     title: "Quicktalog - Modern Digital Catalogue Solution",
     description:

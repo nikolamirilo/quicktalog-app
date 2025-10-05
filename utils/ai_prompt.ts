@@ -86,6 +86,7 @@ export const insertCatalogueData = async (
     configuration: {},
     contact: [],
     services: generatedData.services,
+    source: "ai_prompt",
   }
 
   const { error } = await supabase.from("catalogues").insert([catalogueData]).select()
@@ -125,7 +126,11 @@ const baseSchema = {
   services: [baseCategorySchema],
 }
 
-export function generatePromptForAI(inputText: string, formData: any) {
+export function generatePromptForAI(
+  inputText: string,
+  formData: any,
+  shouldGenerateImages: boolean
+) {
   const layoutData = layouts.map((l) => ({
     key: l.key,
     description: l.description,
@@ -140,7 +145,7 @@ export function generatePromptForAI(inputText: string, formData: any) {
     
     Schema: ${JSON.stringify(baseSchema)}
 
-    Layouts keys and description of each variant: ${JSON.stringify(layoutData)}. According to it use different variants for different purpose. For drinks for example use without image.
+    ${shouldGenerateImages == true ? `Layouts keys and description of each variant: ${JSON.stringify(layoutData)}. According to it use different variants for different purpose. For drinks for example use without image.` : "For category layout always use value 'variant_3'"}
 
     General information about service catalogue: ${JSON.stringify(formData)}
     

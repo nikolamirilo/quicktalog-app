@@ -6,7 +6,7 @@
 
 ## ✨ Purpose
 
-Enable small businesses to launch elegant, mobile-first service catalogues in minutes, with advanced customization and OCR-powered digitalization of existing catalogues.
+Enable small businesses to launch elegant, mobile-first catalogues in minutes, with advanced customization and OCR-powered digitalization of existing catalogues.
 
 ---
 

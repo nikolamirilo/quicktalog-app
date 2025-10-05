@@ -54,7 +54,7 @@ export type OverallAnalytics = {
   totalNewsletterSubscriptions: number
 }
 
-export type ServiceCatalogue = {
+export type Catalogue = {
   id?: string
   name: string
   status: Status
@@ -71,9 +71,10 @@ export type ServiceCatalogue = {
   configuration?: Configuration
   created_at?: string
   updated_at?: string
+  source?: string
 }
 
-export type ServicesFormData = Omit<ServiceCatalogue, "id" | "created_by" | "">
+export type ServicesFormData = Omit<Catalogue, "id" | "created_by" | "">
 
 export type Service = {
   name: string

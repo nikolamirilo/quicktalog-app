@@ -1,12 +1,8 @@
 "use client"
-
 import { sendNewCatalogueEmail } from "@/actions/email"
 import LimitsModal from "@/components/modals/LimitsModal"
 import SuccessModal from "@/components/modals/SuccessModal"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+import { Card, CardContent } from "@/components/ui/card"
 import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
@@ -14,27 +10,20 @@ import { UserData } from "@/types"
 import { useUser } from "@clerk/nextjs"
 import Link from "next/link"
 import React, { useState } from "react"
-import { RiSparkling2Line } from "react-icons/ri"
-import PromptExamples from "./components/ai/PromptExamples"
-import PromptInput from "./components/ai/PromptInput"
-import OcrReader from "./components/ocr/OcrReader"
-import Step1General from "./components/Step1General"
+import FormHeader from "./components/FormHeader"
+import OcrReader from "./components/OcrReader"
+import Step1General from "./components/steps/Step1General"
+import ThemeSelect from "./components/ThemeSelect"
 
-interface AiServicesFormSwitcherProps {
-  type: "ai_prompt" | "ocr_import"
-  userData: UserData
-}
-
-export default function AiServicesFormSwitcher({ type, userData }: AiServicesFormSwitcherProps) {
+export default function OCRBuilder({ userData }: { userData: UserData }) {
   const [formData, setFormData] = useState({
     name: "",
-    theme: "",
+    theme: "theme-elegant",
     title: "",
     currency: "",
     subtitle: "",
   })
   const [shouldGenerateImages, setShouldGenerateImages] = useState<boolean>(false)
-  console.log(shouldGenerateImages)
   const [prompt, setPrompt] = useState("")
   const { user } = useUser()
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
@@ -60,19 +49,8 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
     if (!formData.title.trim()) newErrors.title = "Title is required."
     if (!formData.currency.trim()) newErrors.currency = "Currency is required."
     if (!formData.theme.trim()) newErrors.theme = "Theme is required."
-    if (type === "ai_prompt" && !prompt.trim())
-      newErrors.prompt = "Services description is required."
-    setErrors(newErrors)
-    setTouched({
-      name: true,
-      title: true,
-      currency: true,
-      theme: true,
-      ...(type === "ai_prompt" && { prompt: true }),
-    })
     return Object.keys(newErrors).length === 0 && !hasErrors
   }
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!validate()) return
@@ -99,10 +77,10 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
         return
       }
 
-      const slug = await generateUniqueSlug(formData.name)
+      const slug = generateUniqueSlug(formData.name)
       const data = { ...formData, name: slug }
 
-      const response = await fetch("/api/items/ai", {
+      const response = await fetch("/api/items/ocr", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ formData: data, prompt, shouldGenerateImages }),
@@ -156,18 +134,10 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
       <Card
         className="w-full h-full bg-transparent border-0 shadow-none rounded-none backdrop-blur-none"
         type="form">
-        <CardHeader className="p-6">
-          <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-product-foreground font-heading">
-            {type === "ai_prompt" ? "AI Catalogue Generator" : "Catalogue OCR scan & import"}
-          </CardTitle>
-          <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body max-w-[600px] mx-auto">
-            {type === "ai_prompt"
-              ? "Generate stunning service catalogues"
-              : "Import your existing service catalogues"}{" "}
-            of your services in minutes. Perfect for restaurants, salons, gyms, and more.
-          </CardDescription>
-        </CardHeader>
-
+        <FormHeader
+          title="Scan & Import your catalogue"
+          subtitle="Easily convert your physical catalogs into digital format in seconds. Perfect for restaurants, salons, gyms, and other businesses looking to modernize and streamline customer access."
+        />
         <CardContent className="p-6 sm:p-8 pt-0">
           <form onSubmit={handleSubmit} className="space-y-6">
             <Step1General
@@ -181,55 +151,19 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
               type="create"
             />
 
-            {type === "ai_prompt" ? (
-              <>
-                <div className="space-y-3 md:col-span-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Label className="text-product-foreground font-medium font-body">
-                        Generate Images?
-                      </Label>
-                    </div>
-                    <Switch
-                      className="bg-blue-500"
-                      checked={shouldGenerateImages}
-                      onCheckedChange={() => setShouldGenerateImages(!shouldGenerateImages)}
-                    />
-                  </div>
-                </div>
-                <PromptInput
-                  prompt={prompt}
-                  touched={touched}
-                  errors={errors}
-                  setPrompt={setPrompt}
-                />
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  variant="cta"
-                  className="h-12 font-medium rounded-lg">
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-2 animate-pulse">
-                      <RiSparkling2Line size={20} className="animate-spin" />
-                      Creating Your Catalogue...
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <RiSparkling2Line size={20} />
-                      Generate Catalogue
-                    </div>
-                  )}
-                </Button>
-              </>
-            ) : type === "ocr_import" ? (
-              <OcrReader
-                formData={formData}
-                setShowSuccessModal={setShowSuccessModal}
-                setServiceCatalogueUrl={setCatalogueUrl}
-              />
-            ) : null}
+            <ThemeSelect
+              formData={formData}
+              setFormData={setFormData}
+              touched={touched}
+              errors={errors}
+            />
+
+            <OcrReader
+              formData={formData}
+              setShowSuccessModal={setShowSuccessModal}
+              setServiceCatalogueUrl={setCatalogueUrl}
+            />
           </form>
-          {type === "ai_prompt" && <PromptExamples setPrompt={setPrompt} disabled={isSubmitting} />}
         </CardContent>
       </Card>
 
@@ -237,11 +171,11 @@ export default function AiServicesFormSwitcher({ type, userData }: AiServicesFor
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
         catalogueUrl={catalogueUrl}
-        type="ai"
+        type="ocr"
       />
       {showLimitsModal && (
         <LimitsModal
-          type="ai"
+          type="ocr"
           currentPlan={userData?.pricing_plan?.name}
           requiredPlan={userData?.pricing_plan?.next_plan}
         />

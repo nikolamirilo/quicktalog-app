@@ -1,35 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { FiEdit3, FiLayers, FiSettings } from "react-icons/fi"
-import { IoDiamondOutline } from "react-icons/io5"
-
-const editSteps = [
-  { 
-    value: 1, 
-    label: "General Info", 
-    icon: <FiEdit3 className="mr-2" size={20} />,
-    description: "Basic information"
-  },
-  { 
-    value: 2, 
-    label: "Categories", 
-    icon: <FiLayers className="mr-2" size={20} />,
-    description: "Service categories"
-  },
-  { 
-    value: 3, 
-    label: "Services", 
-    icon: <FiSettings className="mr-2" size={20} />,
-    description: "Service details"
-  },
-  { 
-    value: 4, 
-    label: "Branding", 
-    icon: <IoDiamondOutline className="mr-2" size={20} />,
-    description: "Customization"
-  },
-]
+import { editSteps } from "@/constants/ui"
 
 interface EditFormSidebarProps {
   currentStep: number
@@ -37,10 +9,10 @@ interface EditFormSidebarProps {
   getSidebarButtonClass: (isActive: boolean) => string
 }
 
-export default function EditFormSidebar({ 
-  currentStep, 
-  onStepChange, 
-  getSidebarButtonClass 
+export default function EditFormSidebar({
+  currentStep,
+  onStepChange,
+  getSidebarButtonClass,
 }: EditFormSidebarProps) {
   return (
     <aside className="hidden md:block w-56 flex-shrink-0 bg-product-background/90 border border-product-border shadow-md rounded-2xl sticky top-24 self-start">

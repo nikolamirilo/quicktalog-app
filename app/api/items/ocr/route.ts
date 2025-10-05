@@ -256,6 +256,7 @@ export async function POST(req: NextRequest) {
       configuration: {},
       contact: [],
       services: orderedItems,
+      source: "ocr_import",
     }
 
     console.log("💾 Inserting catalogue data into database...")

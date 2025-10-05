@@ -23,7 +23,7 @@ const Support = ({
       {/* Beta Program Notice */}
       {/* <div className="bg-gradient-to-r from-product-primary/10 to-product-primary/5 border border-product-primary rounded-2xl p-6 text-center">
         <h2 className="text-xl font-semibold text-product-foreground mb-2">
-          🚀 Join Our Beta Program
+          Join Our Beta Program
         </h2>
         <p className="text-product-foreground-accent">
           Get priority support and help shape the future of Quicktalog. Share your feedback with us

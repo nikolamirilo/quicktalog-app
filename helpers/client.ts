@@ -1,4 +1,4 @@
-import { ContactItem, FooterData, HeaderData, ServiceCatalogue } from "@/types"
+import { Catalogue, ContactItem, FooterData, HeaderData } from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -76,13 +76,13 @@ export function cleanValue(value: any) {
 
   return value
 }
-export const buildHeaderData = (item: ServiceCatalogue): HeaderData => ({
+export const buildHeaderData = (item: Catalogue): HeaderData => ({
   email: getContactValue(item.contact, "email") || "",
   phone: getContactValue(item.contact, "phone") || "",
   ctaNavbar: item.configuration?.ctaNavbar,
 })
 
-export const buildFooterData = (item: ServiceCatalogue): FooterData => ({
+export const buildFooterData = (item: Catalogue): FooterData => ({
   name: item.name || "",
   partners: item.partners,
   email: getContactValue(item.contact, "email"),
@@ -231,7 +231,7 @@ export const handleDownloadPng = (restaurantName: string) => {
   img.src = url
 }
 
-export const generateUniqueSlug = async (name: string) => {
+export const generateUniqueSlug = (name: string) => {
   const slug = name
     .toLowerCase()
     .trim()
@@ -240,4 +240,8 @@ export const generateUniqueSlug = async (name: string) => {
     .replace(/^-|-$/g, "") // remove leading/trailing dash
 
   return slug
+}
+
+export function toTitleCase(str) {
+  return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
 }

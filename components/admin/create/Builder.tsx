@@ -2,7 +2,15 @@
 
 import { sendNewCatalogueEmail } from "@/actions/email"
 import { getUserData } from "@/actions/users"
+import EditFormMobileTabs from "@/components/admin/create/components/EditFormMobileTabs"
+import EditFormSidebar from "@/components/admin/create/components/EditFormSidebar"
+import Step1General from "@/components/admin/create/components/steps/Step1General"
+import Step2Categories from "@/components/admin/create/components/steps/Step2Categories"
+import Step3Items from "@/components/admin/create/components/steps/Step3Items"
+import Step4Branding from "@/components/admin/create/components/steps/Step4Branding"
+import Step5Appearance from "@/components/admin/create/components/steps/Step5Appearance"
 import LimitsModal from "@/components/modals/LimitsModal"
+import SuccessModal from "@/components/modals/SuccessModal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { defaultServiceCatalogueData } from "@/constants"
@@ -11,20 +19,13 @@ import { revalidateCataloguesData } from "@/helpers/server"
 import { toast } from "@/hooks/use-toast"
 import { NavigationGuard } from "@/hooks/useBeforeUnload"
 import { ContactInfo, ServicesFormData, ServicesItem } from "@/types"
-import { ServicesFormBaseProps } from "@/types/components"
+import { BuilderProps } from "@/types/components"
 import { useUser } from "@clerk/nextjs"
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 import React, { useEffect, useState } from "react"
 import { MdOutlinePublishedWithChanges } from "react-icons/md"
-import SuccessModal from "../../../modals/SuccessModal"
-import EditFormMobileTabs from "../EditFormMobileTabs"
-import EditFormSidebar from "../EditFormSidebar"
-import Step1General from "./Step1General"
-import Step2Categories from "./Step2Categories"
-import Step3Services from "./Step3Services"
-import Step4Branding from "./Step4Branding"
 
-function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBaseProps) {
+function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   const [formData, setFormData] = useState<ServicesFormData>(
     initialData || defaultServiceCatalogueData
   )
@@ -270,10 +271,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
     if (step === 1) {
       const hasErrors = Object.keys(errors).length > 0
       const requiredFieldsFilled =
-        !!formData.name.trim() &&
-        !!formData.title?.trim() &&
-        !!formData.currency?.trim() &&
-        !!formData.theme?.trim()
+        !!formData.name.trim() && !!formData.title?.trim() && !!formData.currency?.trim()
       return !hasErrors && requiredFieldsFilled
     }
     if (step === 2) {
@@ -299,8 +297,6 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
       if (!formData.name.trim()) newErrors.name = "Service catalogue name is required."
       if (!formData.title?.trim()) newErrors.title = "Title is required."
       if (!formData.currency?.trim()) newErrors.currency = "Currency is required."
-      if (!formData.theme?.trim()) newErrors.theme = "Theme is required."
-
       setErrors(newErrors)
       setTouched({ name: true, title: true, currency: true, theme: true })
       isValid = Object.keys(newErrors).length === 0
@@ -347,9 +343,9 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
             isValid = false
             break
           }
-          if (item.price <= 0) {
+          if (item.price < 0) {
             setStep3Error(
-              `Price for item "${item.name}" in category "${category.name}" must be greater than 0.`
+              `Price for item "${item.name}" in category "${category.name}" must be 0 or greater than 0.`
             )
             isValid = false
             break
@@ -435,7 +431,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
         }
       }
 
-      const serviceCatalogueSlug = await generateUniqueSlug(formData.name)
+      const serviceCatalogueSlug = generateUniqueSlug(formData.name)
 
       const submissionData = {
         name: serviceCatalogueSlug,
@@ -535,7 +531,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
         )
       case 3:
         return (
-          <Step3Services
+          <Step3Items
             isUploading={isUploading}
             formData={formData}
             handleAddItem={handleAddItem}
@@ -565,6 +561,9 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
             setFormData={setFormData}
           />
         )
+      case 5:
+        return <Step5Appearance formData={formData} setFormData={setFormData} />
+
       default:
         return null
     }
@@ -598,17 +597,19 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
                 {type === "edit" ? "Edit Catalogue" : "Create Catalogue"}
               </CardTitle>
               <CardDescription className="text-center text-product-foreground-accent text-base sm:text-lg mt-2 font-body">
-                Step {currentStep} of 4:{" "}
+                Step {currentStep} of 5:{" "}
                 {currentStep === 1
                   ? "General Information"
                   : currentStep === 2
-                    ? "Service Categories"
+                    ? "Manage Categories"
                     : currentStep === 3
-                      ? "Service Items"
-                      : "Branding & Contact"}
+                      ? "Manage Items"
+                      : currentStep === 4
+                        ? "Branding & Contact"
+                        : "Choose Appearance"}
               </CardDescription>
               <div className="flex justify-center space-x-3 mt-6">
-                {[1, 2, 3, 4].map((step) => (
+                {[1, 2, 3, 4, 5].map((step) => (
                   <button
                     key={step}
                     disabled={currentStep === step ? false : true}
@@ -657,7 +658,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
                       <ArrowLeft className="mr-2 h-5 w-5" /> Previous
                     </Button>
                   )}
-                  {currentStep < 4 && (
+                  {currentStep < 5 && (
                     <Button
                       type="button"
                       onClick={handleNext}
@@ -666,7 +667,7 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
                       Next <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   )}
-                  {currentStep === 4 && (
+                  {currentStep === 5 && (
                     <Button
                       type="submit"
                       disabled={isSubmitting || !isStepValid(currentStep) || isUploading}
@@ -710,4 +711,4 @@ function ServicesForm({ type, initialData, onSuccess, userData }: ServicesFormBa
     </>
   )
 }
-export default ServicesForm
+export default Builder

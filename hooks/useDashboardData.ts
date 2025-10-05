@@ -1,7 +1,7 @@
 // hooks/useDashboardDataSWR.ts
 // First install: npm install swr
 
-import type { OverallAnalytics, ServiceCatalogue } from "@/types"
+import type { Catalogue, OverallAnalytics } from "@/types"
 import useSWR from "swr"
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -39,7 +39,7 @@ export function useCatalogues(shouldFetch: boolean) {
   )
 
   return {
-    catalogues: (data || []) as ServiceCatalogue[],
+    catalogues: (data || []) as Catalogue[],
     loading: isLoading,
     error,
     refresh: mutate,

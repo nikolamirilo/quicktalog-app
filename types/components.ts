@@ -1,7 +1,7 @@
 import {
+  Catalogue,
   OverallAnalytics,
   PricingPlan,
-  ServiceCatalogue,
   ServicesCategory,
   ServicesItem,
   Usage,
@@ -48,7 +48,20 @@ export type SuccessModalProps = {
   isOpen: boolean
   onClose: () => void
   catalogueUrl: string
-  type?: "regular" | "ai" | "edit"
+  type?: "regular" | "ai" | "edit" | "ocr"
+}
+
+export type ThemeSelectProps = {
+  formData: {
+    name: string
+    theme?: string
+    title?: string
+    currency?: string
+    subtitle?: string
+  }
+  setFormData: React.Dispatch<React.SetStateAction<any>>
+  errors?: { [key: string]: string }
+  touched?: { [key: string]: boolean }
 }
 
 export type CatalogueHeaderProps = {
@@ -94,7 +107,7 @@ export type IBenefitBullet = {
   icon: JSX.Element
 }
 
-export type ServicesFormBaseProps = {
+export type BuilderProps = {
   type: "create" | "edit"
   initialData?: ServicesFormData
   onSuccess?: (restaurantUrl: string) => void
@@ -122,7 +135,7 @@ export type Step1GeneralProps = {
   type?: string
 }
 
-export type Step2ServicesSectionsProps = {
+export type Step2CategoriesProps = {
   formData: {
     services: ServicesCategory[]
   }
@@ -134,8 +147,8 @@ export type Step2ServicesSectionsProps = {
   setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export type Step3ServicesProps = {
-  formData: ServiceCatalogue
+export type Step3ItemsProps = {
+  formData: Catalogue
   handleAddItem: (categoryIndex: number) => void
   handleRemoveItem: (categoryIndex: number, itemIndex: number) => void
   handleItemChange: (
@@ -154,6 +167,10 @@ export type Step3ServicesProps = {
   setExpandedItem: React.Dispatch<
     React.SetStateAction<{ categoryIndex: number; itemIndex: number } | null>
   >
+}
+export type Step5AppearanceProps = {
+  formData: Catalogue
+  setFormData: React.Dispatch<React.SetStateAction<ServicesFormData>>
 }
 
 export type Step4BrandingProps = {
@@ -205,14 +222,14 @@ export type SubscriptionProps = {
 
 export type DashboardProps = {
   user: User
-  catalogues: ServiceCatalogue[]
+  catalogues: Catalogue[]
   overallAnalytics: OverallAnalytics
   usage: Usage
   pricingPlan: PricingPlan
 }
 
 export type OverviewProps = {
-  catalogues: ServiceCatalogue[]
+  catalogues: Catalogue[]
   overallAnalytics: OverallAnalytics
   user: User
   refreshAll: any

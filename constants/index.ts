@@ -1,5 +1,5 @@
 import { getCurrencySymbol } from "@/helpers/client"
-import { CookiePreferences, Currency, ServiceCatalogue } from "@/types"
+import { Catalogue, CookiePreferences, Currency } from "@/types"
 import { ILinkItem } from "@/types/components"
 
 export const defaultCookiePreferences: CookiePreferences = {
@@ -310,7 +310,7 @@ export const contactTypes = [
   { value: "twitter", label: "Twitter" },
 ]
 
-export const defaultServiceCatalogueData: ServiceCatalogue = {
+export const defaultServiceCatalogueData: Catalogue = {
   name: "",
   status: "draft",
   theme: "",

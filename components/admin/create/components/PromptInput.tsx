@@ -2,13 +2,13 @@ import { Textarea } from "@/components/ui/textarea"
 
 const PromptInput = ({ prompt, touched, errors, setPrompt }) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-6">
       <label htmlFor="prompt" className="text-sm font-medium text-product-foreground">
-        Services Description<span className="text-red-500 ml-1">*</span>
+        Prompt<span className="text-red-500 ml-1">*</span>
       </label>
       <Textarea
         id="prompt"
-        placeholder="e.g., A modern beauty salon specializing in premium hair treatments, nail services, and skincare..."
+        placeholder="We offer exotic sandwiches, tortillas & salads along with wide variety of fresh natural juices."
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
         rows={6}

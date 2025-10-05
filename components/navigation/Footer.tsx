@@ -48,6 +48,7 @@ const Footer: React.FC = () => {
                 src="/logo.svg"
                 alt="Quicktalog Logo"
                 className="w-auto h-12 rounded-full object-cover group-hover:scale-105 transition-transform duration-200"
+                unoptimized
               />
               {/* <h3 className="font-lora text-xl font-semibold cursor-pointer group-hover:text-product-primary transition-colors duration-200">
                 {siteDetails.siteName}
@@ -123,7 +124,7 @@ const Footer: React.FC = () => {
 
               {/* Website icon */}
               <a
-                href="https://quicktalog.app"
+                href="https://www.quicktalog.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Visit our website"

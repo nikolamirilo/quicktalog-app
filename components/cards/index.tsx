@@ -34,12 +34,15 @@ const CardsSwitcher = ({
   }
 
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const price = record.price.toLocaleString() || 0
+  const price = record.price === 0 ? "Free" : record.price ? record.price.toLocaleString() : "Free"
+  const formatedCurrency = price != "Free" ? currency : ""
 
   const validatedRecord = {
     ...record,
     price,
-    image: record.image || "/placeholder-image.jpg",
+    image:
+      record.image ||
+      "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbLZJd0wWMZP0cAtUu7EI5sD2VGw41vjTYyfKL",
   }
 
   // Helper function to pick card component
@@ -50,7 +53,7 @@ const CardsSwitcher = ({
           <CardType1
             key={i}
             record={validatedRecord}
-            currency={currency}
+            currency={formatedCurrency}
             onClick={() => {
               setIsModalOpen(true)
             }}
@@ -61,7 +64,7 @@ const CardsSwitcher = ({
           <CardType2
             key={i}
             record={validatedRecord}
-            currency={currency}
+            currency={formatedCurrency}
             onClick={() => {
               setIsModalOpen(true)
             }}
@@ -72,7 +75,7 @@ const CardsSwitcher = ({
           <CardType3
             key={i}
             record={validatedRecord}
-            currency={currency}
+            currency={formatedCurrency}
             onClick={() => {
               setIsModalOpen(true)
             }}
@@ -83,7 +86,7 @@ const CardsSwitcher = ({
           <CardType4
             key={i}
             record={validatedRecord}
-            currency={currency}
+            currency={formatedCurrency}
             onClick={() => {
               setIsModalOpen(true)
             }}
@@ -94,7 +97,7 @@ const CardsSwitcher = ({
           <CardType1
             key={i}
             record={validatedRecord}
-            currency={currency}
+            currency={formatedCurrency}
             onClick={() => {
               setIsModalOpen(true)
             }}
@@ -110,7 +113,7 @@ const CardsSwitcher = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         item={validatedRecord}
-        currency={currency}
+        currency={formatedCurrency}
         theme={theme}
         variant={variant}
       />
