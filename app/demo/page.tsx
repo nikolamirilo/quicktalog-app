@@ -1,6 +1,6 @@
 // @ts-nocheck
 "use client"
-import Toggle from "@/components/common/Toggle"
+import ThemeSwiper from "@/components/common/ThemeSwiper"
 import Footer from "@/components/navigation/Footer"
 import Navbar from "@/components/navigation/Navbar"
 import ServicesSection from "@/components/sections/ServicesSection"
@@ -38,7 +38,7 @@ const page: React.FC = () => {
             </section>
 
             <div className="flex flex-col justify-center items-center w-full mt-6">
-              <Toggle />
+              <ThemeSwiper />
             </div>
 
             {data && (

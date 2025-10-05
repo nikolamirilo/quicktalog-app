@@ -7,11 +7,11 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { contactTypes } from "@/constants"
@@ -209,31 +209,53 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
   const usedContactTypes = formData.contact?.map((c) => c.type) || []
 
-  const getFieldExplanation = (field: string): string => {
-    const explanations: { [key: string]: string } = {
-      "define-branding":
-        "This step allows you to customize your catalogue's branding and business information. You can add your logo, business details, contact information, legal links, and call-to-action buttons. This helps make your catalogue look professional and trustworthy while providing visitors with all the information they need to contact you or learn more about your business.",
-      "legal-name":
-        "This is your business's legal name that will appear in the footer of your catalogue. It helps establish credibility and provides official business information to visitors.",
-      "legal-address":
-        "Your business address will be displayed in the footer section of your catalogue. This helps visitors know your physical location and adds trust to your business.",
-      "terms-and-conditions":
-        "A link to your terms and conditions page. This will appear in the footer of your catalogue and is important for legal compliance and user trust.",
-      "privacy-policy":
-        "A link to your privacy policy page. This will appear in the footer of your catalogue and is required for GDPR compliance and user data protection.",
-      logo: "Your business logo will be displayed in the header of your catalogue, replacing the default Quicktalog logo. This helps with brand recognition and professional appearance.",
-      "footer-action-link":
-        "A call-to-action button that appears in the footer of your catalogue. This can direct visitors to contact you, book services, or visit your main website.",
-      "header-action-link":
-        "A call-to-action button that appears in the header/navigation area of your catalogue. This provides easy access to important actions like booking or contacting you.",
-      newsletter:
-        "Enables a newsletter signup form in the footer of your catalogue. This helps you collect email addresses for marketing and customer communication.",
-      "contact-information":
-        "Contact details like email, phone, and social media links that will appear in the footer of your catalogue. This makes it easy for visitors to reach you.",
-      partners:
-        "Partner logos and information that will be displayed in the footer of your catalogue. This helps showcase business partnerships and adds credibility to your services.",
+  const getFieldExplanation = (field: string): { message: string; image?: string; imageAlt?: string } => {
+    const explanations: { [key: string]: { message: string; image?: string; imageAlt?: string } } = {
+      "define-branding": {
+        message: "This step allows you to customize your catalogue's branding and business information. You can add your logo, business details, contact information, legal links, and call-to-action buttons. This helps make your catalogue look professional and trustworthy while providing visitors with all the information they need to contact you or learn more about your business."
+      },
+      "legal-name": {
+        message: "This is your business's legal name that will appear in the footer of your catalogue. It helps establish credibility and provides official business information to visitors."
+      },
+      "legal-address": {
+        message: "Your business address will be displayed in the footer section of your catalogue. This helps visitors know your physical location and adds trust to your business."
+      },
+      "terms-and-conditions": {
+        message: "A link to your terms and conditions page. This will appear in the footer of your catalogue and is important for legal compliance and user trust."
+      },
+      "privacy-policy": {
+        message: "A link to your privacy policy page. This will appear in the footer of your catalogue and is required for GDPR compliance and user data protection."
+      },
+      logo: {
+        message: "Your business logo will be displayed in the header of your catalogue, replacing the default Quicktalog logo. This helps with brand recognition and professional appearance."
+      },
+      "footer-action-link": {
+        message: "A call-to-action button that appears in the footer of your catalogue. This can direct visitors to contact you, book services, or visit your main website. The button will be prominently displayed at the bottom of your catalogue page.",
+        image: "/screenshots/ctafooter.png",
+        imageAlt: "Footer action link example showing a call-to-action button in the catalogue footer"
+      },
+      "header-action-link": {
+        message: "A call-to-action button that appears in the header/navigation area of your catalogue. This provides easy access to important actions like booking or contacting you. The button will be visible at the top of your catalogue page.",
+        image: "/screenshots/ctaheader.png",
+        imageAlt: "Header action link example showing a call-to-action button in the catalogue header"
+      },
+      newsletter: {
+        message: "Enables a newsletter signup form in the footer of your catalogue. This helps you collect email addresses for marketing and customer communication. The form will appear at the bottom of your catalogue page.",
+        image: "/screenshots/newsletter.png",
+        imageAlt: "Newsletter signup form example showing an email input field and subscribe button"
+      },
+      "contact-information": {
+        message: "Contact details like email, phone, and social media links that will appear in the footer of your catalogue. This makes it easy for visitors to reach you. The contact information will be displayed with social media icons for easy access.",
+        image: "/screenshots/socialicons.png",
+        imageAlt: "Contact information example showing social media icons and contact details in the catalogue footer"
+      },
+      partners: {
+        message: "Partner logos and information that will be displayed in the footer of your catalogue. This helps showcase business partnerships and adds credibility to your services. The trusted partners section will appear at the bottom of your catalogue.",
+        image: "/screenshots/trustedpartners.png",
+        imageAlt: "Trusted partners example showing partner logos and information in the catalogue footer"
+      },
     }
-    return explanations[field] || "Information about this field."
+    return explanations[field] || { message: "Information about this field." }
   }
 
   const handleInfoClick = (field: string) => {
@@ -657,7 +679,9 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
         onConfirm={() => setIsInfoModalOpen(false)}
         onCancel={() => setIsInfoModalOpen(false)}
         title={`${currentField.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
-        message={getFieldExplanation(currentField)}
+        message={getFieldExplanation(currentField).message}
+        image={getFieldExplanation(currentField).image}
+        imageAlt={getFieldExplanation(currentField).imageAlt}
         confirmText="Got it!"
         cancelText=""
       />

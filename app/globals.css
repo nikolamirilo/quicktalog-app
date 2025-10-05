@@ -3,6 +3,29 @@
 @tailwind utilities;
 @layer theme, base, clerk, components, utilities;
 
+/* Swiper Custom Styles */
+.theme-swiper {
+  padding: 20px 0;
+}
+
+.theme-swiper .swiper-slide {
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-swiper .swiper-slide-active {
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+.theme-swiper .swiper-slide-prev,
+.theme-swiper .swiper-slide-next {
+  opacity: 0.7;
+  transform: scale(0.95);
+}
+
 *,
 button:hover {
   -webkit-tap-highlight-color: transparent !important;
