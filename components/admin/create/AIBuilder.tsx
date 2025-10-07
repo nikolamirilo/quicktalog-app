@@ -1,5 +1,4 @@
 "use client"
-
 import { sendNewCatalogueEmail } from "@/actions/email"
 import LimitsModal from "@/components/modals/LimitsModal"
 import SuccessModal from "@/components/modals/SuccessModal"
@@ -9,13 +8,12 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { generateUniqueSlug } from "@/helpers/client"
 import { revalidateData } from "@/helpers/server"
-import { toast } from "@/hooks/use-toast"
 import { UserData } from "@/types"
 import { useUser } from "@clerk/nextjs"
-import Link from "next/link"
 import React, { useState } from "react"
 import { RiSparkling2Line } from "react-icons/ri"
 import FormHeader from "./components/FormHeader"
+import { LanguageSelector } from "./components/LanguageSelector"
 import PromptExamples from "./components/PromptExamples"
 import PromptInput from "./components/PromptInput"
 import Step1General from "./components/steps/Step1General"
@@ -28,9 +26,9 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
     title: "",
     currency: "",
     subtitle: "",
+    language: "",
   })
   const [shouldGenerateImages, setShouldGenerateImages] = useState<boolean>(false)
-  console.log(shouldGenerateImages)
   const [prompt, setPrompt] = useState("")
   const { user } = useUser()
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
@@ -52,38 +50,26 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
   const validate = () => {
     const newErrors: { [key: string]: string } = {}
     const hasErrors = Object.keys(errors).length > 0
-    if (!formData.name.trim()) newErrors.name = "Name is required."
-    if (!formData.title.trim()) newErrors.title = "Title is required."
-    if (!formData.currency.trim()) newErrors.currency = "Currency is required."
-    if (!formData.theme.trim()) newErrors.theme = "Theme is required."
-    if (!prompt.trim()) newErrors.prompt = "Items description is required."
+    if (!formData.name.trim()) newErrors.name = "Catalogue Name is required"
+    if (!formData.title.trim()) newErrors.title = "Catalogue Heading is required"
+    if (!formData.currency.trim()) newErrors.currency = "Currency is required"
+    if (!formData.theme.trim()) newErrors.theme = "Theme is required"
+    if (!formData.language.trim()) newErrors.language = "Language is required"
+    if (!prompt.trim()) newErrors.prompt = "Prompt is required"
     setErrors(newErrors)
-    setTouched({
-      name: true,
-      title: true,
-      currency: true,
-      theme: true,
-      prompt: true,
-    })
     return Object.keys(newErrors).length === 0 && !hasErrors
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     if (!validate()) return
 
     if (!user || !user.id) {
-      toast({
-        title: "Authentication Error",
-        description: "You must be signed in to create a service catalogue.",
-        variant: "destructive",
-      })
+      console.log("Issue with fetching user data")
       return
     }
 
     setIsSubmitting(true)
     setCatalogueUrl("")
-
     try {
       if (
         userData.usage.prompts >= userData.pricing_plan.features.ai_catalogue_generation ||
@@ -113,37 +99,21 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
         setCatalogueUrl(catalogueUrl)
         await sendNewCatalogueEmail(contactData, formData.name, slug)
         setShowSuccessModal(true)
-        toast({
-          title: "Success!",
-          description: (
-            <p>
-              Your digital showcase has been created. You can view it at{" "}
-              <Link href={catalogueUrl} className="text-primary-accent hover:underline">
-                {catalogueUrl}
-              </Link>
-            </p>
-          ),
-        })
       } else {
         const errorData = await response.json()
-        toast({
-          title: "Error",
-          description: `Failed to create showcase: ${errorData.error || "Unknown error"}`,
-          variant: "destructive",
-        })
+        console.error(errorData)
       }
     } catch (error) {
       console.error("Submission error:", error)
-      toast({
-        title: "Error",
-        description: "An error occurred while submitting the request.",
-        variant: "destructive",
-      })
     } finally {
       setIsSubmitting(false)
       setShouldGenerateImages(false)
       await revalidateData()
     }
+  }
+
+  const handleLanguageChange = (value: string) => {
+    setFormData((prev: any) => ({ ...prev, language: value }))
   }
 
   return (
@@ -156,7 +126,7 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
           subtitle="Generate stunning catalogues in minutes. Perfect for restaurants, salons, gyms, and more."
         />
         <CardContent className="p-6 sm:p-8 pt-0">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form className="space-y-6">
             <Step1General
               formData={formData}
               handleInputChange={handleInputChange}
@@ -167,9 +137,10 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
               setErrors={setErrors}
               type="create"
             />
-            <ThemeSelect
-              formData={formData}
-              setFormData={setFormData}
+            <ThemeSelect formData={formData} setFormData={setFormData} />
+            <LanguageSelector
+              selectedLanguage={formData.language}
+              onLanguageChange={handleLanguageChange}
               touched={touched}
               errors={errors}
             />
@@ -188,8 +159,8 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
             </div>
 
             <Button
-              type="submit"
               disabled={isSubmitting}
+              onClick={handleSubmit}
               variant="cta"
               className="h-12 font-medium rounded-lg">
               {isSubmitting ? (

@@ -3,6 +3,8 @@ import type { NextConfig } from "next"
 const nextConfig: NextConfig = {
   images: {
     minimumCacheTTL: 2678400,
+    formats: ["image/webp"],
+    unoptimized: !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost"),
     remotePatterns: [
       {
         protocol: "https",

@@ -4,20 +4,19 @@ export const OPTIMAL_DPI = 300
 export const MIN_TEXT_HEIGHT = 20
 export const MAX_IMAGE_DIMENSION = 2000
 export const MIN_EFFECTIVE_DIMENSION = 1000
-
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
-  { code: "eng", name: "English", flag: "🇺🇸" },
+  { code: "eng", name: "English", flag: "🇬🇧" },
   { code: "spa", name: "Spanish", flag: "🇪🇸" },
   { code: "fra", name: "French", flag: "🇫🇷" },
   { code: "deu", name: "German", flag: "🇩🇪" },
   { code: "ita", name: "Italian", flag: "🇮🇹" },
-  { code: "por", name: "Portuguese", flag: "🇵🇹" },
+  { code: "por", name: "Portuguese", flag: "🇧🇷" },
   { code: "rus", name: "Russian", flag: "🇷🇺" },
   { code: "chi_sim", name: "Chinese (Simplified)", flag: "🇨🇳" },
   { code: "chi_tra", name: "Chinese (Traditional)", flag: "🇹🇼" },
   { code: "jpn", name: "Japanese", flag: "🇯🇵" },
   { code: "kor", name: "Korean", flag: "🇰🇷" },
-  { code: "ara", name: "Arabic", flag: "🇸🇦" },
+  { code: "ara", name: "Arabic", flag: "🇪🇬" },
   { code: "hin", name: "Hindi", flag: "🇮🇳" },
   { code: "tha", name: "Thai", flag: "🇹🇭" },
   { code: "vie", name: "Vietnamese", flag: "🇻🇳" },
@@ -38,5 +37,4 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
   { code: "slv", name: "Slovenian", flag: "🇸🇮" },
   { code: "srp", name: "Serbian (Cyrillic)", flag: "🇷🇸" },
   { code: "srp_latn", name: "Serbian (Latin)", flag: "🇷🇸" },
-  { code: "auto", name: "Auto-detect", flag: "🌐" },
 ]

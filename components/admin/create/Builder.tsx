@@ -14,9 +14,8 @@ import SuccessModal from "@/components/modals/SuccessModal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { defaultServiceCatalogueData } from "@/constants"
-import { cleanValue, generateUniqueSlug } from "@/helpers/client"
+import { cleanValue, generateUniqueSlug, validateStepHelper } from "@/helpers/client"
 import { revalidateCataloguesData } from "@/helpers/server"
-import { toast } from "@/hooks/use-toast"
 import { NavigationGuard } from "@/hooks/useBeforeUnload"
 import { ContactInfo, ServicesFormData, ServicesItem } from "@/types"
 import { BuilderProps } from "@/types/components"
@@ -266,6 +265,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({})
   const [step2Error, setStep2Error] = useState<string>("")
   const [step3Error, setStep3Error] = useState<string>("")
+  const steps = [1, 2, 3, 4, 5]
 
   const isStepValid = (step: number): boolean => {
     if (step === 1) {
@@ -287,89 +287,21 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
       const hasErrors = Object.keys(errors).length > 0
       return !hasErrors
     }
+    if (step === 5) {
+      const hasErrors = Object.keys(errors).length > 0
+      return !!formData.theme.trim() && !hasErrors
+    }
     return true
   }
+
   const validateStep = (step: number): boolean => {
-    let newErrors: { [key: string]: string } = {}
-    let isValid = true
-
-    if (step === 1) {
-      if (!formData.name.trim()) newErrors.name = "Service catalogue name is required."
-      if (!formData.title?.trim()) newErrors.title = "Title is required."
-      if (!formData.currency?.trim()) newErrors.currency = "Currency is required."
-      setErrors(newErrors)
-      setTouched({ name: true, title: true, currency: true, theme: true })
-      isValid = Object.keys(newErrors).length === 0
-    }
-
-    if (step === 2) {
-      if (formData.services.length === 0) {
-        setStep2Error("Please add at least one service category.")
-        isValid = false
-      } else {
-        const seen = new Set<string>()
-        for (const category of formData.services) {
-          if (
-            !category.name.trim() ||
-            category.layout === "" ||
-            category.layout === null ||
-            category.layout === undefined
-          ) {
-            setStep2Error("All service categories must have a name and layout.")
-            isValid = false
-            break
-          }
-          if (seen.has(category.name.trim().toLowerCase())) {
-            setStep2Error("Category names must be unique within the catalogue.")
-            isValid = false
-            break
-          }
-          seen.add(category.name.trim().toLowerCase())
-        }
-      }
-      if (isValid) setStep2Error("")
-    }
-
-    if (step === 3) {
-      for (const category of formData.services) {
-        if (category.items.length === 0) {
-          setStep3Error(`Category "${category.name}" must have at least one service item.`)
-          isValid = false
-          break
-        }
-        for (const item of category.items) {
-          if (!item.name.trim()) {
-            setStep3Error(`All items in category "${category.name}" must have a name.`)
-            isValid = false
-            break
-          }
-          if (item.price < 0) {
-            setStep3Error(
-              `Price for item "${item.name}" in category "${category.name}" must be 0 or greater than 0.`
-            )
-            isValid = false
-            break
-          }
-          if (category.layout !== "variant_3" && !item.image?.trim()) {
-            setStep3Error(
-              `Image for item "${item.name}" in category "${category.name}" is required for this layout.`
-            )
-            isValid = false
-            break
-          }
-        }
-        if (!isValid) break
-      }
-      if (isValid) setStep3Error("")
-    }
-
-    if (step === 4) {
-      setErrors({})
-      setTouched({})
-      isValid = true
-    }
-
-    return isValid
+    const result = validateStepHelper({ step, formData })
+    setErrors(result.errors)
+    if (result.step2Error) setStep2Error(result.step2Error)
+    else setStep2Error("")
+    if (result.step3Error) setStep3Error(result.step3Error)
+    else setStep3Error("")
+    return result.isValid
   }
 
   const handleInputChangeWithValidation = (
@@ -391,25 +323,14 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
     setCurrentStep((prev) => prev - 1)
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    console.log("Submitting form data:", formData)
-
-    if (!validateStep(4)) {
-      toast({
-        title: "Validation Error",
-        description: `Please complete all steps and ensure all fields are valid.`,
-        variant: "destructive",
-      })
+  const handleSubmit = async () => {
+    if (!steps.every((step) => validateStep(step))) {
+      console.error("Please complete all steps and ensure all fields are valid.")
       return
     }
 
     if (!user || !user.id) {
-      toast({
-        title: "Authentication Error",
-        description: "You must be signed in to create or edit a service catalogue.",
-        variant: "destructive",
-      })
+      console.error("You must be signed in to create or edit a service catalogue.")
       setIsSubmitting(false)
       return
     }
@@ -417,7 +338,6 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
     setIsSubmitting(true)
 
     try {
-      // Check catalogue limits for new catalogues only
       if (type === "create") {
         const currentUserData = await getUserData()
 
@@ -448,8 +368,6 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
         configuration: cleanValue(formData.configuration),
         created_by: user.id,
       }
-
-      console.log("Transformed form data:", submissionData)
 
       const method = type === "edit" ? "PATCH" : "POST"
       const response = await fetch("/api/items", {
@@ -485,19 +403,9 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
       } else {
         const errorData = await response.json()
         console.error("Error response:", errorData)
-        toast({
-          title: "Error",
-          description: `Failed to ${type === "edit" ? "edit" : "create"} service catalogue: ${errorData.error || "Unknown error"}`,
-          variant: "destructive",
-        })
       }
     } catch (error) {
       console.error("Submission error:", error)
-      toast({
-        title: "Error",
-        description: `An error occurred while submitting the form.`,
-        variant: "destructive",
-      })
     } finally {
       setIsSubmitting(false)
     }
@@ -609,7 +517,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
                         : "Choose Appearance"}
               </CardDescription>
               <div className="flex justify-center space-x-3 mt-6">
-                {[1, 2, 3, 4, 5].map((step) => (
+                {steps.map((step) => (
                   <button
                     key={step}
                     disabled={currentStep === step ? false : true}
@@ -636,7 +544,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
               </div>
             </CardHeader>
             <CardContent className="p-4 sm:p-4 pt-0">
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form className="space-y-8">
                 {renderStep()}
                 {currentStep === 2 && step2Error && (
                   <div className="text-red-500 text-center mt-4 p-3 bg-red-50 border border-red-200 rounded-lg font-body">
@@ -669,8 +577,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
                   )}
                   {currentStep === 5 && (
                     <Button
-                      type="submit"
                       disabled={isSubmitting || !isStepValid(currentStep) || isUploading}
+                      onClick={handleSubmit}
                       className="sm:ml-auto flex items-center justify-center px-8 py-3 text-base font-semibold bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
                       {type === "edit" ? (
                         <Edit className="h-5 w-5" />
