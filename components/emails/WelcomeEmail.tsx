@@ -48,7 +48,9 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
 
         {/* Welcome Message */}
         <Section style={welcomeSection}>
-          <Text style={welcomeTitle}>Welcome to Quicktalog, {name}! 🎉</Text>
+          <Text style={welcomeTitle}>
+            Welcome to Quicktalog{name && name !== "Unknown User" ? `, ${name}!` : "!"}🎉
+          </Text>
           <Text style={welcomeText}>
             Thank you for joining Quicktalog! We're excited to help you create stunning digital
             catalogs that will transform how you showcase your business.

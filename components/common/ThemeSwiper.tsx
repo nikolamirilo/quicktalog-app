@@ -93,7 +93,7 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
             Choose Layout Style
           </h3>
           
-          <div className="w-full max-w-2xl">
+          <div className="w-full max-w-2xl lg:max-w-sm">
             {/* Navigation Arrows with Layout Info */}
             <div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
               <Button
@@ -158,7 +158,7 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
           Choose Color Theme
         </h3>
         
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-2xl lg:max-w-sm">
           {/* Navigation Arrows with Theme Info */}
           <div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
             <Button
