@@ -12,7 +12,7 @@ const JoinOurCommunity = () => {
       </p>
       <div className="flex justify-center w-[50%]">
         <Button variant="cta" asChild>
-          <Link href="https://discord.gg/t6bdJQGG">Join on Discord</Link>
+          <Link href="https://discord.gg/uQZxWNt3">Join on Discord</Link>
         </Button>
       </div>
     </div>
