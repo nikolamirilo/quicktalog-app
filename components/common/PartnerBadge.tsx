@@ -1,5 +1,4 @@
 "use client"
-import Image from "next/image"
 import { useState } from "react"
 import SmartLink from "./SmartLink"
 
@@ -18,14 +17,13 @@ export default function PartnerBadge({
         {imageError ? (
           <span className="text-lg">{partner.name.charAt(0)}</span>
         ) : (
-          <Image
+          <img
             src={partner.logo || `https://logo.clearbit.com/${partner.url}`}
             alt={`${partner.name} logo`}
             width={32}
             height={32}
             className="w-8 h-8 rounded-full"
             onError={() => setImageError(true)}
-            unoptimized
           />
         )}
       </div>

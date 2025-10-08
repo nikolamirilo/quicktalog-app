@@ -1,7 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { useUser } from "@clerk/nextjs"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React from "react"
@@ -97,15 +96,14 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Hero Image */}
-        <Image
+        <img
           src="/images/hero-mockup.png"
           width={384 * 1.2}
           height={340 * 1.2}
-          quality={100}
           sizes="(max-width: 768px) 80vw, 460px"
-          priority
           alt="Interactive digital catalog"
           className="relative z-10 mx-auto mt-12 md:mt-16"
+          fetchPriority="high"
         />
       </div>
     </section>

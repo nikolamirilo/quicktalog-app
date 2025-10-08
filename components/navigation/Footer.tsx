@@ -3,7 +3,6 @@ import { productNewsletterSignup } from "@/actions/newsletter"
 import { Button } from "@/components/ui/button"
 import { footerDetails, siteDetails } from "@/constants/details"
 import { getPlatformIconByName } from "@/constants/ui"
-import Image from "next/image"
 import Link from "next/link"
 import React, { useState } from "react"
 import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi"
@@ -42,13 +41,12 @@ const Footer: React.FC = () => {
           {/* Brand section */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-3 group">
-              <Image
+              <img
                 width={140}
                 height={140}
                 src="/logo.svg"
                 alt="Quicktalog Logo"
                 className="w-auto h-12 rounded-full object-cover group-hover:scale-105 transition-transform duration-200"
-                unoptimized
               />
               {/* <h3 className="font-lora text-xl font-semibold cursor-pointer group-hover:text-product-primary transition-colors duration-200">
                 {siteDetails.siteName}
