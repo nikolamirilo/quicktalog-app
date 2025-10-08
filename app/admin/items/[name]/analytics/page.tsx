@@ -46,7 +46,7 @@ export default async function page({ params }: { params: tParams }) {
         body: JSON.stringify({
           query: {
             kind: "HogQLQuery",
-            query: `select timestamp, properties.distinct_id, properties.$browser, properties.$device_type, properties.$geoip_country_name from events where properties.$current_url like '%/${name}%' and event='$pageview' limit 500`,
+            query: `select timestamp, properties.distinct_id, properties.$browser, properties.$device_type, properties.$geoip_country_name from events where properties.$current_url like '${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${name}' and event='$pageview'`,
           },
         }),
         cache: "no-store",
