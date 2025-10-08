@@ -9,8 +9,8 @@ import {
 import { Service } from "@/types"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { ZoomIn } from "lucide-react"
-import Image from "next/image"
 import { useState } from "react"
+import { OptimizedImage } from "../common/OptimizedImage"
 
 interface ItemInfoModalProps {
   isOpen: boolean
@@ -39,13 +39,10 @@ export default function ItemDetailModal({
           {/* Image Section - Only show for variants that have images */}
           {item.image && variant !== "variant_3" && (
             <div className="relative w-full h-80 bg-card-bg/10 flex-shrink-0 overflow-hidden">
-              <Image
+              <OptimizedImage
                 src={item.image}
                 alt={item.name}
-                width={400}
-                height={320}
                 className="w-full h-full object-cover"
-                sizes="(max-width: 640px) 90vw, 400px"
                 priority
               />
               {/* Gradient overlay for better text readability */}
@@ -96,15 +93,12 @@ export default function ItemDetailModal({
           <VisuallyHidden>
             <DialogTitle>Full screen image view</DialogTitle>
           </VisuallyHidden>
-          <div className="relative w-full h-full flex items-center justify-center">
+          <div className="relative w-full h-full flex items-center justify-center border-none">
             {item?.image && (
-              <Image
+              <OptimizedImage
                 src={item.image}
                 alt={item.name}
-                width={1200}
-                height={800}
-                className="max-w-full max-h-[90vh] object-contain"
-                sizes="95vw"
+                className="w-full h-full object-cover"
                 priority
               />
             )}

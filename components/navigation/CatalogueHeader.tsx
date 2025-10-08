@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { CatalogueHeaderProps } from "@/types/components"
-import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi"
@@ -99,13 +98,13 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({ type = "default", dat
               href={type === "default" ? "/" : ""}
               className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
               aria-label={`Go to ${companyName} homepage`}>
-              <Image
+              <img
                 src={logo ?? "/logo.svg"}
                 alt={`${companyName} logo`}
                 width={type === "default" ? 120 : 100}
                 height={40}
                 className="w-auto h-[7vh] object-cover"
-                priority
+                fetchPriority="high"
               />
             </Link>
           </div>

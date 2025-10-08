@@ -2,6 +2,7 @@
 "use client"
 import { useMainContext } from "@/context/MainContext"
 import { contentVariants, getCurrencySymbol, getGridStyle } from "@/helpers/client"
+import { ServicesCategory } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import "swiper/css"
@@ -9,14 +10,6 @@ import "swiper/css/pagination"
 import { Swiper, SwiperSlide } from "swiper/react"
 import CardsSwitcher from "../cards"
 import SectionHeader from "./SectionHeader"
-
-// Type definitions for better type safety
-interface ServiceItem {
-  name: string
-  order?: number
-  layout: string
-  items: any[]
-}
 
 interface ProcessedSection {
   title: string
@@ -27,7 +20,7 @@ interface ProcessedSection {
 }
 
 interface ServicesSectionProps {
-  servicesData: ServiceItem[]
+  servicesData: ServicesCategory[]
   currency: string
   type: "demo" | "item"
   theme?: string
@@ -40,15 +33,17 @@ const processSectionsData = (servicesData: ServiceItem[]): ProcessedSection[] =>
   }
 
   try {
-    const processed = servicesData.map((item) => {
-      return {
-        title: item.name,
-        code: item.name.toLowerCase().split(" ").join("-"),
-        order: item.order != null ? Number(item.order) : 999,
-        layout: item.layout,
-        items: item.items,
-      }
-    })
+    const processed = servicesData
+      .filter((item) => item.items.length > 0 && item.name != "" && item.name != null)
+      .map((item) => {
+        return {
+          title: item.name,
+          code: item.name.toLowerCase().split(" ").join("-"),
+          order: item.order != null ? Number(item.order) : 999,
+          layout: item.layout,
+          items: item.items,
+        }
+      })
 
     const sorted = processed.sort((a, b) => {
       const result = a.order - b.order
@@ -122,10 +117,7 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
   return (
     <main className={`max-w-6xl mx-auto py-5 px-4 `} role="main" aria-label="Services and items">
       {sectionsData.map((item) => {
-        // The 'layout' variable now comes directly from the context or from the item data
         const currentLayout = type === "demo" ? layout : item.layout
-
-        // Validate section data
         if (!item.items || !Array.isArray(item.items)) {
           console.error(`ServicesSection: Invalid data for section ${item.code}:`, item)
           return (

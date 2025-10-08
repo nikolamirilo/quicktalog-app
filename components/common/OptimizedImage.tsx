@@ -20,11 +20,13 @@ export const OptimizedImage = ({
   alt,
   className,
   priority = false,
+  type = "basic",
 }: {
   src: string
   alt: string
   className?: string
   priority?: boolean
+  type?: "basic" | "next"
 }) => {
   const [hasError, setHasError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
@@ -57,32 +59,55 @@ export const OptimizedImage = ({
         </div>
       )}
 
-      {/* Actual Image */}
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className={`${className} transition-all duration-500 ease-out ${
-          showImage ? "opacity-100 scale-100" : "opacity-0 scale-102"
-        }`}
-        priority={priority}
-        loading={priority ? "eager" : "lazy"}
-        onLoad={() => {
-          setIsLoading(false)
-          setShowImage(true)
-        }}
-        onError={() => {
-          setHasError(true)
-          setIsLoading(false)
-          setShowImage(false)
-        }}
-        onLoadStart={() => {
-          setIsLoading(true)
-          setShowImage(false)
-        }}
-        sizes="(max-width: 768px) 40vw, 20vw"
-        quality={85}
-      />
+      {type === "next" ? (
+        /* Next.js Image */
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className={`${className} transition-all duration-500 ease-out ${
+            showImage ? "opacity-100 scale-100" : "opacity-0 scale-102"
+          }`}
+          priority={priority}
+          loading={priority ? "eager" : "lazy"}
+          onLoad={() => {
+            setIsLoading(false)
+            setShowImage(true)
+          }}
+          onError={() => {
+            setHasError(true)
+            setIsLoading(false)
+            setShowImage(false)
+          }}
+          onLoadStart={() => {
+            setIsLoading(true)
+            setShowImage(false)
+          }}
+          sizes="(max-width: 768px) 40vw, 20vw"
+          quality={85}
+        />
+      ) : (
+        /* Regular HTML img */
+        <img
+          src={src}
+          alt={alt}
+          className={`${className} absolute inset-0 transition-all duration-500 ease-out object-cover w-full h-full ${
+            showImage ? "opacity-100 scale-100" : "opacity-0 scale-102"
+          }`}
+          loading={priority ? "eager" : "lazy"}
+          onLoad={() => {
+            setIsLoading(false)
+            setShowImage(true)
+          }}
+          onError={() => {
+            setHasError(true)
+            setIsLoading(false)
+            setShowImage(false)
+          }}
+          sizes="(max-width: 768px) 40vw, 20vw"
+          decoding="async"
+        />
+      )}
     </div>
   )
 }

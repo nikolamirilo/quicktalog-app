@@ -8,6 +8,11 @@
   padding: 20px 0;
 }
 
+#language-select {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Noto Color Emoji", Roboto, sans-serif;
+}
+
 .theme-swiper .swiper-slide {
   height: auto;
   display: flex;

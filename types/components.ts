@@ -58,10 +58,12 @@ export type ThemeSelectProps = {
     title?: string
     currency?: string
     subtitle?: string
+    language?: string
   }
   setFormData: React.Dispatch<React.SetStateAction<any>>
   errors?: { [key: string]: string }
   touched?: { [key: string]: boolean }
+  infoButtonComponent?: JSX.Element
 }
 
 export type CatalogueHeaderProps = {
@@ -197,8 +199,11 @@ export type PromptExamplesProps = {
 
 export type LanguageSelectorProps = {
   selectedLanguage: string
-  detectedLanguage: string
+  detectedLanguage?: string
   onLanguageChange: (language: string) => void
+  type?: string
+  errors?: { [key: string]: string }
+  touched?: { [key: string]: boolean }
 }
 
 export type DonutChartProps = {

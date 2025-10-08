@@ -19,21 +19,7 @@ const Support = ({
         We're here to help you get the most out of Quicktalog. Choose your preferred support method
         below.
       </p>
-
-      {/* Beta Program Notice */}
-      {/* <div className="bg-gradient-to-r from-product-primary/10 to-product-primary/5 border border-product-primary rounded-2xl p-6 text-center">
-        <h2 className="text-xl font-semibold text-product-foreground mb-2">
-          Join Our Beta Program
-        </h2>
-        <p className="text-product-foreground-accent">
-          Get priority support and help shape the future of Quicktalog. Share your feedback with us
-          until December 31, 2025.
-        </p>
-      </div> */}
-
-      {/* Support Options */}
       <div className="grid gap-8">
-        {/* Email Support Section */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 bg-product-primary rounded-full"></div>
@@ -45,7 +31,6 @@ const Support = ({
           <Contact type="support" />
         </div>
 
-        {/* Meeting Scheduling Section */}
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 bg-product-primary rounded-full"></div>

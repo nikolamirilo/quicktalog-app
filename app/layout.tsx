@@ -11,7 +11,10 @@ import {
   poppins,
 } from "@/fonts"
 import { GoogleTagManager } from "@next/third-parties/google"
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin"
 import type { Metadata } from "next"
+import { extractRouterConfig } from "uploadthing/server"
+import { ourFileRouter } from "./api/items/uploadthing/core"
 import "./globals.css"
 
 export const metadata: Metadata = generatePageMetadata("home")
@@ -25,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClarityScript />
         <GoogleTagManager gtmId={process.env.GTM_ID} />
       </head>
-
+      <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
       <body className="product">
         <PageWrapperClient children={children} />
       </body>

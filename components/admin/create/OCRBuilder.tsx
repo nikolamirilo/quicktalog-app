@@ -22,8 +22,10 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
     title: "",
     currency: "",
     subtitle: "",
+    language: "",
   })
   const [shouldGenerateImages, setShouldGenerateImages] = useState<boolean>(false)
+  console.log(shouldGenerateImages)
   const [prompt, setPrompt] = useState("")
   const { user } = useUser()
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
@@ -45,12 +47,22 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
   const validate = () => {
     const newErrors: { [key: string]: string } = {}
     const hasErrors = Object.keys(errors).length > 0
-    if (!formData.name.trim()) newErrors.name = "Name is required."
-    if (!formData.title.trim()) newErrors.title = "Title is required."
-    if (!formData.currency.trim()) newErrors.currency = "Currency is required."
-    if (!formData.theme.trim()) newErrors.theme = "Theme is required."
+    if (!formData.name.trim()) newErrors.name = "Catalogue Name is required."
+    if (!formData.title.trim()) newErrors.title = "Catalogue Heading is required"
+    if (!formData.currency.trim()) newErrors.currency = "Currency is required"
+    if (!formData.theme.trim()) newErrors.theme = "Theme is required"
+    if (!prompt.trim()) newErrors.prompt = "Items description is required."
+    setErrors(newErrors)
+    setTouched({
+      name: true,
+      title: true,
+      currency: true,
+      theme: true,
+      prompt: true,
+    })
     return Object.keys(newErrors).length === 0 && !hasErrors
   }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!validate()) return
@@ -80,7 +92,7 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
       const slug = generateUniqueSlug(formData.name)
       const data = { ...formData, name: slug }
 
-      const response = await fetch("/api/items/ocr", {
+      const response = await fetch("/api/items/ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ formData: data, prompt, shouldGenerateImages }),

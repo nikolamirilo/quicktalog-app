@@ -2,7 +2,6 @@
 "use client"
 import clsx from "clsx"
 import { motion, Variants } from "framer-motion"
-import Image from "next/image"
 
 import { IBenefit } from "@/types/components"
 import SectionTitle from "../SectionTitle"
@@ -93,15 +92,7 @@ const BenefitSection: React.FC<Props> = ({ benefit, imageAtRight }: Props) => {
               "justify-start": imageAtRight,
               "justify-end": !imageAtRight,
             })}>
-            <Image
-              src={imageSrc}
-              alt="title"
-              width="384"
-              height="762"
-              quality={100}
-              className="lg:ml-0"
-              unoptimized
-            />
+            <img src={imageSrc} alt="title" width="384" height="762" className="lg:ml-0" />
           </div>
         </div>
       </motion.div>

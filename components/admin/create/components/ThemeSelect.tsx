@@ -2,45 +2,59 @@ import { Label } from "@/components/ui/label"
 import { themes } from "@/constants"
 import { ThemeSelectProps } from "@/types/components"
 
-const ThemeSelect = ({ formData, setFormData, touched, errors }: ThemeSelectProps) => {
-  const handleThemeChange = (value: string) => {
-    setFormData((prev: any) => ({ ...prev, theme: value }))
-  }
-  return (
-    <div className="space-y-4 col-span-full">
-      <Label htmlFor="theme" className="text-product-foreground font-medium font-body">
-        Theme<span className="text-red-500 ml-1">*</span>
-      </Label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {themes.map((themeOption) => (
-          <div
-            key={themeOption.key}
-            className={`relative cursor-pointer rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-product-hover-shadow ${
-              formData.theme === themeOption.key
-                ? "border-product-primary shadow-product-shadow bg-product-primary/5"
-                : "border-product-border hover:border-product-primary/50"
-            }`}
-            onClick={() => handleThemeChange(themeOption.key)}>
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100">
-              <img
-                src={themeOption.image}
-                alt={themeOption.label}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <p className="text-center text-base mt-3 font-medium text-product-foreground font-body">
-              {themeOption.label}
-            </p>
-          </div>
-        ))}
+const ThemeSelect = ({ formData, setFormData, infoButtonComponent }: ThemeSelectProps) => (
+  <div className="space-y-4">
+    <div className="text-center">
+      <div className="flex items-center justify-start gap-2">
+        <Label className="text-sm font-medium text-gray-700">
+          Select Theme<span className="text-red-500 ml-1">*</span>
+        </Label>
+        {infoButtonComponent}
       </div>
-      {touched?.theme && errors?.theme && (
-        <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-          {errors.theme}
-        </div>
-      )}
     </div>
-  )
-}
+
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      {themes.map((themeItem, index) => (
+        <button
+          key={themeItem.key}
+          type="button"
+          onClick={(value) => {
+            setFormData((prev: any) => ({ ...prev, theme: themeItem.key }))
+          }}
+          className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${themeItem.key} ${
+            formData.theme === themeItem.key
+              ? "border-product-primary shadow-md"
+              : "hover:shadow-sm"
+          }`}
+          style={{
+            borderColor:
+              formData.theme === themeItem.key ? "var(--product-primary)" : "var(--section-border)",
+            backgroundColor: "var(--background)",
+            color: "var(--foreground)",
+            fontFamily: "var(--font-family-body)",
+          }}>
+          <div className="text-center">
+            <div
+              className="w-8 h-8 mx-auto mb-2 rounded-full border-2"
+              style={{
+                backgroundColor: "var(--primary)",
+                borderColor: "var(--foreground)",
+              }}></div>
+            <div
+              className="text-xs font-medium"
+              style={{
+                color: "var(--heading)",
+                fontFamily: "var(--font-family-heading)",
+                fontWeight: "var(--font-weight-heading)",
+                letterSpacing: "var(--letter-spacing-heading)",
+              }}>
+              {themeItem.label}
+            </div>
+          </div>
+        </button>
+      ))}
+    </div>
+  </div>
+)
 
 export default ThemeSelect

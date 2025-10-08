@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { footerDetails } from "@/constants/details"
 import { footerFeatures } from "@/constants/ui"
 import { CatalogueFooterProps } from "@/types/components"
-import Image from "next/image"
 import Link from "next/link"
 import React, { useState } from "react"
 import { FiCheck, FiExternalLink, FiMail, FiMapPin, FiPhone, FiPlus } from "react-icons/fi"
@@ -57,13 +56,12 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({ type = "default", dat
                   href={type === "default" ? "/" : ""}
                   className="flex flex-col items-start space-y-2 group transition-transform duration-200 hover:scale-102"
                   aria-label={`Go to ${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} homepage`}>
-                  <Image
+                  <img
                     src={logo ?? "/logo.svg"}
                     alt={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} logo`}
                     width={type === "default" ? 120 : 100}
                     height={40}
                     className="w-auto h-[7vh] object-cover"
-                    unoptimized
                   />
                   {type === "default" && (
                     <p className="text-sm text-card-description">Digital Catalogue Platform</p>

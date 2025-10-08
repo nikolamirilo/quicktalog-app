@@ -1,4 +1,5 @@
-import { Catalogue, ContactItem, FooterData, HeaderData } from "@/types"
+import { layouts } from "@/constants"
+import { Catalogue, ContactItem, FooterData, HeaderData, ServicesFormData } from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -244,4 +245,114 @@ export const generateUniqueSlug = (name: string) => {
 
 export function toTitleCase(str) {
   return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+interface ValidationResult {
+  isValid: boolean
+  errors: { [key: string]: string }
+  step2Error?: string
+  step3Error?: string
+}
+
+interface Step1Validation {
+  name: string
+  title?: string
+  currency?: string
+}
+
+interface StepValidationOptions {
+  step: number
+  formData: ServicesFormData
+  requiredFields?: {
+    step1?: Array<keyof Step1Validation>
+  }
+}
+
+export const validateStepHelper = (options: StepValidationOptions): ValidationResult => {
+  const ACCEPTED_LAYOUTS = layouts.map((l) => l.key)
+  const { step, formData, requiredFields } = options
+  const errors: { [key: string]: string } = {}
+  let step2Error = ""
+  let step3Error = ""
+
+  if (step === 1) {
+    const defaultRequiredFields: Array<keyof Step1Validation> = ["name", "title", "currency"]
+    const fieldsToValidate = requiredFields?.step1 || defaultRequiredFields
+
+    fieldsToValidate.forEach((field) => {
+      const value = formData[field]
+      if (typeof value === "string" && !value.trim()) {
+        const fieldLabels: { [key: string]: string } = {
+          name: "Service catalogue name",
+          title: "Catalogue Heading",
+          currency: "Currency",
+        }
+        errors[field] = `${fieldLabels[field] || field} is required`
+      }
+    })
+  }
+
+  if (step === 2) {
+    if (formData.services.length === 0) {
+      step2Error = "Please add at least one service category."
+    } else {
+      const seen = new Set<string>()
+
+      for (const category of formData.services) {
+        if (!category.name?.trim()) {
+          step2Error = "All service categories must have a name and layout."
+          break
+        }
+
+        if (!category.layout || !ACCEPTED_LAYOUTS.includes(category?.layout)) {
+          step2Error = "All service categories must have a valid layout."
+          break
+        }
+
+        const normalizedName = category.name.trim().toLowerCase()
+        if (seen.has(normalizedName)) {
+          step2Error = "Category names must be unique within the catalogue."
+          break
+        }
+        seen.add(normalizedName)
+      }
+    }
+  }
+
+  if (step === 3) {
+    for (const category of formData.services) {
+      if (!category.items || category.items.length === 0) {
+        step3Error = `Category "${category.name}" must have at least one service item.`
+        break
+      }
+
+      for (const item of category.items) {
+        if (!item.name?.trim()) {
+          step3Error = `All items in category "${category.name}" must have a name.`
+          break
+        }
+
+        if (typeof item.price !== "number" || item.price < 0) {
+          step3Error = `Price for item "${item.name}" in category "${category.name}" must be 0 or greater.`
+          break
+        }
+
+        if (category.layout !== "variant_3" && !item.image?.trim()) {
+          step3Error = `Image for item "${item.name}" in category "${category.name}" is required for this layout.`
+          break
+        }
+      }
+
+      if (step3Error) break
+    }
+  }
+
+  const isValid = Object.keys(errors).length === 0 && !step2Error && !step3Error
+
+  return {
+    isValid,
+    errors,
+    step2Error,
+    step3Error,
+  }
 }

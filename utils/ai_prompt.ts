@@ -137,7 +137,7 @@ export function generatePromptForAI(
   }))
 
   return `
-    Role: You are an expert in creating service offers (restaurant services, beauty center service offer, etc.).
+    Role: You are an expert in creating price lists/catalogues (restaurant menus, beauty center service offer, product price list, etc.).
     Based on the following prompt, generate a complete service offer configuration in JSON format.
     The JSON object should strictly follow the type definition from the project.
     
@@ -152,7 +152,7 @@ export function generatePromptForAI(
     IMPORTANT REQUIREMENTS:
     1. Return ONLY the JSON object, no additional text, explanations, or formatting
     2. Start your response directly with { and end with }
-    3. Service offer should be created in the language and alphabet of the prompt.
+    3. Catalogue/Price List should be created in the selected language: ${formData.language}
     4. The services field should be an ARRAY of categories, NOT an object
     5. Add at least 3 categories with at least 5 items each
     6. Name all items in full name of the dish e.g. "Spaghetti Carbonara", "Caesar Salad", "Pizza Margarita" etc.

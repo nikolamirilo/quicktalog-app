@@ -14,7 +14,7 @@ import { LanguageSelector } from "./LanguageSelector"
 const OcrReader = ({ formData, setServiceCatalogueUrl, setShowSuccessModal }) => {
   const [images, setImages] = useState<OCRImageData[]>([])
   const [combinedText, setCombinedText] = useState("")
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("auto")
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("en")
   const [detectedLanguage, setDetectedLanguage] = useState<string>("")
   const [isProcessing, setIsProcessing] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -198,7 +198,6 @@ const OcrReader = ({ formData, setServiceCatalogueUrl, setShowSuccessModal }) =>
 
   return (
     <div className="flex flex-col items-center text-product-foreground min-h-screen">
-      {/* Language Selection */}
       <LanguageSelector
         selectedLanguage={selectedLanguage}
         detectedLanguage={detectedLanguage}

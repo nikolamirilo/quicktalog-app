@@ -1,31 +1,49 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { LANGUAGE_OPTIONS } from "@/constants/ocr"
 import { LanguageSelectorProps } from "@/types/components"
 import React from "react"
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   selectedLanguage,
+  touched,
+  errors,
   detectedLanguage,
   onLanguageChange,
+  type = "ai",
 }) => {
   return (
     <div className="mb-6 w-full max-w-md">
       <label className="block text-sm font-medium text-product-foreground mb-2">
-        Select Language of Images:
+        {type === "ai" ? "Select Catalogue Language" : "Select Language of Images"}
+        <span className="text-red-500 ml-1">*</span>
       </label>
-      <select
-        value={selectedLanguage}
-        onChange={(e) => onLanguageChange(e.target.value)}
-        className="w-full p-3 rounded-lg border border-product-border text-product-foreground focus:outline-none focus:ring-2 focus:ring-product-primary-accent">
-        {LANGUAGE_OPTIONS.map((lang) => (
-          <option key={lang.code} value={lang.code}>
-            {lang.flag} {lang.name}
-          </option>
-        ))}
-      </select>
+      <Select value={selectedLanguage} onValueChange={(e) => onLanguageChange(e)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select language" />
+        </SelectTrigger>
+        <SelectContent>
+          {LANGUAGE_OPTIONS.map((lang) => (
+            <SelectItem key={lang.code} value={lang.name} className="cursor-pointer">
+              {lang.flag} {lang.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       {detectedLanguage && selectedLanguage === "auto" && (
-        <p className="text-xs text-product-foreground-accent mt-1">
+        <p className="mt-1 text-xs text-product-foreground-accent">
           Auto-detected: {LANGUAGE_OPTIONS.find((lang) => lang.code === detectedLanguage)?.name}
         </p>
+      )}
+      {touched?.language && errors?.language && (
+        <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
+          {errors?.language}
+        </div>
       )}
     </div>
   )

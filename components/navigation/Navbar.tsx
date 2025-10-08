@@ -4,7 +4,6 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import React, { useState } from "react"
 
-import Image from "next/image"
 import { FaRegCirclePlay } from "react-icons/fa6"
 import { FiHome, FiMail, FiX } from "react-icons/fi"
 import { GiHamburgerMenu } from "react-icons/gi"
@@ -80,14 +79,14 @@ const Navbar = () => {
     <nav className="w-full flex items-center justify-between px-4 sm:px-6 font-lora py-2 sm:py-3 bg-product-background shadow-lg border-b border-gray-100 fixed top-0 left-0 z-50">
       <div className="flex items-center gap-2 sm:gap-3">
         <Link href="/">
-          <Image
+          <img
             src="/logo.svg"
             alt="Quicktalog Logo"
             width={160}
             height={160}
             className="h-[7vh] w-auto rounded-full"
             style={{ width: "auto", height: "7vh" }}
-            priority
+            fetchPriority="high"
           />
         </Link>
       </div>
