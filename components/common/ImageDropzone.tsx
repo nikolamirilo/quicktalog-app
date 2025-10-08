@@ -5,7 +5,6 @@ import React, { useCallback } from "react"
 import { FiUploadCloud } from "react-icons/fi"
 import { IoClose } from "react-icons/io5"
 
-// ... keep all your existing helper functions exactly as they are ...
 const loadImage = (file: File): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
     const img = new Image()
@@ -66,7 +65,7 @@ const canvasToBlob = (canvas: HTMLCanvasElement, quality: number): Promise<Blob>
 const processImage = async (
   img: HTMLImageElement,
   maxDim: number,
-  targetSizeKB: number = 250,
+  targetSizeKB: number = 400,
   fileName: string
 ): Promise<File> => {
   const { width, height } = calculateDimensions(img.width, img.height, maxDim)
@@ -94,7 +93,7 @@ const processImage = async (
   ctx.drawImage(img, 0, 0, width, height)
 
   const targetSizeBytes = targetSizeKB * 1024
-  const maxSizeBytes = targetSizeBytes * 1.5
+  const maxSizeBytes = targetSizeKB * 1024 // Enforce strict 400KB limit
 
   let minQuality = 0.3
   let maxQuality = 0.98
@@ -106,10 +105,7 @@ const processImage = async (
   if (currentBlob.size <= targetSizeBytes) {
     bestBlob = currentBlob
     bestQuality = maxQuality
-  } else if (currentBlob.size <= maxSizeBytes) {
-    bestBlob = currentBlob
-    bestQuality = maxQuality
-
+  } else {
     let searchMin = minQuality
     let searchMax = maxQuality
 
@@ -127,28 +123,6 @@ const processImage = async (
           bestQuality = midQuality
         }
         searchMin = midQuality
-      } else if (testBlob.size <= maxSizeBytes) {
-        if (!bestBlob || testBlob.size < bestBlob.size) {
-          bestBlob = testBlob
-          bestQuality = midQuality
-        }
-        searchMax = midQuality
-      } else {
-        searchMax = midQuality
-      }
-    }
-  } else {
-    let searchMin = 0.1
-    let searchMax = maxQuality
-
-    for (let i = 0; i < 10; i++) {
-      const midQuality = (searchMin + searchMax) / 2
-      const testBlob = await canvasToBlob(canvas, midQuality)
-
-      if (testBlob.size <= maxSizeBytes) {
-        bestBlob = testBlob
-        bestQuality = midQuality
-        searchMin = midQuality
       } else {
         searchMax = midQuality
       }
@@ -158,6 +132,12 @@ const processImage = async (
   if (!bestBlob) {
     bestBlob = await canvasToBlob(canvas, 0.1)
     bestQuality = 0.1
+  }
+
+  if (bestBlob.size > maxSizeBytes) {
+    throw new Error(
+      `Processed image size (${Math.round(bestBlob.size / 1024)}KB) exceeds maximum allowed size of ${targetSizeKB}KB`
+    )
   }
 
   console.log(`Image processing results:
@@ -194,7 +174,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
   onUploadComplete,
   onError,
   maxDim = 1024,
-  targetSizeKB = 250,
+  targetSizeKB = 400,
   className = "",
   disabled = false,
 }) => {
@@ -324,7 +304,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
                 if (ready && !isUploading)
                   return (
                     <span translate="no" className="notranslate">
-                      Image (PNG, JPG, WebP, …)
+                      Image (PNG, JPG, WebP, …, max 400KB)
                     </span>
                   )
                 if (isUploading) return ""
