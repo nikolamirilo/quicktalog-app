@@ -44,8 +44,14 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   const { user } = useUser()
 
   const handleStepChange = (step: number) => {
-    setCurrentStep(step)
+    if (step === currentStep) return
+    const isValid = validateStep(currentStep)
+    if (!isValid) {
+      alert("Solve validation errors in order to proceed")
+      return
+    }
     setIsDirty(true)
+    setCurrentStep(step)
   }
 
   // Sidebar button styling function
@@ -57,20 +63,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 
   useEffect(() => {
     if (initialData) {
-      const services = initialData.services || {}
-      let transformedServices: ServicesFormData["services"] = []
-      if (typeof services === "object" && !Array.isArray(services)) {
-        transformedServices = Object.entries(services).map(([key, value]) => ({
-          order: value.order || 0,
-          name: key.replace(/-/g, " "),
-          layout: value.layout,
-          items: value.items,
-        }))
-      } else if (Array.isArray(services)) {
-        transformedServices = services
-      }
-
-      setFormData({ ...initialData, services: transformedServices })
+      setFormData(initialData)
     }
   }, [initialData])
 
@@ -295,7 +288,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   }
 
   const validateStep = (step: number): boolean => {
-    const result = validateStepHelper({ step, formData })
+    const result = validateStepHelper({ step, formData, tier: userData.pricing_plan })
     setErrors(result.errors)
     if (result.step2Error) setStep2Error(result.step2Error)
     else setStep2Error("")

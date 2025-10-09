@@ -16,6 +16,8 @@ export const tiers: PricingPlan[] = [
       custom_features: false,
       analytics: "Basic",
       ai_catalogue_generation: 0,
+      categories_per_catalogue: 3,
+      items_per_catalogue: 12,
     },
   },
   {
@@ -33,6 +35,8 @@ export const tiers: PricingPlan[] = [
       custom_features: false,
       analytics: "Basic",
       ai_catalogue_generation: 10,
+      categories_per_catalogue: 10,
+      items_per_catalogue: 50,
     },
   },
   {
@@ -50,6 +54,8 @@ export const tiers: PricingPlan[] = [
       custom_features: false,
       analytics: "Advanced",
       ai_catalogue_generation: 20,
+      categories_per_catalogue: 20,
+      items_per_catalogue: 100,
     },
   },
   {
@@ -67,6 +73,8 @@ export const tiers: PricingPlan[] = [
       custom_features: true,
       analytics: "Advanced",
       ai_catalogue_generation: 50,
+      categories_per_catalogue: "unlimited",
+      items_per_catalogue: "unlimited",
     },
   },
 ]
