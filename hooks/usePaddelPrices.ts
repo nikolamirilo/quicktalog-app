@@ -5,7 +5,9 @@ import { useEffect, useState } from "react"
 export type PaddlePrices = Record<string, string>
 
 function getLineItems(): PricePreviewParams["items"] {
-  const priceId = tiers.map((tier) => [tier.priceId.month, tier.priceId.year])
+  const priceId = tiers
+    .filter((item) => item?.type == "standard")
+    .map((tier) => [tier.priceId.month, tier.priceId.year])
   return priceId.flat().map((priceId) => ({ priceId, quantity: 1 }))
 }
 

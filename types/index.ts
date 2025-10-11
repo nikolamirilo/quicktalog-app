@@ -155,7 +155,8 @@ export type Usage = {
 
 export type UserData = User & {
   usage: Usage
-  pricing_plan: PricingPlan
+  currentPlan: PricingPlan
+  nextPlan: PricingPlan
 }
 export interface LanguageOption {
   code: string
@@ -179,6 +180,7 @@ export interface OcrState {
 export type PricingPlan = {
   id: number
   name: string
+  type: string
   priceId: {
     month: string
     year: string
@@ -197,7 +199,6 @@ export type PricingPlan = {
     categories_per_catalogue?: number | "unlimited"
     items_per_catalogue?: number | "unlimited"
   }
-  next_plan?: string
   billing_period?: "month" | "year"
 }
 

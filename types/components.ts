@@ -147,6 +147,8 @@ export type Step2CategoriesProps = {
   handleReorderCategories?: (newOrder: ServicesCategory[]) => void
   expandedCategory: number | null
   setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>
+  setShowLimitsModal: React.Dispatch<React.SetStateAction<{ isOpen: boolean; type: string }>>
+  tier: PricingPlan
 }
 
 export type Step3ItemsProps = {
@@ -166,6 +168,8 @@ export type Step3ItemsProps = {
   expandedCategory: number | null
   setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>
   expandedItem: { categoryIndex: number; itemIndex: number } | null
+  tier: PricingPlan
+  setShowLimitsModal: React.Dispatch<React.SetStateAction<{ isOpen: boolean; type: string }>>
   setExpandedItem: React.Dispatch<
     React.SetStateAction<{ categoryIndex: number; itemIndex: number } | null>
   >

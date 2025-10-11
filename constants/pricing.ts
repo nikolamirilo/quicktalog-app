@@ -4,6 +4,7 @@ export const tiers: PricingPlan[] = [
   {
     id: 0,
     name: "Starter",
+    type: "standard",
     priceId: { month: "pri_01k27ajepm199twd1x77rpwdrq", year: "pri_01k27ajepm199twd1x77rpwdrq" },
     description: "Perfect for individuals and small businesses getting started.",
     features: {
@@ -23,6 +24,7 @@ export const tiers: PricingPlan[] = [
   {
     id: 1,
     name: "Pro",
+    type: "standard",
     priceId: { month: "pri_01k277hdtkkb1xdbz6karkqek9", year: "pri_01k277q6ftcjfzy9v7xhe6ckdt" },
     description: "Ideal for growing businesses with multiple services.",
     features: {
@@ -42,6 +44,7 @@ export const tiers: PricingPlan[] = [
   {
     id: 2,
     name: "Growth",
+    type: "standard",
     priceId: { month: "pri_01k277kkzqz4ef7nc786ssnw6x", year: "pri_01k277r7p899gfn5nn3ne87pww" },
     description: "Built for teams that need advanced features and analytics.",
     features: {
@@ -61,6 +64,7 @@ export const tiers: PricingPlan[] = [
   {
     id: 3,
     name: "Premium",
+    type: "standard",
     priceId: { month: "pri_01k277mzp3tgy7n5wvrsa5v0sx", year: "pri_01k277see7qtyq30kc5g3vyqy9" },
     description: "Enterprise-grade solution with unlimited possibilities.",
     features: {
@@ -73,6 +77,26 @@ export const tiers: PricingPlan[] = [
       custom_features: true,
       analytics: "Advanced",
       ai_catalogue_generation: 50,
+      categories_per_catalogue: "unlimited",
+      items_per_catalogue: "unlimited",
+    },
+  },
+  {
+    id: 4,
+    name: "Quicktalog Admin",
+    type: "custom",
+    priceId: { month: "cstm_000000000000000001", year: "cstm_000000000000000001" },
+    description: "Custom plan tailored to your specific business needs.",
+    features: {
+      support: "Priority Support (Email, Chat, Meeting)",
+      catalogues: 1000,
+      newsletter: true,
+      customization: "Advanced",
+      ocr_ai_import: 10000,
+      traffic_limit: 32000,
+      custom_features: true,
+      analytics: "Advanced",
+      ai_catalogue_generation: 10000,
       categories_per_catalogue: "unlimited",
       items_per_catalogue: "unlimited",
     },

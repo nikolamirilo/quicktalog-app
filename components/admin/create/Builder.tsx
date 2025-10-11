@@ -1,7 +1,5 @@
 "use client"
-
 import { sendNewCatalogueEmail } from "@/actions/email"
-import { getUserData } from "@/actions/users"
 import EditFormMobileTabs from "@/components/admin/create/components/EditFormMobileTabs"
 import EditFormSidebar from "@/components/admin/create/components/EditFormSidebar"
 import Step1General from "@/components/admin/create/components/steps/Step1General"
@@ -19,6 +17,7 @@ import { revalidateCataloguesData } from "@/helpers/server"
 import { NavigationGuard } from "@/hooks/useBeforeUnload"
 import { ContactInfo, ServicesFormData, ServicesItem } from "@/types"
 import { BuilderProps } from "@/types/components"
+import { LimitType } from "@/types/enums"
 import { useUser } from "@clerk/nextjs"
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react"
 import React, { useEffect, useState } from "react"
@@ -31,7 +30,10 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const [showLimitsModal, setShowLimitsModal] = useState(false)
+  const [showLimitsModal, setShowLimitsModal] = useState<{
+    isOpen: boolean
+    type: LimitType
+  }>({ isOpen: false, type: "catalogue" })
   const [serviceCatalogueUrl, setServiceCatalogueUrl] = useState("")
   const [imagePreviews, setImagePreviews] = useState<{ [key: string]: string }>({})
   const [isUploading, setIsUploading] = useState(false)
@@ -68,11 +70,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   }, [initialData])
 
   useEffect(() => {
-    if (
-      userData.pricing_plan.features.catalogues <= userData.usage.catalogues &&
-      type == "create"
-    ) {
-      setShowLimitsModal(true)
+    if (userData.currentPlan.features.catalogues <= userData.usage.catalogues && type == "create") {
+      setShowLimitsModal({ isOpen: true, type: "catalogue" })
     }
   }, [])
 
@@ -173,7 +172,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
     const newItemIndex = updatedServices[categoryIndex].items.length
     updatedServices[categoryIndex].items = [
       ...updatedServices[categoryIndex].items,
-      { name: "", description: "", price: 0, image: "" },
+      { name: "", description: "", price: undefined, image: "" },
     ]
     setFormData((prev) => ({ ...prev, services: updatedServices }))
     setExpandedItem({ categoryIndex, itemIndex: newItemIndex })
@@ -288,7 +287,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   }
 
   const validateStep = (step: number): boolean => {
-    const result = validateStepHelper({ step, formData, tier: userData.pricing_plan })
+    const result = validateStepHelper({ step, formData, tier: userData.currentPlan })
     setErrors(result.errors)
     if (result.step2Error) setStep2Error(result.step2Error)
     else setStep2Error("")
@@ -332,13 +331,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 
     try {
       if (type === "create") {
-        const currentUserData = await getUserData()
-
-        if (
-          !currentUserData ||
-          currentUserData.usage.catalogues >= currentUserData.pricing_plan.features.catalogues
-        ) {
-          setShowLimitsModal(true)
+        if (!userData || userData.usage.catalogues >= userData.currentPlan.features.catalogues) {
+          setShowLimitsModal({ isOpen: true, type: "catalogue" })
           setIsSubmitting(false)
           return
         }
@@ -428,6 +422,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
             handleReorderCategories={handleReorderCategories}
             expandedCategory={expandedCategory}
             setExpandedCategory={setExpandedCategory}
+            tier={userData.currentPlan}
+            setShowLimitsModal={setShowLimitsModal}
           />
         )
       case 3:
@@ -445,6 +441,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
             setExpandedCategory={setExpandedCategory}
             expandedItem={expandedItem}
             setExpandedItem={setExpandedItem}
+            tier={userData.currentPlan}
+            setShowLimitsModal={setShowLimitsModal}
           />
         )
       case 4:
@@ -599,11 +597,13 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
               />
             ) : null}
 
-            {showLimitsModal && (
+            {showLimitsModal.isOpen && (
               <LimitsModal
-                type="catalogue"
-                currentPlan={userData?.pricing_plan?.name}
-                requiredPlan={userData?.pricing_plan?.next_plan}
+                isOpen={showLimitsModal.isOpen}
+                onClose={() => setShowLimitsModal({ isOpen: false, type: "catalogue" })}
+                type={showLimitsModal.type}
+                currentPlan={userData?.currentPlan}
+                requiredPlan={userData?.nextPlan}
               />
             )}
           </Card>

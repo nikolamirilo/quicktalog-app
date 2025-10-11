@@ -27,7 +27,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Find pricing plan
     const pricingPlan = tiers.find((tier) => Object.values(tier.priceId).includes(user.plan_id))
-    // Find next plan only if pricingPlan exists
     const nextPlan = pricingPlan ? tiers.find((tier) => tier.id === pricingPlan.id + 1) : null
     const billingPeriod = Object.entries(pricingPlan.priceId).find(
       ([_, id]) => id === user.plan_id
@@ -96,15 +95,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { cookie_preferences, created_at, customer_id, plan_id, ...adjustedUser } = user
     const userData: UserData = {
       ...adjustedUser,
-      pricing_plan: {
-        id: pricingPlan.id,
-        name: pricingPlan?.name || null,
-        description: pricingPlan?.description || null,
-        priceId: pricingPlan.priceId || null,
-        features: pricingPlan?.features || null,
-        next_plan: nextPlan?.name || "Enterprise",
-        billing_period: billingPeriod || null,
-      },
+      currentPlan: { ...pricingPlan, billing_period: billingPeriod || "year" },
+      nextPlan: nextPlan || tiers[1],
       usage: {
         traffic,
         ocr: ocrUsage?.count ?? 0,

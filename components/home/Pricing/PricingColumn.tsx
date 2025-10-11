@@ -97,6 +97,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
     setCurrentFeature(feature)
     setIsInfoModalOpen(true)
   }
+  const filteredTiers = tiers.filter((item) => item?.type === "standard")
 
   return (
     <div
@@ -143,7 +144,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
           className="w-full py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-[1.02]"
           onClick={() => {
             if (user) {
-              const matchedTier = tiers.find((tier) =>
+              const matchedTier = filteredTiers.find((tier) =>
                 Object.values(tier.priceId).includes(user.plan_id)
               )
               if (tier.name === matchedTier.name) {
@@ -163,7 +164,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
           }}>
           {user
             ? (() => {
-                const currentTier = tiers.find((t) =>
+                const currentTier = filteredTiers.find((t) =>
                   Object.values(t.priceId).includes(user.plan_id)
                 )
 

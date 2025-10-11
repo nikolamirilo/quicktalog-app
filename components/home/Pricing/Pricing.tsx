@@ -70,6 +70,9 @@ const Pricing: React.FC = () => {
     fetchUserData()
   }, [clerkUser?.id])
 
+  const filteredTiers = tiers.filter((item) => item?.type === "standard")
+  console.log(filteredTiers)
+
   return (
     <div className="space-y-6 mx-4">
       {/* Segmented toggle */}
@@ -112,14 +115,15 @@ const Pricing: React.FC = () => {
         initial="offscreen"
         whileInView="onscreen"
         viewport={{ once: true }}>
-        {tiers.map((tier, index) => (
+        {filteredTiers.map((tier, index) => (
           <motion.div key={tier.name} variants={childVariants}>
             <PricingColumn
               tier={tier}
               highlight={
                 user
                   ? index ===
-                    tiers.find((tier) => Object.values(tier.priceId).includes(user.plan_id)).id
+                    filteredTiers.find((tier) => Object.values(tier.priceId).includes(user.plan_id))
+                      .id
                   : index === 2
               }
               user={user}

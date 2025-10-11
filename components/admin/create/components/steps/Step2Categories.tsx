@@ -20,6 +20,8 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
   handleReorderCategories,
   expandedCategory,
   setExpandedCategory,
+  setShowLimitsModal,
+  tier,
 }) => {
   const [currentCategoryIndex, setCurrentCategoryIndex] = React.useState(0)
   const [isCategoryDeletionConfirmed, setIsCategoryDeletionConfirmed] = React.useState(false)
@@ -265,7 +267,16 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
 
         <Button
           type="button"
-          onClick={handleAddCategory}
+          onClick={() => {
+            if (
+              typeof tier.features.categories_per_catalogue == "number" &&
+              formData.services.length >= tier.features.categories_per_catalogue
+            ) {
+              setShowLimitsModal({ isOpen: true, type: "categories" })
+            } else {
+              handleAddCategory()
+            }
+          }}
           className="px-6 py-3 text-base text-wrap font-medium bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
           <Plus className="h-5 w-5" /> New Category
         </Button>

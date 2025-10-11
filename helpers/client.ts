@@ -302,13 +302,14 @@ export const validateStepHelper = (options: StepValidationOptions): ValidationRe
   if (step === 2) {
     if (formData.services.length === 0) {
       step2Error = "Please add at least one service category."
-    } else if (
-      typeof tier.features.categories_per_catalogue == "number" &&
-      formData.services.length > tier.features.categories_per_catalogue
-    ) {
-      step2Error =
-        "Maxiumum number of categories for your tier is " + tier.features.categories_per_catalogue
-    } else {
+    }
+    // else if (
+    //   typeof tier.features.categories_per_catalogue == "number" &&
+    //   formData.services.length > tier.features.categories_per_catalogue
+    // ) {
+    //   step2Error = `You can create up to ${tier.features.categories_per_catalogue} categories on your current plan`
+    // }
+    else {
       const seen = new Set<string>()
 
       for (const category of formData.services) {
@@ -353,15 +354,15 @@ export const validateStepHelper = (options: StepValidationOptions): ValidationRe
 
       if (step3Error) break
     }
-    const totalItems = formData.services.reduce((sum, category) => {
-      return sum + category.items.length
-    }, 0)
-    if (
-      typeof tier.features.items_per_catalogue == "number" &&
-      totalItems > tier.features.items_per_catalogue
-    ) {
-      step3Error = "Maxiumum number of items for your tier is " + tier.features.items_per_catalogue
-    }
+    // const totalItems = formData.services.reduce((sum, category) => {
+    //   return sum + category.items.length
+    // }, 0)
+    // if (
+    //   typeof tier.features.items_per_catalogue == "number" &&
+    //   totalItems > tier.features.items_per_catalogue
+    // ) {
+    //   step3Error = `You can add up to ${tier.features.items_per_catalogue} items on your current plan.`
+    // }
   }
 
   const isValid = Object.keys(errors).length === 0 && !step2Error && !step3Error

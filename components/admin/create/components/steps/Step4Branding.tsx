@@ -38,8 +38,8 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
   errors,
   setErrors,
 }) => {
-  const isFreePlan = userData?.pricing_plan.id === 0
-  const isProPlan = userData?.pricing_plan.id === 1
+  const isFreePlan = userData?.currentPlan.id === 0
+  const isProPlan = userData?.currentPlan.id === 1
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false)
   const [currentField, setCurrentField] = useState("")
 

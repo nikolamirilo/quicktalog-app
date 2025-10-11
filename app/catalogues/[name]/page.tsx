@@ -1,4 +1,3 @@
-//@ts-nocheck
 import LimitsModal from "@/components/modals/LimitsModal"
 import CatalogueFooter from "@/components/navigation/CatalogueFooter"
 import CatalogueHeader from "@/components/navigation/CatalogueHeader"
@@ -230,11 +229,11 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
         </div>
       )
     } else {
-      return <LimitsModal type="traffic" />
+      return <LimitsModal type="traffic" isOpen={true} />
     }
   } catch (error) {
     console.warn("Service catalogue page error:", error)
-    return <LimitsModal type="traffic" />
+    return <LimitsModal type="traffic" isOpen={true} />
   }
 }
 

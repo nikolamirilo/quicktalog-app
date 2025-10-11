@@ -27,6 +27,8 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
   setExpandedCategory,
   expandedItem,
   setExpandedItem,
+  setShowLimitsModal,
+  tier,
 }) => {
   const [editableCategoryIndex, setEditableCategoryIndex] = React.useState<number | null>(null)
   const [isInfoModalOpen, setIsInfoModalOpen] = React.useState(false)
@@ -174,8 +176,7 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
                                 id={`item-price-${categoryIndex}-${itemIndex}`}
                                 type="number"
                                 step="0.01"
-                                placeholder="0"
-                                value={item.price || 0}
+                                value={item.price || ""}
                                 onChange={(e) =>
                                   handleItemChange(
                                     categoryIndex,
@@ -257,7 +258,19 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 
                 <Button
                   type="button"
-                  onClick={() => handleAddItem(categoryIndex)}
+                  onClick={() => {
+                    const totalItems = formData.services.reduce((sum, category) => {
+                      return sum + category.items.length
+                    }, 0)
+                    if (
+                      typeof tier.features.items_per_catalogue == "number" &&
+                      totalItems >= tier.features.items_per_catalogue
+                    ) {
+                      setShowLimitsModal({ isOpen: true, type: "items" })
+                    } else {
+                      handleAddItem(categoryIndex)
+                    }
+                  }}
                   disabled={isUploading}
                   className="px-6 py-3 text-base text-wrap font-medium bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300">
                   <Plus className="h-5 w-5" /> New Item

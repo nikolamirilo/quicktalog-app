@@ -1,7 +1,7 @@
 import { getUserData } from "@/actions/users"
 import Builder from "@/components/admin/create/Builder"
 import Navbar from "@/components/navigation/Navbar"
-import { ContactInfo, ServicesFormData } from "@/types"
+import { ContactInfo, ServicesFormData, UserData } from "@/types"
 import { createClient } from "@/utils/supabase/server"
 
 export default async function EditServicesPage({ params }: { params: Promise<{ name: string }> }) {
@@ -44,7 +44,7 @@ export default async function EditServicesPage({ params }: { params: Promise<{ n
     subtitle: data.subtitle || "",
     services,
   }
-  const userData = await getUserData()
+  const userData: UserData = await getUserData()
   return (
     <div className="product font-lora min-h-screen">
       <Navbar />
