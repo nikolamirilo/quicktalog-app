@@ -26,7 +26,7 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
     title: "",
     currency: "",
     subtitle: "",
-    language: "",
+    language: "eng",
   })
   const [shouldGenerateImages, setShouldGenerateImages] = useState<boolean>(false)
   const [prompt, setPrompt] = useState("")

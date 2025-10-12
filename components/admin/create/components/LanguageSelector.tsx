@@ -19,17 +19,17 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 }) => {
   return (
     <div className="mb-6 w-full max-w-md">
-      <label className="block text-sm font-medium text-product-foreground mb-2">
+      <label className="block text-sm font-medium !text-product-foreground mb-2">
         {type === "ai" ? "Select Catalogue Language" : "Select Language of Images"}
         <span className="text-red-500 ml-1">*</span>
       </label>
       <Select value={selectedLanguage} onValueChange={(e) => onLanguageChange(e)}>
-        <SelectTrigger>
+        <SelectTrigger className="!text-product-foreground">
           <SelectValue placeholder="Select language" />
         </SelectTrigger>
         <SelectContent>
           {LANGUAGE_OPTIONS.map((lang) => (
-            <SelectItem key={lang.code} value={lang.name} className="cursor-pointer">
+            <SelectItem key={lang.code} value={lang.code} className="cursor-pointer">
               {lang.flag} {lang.name}
             </SelectItem>
           ))}

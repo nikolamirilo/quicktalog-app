@@ -95,14 +95,12 @@ export const insertCatalogueData = async (
     throw new Error(`Failed to insert catalogue: ${error.message}`)
   }
 
-  // Insert prompt data
   const { error: promptError } = await supabase
     .from("prompts")
     .insert([{ user_id: userId, catalogue: slug }])
 
   if (promptError) {
     console.warn("Failed to insert prompt data:", promptError.message)
-    // Don't fail the entire request for prompt insertion failure
   }
 
   return slug
