@@ -21,7 +21,7 @@ export type NavbarProps = {
   itemData?: unknown
 }
 
-export type ServicesItem = {
+export type CategoryItem = {
   name: string
   description: string
   price: number
@@ -40,11 +40,11 @@ export type Layout = Theme
 export type ThemeVariant = (typeof themes)[number]["key"]
 export type LayoutVariant = (typeof layouts)[number]["key"]
 
-export type ServicesCategory = {
+export type CatalogueCategory = {
   order: number
   name: string
   layout: LayoutVariant
-  items: ServicesItem[]
+  items: CategoryItem[]
 }
 
 export type OverallAnalytics = {
@@ -65,7 +65,7 @@ export type Catalogue = {
   currency: string
   contact?: ContactInfo[]
   subtitle?: string
-  services: ServicesCategory[]
+  services: CatalogueCategory[]
   partners?: Partner[]
   legal?: Legal
   configuration?: Configuration
@@ -155,7 +155,8 @@ export type Usage = {
 
 export type UserData = User & {
   usage: Usage
-  pricing_plan: PricingPlan
+  currentPlan: PricingPlan
+  nextPlan: PricingPlan
 }
 export interface LanguageOption {
   code: string
@@ -179,6 +180,7 @@ export interface OcrState {
 export type PricingPlan = {
   id: number
   name: string
+  type: string
   priceId: {
     month: string
     year: string
@@ -194,8 +196,9 @@ export type PricingPlan = {
     custom_features: boolean
     analytics: string
     ai_catalogue_generation: number
+    categories_per_catalogue?: number | "unlimited"
+    items_per_catalogue?: number | "unlimited"
   }
-  next_plan?: string
   billing_period?: "month" | "year"
 }
 

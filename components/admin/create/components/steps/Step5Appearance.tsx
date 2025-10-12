@@ -1,7 +1,7 @@
 "use client"
 import BrowserFrame from "@/components/common/BrowserFrame"
 import InformModal from "@/components/modals/InformModal"
-import ServicesSection from "@/components/sections/ServicesSection"
+import CatalogueContent from "@/components/sections/CatalogueContent"
 import { Card } from "@/components/ui/card"
 import { themes } from "@/constants"
 import { useMainContext } from "@/context/MainContext"
@@ -176,8 +176,8 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({ formData, setFormData
                       <section
                         className={`flex-1 w-full max-w-7xl mx-auto pt-8 pb-8 min-h-[60vh] ${isMobileView ? "px-0 sm:px-0 md:px-0 lg:px-0" : "lg:px-8 sm:pt-12 md:pt-16"}`}
                         aria-label="Services and items">
-                        <ServicesSection
-                          servicesData={item.services}
+                        <CatalogueContent
+                          data={item.services}
                           currency={item.currency}
                           type="item"
                           theme={item.theme}

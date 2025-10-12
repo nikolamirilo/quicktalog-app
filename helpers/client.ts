@@ -1,5 +1,12 @@
-import { layouts } from "@/constants"
-import { Catalogue, ContactItem, FooterData, HeaderData, ServicesFormData } from "@/types"
+import { tiers } from "@/constants/pricing"
+import {
+  Catalogue,
+  ContactItem,
+  FooterData,
+  HeaderData,
+  PricingPlan,
+  ServicesFormData,
+} from "@/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -266,11 +273,11 @@ interface StepValidationOptions {
   requiredFields?: {
     step1?: Array<keyof Step1Validation>
   }
+  tier?: PricingPlan
 }
 
 export const validateStepHelper = (options: StepValidationOptions): ValidationResult => {
-  const ACCEPTED_LAYOUTS = layouts.map((l) => l.key)
-  const { step, formData, requiredFields } = options
+  const { step, formData, requiredFields, tier = tiers[0] } = options
   const errors: { [key: string]: string } = {}
   let step2Error = ""
   let step3Error = ""
@@ -295,17 +302,19 @@ export const validateStepHelper = (options: StepValidationOptions): ValidationRe
   if (step === 2) {
     if (formData.services.length === 0) {
       step2Error = "Please add at least one service category."
-    } else {
+    }
+    // else if (
+    //   typeof tier.features.categories_per_catalogue == "number" &&
+    //   formData.services.length > tier.features.categories_per_catalogue
+    // ) {
+    //   step2Error = `You can create up to ${tier.features.categories_per_catalogue} categories on your current plan`
+    // }
+    else {
       const seen = new Set<string>()
 
       for (const category of formData.services) {
         if (!category.name?.trim()) {
           step2Error = "All service categories must have a name and layout."
-          break
-        }
-
-        if (!category.layout || !ACCEPTED_LAYOUTS.includes(category?.layout)) {
-          step2Error = "All service categories must have a valid layout."
           break
         }
 
@@ -345,6 +354,15 @@ export const validateStepHelper = (options: StepValidationOptions): ValidationRe
 
       if (step3Error) break
     }
+    // const totalItems = formData.services.reduce((sum, category) => {
+    //   return sum + category.items.length
+    // }, 0)
+    // if (
+    //   typeof tier.features.items_per_catalogue == "number" &&
+    //   totalItems > tier.features.items_per_catalogue
+    // ) {
+    //   step3Error = `You can add up to ${tier.features.items_per_catalogue} items on your current plan.`
+    // }
   }
 
   const isValid = Object.keys(errors).length === 0 && !step2Error && !step3Error

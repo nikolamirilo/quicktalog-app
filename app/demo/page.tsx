@@ -1,9 +1,9 @@
 // @ts-nocheck
 "use client"
-import ThemeSwiper from "@/components/common/ThemeSwiper"
+import AppearanceOptions from "@/components/common/AppearanceOptions"
 import Footer from "@/components/navigation/Footer"
 import Navbar from "@/components/navigation/Navbar"
-import ServicesSection from "@/components/sections/ServicesSection"
+import CatalogueContent from "@/components/sections/CatalogueContent"
 import { useMainContext } from "@/context/MainContext"
 import data from "../../showcase.json"
 
@@ -25,7 +25,7 @@ const page: React.FC = () => {
         <div
           className={`min-h-screen text-text bg-background font-lora ${theme ? theme : "theme-luxury"}`}>
           <main>
-            <section className="w-full bg-background pt-36 px-4 text-center flex flex-col items-center">
+            <section className="w-full pt-36 px-4 text-center flex flex-col items-center bg-transparent">
               <h1 className="text-4xl sm:text-5xl md:text-6xl max-w-[800px] font-lora font-semibold text-foreground tracking-tight mb-4">
                 Welcome to Quicktalog Demo!
               </h1>
@@ -38,18 +38,18 @@ const page: React.FC = () => {
             </section>
 
             <div className="flex flex-col justify-center items-center w-full mt-6">
-              <ThemeSwiper />
+              <AppearanceOptions />
             </div>
 
             {data && (
-              <ServicesSection
-                servicesData={data.services}
+              <CatalogueContent
+                data={data.services}
                 currency={data.currency}
                 type="demo"
                 theme={theme}
               />
             )}
-            
+
             {/* Fixed Bottom Create Catalogue CTA */}
             <div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-product-background border-t border-product-border">
               <div className="max-w-4xl mx-auto">
@@ -62,21 +62,19 @@ const page: React.FC = () => {
                   <div className="flex gap-2">
                     <a
                       href="/auth?mode=signup"
-                      className="bg-product-primary text-product-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary-accent transition-colors duration-200 shadow-product-shadow"
-                    >
+                      className="bg-product-primary text-product-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary-accent transition-colors duration-200 shadow-product-shadow">
                       Get Started
                     </a>
                     <a
                       href="/pricing"
-                      className="text-product-secondary border border-product-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary hover:text-product-foreground transition-all duration-200"
-                    >
+                      className="text-product-secondary border border-product-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary hover:text-product-foreground transition-all duration-200">
                       Pricing
                     </a>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <Footer />
           </main>
         </div>

@@ -1,4 +1,4 @@
-import { ServicesCategory } from "@/types"
+import { CatalogueCategory } from "@/types"
 import {
   chatCompletion,
   generatePromptForCategoryDetection,
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     console.log("📥 All category responses received! Count:", categoryResponses.length)
 
     console.log("\n🔧 === STEP 3: RESPONSE PROCESSING & VALIDATION ===")
-    const items: ServicesCategory[] = []
+    const items: CatalogueCategory[] = []
 
     for (let i = 0; i < categoryResponses.length; i++) {
       const response = categoryResponses[i]
@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     console.log("🎯 Reordering categories for optimal display...")
 
     // Initialize orderedItems with original items as fallback
-    let orderedItems: ServicesCategory[] = items
+    let orderedItems: CatalogueCategory[] = items
 
     const orderingPrompt = `You are an expert in organizing service/menu categories for optimal customer experience.
 

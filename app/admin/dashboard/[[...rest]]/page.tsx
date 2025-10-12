@@ -26,18 +26,22 @@ export default async function page() {
     )
   }
 
-  const { pricing_plan, usage, ...user } = userData
+  const { currentPlan, usage, ...user } = userData
   const areLimitesReached: AreLimitesReached = {
-    catalogues: usage.catalogues >= pricing_plan.features.catalogues,
-    ocr: usage.ocr >= pricing_plan.features.ocr_ai_import || usage.catalogues >= pricing_plan.features.catalogues,
-    prompts: usage.prompts >= pricing_plan.features.ai_catalogue_generation || usage.catalogues >= pricing_plan.features.catalogues,
+    catalogues: usage.catalogues >= currentPlan.features.catalogues,
+    ocr:
+      usage.ocr >= currentPlan.features.ocr_ai_import ||
+      usage.catalogues >= currentPlan.features.catalogues,
+    prompts:
+      usage.prompts >= currentPlan.features.ai_catalogue_generation ||
+      usage.catalogues >= currentPlan.features.catalogues,
   }
 
   return (
     <div className="product font-lora min-h-screen">
       <Navbar />
-      <Dashboard user={user} pricingPlan={pricing_plan} usage={usage} />
-      <FloatingActionMenu planId={pricing_plan.id} areLimitsReached={areLimitesReached} />
+      <Dashboard user={user} pricingPlan={currentPlan} usage={usage} />
+      <FloatingActionMenu planId={currentPlan.id} areLimitsReached={areLimitesReached} />
       <Footer />
     </div>
   )

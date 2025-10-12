@@ -26,7 +26,7 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
     title: "",
     currency: "",
     subtitle: "",
-    language: "",
+    language: "eng",
   })
   const [shouldGenerateImages, setShouldGenerateImages] = useState<boolean>(false)
   const [prompt, setPrompt] = useState("")
@@ -72,8 +72,8 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
     setCatalogueUrl("")
     try {
       if (
-        userData.usage.prompts >= userData.pricing_plan.features.ai_catalogue_generation ||
-        userData.usage.catalogues >= userData.pricing_plan.features.catalogues
+        userData.usage.prompts >= userData.currentPlan.features.ai_catalogue_generation ||
+        userData.usage.catalogues >= userData.currentPlan.features.catalogues
       ) {
         setShowLimitsModal(true)
         setIsSubmitting(false)
@@ -189,8 +189,9 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
       {showLimitsModal && (
         <LimitsModal
           type="ai"
-          currentPlan={userData?.pricing_plan?.name}
-          requiredPlan={userData?.pricing_plan?.next_plan}
+          isOpen={showLimitsModal}
+          currentPlan={userData?.currentPlan}
+          requiredPlan={userData?.nextPlan}
         />
       )}
     </div>

@@ -273,7 +273,6 @@ const OcrReader = ({ formData, setServiceCatalogueUrl, setShowSuccessModal }) =>
                       Image {index + 1}
                     </p>
 
-                    {/* Image preview */}
                     <img
                       src={OCRImageData.originalUrl}
                       alt={`Content ${index + 1}`}

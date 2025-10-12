@@ -50,7 +50,7 @@ const MonthlyUsage = ({ data, pricingPlan }: { data: Usage; pricingPlan: Pricing
   const charts = [trafficUsage, cataloguesUsage, aiPromptsUsage, ocrUsage]
 
   return (
-    <div className="max-w-6xl space-y-8 bg-gradient-to-br from-product-background to-hero-product-background p-6 rounded-3xl">
+    <div className="max-w-6xl space-y-8 bg-gradient-to-br from-product-background to-hero-product-background  rounded-3xl">
       {/* Header Section */}
       <div className="space-y-4">
         <h2

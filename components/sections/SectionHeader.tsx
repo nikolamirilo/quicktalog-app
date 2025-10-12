@@ -54,7 +54,6 @@ const SectionHeader = ({
         </span>
       </span>
 
-      {/* Optimized icon container */}
       <div className="relative z-10 flex items-center">
         <div
           className="w-7 h-7 bg-section-header-accent/10 rounded-full flex items-center justify-center

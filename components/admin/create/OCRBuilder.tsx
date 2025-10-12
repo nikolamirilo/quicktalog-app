@@ -22,7 +22,7 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
     title: "",
     currency: "",
     subtitle: "",
-    language: "",
+    language: "eng",
   })
   const [shouldGenerateImages, setShouldGenerateImages] = useState<boolean>(false)
   console.log(shouldGenerateImages)
@@ -81,8 +81,8 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 
     try {
       if (
-        userData.usage.prompts >= userData.pricing_plan.features.ai_catalogue_generation ||
-        userData.usage.catalogues >= userData.pricing_plan.features.catalogues
+        userData.usage.prompts >= userData.currentPlan.features.ai_catalogue_generation ||
+        userData.usage.catalogues >= userData.currentPlan.features.catalogues
       ) {
         setShowLimitsModal(true)
         setIsSubmitting(false)
@@ -188,8 +188,9 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
       {showLimitsModal && (
         <LimitsModal
           type="ocr"
-          currentPlan={userData?.pricing_plan?.name}
-          requiredPlan={userData?.pricing_plan?.next_plan}
+          isOpen={showLimitsModal}
+          currentPlan={userData?.currentPlan}
+          requiredPlan={userData?.nextPlan}
         />
       )}
     </div>

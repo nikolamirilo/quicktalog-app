@@ -41,6 +41,13 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
         text: `${features.catalogues} ${features.catalogues > 1 ? "catalogues" : "catalogue"}`,
         type: "catalogues",
       },
+      {
+        text:
+          tier.name == "Premium"
+            ? "Unlimited categories & items"
+            : `Up to ${features.categories_per_catalogue} categories & ${features.items_per_catalogue} items`,
+        type: "items",
+      },
       { text: `${features.analytics} analytics`, type: "analytics" },
       { text: `${features.traffic_limit.toLocaleString()} traffic limit`, type: "traffic-limit" },
       { text: `${features.customization} customization`, type: "customization" },
@@ -80,6 +87,8 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
         "Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
       "custom-features":
         "Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
+      items:
+        "The total number of categories and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
     }
     return explanations[feature] || "Information about this feature."
   }
@@ -88,6 +97,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
     setCurrentFeature(feature)
     setIsInfoModalOpen(true)
   }
+  const filteredTiers = tiers.filter((item) => item?.type === "standard")
 
   return (
     <div
@@ -134,7 +144,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
           className="w-full py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-[1.02]"
           onClick={() => {
             if (user) {
-              const matchedTier = tiers.find((tier) =>
+              const matchedTier = filteredTiers.find((tier) =>
                 Object.values(tier.priceId).includes(user.plan_id)
               )
               if (tier.name === matchedTier.name) {
@@ -154,7 +164,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
           }}>
           {user
             ? (() => {
-                const currentTier = tiers.find((t) =>
+                const currentTier = filteredTiers.find((t) =>
                   Object.values(t.priceId).includes(user.plan_id)
                 )
 

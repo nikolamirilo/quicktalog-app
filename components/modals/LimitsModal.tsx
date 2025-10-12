@@ -1,30 +1,184 @@
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { tiers } from "@/constants/pricing"
+import { PricingPlan } from "@/types"
 import { LimitType } from "@/types/enums"
-import { ArrowRight, Crown, Lock } from "lucide-react"
+import { ArrowRight, FolderTree, Layers, Lock, Sparkles, TrendingUp, Zap } from "lucide-react"
 import Link from "next/link"
 import { IoSearch } from "react-icons/io5"
 import { Button } from "../ui/button"
 
-const LimitsModal = ({
-  type,
-  currentPlan = "Starter",
-  requiredPlan = "Pro",
-  onClose,
-}: {
+interface LimitsModalProps {
+  isOpen: boolean
   type: LimitType
-  currentPlan?: string
-  requiredPlan?: string
-  onClose?: () => void | undefined
-}) => {
+  currentPlan?: PricingPlan
+  requiredPlan?: PricingPlan
+  onClose?: () => void
+}
+
+const formatLimit = (limit: number | "unlimited" | undefined) => {
+  if (limit === "unlimited") return "Unlimited"
+  if (limit === undefined) return "N/A"
+  return limit.toLocaleString()
+}
+
+const getLimitContent = (
+  type: LimitType,
+  currentPlan?: PricingPlan,
+  requiredPlan?: PricingPlan
+) => {
+  const getCurrentLimit = () => {
+    switch (type) {
+      case "ai":
+        return currentPlan.features.ai_catalogue_generation
+      case "catalogue":
+        return currentPlan.features.catalogues
+      case "ocr":
+        return currentPlan.features.ocr_ai_import
+      case "items":
+        return currentPlan.features.items_per_catalogue
+      case "categories":
+        return currentPlan.features.categories_per_catalogue
+      default:
+        return undefined
+    }
+  }
+
+  const getNextLimit = () => {
+    switch (type) {
+      case "ai":
+        return requiredPlan.features?.ai_catalogue_generation
+      case "catalogue":
+        return requiredPlan.features?.catalogues
+      case "ocr":
+        return requiredPlan.features?.ocr_ai_import
+      case "items":
+        return requiredPlan.features?.items_per_catalogue
+      case "categories":
+        return requiredPlan.features?.categories_per_catalogue
+      default:
+        return undefined
+    }
+  }
+
+  const currentLimit = getCurrentLimit()
+  const nextLimit = getNextLimit()
+
+  switch (type) {
+    case "ai":
+      return {
+        feature: "AI Catalogue Generation",
+        icon: Sparkles,
+        description: `Ready to create more catalogues instantly? Upgrade to unlock ${nextLimit === "unlimited" ? "unlimited" : nextLimit} AI-powered catalogue generations and scale your business faster.`,
+        upgradeText: "AI generations",
+        currentLimit,
+        nextLimit,
+        benefit: "Generate catalogues in seconds with AI - no manual work needed",
+        valueProposition: "Save hours of manual work every week",
+      }
+    case "catalogue":
+      return {
+        feature: "Catalogues",
+        icon: Layers,
+        description: `Your business is growing! Get ${nextLimit === "unlimited" ? "unlimited" : nextLimit} catalogues to manage all your product lines in one place and serve more customers.`,
+        upgradeText: "catalogues",
+        currentLimit,
+        nextLimit,
+        benefit: "Manage unlimited product lines and grow without restrictions",
+        valueProposition: "Expand your digital presence effortlessly",
+      }
+    case "ocr":
+      return {
+        feature: "OCR AI Import",
+        icon: Zap,
+        description: `Transform your printed materials into digital catalogues instantly. Upgrade to get ${nextLimit === "unlimited" ? "unlimited" : nextLimit} OCR imports and digitize your entire inventory.`,
+        upgradeText: "OCR imports",
+        currentLimit,
+        nextLimit,
+        benefit: "Digitize any printed material in seconds - menus, flyers, catalogs",
+        valueProposition: "Turn photos into editable catalogues instantly",
+      }
+    case "items":
+      return {
+        feature: "Items",
+        icon: Layers,
+        description: `Showcase your complete product range! Upgrade to add ${nextLimit === "unlimited" ? "unlimited" : `up to ${nextLimit}`} items per catalogue and never miss a sales opportunity.`,
+        upgradeText: "items",
+        currentLimit,
+        nextLimit,
+        benefit: "Display your entire inventory - every product deserves visibility",
+        valueProposition: "More products = More opportunities",
+      }
+    case "categories":
+      return {
+        feature: "Categories",
+        icon: FolderTree,
+        description: `Better organization drives more sales. Upgrade to create ${nextLimit === "unlimited" ? "unlimited" : nextLimit} categories and help customers find exactly what they need.`,
+        upgradeText: "categories",
+        currentLimit,
+        nextLimit,
+        benefit: "Perfect organization makes shopping effortless for your customers",
+        valueProposition: "Better navigation = Higher conversions",
+      }
+    default:
+      return {
+        feature: "Premium Features",
+        icon: Lock,
+        description:
+          "Unlock the full potential of your digital catalogues with premium features designed to grow your business.",
+        upgradeText: "features",
+        currentLimit: undefined,
+        nextLimit: undefined,
+        benefit: "Access advanced tools that drive real business results",
+        valueProposition: "Professional features for serious growth",
+      }
+  }
+}
+
+const getIcon = (type: LimitType) => {
+  switch (type) {
+    case "items":
+      return Layers
+    case "categories":
+      return FolderTree
+    case "traffic":
+      return IoSearch
+    case "ai":
+      return Sparkles
+    case "ocr":
+      return Zap
+    default:
+      return Lock
+  }
+}
+
+const LimitsModal = ({
+  isOpen,
+  type = "catalogue",
+  currentPlan = tiers[0],
+  requiredPlan = tiers[1],
+  onClose,
+}: LimitsModalProps) => {
   const isTraffic = type === "traffic"
+  const content = getLimitContent(type, currentPlan, requiredPlan)
+  const IconComponent = getIcon(type)
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-product-background rounded-lg shadow-lg max-w-md w-[95vw] sm:w-full mx-auto overflow-hidden">
+    <AlertDialog open={isOpen}>
+      <AlertDialogContent className="w-[95vw] max-w-md mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow rounded-lg overflow-hidden">
         {/* Header */}
-        <div className="relative p-4 sm:p-6 text-center bg-hero-product-background">
+        <AlertDialogHeader className="relative p-6 sm:p-8 text-center bg-hero-product-background space-y-0">
           {onClose ? (
             <button
-              className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors"
-              onClick={onClose}>
+              className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors z-10"
+              onClick={onClose}
+              aria-label="Close">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -37,7 +191,8 @@ const LimitsModal = ({
           ) : (
             <Link
               href="/admin/dashboard"
-              className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors">
+              className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors z-10"
+              aria-label="Go to dashboard">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -50,83 +205,178 @@ const LimitsModal = ({
           )}
 
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-product-primary">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-product-primary shadow-lg">
               {isTraffic ? (
-                <IoSearch className="w-6 h-6 sm:w-8 sm:h-8 text-product-secondary" />
+                <IoSearch className="w-8 h-8 sm:w-10 sm:h-10 text-product-secondary" />
               ) : (
-                <Lock className="w-6 h-6 sm:w-8 sm:h-8 text-product-secondary" />
+                <IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-product-secondary" />
               )}
             </div>
           </div>
 
-          <h2 className="text-lg sm:text-xl font-semibold mb-2 text-product-foreground">
-            {isTraffic ? "Catalogue Not Found" : "Upgrade Required"}
-          </h2>
-          <p className="text-sm text-product-foreground-accent">
+          <AlertDialogTitle className="text-xl sm:text-2xl font-bold mb-2 text-product-foreground text-center">
+            {isTraffic ? "Catalogue Not Found" : `Need More ${content.feature}?`}
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-sm sm:text-base text-product-foreground-accent text-center leading-relaxed">
             {isTraffic
-              ? "The selected catalogue is inactive or doesn't exist."
-              : `You've used all available ${type === "ai" ? "AI prompts" : type === "catalogue" ? "Catalogues" : type === "ocr" ? "OCR imports" : "features"} in your plan.`}
-          </p>
-        </div>
+              ? "The selected catalogue is inactive or doesn't exist. Join thousands of businesses already using Quicktalog to showcase their offerings digitally."
+              : "Upgrade your plan to unlock more features and take your digital catalogues to the next level."}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
 
         {/* Content */}
-        <div className="p-4 sm:p-6">
+        <div className="p-6 sm:p-8 space-y-6">
           {isTraffic ? (
-            <>
+            <div className="space-y-6">
               {/* Quicktalog Promotional Content */}
-              <div className="p-3 sm:p-4 rounded-lg bg-product-hover-background mb-4 sm:mb-6">
-                <h3 className="text-base font-medium text-product-foreground mb-2">
+              <div className="p-4 sm:p-5 rounded-xl bg-product-hover-background border border-product-border">
+                <h3 className="text-base sm:text-lg font-semibold text-product-foreground mb-3">
                   Create Your Digital Catalog with Quicktalog
                 </h3>
-                <p className="text-sm text-product-foreground-accent">
-                  Transform your products into beautiful, mobile-friendly digital catalogs. No
-                  coding required - share via QR codes and get real-time analytics.
-                </p>
+                <ul className="space-y-2 text-sm text-product-foreground-accent">
+                  <li className="flex items-start">
+                    <Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                    <span>Beautiful, mobile-friendly catalogs in minutes</span>
+                  </li>
+                  <li className="flex items-start">
+                    <Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                    <span>Share via QR codes and get real-time analytics</span>
+                  </li>
+                  <li className="flex items-start">
+                    <TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                    <span>No coding required - start today</span>
+                  </li>
+                </ul>
               </div>
-
-              <Link href="https://www.quicktalog.app" target="_blank">
-                <Button variant="cta" className="w-full">
+              <Button variant="cta" className="w-full h-12 text-base font-semibold">
+                <Link href={process.env.NEXT_PUBLIC_BASE_URL!} target="_blank">
                   Get Started Today
-                </Button>
-              </Link>
-            </>
+                </Link>
+              </Button>
+            </div>
           ) : (
             <>
-              {/* Upgrade flow for AI/OCR limits */}
-              <div className="flex items-center justify-between my-4 sm:my-6 p-3 rounded-lg bg-product-hover-background">
-                <div className="text-sm">
-                  <div className="text-product-foreground-accent">Current plan</div>
-                  <div className="font-medium text-product-foreground">{currentPlan}</div>
+              {/* Current vs Next Tier Comparison */}
+              <div className="space-y-4">
+                {/* Limit Comparison */}
+                <div className="border-2 border-product-primary flex items-center justify-between p-4 rounded-xl bg-product-hover-background">
+                  <div className="text-sm flex-1">
+                    <div className="text-product-foreground-accent mb-1">Current Plan</div>
+                    <div className="font-semibold text-lg flex items-center justify-start space-x-1">
+                      <span className="text-product-foreground text-xl">
+                        {formatLimit(content.currentLimit)}
+                      </span>
+                    </div>
+                    <div className="text-base text-product-foreground-accent mt-1">
+                      {currentPlan.name}
+                    </div>
+                  </div>
+
+                  <div className="px-4">
+                    <ArrowRight className="w-5 h-5 text-product-primary" />
+                  </div>
+
+                  <div className="text-sm text-right flex-1">
+                    <div className="text-product-foreground-accent mb-1">Required Plan</div>
+                    <div className="font-semibold text-lg flex items-center justify-end space-x-1">
+                      <span className="text-product-foreground text-xl">
+                        {formatLimit(content.nextLimit)}
+                      </span>
+                    </div>
+                    <div className="text-base text-product-foreground mt-1 font-medium">
+                      {requiredPlan.name}
+                    </div>
+                  </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-product-icon" />
-                <div className="text-sm text-right">
-                  <div className="text-product-foreground-accent">Required plan</div>
-                  <div className="font-medium flex items-center justify-end space-x-1 text-product-secondary">
-                    <Crown className="w-4 h-4 text-product-primary" />
-                    <span>{requiredPlan}</span>
+
+                {/* Key Benefit */}
+                <div className="p-4 rounded-xl bg-product-hover-background border-2 border-product-primary">
+                  <div className="space-y-3">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0">
+                        <Sparkles className="w-4 h-4 text-product-secondary" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-product-foreground mb-1">
+                          What You'll Get with {requiredPlan.name}
+                        </h4>
+                      </div>
+                    </div>
+                    <ul className="space-y-2 text-sm text-product-foreground-accent">
+                      <li className="flex items-start">
+                        <Layers className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                        <span>
+                          <strong className="text-product-foreground">
+                            {formatLimit(requiredPlan.features.catalogues)}
+                          </strong>{" "}
+                          catalogues with{" "}
+                          <strong>
+                            {formatLimit(requiredPlan.features.categories_per_catalogue)}
+                          </strong>{" "}
+                          categories and{" "}
+                          <strong>{formatLimit(requiredPlan.features.items_per_catalogue)}</strong>{" "}
+                          per catalogue to manage all your product lines
+                        </span>
+                      </li>
+                      <li className="flex items-start">
+                        <Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                        <span>
+                          <strong className="text-product-foreground">
+                            {formatLimit(requiredPlan.features.ai_catalogue_generation)}
+                          </strong>{" "}
+                          AI catalogue generations per month
+                        </span>
+                      </li>
+                      {requiredPlan.features.ocr_ai_import > 0 && (
+                        <li className="flex items-start">
+                          <Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                          <span>
+                            <strong className="text-product-foreground">
+                              {formatLimit(requiredPlan.features.ocr_ai_import)}
+                            </strong>{" "}
+                            OCR AI imports to digitize printed materials
+                          </span>
+                        </li>
+                      )}
+                      <li className="flex items-start">
+                        <TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                        <span>
+                          <strong className="text-product-foreground">
+                            {requiredPlan.features.traffic_limit.toLocaleString()}
+                          </strong>{" "}
+                          monthly views to reach more customers
+                        </span>
+                      </li>
+                      {requiredPlan.features.newsletter && (
+                        <li className="flex items-start">
+                          <Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+                          <span>
+                            <strong className="text-product-foreground">Newsletter feature</strong>{" "}
+                            to keep customers engaged
+                          </span>
+                        </li>
+                      )}
+                    </ul>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-center">
+              {/* CTA Button */}
+              <AlertDialogFooter className="sm:justify-center pt-2">
                 <Link
                   href="/pricing"
-                  className="w-full sm:w-fit py-2 sm:py-3 px-4 sm:px-6 rounded-lg font-medium text-sm transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5 focus:outline-none focus:ring-3 focus:ring-opacity-20 bg-product-primary text-product-secondary hover:bg-product-primary-accent shadow-sm hover:shadow-md">
-                  Upgrade to {requiredPlan}
+                  className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent">
+                  <span className="relative z-10 flex items-center justify-center space-x-2">
+                    <span>Upgrade to {requiredPlan.name} Now</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 </Link>
-              </div>
+              </AlertDialogFooter>
             </>
           )}
-
-          {/* Small print */}
-          <p className="text-xs text-center mt-3 sm:mt-4 px-2 text-product-foreground-accent">
-            {isTraffic
-              ? "Join thousands of businesses already using Quicktalog to showcase their offerings digitally."
-              : `Upgrade to get more ${type === "ai" ? "AI prompts" : type === "catalogue" ? "catalogues" : type === "ocr" ? "OCR imports" : "features"} and unlock additional premium features.`}
-          </p>
         </div>
-      </div>
-    </div>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
 

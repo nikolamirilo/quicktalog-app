@@ -1,9 +1,9 @@
 import {
   Catalogue,
+  CatalogueCategory,
+  CategoryItem,
   OverallAnalytics,
   PricingPlan,
-  ServicesCategory,
-  ServicesItem,
   Usage,
   User,
 } from "@/types"
@@ -86,6 +86,13 @@ export type CatalogueFooterProps = {
   logo: string
 }
 
+export type CatalogueContentProps = {
+  data: CatalogueCategory[]
+  currency: string
+  type: "demo" | "item"
+  theme?: string
+}
+
 export type IFAQ = {
   question: string
   answer: string
@@ -139,14 +146,16 @@ export type Step1GeneralProps = {
 
 export type Step2CategoriesProps = {
   formData: {
-    services: ServicesCategory[]
+    services: CatalogueCategory[]
   }
   handleAddCategory: () => void
   handleRemoveCategory: (index: number) => void
   handleCategoryChange: (index: number, field: "name" | "layout", value: string) => void
-  handleReorderCategories?: (newOrder: ServicesCategory[]) => void
+  handleReorderCategories?: (newOrder: CatalogueCategory[]) => void
   expandedCategory: number | null
   setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>
+  setShowLimitsModal: React.Dispatch<React.SetStateAction<{ isOpen: boolean; type: string }>>
+  tier: PricingPlan
 }
 
 export type Step3ItemsProps = {
@@ -156,7 +165,7 @@ export type Step3ItemsProps = {
   handleItemChange: (
     categoryIndex: number,
     itemIndex: number,
-    field: keyof ServicesItem,
+    field: keyof CategoryItem,
     value: string | number
   ) => void
   imagePreviews: { [key: string]: string }
@@ -166,6 +175,8 @@ export type Step3ItemsProps = {
   expandedCategory: number | null
   setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>
   expandedItem: { categoryIndex: number; itemIndex: number } | null
+  tier: PricingPlan
+  setShowLimitsModal: React.Dispatch<React.SetStateAction<{ isOpen: boolean; type: string }>>
   setExpandedItem: React.Dispatch<
     React.SetStateAction<{ categoryIndex: number; itemIndex: number } | null>
   >

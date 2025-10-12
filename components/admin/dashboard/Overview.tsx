@@ -180,7 +180,7 @@ const Overview = ({
         </div>
         {usage.catalogues >= matchedTier.features.catalogues && (
           <CTASection
-            title="You have reached your catalogue quota"
+            title="You’ve reached your current catalogue limit"
             subtitle=" Upgrade your plan to get more catalogues, features, and higher limits."
             href="/pricing"
             ctaLabel="Upgrade plan"

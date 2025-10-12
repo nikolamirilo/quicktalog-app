@@ -5,7 +5,7 @@ import { useMainContext } from "@/context/MainContext"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useEffect, useState } from "react"
 
-const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
+const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
   const context = useMainContext()
   if (!context) return null
   const { setLayout, layout, theme, setTheme } = context
@@ -14,7 +14,7 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
 
   // Find current theme index
   useEffect(() => {
-    const currentIndex = themes.findIndex(t => t.key === theme)
+    const currentIndex = themes.findIndex((t) => t.key === theme)
     if (currentIndex !== -1) {
       setActiveIndex(currentIndex)
     }
@@ -27,7 +27,7 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
       { key: "variant_2", label: "Top Image" },
       { key: "variant_3", label: "Text Only" },
       { key: "variant_4", label: "Carousel" },
-    ].findIndex(l => l.key === layout)
+    ].findIndex((l) => l.key === layout)
     if (currentIndex !== -1) {
       setActiveLayoutIndex(currentIndex)
     }
@@ -38,14 +38,14 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
   }
 
   const handlePreviousTheme = () => {
-    const currentIndex = themes.findIndex(t => t.key === theme)
+    const currentIndex = themes.findIndex((t) => t.key === theme)
     const newIndex = currentIndex > 0 ? currentIndex - 1 : themes.length - 1
     setActiveIndex(newIndex)
     setTheme(themes[newIndex].key)
   }
 
   const handleNextTheme = () => {
-    const currentIndex = themes.findIndex(t => t.key === theme)
+    const currentIndex = themes.findIndex((t) => t.key === theme)
     const newIndex = currentIndex < themes.length - 1 ? currentIndex + 1 : 0
     setActiveIndex(newIndex)
     setTheme(themes[newIndex].key)
@@ -58,7 +58,7 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
       { key: "variant_3", label: "Text Only" },
       { key: "variant_4", label: "Carousel" },
     ]
-    const currentIndex = layouts.findIndex(l => l.key === layout)
+    const currentIndex = layouts.findIndex((l) => l.key === layout)
     const newIndex = currentIndex > 0 ? currentIndex - 1 : layouts.length - 1
     setActiveLayoutIndex(newIndex)
     setLayout(layouts[newIndex].key)
@@ -71,14 +71,14 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
       { key: "variant_3", label: "Text Only" },
       { key: "variant_4", label: "Carousel" },
     ]
-    const currentIndex = layouts.findIndex(l => l.key === layout)
+    const currentIndex = layouts.findIndex((l) => l.key === layout)
     const newIndex = currentIndex < layouts.length - 1 ? currentIndex + 1 : 0
     setActiveLayoutIndex(newIndex)
     setLayout(layouts[newIndex].key)
   }
 
   return (
-    <div className="flex flex-col justify-center items-center gap-8 w-full max-w-5xl mx-auto px-4">
+    <div className="flex flex-col lg:flex-row justify-center items-center gap-8 w-full max-w-5xl mx-auto px-4">
       {/* Layout Section */}
       {type === "home" && (
         <div className="flex flex-col items-center gap-6 w-full">
@@ -92,8 +92,8 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
             }}>
             Choose Layout Style
           </h3>
-          
-          <div className="w-full max-w-2xl lg:max-w-sm">
+
+          <div className="w-full max-w-xs">
             {/* Navigation Arrows with Layout Info */}
             <div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
               <Button
@@ -109,9 +109,9 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
                 }}>
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              
+
               <div className="text-center">
-                <div 
+                <div
                   className="text-base font-medium"
                   style={{
                     color: "var(--heading)",
@@ -126,7 +126,7 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
                   ][activeLayoutIndex]?.label || "Side Image"}
                 </div>
               </div>
-              
+
               <Button
                 type="button"
                 variant="outline"
@@ -157,8 +157,8 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
           }}>
           Choose Color Theme
         </h3>
-        
-        <div className="w-full max-w-2xl lg:max-w-sm">
+
+        <div className="w-full max-w-xs">
           {/* Navigation Arrows with Theme Info */}
           <div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
             <Button
@@ -174,18 +174,18 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
               }}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            
+
             <div className="flex items-center gap-3">
               {/* Theme Color Circle */}
-              <div 
+              <div
                 className="w-6 h-6 rounded-full border-2 flex-shrink-0"
                 style={{
-                  backgroundColor: themes[activeIndex] ? `var(--primary, #3b82f6)` : '#3b82f6',
-                  borderColor: "var(--foreground)"
+                  backgroundColor: themes[activeIndex] ? `var(--primary, #3b82f6)` : "#3b82f6",
+                  borderColor: "var(--foreground)",
                 }}></div>
-              
+
               <div className="text-center">
-                <div 
+                <div
                   className="text-base font-medium"
                   style={{
                     color: "var(--heading)",
@@ -196,7 +196,7 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
                 </div>
               </div>
             </div>
-            
+
             <Button
               type="button"
               variant="outline"
@@ -217,5 +217,4 @@ const ThemeSwiper = ({ type = "home" }: { type?: string }) => {
   )
 }
 
-export default ThemeSwiper
-
+export default AppearanceOptions
