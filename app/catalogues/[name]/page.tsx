@@ -1,7 +1,7 @@
 import LimitsModal from "@/components/modals/LimitsModal"
 import CatalogueFooter from "@/components/navigation/CatalogueFooter"
 import CatalogueHeader from "@/components/navigation/CatalogueHeader"
-import ServicesSection from "@/components/sections/ServicesSection"
+import CatalogueContent from "@/components/sections/CatalogueContent"
 import { DARK_THEMES } from "@/constants"
 import { generateCatalogueMetadata } from "@/constants/metadata"
 import { buildFooterData, buildHeaderData } from "@/helpers/client"
@@ -196,8 +196,8 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
             <section
               className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pt-8 sm:pt-12 md:pt-16 pb-8 min-h-[60vh]"
               aria-label="Services and items">
-              <ServicesSection
-                servicesData={item.services}
+              <CatalogueContent
+                data={item.services}
                 currency={item.currency}
                 type="item"
                 theme={item.theme}

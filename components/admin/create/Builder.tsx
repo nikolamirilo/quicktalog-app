@@ -15,7 +15,7 @@ import { defaultServiceCatalogueData } from "@/constants"
 import { cleanValue, generateUniqueSlug, validateStepHelper } from "@/helpers/client"
 import { revalidateCataloguesData } from "@/helpers/server"
 import { NavigationGuard } from "@/hooks/useBeforeUnload"
-import { ContactInfo, ServicesFormData, ServicesItem } from "@/types"
+import { CategoryItem, ContactInfo, ServicesFormData } from "@/types"
 import { BuilderProps } from "@/types/components"
 import { LimitType } from "@/types/enums"
 import { useUser } from "@clerk/nextjs"
@@ -207,7 +207,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
   const handleItemChange = (
     categoryIndex: number,
     itemIndex: number,
-    field: keyof ServicesItem,
+    field: keyof CategoryItem,
     value: string | number
   ) => {
     setFormData((prev) => {

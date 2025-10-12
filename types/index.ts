@@ -21,7 +21,7 @@ export type NavbarProps = {
   itemData?: unknown
 }
 
-export type ServicesItem = {
+export type CategoryItem = {
   name: string
   description: string
   price: number
@@ -40,11 +40,11 @@ export type Layout = Theme
 export type ThemeVariant = (typeof themes)[number]["key"]
 export type LayoutVariant = (typeof layouts)[number]["key"]
 
-export type ServicesCategory = {
+export type CatalogueCategory = {
   order: number
   name: string
   layout: LayoutVariant
-  items: ServicesItem[]
+  items: CategoryItem[]
 }
 
 export type OverallAnalytics = {
@@ -65,7 +65,7 @@ export type Catalogue = {
   currency: string
   contact?: ContactInfo[]
   subtitle?: string
-  services: ServicesCategory[]
+  services: CatalogueCategory[]
   partners?: Partner[]
   legal?: Legal
   configuration?: Configuration

@@ -1,6 +1,6 @@
 import { layouts } from "@/constants"
 import { fetchImageFromUnsplash } from "@/helpers/client"
-import { ServicesCategory } from "@/types"
+import { CatalogueCategory } from "@/types"
 import { NextResponse } from "next/server"
 
 // Type definitions for better type safety
@@ -17,7 +17,7 @@ export interface GenerationRequest {
 }
 
 export interface GeneratedData {
-  services: ServicesCategory[]
+  services: CatalogueCategory[]
 }
 
 // Utility functions
@@ -47,7 +47,7 @@ export const extractJSONFromResponse = (response: string): GeneratedData => {
   return parsedData
 }
 
-export const processImagesForServices = async (services: ServicesCategory[]): Promise<void> => {
+export const processImagesForServices = async (services: CatalogueCategory[]): Promise<void> => {
   // Use Promise.all for concurrent image fetching instead of sequential
   const imagePromises = services
     .filter((category) => category.layout !== "variant_3")

@@ -1,8 +1,12 @@
-// @ts-nocheck
 "use client"
 import { useMainContext } from "@/context/MainContext"
-import { contentVariants, getCurrencySymbol, getGridStyle } from "@/helpers/client"
-import { ServicesCategory } from "@/types"
+import {
+  contentVariants,
+  generateUniqueSlug,
+  getCurrencySymbol,
+  getGridStyle,
+} from "@/helpers/client"
+import { CatalogueContentProps } from "@/types/components"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import "swiper/css"
@@ -11,82 +15,32 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import CardsSwitcher from "../cards"
 import SectionHeader from "./SectionHeader"
 
-interface ProcessedSection {
-  title: string
-  code: string
-  order: number
-  layout: string
-  items: any[]
-}
-
-interface ServicesSectionProps {
-  servicesData: ServicesCategory[]
-  currency: string
-  type: "demo" | "item"
-  theme?: string
-}
-
-const processSectionsData = (servicesData: ServiceItem[]): ProcessedSection[] => {
-  if (!servicesData || !Array.isArray(servicesData)) {
-    console.warn("ServicesSection: No servicesData provided or not an array")
-    return []
-  }
-
-  try {
-    const processed = servicesData
-      .filter((item) => item.items.length > 0 && item.name != "" && item.name != null)
-      .map((item) => {
-        return {
-          title: item.name,
-          code: item.name.toLowerCase().split(" ").join("-"),
-          order: item.order != null ? Number(item.order) : 999,
-          layout: item.layout,
-          items: item.items,
-        }
-      })
-
-    const sorted = processed.sort((a, b) => {
-      const result = a.order - b.order
-
-      return result
-    })
-    return sorted
-  } catch (error) {
-    console.error("ServicesSection: Error processing sections data:", error)
-    return []
-  }
-}
-
-const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectionProps) => {
+const CatalogueContent = ({ data, currency, type, theme }: CatalogueContentProps) => {
   const { layout } = useMainContext()
-  const [expandedSections, setExpandedSections] = useState<{
-    [key: string]: boolean
-  }>({})
-
-  const sectionsData = processSectionsData(servicesData)
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
-    if (sectionsData.length > 0 && type === "demo") {
-      const initialExpanded = sectionsData.reduce(
-        (acc, item) => {
-          acc[item.code] = true
-          return acc
-        },
-        {} as { [key: string]: boolean }
-      )
-      setExpandedSections(initialExpanded)
-    }
-  }, [sectionsData.length, type])
+    if (!data || data.length === 0) return
+    const initialExpanded = data.reduce(
+      (acc, item, idx) => {
+        const slug = generateUniqueSlug(item.name)
+        acc[slug] = type === "demo" || idx === 0
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
+    setExpandedSections(initialExpanded)
+  }, [data, type])
 
-  const handleToggleSection = (code: string) => {
+  const handleToggleSection = (slug: string) => {
     setExpandedSections((prev) => ({
       ...prev,
-      [code]: !prev[code],
+      [slug]: !prev[slug],
     }))
   }
 
-  if (!servicesData || !Array.isArray(servicesData)) {
-    console.warn("ServicesSection: No servicesData, rendering null")
+  if (!data || !Array.isArray(data)) {
+    console.warn("No data, rendering null")
     return (
       <main className="max-w-6xl mx-auto px-4 py-4" role="main" aria-label="Services content">
         <div
@@ -100,14 +54,14 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
     )
   }
 
-  if (sectionsData.length === 0) {
+  if (data.length === 0) {
     return (
       <main className="max-w-6xl mx-auto px-4 py-4" role="main" aria-label="Services content">
         <div
           className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center"
           role="alert"
           aria-live="polite">
-          <h2 className="text-lg font-semibold text-yellow-800 mb-2">No Service Categories</h2>
+          <h2 className="text-lg font-semibold text-yellow-800 mb-2">No Categories</h2>
           <p className="text-yellow-700">No service categories were found in the data.</p>
         </div>
       </main>
@@ -115,21 +69,19 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
   }
 
   return (
-    <main className={`max-w-6xl mx-auto py-5 px-4 `} role="main" aria-label="Services and items">
-      {sectionsData.map((item) => {
+    <main className="max-w-6xl mx-auto py-5 px-4" role="main" aria-label="Categories and items">
+      {data.map((item, index) => {
         const currentLayout = type === "demo" ? layout : item.layout
+        const slug = generateUniqueSlug(item.name)
+        const isExpanded = expandedSections[slug]
+
         if (!item.items || !Array.isArray(item.items)) {
-          console.error(`ServicesSection: Invalid data for section ${item.code}:`, item)
           return (
-            <section
-              key={item.code}
-              className="mb-5"
-              id={item.code}
-              aria-labelledby={`section-header-${item.code}`}>
+            <section key={slug} className="mb-5" id={slug}>
               <SectionHeader
-                title={item.title}
-                code={item.code}
-                isExpanded={!!expandedSections[item.code]}
+                title={item.name}
+                code={slug}
+                isExpanded={isExpanded}
                 onToggle={handleToggleSection}
               />
               <div
@@ -143,22 +95,17 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
         }
 
         return (
-          <section
-            key={item.code}
-            className="mb-5"
-            id={item.code}
-            aria-labelledby={`section-header-${item.code}`}>
+          <section key={slug} className="mb-5" id={slug}>
             <SectionHeader
-              title={item.title}
-              code={item.code}
-              isExpanded={!!expandedSections[item.code]}
+              title={item.name}
+              code={slug}
+              isExpanded={isExpanded}
               onToggle={handleToggleSection}
             />
 
             <AnimatePresence initial={false}>
-              {expandedSections[item.code] && (
+              {isExpanded && (
                 <motion.div
-                  id={`section-content-${item.code}`}
                   key="content"
                   variants={contentVariants}
                   initial="hidden"
@@ -167,16 +114,15 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
                   transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                   className="overflow-hidden"
                   role="region"
-                  aria-label={`${item.title} items`}
-                  aria-live="polite">
+                  aria-label={`${item.name} items`}>
                   {currentLayout === "variant_4" ? (
                     <Swiper
                       spaceBetween={12}
-                      slidesPerView={"auto"}
+                      slidesPerView="auto"
                       className="mt-4 px-0 sm:px-2 py-2"
                       role="region"
-                      aria-label={`${item.title} carousel`}>
-                      {item.items.map((record: any, i: number) => (
+                      aria-label={`${item.name} carousel`}>
+                      {item.items.map((record, i) => (
                         <SwiperSlide
                           key={i}
                           className="!w-[160px] sm:!w-[220px] md:!w-[260px] lg:!w-[320px] py-2 flex-shrink-0 flex flex-col !h-auto"
@@ -196,8 +142,8 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
                     <div
                       className={getGridStyle(currentLayout)}
                       role="grid"
-                      aria-label={`${item.title} items grid`}>
-                      {item.items.map((record: any, i: number) => (
+                      aria-label={`${item.name} items grid`}>
+                      {item.items.map((record, i) => (
                         <CardsSwitcher
                           key={i}
                           variant={currentLayout}
@@ -219,4 +165,4 @@ const ServicesSection = ({ servicesData, currency, type, theme }: ServicesSectio
   )
 }
 
-export default ServicesSection
+export default CatalogueContent
