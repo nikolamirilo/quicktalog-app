@@ -1,6 +1,6 @@
 // @ts-nocheck
 "use client"
-import ThemeSwiper from "@/components/common/ThemeSwiper"
+import AppearanceOptions from "@/components/common/AppearanceOptions"
 import Footer from "@/components/navigation/Footer"
 import Navbar from "@/components/navigation/Navbar"
 import CatalogueContent from "@/components/sections/CatalogueContent"
@@ -25,7 +25,7 @@ const page: React.FC = () => {
         <div
           className={`min-h-screen text-text bg-background font-lora ${theme ? theme : "theme-luxury"}`}>
           <main>
-            <section className="w-full bg-background pt-36 px-4 text-center flex flex-col items-center">
+            <section className="w-full pt-36 px-4 text-center flex flex-col items-center bg-transparent">
               <h1 className="text-4xl sm:text-5xl md:text-6xl max-w-[800px] font-lora font-semibold text-foreground tracking-tight mb-4">
                 Welcome to Quicktalog Demo!
               </h1>
@@ -38,7 +38,7 @@ const page: React.FC = () => {
             </section>
 
             <div className="flex flex-col justify-center items-center w-full mt-6">
-              <ThemeSwiper />
+              <AppearanceOptions />
             </div>
 
             {data && (
