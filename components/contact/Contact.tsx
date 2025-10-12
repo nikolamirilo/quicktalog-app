@@ -87,7 +87,7 @@ const Contact = ({ type = "regular" }: { type?: string }) => {
         </div>
       )}
 
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div className="container mx-auto  max-w-4xl">
         {/* Header */}
         {type !== "support" && (
           <div className="text-center mb-16">
