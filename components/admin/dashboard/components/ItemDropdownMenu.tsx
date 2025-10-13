@@ -30,6 +30,7 @@ const ItemDropdownMenu = ({
   handleDeleteItem,
   usage,
   matchedTier,
+  planId,
 }) => {
   return (
     <div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 z-10">
@@ -99,7 +100,6 @@ const ItemDropdownMenu = ({
             <DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg">
               <DropdownMenuItem
                 onClick={() => handleDownloadPng(catalogue.name)}
-                disabled={isModalOpen}
                 className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
                 <span className="flex items-center gap-2">
                   <BsQrCodeScan size={18} />
@@ -113,7 +113,7 @@ const ItemDropdownMenu = ({
                     `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`
                   )
                 }
-                disabled={isModalOpen}
+                disabled={planId == 0}
                 className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
                 <span className="flex items-center gap-2">
                   <ImEmbed2 size={18} />
@@ -127,7 +127,7 @@ const ItemDropdownMenu = ({
                     `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}?expanded=true`
                   )
                 }
-                disabled={isModalOpen}
+                disabled={planId < 2}
                 className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
                 <span className="flex items-center gap-2">
                   <FaRegFilePdf size={18} />

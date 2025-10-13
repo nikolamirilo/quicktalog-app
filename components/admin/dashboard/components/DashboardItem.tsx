@@ -37,6 +37,7 @@ const DashboardItem = ({
         handleDeleteItem={handleDeleteItem}
         usage={usage}
         matchedTier={matchedTier}
+        planId={matchedTier?.id || 0}
       />
 
       <div className="font-heading font-bold text-sm sm:text-base md:text-lg lg:text-xl text-product-foreground break-words">
