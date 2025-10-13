@@ -33,7 +33,7 @@ export default async function page() {
       usage.ocr >= currentPlan.features.ocr_ai_import ||
       usage.catalogues >= currentPlan.features.catalogues,
     prompts:
-      usage.prompts >= currentPlan.features.ai_catalogue_generation ||
+      usage.prompts >= currentPlan.features.ai_prompts ||
       usage.catalogues >= currentPlan.features.catalogues,
   }
 

@@ -166,7 +166,7 @@ export const contentVariants = {
   visible: { height: "auto", opacity: 1, marginTop: 16 },
 }
 
-export const handleDownloadHTML = (restaurantName: string, fullURL: string) => {
+export const handleDownloadHTML = (catalogueSlug: string, fullURL: string) => {
   try {
     const html = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Embedded Catalogue</title>\n  <style>\n    html, body { margin: 0; padding: 0; height: 100%; width: 100%; background: white; }\n    iframe { width: 100vw; height: 100vh; border: none; position: fixed; top: 0; left: 0; z-index: 9999; background: white; }\n  </style>\n</head>\n<body>\n  <iframe src=\"${fullURL}\"></iframe>\n</body>\n</html>`
 
@@ -175,7 +175,7 @@ export const handleDownloadHTML = (restaurantName: string, fullURL: string) => {
     const a = document.createElement("a")
 
     a.href = url
-    a.download = `${restaurantName}.html`
+    a.download = `${catalogueSlug}.html`
     document.body.appendChild(a)
     a.click()
 
@@ -194,7 +194,27 @@ export const handleDownloadHTML = (restaurantName: string, fullURL: string) => {
   }
 }
 
-export const handleDownloadPng = (restaurantName: string) => {
+export const handleDownloadPDF = async (catalogueSlug: string, fullURL: string) => {
+  try {
+    const response = await fetch(
+      `/api/pdf?url=${encodeURIComponent(fullURL)}&name=${encodeURIComponent(catalogueSlug)}`
+    )
+
+    if (!response.ok) throw new Error("Failed to generate PDF")
+
+    const blob = await response.blob()
+    const link = document.createElement("a")
+    link.href = URL.createObjectURL(blob)
+    link.download = `${catalogueSlug}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+  } catch (error) {
+    console.error("Error downloading PDF:", error)
+  }
+}
+
+export const handleDownloadPng = (catalogueSlug: string) => {
   const svg = document.querySelector("#qr-code svg")
   if (!svg) {
     console.error("QR SVG not found!")
@@ -223,7 +243,7 @@ export const handleDownloadPng = (restaurantName: string) => {
       }
       const url2 = URL.createObjectURL(blob)
       const a = document.createElement("a")
-      a.download = `${restaurantName}.png`
+      a.download = `${catalogueSlug}.png`
       a.href = url2
       document.body.appendChild(a)
       a.click()

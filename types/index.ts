@@ -190,12 +190,11 @@ export type PricingPlan = {
     support: string
     catalogues: number
     newsletter: boolean
-    customization: string
+    custom_features: boolean
     ocr_ai_import: number
     traffic_limit: number
-    custom_features: boolean
     analytics: string
-    ai_catalogue_generation: number
+    ai_prompts: number
     categories_per_catalogue?: number | "unlimited"
     items_per_catalogue?: number | "unlimited"
   }

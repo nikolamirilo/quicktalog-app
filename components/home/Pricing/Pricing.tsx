@@ -70,7 +70,7 @@ const Pricing: React.FC = () => {
     fetchUserData()
   }, [clerkUser?.id])
 
-  const filteredTiers = tiers.filter((item) => item?.type === "standard")
+  const filteredTiers = tiers.filter((item) => item?.type === "standard" && item?.id > 0)
   console.log(filteredTiers)
 
   return (
@@ -107,7 +107,20 @@ const Pricing: React.FC = () => {
           </button>
         </div>
       </div>
-
+      <div className="mb-8">
+        <PricingColumn
+          tier={tiers[0]}
+          mode="row" // Add row mode here
+          highlight={false}
+          user={user}
+          price={
+            prices[billingCycle === "monthly" ? tiers[0].priceId.month : tiers[0].priceId.year]
+          }
+          priceId={billingCycle === "monthly" ? tiers[0].priceId.month : tiers[0].priceId.year}
+          billingCycle={billingCycle}
+          paddle={paddle}
+        />
+      </div>
       {/* Pricing grid */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
@@ -119,13 +132,7 @@ const Pricing: React.FC = () => {
           <motion.div key={tier.name} variants={childVariants}>
             <PricingColumn
               tier={tier}
-              highlight={
-                user
-                  ? index ===
-                    filteredTiers.find((tier) => Object.values(tier.priceId).includes(user.plan_id))
-                      .id
-                  : index === 2
-              }
+              highlight={!user && index == 1 ? true : false}
               user={user}
               price={prices[billingCycle === "monthly" ? tier.priceId.month : tier.priceId.year]}
               priceId={billingCycle === "monthly" ? tier.priceId.month : tier.priceId.year}

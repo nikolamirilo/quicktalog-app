@@ -8,6 +8,7 @@ import {
 } from "@/helpers/client"
 import { CatalogueContentProps } from "@/types/components"
 import { AnimatePresence, motion } from "framer-motion"
+import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import "swiper/css"
 import "swiper/css/pagination"
@@ -18,6 +19,7 @@ import SectionHeader from "./SectionHeader"
 const CatalogueContent = ({ data, currency, type, theme }: CatalogueContentProps) => {
   const { layout } = useMainContext()
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     if (!data || data.length === 0) return
@@ -38,6 +40,24 @@ const CatalogueContent = ({ data, currency, type, theme }: CatalogueContentProps
       [slug]: !prev[slug],
     }))
   }
+  useEffect(() => {
+    const isExpanded = searchParams.get("expanded")
+    console.log("isExpanded from URL:", isExpanded)
+
+    if (isExpanded && data && data.length > 0) {
+      // Create an object where all sections are expanded
+      const allSectionsExpanded = data.reduce(
+        (acc, item) => {
+          const slug = generateUniqueSlug(item.name)
+          acc[slug] = true
+          return acc
+        },
+        {} as Record<string, boolean>
+      )
+
+      setExpandedSections(allSectionsExpanded)
+    }
+  }, [searchParams, data])
 
   if (!data || !Array.isArray(data)) {
     console.warn("No data, rendering null")

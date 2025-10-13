@@ -5,20 +5,19 @@ import { formatPrice } from "@/helpers/client"
 import { usePaddlePrices } from "@/hooks/usePaddelPrices"
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js"
 import {
-    BarChart3,
-    Calendar,
-    CheckCircle,
-    Clock,
-    CreditCard,
-    DollarSign,
-    Eye,
-    Mail,
-    Settings,
-    Shield,
-    Sparkles,
-    Star,
-    X,
-    Zap,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  DollarSign,
+  Eye,
+  Mail,
+  Shield,
+  Sparkles,
+  Star,
+  X,
+  Zap,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -79,12 +78,11 @@ export default function Subscription({
       support: Mail,
       catalogues: BarChart3,
       newsletter: Mail,
-      customization: Settings,
       ocr_ai_import: Sparkles,
       traffic_limit: Eye,
       custom_features: Star,
       analytics: BarChart3,
-      ai_catalogue_generation: Sparkles,
+      ai_prompts: Sparkles,
     }
     return iconMap[key] || CheckCircle
   }
@@ -109,8 +107,7 @@ export default function Subscription({
       if (key === "traffic_limit") return `${value.toLocaleString()} visits/month`
       if (key === "catalogues") return `${value} catalogue${value !== 1 ? "s" : ""}`
       if (key === "ocr_ai_import") return `${value} OCR AI import${value !== 1 ? "s" : ""}`
-      if (key === "ai_catalogue_generation")
-        return `${value} AI generation${value !== 1 ? "s" : ""}`
+      if (key === "ai_prompts") return `${value} AI generation${value !== 1 ? "s" : ""}`
       return value.toString()
     }
     return String(value)
@@ -328,7 +325,6 @@ export default function Subscription({
           </div>
         </CardContent>
       </Card>
-
     </div>
   )
 }

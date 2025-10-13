@@ -30,11 +30,11 @@ const MonthlyUsage = ({ data, pricingPlan }: { data: Usage; pricingPlan: Pricing
   }
 
   const aiPromptsUsage = {
-    data: [data.prompts, pricingPlan.features.ai_catalogue_generation - data.prompts],
+    data: [data.prompts, pricingPlan.features.ai_prompts - data.prompts],
     labels: ["Used", "Remaining"],
     title: "AI Prompts",
     icon: <RiSparkling2Line className="w-6 h-6" />,
-    shown: pricingPlan.features.ai_catalogue_generation > 0 ? true : false,
+    shown: pricingPlan.features.ai_prompts > 0 ? true : false,
     color: "text-product-primary-accent",
   }
 

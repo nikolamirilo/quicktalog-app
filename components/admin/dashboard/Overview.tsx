@@ -157,7 +157,7 @@ const Overview = ({
             variant="outline"
             className={`${planId < 1 && "animate-pulse"}`}
             disabled={
-              usage.prompts >= matchedTier.features.ai_catalogue_generation ||
+              usage.prompts >= matchedTier.features.ai_prompts ||
               usage.catalogues >= matchedTier.features.catalogues
             }
             onClick={() => {

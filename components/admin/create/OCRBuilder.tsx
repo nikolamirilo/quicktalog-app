@@ -81,7 +81,7 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 
     try {
       if (
-        userData.usage.prompts >= userData.currentPlan.features.ai_catalogue_generation ||
+        userData.usage.prompts >= userData.currentPlan.features.ai_prompts ||
         userData.usage.catalogues >= userData.currentPlan.features.catalogues
       ) {
         setShowLimitsModal(true)

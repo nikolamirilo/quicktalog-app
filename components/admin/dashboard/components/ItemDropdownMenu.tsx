@@ -9,11 +9,11 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client"
+import { handleDownloadHTML, handleDownloadPDF, handleDownloadPng } from "@/helpers/client"
 import Link from "next/link"
 import { QRCodeSVG } from "qrcode.react"
 import { BsQrCodeScan } from "react-icons/bs"
-import { FaRegCircleCheck } from "react-icons/fa6"
+import { FaRegCircleCheck, FaRegFilePdf } from "react-icons/fa6"
 import { FiCopy, FiDownload, FiEdit, FiMoreVertical, FiTrash2 } from "react-icons/fi"
 import { ImEmbed2 } from "react-icons/im"
 import { LuShare2 } from "react-icons/lu"
@@ -118,6 +118,20 @@ const ItemDropdownMenu = ({
                 <span className="flex items-center gap-2">
                   <ImEmbed2 size={18} />
                   Embed
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  handleDownloadPDF(
+                    catalogue.name,
+                    `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}?expanded=true`
+                  )
+                }
+                disabled={isModalOpen}
+                className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
+                <span className="flex items-center gap-2">
+                  <FaRegFilePdf size={18} />
+                  PDF
                 </span>
               </DropdownMenuItem>
             </DropdownMenuSubContent>

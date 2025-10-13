@@ -36,7 +36,7 @@ const getLimitContent = (
   const getCurrentLimit = () => {
     switch (type) {
       case "ai":
-        return currentPlan.features.ai_catalogue_generation
+        return currentPlan.features.ai_prompts
       case "catalogue":
         return currentPlan.features.catalogues
       case "ocr":
@@ -53,7 +53,7 @@ const getLimitContent = (
   const getNextLimit = () => {
     switch (type) {
       case "ai":
-        return requiredPlan.features?.ai_catalogue_generation
+        return requiredPlan.features?.ai_prompts
       case "catalogue":
         return requiredPlan.features?.catalogues
       case "ocr":
@@ -322,9 +322,9 @@ const LimitsModal = ({
                         <Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
                         <span>
                           <strong className="text-product-foreground">
-                            {formatLimit(requiredPlan.features.ai_catalogue_generation)}
+                            {formatLimit(requiredPlan.features.ai_prompts)}
                           </strong>{" "}
-                          AI catalogue generations per month
+                          AI prompts per month
                         </span>
                       </li>
                       {requiredPlan.features.ocr_ai_import > 0 && (
