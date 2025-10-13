@@ -1,8 +1,8 @@
 "use client";
+import { useState } from "react";
 import UpgradePlanModal from "@/components/modals/UpgradePlanModal";
 import { Button } from "@/components/ui/button";
 import { tiers } from "@/constants/pricing";
-import { useState } from "react";
 
 const TestPage = () => {
 	const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -29,12 +29,12 @@ const TestPage = () => {
 								Current Plan
 							</label>
 							<select
-								value={currentPlanIndex}
-								onChange={(e) => setCurrentPlanIndex(Number(e.target.value))}
 								className="w-full px-4 py-2 border border-product-border rounded-lg bg-product-background text-product-foreground"
+								onChange={(e) => setCurrentPlanIndex(Number(e.target.value))}
+								value={currentPlanIndex}
 							>
 								{tiers.map((tier, index) => (
-									<option key={tier.name} value={index}>
+									<option key={index} value={index}>
 										{tier.name}
 									</option>
 								))}
@@ -47,12 +47,12 @@ const TestPage = () => {
 								Required Plan
 							</label>
 							<select
-								value={requiredPlanIndex}
-								onChange={(e) => setRequiredPlanIndex(Number(e.target.value))}
 								className="w-full px-4 py-2 border border-product-border rounded-lg bg-product-background text-product-foreground"
+								onChange={(e) => setRequiredPlanIndex(Number(e.target.value))}
+								value={requiredPlanIndex}
 							>
 								{tiers.map((tier, index) => (
-									<option key={tier.name} value={index}>
+									<option key={index} value={index}>
 										{tier.name}
 									</option>
 								))}
@@ -67,25 +67,25 @@ const TestPage = () => {
 							<div className="flex gap-4">
 								<label className="flex items-center">
 									<input
-										type="radio"
-										value="items"
 										checked={limitType === "items"}
+										className="mr-2"
 										onChange={(e) =>
 											setLimitType(e.target.value as "items" | "categories")
 										}
-										className="mr-2"
+										type="radio"
+										value="items"
 									/>
 									Items
 								</label>
 								<label className="flex items-center">
 									<input
-										type="radio"
-										value="categories"
 										checked={limitType === "categories"}
+										className="mr-2"
 										onChange={(e) =>
 											setLimitType(e.target.value as "items" | "categories")
 										}
-										className="mr-2"
+										type="radio"
+										value="categories"
 									/>
 									Categories
 								</label>
@@ -96,9 +96,9 @@ const TestPage = () => {
 
 				{/* Test Button */}
 				<Button
-					variant="cta"
-					onClick={() => setShowUpgradeModal(true)}
 					className="w-full py-4 text-lg"
+					onClick={() => setShowUpgradeModal(true)}
+					variant="cta"
 				>
 					Open Upgrade Modal
 				</Button>
@@ -124,11 +124,11 @@ const TestPage = () => {
 
 			{/* Upgrade Modal */}
 			<UpgradePlanModal
-				isOpen={showUpgradeModal}
-				onClose={() => setShowUpgradeModal(false)}
 				currentPlan={tiers[currentPlanIndex]}
-				requiredPlan={tiers[requiredPlanIndex]}
+				isOpen={showUpgradeModal}
 				limitType={limitType}
+				onClose={() => setShowUpgradeModal(false)}
+				requiredPlan={tiers[requiredPlanIndex]}
 				userEmail="test@example.com"
 			/>
 		</div>

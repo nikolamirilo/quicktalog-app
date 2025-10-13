@@ -18,18 +18,17 @@ const ThemeSelect = ({
 		</div>
 
 		<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-			{themes.map((themeItem, index) => (
+			{themes.map((themeItem) => (
 				<button
-					key={themeItem.key}
-					type="button"
-					onClick={(value) => {
-						setFormData((prev: any) => ({ ...prev, theme: themeItem.key }));
-					}}
 					className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${themeItem.key} ${
 						formData.theme === themeItem.key
 							? "border-product-primary shadow-md"
 							: "hover:shadow-sm"
 					}`}
+					key={themeItem.key}
+					onClick={() => {
+						setFormData((prev: any) => ({ ...prev, theme: themeItem.key }));
+					}}
 					style={{
 						borderColor:
 							formData.theme === themeItem.key
@@ -39,6 +38,7 @@ const ThemeSelect = ({
 						color: "var(--foreground)",
 						fontFamily: "var(--font-family-body)",
 					}}
+					type="button"
 				>
 					<div className="text-center">
 						<div

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 			status,
 		} = await request.json();
 
-		const { data, error } = await supabase
+		const { error } = await supabase
 			.from("catalogues")
 			.insert([
 				{

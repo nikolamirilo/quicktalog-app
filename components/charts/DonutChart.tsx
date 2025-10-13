@@ -9,9 +9,6 @@ import type { DonutChartProps } from "@/types/components";
 export default function DonutChart({
 	data = [],
 	labels = [],
-	title,
-	description,
-	icon,
 }: DonutChartProps) {
 	const [chartColors, setChartColors] = useState(["#010e58", "#e2e8f0"]);
 

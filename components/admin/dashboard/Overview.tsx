@@ -1,4 +1,12 @@
 "use client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { BiScan } from "react-icons/bi";
+import { FiCpu, FiFileText, FiTool } from "react-icons/fi";
+import { IoCreateOutline } from "react-icons/io5";
+import { LuSquareMenu } from "react-icons/lu";
+import { RiSparkling2Line } from "react-icons/ri";
+import { TbFileAnalytics } from "react-icons/tb";
 import {
 	deleteItem,
 	deleteMultipleItems,
@@ -13,14 +21,6 @@ import { statusOrder } from "@/constants/sort";
 import { Catalogue } from "@/types";
 import { OverviewProps } from "@/types/components";
 import { Status } from "@/types/enums";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { BiScan } from "react-icons/bi";
-import { FiCpu, FiFileText, FiTool } from "react-icons/fi";
-import { IoCreateOutline } from "react-icons/io5";
-import { LuSquareMenu } from "react-icons/lu";
-import { RiSparkling2Line } from "react-icons/ri";
-import { TbFileAnalytics } from "react-icons/tb";
 import InformModal from "../../modals/InformModal";
 import DashboardItem from "./components/DashboardItem";
 import OverallAnalytics from "./components/OverallAnalytics";
@@ -91,7 +91,8 @@ const Overview = ({
 		try {
 			await duplicateItem(id);
 			await refreshAll();
-		} catch (e) {
+		} catch (error) {
+			console.error("Error duplicating item:", error);
 			alert("Failed to duplicate item.");
 		} finally {
 			setDuplicatingId(null);
@@ -101,7 +102,8 @@ const Overview = ({
 		try {
 			await updateItemStatus(id, status);
 			await refreshAll();
-		} catch (e) {
+		} catch (error) {
+			console.error("Error updating item status:", error);
 			alert("Failed to update status.");
 		} finally {
 			setDuplicatingId(null);
@@ -141,9 +143,9 @@ const Overview = ({
 					Dashboard
 				</h2>
 				<OverallAnalytics
-					setIsInfoModalOpen={setIsInfoModalOpen}
-					setCurrentMetric={setCurrentMetric}
 					overallAnalytics={overallAnalytics}
+					setCurrentMetric={setCurrentMetric}
+					setIsInfoModalOpen={setIsInfoModalOpen}
 				/>
 			</section>
 			{/* Catalogues */}
@@ -160,13 +162,12 @@ const Overview = ({
 						}}
 					>
 						<IoCreateOutline
-							size={18}
 							className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+							size={18}
 						/>{" "}
 						Create Catalogue
 					</Button>
 					<Button
-						variant="outline"
 						className={`${planId < 1 && "animate-pulse"}`}
 						disabled={
 							usage.prompts >= matchedTier.features.ai_prompts ||
@@ -175,15 +176,15 @@ const Overview = ({
 						onClick={() => {
 							router.push("/admin/create/ai");
 						}}
+						variant="outline"
 					>
 						<RiSparkling2Line
-							size={18}
 							className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+							size={18}
 						/>{" "}
 						Generate with AI
 					</Button>
 					<Button
-						variant="outline"
 						disabled={
 							usage.ocr >= matchedTier.features.ocr_ai_import ||
 							usage.catalogues >= matchedTier.features.catalogues
@@ -191,17 +192,18 @@ const Overview = ({
 						onClick={() => {
 							router.push("/admin/create/ocr");
 						}}
+						variant="outline"
 					>
-						<BiScan size={18} className="sm:w-5 sm:h-5 md:w-6 md:h-6" />
+						<BiScan className="sm:w-5 sm:h-5 md:w-6 md:h-6" size={18} />
 						Scan & Import Catalogue
 					</Button>
 				</div>
 				{usage.catalogues >= matchedTier.features.catalogues && (
 					<CTASection
-						title="You’ve reached your current catalogue limit"
-						subtitle=" Upgrade your plan to get more catalogues, features, and higher limits."
-						href="/pricing"
 						ctaLabel="Upgrade plan"
+						href="/pricing"
+						subtitle=" Upgrade your plan to get more catalogues, features, and higher limits."
+						title="You’ve reached your current catalogue limit"
 					/>
 				)}
 				<div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
@@ -221,43 +223,42 @@ const Overview = ({
 						})
 						.map((catalogue: Catalogue, index: number) => (
 							<DashboardItem
-								key={index}
 								catalogue={catalogue}
 								duplicatingId={duplicatingId}
+								handleDeleteItem={handleDeleteItem}
+								handleDuplicateCatalogue={handleDuplicateCatalogue}
 								handleUpdateItemStatus={handleUpdateItemStatus}
-								setIsLinkCopied={setIsLinkCopied}
 								isLinkCopied={isLinkCopied}
 								isModalOpen={isModalOpen}
-								handleDuplicateCatalogue={handleDuplicateCatalogue}
-								handleDeleteItem={handleDeleteItem}
-								usage={usage}
+								key={index}
 								matchedTier={matchedTier}
-								statusColors={statusColors}
+								setIsLinkCopied={setIsLinkCopied}
 								sourceConfig={sourceConfig}
+								statusColors={statusColors}
+								usage={usage}
 							/>
 						))}
 				</div>
 			</section>
 			<InformModal
 				isOpen={isModalOpen}
-				onConfirm={confirmDelete}
-				onCancel={cancelDelete}
-				title="Delete Catalogue"
 				message="Are you sure you want to delete this catalogue? This action cannot be undone."
+				onCancel={cancelDelete}
+				onConfirm={confirmDelete}
+				title="Delete Catalogue"
 			/>
 
 			<DeleteMultipleItemsModal
-				isOpen={isDeleteMultipleModalOpen}
 				catalogues={catalogues}
-				onConfirm={handleDeleteMultipleCatalogues}
+				isOpen={isDeleteMultipleModalOpen}
 				maxAllowed={maxAllowedCatalogues}
+				onConfirm={handleDeleteMultipleCatalogues}
 			/>
 
 			<InformModal
+				cancelText=""
+				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
-				onConfirm={() => setIsInfoModalOpen(false)}
-				onCancel={() => setIsInfoModalOpen(false)}
-				title={`${currentMetric} Explained`}
 				message={
 					currentMetric === "Total Views"
 						? "This shows the total number of times your catalogues have been viewed by visitors. It includes all page visits across all your catalogues."
@@ -269,8 +270,9 @@ const Overview = ({
 									? "This shows how many people have subscribed to your newsletter service. These are users who have opted in to receive updates from you."
 									: "Select a metric to see its explanation."
 				}
-				confirmText="Got it!"
-				cancelText=""
+				onCancel={() => setIsInfoModalOpen(false)}
+				onConfirm={() => setIsInfoModalOpen(false)}
+				title={`${currentMetric} Explained`}
 			/>
 		</div>
 	);

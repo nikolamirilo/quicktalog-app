@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import {
 	Catalogue,
 	CatalogueCategory,
@@ -7,7 +8,6 @@ import {
 	Usage,
 	User,
 } from "@/types";
-import { JSX } from "react";
 import { ContactInfo, FooterData, ServicesFormData, UserData } from ".";
 
 export type ITestimonial = {
@@ -234,9 +234,6 @@ export type LanguageSelectorProps = {
 export type DonutChartProps = {
 	data: number[];
 	labels: string[];
-	title: string;
-	description: string;
-	icon: JSX.Element;
 };
 
 export type AnalyticsProps = {

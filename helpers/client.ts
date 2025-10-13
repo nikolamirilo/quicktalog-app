@@ -311,7 +311,7 @@ interface StepValidationOptions {
 export const validateStepHelper = (
 	options: StepValidationOptions,
 ): ValidationResult => {
-	const { step, formData, requiredFields, tier = tiers[0] } = options;
+	const { step, formData, requiredFields } = options;
 	const errors: { [key: string]: string } = {};
 	let step2Error = "";
 	let step3Error = "";
@@ -340,14 +340,7 @@ export const validateStepHelper = (
 	if (step === 2) {
 		if (formData.services.length === 0) {
 			step2Error = "Please add at least one service category.";
-		}
-		// else if (
-		//   typeof tier.features.categories_per_catalogue == "number" &&
-		//   formData.services.length > tier.features.categories_per_catalogue
-		// ) {
-		//   step2Error = `You can create up to ${tier.features.categories_per_catalogue} categories on your current plan`
-		// }
-		else {
+		} else {
 			const seen = new Set<string>();
 
 			for (const category of formData.services) {

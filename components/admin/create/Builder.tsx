@@ -1,4 +1,8 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
+import { ArrowLeft, ArrowRight, Edit } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { MdOutlinePublishedWithChanges } from "react-icons/md";
 import { sendNewCatalogueEmail } from "@/actions/email";
 import EditFormMobileTabs from "@/components/admin/create/components/EditFormMobileTabs";
 import EditFormSidebar from "@/components/admin/create/components/EditFormSidebar";
@@ -28,10 +32,6 @@ import { NavigationGuard } from "@/hooks/useBeforeUnload";
 import { CategoryItem, ContactInfo, ServicesFormData } from "@/types";
 import { BuilderProps } from "@/types/components";
 import { LimitType } from "@/types/enums";
-import { useUser } from "@clerk/nextjs";
-import { ArrowLeft, ArrowRight, Edit } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { MdOutlinePublishedWithChanges } from "react-icons/md";
 
 function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 	const [formData, setFormData] = useState<ServicesFormData>(
@@ -325,7 +325,6 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		const result = validateStepHelper({
 			step,
 			formData,
-			tier: userData.currentPlan,
 		});
 		setErrors(result.errors);
 		if (result.step2Error) setStep2Error(result.step2Error);
@@ -340,7 +339,6 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 			| React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 			| { target: { name: string; value: string } },
 	) => {
-		const { name, value } = e.target;
 		handleInputChange(e);
 	};
 
@@ -449,62 +447,62 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 			case 1:
 				return (
 					<Step1General
+						errors={errors}
 						formData={formData}
 						handleInputChange={handleInputChangeWithValidation}
-						setFormData={setFormData}
-						errors={errors}
-						touched={touched}
-						setTouched={setTouched}
 						setErrors={setErrors}
+						setFormData={setFormData}
+						setTouched={setTouched}
+						touched={touched}
 						type={type}
 					/>
 				);
 			case 2:
 				return (
 					<Step2Categories
+						expandedCategory={expandedCategory}
 						formData={formData}
 						handleAddCategory={handleAddCategory}
-						handleRemoveCategory={handleRemoveCategory}
 						handleCategoryChange={handleCategoryChange}
+						handleRemoveCategory={handleRemoveCategory}
 						handleReorderCategories={handleReorderCategories}
-						expandedCategory={expandedCategory}
 						setExpandedCategory={setExpandedCategory}
-						tier={userData.currentPlan}
 						setShowLimitsModal={setShowLimitsModal}
+						tier={userData.currentPlan}
 					/>
 				);
 			case 3:
 				return (
 					<Step3Items
-						isUploading={isUploading}
+						expandedCategory={expandedCategory}
+						expandedItem={expandedItem}
 						formData={formData}
 						handleAddItem={handleAddItem}
-						handleRemoveItem={handleRemoveItem}
 						handleItemChange={handleItemChange}
+						handleRemoveItem={handleRemoveItem}
 						imagePreviews={imagePreviews}
+						isUploading={isUploading}
+						setExpandedCategory={setExpandedCategory}
+						setExpandedItem={setExpandedItem}
 						setImagePreviews={setImagePreviews}
 						setIsUploading={setIsUploading}
-						expandedCategory={expandedCategory}
-						setExpandedCategory={setExpandedCategory}
-						expandedItem={expandedItem}
-						setExpandedItem={setExpandedItem}
-						tier={userData.currentPlan}
 						setShowLimitsModal={setShowLimitsModal}
+						tier={userData.currentPlan}
 					/>
 				);
 			case 4:
 				return (
 					<Step4Branding
-						formData={formData}
 						errors={errors}
+						formData={formData}
+						handleAddContact={handleAddContact}
+						handleContactChange={handleContactChange}
+						handleInputChange={handleInputChangeWithValidation}
+						handleRemoveContact={handleRemoveContact}
 						setErrors={setErrors}
+						setFormData={setFormData}
 						setIsUploading={setIsUploading}
 						userData={userData}
-						handleInputChange={handleInputChangeWithValidation}
-						handleAddContact={handleAddContact}
-						handleRemoveContact={handleRemoveContact}
-						handleContactChange={handleContactChange}
-						setFormData={setFormData}
 					/>
 				);
 			case 5:
@@ -523,8 +521,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 			{type === "edit" && (
 				<EditFormSidebar
 					currentStep={currentStep}
-					onStepChange={handleStepChange}
 					getSidebarButtonClass={getSidebarButtonClass}
+					onStepChange={handleStepChange}
 				/>
 			)}
 			<NavigationGuard isDirty={isDirty} />
@@ -563,9 +561,9 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 							<div className="flex justify-center space-x-3 mt-6">
 								{steps.map((step) => (
 									<button
-										key={step}
-										disabled={currentStep === step ? false : true}
 										className={`w-10 h-2 rounded-full transition-all duration-300 ${currentStep === step ? "bg-product-primary shadow-product-shadow cursor-pointer" : "bg-product-border cursor-not-allowed"}  hover:bg-product-primary/80 hover:shadow-product-hover-shadow`}
+										disabled={currentStep === step ? false : true}
+										key={step}
 										onClick={async () => {
 											if (step === currentStep) return;
 											if (step < currentStep) {
@@ -603,31 +601,31 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 								<div className="flex flex-col sm:flex-row sm:justify-between gap-4 mt-8 pt-6 border-t border-product-border">
 									{currentStep > 1 && (
 										<Button
+											className="px-6 py-3 text-base font-medium"
+											onClick={handlePrevious}
 											type="button"
 											variant="outline"
-											onClick={handlePrevious}
-											className="px-6 py-3 text-base font-medium"
 										>
 											<ArrowLeft className="mr-2 h-5 w-5" /> Previous
 										</Button>
 									)}
 									{currentStep < 5 && (
 										<Button
-											type="button"
-											onClick={handleNext}
 											className={`sm:ml-auto px-6 py-3 text-base font-medium ${!isStepValid(currentStep) || isUploading ? "bg-product-border text-product-foreground-accent hover:bg-product-border cursor-not-allowed" : "bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1"}`}
 											disabled={!isStepValid(currentStep) || isUploading}
+											onClick={handleNext}
+											type="button"
 										>
 											Next <ArrowRight className="ml-2 h-5 w-5" />
 										</Button>
 									)}
 									{currentStep === 5 && (
 										<Button
+											className="sm:ml-auto flex items-center justify-center px-8 py-3 text-base font-semibold bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300"
 											disabled={
 												isSubmitting || !isStepValid(currentStep) || isUploading
 											}
 											onClick={handleSubmit}
-											className="sm:ml-auto flex items-center justify-center px-8 py-3 text-base font-semibold bg-product-primary hover:bg-product-primary-accent hover:shadow-product-hover-shadow hover:scale-[1.02] hover:transform hover:-translate-y-1 transition-all duration-300"
 										>
 											{type === "edit" ? (
 												<Edit className="h-5 w-5" />
@@ -648,22 +646,22 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 						</CardContent>
 						{showSuccessModal ? (
 							<SuccessModal
+								catalogueUrl={serviceCatalogueUrl}
 								isOpen={showSuccessModal}
 								onClose={() => setShowSuccessModal(false)}
-								catalogueUrl={serviceCatalogueUrl}
 								type={type === "edit" ? "edit" : "regular"}
 							/>
 						) : null}
 
 						{showLimitsModal.isOpen && (
 							<LimitsModal
+								currentPlan={userData?.currentPlan}
 								isOpen={showLimitsModal.isOpen}
 								onClose={() =>
 									setShowLimitsModal({ isOpen: false, type: "catalogue" })
 								}
-								type={showLimitsModal.type}
-								currentPlan={userData?.currentPlan}
 								requiredPlan={userData?.nextPlan}
+								type={showLimitsModal.type}
 							/>
 						)}
 					</Card>

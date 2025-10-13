@@ -1,8 +1,8 @@
+import { NextRequest, NextResponse } from "next/server";
 import { tiers } from "@/constants/pricing";
 import { endOfMonth, startOfMonth } from "@/helpers/client";
 import { UserData } from "@/types";
 import { createClient } from "@/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
 	request: NextRequest,

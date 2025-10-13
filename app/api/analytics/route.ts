@@ -1,5 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: NextRequest) {
 	try {
@@ -119,7 +119,7 @@ ORDER BY date DESC, hour DESC`,
 
 				if (existing) {
 					// Record exists - add to existing values
-					const { data, error } = await supabase
+					const { error } = await supabase
 						.from("analytics")
 						.update({
 							pageview_count: existing.pageview_count + item.pageview_count,
@@ -146,9 +146,7 @@ ORDER BY date DESC, hour DESC`,
 					}
 				} else {
 					// Record doesn't exist - insert new
-					const { data, error } = await supabase
-						.from("analytics")
-						.insert([item]);
+					const { error } = await supabase.from("analytics").insert([item]);
 
 					if (error) {
 						errors.push({ item, error });

@@ -1,6 +1,6 @@
-import { createClient } from "@/utils/supabase/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET() {
 	try {
@@ -23,7 +23,7 @@ export async function GET() {
 		return NextResponse.json(data || []);
 	} catch (error) {
 		return NextResponse.json(
-			{ error: "Failed to fetch catalogues" },
+			{ error: "Failed to fetch catalogues", details: error },
 			{ status: 500 },
 		);
 	}

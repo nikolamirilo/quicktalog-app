@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import {
 	Select,
 	SelectContent,
@@ -7,7 +8,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { currencies } from "@/constants";
-import { useEffect, useState } from "react";
 
 export function CurrencySelect({
 	value,
@@ -46,7 +46,7 @@ export function CurrencySelect({
 	}, [value, onChange]);
 
 	return (
-		<Select value={value || defaultCurrency} onValueChange={onChange}>
+		<Select onValueChange={onChange} value={value || defaultCurrency}>
 			<SelectTrigger>
 				<SelectValue placeholder="Select currency" />
 			</SelectTrigger>
@@ -55,9 +55,9 @@ export function CurrencySelect({
 					.sort((a, b) => a.label.localeCompare(b.label))
 					.map((currency) => (
 						<SelectItem
+							className="cursor-pointer"
 							key={currency.value}
 							value={currency.value}
-							className="cursor-pointer"
 						>
 							{currency.label} ({currency.symbol})
 						</SelectItem>

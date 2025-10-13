@@ -1,4 +1,7 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
+import React, { useState } from "react";
 import { sendNewCatalogueEmail } from "@/actions/email";
 import LimitsModal from "@/components/modals/LimitsModal";
 import SuccessModal from "@/components/modals/SuccessModal";
@@ -7,9 +10,6 @@ import { generateUniqueSlug } from "@/helpers/client";
 import { revalidateData } from "@/helpers/server";
 import { toast } from "@/hooks/use-toast";
 import { UserData } from "@/types";
-import { useUser } from "@clerk/nextjs";
-import Link from "next/link";
-import React, { useState } from "react";
 import FormHeader from "./components/FormHeader";
 import OcrReader from "./components/OcrReader";
 import Step1General from "./components/steps/Step1General";
@@ -116,8 +116,8 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 						<p>
 							Your digital showcase has been created. You can view it at{" "}
 							<Link
-								href={catalogueUrl}
 								className="text-primary-accent hover:underline"
+								href={catalogueUrl}
 							>
 								{catalogueUrl}
 							</Link>
@@ -153,50 +153,50 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 				type="form"
 			>
 				<FormHeader
-					title="Scan & Import your catalogue"
 					subtitle="Easily convert your physical catalogs into digital format in seconds. Perfect for restaurants, salons, gyms, and other businesses looking to modernize and streamline customer access."
+					title="Scan & Import your catalogue"
 				/>
 				<CardContent className="p-6 sm:p-8 pt-0">
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form className="space-y-6" onSubmit={handleSubmit}>
 						<Step1General
+							errors={errors}
 							formData={formData}
 							handleInputChange={handleInputChange}
-							setFormData={setFormData}
-							errors={errors}
-							touched={touched}
-							setTouched={setTouched}
 							setErrors={setErrors}
+							setFormData={setFormData}
+							setTouched={setTouched}
+							touched={touched}
 							type="create"
 						/>
 
 						<ThemeSelect
+							errors={errors}
 							formData={formData}
 							setFormData={setFormData}
 							touched={touched}
-							errors={errors}
 						/>
 
 						<OcrReader
 							formData={formData}
-							setShowSuccessModal={setShowSuccessModal}
 							setServiceCatalogueUrl={setCatalogueUrl}
+							setShowSuccessModal={setShowSuccessModal}
 						/>
 					</form>
 				</CardContent>
 			</Card>
 
 			<SuccessModal
+				catalogueUrl={catalogueUrl}
 				isOpen={showSuccessModal}
 				onClose={() => setShowSuccessModal(false)}
-				catalogueUrl={catalogueUrl}
 				type="ocr"
 			/>
 			{showLimitsModal && (
 				<LimitsModal
-					type="ocr"
-					isOpen={showLimitsModal}
 					currentPlan={userData?.currentPlan}
+					isOpen={showLimitsModal}
 					requiredPlan={userData?.nextPlan}
+					type="ocr"
 				/>
 			)}
 		</div>

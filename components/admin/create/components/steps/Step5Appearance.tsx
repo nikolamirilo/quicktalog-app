@@ -141,7 +141,7 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({
 							slidesPerView={1}
 							spaceBetween={0}
 						>
-							{themes.map((themeItem, index) => (
+							{themes.map((themeItem) => (
 								<SwiperSlide key={themeItem.key}>
 									<div
 										aria-label={`${item.title} Catalogue`}

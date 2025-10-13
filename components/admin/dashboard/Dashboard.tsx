@@ -115,10 +115,7 @@ export default function Dashboard({
 
 						{activeTab === "support" ? (
 							<section className="animate-fade-in">
-								<Support
-									pricingPlanId={pricingPlan.id}
-									userEmail={user.email}
-								/>
+								<Support />
 							</section>
 						) : null}
 					</Suspense>

@@ -125,7 +125,8 @@ const Pricing: React.FC = () => {
 			<div className="mb-8">
 				<PricingColumn
 					billingCycle={billingCycle}
-					highlight={false} // Add row mode here
+					highlight={false}
+					key={"pricing-plan-0"}
 					mode="row"
 					paddle={paddle}
 					price={
@@ -153,10 +154,10 @@ const Pricing: React.FC = () => {
 				whileInView="onscreen"
 			>
 				{filteredTiers.map((tier, index) => (
-					<motion.div key={tier.name} variants={childVariants}>
+					<motion.div key={`pricing-plan-${index}`} variants={childVariants}>
 						<PricingColumn
 							billingCycle={billingCycle}
-							highlight={!user && index == 1 ? true : false}
+							highlight={!user && tier.id == 1 ? true : false}
 							paddle={paddle}
 							price={
 								prices[

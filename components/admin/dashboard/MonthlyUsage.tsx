@@ -1,10 +1,10 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
-import { PricingPlan, Usage } from "@/types";
 import { BiGridAlt, BiScan } from "react-icons/bi";
 import { FiBarChart2 } from "react-icons/fi";
 import { IoAnalyticsOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
+import { Card, CardContent } from "@/components/ui/card";
+import { PricingPlan, Usage } from "@/types";
 import DonutChart from "../../charts/DonutChart";
 
 const MonthlyUsage = ({
@@ -80,8 +80,8 @@ const MonthlyUsage = ({
 					.filter((item) => item.shown === true)
 					.map((chart, index) => (
 						<Card
-							key={index}
 							className="bg-white border border-product-border shadow-lg overflow-hidden"
+							key={index}
 						>
 							<CardContent className="p-6">
 								{/* Header with Icon */}
@@ -97,13 +97,7 @@ const MonthlyUsage = ({
 								{/* Donut Chart */}
 								<div className="flex justify-center mb-6">
 									<div className="w-full max-w-48 h-32 sm:h-40 md:h-48">
-										<DonutChart
-											data={chart.data}
-											labels={chart.labels}
-											title={chart.title}
-											description=""
-											icon={chart.icon}
-										/>
+										<DonutChart data={chart.data} labels={chart.labels} />
 									</div>
 								</div>
 

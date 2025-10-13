@@ -1,15 +1,9 @@
 "use client";
-import Contact from "@/components/contact/Contact";
 import { InlineWidget } from "react-calendly";
 import { IoMdHelpCircleOutline } from "react-icons/io";
+import Contact from "@/components/contact/Contact";
 
-const Support = ({
-	pricingPlanId = 0,
-	userEmail,
-}: {
-	pricingPlanId: number;
-	userEmail: string;
-}) => {
+const Support = () => {
 	return (
 		<div className="max-w-5xl space-y-8">
 			<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
@@ -47,11 +41,11 @@ const Support = ({
 					</p>
 					<div className="h-[600px] w-full rounded-2xl overflow-hidden border border-product-border">
 						<InlineWidget
+							styles={{ height: "100%", width: "100%" }}
 							url={
 								process.env.NEXT_PUBLIC_CALENDLY_URL ||
 								"https://calendly.com/quicktalog/customer-support"
 							}
-							styles={{ height: "100%", width: "100%" }}
 						/>
 					</div>
 				</div>

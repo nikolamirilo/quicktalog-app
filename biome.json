@@ -5,22 +5,23 @@
 		"clientKind": "git",
 		"useIgnoreFile": true
 	},
-	"files": {
-		"ignoreUnknown": false
-	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab"
 	},
 	"linter": {
-		"enabled": false,
+		"enabled": true,
 		"rules": {
 			"recommended": false,
 			"a11y": {
-				"recommended": true
+				"recommended": false
+			},
+			"style": {
+				"noShoutyConstants": "on"
 			},
 			"correctness": {
-				"noUnusedFunctionParameters": "warn"
+				"noUnusedFunctionParameters": "warn",
+				"noUnusedVariables": "warn"
 			},
 			"complexity": {
 				"noUselessContinue": "error"

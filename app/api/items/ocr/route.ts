@@ -1,3 +1,5 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 import { CatalogueCategory } from "@/types";
 import {
 	chatCompletion,
@@ -5,8 +7,6 @@ import {
 	generatePromptForCategoryProcessing,
 } from "@/utils/deepseek";
 import { createClient } from "@/utils/supabase/server";
-import { currentUser } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
 	console.log("🚀 === OCR PROCESSING STARTED ===");

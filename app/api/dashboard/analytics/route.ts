@@ -1,6 +1,6 @@
-import { createClient } from "@/utils/supabase/server";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET() {
 	try {
@@ -34,7 +34,7 @@ export async function GET() {
 		});
 	} catch (error) {
 		return NextResponse.json(
-			{ error: "Failed to fetch analytics" },
+			{ error: "Failed to fetch analytics", details: error },
 			{ status: 500 },
 		);
 	}
