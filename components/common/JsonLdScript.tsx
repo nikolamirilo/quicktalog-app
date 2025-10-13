@@ -1,18 +1,18 @@
-import Head from 'next/head'
+import Head from "next/head";
 
 interface JsonLdScriptProps {
-    schema: any
+	schema: any;
 }
 
 const JsonLdScript: React.FC<JsonLdScriptProps> = ({ schema }) => {
-    return (
-        <Head>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-            />
-        </Head>
-    )
-}
+	return (
+		<Head>
+			<script
+				type="application/ld+json"
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+			/>
+		</Head>
+	);
+};
 
-export default JsonLdScript
+export default JsonLdScript;
