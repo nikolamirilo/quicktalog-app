@@ -1,4 +1,7 @@
 "use client";
+import { X } from "lucide-react";
+import { useState } from "react";
+import { createWorker, OEM } from "tesseract.js";
 import { logOcrUsage } from "@/actions/usage";
 import { Button } from "@/components/ui/button";
 import { generateUniqueSlug } from "@/helpers/client";
@@ -10,9 +13,6 @@ import {
 	getLanguageParameters,
 	preprocessImage,
 } from "@/utils/ocr";
-import { X } from "lucide-react";
-import { useState } from "react";
-import { createWorker, OEM } from "tesseract.js";
 import { LanguageSelector } from "./LanguageSelector";
 
 const OcrReader = ({
@@ -170,11 +170,6 @@ const OcrReader = ({
 
 	const handleSubmit = async () => {
 		if (!combinedText.trim()) {
-			toast({
-				title: "No Text Found",
-				description: "Please extract text from images first.",
-				variant: "destructive",
-			});
 			return;
 		}
 
@@ -196,18 +191,10 @@ const OcrReader = ({
 				setShowSuccessModal(true);
 			} else {
 				const errorData = await response.json();
-				toast({
-					title: "Error",
-					description: `Failed to create showcase: ${errorData.error || "Unknown error"}`,
-					variant: "destructive",
-				});
+				console.error("Error response:", errorData);
 			}
 		} catch (error) {
-			toast({
-				title: "Error",
-				description: "An error occurred while processing the extracted text.",
-				variant: "destructive",
-			});
+			console.error("Error submitting OCR data:", error);
 		} finally {
 			setIsSubmitting(false);
 			await revalidateData();
@@ -221,9 +208,9 @@ const OcrReader = ({
 	return (
 		<div className="flex flex-col items-center text-product-foreground min-h-screen">
 			<LanguageSelector
-				selectedLanguage={selectedLanguage}
 				detectedLanguage={detectedLanguage}
 				onLanguageChange={setSelectedLanguage}
+				selectedLanguage={selectedLanguage}
 			/>
 
 			{/* Image Upload Controls */}
@@ -235,11 +222,11 @@ const OcrReader = ({
 				>
 					Upload from Gallery
 					<input
-						type="file"
 						accept="image/*"
+						className="hidden"
 						multiple
 						onChange={handleImageChange}
-						className="hidden"
+						type="file"
 					/>
 				</label>
 
@@ -250,11 +237,11 @@ const OcrReader = ({
 				>
 					Open Camera App
 					<input
-						type="file"
 						accept="image/*"
 						capture="environment"
-						onChange={handleImageChange}
 						className="hidden"
+						onChange={handleImageChange}
+						type="file"
 					/>
 				</label>
 			</div>
@@ -276,13 +263,13 @@ const OcrReader = ({
 
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
 						{images.map((OCRImageData, index) => (
-							<div key={OCRImageData.id} className="relative">
+							<div className="relative" key={OCRImageData.id}>
 								<div className="p-3 rounded-xl border border-product-border bg-hero-product-background shadow-product">
 									{/* Remove button */}
 									<button
-										onClick={() => removeImage(OCRImageData.id)}
 										className="absolute -top-2 -right-2 z-10 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
 										disabled={isProcessing}
+										onClick={() => removeImage(OCRImageData.id)}
 									>
 										<X size={14} />
 									</button>
@@ -300,9 +287,9 @@ const OcrReader = ({
 										</p>
 
 										<img
-											src={OCRImageData.originalUrl}
 											alt={`Content ${index + 1}`}
 											className="w-full h-24 object-cover rounded-lg mb-2"
+											src={OCRImageData.originalUrl}
 										/>
 
 										{/* Confidence badge */}
@@ -339,14 +326,14 @@ const OcrReader = ({
 			{/* Action Buttons */}
 			<div className="mb-8 flex flex-col sm:flex-row gap-4">
 				<Button
-					onClick={extractTextFromAllImages}
-					disabled={images.length === 0 || isProcessing || isSubmitting}
-					variant="file-action"
 					className={
 						images.length > 0 && !isProcessing && !isSubmitting
 							? "bg-product-primary text-product-secondary hover:bg-product-primary-accent hover:shadow-product-hover hover:scale-105 cursor-pointer"
 							: "bg-gray-300 text-gray-600 cursor-not-allowed"
 					}
+					disabled={images.length === 0 || isProcessing || isSubmitting}
+					onClick={extractTextFromAllImages}
+					variant="file-action"
 				>
 					{isProcessing
 						? "Extracting Text..."
@@ -354,14 +341,14 @@ const OcrReader = ({
 				</Button>
 
 				<Button
-					onClick={handleSubmit}
-					disabled={!hasExtractedText || isProcessing || isSubmitting}
-					variant="file-action"
 					className={
 						hasExtractedText && !isProcessing && !isSubmitting
 							? "bg-green-600 text-white hover:bg-green-700 hover:shadow-product-hover hover:scale-105 cursor-pointer"
 							: "bg-gray-300 text-gray-600 cursor-not-allowed"
 					}
+					disabled={!hasExtractedText || isProcessing || isSubmitting}
+					onClick={handleSubmit}
+					variant="file-action"
 				>
 					{isSubmitting ? "Creating Catalogue..." : "Create Catalogue"}
 				</Button>
@@ -403,7 +390,7 @@ const OcrReader = ({
 						{combinedText ? (
 							<div>
 								{combinedText.split("\n").map((line, index) => (
-									<div key={index}>
+									<div key={`text-${index}`}>
 										{line.startsWith("--- Image") ? (
 											<div className="text-blue-600 font-semibold my-2 border-b border-blue-200 pb-1">
 												{line}

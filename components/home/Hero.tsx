@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,6 +11,7 @@ import {
 	FiPlay,
 	FiSmartphone,
 } from "react-icons/fi";
+import { Button } from "@/components/ui/button";
 
 // Static data for reusability
 const valuePropositions = [
@@ -41,9 +41,9 @@ const Hero: React.FC = () => {
 	const router = useRouter();
 	return (
 		<section
+			className="relative flex min-h-[80vh] items-center justify-center px-4 pt-32 md:pt-40"
 			id="hero"
 			role="banner"
-			className="relative flex min-h-[80vh] items-center justify-center px-4 pt-32 md:pt-40"
 		>
 			{/* Background Grid */}
 			<div className="absolute inset-0 -z-10 bg-hero-product-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]" />
@@ -64,13 +64,15 @@ const Hero: React.FC = () => {
 				{/* Value Propositions */}
 				<div className="mt-6 flex flex-col items-center justify-center gap-4 text-sm text-product-foreground-accent sm:flex-row">
 					{valuePropositions.map(({ icon, text }, index) => (
-						<IconText key={index} icon={icon} text={text} />
+						<IconText icon={icon} key={`value-${index}`} text={text} />
 					))}
 				</div>
 
 				{/* CTA Buttons */}
 				<div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
 					<Button
+						aria-label="Create your digital catalog"
+						className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
 						onClick={() => {
 							if (user) {
 								router.push("/admin/create");
@@ -79,16 +81,14 @@ const Hero: React.FC = () => {
 							}
 						}}
 						variant="cta"
-						className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
-						aria-label="Create your digital catalog"
 					>
 						Start Creating Now
 					</Button>
 					<Link href="/demo">
 						<Button
-							variant="outline"
-							className="h-14 border-2 border-product-primary px-8 py-4 text-lg text-wrap min-w-56 w-fit"
 							aria-label="Try the catalog demo"
+							className="h-14 border-2 border-product-primary px-8 py-4 text-lg text-wrap min-w-56 w-fit"
+							variant="outline"
 						>
 							<FiPlay className="mr-2 h-5 w-5" />
 							Try Demo
@@ -99,7 +99,7 @@ const Hero: React.FC = () => {
 				{/* Trust Indicators */}
 				<div className="mt-6 flex items-center justify-center gap-6 text-sm text-product-foreground-accent">
 					{trustIndicators.map(({ icon, text }, index) => (
-						<IconText key={index} icon={icon} text={text} />
+						<IconText icon={icon} key={`trust-${index}`} text={text} />
 					))}
 				</div>
 
@@ -110,13 +110,13 @@ const Hero: React.FC = () => {
 
 				{/* Hero Image */}
 				<img
-					src="/images/hero-mockup.png"
-					width={384 * 1.2}
-					height={340 * 1.2}
-					sizes="(max-width: 768px) 80vw, 460px"
 					alt="Interactive digital catalog"
 					className="relative z-10 mx-auto mt-12 md:mt-16"
 					fetchPriority="high"
+					height={340 * 1.2}
+					sizes="(max-width: 768px) 80vw, 460px"
+					src="/images/hero-mockup.png"
+					width={384 * 1.2}
 				/>
 			</div>
 		</section>

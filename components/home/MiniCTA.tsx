@@ -1,18 +1,18 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { FiArrowRight } from "react-icons/fi";
+import { Button } from "@/components/ui/button";
 
 const MiniCTA: React.FC = () => {
 	return (
 		<motion.div
+			className="relative overflow-hidden rounded-xl p-6 bg-gradient-to-r from-white via-product-primary/25 to-product-primary/40 border border-product-border shadow-md"
 			initial={{ opacity: 0, y: 20 }}
-			whileInView={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.6 }}
 			viewport={{ once: true }}
-			className="relative overflow-hidden rounded-xl p-6 bg-gradient-to-r from-white via-product-primary/25 to-product-primary/40 border border-product-border shadow-md"
+			whileInView={{ opacity: 1, y: 0 }}
 		>
 			{/* Background gradient overlay */}
 			<div className="absolute inset-0 bg-gradient-to-r from-white/60 via-product-primary/15 to-product-primary/25 pointer-events-none" />
@@ -34,7 +34,7 @@ const MiniCTA: React.FC = () => {
 							"Advanced analytics",
 							"Priority support",
 						].map((feature, index) => (
-							<div key={index} className="flex items-center gap-3">
+							<div className="flex items-center gap-3" key={`feature-${index}`}>
 								<div className="flex-shrink-0 w-5 h-5 bg-product-primary/10 rounded-full flex items-center justify-center">
 									<BsFillCheckCircleFill className="w-3 h-3 text-product-primary" />
 								</div>
@@ -53,8 +53,8 @@ const MiniCTA: React.FC = () => {
 						className="w-full sm:w-auto bg-product-primary hover:bg-product-primary-accent text-product-secondary px-6 py-3 rounded-lg font-bold transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md"
 					>
 						<Link
-							href="/contact"
 							className="flex items-center  justify-center gap-2"
+							href="/contact"
 						>
 							Get Started
 							<FiArrowRight className="w-4 h-4" />

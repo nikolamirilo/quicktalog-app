@@ -53,10 +53,10 @@ const BenefitSection: React.FC<Props> = ({ benefit, imageAtRight }: Props) => {
 		<section className="benefit-section">
 			<motion.div
 				className="flex flex-wrap flex-col items-center justify-center gap-2 lg:flex-row lg:gap-20 lg:flex-nowrap mt-24 mb-24"
-				variants={containerVariants}
 				initial="offscreen"
-				whileInView="onscreen"
+				variants={containerVariants}
 				viewport={{ once: true }}
+				whileInView="onscreen"
 			>
 				<div
 					className={clsx("flex flex-wrap items-center w-full max-w-lg", {
@@ -81,10 +81,10 @@ const BenefitSection: React.FC<Props> = ({ benefit, imageAtRight }: Props) => {
 						<div className="mx-auto lg:ml-0 w-full">
 							{bullets.map((item, index) => (
 								<BenefitBullet
-									key={index}
-									title={item.title}
-									icon={item.icon}
 									description={item.description}
+									icon={item.icon}
+									key={`benefit-item-${index}`}
+									title={item.title}
 								/>
 							))}
 						</div>
@@ -99,11 +99,11 @@ const BenefitSection: React.FC<Props> = ({ benefit, imageAtRight }: Props) => {
 						})}
 					>
 						<img
-							src={imageSrc}
 							alt="title"
-							width="384"
-							height="762"
 							className="lg:ml-0"
+							height="762"
+							src={imageSrc}
+							width="384"
 						/>
 					</div>
 				</div>

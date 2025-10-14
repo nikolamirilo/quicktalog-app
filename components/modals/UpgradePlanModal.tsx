@@ -1,13 +1,13 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { formatPrice } from "@/helpers/client";
-import { usePaddlePrices } from "@/hooks/usePaddelPrices";
-import { PricingPlan } from "@/types";
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BsFillCheckCircleFill } from "react-icons/bs";
+import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/helpers/client";
+import { usePaddlePrices } from "@/hooks/usePaddelPrices";
+import { PricingPlan } from "@/types";
 
 interface UpgradePlanModalProps {
 	isOpen: boolean;
@@ -156,32 +156,32 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 					<div className="flex items-center justify-center mb-4 sm:mb-6">
 						<div className="relative inline-flex w-full max-w-[260px] bg-product-background border border-product-border rounded-full p-1 shadow-sm">
 							<span
+								aria-hidden="true"
 								className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${
 									billingCycle === "yearly"
 										? "translate-x-full"
 										: "translate-x-0"
 								}`}
-								aria-hidden="true"
 							/>
 							<button
-								type="button"
 								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
 									billingCycle === "monthly"
 										? "text-product-foreground font-bold"
 										: "text-product-foreground/60 font-medium"
 								}`}
 								onClick={() => setBillingCycle("monthly")}
+								type="button"
 							>
 								Monthly
 							</button>
 							<button
-								type="button"
 								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
 									billingCycle === "yearly"
 										? "text-product-foreground font-bold"
 										: "text-product-foreground/60 font-medium"
 								}`}
 								onClick={() => setBillingCycle("yearly")}
+								type="button"
 							>
 								Yearly
 							</button>
@@ -217,7 +217,10 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 							<div className="space-y-2 sm:space-y-3">
 								{getRelevantFeatures(currentPlan).map((feature, index) => (
-									<div key={index} className="flex items-start">
+									<div
+										className="flex items-start"
+										key={`plan-feature-${index}`}
+									>
 										<div className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 bg-product-border/30 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
 											<BsFillCheckCircleFill className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-product-foreground-accent" />
 										</div>
@@ -257,7 +260,10 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 							<div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
 								{getRelevantFeatures(requiredPlan).map((feature, index) => (
-									<div key={index} className="flex items-start">
+									<div
+										className="flex items-start"
+										key={`plan-feature-${index}`}
+									>
 										<div className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 bg-product-primary/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
 											<BsFillCheckCircleFill className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-product-primary" />
 										</div>
@@ -270,18 +276,18 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 							{/* See all features link inside card */}
 							<Link
-								href="/pricing"
 								className="text-xs sm:text-sm text-product-primary hover:underline font-lora flex items-center gap-1 mb-3 sm:mb-4"
+								href="/pricing"
 							>
 								See all features →
 							</Link>
 
 							{/* Upgrade button inside card */}
 							<Button
-								variant="cta"
 								className="w-full text-sm sm:text-base py-2 sm:py-3 font-lora"
-								onClick={handleUpgrade}
 								disabled={!paddle}
+								onClick={handleUpgrade}
+								variant="cta"
 							>
 								Upgrade to {requiredPlan.name}
 							</Button>

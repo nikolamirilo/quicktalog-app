@@ -81,7 +81,7 @@ const MonthlyUsage = ({
 					.map((chart, index) => (
 						<Card
 							className="bg-white border border-product-border shadow-lg overflow-hidden"
-							key={index}
+							key={`usage-${index}`}
 						>
 							<CardContent className="p-6">
 								{/* Header with Icon */}

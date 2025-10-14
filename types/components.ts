@@ -201,11 +201,6 @@ export type Step4BrandingProps = {
 	setErrors: any;
 	formData: ServicesFormData;
 	userData: UserData;
-	handleInputChange: (
-		e:
-			| React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-			| { target: { name: string; value: string } },
-	) => void;
 	handleAddContact: () => void;
 	handleRemoveContact: (index: number) => void;
 	setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;

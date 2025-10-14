@@ -209,7 +209,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 							{getFeatureList(tier.features).map((feature) => (
 								<div
 									className="flex items-start transition-all duration-300"
-									key={tier.id}
+									key={feature.type}
 								>
 									<div className="flex-shrink-0 w-4 h-4 bg-product-primary/10 rounded-full flex items-center justify-center mr-2 mt-0.5">
 										<BsFillCheckCircleFill className="w-2.5 h-2.5 text-product-primary" />
@@ -334,7 +334,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 					{getFeatureList(tier.features).map((feature) => (
 						<li
 							className="flex items-start transition-all duration-300"
-							key={tier.id}
+							key={feature.type}
 						>
 							<div className="flex-shrink-0 w-5 h-5 bg-product-primary/10 rounded-full flex items-center justify-center mr-3 mt-0.5">
 								<BsFillCheckCircleFill className="w-3 h-3 text-product-primary" />

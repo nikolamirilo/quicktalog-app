@@ -497,7 +497,6 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 						formData={formData}
 						handleAddContact={handleAddContact}
 						handleContactChange={handleContactChange}
-						handleInputChange={handleInputChangeWithValidation}
 						handleRemoveContact={handleRemoveContact}
 						setErrors={setErrors}
 						setFormData={setFormData}

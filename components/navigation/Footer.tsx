@@ -1,11 +1,11 @@
 "use client";
+import Link from "next/link";
+import React, { useState } from "react";
+import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
 import { productNewsletterSignup } from "@/actions/newsletter";
 import { Button } from "@/components/ui/button";
 import { footerDetails, siteDetails } from "@/constants/details";
 import { getPlatformIconByName } from "@/constants/ui";
-import Link from "next/link";
-import React, { useState } from "react";
-import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
 
 const Footer: React.FC = () => {
 	const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -41,13 +41,13 @@ const Footer: React.FC = () => {
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
 					{/* Brand section */}
 					<div className="space-y-4">
-						<Link href="/" className="flex items-center gap-3 group">
+						<Link className="flex items-center gap-3 group" href="/">
 							<img
-								width={140}
-								height={140}
-								src="/logo.svg"
 								alt="Quicktalog Logo"
 								className="w-auto h-12 rounded-full object-cover group-hover:scale-105 transition-transform duration-200"
+								height={140}
+								src="/logo.svg"
+								width={140}
 							/>
 							{/* <h3 className="font-lora text-xl font-semibold cursor-pointer group-hover:text-product-primary transition-colors duration-200">
                 {siteDetails.siteName}
@@ -81,8 +81,8 @@ const Footer: React.FC = () => {
 							{footerDetails.quickLinks.map((link) => (
 								<li key={link.text}>
 									<Link
-										href={link.url}
 										className="text-product-foreground-accent hover:text-product-primary transition-colors duration-200 flex items-center gap-2 group"
+										href={link.url}
 									>
 										<span>{link.text}</span>
 										<FiExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
@@ -104,10 +104,10 @@ const Footer: React.FC = () => {
 									if (platformName && footerDetails.socials[platformName]) {
 										return (
 											<Link
-												href={footerDetails.socials[platformName]}
-												key={platformName}
 												aria-label={platformName}
 												className="p-2 rounded-lg bg-white text-gray-600 border border-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-3 group"
+												href={footerDetails.socials[platformName]}
+												key={platformName}
 											>
 												<div className="group-hover:text-product-primary transition-colors duration-300">
 													{getPlatformIconByName(platformName)}
@@ -119,25 +119,25 @@ const Footer: React.FC = () => {
 
 							{/* Mail icon */}
 							<a
-								href={`mailto:${footerDetails.email}`}
 								aria-label="Email us"
 								className="p-2 rounded-lg bg-white text-gray-600 border border-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-3 group"
+								href={`mailto:${footerDetails.email}`}
 							>
 								<div className="group-hover:text-product-primary transition-colors duration-300">
-									<FiMail size={24} className="min-w-fit" />
+									<FiMail className="min-w-fit" size={24} />
 								</div>
 							</a>
 
 							{/* Website icon */}
 							<a
-								href="https://www.quicktalog.app"
-								target="_blank"
-								rel="noopener noreferrer"
 								aria-label="Visit our website"
 								className="p-2 rounded-lg bg-white text-gray-600 border border-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-3 group"
+								href="https://www.quicktalog.app"
+								rel="noopener noreferrer"
+								target="_blank"
 							>
 								<div className="group-hover:text-product-primary transition-colors duration-300">
-									<FiGlobe size={24} className="min-w-fit" />
+									<FiGlobe className="min-w-fit" size={24} />
 								</div>
 							</a>
 						</div>
@@ -151,26 +151,26 @@ const Footer: React.FC = () => {
 						<p className="text-sm text-product-foreground-accent">
 							Subscribe to our newsletter for the latest updates and features.
 						</p>
-						<form onSubmit={handleNewsletterSubmit} className="space-y-3">
+						<form className="space-y-3" onSubmit={handleNewsletterSubmit}>
 							<div className="relative">
 								<input
-									type="email"
-									placeholder="Enter your email"
-									value={newsletterEmail}
-									onChange={(e) => setNewsletterEmail(e.target.value)}
 									className="w-full px-4 py-3 bg-product-background border border-product-border rounded-lg text-product-foreground placeholder-product-foreground-accent focus:outline-none focus:ring-2 focus:ring-product-primary/50 focus:border-product-primary transition-colors duration-200"
-									required
 									disabled={isSubmitting || submitSuccess}
+									onChange={(e) => setNewsletterEmail(e.target.value)}
+									placeholder="Enter your email"
+									required
+									type="email"
+									value={newsletterEmail}
 								/>
 							</div>
 							<Button
-								type="submit"
-								disabled={isSubmitting || submitSuccess}
 								className={`w-full transition-colors duration-200 font-semibold ${
 									submitSuccess
 										? "bg-green-500 text-white hover:bg-green-600"
 										: "bg-product-primary text-product-foreground hover:bg-product-primary-accent"
 								}`}
+								disabled={isSubmitting || submitSuccess}
+								type="submit"
 							>
 								{isSubmitting ? (
 									"Subscribing..."
@@ -185,9 +185,9 @@ const Footer: React.FC = () => {
 							</Button>
 							{submitError && (
 								<p
+									aria-live="polite"
 									className="text-red-500 text-xs"
 									role="alert"
-									aria-live="polite"
 								>
 									{submitError}
 								</p>
@@ -206,9 +206,9 @@ const Footer: React.FC = () => {
 						<div className="flex flex-row items-center gap-2 md:gap-6 text-sm text-product-foreground-accent">
 							{footerDetails.legalLinks.map((link, index) => (
 								<Link
-									key={index}
-									href={link.url}
 									className="hover:text-product-primary transition-colors duration-200"
+									href={link.url}
+									key={`detail-${index}`}
 								>
 									{link.text}
 								</Link>

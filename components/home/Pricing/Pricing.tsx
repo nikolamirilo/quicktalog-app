@@ -153,8 +153,11 @@ const Pricing: React.FC = () => {
 				viewport={{ once: true }}
 				whileInView="onscreen"
 			>
-				{filteredTiers.map((tier, index) => (
-					<motion.div key={`pricing-plan-${index}`} variants={childVariants}>
+				{filteredTiers.map((tier) => (
+					<motion.div
+						key={`pricing-plan-${tier.priceId.month}`}
+						variants={childVariants}
+					>
 						<PricingColumn
 							billingCycle={billingCycle}
 							highlight={!user && tier.id == 1 ? true : false}

@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { CatalogueHeaderProps } from "@/types/components";
 import Link from "next/link";
 import React from "react";
 import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
+import { Button } from "@/components/ui/button";
+import { CatalogueHeaderProps } from "@/types/components";
 import SmartLink from "../common/SmartLink";
 
 const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
@@ -30,8 +30,8 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 				createContactLink(
 					"mailto:quicktalog@outlook.com",
 					<FiMail
-						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						aria-hidden="true"
+						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 					/>,
 					"Send email to quicktalog@outlook.com",
 				),
@@ -42,8 +42,8 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					createContactLink(
 						`mailto:${data?.email}`,
 						<FiMail
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 							aria-hidden="true"
+							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
 						`Send email to ${data?.email}`,
 					),
@@ -54,8 +54,8 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					createContactLink(
 						`tel:${data?.phone}`,
 						<FiPhone
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 							aria-hidden="true"
+							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
 						`Call ${data?.phone}`,
 					),
@@ -72,7 +72,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 				href: "/auth?mode=signup",
 				label: "Create Your Catalog",
 				shortLabel: "Get Started",
-				icon: <FiPlus className="w-4 h-4 mr-2" aria-hidden="true" />,
+				icon: <FiPlus aria-hidden="true" className="w-4 h-4 mr-2" />,
 				ariaLabel: "Create your own digital catalog",
 			};
 		}
@@ -82,7 +82,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 				href: data?.ctaNavbar.url,
 				label: data?.ctaNavbar.label || "Learn more",
 				shortLabel: data?.ctaNavbar.label || "Learn more",
-				icon: <FiExternalLink className="w-4 h-4 mr-2" aria-hidden="true" />,
+				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4 mr-2" />,
 				ariaLabel: data?.ctaNavbar.label || "Learn more",
 			};
 		}
@@ -96,46 +96,46 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 
 	return (
 		<header
+			aria-label={`${companyName} header navigation`}
 			className="border-b shadow-lg z-50 bg-header-bg text-header-text border-card-border font-body tracking-body"
 			role="banner"
-			aria-label={`${companyName} header navigation`}
 		>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between py-2 sm:py-3">
 					<div className="flex items-center">
 						<Link
-							href={type === "default" ? "/" : ""}
-							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
 							aria-label={`Go to ${companyName} homepage`}
+							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
+							href={type === "default" ? "/" : ""}
 						>
 							<img
-								src={logo ?? "/logo.svg"}
 								alt={`${companyName} logo`}
-								width={type === "default" ? 120 : 100}
-								height={40}
 								className="w-auto h-[7vh] object-cover"
 								fetchPriority="high"
+								height={40}
+								src={logo ?? "/logo.svg"}
+								width={type === "default" ? 120 : 100}
 							/>
 						</Link>
 					</div>
 
 					<nav
+						aria-label="Contact and actions"
 						className="flex items-center space-x-2 sm:space-x-4"
 						role="navigation"
-						aria-label="Contact and actions"
 					>
 						{contactLinks.length > 0 && (
 							<div
+								aria-label="Contact options"
 								className="hidden sm:flex items-center space-x-2"
 								role="group"
-								aria-label="Contact options"
 							>
 								{contactLinks.map((linkProps, index) => (
 									<Link
-										key={index}
-										href={linkProps.href}
-										className={linkProps.className}
 										aria-label={linkProps.label}
+										className={linkProps.className}
+										href={linkProps.href}
+										key={`contact-${index}`}
 									>
 										{linkProps.icon}
 									</Link>
@@ -146,14 +146,14 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						{ctaProps && (
 							<Button
 								asChild
-								variant="secondary"
-								size="default"
 								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-header-bg text-header-text border-primary footer-cta-button"
+								size="default"
+								variant="secondary"
 							>
 								<SmartLink
-									href={ctaProps.href}
-									className="flex items-center"
 									aria-label={ctaProps.ariaLabel}
+									className="flex items-center"
+									href={ctaProps.href}
 								>
 									{ctaProps.icon}
 									<span className="hidden sm:inline">{ctaProps.label}</span>

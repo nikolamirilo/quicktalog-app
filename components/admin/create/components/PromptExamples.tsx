@@ -1,6 +1,6 @@
+import { RiLightbulbLine } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { examplePrompts } from "@/constants/ui";
-import { RiLightbulbLine } from "react-icons/ri";
 
 import type { PromptExamplesProps } from "@/types/components";
 
@@ -22,11 +22,11 @@ const PromptExamples: React.FC<PromptExamplesProps> = ({
 			<div className="grid gap-3">
 				{examplePrompts.map((example, index) => (
 					<Button
-						key={index}
-						onClick={() => setPrompt(example.prompt)}
-						disabled={disabled}
-						variant="ghost"
 						className="text-left p-4 rounded-lg bg-transparent hover:bg-product-hover-background border border-product-border transition-all group !h-fit max-w-full text-wrap"
+						disabled={disabled}
+						key={`example-${index}`}
+						onClick={() => setPrompt(example.prompt)}
+						variant="ghost"
 					>
 						<div className="flex flex-row justify-start items-center w-full h-full gap-3">
 							<div className="w-8 h-8 rounded-full bg-primary-accent/10 flex items-center justify-center group-hover:bg-primary-accent/20 transition-colors">

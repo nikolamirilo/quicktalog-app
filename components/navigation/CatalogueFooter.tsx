@@ -1,9 +1,4 @@
 "use client";
-import { newsletterSignup } from "@/actions/newsletter";
-import { Button } from "@/components/ui/button";
-import { footerDetails } from "@/constants/details";
-import { footerFeatures } from "@/constants/ui";
-import { CatalogueFooterProps } from "@/types/components";
 import Link from "next/link";
 import React, { useState } from "react";
 import {
@@ -15,6 +10,11 @@ import {
 	FiPlus,
 } from "react-icons/fi";
 import { MdTitle } from "react-icons/md";
+import { newsletterSignup } from "@/actions/newsletter";
+import { Button } from "@/components/ui/button";
+import { footerDetails } from "@/constants/details";
+import { footerFeatures } from "@/constants/ui";
+import { CatalogueFooterProps } from "@/types/components";
 import PartnerBadge from "../common/PartnerBadge";
 import SmartLink from "../common/SmartLink";
 import SocialIcon from "../common/SocialIcon";
@@ -61,9 +61,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 	return (
 		<footer
+			aria-label={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} footer`}
 			className="border-t mt-auto font-body font-weight-body tracking-body bg-footer-bg text-footer-text border-footer-border"
 			role="contentinfo"
-			aria-label={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} footer`}
 		>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="py-12 sm:py-16">
@@ -71,16 +71,16 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						<div className="space-y-6">
 							<div className="space-y-4">
 								<Link
-									href={type === "default" ? "/" : ""}
-									className="flex flex-col items-start space-y-2 group transition-transform duration-200 hover:scale-102"
 									aria-label={`Go to ${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} homepage`}
+									className="flex flex-col items-start space-y-2 group transition-transform duration-200 hover:scale-102"
+									href={type === "default" ? "/" : ""}
 								>
 									<img
-										src={logo ?? "/logo.svg"}
 										alt={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} logo`}
-										width={type === "default" ? 120 : 100}
-										height={40}
 										className="w-auto h-[7vh] object-cover"
+										height={40}
+										src={logo ?? "/logo.svg"}
+										width={type === "default" ? 120 : 100}
 									/>
 									{type === "default" && (
 										<p className="text-sm text-card-description">
@@ -103,18 +103,18 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								data?.socialLinks &&
 								Object.keys(data?.socialLinks).length > 0 && (
 									<nav
+										aria-label="Social media links"
 										className="flex items-center space-x-3"
 										role="navigation"
-										aria-label="Social media links"
 									>
 										{Object.keys(data?.socialLinks).map((platform) => {
 											const socialUrl = data?.socialLinks[platform];
 											if (platform && socialUrl) {
 												return (
 													<SocialIcon
+														href={socialUrl}
 														key={platform}
 														platform={platform}
-														href={socialUrl}
 													/>
 												);
 											}
@@ -128,21 +128,21 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							<div className="space-y-6">
 								<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
 									<div
-										className="w-1 h-5 bg-primary rounded-full"
 										aria-hidden="true"
+										className="w-1 h-5 bg-primary rounded-full"
 									></div>
 									<span>Contact & Support</span>
 								</h4>
 								<ul className="space-y-4">
 									<li>
 										<a
-											href={`mailto:${type === "default" ? footerDetails.email : data?.email}`}
-											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
 											aria-label={`Send email to ${type === "default" ? footerDetails.email : data?.email || "contact"}`}
+											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
+											href={`mailto:${type === "default" ? footerDetails.email : data?.email}`}
 										>
 											<FiMail
-												className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 												aria-hidden="true"
+												className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 											/>
 											<span>
 												{type === "default" ? footerDetails.email : data?.email}
@@ -152,13 +152,13 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									{data?.phone && (
 										<li>
 											<a
-												href={`tel:${data?.phone}`}
-												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
 												aria-label={`Call ${data?.phone}`}
+												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
+												href={`tel:${data?.phone}`}
 											>
 												<FiPhone
-													className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 													aria-hidden="true"
+													className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 												/>
 												<span>{data?.phone}</span>
 											</a>
@@ -167,13 +167,13 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									{type === "default" && (
 										<li>
 											<Link
-												href="/contact"
-												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
 												aria-label="Contact us"
+												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
+												href="/contact"
 											>
 												<FiExternalLink
-													className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 													aria-hidden="true"
+													className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 												/>
 												<span>Contact Us</span>
 											</Link>
@@ -188,16 +188,16 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								<>
 									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
 										<div
-											className="w-1 h-5 bg-primary rounded-full"
 											aria-hidden="true"
+											className="w-1 h-5 bg-primary rounded-full"
 										></div>
 										<span>Platform Features</span>
 									</h4>
 									<ul className="space-y-4">
 										{footerFeatures.map((feature, index) => (
 											<li
-												key={index}
 												className="flex items-start space-x-3 group text-card-description"
+												key={`footer-feature-${index}`}
 											>
 												<div className="mt-1 group-hover:scale-110 transition-transform duration-200 text-primary">
 													{feature.icon}
@@ -218,8 +218,8 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								<>
 									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
 										<div
-											className="w-1 h-5 bg-primary rounded-full"
 											aria-hidden="true"
+											className="w-1 h-5 bg-primary rounded-full"
 										></div>
 										<span>Company Information</span>
 									</h4>
@@ -250,23 +250,23 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									<div className="flex items-center space-x-3">
 										{Object.keys(socialLinks).map((platform, index) => (
 											<SocialIcon
-												key={index}
-												platform={platform}
 												className="rounded-lg"
 												href={socialLinks[platform as keyof typeof socialLinks]}
+												key={`social-${index}`}
+												platform={platform}
 											/>
 										))}
 									</div>
 
 									<Button
 										asChild
-										variant="secondary"
-										size="default"
 										className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary footer-cta-button"
+										size="default"
+										variant="secondary"
 									>
 										<Link
-											href="/auth?mode=signup"
 											aria-label="Create your own digital catalog"
+											href="/auth?mode=signup"
 										>
 											<FiPlus className="w-4 h-4" />
 											Create Your Digital Catalog
@@ -277,14 +277,14 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								<>
 									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
 										<div
-											className="w-1 h-5 bg-primary rounded-full"
 											aria-hidden="true"
+											className="w-1 h-5 bg-primary rounded-full"
 										></div>
 										<span>Trusted Partners</span>
 									</h4>
 									<ul className="space-y-3">
 										{data?.partners.map((partner, index) => (
-											<li key={index}>
+											<li key={`partner-${index}`}>
 												<PartnerBadge partner={partner} />
 											</li>
 										))}
@@ -305,30 +305,30 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							. All rights reserved.
 						</span>
 						<nav
+							aria-label="Legal links"
 							className="flex items-center space-x-6"
 							role="navigation"
-							aria-label="Legal links"
 						>
 							{type === "default" ? (
 								<>
 									<Link
-										href="/privacy-policy"
-										className="hover:text-primary transition-colors duration-200"
 										aria-label="Privacy Policy"
+										className="hover:text-primary transition-colors duration-200"
+										href="/privacy-policy"
 									>
 										Privacy Policy
 									</Link>
 									<Link
-										href="/terms-and-conditions"
-										className="hover:text-primary transition-colors duration-200"
 										aria-label="Terms of Service"
+										className="hover:text-primary transition-colors duration-200"
+										href="/terms-and-conditions"
 									>
 										Terms of Service
 									</Link>
 									<Link
-										href="/refund-policy"
-										className="hover:text-primary transition-colors duration-200"
 										aria-label="Refund Policy"
+										className="hover:text-primary transition-colors duration-200"
+										href="/refund-policy"
 									>
 										Refund Policy
 									</Link>
@@ -337,18 +337,18 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								<>
 									{data?.legal?.privacy_policy && (
 										<SmartLink
-											href={data?.legal?.privacy_policy}
-											className="hover:text-primary transition-colors duration-200"
 											aria-label="Privacy Policy"
+											className="hover:text-primary transition-colors duration-200"
+											href={data?.legal?.privacy_policy}
 										>
 											Privacy Policy
 										</SmartLink>
 									)}
 									{data?.legal?.terms_and_conditions && (
 										<SmartLink
-											href={data?.legal?.terms_and_conditions}
-											className="hover:text-primary transition-colors duration-200"
 											aria-label="Terms of Service"
+											className="hover:text-primary transition-colors duration-200"
+											href={data?.legal?.terms_and_conditions}
 										>
 											Terms of Service
 										</SmartLink>
@@ -362,39 +362,39 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							<div className="flex flex-col h-full">
 								<div className="flex-1 flex items-center">
 									<form
-										onSubmit={handleNewsletterSubmit}
-										className="flex items-center space-x-2 w-full"
-										role="form"
 										aria-label="Newsletter subscription"
+										className="flex items-center space-x-2 w-full"
+										onSubmit={handleNewsletterSubmit}
+										role="form"
 									>
 										<div className="relative">
-											<label htmlFor="newsletter-email" className="sr-only">
+											<label className="sr-only" htmlFor="newsletter-email">
 												Email address
 											</label>
 											<input
-												id="newsletter-email"
-												type="email"
-												placeholder="your@email.com"
-												value={newsletterEmail}
-												onChange={(e) => setNewsletterEmail(e.target.value)}
-												className="w-48 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-card-bg text-card-text border border-card-border"
-												required
-												disabled={isSubmitting || submitSuccess}
 												aria-describedby="newsletter-description"
 												aria-invalid={submitError ? "true" : "false"}
+												className="w-48 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-card-bg text-card-text border border-card-border"
+												disabled={isSubmitting || submitSuccess}
+												id="newsletter-email"
+												onChange={(e) => setNewsletterEmail(e.target.value)}
+												placeholder="your@email.com"
+												required
+												type="email"
+												value={newsletterEmail}
 											/>
 										</div>
 										<Button
-											type="submit"
-											variant="secondary"
-											size="default"
+											aria-label="Subscribe to newsletter"
 											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
 												submitSuccess
 													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
 													: "hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary"
 											}`}
 											disabled={isSubmitting || submitSuccess}
-											aria-label="Subscribe to newsletter"
+											size="default"
+											type="submit"
+											variant="secondary"
 										>
 											{isSubmitting ? (
 												<span>Subscribing...</span>
@@ -409,9 +409,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</Button>
 										{submitError && (
 											<p
+												aria-live="polite"
 												className="text-red-500 text-xs absolute -bottom-6 left-0"
 												role="alert"
-												aria-live="polite"
 											>
 												{submitError}
 											</p>
@@ -425,13 +425,13 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							data?.ctaFooter?.url && (
 								<Button
 									asChild
-									variant="secondary"
-									size="default"
 									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary footer-cta-button flex items-center gap-2"
+									size="default"
+									variant="secondary"
 								>
 									<SmartLink
-										href={data?.ctaFooter.url}
 										aria-label={data?.ctaFooter.label}
+										href={data?.ctaFooter.url}
 									>
 										<FiExternalLink className="w-4 h-4" />
 										{data?.ctaFooter.label}

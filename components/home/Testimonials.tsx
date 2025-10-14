@@ -1,19 +1,19 @@
-import { testimonials } from "@/constants/details";
 import React from "react";
 import { FiTrendingUp } from "react-icons/fi";
+import { testimonials } from "@/constants/details";
 
 const Testimonials: React.FC = () => {
 	return (
 		<div className="grid gap-14 max-w-lg w-full mx-auto lg:gap-8 lg:grid-cols-3 lg:max-w-full">
 			{testimonials.map((testimonial, index) => (
-				<div key={index} className="">
+				<div className="" key={`testimonial-${index}`}>
 					<div className="flex items-center mb-4 w-full justify-center lg:justify-start">
 						<img
-							src={testimonial.avatar}
 							alt={`${testimonial.name} avatar`}
-							width={50}
-							height={50}
 							className="rounded-full shadow-md"
+							height={50}
+							src={testimonial.avatar}
+							width={50}
 						/>
 						<div className="ml-4">
 							<h3 className="text-lg font-semibold text-product-secondary">

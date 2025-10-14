@@ -28,7 +28,6 @@ export async function getTransactions(
 		} else {
 			return { data: [], hasMore: false, totalRecords: 0 };
 		}
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (error) {
 		console.error("Paddle API Error: Failed to fetch transactions.", error);
 		return getErrorMessage();

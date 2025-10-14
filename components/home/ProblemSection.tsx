@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
 import React from "react";
@@ -11,6 +10,7 @@ import {
 	FiSmartphone,
 	FiXSquare,
 } from "react-icons/fi";
+import { Button } from "@/components/ui/button";
 
 const containerVariants: Variants = {
 	offscreen: {
@@ -108,30 +108,30 @@ const FlipCard: React.FC<FlipCardProps> = ({
 					<div className="flex items-center justify-center">
 						{/* Mobile horizontal track */}
 						<div
-							className="md:hidden h-px w-full bg-product-primary/20 rounded-full overflow-hidden"
 							aria-hidden="true"
+							className="md:hidden h-px w-full bg-product-primary/20 rounded-full overflow-hidden"
 						>
 							<motion.div
 								className="h-full bg-product-primary rounded-full"
 								initial={{ width: 0 }}
-								whileInView={{ width: "100%" }}
-								viewport={{ once: true }}
-								transition={{ duration: 0.6, ease: "easeOut" }}
 								style={{ transformOrigin: "right center" }}
+								transition={{ duration: 0.6, ease: "easeOut" }}
+								viewport={{ once: true }}
+								whileInView={{ width: "100%" }}
 							/>
 						</div>
 						{/* Desktop vertical track */}
 						<div
-							className="hidden md:block w-px h-full bg-product-primary/20 rounded-full overflow-hidden"
 							aria-hidden="true"
+							className="hidden md:block w-px h-full bg-product-primary/20 rounded-full overflow-hidden"
 						>
 							<motion.div
 								className="w-full bg-product-primary rounded-full"
 								initial={{ height: 0 }}
-								whileInView={{ height: "100%" }}
-								viewport={{ once: true }}
-								transition={{ duration: 0.6, ease: "easeOut" }}
 								style={{ transformOrigin: "bottom center" }}
+								transition={{ duration: 0.6, ease: "easeOut" }}
+								viewport={{ once: true }}
+								whileInView={{ height: "100%" }}
 							/>
 						</div>
 					</div>
@@ -153,11 +153,11 @@ const FlipCard: React.FC<FlipCardProps> = ({
 							<span className="text-xs sm:text-sm text-product-foreground-accent opacity-80 font-lora">
 								{impactMetric}
 							</span>
-							<Link href="/auth?mode=signup" className="w-full lg:w-auto">
+							<Link className="w-full lg:w-auto" href="/auth?mode=signup">
 								<Button
-									variant="default"
-									size="sm"
 									className="no-tap-highlight w-full"
+									size="sm"
+									variant="default"
 								>
 									<span>{ctaText}</span>
 									<FiArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -212,22 +212,22 @@ const ProblemSection: React.FC = () => {
 	return (
 		<motion.div
 			className="max-w-6xl mx-auto space-y-12 lg:space-y-12 no-tap-highlight"
-			variants={containerVariants}
 			initial="offscreen"
-			whileInView="onscreen"
-			viewport={{ once: true }}
 			style={{
 				WebkitTapHighlightColor: "transparent",
 				WebkitTouchCallout: "none",
 				outline: "none",
 			}}
+			variants={containerVariants}
+			viewport={{ once: true }}
+			whileInView="onscreen"
 		>
 			{problems.map((problem, index) => (
 				<FlipCard
-					key={index}
+					key={`problem-${index}`}
 					{...problem}
-					isReversed={index % 2 === 1}
 					index={index}
+					isReversed={index % 2 === 1}
 				/>
 			))}
 		</motion.div>
