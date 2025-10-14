@@ -1,8 +1,5 @@
-// hooks/useDashboardDataSWR.ts
-// First install: npm install swr
-
-import type { Catalogue, OverallAnalytics } from "@/types";
 import useSWR from "swr";
+import type { Catalogue, OverallAnalytics } from "@/types";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
