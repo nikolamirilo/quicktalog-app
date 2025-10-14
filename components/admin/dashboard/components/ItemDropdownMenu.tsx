@@ -49,7 +49,7 @@ const ItemDropdownMenu = ({
 	if (isDuplicateModalOpen) {
 		return (
 			<InputModal
-				description="Please provide name of the catalogue"
+				description="Please provide name for the catalogue"
 				isOpen={isDuplicateModalOpen}
 				name={name}
 				onCancel={() => setIsDuplicateModalOpen(false)}

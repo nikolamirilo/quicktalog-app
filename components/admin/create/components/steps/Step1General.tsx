@@ -1,4 +1,7 @@
 "use client";
+import { AlertCircle, CheckCircle, FileText, Link2 } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { FiInfo } from "react-icons/fi";
 import InformModal from "@/components/modals/InformModal";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,9 +9,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { generateUniqueSlug } from "@/helpers/client";
 import type { Step1GeneralProps } from "@/types/components";
-import { AlertCircle, CheckCircle, FileText, Link2 } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
-import { FiInfo } from "react-icons/fi";
 import { CurrencySelect } from "../CurrencySelect";
 
 const Step1General: React.FC<Step1GeneralProps> = ({
@@ -175,9 +175,9 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 					General Information
 				</h2>
 				<button
-					type="button"
-					onClick={() => handleInfoClick("general-information")}
 					className="hover:text-product-primary transition-colors duration-200 z-10"
+					onClick={() => handleInfoClick("general-information")}
+					type="button"
 				>
 					<FiInfo size={20} />
 				</button>
@@ -186,28 +186,21 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 				<div className="flex flex-col gap-3">
 					<div className="flex items-center gap-3">
 						<Label
-							htmlFor="name"
 							className="text-product-foreground font-medium font-body"
+							htmlFor="name"
 						>
 							Catalogue Name<span className="text-red-500 ml-1">*</span>
 						</Label>
 						<button
-							type="button"
-							onClick={() => handleInfoClick("catalog-name")}
 							className="hover:text-product-primary transition-colors duration-200 z-10"
+							onClick={() => handleInfoClick("catalog-name")}
+							type="button"
 						>
 							<FiInfo size={16} />
 						</button>
 					</div>
 					<div className="relative">
 						<Input
-							id="name"
-							type="text"
-							disabled={type === "edit" ? true : false}
-							name="name"
-							value={formData.name}
-							onChange={handleNameChange}
-							placeholder="e.g. Burger House"
 							className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
 								errors?.name
 									? "border-red-500 focus:border-red-500"
@@ -218,7 +211,14 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 										? "border-green-500 focus:border-green-500"
 										: ""
 							}`}
+							disabled={type === "edit" ? true : false}
+							id="name"
+							name="name"
+							onChange={handleNameChange}
+							placeholder="e.g. Burger House"
 							required
+							type="text"
+							value={formData.name}
 						/>
 						{/* Real-time validation icon - only show in create flow */}
 						{formData.name && touched?.name && type === "create" && (
@@ -254,27 +254,27 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 					<div className="flex flex-col gap-3">
 						<div className="flex items-center gap-2">
 							<Label
-								htmlFor="title"
 								className="text-product-foreground font-medium font-body"
+								htmlFor="title"
 							>
 								Catalogue Heading<span className="text-red-500 ml-1">*</span>
 							</Label>
 							<button
-								type="button"
-								onClick={() => handleInfoClick("catalog-title")}
 								className="hover:text-product-primary transition-colors duration-200 z-10"
+								onClick={() => handleInfoClick("catalog-title")}
+								type="button"
 							>
 								<FiInfo size={16} />
 							</button>
 						</div>
 						<Input
+							className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
 							id="title"
-							type="text"
 							name="title"
-							value={formData.title || ""}
 							onChange={handleInputChange}
 							placeholder="e.g. Our Delicious Menu"
-							className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
+							type="text"
+							value={formData.title || ""}
 						/>
 						{touched?.title && errors?.title && (
 							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
@@ -285,14 +285,14 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 
 					<div className="flex flex-col gap-3">
 						<Label
-							htmlFor="currency"
 							className="text-product-foreground font-medium font-body"
+							htmlFor="currency"
 						>
 							Currency<span className="text-red-500 ml-1">*</span>
 						</Label>
 						<CurrencySelect
-							value={formData.currency}
 							onChange={handleCurrencyChange}
+							value={formData.currency}
 						/>
 						{touched?.currency && errors?.currency && (
 							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
@@ -304,18 +304,18 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 
 				<div className="flex flex-col h-full gap-3">
 					<Label
-						htmlFor="subtitle"
 						className="text-product-foreground font-medium font-body"
+						htmlFor="subtitle"
 					>
 						Catalogue Description
 					</Label>
 					<Textarea
+						className="flex-1 border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
 						id="subtitle"
 						name="subtitle"
-						value={formData.subtitle || ""}
 						onChange={handleInputChange}
 						placeholder="Add a catchy intro for your catalogue"
-						className="flex-1 border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
+						value={formData.subtitle || ""}
 					/>
 				</div>
 			</div>
@@ -335,16 +335,16 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 				</div>
 			) : null}
 			<InformModal
+				cancelText=""
+				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
-				onConfirm={() => setIsInfoModalOpen(false)}
+				message={getFieldExplanation(currentField)}
 				onCancel={() => setIsInfoModalOpen(false)}
+				onConfirm={() => setIsInfoModalOpen(false)}
 				title={`${currentField
 					.replace(/-/g, " ")
 					.replace(/\b\w/g, (l) => l.toUpperCase())
 					.replace("Catalog Title", "Catalog Heading")} Explained`}
-				message={getFieldExplanation(currentField)}
-				confirmText="Got it!"
-				cancelText=""
 			/>
 		</Card>
 	);

@@ -1,5 +1,6 @@
 "use client";
 
+import { Link2 } from "lucide-react";
 import { useState } from "react";
 import {
 	AlertDialog,
@@ -12,6 +13,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { generateUniqueSlug } from "@/helpers/client";
 
 interface InputModalProps {
 	isOpen: boolean;
@@ -75,6 +77,21 @@ export default function InputModal({
 						/>
 					</div>
 				</AlertDialogHeader>
+				{name && (
+					<div className="mt-2 p-3 bg-gray-100 border border-gray-200 rounded-lg">
+						<div className="flex items-start gap-2">
+							<Link2 className="text-product-primary" size={25} />
+							<div className="flex-1 min-w-0">
+								<p className="text-sm text-product-foreground font-medium mb-1">
+									Your catalogue URL will be:
+								</p>
+								<p className="text-sm text-product-primary font-mono break-all">
+									{`${process.env.NEXT_PUBLIC_BASE_URL}/catalogue/${generateUniqueSlug(name)}`}
+								</p>
+							</div>
+						</div>
+					</div>
+				)}
 
 				<AlertDialogFooter className="pt-4 border-t border-product-border">
 					{cancelText && (
