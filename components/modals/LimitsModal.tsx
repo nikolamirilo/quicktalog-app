@@ -1,15 +1,4 @@
 import {
-	AlertDialog,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { tiers } from "@/constants/pricing";
-import { PricingPlan } from "@/types";
-import { LimitType } from "@/types/enums";
-import {
 	ArrowRight,
 	FolderTree,
 	Layers,
@@ -20,6 +9,17 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { IoSearch } from "react-icons/io5";
+import {
+	AlertDialog,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { tiers } from "@/constants/pricing";
+import { PricingPlan } from "@/types";
+import { LimitType } from "@/types/enums";
 import { Button } from "../ui/button";
 
 interface LimitsModalProps {
@@ -188,9 +188,9 @@ const LimitsModal = ({
 				<AlertDialogHeader className="relative p-6 sm:p-8 text-center bg-hero-product-background space-y-0">
 					{onClose ? (
 						<button
+							aria-label="Close"
 							className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors z-10"
 							onClick={onClose}
-							aria-label="Close"
 						>
 							<svg
 								className="w-5 h-5"
@@ -199,18 +199,18 @@ const LimitsModal = ({
 								viewBox="0 0 24 24"
 							>
 								<path
+									d="M6 18L18 6M6 6l12 12"
 									strokeLinecap="round"
 									strokeLinejoin="round"
 									strokeWidth={2}
-									d="M6 18L18 6M6 6l12 12"
 								/>
 							</svg>
 						</button>
 					) : (
 						<Link
-							href="/admin/dashboard"
-							className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors z-10"
 							aria-label="Go to dashboard"
+							className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors z-10"
+							href="/admin/dashboard"
 						>
 							<svg
 								className="w-5 h-5"
@@ -219,10 +219,10 @@ const LimitsModal = ({
 								viewBox="0 0 24 24"
 							>
 								<path
+									d="M6 18L18 6M6 6l12 12"
 									strokeLinecap="round"
 									strokeLinejoin="round"
 									strokeWidth={2}
-									d="M6 18L18 6M6 6l12 12"
 								/>
 							</svg>
 						</Link>
@@ -275,8 +275,8 @@ const LimitsModal = ({
 								</ul>
 							</div>
 							<Button
-								variant="cta"
 								className="w-full h-12 text-base font-semibold"
+								variant="cta"
 							>
 								<Link href={process.env.NEXT_PUBLIC_BASE_URL!} target="_blank">
 									Get Started Today
@@ -405,8 +405,8 @@ const LimitsModal = ({
 							{/* CTA Button */}
 							<AlertDialogFooter className="sm:justify-center pt-2">
 								<Link
-									href="/pricing"
 									className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
+									href="/pricing"
 								>
 									<span className="relative z-10 flex items-center justify-center space-x-2">
 										<span>Upgrade to {requiredPlan.name} Now</span>

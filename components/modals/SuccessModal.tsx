@@ -1,4 +1,13 @@
 "use client";
+import { QRCodeSVG } from "qrcode.react";
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import { FaCode } from "react-icons/fa6";
+import { FiCheckCircle, FiHome } from "react-icons/fi";
+import { ImEmbed2 } from "react-icons/im";
+import { IoMdCheckmark, IoMdOpen } from "react-icons/io";
+import { IoQrCode, IoShareSocialOutline } from "react-icons/io5";
+import { MdCheck, MdContentCopy } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -10,15 +19,6 @@ import {
 } from "@/components/ui/dialog";
 import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client";
 import { SuccessModalProps } from "@/types/components";
-import { QRCodeSVG } from "qrcode.react";
-import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-import { FaCode } from "react-icons/fa6";
-import { FiCheckCircle, FiHome } from "react-icons/fi";
-import { ImEmbed2 } from "react-icons/im";
-import { IoMdCheckmark, IoMdOpen } from "react-icons/io";
-import { IoQrCode, IoShareSocialOutline } from "react-icons/io5";
-import { MdCheck, MdContentCopy } from "react-icons/md";
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
 	isOpen = false,
@@ -44,10 +44,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 
 	return (
 		<Dialog
-			open={isOpen}
 			onOpenChange={(open) => {
 				if (!open) onClose();
 			}}
+			open={isOpen}
 		>
 			<DialogContent className="max-h-[90vh] sm:max-h-[85vh] overflow-y-auto w-[95vw] max-w-[95vw] sm:max-w-[550px] !p-4 sm:!p-7 bg-white/95 border border-product-border shadow-product-shadow rounded-3xl">
 				<DialogHeader className="space-y-2 sm:space-y-3">
@@ -82,12 +82,12 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								Share instantly
 							</h4>
 							<button
+								className="p-1 hover:bg-product-background rounded transition-colors"
 								onClick={async () => {
 									await navigator.clipboard.writeText(fullURL);
 									setLinkCopied(true);
 									setTimeout(() => setLinkCopied(false), 2000); // reset after 2s
 								}}
-								className="p-1 hover:bg-product-background rounded transition-colors"
 								title={linkCopied ? "Link copied!" : "Copy link"}
 							>
 								{linkCopied ? (
@@ -107,22 +107,22 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 							Use the QR code below to share your catalog
 						</p>
 						<div
-							id="qr-code"
 							className="p-2 sm:p-3 bg-white rounded-xl shadow-sm border border-product-border"
+							id="qr-code"
 						>
 							<QRCodeSVG
-								value={fullURL}
-								size={100}
-								className="w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36"
 								bgColor="white"
+								className="w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36"
 								fgColor="black"
+								size={100}
+								value={fullURL}
 							/>
 						</div>
 						<Button
-							onClick={() => handleDownloadPng(catalogueUrl.split("/")[2])}
-							variant="outline"
-							size="sm"
 							className="bg-product-background text-xs"
+							onClick={() => handleDownloadPng(catalogueUrl.split("/")[2])}
+							size="sm"
+							variant="outline"
 						>
 							<IoQrCode className="w-3 h-3 sm:w-4 sm:h-4" /> Download QR code
 						</Button>
@@ -141,18 +141,18 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 						</p>
 						<div className="flex flex-col items-center justify-end flex-1 gap-2 sm:gap-3 md:gap-4">
 							<div
-								ref={codeRef}
 								className="bg-gray-900 rounded-xl p-2 sm:p-3 md:p-4 text-xs overflow-x-auto font-mono border border-gray-700 transition-all duration-200 text-gray-300 leading-relaxed max-h-28 sm:max-h-32 md:max-h-44"
+								ref={codeRef}
 							>
 								<pre className="whitespace-pre-wrap break-all relative m-0">
 									{iframeCode}
 									<button
-										onClick={handleCopyCode}
 										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${
 											copied
 												? "bg-green-500 text-white"
 												: "bg-gray-700 text-gray-300 hover:bg-gray-600"
 										}`}
+										onClick={handleCopyCode}
 									>
 										{copied ? (
 											<IoMdCheckmark className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -163,12 +163,12 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								</pre>
 							</div>
 							<Button
+								className="bg-product-background text-xs"
 								onClick={() =>
 									handleDownloadHTML(catalogueUrl.split("/")[2], fullURL)
 								}
-								variant="outline"
 								size="sm"
-								className="bg-product-background text-xs"
+								variant="outline"
 							>
 								<FaCode className="w-3 h-3 sm:w-4 sm:h-4" /> Download HTML code
 							</Button>
@@ -180,16 +180,16 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 					{type === "edit" ? (
 						<>
 							<Button
+								className="flex-1 text-xs bg-product-background sm:text-sm"
 								onClick={() => (window.location.href = "/admin/dashboard")}
 								variant="outline"
-								className="flex-1 text-xs bg-product-background sm:text-sm"
 							>
 								<FiHome className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
 								Return to Dashboard
 							</Button>
 							<Button
-								onClick={() => window.open(fullURL, "_blank")}
 								className="flex-1 text-xs sm:text-sm"
+								onClick={() => window.open(fullURL, "_blank")}
 							>
 								<IoMdOpen className="w-3 h-3 sm:w-4 sm:h-4" /> View Catalogue
 							</Button>
@@ -197,16 +197,16 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 					) : (
 						<>
 							<Button
+								className="flex-1 text-xs bg-product-background sm:text-sm"
 								onClick={() => (window.location.href = "/admin/dashboard")}
 								variant="outline"
-								className="flex-1 text-xs bg-product-background sm:text-sm"
 							>
 								<FiHome className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
 								Return to Dashboard
 							</Button>
 							<Button
-								onClick={() => window.open(fullURL, "_blank")}
 								className="flex-1 text-xs sm:text-sm"
+								onClick={() => window.open(fullURL, "_blank")}
 							>
 								<IoMdOpen className="w-3 h-3 sm:w-4 sm:h-4" /> View Catalogue
 							</Button>

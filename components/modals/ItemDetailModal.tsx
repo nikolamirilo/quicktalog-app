@@ -105,13 +105,6 @@ export default function ItemDetailModal({
 								src={item.image}
 							/>
 						)}
-						{/* <button
-            onClick={() => setIsImageZoomed(false)}
-            className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors duration-200 backdrop-blur-sm"
-            aria-label="Close zoom"
-          >
-            ✕
-          </button> */}
 					</div>
 				</DialogContent>
 			</Dialog>

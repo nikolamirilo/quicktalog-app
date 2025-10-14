@@ -86,10 +86,10 @@ const Overview = ({
 		draft: "text-white bg-product-primary",
 	};
 
-	async function handleDuplicateCatalogue(id: string) {
+	async function handleDuplicateCatalogue(id: string, name: string) {
 		setDuplicatingId(id);
 		try {
-			await duplicateItem(id);
+			await duplicateItem(id, name);
 			await refreshAll();
 		} catch (error) {
 			console.error("Error duplicating item:", error);

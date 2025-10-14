@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import { FiAlertTriangle, FiTrash2 } from "react-icons/fi";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,8 +14,6 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Catalogue } from "@/types";
-import { useState } from "react";
-import { FiAlertTriangle, FiTrash2 } from "react-icons/fi";
 
 interface DeleteMultipleItemsModalProps {
 	isOpen: boolean;
@@ -86,20 +86,20 @@ const DeleteMultipleItemsModal = ({
 				<div className="flex flex-wrap overflow-y-auto pr-2 gap-3 max-h-96">
 					{catalogues.map((catalogue) => (
 						<Card
-							key={catalogue.id}
 							className={`p-4 flex items-center gap-4 w-[45%] transition-all duration-200 ${
 								selectedIds.includes(catalogue.id)
 									? "border-red-500 bg-red-50/50"
 									: "border-product-border bg-product-background hover:shadow-product-hover-shadow"
 							}`}
+							key={catalogue.id}
 						>
 							<Checkbox
-								id={catalogue.id}
 								checked={selectedIds.includes(catalogue.id)}
+								className="data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
+								id={catalogue.id}
 								onCheckedChange={(checked) =>
 									handleCheckboxChange(catalogue.id, checked as boolean)
 								}
-								className="data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
 							/>
 
 							<div className="flex-1 min-w-0">
@@ -145,10 +145,10 @@ const DeleteMultipleItemsModal = ({
             Cancel
           </Button> */}
 					<Button
-						variant="destructive"
-						onClick={handleConfirm}
-						disabled={!canProceed || isDeleting}
 						className="bg-red-600 hover:bg-red-700"
+						disabled={!canProceed || isDeleting}
+						onClick={handleConfirm}
+						variant="destructive"
 					>
 						{isDeleting ? (
 							"Deleting..."

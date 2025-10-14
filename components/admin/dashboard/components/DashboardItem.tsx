@@ -1,11 +1,11 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { FiFileText } from "react-icons/fi";
 import { LuSquareMenu } from "react-icons/lu";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import ItemDropdownMenu from "./ItemDropdownMenu";
 
 const DashboardItem = ({
@@ -24,21 +24,21 @@ const DashboardItem = ({
 }) => {
 	return (
 		<Card
-			key={catalogue.id}
 			className="p-2 md:p-5 flex flex-col gap-2 sm:gap-3 lg:gap-4 relative bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow hover:scale-[1.02] transition-all duration-200 animate-fade-in"
+			key={catalogue.id}
 		>
 			<ItemDropdownMenu
 				catalogue={catalogue}
 				duplicatingId={duplicatingId}
+				handleDeleteItem={handleDeleteItem}
+				handleDuplicateCatalogue={handleDuplicateCatalogue}
 				handleUpdateItemStatus={handleUpdateItemStatus}
-				setIsLinkCopied={setIsLinkCopied}
 				isLinkCopied={isLinkCopied}
 				isModalOpen={isModalOpen}
-				handleDuplicateCatalogue={handleDuplicateCatalogue}
-				handleDeleteItem={handleDeleteItem}
-				usage={usage}
 				matchedTier={matchedTier}
 				planId={matchedTier?.id || 0}
+				setIsLinkCopied={setIsLinkCopied}
+				usage={usage}
 			/>
 
 			<div className="font-heading font-bold text-sm sm:text-base md:text-lg lg:text-xl text-product-foreground break-words">
@@ -92,20 +92,20 @@ const DashboardItem = ({
 			</div>
 
 			<div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
-				<Link href={`/catalogues/${catalogue.name}`} className="w-full">
+				<Link className="w-full" href={`/catalogues/${catalogue.name}`}>
 					<Button className="w-full">
-						<LuSquareMenu size={12} className="sm:w-3 sm:h-3 md:w-4 md:h-4" />
+						<LuSquareMenu className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
 						<span className="ml-1">View Catalogue</span>
 					</Button>
 				</Link>
 				<Link
-					href={`/admin/items/${catalogue.name}/analytics`}
 					className="w-full"
+					href={`/admin/items/${catalogue.name}/analytics`}
 				>
-					<Button variant="outline" className="w-full">
+					<Button className="w-full" variant="outline">
 						<TbBrandGoogleAnalytics
-							size={12}
 							className="sm:w-3 sm:h-3 md:w-4 md:h-4"
+							size={12}
 						/>
 						<span className="ml-1">Analytics</span>
 					</Button>
