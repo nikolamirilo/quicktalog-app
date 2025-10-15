@@ -193,6 +193,7 @@ export type PricingPlan = {
 		custom_features: boolean;
 		ocr_ai_import: number;
 		traffic_limit: number;
+		branding: boolean;
 		analytics: string;
 		ai_prompts: number;
 		categories_per_catalogue?: number | "unlimited";

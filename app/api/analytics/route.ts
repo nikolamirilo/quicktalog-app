@@ -2,16 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(request: NextRequest) {
+	const startTime = Date.now();
+
 	try {
+		// Validate environment variables
+		if (
+			!process.env.POSTHOG_API_KEY ||
+			!process.env.POSTHOG_PROJECT_ID ||
+			!process.env.NEXT_PUBLIC_POSTHOG_HOST
+		) {
+			console.error("Missing required environment variables");
+			return NextResponse.json(
+				{ error: "Missing PostHog configuration" },
+				{ status: 500 },
+			);
+		}
+
 		const supabase = await createClient();
-		const startDate = new Date(new Date().setDate(new Date().getDate() - 2));
-		const endDate = new Date(new Date().setDate(new Date().getDate() + 1));
+
+		// Get yesterday's data (previous 24 hours)
+		const endDate = new Date();
+		endDate.setHours(0, 0, 0, 0); // Today at midnight
+
+		const startDate = new Date(endDate);
+		startDate.setDate(startDate.getDate() - 1); // Yesterday at midnight
+
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_POSTHOG_HOST}/api/projects/${process.env.POSTHOG_PROJECT_ID!}/query/`,
+			`${process.env.NEXT_PUBLIC_POSTHOG_HOST}/api/projects/${process.env.POSTHOG_PROJECT_ID}/query/`,
 			{
 				method: "POST",
 				headers: {
-					Authorization: `Bearer ${process.env.POSTHOG_API_KEY!}`,
+					Authorization: `Bearer ${process.env.POSTHOG_API_KEY}`,
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
@@ -29,8 +50,8 @@ WHERE event = '$pageview'
   AND properties.$current_url LIKE '%/catalogues/%'
   AND properties.$current_url NOT ILIKE '%localhost%'
   AND properties.$current_url NOT ILIKE '%//test.%'
-  AND timestamp >= toDateTime('${startDate.toISOString().replace("Z", "000Z")}') 
-  AND timestamp < toDateTime('${endDate.toISOString().replace("Z", "000Z")}')
+  AND timestamp >= toDateTime('${startDate.toISOString()}') 
+  AND timestamp < toDateTime('${endDate.toISOString()}')
 GROUP BY date, hour, current_url
 ORDER BY date DESC, hour DESC`,
 					},
@@ -39,7 +60,24 @@ ORDER BY date DESC, hour DESC`,
 			},
 		);
 
+		if (!res.ok) {
+			console.error(`PostHog API error: ${res.status} ${res.statusText}`);
+			return NextResponse.json(
+				{ error: "PostHog API request failed", status: res.status },
+				{ status: 500 },
+			);
+		}
+
 		const eventsData = await res.json();
+
+		// Validate response structure
+		if (!eventsData.results || !Array.isArray(eventsData.results)) {
+			console.error("Invalid PostHog response structure");
+			return NextResponse.json(
+				{ error: "Invalid PostHog response" },
+				{ status: 500 },
+			);
+		}
 
 		const analyticsData = eventsData.results
 			.map(([date, hour, current_url, pageview_count, unique_visitors]) => {
@@ -56,7 +94,7 @@ ORDER BY date DESC, hour DESC`,
 				(item) => !(item.pageview_count === 0 && item.unique_visitors === 0),
 			);
 
-		// 1. Extract unique restaurant names from analyticsData
+		// Extract unique catalogue names
 		const catalogueNames = [
 			...new Set(
 				analyticsData
@@ -68,133 +106,121 @@ ORDER BY date DESC, hour DESC`,
 			),
 		];
 
-		// 2. Query all relevant catalogues in one go
+		// Query all relevant catalogues
 		const { data: catalogues, error: catalogueError } = await supabase
 			.from("catalogues")
 			.select("name, created_by")
 			.in("name", catalogueNames);
 
 		if (catalogueError) {
+			console.error("Catalogues query error:", catalogueError);
 			return NextResponse.json(
 				{ error: catalogueError.message },
 				{ status: 500 },
 			);
 		}
 
-		// 3. Create a map for quick lookup
+		// Create lookup map
 		const nameToUserId = {};
 		(catalogues || []).forEach((r) => {
 			nameToUserId[r.name] = r.created_by;
 		});
 
-		// 4. Add user_id to each analytics row
+		// Add user_id to each analytics row
+		let unmatchedUrls = 0;
 		const analyticsDataWithUserId = analyticsData.map((item) => {
 			const match = item.current_url.match(/\/catalogues\/([^/]+)/);
 			const restaurantName = match ? match[1] : null;
+
+			if (!restaurantName) {
+				unmatchedUrls++;
+				console.warn(`No catalogue name found in URL: ${item.current_url}`);
+			}
+
 			return {
 				...item,
 				user_id: restaurantName ? nameToUserId[restaurantName] : null,
 			};
 		});
 
-		// 5. Process each record individually to handle additive behavior
-		const processedResults = [];
-		const errors = [];
+		// Use upsert with ignoreDuplicates to handle conflicts gracefully
+		const { data: insertedData, error: insertError } = await supabase
+			.from("analytics")
+			.upsert(analyticsDataWithUserId, {
+				onConflict: "date,hour,current_url",
+				ignoreDuplicates: true,
+			})
+			.select();
 
-		for (const item of analyticsDataWithUserId) {
-			try {
-				// Check if record exists
-				const { data: existing, error: selectError } = await supabase
-					.from("analytics")
-					.select("pageview_count, unique_visitors")
-					.eq("date", item.date)
-					.eq("hour", item.hour)
-					.eq("current_url", item.current_url)
-					.maybeSingle(); // Use maybeSingle instead of single to avoid errors when no record found
+		if (insertError) {
+			console.error("Insert error:", insertError);
 
-				if (selectError) {
-					errors.push({ item, error: selectError });
-					continue;
-				}
+			// Log failure to job_logs if table exists
+			await supabase.from("job_logs").insert({
+				job_name: "analytics",
+				status: "failure",
+				processed_count: analyticsDataWithUserId.length,
+				inserted_count: 0,
+				execution_time_ms: Date.now() - startTime,
+				error: insertError.message,
+			});
 
-				if (existing) {
-					// Record exists - add to existing values
-					const { error } = await supabase
-						.from("analytics")
-						.update({
-							pageview_count: existing.pageview_count + item.pageview_count,
-							unique_visitors: existing.unique_visitors + item.unique_visitors,
-							user_id: item.user_id, // Update user_id in case it changed
-						})
-						.eq("date", item.date)
-						.eq("hour", item.hour)
-						.eq("current_url", item.current_url);
-
-					if (error) {
-						errors.push({ item, error });
-					} else {
-						processedResults.push({
-							action: "updated",
-							item,
-							previous: existing,
-							newValues: {
-								pageview_count: existing.pageview_count + item.pageview_count,
-								unique_visitors:
-									existing.unique_visitors + item.unique_visitors,
-							},
-						});
-					}
-				} else {
-					// Record doesn't exist - insert new
-					const { error } = await supabase.from("analytics").insert([item]);
-
-					if (error) {
-						errors.push({ item, error });
-					} else {
-						processedResults.push({ action: "inserted", item });
-					}
-				}
-			} catch (err) {
-				errors.push({ item, error: err });
-			}
-		}
-
-		if (errors.length > 0) {
-			console.error("Processing errors:", errors);
 			return NextResponse.json(
 				{
-					error: "Some records failed to process",
-					details: errors,
-					successful: processedResults,
+					error: "Failed to insert analytics data",
+					details: insertError.message,
 				},
-				{ status: 207 },
-			); // 207 = Multi-Status
+				{ status: 500 },
+			);
 		}
+
+		const executionTime = Date.now() - startTime;
+
+		// Log success to job_logs if table exists
+		await supabase.from("job_logs").insert({
+			job_name: "analytics",
+			status: "success",
+			processed_count: analyticsDataWithUserId.length,
+			inserted_count: insertedData?.length || 0,
+			execution_time_ms: executionTime,
+			error: null,
+		});
 
 		return NextResponse.json(
 			{
-				message: "Analytics processed successfully with additive behavior",
-				options: {
-					startDate: startDate.toISOString().replace("Z", "000Z"),
-					endDate: endDate.toISOString().replace("Z", "000Z"),
+				message: "Analytics data inserted successfully",
+				period: {
+					startDate: startDate.toISOString(),
+					endDate: endDate.toISOString(),
 				},
-				inputData: analyticsData,
-				processedResults: processedResults,
 				summary: {
-					total: analyticsDataWithUserId.length,
-					inserted: processedResults.filter((r) => r.action === "inserted")
-						.length,
-					updated: processedResults.filter((r) => r.action === "updated")
-						.length,
-					failed: errors.length,
+					fetched: analyticsDataWithUserId.length,
+					inserted: insertedData?.length || 0,
+					unmatched_urls: unmatchedUrls,
+					execution_time_ms: executionTime,
 				},
 			},
 			{ status: 200 },
 		);
 	} catch (error) {
 		console.error("Error in analytics function:", error);
-		return new Response("Error occurred while processing analytics.", {
-			status: 500,
-		});
+
+		// Log failure
+		try {
+			const supabase = await createClient();
+			await supabase.from("job_logs").insert({
+				job_name: "analytics",
+				status: "failure",
+				processed_count: 0,
+				inserted_count: 0,
+				execution_time_ms: Date.now() - startTime,
+				error: error instanceof Error ? error.message : String(error),
+			});
+		} catch {}
+
+		return NextResponse.json(
+			{ error: "Error occurred while processing analytics" },
+			{ status: 500 },
+		);
 	}
 }

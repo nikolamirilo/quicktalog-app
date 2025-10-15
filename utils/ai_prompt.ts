@@ -1,7 +1,7 @@
+import { NextResponse } from "next/server";
 import { layouts } from "@/constants";
 import { fetchImageFromUnsplash } from "@/helpers/client";
 import { CatalogueCategory } from "@/types";
-import { NextResponse } from "next/server";
 
 // Type definitions for better type safety
 export interface GenerationRequest {
@@ -164,31 +164,4 @@ export function generatePromptForAI(
     8. Set order for each category starting from 1. Order items in logical way. They will be displayed in this ascending order.
     9. Wherever you have string it should be valid string. It should not contain any special character like /,-,",' etc."
     `;
-}
-
-export function generatePromptForOCR(inputText: string, formData: any): string {
-	return `
-      Role: You are an expert in creating service offers (restaurant services, beauty center service offer, etc.).
-      Based on the following prompt, generate a complete service offer configuration in JSON format.
-      The JSON object should strictly follow the type definition from the project.
-      
-      Prompt: Create services array based on text extracted from service catalogue: ${inputText}
-      
-      Schema: ${JSON.stringify(baseSchema)}
-
-    For layout use always variant_3
-
-    Detect categories in text (breakfast, lunch, etc.) if you dont see it there group items by similarity. 
-
-    General information about service catalogue: ${JSON.stringify(formData)}
-      
-      IMPORTANT REQUIREMENTS:
-      1. Return ONLY the JSON object, no additional text, explanations, or formatting
-      2. Start your response directly with { and end with }
-      3. Service offer should be created in the language and alphabet of the text.
-      4. Ensure the JSON is valid and well-formed  
-      5. If you cannot find price for an item, you set price. Keep in mind currency and make sure price is not 0.
-      6. Set order for each category starting from 1. Order items in logical way. They will be displayed in this ascending order.
-      7. Wherecver you have string it should be valid string. It should not contain any special character like /,-,",' etc."
-      `;
 }

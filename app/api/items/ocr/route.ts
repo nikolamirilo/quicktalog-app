@@ -1,11 +1,12 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { CatalogueCategory } from "@/types";
+import { chatCompletion } from "@/utils/deepseek";
 import {
-	chatCompletion,
+	generateOrderPrompt,
 	generatePromptForCategoryDetection,
 	generatePromptForCategoryProcessing,
-} from "@/utils/deepseek";
+} from "@/utils/ocr";
 import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: NextRequest) {
@@ -33,22 +34,25 @@ export async function POST(req: NextRequest) {
 		let categoryChunks: string[] = [];
 		try {
 			console.log("🔧 Parsing category detection response...");
-			let cleanedText = categoryDetectionResponse
+			let cleanedOrderingResponse = categoryDetectionResponse
 				.replace(/```json/g, "")
 				.replace(/```/g, "")
 				.trim();
-			console.log("🧹 Cleaned text:", cleanedText);
+			console.log("🧹 Cleaned text:", cleanedOrderingResponse);
 
-			const jsonStart = cleanedText.indexOf("{");
-			const jsonEnd = cleanedText.lastIndexOf("}");
-			console.log("🎯 JSON boundaries - start:", jsonStart, "end:", jsonEnd);
+			const arrayStart = cleanedOrderingResponse.indexOf("{");
+			const arrayEnd = cleanedOrderingResponse.lastIndexOf("}");
+			console.log("🎯 JSON boundaries - start:", arrayStart, "end:", arrayEnd);
 
-			if (jsonStart === -1 || jsonEnd === -1) {
+			if (arrayStart === -1 || arrayEnd === -1) {
 				throw new Error("No JSON object found in category detection response");
 			}
 
-			cleanedText = cleanedText.substring(jsonStart, jsonEnd + 1);
-			const categoryData = JSON.parse(cleanedText);
+			cleanedOrderingResponse = cleanedOrderingResponse.substring(
+				arrayStart,
+				arrayEnd + 1,
+			);
+			const categoryData = JSON.parse(cleanedOrderingResponse);
 			console.log(
 				"✅ Parsed category data:",
 				JSON.stringify(categoryData, null, 2),
@@ -71,13 +75,16 @@ export async function POST(req: NextRequest) {
 				categoryChunks.length,
 				"category chunks:",
 			);
-		} catch (e) {
+		} catch (error) {
 			console.error(
 				"❌ Failed to parse category detection response:",
 				categoryDetectionResponse,
 			);
 			return NextResponse.json(
-				{ error: "Failed to parse category detection response" },
+				{
+					error: "Failed to parse category detection response",
+					details: error,
+				},
 				{ status: 500 },
 			);
 		}
@@ -110,21 +117,21 @@ export async function POST(req: NextRequest) {
 		for (let i = 0; i < categoryResponses.length; i++) {
 			const response = categoryResponses[i];
 			try {
-				let cleanedText = response
+				let cleanedOrderingResponse = response
 					.replace(/```json/g, "")
 					.replace(/```/g, "")
 					.trim();
 
-				const jsonStart = cleanedText.indexOf("{");
-				const jsonEnd = cleanedText.lastIndexOf("}");
+				const arrayStart = cleanedOrderingResponse.indexOf("{");
+				const arrayEnd = cleanedOrderingResponse.lastIndexOf("}");
 				console.log(
 					`🎯 Category ${i + 1} JSON boundaries - start:`,
-					jsonStart,
+					arrayStart,
 					"end:",
-					jsonEnd,
+					arrayEnd,
 				);
 
-				if (jsonStart === -1 || jsonEnd === -1) {
+				if (arrayStart === -1 || arrayEnd === -1) {
 					console.error(
 						`❌ No JSON object found in category ${i + 1} response:`,
 						response,
@@ -132,9 +139,12 @@ export async function POST(req: NextRequest) {
 					continue;
 				}
 
-				cleanedText = cleanedText.substring(jsonStart, jsonEnd + 1);
+				cleanedOrderingResponse = cleanedOrderingResponse.substring(
+					arrayStart,
+					arrayEnd + 1,
+				);
 
-				const categoryData = JSON.parse(cleanedText);
+				const categoryData = JSON.parse(cleanedOrderingResponse);
 				console.log(
 					`✅ Category ${i + 1} parsed data:`,
 					JSON.stringify(categoryData, null, 2),
@@ -171,129 +181,73 @@ export async function POST(req: NextRequest) {
 		}
 
 		console.log("\n🔄 === STEP 4: CATEGORY ORDERING ===");
-		console.log("🎯 Reordering categories for optimal display...");
 
-		// Initialize orderedItems with original items as fallback
 		let orderedItems: CatalogueCategory[] = items;
 
-		const orderingPrompt = `You are an expert in organizing service/menu categories for optimal customer experience.
-
-**Task**: Reorder the categories in the provided items array to create the most logical and intuitive flow for customers browsing a ${formData.title || "service catalogue"}.
-
-**Current Categories**: ${JSON.stringify(items.map((s) => ({ name: s.name, itemCount: s.items.length })))}
-
-**Full Items Data**: ${JSON.stringify(items)}
-
-**Ordering Guidelines**:
-1. **Natural Flow**: Follow logical progression (e.g., appetizers → mains → desserts, or morning → afternoon → evening items)
-2. **Customer Journey**: Consider how customers typically browse and make decisions
-3. **Popular First**: Place most important/popular categories prominently
-4. **Related Grouping**: Keep similar items together
-5. **Logical Ending**: End with beverages, desserts, add-ons, or supplementary items
-
-**Context-Specific Rules**:
-- **Restaurants**: Appetizers → Soups/Salads → Main Courses → Desserts → Beverages
-- **Cafés**: Coffee/Tea → Breakfast → Lunch → Snacks → Desserts
-- **Beauty/Wellness**: Basic items → Premium treatments → Packages → Add-ons
-- **General Items**: Core items → Specialized items → Extras/Add-ons
-
-**Requirements**:
-1. Return ONLY a valid JSON array (no explanations, no markdown formatting)
-2. Keep ALL existing data intact - only modify the "order" field
-3. Start numbering from 1 and increment sequentially (1, 2, 3...)
-4. Maintain exact structure and all properties
-5. Ensure every category has a unique order number
-6. The array length must match the input (${items.length} categories)
-
-**Expected Output Format**:
-[{"name":"Category1","layout":"variant_3","order":1,"items":[...]}, {"name":"Category2","layout":"variant_3","order":2,"items":[...]}]`;
-
-		console.log(
-			"📝 Category ordering prompt created (length:",
-			orderingPrompt.length,
-			")",
-		);
-		console.log("📤 Sending category ordering request to DeepSeek...");
+		const orderingPrompt = generateOrderPrompt(items, formData);
 
 		try {
 			const orderingResponse = await chatCompletion(orderingPrompt);
 			console.log("📥 Category ordering response received:");
 			console.log("🔍 Raw response:", orderingResponse);
 
-			console.log("🔧 Parsing category ordering response...");
-
-			let cleanedText = orderingResponse
+			let cleanedOrderingResponse = orderingResponse
 				.replace(/```json/g, "")
 				.replace(/```/g, "")
 				.trim();
-			console.log("🧹 Cleaned ordering text:", cleanedText);
 
-			const jsonStart = cleanedText.indexOf("[");
-			const jsonEnd = cleanedText.lastIndexOf("]");
-			console.log("🎯 Array boundaries - start:", jsonStart, "end:", jsonEnd);
+			console.log("🧹 Cleaned ordering text:", cleanedOrderingResponse);
 
-			if (jsonStart === -1 || jsonEnd === -1) {
+			const arrayStart = cleanedOrderingResponse.indexOf("[");
+			const arrayEnd = cleanedOrderingResponse.lastIndexOf("]");
+
+			if (arrayStart === -1 || arrayEnd === -1) {
 				console.log(
-					"⚠️ No array found in ordering response, using original items",
+					"⚠️ No valid array found in AI response. Using original order.",
 				);
 				orderedItems = items;
 			} else {
-				cleanedText = cleanedText.substring(jsonStart, jsonEnd + 1);
-				console.log("✂️ Extracted array JSON:", cleanedText);
+				const extracted = cleanedOrderingResponse.substring(
+					arrayStart,
+					arrayEnd + 1,
+				);
+				const parsedNames = JSON.parse(extracted);
 
-				const parsedItems = JSON.parse(cleanedText);
+				if (Array.isArray(parsedNames) && parsedNames.length === items.length) {
+					console.log("✅ Parsed valid array of category names:", parsedNames);
 
-				if (Array.isArray(parsedItems) && parsedItems.length === items.length) {
-					// Validate that all items have required properties
-					const allValid = parsedItems.every(
-						(service) =>
-							service &&
-							service.name &&
-							Array.isArray(service.items) &&
-							typeof service.order === "number" &&
-							service.order > 0,
-					);
+					const nameToItem = new Map(items.map((item) => [item.name, item]));
 
-					// Check for unique order numbers
-					const orderNumbers = parsedItems.map((s) => s.order);
-					const uniqueOrders = new Set(orderNumbers);
-					const hasUniqueOrders = uniqueOrders.size === parsedItems.length;
+					orderedItems = parsedNames
+						.map((name, index) => {
+							const original = nameToItem.get(name);
+							return original ? { ...original, order: index } : null;
+						})
+						.filter(Boolean);
 
-					if (allValid && hasUniqueOrders) {
-						orderedItems = parsedItems;
-						console.log("🎉 Category ordering successful!");
-						console.log("📊 New ordering:");
-						orderedItems
-							.sort((a, b) => a.order - b.order)
-							.forEach((service) => {
-								console.log(
-									`   ${service.order}. ${service.name} (${service.items.length} items)`,
-								);
-							});
-					} else {
-						console.log("⚠️ Invalid ordering structure detected:");
-						console.log("   - All valid:", allValid);
-						orderedItems = items;
-					}
+					console.log("🎉 Category ordering successful!");
+					orderedItems.forEach((service) => {
+						console.log(
+							`   ${service.order}. ${service.name} (${service.items.length} items)`,
+						);
+					});
 				} else {
-					console.log("⚠️ Ordering array length mismatch:");
+					console.log("⚠️ Ordering array invalid or length mismatch:");
 					console.log(
 						"   Expected:",
 						items.length,
 						"Received:",
-						parsedItems?.length || 0,
+						parsedNames?.length || 0,
 					);
 					orderedItems = items;
 				}
 			}
 		} catch (e) {
 			console.error("💥 Failed to parse category ordering response:", e);
-			console.log("⚠️ Using original items order due to parsing error");
 			orderedItems = items;
 		}
 
 		console.log("\n📊 === FINAL ITEMS SUMMARY ===");
-		console.log("🎯 Total items after ordering:", orderedItems.length);
 
 		orderedItems
 			.sort((a, b) => a.order - b.order)
@@ -301,10 +255,10 @@ export async function POST(req: NextRequest) {
 				console.log(`📋 ${index + 1}. ${service.name}`);
 			});
 
-		console.log("\n🏷️ === STEP 5: SLUG GENERATION ===");
+		console.log("\n === STEP 5: SLUG GENERATION ===");
 		const user = await currentUser();
 
-		console.log("\n💾 === STEP 7: DATABASE OPERATIONS ===");
+		console.log("\n === STEP 7: DATABASE OPERATIONS ===");
 
 		const catalogueData = {
 			name: formData.name,
@@ -323,8 +277,6 @@ export async function POST(req: NextRequest) {
 			source: "ocr_import",
 		};
 
-		console.log("💾 Inserting catalogue data into database...");
-
 		const { error } = await supabase
 			.from("catalogues")
 			.insert([catalogueData])
@@ -338,27 +290,25 @@ export async function POST(req: NextRequest) {
 			return NextResponse.json({ error: error.message }, { status: 500 });
 		}
 
-		console.log("✅ Catalogue inserted successfully!");
+		console.log("✅ Catalogue created successfully!");
 
 		console.log("💾 Inserting prompt record...");
-		const { error: errorPrompt } = await supabase
+		const { error: errorOcrUsageEntry } = await supabase
 			.from("ocr")
 			.insert([{ user_id: user.id }]);
-		if (errorPrompt) {
+		if (errorOcrUsageEntry) {
 			console.error(
 				"❌ Error inserting data into Supabase prompt table:",
-				errorPrompt,
+				errorOcrUsageEntry,
 			);
-			return NextResponse.json({ error: errorPrompt.message }, { status: 500 });
+			return NextResponse.json(
+				{ error: errorOcrUsageEntry.message },
+				{ status: 500 },
+			);
 		}
-
-		console.log("✅ Prompt record inserted successfully!");
 
 		console.log("\n🎉 === PROCESS COMPLETED SUCCESSFULLY ===");
 		const finalUrl = `/catalogues/${formData.name}`;
-		console.log("🔗 Restaurant URL:", finalUrl);
-		console.log("🎯 Total processing steps completed: 7");
-		console.log("📊 Final items count:", orderedItems.length);
 		console.log(
 			"🔄 Categories properly ordered:",
 			orderedItems.map((s) => `${s.order}. ${s.name}`).join(" → "),
@@ -368,14 +318,9 @@ export async function POST(req: NextRequest) {
 	} catch (error) {
 		console.error("\n💥 === CRITICAL ERROR OCCURRED ===");
 		console.error("🚨 Error generating items:", error);
-		console.error("📋 Error type:", error?.constructor?.name);
 		console.error(
 			"💬 Error message:",
 			error instanceof Error ? error.message : "Unknown error",
-		);
-		console.error(
-			"📚 Error stack:",
-			error instanceof Error ? error.stack : "No stack trace",
 		);
 
 		// Handle specific API errors

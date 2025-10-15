@@ -383,7 +383,7 @@ const LimitsModal = ({
 													<strong className="text-product-foreground">
 														{requiredPlan.features.traffic_limit.toLocaleString()}
 													</strong>{" "}
-													monthly views to reach more customers
+													page views per month to reach more customers
 												</span>
 											</li>
 											{requiredPlan.features.newsletter && (

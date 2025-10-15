@@ -130,6 +130,7 @@ export type Step1GeneralProps = {
 		title?: string;
 		currency?: string;
 		subtitle?: string;
+		language?: string;
 	};
 	handleInputChange: (
 		e:

@@ -47,7 +47,7 @@ export function CurrencySelect({
 
 	return (
 		<Select onValueChange={onChange} value={value || defaultCurrency}>
-			<SelectTrigger>
+			<SelectTrigger className="!text-product-foreground">
 				<SelectValue placeholder="Select currency" />
 			</SelectTrigger>
 			<SelectContent>
