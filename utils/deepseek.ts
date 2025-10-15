@@ -1,38 +1,39 @@
-import OpenAI from "openai"
+import OpenAI from "openai";
 
 const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.DEEPSEEK_API_KEY,
-})
+	baseURL: "https://api.deepseek.com",
+	apiKey: process.env.DEEPSEEK_API_KEY,
+});
 
 export async function chatCompletion(prompt: string) {
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "system", content: prompt }],
-    model: "deepseek-chat",
-  })
-  return completion.choices[0].message.content
+	const completion = await openai.chat.completions.create({
+		messages: [{ role: "system", content: prompt }],
+		model: "deepseek-chat",
+	});
+	return completion.choices[0].message.content;
 }
 
 const baseCategorySchema = {
-  name: "Name of category (e.g. lunch, breakfast, welness, etc.)",
-  layout: "variant",
-  order: 1,
-  items: [
-    {
-      name: "Item Name",
-      description: "Description of Item",
-      price: 12,
-      image: "leave as empty string as I will populate this later via unsplash API",
-    },
-  ],
-}
+	name: "Name of category (e.g. lunch, breakfast, welness, etc.)",
+	layout: "variant",
+	order: 1,
+	items: [
+		{
+			name: "Item Name",
+			description: "Description of Item",
+			price: 12,
+			image:
+				"leave as empty string as I will populate this later via unsplash API",
+		},
+	],
+};
 
 const baseSchema = {
-  services: [baseCategorySchema],
-}
+	services: [baseCategorySchema],
+};
 
 export function generatePromptForCategoryDetection(ocrText: string): string {
-  return `
+	return `
     Role: You are an expert in analyzing digital catalogs, menus and price lists to identify categories.
     Your task is to analyze the provided OCR text and split it into logical category chunks.
     
@@ -59,15 +60,15 @@ export function generatePromptForCategoryDetection(ocrText: string): string {
         "DRINKS\nCoffee 3.50\nOrange Juice 4.00\nSparkling Water 2.50"
       ]
     }
-  `
+  `;
 }
 
 export function generatePromptForCategoryProcessing(
-  categoryChunk: string,
-  formData: any,
-  order: number
+	categoryChunk: string,
+	formData: any,
+	order: number,
 ): string {
-  return `
+	return `
     Role: You are an expert in creating service category configurations.
     Based on the provided category text chunk, generate a single category object in JSON format.
     
@@ -106,11 +107,11 @@ export function generatePromptForCategoryProcessing(
         }
       ]
     }
-  `
+  `;
 }
 
 export function generatePromptForOCR(inputText: string, formData: any): string {
-  return `
+	return `
       Role: You are an expert in creating service offers (restaurant services, beauty center service offer, etc.).
       Based on the following prompt, generate a complete service offer configuration in JSON format.
       The JSON object should strictly follow the type definition from the project.
@@ -133,5 +134,5 @@ export function generatePromptForOCR(inputText: string, formData: any): string {
       5. If you cannot find price for an item, you set price. Keep in mind currency and make sure price is not 0.
       6. Set order for each category starting from 1. Order items in logical way. They will be displayed in this ascending order.
       7. Wherecver you have string it should be valid string. It should not contain any special character like /,-,",' etc."
-      `
+      `;
 }

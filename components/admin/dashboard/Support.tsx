@@ -1,57 +1,57 @@
-"use client"
-import Contact from "@/components/contact/Contact"
-import { InlineWidget } from "react-calendly"
-import { IoMdHelpCircleOutline } from "react-icons/io"
+"use client";
+import { InlineWidget } from "react-calendly";
+import { IoMdHelpCircleOutline } from "react-icons/io";
+import Contact from "@/components/contact/Contact";
 
-const Support = ({
-  pricingPlanId = 0,
-  userEmail,
-}: {
-  pricingPlanId: number
-  userEmail: string
-}) => {
-  return (
-    <div className="max-w-5xl space-y-8">
-      <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
-        <IoMdHelpCircleOutline className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" /> Support
-      </h2>
-      <p className="text-lg text-product-foreground-accent mb-6">
-        We're here to help you get the most out of Quicktalog. Choose your preferred support method
-        below.
-      </p>
-      <div className="grid gap-8">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-product-primary rounded-full"></div>
-            <h2 className="text-2xl font-semibold text-product-foreground">Email Support</h2>
-          </div>
-          <p className="text-product-foreground-accent mb-4">
-            Send us a detailed message and we'll respond within 1 business day.
-          </p>
-          <Contact type="support" />
-        </div>
+const Support = () => {
+	return (
+		<div className="max-w-5xl space-y-8">
+			<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
+				<IoMdHelpCircleOutline className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" />{" "}
+				Support
+			</h2>
+			<p className="text-lg text-product-foreground-accent mb-6">
+				We're here to help you get the most out of Quicktalog. Choose your
+				preferred support method below.
+			</p>
+			<div className="grid gap-8">
+				<div className="space-y-4">
+					<div className="flex items-center gap-3">
+						<div className="w-2 h-2 bg-product-primary rounded-full"></div>
+						<h2 className="text-2xl font-semibold text-product-foreground">
+							Email Support
+						</h2>
+					</div>
+					<p className="text-product-foreground-accent mb-4">
+						Send us a detailed message and we'll respond within 1 business day.
+					</p>
+					<Contact type="support" />
+				</div>
 
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-product-primary rounded-full"></div>
-            <h2 className="text-2xl font-semibold text-product-foreground">Schedule a Meeting</h2>
-          </div>
-          <p className="text-product-foreground-accent mb-4">
-            Book a 30-minute consultation to discuss your needs or get personalized assistance.
-          </p>
-          <div className="h-[600px] w-full rounded-2xl overflow-hidden border border-product-border">
-            <InlineWidget
-              url={
-                process.env.NEXT_PUBLIC_CALENDLY_URL ||
-                "https://calendly.com/quicktalog/customer-support"
-              }
-              styles={{ height: "100%", width: "100%" }}
-            />
-          </div>
-        </div>
+				<div className="space-y-4">
+					<div className="flex items-center gap-3">
+						<div className="w-2 h-2 bg-product-primary rounded-full"></div>
+						<h2 className="text-2xl font-semibold text-product-foreground">
+							Schedule a Meeting
+						</h2>
+					</div>
+					<p className="text-product-foreground-accent mb-4">
+						Book a 30-minute consultation to discuss your needs or get
+						personalized assistance.
+					</p>
+					<div className="h-[600px] w-full rounded-2xl overflow-hidden border border-product-border">
+						<InlineWidget
+							styles={{ height: "100%", width: "100%" }}
+							url={
+								process.env.NEXT_PUBLIC_CALENDLY_URL ||
+								"https://calendly.com/quicktalog/customer-support"
+							}
+						/>
+					</div>
+				</div>
 
-        {/* Quick Contact */}
-        {/* <div className="space-y-4">
+				{/* Quick Contact */}
+				{/* <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 bg-product-primary rounded-full"></div>
             <h2 className="text-2xl font-semibold text-product-foreground">Quick Contact</h2>
@@ -75,9 +75,9 @@ const Support = ({
             </a>
           </div>
         </div> */}
-      </div>
-    </div>
-  )
-}
+			</div>
+		</div>
+	);
+};
 
-export default Support
+export default Support;
