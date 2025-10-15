@@ -1,17 +1,22 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import Link from "next/link";
 import React, { useState } from "react";
+import { RiSparkling2Line } from "react-icons/ri";
 import { sendNewCatalogueEmail } from "@/actions/email";
 import LimitsModal from "@/components/modals/LimitsModal";
 import SuccessModal from "@/components/modals/SuccessModal";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { generateUniqueSlug } from "@/helpers/client";
 import { revalidateData } from "@/helpers/server";
-import { toast } from "@/hooks/use-toast";
 import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";
+import { LanguageSelector } from "./components/LanguageSelector";
 import OcrReader from "./components/OcrReader";
+import PromptExamples from "./components/PromptExamples";
+import PromptInput from "./components/PromptInput";
 import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 
@@ -24,16 +29,11 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 		subtitle: "",
 		language: "eng",
 	});
-	const [shouldGenerateImages, setShouldGenerateImages] =
-		useState<boolean>(false);
-	console.log(shouldGenerateImages);
-	const [prompt, setPrompt] = useState("");
+	const [extractedText, setExtractedText] = useState("");
 	const { user } = useUser();
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [catalogueUrl, setCatalogueUrl] = useState("");
-	const [showSuccessModal, setShowSuccessModal] = useState(false);
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
 
 	const handleInputChange = (
@@ -48,39 +48,29 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 	const validate = () => {
 		const newErrors: { [key: string]: string } = {};
 		const hasErrors = Object.keys(errors).length > 0;
-		if (!formData.name.trim()) newErrors.name = "Catalogue Name is required.";
+		if (!formData.name.trim()) newErrors.name = "Catalogue Name is required";
 		if (!formData.title.trim())
 			newErrors.title = "Catalogue Heading is required";
 		if (!formData.currency.trim()) newErrors.currency = "Currency is required";
 		if (!formData.theme.trim()) newErrors.theme = "Theme is required";
-		if (!prompt.trim()) newErrors.prompt = "Items description is required.";
+		if (!formData.language.trim()) newErrors.language = "Language is required";
 		setErrors(newErrors);
-		setTouched({
-			name: true,
-			title: true,
-			currency: true,
-			theme: true,
-			prompt: true,
-		});
 		return Object.keys(newErrors).length === 0 && !hasErrors;
 	};
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
+	const handleSubmit = async () => {
 		if (!validate()) return;
 
+		if (!extractedText.trim()) {
+			return;
+		}
+
 		if (!user || !user.id) {
-			toast({
-				title: "Authentication Error",
-				description: "You must be signed in to create a service catalogue.",
-				variant: "destructive",
-			});
+			console.log("Issue with fetching user data");
 			return;
 		}
 
 		setIsSubmitting(true);
-		setCatalogueUrl("");
-
 		try {
 			if (
 				userData.usage.prompts >= userData.currentPlan.features.ai_prompts ||
@@ -93,57 +83,35 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
-
-			const response = await fetch("/api/items/ai", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ formData: data, prompt, shouldGenerateImages }),
-			});
-
-			const contactData = {
-				email: user.emailAddresses[0]?.emailAddress || "",
-				name: user.firstName || "",
-			};
-
-			if (response.ok) {
-				const { catalogueUrl, slug } = await response.json();
-				setCatalogueUrl(catalogueUrl);
-				await sendNewCatalogueEmail(contactData, formData.name, slug);
-				setShowSuccessModal(true);
-				toast({
-					title: "Success!",
-					description: (
-						<p>
-							Your digital showcase has been created. You can view it at{" "}
-							<Link
-								className="text-primary-accent hover:underline"
-								href={catalogueUrl}
-							>
-								{catalogueUrl}
-							</Link>
-						</p>
-					),
+			try {
+				const response = await fetch("/api/items/ocr", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ ocr_text: extractedText, formData: data }),
 				});
-			} else {
-				const errorData = await response.json();
-				toast({
-					title: "Error",
-					description: `Failed to create showcase: ${errorData.error || "Unknown error"}`,
-					variant: "destructive",
-				});
+
+				if (response.ok) {
+					await response.json();
+				} else {
+					const errorData = await response.json();
+					console.error("Error response:", errorData);
+				}
+			} catch (error) {
+				console.error("Error submitting OCR data:", error);
+			} finally {
+				setIsSubmitting(false);
+				await revalidateData();
 			}
 		} catch (error) {
 			console.error("Submission error:", error);
-			toast({
-				title: "Error",
-				description: "An error occurred while submitting the request.",
-				variant: "destructive",
-			});
 		} finally {
 			setIsSubmitting(false);
-			setShouldGenerateImages(false);
 			await revalidateData();
 		}
+	};
+
+	const handleLanguageChange = (value: string) => {
+		setFormData((prev: any) => ({ ...prev, language: value }));
 	};
 
 	return (
@@ -168,29 +136,24 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 							touched={touched}
 							type="create"
 						/>
-
-						<ThemeSelect
+						<ThemeSelect formData={formData} setFormData={setFormData} />
+						<LanguageSelector
 							errors={errors}
-							formData={formData}
-							setFormData={setFormData}
+							onLanguageChange={handleLanguageChange}
+							selectedLanguage={formData.language}
 							touched={touched}
 						/>
 
 						<OcrReader
+							extractedText={extractedText}
 							formData={formData}
-							setServiceCatalogueUrl={setCatalogueUrl}
-							setShowSuccessModal={setShowSuccessModal}
+							isSubmitting={isSubmitting}
+							onSubmit={handleSubmit}
+							setExtractedText={setExtractedText}
 						/>
 					</form>
 				</CardContent>
 			</Card>
-
-			<SuccessModal
-				catalogueUrl={catalogueUrl}
-				isOpen={showSuccessModal}
-				onClose={() => setShowSuccessModal(false)}
-				type="ocr"
-			/>
 			{showLimitsModal && (
 				<LimitsModal
 					currentPlan={userData?.currentPlan}

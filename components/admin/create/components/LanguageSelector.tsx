@@ -1,3 +1,4 @@
+import React from "react";
 import {
 	Select,
 	SelectContent,
@@ -7,13 +8,11 @@ import {
 } from "@/components/ui/select";
 import { LANGUAGE_OPTIONS } from "@/constants/ocr";
 import { LanguageSelectorProps } from "@/types/components";
-import React from "react";
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 	selectedLanguage,
 	touched,
 	errors,
-	detectedLanguage,
 	onLanguageChange,
 	type = "ai",
 }) => {
@@ -26,33 +25,24 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 				<span className="text-red-500 ml-1">*</span>
 			</label>
 			<Select
-				value={selectedLanguage}
 				onValueChange={(e) => onLanguageChange(e)}
+				value={selectedLanguage || "eng"}
 			>
-				<SelectTrigger className="!text-product-foreground">
-					<SelectValue placeholder="Select language" />
+				<SelectTrigger>
+					<SelectValue placeholder="Select currency" />
 				</SelectTrigger>
 				<SelectContent>
 					{LANGUAGE_OPTIONS.map((lang) => (
 						<SelectItem
+							className="cursor-pointer"
 							key={lang.code}
 							value={lang.code}
-							className="cursor-pointer"
 						>
 							{lang.flag} {lang.name}
 						</SelectItem>
 					))}
 				</SelectContent>
 			</Select>
-			{detectedLanguage && selectedLanguage === "auto" && (
-				<p className="mt-1 text-xs text-product-foreground-accent">
-					Auto-detected:{" "}
-					{
-						LANGUAGE_OPTIONS.find((lang) => lang.code === detectedLanguage)
-							?.name
-					}
-				</p>
-			)}
 			{touched?.language && errors?.language && (
 				<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
 					{errors?.language}

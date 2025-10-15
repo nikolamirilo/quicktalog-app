@@ -9,10 +9,10 @@ export function useAnalytics(shouldFetch: boolean) {
 		shouldFetch ? "/api/dashboard/analytics" : null,
 		fetcher,
 		{
-			revalidateOnFocus: false, // Don't refetch when window regains focus
-			revalidateOnReconnect: false, // Don't refetch on reconnect
-			dedupingInterval: 60000, // Dedupe requests within 1 minute
-			refreshInterval: 300000, // Auto-refresh every 5 minutes (optional)
+			revalidateOnFocus: false,
+			revalidateOnReconnect: false,
+			dedupingInterval: 60000,
+			refreshInterval: 300000,
 		},
 	);
 

@@ -1,4 +1,7 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
+import React, { useState } from "react";
+import { RiSparkling2Line } from "react-icons/ri";
 import { sendNewCatalogueEmail } from "@/actions/email";
 import LimitsModal from "@/components/modals/LimitsModal";
 import SuccessModal from "@/components/modals/SuccessModal";
@@ -9,9 +12,6 @@ import { Switch } from "@/components/ui/switch";
 import { generateUniqueSlug } from "@/helpers/client";
 import { revalidateData } from "@/helpers/server";
 import { UserData } from "@/types";
-import { useUser } from "@clerk/nextjs";
-import React, { useState } from "react";
-import { RiSparkling2Line } from "react-icons/ri";
 import FormHeader from "./components/FormHeader";
 import { LanguageSelector } from "./components/LanguageSelector";
 import PromptExamples from "./components/PromptExamples";
@@ -125,34 +125,34 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 				type="form"
 			>
 				<FormHeader
-					title="AI Catalogue Generator"
 					subtitle="Generate stunning catalogues in minutes. Perfect for restaurants, salons, gyms, and more."
+					title="AI Catalogue Generator"
 				/>
 				<CardContent className="p-6 sm:p-8 pt-0">
 					<form className="space-y-6">
 						<Step1General
+							errors={errors}
 							formData={formData}
 							handleInputChange={handleInputChange}
-							setFormData={setFormData}
-							errors={errors}
-							touched={touched}
-							setTouched={setTouched}
 							setErrors={setErrors}
+							setFormData={setFormData}
+							setTouched={setTouched}
+							touched={touched}
 							type="create"
 						/>
 						<ThemeSelect formData={formData} setFormData={setFormData} />
 						<LanguageSelector
-							selectedLanguage={formData.language}
-							onLanguageChange={handleLanguageChange}
-							touched={touched}
 							errors={errors}
+							onLanguageChange={handleLanguageChange}
+							selectedLanguage={formData.language}
+							touched={touched}
 						/>
 
 						<PromptInput
-							prompt={prompt}
-							touched={touched}
 							errors={errors}
+							prompt={prompt}
 							setPrompt={setPrompt}
+							touched={touched}
 						/>
 
 						<div className="flex items-center gap-2">
@@ -160,8 +160,8 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 								Generate Images?
 							</Label>
 							<Switch
-								className="bg-blue-500"
 								checked={shouldGenerateImages}
+								className="bg-blue-500"
 								onCheckedChange={() =>
 									setShouldGenerateImages(!shouldGenerateImages)
 								}
@@ -169,14 +169,14 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 						</div>
 
 						<Button
+							className="h-12 font-medium rounded-lg"
 							disabled={isSubmitting}
 							onClick={handleSubmit}
 							variant="cta"
-							className="h-12 font-medium rounded-lg"
 						>
 							{isSubmitting ? (
 								<div className="flex items-center gap-2 animate-pulse">
-									<RiSparkling2Line size={20} className="animate-spin" />
+									<RiSparkling2Line className="animate-spin" size={20} />
 									Creating Your Catalogue...
 								</div>
 							) : (
@@ -187,22 +187,22 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 							)}
 						</Button>
 					</form>
-					<PromptExamples setPrompt={setPrompt} disabled={isSubmitting} />
+					<PromptExamples disabled={isSubmitting} setPrompt={setPrompt} />
 				</CardContent>
 			</Card>
 
 			<SuccessModal
+				catalogueUrl={catalogueUrl}
 				isOpen={showSuccessModal}
 				onClose={() => setShowSuccessModal(false)}
-				catalogueUrl={catalogueUrl}
 				type="ai"
 			/>
 			{showLimitsModal && (
 				<LimitsModal
-					type="ai"
-					isOpen={showLimitsModal}
 					currentPlan={userData?.currentPlan}
+					isOpen={showLimitsModal}
 					requiredPlan={userData?.nextPlan}
+					type="ai"
 				/>
 			)}
 		</div>

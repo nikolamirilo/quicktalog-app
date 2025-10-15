@@ -50,6 +50,12 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 						: `Up to ${features.categories_per_catalogue} categories & ${features.items_per_catalogue} items per catalogue`,
 				type: "categories_and_items",
 			},
+			features.branding === true
+				? {
+						text: features.branding === true ? "Custom Branding" : null,
+						type: "custom_branding",
+					}
+				: null,
 			// { text: `${features.analytics} analytics`, type: "analytics" },
 			{
 				text: `${features.traffic_limit.toLocaleString()} page views per month`,
@@ -101,6 +107,8 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				"Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
 			categories_and_items:
 				"The total number of categories and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
+			custom_branding:
+				"Control over the visual branding of your catalogues, including logo upload, legal information, partners and contact information represent your business in the best possible way.",
 		};
 		return explanations[feature] || "Information about this feature.";
 	};

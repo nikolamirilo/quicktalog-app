@@ -4,28 +4,25 @@ import { useState } from "react";
 import { createWorker, OEM } from "tesseract.js";
 import { logOcrUsage } from "@/actions/usage";
 import { Button } from "@/components/ui/button";
-import { generateUniqueSlug } from "@/helpers/client";
-import { revalidateData } from "@/helpers/server";
-import { toast } from "@/hooks/use-toast";
 import { OCRImageData } from "@/types";
-import {
-	detectLanguage,
-	getLanguageParameters,
-	preprocessImage,
-} from "@/utils/ocr";
-import { LanguageSelector } from "./LanguageSelector";
+import { Step1GeneralProps } from "@/types/components";
+import { getLanguageParameters, preprocessImage } from "@/utils/ocr";
 
 const OcrReader = ({
 	formData,
-	setServiceCatalogueUrl,
-	setShowSuccessModal,
+	extractedText,
+	setExtractedText,
+	isSubmitting,
+	onSubmit,
+}: {
+	formData: Step1GeneralProps["formData"];
+	extractedText: string;
+	setExtractedText: (string) => void;
+	isSubmitting: boolean;
+	onSubmit: () => void;
 }) => {
 	const [images, setImages] = useState<OCRImageData[]>([]);
-	const [combinedText, setCombinedText] = useState("");
-	const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
-	const [detectedLanguage, setDetectedLanguage] = useState<string>("");
 	const [isProcessing, setIsProcessing] = useState(false);
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [currentProcessingIndex, setCurrentProcessingIndex] =
 		useState<number>(-1);
 
@@ -40,7 +37,7 @@ const OcrReader = ({
 			}));
 
 			setImages((prev) => [...prev, ...newImages]);
-			setCombinedText(""); // Reset combined text when new images are added
+			setExtractedText(""); // Reset combined text when new images are added
 		}
 	};
 
@@ -52,7 +49,7 @@ const OcrReader = ({
 			}
 			return prev.filter((img) => img.id !== imageId);
 		});
-		setCombinedText(""); // Reset combined text when images are removed
+		setExtractedText(""); // Reset combined text when images are removed
 	};
 
 	const updateOCRImageData = (
@@ -83,28 +80,14 @@ const OcrReader = ({
 				},
 			);
 
-			// Determine which language to use
-			let languageToUse = selectedLanguage;
+			let languageToUse = formData.language;
 
-			// Handle Serbian Latin script mapping
-			if (selectedLanguage === "srp_latn") {
+			if (formData.language === "srp_latn") {
 				languageToUse = "hrv";
-			}
-
-			if (selectedLanguage === "auto") {
-				// First pass with English to get some text for detection
-				const quickWorker = await createWorker("eng");
-				const quickResult = await quickWorker.recognize(imageToProcess);
-				await quickWorker.terminate();
-
-				const detectedLang = detectLanguage(quickResult.data.text);
-				setDetectedLanguage(detectedLang);
-				languageToUse = detectedLang;
 			}
 
 			const worker = await createWorker(languageToUse, OEM.LSTM_ONLY);
 
-			// Apply language-specific parameters
 			const languageParams = getLanguageParameters(languageToUse);
 			await worker.setParameters(languageParams);
 
@@ -133,7 +116,7 @@ const OcrReader = ({
 		if (images.length === 0) return;
 
 		setIsProcessing(true);
-		setCombinedText("");
+		setExtractedText("");
 		const extractedTexts: string[] = [];
 
 		for (let i = 0; i < images.length; i++) {
@@ -161,58 +144,19 @@ const OcrReader = ({
 		// Combine all extracted texts
 		const combinedExtractedText = extractedTexts.join("\n\n");
 		console.log("Combined text length:", combinedExtractedText.length);
-		setCombinedText(combinedExtractedText);
+		setExtractedText(combinedExtractedText);
 
 		// Log usage for all processed images
 		await logOcrUsage();
 		console.log("Usage assigned successfully.");
 	};
 
-	const handleSubmit = async () => {
-		if (!combinedText.trim()) {
-			return;
-		}
-
-		setIsSubmitting(true);
-		setServiceCatalogueUrl("");
-
-		const slug = generateUniqueSlug(formData.name);
-		const data = { ...formData, name: slug };
-		try {
-			const response = await fetch("/api/items/ocr", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ ocr_text: combinedText, formData: data }),
-			});
-
-			if (response.ok) {
-				const { restaurantUrl } = await response.json();
-				setServiceCatalogueUrl(restaurantUrl);
-				setShowSuccessModal(true);
-			} else {
-				const errorData = await response.json();
-				console.error("Error response:", errorData);
-			}
-		} catch (error) {
-			console.error("Error submitting OCR data:", error);
-		} finally {
-			setIsSubmitting(false);
-			await revalidateData();
-		}
-	};
-
 	const allImagesProcessed =
 		images.length > 0 && images.every((img) => img.isProcessed);
-	const hasExtractedText = combinedText.trim().length > 0;
+	const hasExtractedText = extractedText.trim().length > 0;
 
 	return (
 		<div className="flex flex-col items-center text-product-foreground min-h-screen">
-			<LanguageSelector
-				detectedLanguage={detectedLanguage}
-				onLanguageChange={setSelectedLanguage}
-				selectedLanguage={selectedLanguage}
-			/>
-
 			{/* Image Upload Controls */}
 			<div className="flex flex-col sm:flex-row gap-4 mb-6 sm:mb-8 items-center w-full max-w-lg">
 				<label
@@ -347,7 +291,7 @@ const OcrReader = ({
 							: "bg-gray-300 text-gray-600 cursor-not-allowed"
 					}
 					disabled={!hasExtractedText || isProcessing || isSubmitting}
-					onClick={handleSubmit}
+					onClick={onSubmit}
 					variant="file-action"
 				>
 					{isSubmitting ? "Creating Catalogue..." : "Create Catalogue"}
@@ -387,9 +331,9 @@ const OcrReader = ({
 						Extracted Text
 					</h3>
 					<div className="border border-product-border bg-hero-product-background p-4 rounded-lg text-left text-product-foreground-accent break-words whitespace-pre-wrap min-h-[200px] max-h-[400px] overflow-auto">
-						{combinedText ? (
+						{extractedText ? (
 							<div>
-								{combinedText.split("\n").map((line, index) => (
+								{extractedText.split("\n").map((line, index) => (
 									<div key={`text-${index}`}>
 										{line.startsWith("--- Image") ? (
 											<div className="text-blue-600 font-semibold my-2 border-b border-blue-200 pb-1">

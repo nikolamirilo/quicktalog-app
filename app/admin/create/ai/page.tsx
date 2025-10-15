@@ -8,7 +8,7 @@ import { UserData } from "@/types";
 export const dynamic = "force-dynamic";
 export default async function page() {
 	const userData: UserData = await getUserData();
-	if (userData && userData.currentPlan.id !== 0) {
+	if (userData && userData.currentPlan.id > 1) {
 		return (
 			<div className="product font-lora min-h-screen">
 				<Navbar />
@@ -23,10 +23,10 @@ export default async function page() {
 	} else {
 		return (
 			<LimitsModal
-				isOpen={userData && userData.currentPlan.id !== 0 ? false : true}
-				type="ai"
 				currentPlan={userData.currentPlan}
+				isOpen={userData && userData.currentPlan.id > 1 ? false : true}
 				requiredPlan={userData.nextPlan}
+				type="ai"
 			/>
 		);
 	}
