@@ -1,9 +1,9 @@
 "use client";
-import { UploadDropzone } from "@/utils/uploadthing";
 import NextImage from "next/image";
 import React, { useCallback } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
+import { UploadDropzone } from "@/utils/uploadthing";
 
 const loadImage = (file: File): Promise<HTMLImageElement> => {
 	return new Promise((resolve, reject) => {
@@ -159,6 +159,7 @@ const processImage = async (
 };
 
 interface ImageDropzoneProps {
+	type?: "default" | "logo";
 	setIsUploading: React.Dispatch<boolean>;
 	onUploadComplete: (url: string) => void;
 	onError?: (error: Error) => void;
@@ -171,6 +172,7 @@ interface ImageDropzoneProps {
 }
 
 const ImageDropzone: React.FC<ImageDropzoneProps> = ({
+	type = "default",
 	setIsUploading,
 	removeImage,
 	image,
@@ -259,22 +261,23 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 	);
 
 	return (
-		<div translate="no" className="notranslate">
+		<div className="notranslate" translate="no">
 			{image ? (
-				<div className="relative mt-2 w-48 h-48 rounded-lg border-2 border-product-border overflow-hidden bg-product-background shadow-product-shadow">
-					<NextImage
-						src={image}
+				<div
+					className={`relative mt-2 ${type === "default" ? "w-48 h-48" : "w-fit h-fit"} rounded-lg border-2 border-product-border overflow-hidden bg-product-background shadow-product-shadow`}
+				>
+					<img
 						alt="Uploaded image preview"
-						fill
-						className="object-cover opacity-0 transition-opacity duration-500 ease-in-out"
-						onLoadingComplete={(img) => {
-							img.classList.remove("opacity-0");
+						className={`${type === "default" ? "w-full h-full object-cover" : "!w-auto max-h-48 !h-auto max-w-96 my-auto"} opacity-0 transition-opacity duration-500 ease-in-out`}
+						onLoad={(e) => {
+							e.currentTarget.classList.remove("opacity-0");
 						}}
+						src={image}
 					/>
 					<button
+						className="absolute top-1 right-1 z-10 bg-red-500 text-white rounded-full cursor-pointer hover:bg-red-600 transition-colors duration-200 shadow-lg"
 						onClick={removeImage}
 						translate="no"
-						className="absolute top-2 right-2 z-10 bg-red-500 text-white rounded-full cursor-pointer hover:bg-red-600 transition-colors duration-200 shadow-lg"
 					>
 						<IoClose size={25} />
 					</button>
@@ -282,23 +285,18 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 			) : (
 				<div className="relative cursor-pointer">
 					<UploadDropzone
-						endpoint="imageUploader"
-						config={{ mode: "auto" }}
-						className={className}
-						disabled={disabled}
-						onUploadBegin={() => {
-							setIsUploading(true);
-						}}
 						appearance={{
 							button: "hidden",
 							label: "text-gray-600 hover:text-product-primary",
 							container: `h-48 w-full`,
 						}}
+						className={className}
+						config={{ mode: "auto" }}
 						content={{
 							label: ({ ready, isUploading }) => {
 								if (ready && !isUploading)
 									return (
-										<span translate="no" className="notranslate">
+										<span className="notranslate" translate="no">
 											Choose a file or Drag & Drop
 										</span>
 									);
@@ -316,14 +314,14 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 							},
 							uploadIcon: ({ ready, isUploading }) => {
 								if (ready && !isUploading)
-									return <FiUploadCloud size={40} color="#ffc017" />;
+									return <FiUploadCloud color="#ffc017" size={40} />;
 								if (isUploading) return "";
 								return "";
 							},
 							allowedContent: ({ ready, isUploading }) => {
 								if (ready && !isUploading)
 									return (
-										<span translate="no" className="notranslate">
+										<span className="notranslate" translate="no">
 											Image (PNG, JPG, WebP, …, max 400KB)
 										</span>
 									);
@@ -331,8 +329,13 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 								return "";
 							},
 						}}
+						disabled={disabled}
+						endpoint="imageUploader"
 						onBeforeUploadBegin={handleBeforeUploadBegin}
 						onClientUploadComplete={handleUploadComplete}
+						onUploadBegin={() => {
+							setIsUploading(true);
+						}}
 						onUploadError={handleUploadError}
 					/>
 				</div>

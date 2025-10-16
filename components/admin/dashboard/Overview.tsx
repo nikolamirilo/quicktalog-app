@@ -203,7 +203,7 @@ const Overview = ({
 						ctaLabel="Upgrade plan"
 						href="/pricing"
 						subtitle=" Upgrade your plan to get more catalogues, features, and higher limits."
-						title="You’ve reached your current catalogue limit"
+						title="You've reached your current catalogue limit"
 					/>
 				)}
 				<div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">

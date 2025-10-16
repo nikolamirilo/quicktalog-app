@@ -13,8 +13,10 @@ const JoinOurCommunity = () => {
 				Discord group. Open until December 31, 2025.
 			</p>
 			<div className="flex justify-center w-[50%]">
-				<Button variant="cta" asChild>
-					<Link href="https://discord.gg/uQZxWNt3">Join on Discord</Link>
+				<Button asChild variant="cta">
+					<Link href={process.env.NEXT_PUBLIC_DISCORD_BETA_GROUP_INVITE}>
+						Join on Discord
+					</Link>
 				</Button>
 			</div>
 		</div>

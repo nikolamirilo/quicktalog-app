@@ -70,31 +70,39 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
 						<div className="space-y-6">
 							<div className="space-y-4">
-								<Link
+								<div
 									aria-label={`Go to ${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} homepage`}
-									className="flex flex-col items-start space-y-2 group transition-transform duration-200 hover:scale-102"
-									href={type === "default" ? "/" : ""}
+									className="flex flex-col items-start space-y-6 mt-2 group transition-transform duration-200 hover:scale-102"
 								>
-									<img
-										alt={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} logo`}
-										className="w-auto h-[7vh] object-cover"
-										height={40}
-										src={logo ?? "/logo.svg"}
-										width={type === "default" ? 120 : 100}
-									/>
+									<SmartLink
+										href={
+											type === "default"
+												? "/"
+												: data?.socialLinks?.website || ""
+										}
+									>
+										<img
+											alt={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} logo`}
+											className="w-auto max-h-[7vh] object-cover max-w-[150px] lg:max-w-[200px] h-48"
+											height={40}
+											src={logo ?? "/logo.svg"}
+											width={type === "default" ? 120 : 100}
+										/>
+									</SmartLink>
+
 									{type === "default" && (
 										<p className="text-sm text-card-description">
 											Digital Catalogue Platform
 										</p>
 									)}
 									{type === "custom" && (
-										<div className="ml-0 sm:ml-2 lg:ml-4">
-											<h3 className="text-xl font-semibold group-hover:text-primary transition-colors duration-200 font-heading font-weight-heading tracking-heading text-section-heading">
+										<div className="ml-0">
+											<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-section-heading">
 												{data?.legal?.name}
 											</h3>
 										</div>
 									)}
-								</Link>
+								</div>
 								<p className="text-sm leading-relaxed text-card-description">
 									{type === "default" ? footerDetails.subheading : ""}
 								</p>

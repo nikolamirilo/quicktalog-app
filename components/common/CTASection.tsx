@@ -3,14 +3,16 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 
 const CTASection = ({
+	type = "default",
 	title,
 	subtitle,
 	href,
 	ctaLabel,
 }: {
+	type?: "default" | "form";
 	title: string;
 	subtitle: string;
-	href: string;
+	href?: string;
 	ctaLabel: string;
 }) => {
 	return (
@@ -24,15 +26,17 @@ const CTASection = ({
 					{subtitle}
 				</p>
 			</div>
-			<a href={href} rel="noopener noreferrer" target="_blank">
-				<Button
-					className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-					variant="default"
-				>
-					<Star className="w-4 h-4" />
-					{ctaLabel}
-				</Button>
-			</a>
+			{type === "default" && (
+				<Link href={href}>
+					<Button
+						className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+						variant="default"
+					>
+						<Star className="w-4 h-4" />
+						{ctaLabel}
+					</Button>
+				</Link>
+			)}
 		</div>
 	);
 };
