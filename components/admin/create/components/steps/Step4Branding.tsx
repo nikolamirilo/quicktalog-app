@@ -312,10 +312,9 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
 			{isFreePlan && (
 				<CTASection
-					ctaLabel="Upgrade plan"
-					href="/pricing"
-					subtitle="Branding customization is available only in paid plans."
+					subtitle="Upgrade your plan to access branding. After upgrading, you can return to edit your catalog and apply branding."
 					title="Unlock Branding"
+					type="form"
 				/>
 			)}
 
@@ -459,6 +458,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 						onUploadComplete={handleLogoUpload}
 						removeImage={handleLogoRemove}
 						setIsUploading={setIsUploading}
+						type="logo"
 					/>
 				</div>
 

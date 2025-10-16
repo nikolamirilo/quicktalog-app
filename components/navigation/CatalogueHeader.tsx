@@ -97,11 +97,11 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	return (
 		<header
 			aria-label={`${companyName} header navigation`}
-			className="border-b shadow-lg z-50 bg-header-bg text-header-text border-card-border font-body tracking-body"
+			className="border-b shadow-lg z-50 bg-header-bg flex flex-row justify-between items-center  text-header-text border-card-border font-body tracking-body min-h-[7vh]"
 			role="banner"
 		>
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex items-center justify-between py-2 sm:py-3">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
+				<div className="flex items-center justify-between py-2 sm:py-3 w-full">
 					<div className="flex items-center">
 						<Link
 							aria-label={`Go to ${companyName} homepage`}
@@ -110,7 +110,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						>
 							<img
 								alt={`${companyName} logo`}
-								className="w-auto h-[7vh] object-cover"
+								className="w-auto max-h-[7vh] object-cover max-w-[150px] lg:max-w-[200px] rounded-lg"
 								fetchPriority="high"
 								height={40}
 								src={logo ?? "/logo.svg"}
