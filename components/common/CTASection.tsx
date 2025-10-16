@@ -13,7 +13,7 @@ const CTASection = ({
 	title: string;
 	subtitle: string;
 	href?: string;
-	ctaLabel: string;
+	ctaLabel?: string;
 }) => {
 	return (
 		<div className="flex flex-col sm:flex-row items-center mb-6 justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl p-6 shadow-lg">

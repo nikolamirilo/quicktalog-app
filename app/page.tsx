@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+import { lazy, Suspense } from "react";
 import Container from "@/components/home/Container";
 import Hero from "@/components/home/Hero";
 import Section from "@/components/home/Section";
@@ -8,8 +10,6 @@ import {
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
-import { Metadata } from "next";
-import { Suspense, lazy } from "react";
 
 export const metadata: Metadata = generatePageMetadata("home");
 
@@ -30,8 +30,8 @@ const page: React.FC = async () => {
 			style={{ WebkitTapHighlightColor: "transparent" }}
 		>
 			<script
-				type="application/ld+json"
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageSchema) }}
+				type="application/ld+json"
 			/>
 			<Navbar />
 			<Hero />
@@ -41,9 +41,9 @@ const page: React.FC = async () => {
 				</Suspense>
 
 				<Section
+					description="Replace printed catalogs with an interactive, mobile-friendly online catalog you can update in real time."
 					id="problems"
 					title="Stop Losing Customers to Outdated Catalogs"
-					description="Replace printed catalogs with an interactive, mobile-friendly online catalog you can update in real time."
 				>
 					<Suspense fallback={<SectionSkeleton height="h-64" />}>
 						<ProblemSection />
@@ -51,9 +51,9 @@ const page: React.FC = async () => {
 				</Section>
 
 				<Section
+					description="Create a professional digital catalog with our free online catalog maker in a few simple steps-or let AI generate it for you. No design or code required."
 					id="how-it-works"
 					title="Go Live in Minutes"
-					description="Create a professional digital catalog with our free online catalog maker in a few simple steps-or let AI generate it for you. No design or code required."
 				>
 					<Suspense fallback={<SectionSkeleton height="h-72" />}>
 						<HowItWorks />
@@ -65,9 +65,9 @@ const page: React.FC = async () => {
 				</Suspense>
 
 				<Section
+					description="Start with our free online catalog maker and upgrade as you grow. No hidden fees. Access professional catalog templates, AI generation, OCR import, and analytics on higher tiers."
 					id="pricing"
 					title="Simple, Transparent Pricing"
-					description="Start with our free online catalog maker and upgrade as you grow. No hidden fees. Access professional catalog templates, AI generation, OCR import, and analytics on higher tiers."
 				>
 					<Suspense fallback={<SectionSkeleton height="h-96" />}>
 						<Pricing />
@@ -79,9 +79,9 @@ const page: React.FC = async () => {
 				</Suspense>
 
 				<Section
+					description="Learn how digital catalogs differ from websites, how updates work, and how AI/OCR help you launch faster."
 					id="faq"
 					title="Got Questions? We've Got Answers"
-					description="Learn how digital catalogs differ from websites, how updates work, and how AI/OCR help you launch faster."
 				>
 					<Suspense fallback={<SectionSkeleton height="h-80" />}>
 						<FAQ />

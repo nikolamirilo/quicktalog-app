@@ -312,8 +312,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 
 			{isFreePlan && (
 				<CTASection
-					ctaLabel="Upgrade plan"
-					subtitle="Publish your existing catalog, upgrade your plan, then edit it with new features."
+					subtitle="Upgrade your plan to access branding. After upgrading, you can return to edit your catalog and apply branding."
 					title="Unlock Branding"
 					type="form"
 				/>
