@@ -110,7 +110,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						>
 							<img
 								alt={`${companyName} logo`}
-								className="w-auto max-h-[7vh] object-cover max-w-[150px] lg:max-w-[200px] rounded-lg"
+								className="w-auto max-h-[7vh] object-cover max-w-[150px] lg:max-w-[200px] rounded-sm"
 								fetchPriority="high"
 								height={40}
 								src={logo ?? "/logo.svg"}
