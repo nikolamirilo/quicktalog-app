@@ -24,15 +24,15 @@ const CTASection = ({
 					{subtitle}
 				</p>
 			</div>
-			<Link href={href}>
+			<a href={href} rel="noopener noreferrer" target="_blank">
 				<Button
-					variant="default"
 					className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+					variant="default"
 				>
 					<Star className="w-4 h-4" />
 					{ctaLabel}
 				</Button>
-			</Link>
+			</a>
 		</div>
 	);
 };
