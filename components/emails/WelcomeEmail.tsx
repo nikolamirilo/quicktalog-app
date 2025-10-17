@@ -20,8 +20,8 @@ interface WelcomeEmailProps {
 export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
 	<Html>
 		<Head>
-			<link rel="preconnect" href="https://fonts.googleapis.com" />
-			<link rel="preconnect" href="https://fonts.gstatic.com" />
+			<link href="https://fonts.googleapis.com" rel="preconnect" />
+			<link href="https://fonts.gstatic.com" rel="preconnect" />
 			<link
 				href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 				rel="stylesheet"
@@ -38,11 +38,11 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
 					<Row>
 						<Column align="center">
 							<Img
-								src={`https://www.quicktalog.app/images/logo.png`}
-								width="120"
-								height="40"
 								alt="Quicktalog Logo"
+								height="40"
+								src={`https://www.quicktalog.app/images/logo.png`}
 								style={logo}
+								width="120"
 							/>
 						</Column>
 					</Row>
@@ -141,33 +141,6 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
 						</div>
 					</div>
 				</Section>
-
-				{/* Feedback Section */}
-				{/* {feedbackFormUrl && (
-          <Section style={feedbackSection}>
-            <Text style={sectionTitle}>Share Your Feedback</Text>
-            <Text style={contentText}>
-              We'd love to hear about your experience! Help us improve Quicktalog by sharing your
-              thoughts.
-            </Text>
-
-            <div style={feedbackForm}>
-              <Text style={feedbackLabel}>How would you rate your experience so far?</Text>
-              <div style={ratingContainer}>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
-                  <Link
-                    key={rating}
-                    href={`${feedbackFormUrl}?rating=${rating}`}
-                    style={getRatingButtonStyle(rating)}>
-                    {rating}
-                  </Link>
-                ))}
-              </div>
-              <Text style={feedbackNote}>Click on a number to share your rating</Text>
-            </div>
-          </Section>
-        )} */}
-
 				<Hr style={divider} />
 
 				{/* Footer */}
@@ -209,57 +182,6 @@ export const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
 		</Body>
 	</Html>
 );
-
-// Helper function to get rating button styles with product colors
-const getRatingButtonStyle = (rating: number) => {
-	const baseStyle = {
-		backgroundColor: "#ffffff",
-		color: "#ffc107", // product-primary
-		border: "2px solid #ffc107", // product-primary
-		borderRadius: "6px",
-		width: "40px",
-		height: "40px",
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
-		textDecoration: "none",
-		fontSize: "16px",
-		fontWeight: "600",
-		transition: "all 0.2s ease",
-		margin: "0 4px",
-	};
-
-	// Highlight higher ratings with different colors
-	if (rating >= 8) {
-		return {
-			...baseStyle,
-			backgroundColor: "#10b981",
-			color: "#ffffff",
-			border: "2px solid #10b981",
-		};
-	} else if (rating >= 6) {
-		return {
-			...baseStyle,
-			backgroundColor: "#f59e0b",
-			color: "#ffffff",
-			border: "2px solid #f59e0b",
-		};
-	} else if (rating >= 4) {
-		return {
-			...baseStyle,
-			backgroundColor: "#f97316",
-			color: "#ffffff",
-			border: "2px solid #f97316",
-		};
-	} else {
-		return {
-			...baseStyle,
-			backgroundColor: "#ef4444",
-			color: "#ffffff",
-			border: "2px solid #ef4444",
-		};
-	}
-};
 
 // Styles using your product color system
 const main = {
@@ -416,40 +338,6 @@ const contactLink = {
 	color: "#ffc107", // product-primary
 	textDecoration: "none",
 	fontWeight: "500",
-};
-
-const feedbackSection = {
-	padding: "30px 0",
-	backgroundColor: "#fff9e5", // product-hover-background
-	borderRadius: "8px",
-	margin: "20px 0",
-};
-
-const feedbackForm = {
-	textAlign: "center" as const,
-	margin: "20px 0",
-};
-
-const feedbackLabel = {
-	fontSize: "16px",
-	fontWeight: "600",
-	color: "#171717", // product-foreground
-	margin: "0 0 20px 0",
-};
-
-const ratingContainer = {
-	display: "flex",
-	justifyContent: "center",
-	gap: "8px",
-	margin: "0 0 12px 0",
-	flexWrap: "wrap" as const,
-};
-
-const feedbackNote = {
-	fontSize: "12px",
-	color: "#454545", // product-foreground-accent
-	margin: "0",
-	fontStyle: "italic",
 };
 
 const divider = {

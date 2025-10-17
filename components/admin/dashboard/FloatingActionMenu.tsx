@@ -1,10 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { AreLimitesReached } from "@/types";
 import { Plus, Scan, Sparkles, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IoCreateOutline } from "react-icons/io5";
+import { Button } from "@/components/ui/button";
+import { AreLimitesReached } from "@/types";
 
 const FloatingActionMenu = ({
 	planId,
@@ -61,7 +61,7 @@ const FloatingActionMenu = ({
 	];
 
 	return (
-		<div ref={menuRef} className="fixed bottom-6 right-6 z-50">
+		<div className="fixed bottom-6 right-6 z-50" ref={menuRef}>
 			{isOpen && (
 				<div
 					className="fixed inset-0 bg-black bg-opacity-20 -z-10"
@@ -77,23 +77,23 @@ const FloatingActionMenu = ({
 			>
 				{menuOptions.map((option, index) => (
 					<div
-						key={option.href}
 						className={`transform transition-all duration-300 ${
 							isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
 						}`}
+						key={`${option.key}-${index}`}
 						style={{ transitionDelay: isOpen ? `${index * 50}ms` : "0ms" }}
 					>
 						<Button
-							onClick={() => handleOptionClick(option.href)}
-							disabled={
-								planId < option.requiredPlanId || areLimitsReached[option.key]
-							}
-							variant={option.variant === "primary" ? "default" : "outline"}
 							className={`flex items-center gap-3 px-4 py-3 rounded-full shadow-lg z-10 hover:shadow-xl transform transition-all duration-200 whitespace-nowrap text-sm font-medium ${
 								option.variant === "primary"
 									? "bg-product-primary hover:product-primary/20 text-white"
 									: "bg-white hover:bg-gray-50 text-gray-700 border border-gray-200"
 							}`}
+							disabled={
+								planId < option.requiredPlanId || areLimitsReached[option.key]
+							}
+							onClick={() => handleOptionClick(option.href)}
+							variant={option.variant === "primary" ? "default" : "outline"}
 						>
 							<option.icon size={18} />
 							<span className="inline">{option.label}</span>
@@ -103,16 +103,16 @@ const FloatingActionMenu = ({
 			</div>
 
 			<button
-				onClick={() => setIsOpen(!isOpen)}
+				aria-label={isOpen ? "Close menu" : "Open create menu"}
 				className={`w-14 h-14 bg-product-primary hover:product-primary/20 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center ${
 					isOpen ? "rotate-45" : "rotate-0"
 				}`}
-				aria-label={isOpen ? "Close menu" : "Open create menu"}
+				onClick={() => setIsOpen(!isOpen)}
 			>
 				{isOpen ? (
-					<X size={30} className="transition-transform duration-200" />
+					<X className="transition-transform duration-200" size={30} />
 				) : (
-					<Plus size={30} className="transition-transform duration-200" />
+					<Plus className="transition-transform duration-200" size={30} />
 				)}
 			</button>
 		</div>

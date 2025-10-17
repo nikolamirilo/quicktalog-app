@@ -34,7 +34,10 @@ const TestPage = () => {
 								value={currentPlanIndex}
 							>
 								{tiers.map((tier, index) => (
-									<option key={`test-pricing-${index}`} value={index}>
+									<option
+										key={`test-pricing-${index}-${tier.priceId}`}
+										value={index}
+									>
 										{tier.name}
 									</option>
 								))}
@@ -52,7 +55,7 @@ const TestPage = () => {
 								value={requiredPlanIndex}
 							>
 								{tiers.map((tier, index) => (
-									<option key={`test-pricing-${index}`} value={index}>
+									<option key={`test-price-${index}`} value={index}>
 										{tier.name}
 									</option>
 								))}

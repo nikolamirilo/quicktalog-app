@@ -89,7 +89,7 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 				formData.services.map((category, categoryIndex) => (
 					<Card
 						className="shadow-product-shadow bg-product-background/50 bg-product-background border border-product-border rounded-xl"
-						key={categoryIndex}
+						key={`${category.name}-${categoryIndex}`}
 						type="form"
 					>
 						<div
@@ -116,7 +116,7 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 									return (
 										<Card
 											className="border border-product-border shadow-product-shadow bg-product-background rounded-xl"
-											key={itemIndex}
+											key={`${item.name}-${itemIndex}`}
 										>
 											<div
 												className="flex justify-between items-center p-2 sm:p-4 cursor-pointer"

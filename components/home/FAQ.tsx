@@ -1,5 +1,4 @@
 "use client";
-import { faqs } from "@/constants/details";
 import {
 	Disclosure,
 	DisclosureButton,
@@ -8,6 +7,7 @@ import {
 import { motion, Variants } from "framer-motion";
 import React, { useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import { faqs } from "@/constants/details";
 
 const containerVariants: Variants = {
 	offscreen: {
@@ -67,21 +67,21 @@ const FAQ: React.FC = () => {
 	return (
 		<motion.div
 			className="max-w-4xl mx-auto"
-			variants={containerVariants}
 			initial="offscreen"
-			whileInView="onscreen"
+			variants={containerVariants}
 			viewport={{ once: true }}
+			whileInView="onscreen"
 		>
 			<div className="space-y-4 x-4">
 				{displayedFaqs.map((faq, index) => (
 					<motion.div
-						key={`${index}-${showAll}`}
-						variants={itemVariants}
-						initial="offscreen"
 						animate="onscreen"
+						initial="offscreen"
+						key={`${index}-${showAll}`}
 						transition={{
 							delay: index * 0.1 + (showAll && index >= 5 ? 0.3 : 0),
 						}}
+						variants={itemVariants}
 					>
 						<Disclosure
 							as="div"
@@ -120,14 +120,14 @@ const FAQ: React.FC = () => {
 
 			{hasMore && !showAll && (
 				<motion.div
+					animate={{ opacity: 1, y: 0 }}
 					className="text-center mt-8"
 					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.5 }}
 				>
 					<button
-						onClick={handleLoadMore}
 						className="px-8 py-3 bg-product-primary text-product-foreground rounded-lg font-semibold hover:bg-product-primary-accent transition-all duration-200 hover:scale-105 shadow-product-shadow"
+						onClick={handleLoadMore}
 					>
 						Load More Questions
 					</button>

@@ -31,10 +31,6 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 						>
 							{layouts.map((layoutOption) => (
 								<Button
-									key={layoutOption.key}
-									type="button"
-									variant="ghost"
-									size="sm"
 									className={`
                   relative flex-1 px-3 py-3 text-xs sm:text-sm transition-all duration-300 ease-out
                   ${
@@ -49,6 +45,9 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
                   min-w-0
                   flex flex-col items-center gap-1
                 `}
+									key={layoutOption.key}
+									onClick={() => setLayout(layoutOption.key)}
+									size="sm"
 									style={{
 										backgroundColor:
 											layout === layoutOption.key
@@ -65,7 +64,8 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 												: "var(--font-weight-body)",
 										letterSpacing: "var(--letter-spacing-body)",
 									}}
-									onClick={() => setLayout(layoutOption.key)}
+									type="button"
+									variant="ghost"
 								>
 									<span className="relative z-10 text-center leading-tight">
 										{layoutOption.label}
@@ -103,14 +103,13 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 					>
 						{themes.map((themeOption) => (
 							<button
-								key={themeOption.key}
-								type="button"
-								onClick={() => setTheme(themeOption.key)}
 								className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-102 ${themeOption.key} ${
 									theme === themeOption.key
 										? "border-product-primary shadow-md"
 										: "hover:shadow-sm"
 								}`}
+								key={themeOption.key}
+								onClick={() => setTheme(themeOption.key)}
 								style={{
 									borderColor:
 										theme === themeOption.key
@@ -120,6 +119,7 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 									color: "var(--foreground)",
 									fontFamily: "var(--font-family-body)",
 								}}
+								type="button"
 							>
 								<div className="text-center">
 									<div

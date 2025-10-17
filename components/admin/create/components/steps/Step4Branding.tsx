@@ -605,7 +605,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 					{formData.contact?.map((contact, index) => (
 						<div
 							className="flex items-end gap-3 p-4 bg-product-background/50 rounded-xl border border-product-border"
-							key={`contact-${index}`}
+							key={`contact-type-${index}`}
 						>
 							<div className="flex-grow space-y-2">
 								<Label className="sr-only" htmlFor={`contact-type-${index}`}>

@@ -126,7 +126,7 @@ const Pricing: React.FC = () => {
 				<PricingColumn
 					billingCycle={billingCycle}
 					highlight={false}
-					key={"pricing-plan-0"}
+					key={`pricing-plan-${tiers[0].priceId.month}`}
 					mode="row"
 					paddle={paddle}
 					price={

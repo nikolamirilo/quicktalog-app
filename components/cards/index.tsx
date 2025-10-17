@@ -1,6 +1,6 @@
 "use client";
-import { Record } from "@/types";
 import { useState } from "react";
+import { Record } from "@/types";
 import ItemDetailModal from "../modals/ItemDetailModal";
 import CardType1 from "./CardType1";
 import CardType2 from "./CardType2";
@@ -25,9 +25,9 @@ const CardsSwitcher = ({
 		console.error("CardsSwitcher: Invalid record data:", record);
 		return (
 			<div
+				aria-live="polite"
 				className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"
 				role="alert"
-				aria-live="polite"
 			>
 				<p>Invalid item data</p>
 			</div>
@@ -57,56 +57,56 @@ const CardsSwitcher = ({
 			case "variant_1":
 				return (
 					<CardType1
-						key={i}
-						record={validatedRecord}
 						currency={formatedCurrency}
+						key={`c1-${validatedRecord.name}-${i}`}
 						onClick={() => {
 							setIsModalOpen(true);
 						}}
+						record={validatedRecord}
 					/>
 				);
 			case "variant_2":
 				return (
 					<CardType2
-						key={i}
-						record={validatedRecord}
 						currency={formatedCurrency}
+						key={`c2-${validatedRecord.name}-${i}`}
 						onClick={() => {
 							setIsModalOpen(true);
 						}}
+						record={validatedRecord}
 					/>
 				);
 			case "variant_3":
 				return (
 					<CardType3
-						key={i}
-						record={validatedRecord}
 						currency={formatedCurrency}
+						key={`c3-${validatedRecord.name}-${i}`}
 						onClick={() => {
 							setIsModalOpen(true);
 						}}
+						record={validatedRecord}
 					/>
 				);
 			case "variant_4":
 				return (
 					<CardType4
-						key={i}
-						record={validatedRecord}
 						currency={formatedCurrency}
+						key={`c4-${validatedRecord.name}-${i}`}
 						onClick={() => {
 							setIsModalOpen(true);
 						}}
+						record={validatedRecord}
 					/>
 				);
 			default:
 				return (
 					<CardType1
-						key={i}
-						record={validatedRecord}
 						currency={formatedCurrency}
+						key={`c1-${validatedRecord.name}-${i}`}
 						onClick={() => {
 							setIsModalOpen(true);
 						}}
+						record={validatedRecord}
 					/>
 				);
 		}
@@ -116,10 +116,10 @@ const CardsSwitcher = ({
 		<>
 			{renderCard()}
 			<ItemDetailModal
-				isOpen={isModalOpen}
-				onClose={() => setIsModalOpen(false)}
-				item={validatedRecord}
 				currency={formatedCurrency}
+				isOpen={isModalOpen}
+				item={validatedRecord}
+				onClose={() => setIsModalOpen(false)}
 				theme={theme}
 				variant={variant}
 			/>
