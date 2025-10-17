@@ -49,8 +49,8 @@ export const FeedbackFormEmail = ({
 	return (
 		<Html>
 			<Head>
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link rel="preconnect" href="https://fonts.gstatic.com" />
+				<link href="https://fonts.googleapis.com" rel="preconnect" />
+				<link href="https://fonts.gstatic.com" rel="preconnect" />
 				<link
 					href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 					rel="stylesheet"
@@ -65,11 +65,11 @@ export const FeedbackFormEmail = ({
 						<Row>
 							<Column align="center">
 								<Img
-									src="https://www.quicktalog.app/logo.svg"
-									width="120"
-									height="40"
 									alt="Quicktalog Logo"
+									height="40"
+									src="https://www.quicktalog.app/logo.svg"
 									style={logo}
+									width="120"
 								/>
 							</Column>
 						</Row>
@@ -94,8 +94,8 @@ export const FeedbackFormEmail = ({
 						<div style={ratingContainer}>
 							{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
 								<Link
-									key={rating}
 									href={`${microsoftFormUrl}?rating=${rating}&user=${encodeURIComponent(userName)}&context=${context}`}
+									key={rating}
 									style={getRatingButtonStyle(rating)}
 								>
 									{rating}

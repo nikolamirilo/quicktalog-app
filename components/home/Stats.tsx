@@ -1,6 +1,6 @@
 "use client";
-import { stats } from "@/constants/ui";
 import { motion, Variants } from "framer-motion";
+import { stats } from "@/constants/ui";
 
 const containerVariants: Variants = {
 	offscreen: {
@@ -38,18 +38,18 @@ const childVariants = {
 
 const Stats: React.FC = () => {
 	return (
-		<section id="stats" className="py-10 lg:py-20">
+		<section className="py-10 lg:py-20" id="stats">
 			<motion.div
 				className="grid sm:grid-cols-3 gap-8"
-				variants={containerVariants}
 				initial="offscreen"
-				whileInView="onscreen"
+				variants={containerVariants}
 				viewport={{ once: true }}
+				whileInView="onscreen"
 			>
 				{stats.map((stat, index) => (
 					<motion.div
-						key={stat.title}
 						className="text-center sm:text-left max-w-md sm:max-w-full mx-auto"
+						key={`${stat.title}-${index}`}
 						variants={childVariants}
 					>
 						<h3 className="mb-5 flex items-center gap-2 text-3xl font-semibold justify-center sm:justify-start">

@@ -1,6 +1,6 @@
+import { FiInfo } from "react-icons/fi";
 import { Card } from "@/components/ui/card";
 import { OverallAnalytics as OverallAnalyticsType } from "@/types";
-import { FiInfo } from "react-icons/fi";
 
 const OverallAnalytics = ({
 	setIsInfoModalOpen,
@@ -15,11 +15,11 @@ const OverallAnalytics = ({
 		<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
 			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
 				<button
+					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {
 						setIsInfoModalOpen(true);
 						setCurrentMetric("Total Views");
 					}}
-					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 				>
 					<FiInfo size={20} />
 				</button>
@@ -32,16 +32,16 @@ const OverallAnalytics = ({
 			</Card>
 			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
 				<button
+					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {
 						setIsInfoModalOpen(true);
-						setCurrentMetric("Unique Visitors");
+						setCurrentMetric("Total Visitors");
 					}}
-					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 				>
 					<FiInfo size={20} />
 				</button>
 				<div className="text-xs sm:text-sm md:text-base lg:text-lg font-semibold text-product-foreground mb-2 text-center">
-					Unique Visitors
+					Total Visitors
 				</div>
 				<div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-product-primary">
 					{overallAnalytics.totalUniqueVisitors}
@@ -49,11 +49,11 @@ const OverallAnalytics = ({
 			</Card>
 			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
 				<button
+					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {
 						setIsInfoModalOpen(true);
 						setCurrentMetric("Total Items");
 					}}
-					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 				>
 					<FiInfo size={20} />
 				</button>
@@ -66,11 +66,11 @@ const OverallAnalytics = ({
 			</Card>
 			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
 				<button
+					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {
 						setIsInfoModalOpen(true);
 						setCurrentMetric("Newsletter");
 					}}
-					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 				>
 					<FiInfo size={20} />
 				</button>

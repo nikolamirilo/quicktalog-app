@@ -1,8 +1,3 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatPrice } from "@/helpers/client";
-import { usePaddlePrices } from "@/hooks/usePaddelPrices";
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
 import {
 	BarChart3,
@@ -23,6 +18,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCalendar } from "react-icons/fi";
 import { MdOutlineSettings } from "react-icons/md";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatPrice } from "@/helpers/client";
+import { usePaddlePrices } from "@/hooks/usePaddelPrices";
 
 import type { SubscriptionProps } from "@/types/components";
 
@@ -188,9 +188,9 @@ export default function Subscription({
 					</p>
 				</div>
 				<Button
-					variant="default"
-					onClick={() => router.push("/pricing")}
 					className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+					onClick={() => router.push("/pricing")}
+					variant="default"
 				>
 					<Star className="w-4 h-4" />
 					Upgrade plan
@@ -217,7 +217,7 @@ export default function Subscription({
 								</p>
 							</div>
 						</div>
-						<Badge variant="default" className="bg-product-background">
+						<Badge className="bg-product-background" variant="default">
 							Active
 						</Badge>
 					</div>
@@ -293,14 +293,14 @@ export default function Subscription({
 								</p>
 							</div>
 							<Button
-								variant="default"
-								disabled={pricingPlan.id === 0}
 								className="w-fit min-w-56"
+								disabled={pricingPlan.id === 0}
 								onClick={() =>
 									router.push(
 										"https://customer-portal.paddle.com/cpl_01k11h2axbrhg4fzmw2zey50x0",
 									)
 								}
+								variant="default"
 							>
 								<MdOutlineSettings className="w-4 h-4" />
 								Manage subscription
@@ -332,12 +332,12 @@ export default function Subscription({
 								const included = isFeatureIncluded(value);
 								return (
 									<div
-										key={key}
 										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
 											included
 												? "bg-product-background border border-product-primary"
 												: "bg-product-background border border-product-border"
 										}`}
+										key={key}
 									>
 										{included ? (
 											<CheckCircle className="w-5 h-5 text-product-primary flex-shrink-0" />

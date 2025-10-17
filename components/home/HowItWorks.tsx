@@ -41,7 +41,7 @@ type SimpleStep = {
 const StepCard: React.FC<{ step: SimpleStep; index: number }> = ({ step }) => {
 	const [isHovered, setIsHovered] = useState(false);
 	return (
-		<motion.div variants={cardVariants} className="h-full">
+		<motion.div className="h-full" variants={cardVariants}>
 			<div
 				className={clsx(
 					"group relative w-full h-full bg-product-background text-product-foreground rounded-xl border border-gray-200 transition-all duration-300 ease-out overflow-hidden",
@@ -56,7 +56,6 @@ const StepCard: React.FC<{ step: SimpleStep; index: number }> = ({ step }) => {
 			>
 				<div className="relative w-full aspect-[4/3] bg-gradient-to-br from-product-primary/5 to-product-primary/10 overflow-hidden">
 					<img
-						src={step.image}
 						alt={step.title}
 						className="w-full h-full px-3 py-3 border-b-2 border-product-border object-contain transition-transform duration-300 group-hover:scale-105"
 						onError={(e) => {
@@ -70,6 +69,7 @@ const StepCard: React.FC<{ step: SimpleStep; index: number }> = ({ step }) => {
 									)}</div></div>`;
 							}
 						}}
+						src={step.image}
 					/>
 				</div>
 				<div className="flex flex-col p-4 sm:p-5 gap-2">
@@ -113,15 +113,15 @@ const HowItWorks: React.FC = () => {
 	return (
 		<motion.div
 			className="w-full"
-			variants={containerVariants}
 			initial="offscreen"
-			whileInView="onscreen"
+			variants={containerVariants}
 			viewport={{ once: true }}
+			whileInView="onscreen"
 		>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
 				{steps.map((step, index) => (
-					<motion.div key={step.step} variants={cardVariants}>
-						<StepCard step={step} index={index} />
+					<motion.div key={step.title} variants={cardVariants}>
+						<StepCard index={index} step={step} />
 					</motion.div>
 				))}
 			</div>

@@ -23,11 +23,11 @@ export default function EditFormSidebar({
 				<nav className="flex flex-col gap-2 md:gap-3">
 					{editSteps.map((step) => (
 						<Button
+							aria-current={currentStep === step.value ? "page" : undefined}
+							className={`${getSidebarButtonClass(currentStep === step.value)} flex items-center justify-start`}
 							key={step.value}
 							onClick={() => onStepChange(step.value)}
 							variant="nav"
-							className={`${getSidebarButtonClass(currentStep === step.value)} flex items-center justify-start`}
-							aria-current={currentStep === step.value ? "page" : undefined}
 						>
 							<span className="flex items-center justify-center">
 								{step.icon}

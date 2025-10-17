@@ -262,8 +262,8 @@ const Overview = ({
 				message={
 					currentMetric === "Total Views"
 						? "This shows the total number of times your catalogues have been viewed by visitors. It includes all page visits across all your catalogues."
-						: currentMetric === "Unique Visitors"
-							? "This represents the number of unique individuals who have visited your catalogues. Each person is counted only once per day, regardless of how many times they visit your catalogue on that day."
+						: currentMetric === "Total Visitors"
+							? "This represents the number of individuals who have visited your catalogues. Each person is counted only once per day, regardless of how many times they visit your catalogue on that day."
 							: currentMetric === "Total Items"
 								? "This displays the total number of catalogues you have created. Each catalogue represents a different business or service offering."
 								: currentMetric === "Newsletter"

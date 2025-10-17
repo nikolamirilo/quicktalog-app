@@ -1,4 +1,7 @@
 "use client";
+// import { Badge } from "../../ui/badge";
+// import { Separator } from "../../ui/separator";
+import { FiBarChart, FiCalendar, FiTrendingUp, FiUsers } from "react-icons/fi";
 import LineChart from "../../charts/LineChart";
 import {
 	Card,
@@ -7,9 +10,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "../../ui/card";
-// import { Badge } from "../../ui/badge";
-// import { Separator } from "../../ui/separator";
-import { FiBarChart, FiCalendar, FiTrendingUp, FiUsers } from "react-icons/fi";
 // import { FiGlobe, FiMonitor, FiChrome } from 'react-icons/fi';
 
 import type { AnalyticsProps } from "@/types/components";
@@ -177,66 +177,6 @@ const Analytics = ({ data, rawEvents }: AnalyticsProps) => {
 					</div>
 				</CardContent>
 			</Card>
-
-			{/* Quick Stats Grid */}
-			{/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-product-background border-product-border shadow-product-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-product-foreground flex items-center gap-2">
-              <FiChrome className="w-5 h-5 text-product-primary" />
-              Top Browsers
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {topBrowsers.slice(0, 5).map(([browser, count]) => (
-              <div key={browser} className="flex items-center justify-between p-2 rounded-lg bg-product-hover-background">
-                <span className="text-product-foreground font-medium">{browser}</span>
-                <Badge variant="outline" className="bg-product-primary/10 text-product-primary border-product-primary/20">
-                  {count}
-                </Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-product-background border-product-border shadow-product-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-product-foreground flex items-center gap-2">
-              <FiMonitor className="w-5 h-5 text-product-secondary" />
-              Top Devices
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {topDevices.slice(0, 5).map(([device, count]) => (
-              <div key={device} className="flex items-center justify-between p-2 rounded-lg bg-product-hover-background">
-                <span className="text-product-foreground font-medium">{device}</span>
-                <Badge variant="outline" className="bg-product-secondary/10 text-product-secondary border-product-secondary/20">
-                  {count}
-                </Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-product-background border-product-border shadow-product-shadow">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-semibold text-product-foreground flex items-center gap-2">
-              <FiGlobe className="w-5 h-5 text-product-icon" />
-              Top Countries
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {topCountries.slice(0, 5).map(([country, count]) => (
-              <div key={country} className="flex items-center justify-between p-2 rounded-lg bg-product-hover-background">
-                <span className="text-product-foreground font-medium">{country}</span>
-                <Badge variant="outline" className="bg-product-icon/10 text-product-icon border-product-icon/20">
-                  {count}
-                </Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div> */}
 		</div>
 	);
 };
