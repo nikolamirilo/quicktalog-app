@@ -100,7 +100,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 			className="border-b shadow-lg z-50 bg-header-bg flex flex-row justify-between items-center  text-header-text border-card-border font-body tracking-body min-h-[7vh]"
 			role="banner"
 		>
-			<div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
+			<div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
 				<div className="flex items-center justify-between py-2 sm:py-4 w-full">
 					<div className="flex items-center">
 						<Link
