@@ -20,12 +20,8 @@ export async function GET(request: NextRequest) {
 
 		const supabase = await createClient();
 
-		// Get yesterday's data (previous 24 hours)
 		const endDate = new Date();
-		endDate.setHours(0, 0, 0, 0); // Today at midnight
-
-		const startDate = new Date(endDate);
-		startDate.setDate(startDate.getDate() - 1); // Yesterday at midnight
+		endDate.setHours(0, 0, 0, 0);
 
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_POSTHOG_HOST}/api/projects/${process.env.POSTHOG_PROJECT_ID}/query/`,
@@ -49,8 +45,10 @@ WHERE event = '$pageview'
   AND properties.$current_url NOT ILIKE '%admin%'
   AND properties.$current_url LIKE '%/catalogues/%'
   AND properties.$current_url NOT ILIKE '%localhost%'
-  AND properties.$current_url NOT ILIKE '%//test.quicktalog.app%'
+  AND properties.$current_url NOT ILIKE '%test.quicktalog.app%'
   AND properties.$current_url ILIKE '%www.quicktalog.app%'
+  AND timestamp >= toDateTime('2025-09-01T00:00:00.000Z')
+  AND timestamp < toDateTime('${endDate.toISOString()}')
 GROUP BY date, hour, current_url
 ORDER BY date DESC, hour DESC`,
 					},
@@ -156,7 +154,7 @@ ORDER BY date DESC, hour DESC`,
 
 			// Log failure to job_logs if table exists
 			await supabase.from("job_logs").insert({
-				job_name: "analytics_all",
+				job_name: "analytics",
 				status: "failure",
 				processed_count: analyticsDataWithUserId.length,
 				inserted_count: 0,
@@ -177,7 +175,7 @@ ORDER BY date DESC, hour DESC`,
 
 		// Log success to job_logs if table exists
 		await supabase.from("job_logs").insert({
-			job_name: "analytics_all",
+			job_name: "analytics",
 			status: "success",
 			processed_count: analyticsDataWithUserId.length,
 			inserted_count: insertedData?.length || 0,
@@ -189,7 +187,7 @@ ORDER BY date DESC, hour DESC`,
 			{
 				message: "Analytics data inserted successfully",
 				period: {
-					startDate: startDate.toISOString(),
+					startDate: "2025-09-01T00:00:00.000Z",
 					endDate: endDate.toISOString(),
 				},
 				summary: {
@@ -208,7 +206,7 @@ ORDER BY date DESC, hour DESC`,
 		try {
 			const supabase = await createClient();
 			await supabase.from("job_logs").insert({
-				job_name: "analytics_all",
+				job_name: "analytics",
 				status: "failure",
 				processed_count: 0,
 				inserted_count: 0,
