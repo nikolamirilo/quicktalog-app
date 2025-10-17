@@ -36,7 +36,6 @@ export async function GET(request: NextRequest) {
 						kind: "HogQLQuery",
 						query: `SELECT 
     toDate(timestamp) AS date,
-    formatDateTime(timestamp, '%H:00') AS hour,
     properties.$current_url AS current_url,
     COUNT(*) AS pageview_count,
     COUNT(DISTINCT properties.distinct_id) AS unique_visitors
@@ -49,9 +48,8 @@ WHERE event = '$pageview'
   AND properties.$current_url ILIKE '%www.quicktalog.app%'
   AND timestamp >= toDateTime('2025-09-01T00:00:00.000Z')
   AND timestamp < toDateTime('${endDate.toISOString()}')
-GROUP BY date, hour, current_url
-ORDER BY date DESC, hour DESC
-LIMIT 1000000
+GROUP BY date, current_url
+ORDER BY date DESC;
 `,
 					},
 				}),
