@@ -13,7 +13,7 @@ export async function GET() {
 
 		const { data: analyticsData } = await supabase
 			.from("analytics")
-			.select("date, hour, current_url, pageview_count, unique_visitors")
+			.select("date, current_url, pageview_count, unique_visitors")
 			.eq("user_id", id);
 
 		const { count: newsletterCount } = await supabase

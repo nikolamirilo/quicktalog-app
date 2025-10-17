@@ -1,10 +1,10 @@
 // app/terms-and-conditions/page.tsx
 
+import { Metadata } from "next";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
-import { Metadata } from "next";
 
 export const metadata: Metadata = generatePageMetadata("terms");
 
@@ -14,8 +14,8 @@ export default function TermsAndConditionsPage() {
 	return (
 		<>
 			<script
-				type="application/ld+json"
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(termsPageSchema) }}
+				type="application/ld+json"
 			/>
 			<Navbar />
 			<div className="max-w-3xl mx-auto px-4 py-36">
@@ -24,8 +24,8 @@ export default function TermsAndConditionsPage() {
 				<p className="mb-4">
 					Welcome to Quicktalog (
 					<a
-						href="https://www.quicktalog.app"
 						className="text-product-primary underline"
+						href="https://www.quicktalog.app"
 					>
 						quicktalog.app
 					</a>
@@ -50,8 +50,8 @@ export default function TermsAndConditionsPage() {
 						All purchases for Quicktalog products and subscription plans must be
 						made directly through our official website (
 						<a
-							href="https://www.quicktalog.app"
 							className="text-product-primary underline"
+							href="https://www.quicktalog.app"
 						>
 							quicktalog.app
 						</a>
@@ -114,7 +114,7 @@ export default function TermsAndConditionsPage() {
 					<li>
 						If you discover an error in your order immediately after purchase,
 						please contact us at{" "}
-						<a href="mailto:quicktalog@outlook.com" className="underline">
+						<a className="underline" href="mailto:quicktalog@outlook.com">
 							quicktalog@outlook.com
 						</a>{" "}
 						within 48 hours for assistance with resolution.
@@ -130,7 +130,7 @@ export default function TermsAndConditionsPage() {
 					<li>
 						For detailed information on how to request a refund and the
 						conditions that apply, please refer to our dedicated{" "}
-						<a href="/refund-policy" className="underline">
+						<a className="underline" href="/refund-policy">
 							Refund Policy
 						</a>{" "}
 						page.
@@ -138,11 +138,11 @@ export default function TermsAndConditionsPage() {
 					<li>
 						To initiate a refund request, you may contact Paddle directly
 						through their buyer support portal at{" "}
-						<a href="https://paddle.net" className="underline">
+						<a className="underline" href="https://paddle.net">
 							paddle.net
 						</a>
 						, or reach out to us at{" "}
-						<a href="mailto:quicktalog@outlook.com" className="underline">
+						<a className="underline" href="mailto:quicktalog@outlook.com">
 							quicktalog@outlook.com
 						</a>
 						.
@@ -175,7 +175,7 @@ export default function TermsAndConditionsPage() {
 				<ul className="list-disc list-inside space-y-2">
 					<li>
 						<strong>Support Email:</strong>{" "}
-						<a href="mailto:quicktalog@outlook.com" className="underline">
+						<a className="underline" href="mailto:quicktalog@outlook.com">
 							quicktalog@outlook.com
 						</a>
 					</li>
@@ -227,7 +227,7 @@ export default function TermsAndConditionsPage() {
 				<p>
 					If you have any questions regarding these Terms & Conditions, please
 					don't hesitate to reach out to us at{" "}
-					<a href="mailto:quicktalog@outlook.com" className="underline">
+					<a className="underline" href="mailto:quicktalog@outlook.com">
 						quicktalog@outlook.com
 					</a>
 					.
