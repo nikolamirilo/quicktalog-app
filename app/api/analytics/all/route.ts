@@ -50,7 +50,9 @@ WHERE event = '$pageview'
   AND timestamp >= toDateTime('2025-09-01T00:00:00.000Z')
   AND timestamp < toDateTime('${endDate.toISOString()}')
 GROUP BY date, hour, current_url
-ORDER BY date DESC, hour DESC`,
+ORDER BY date DESC, hour DESC
+LIMIT 1000000
+`,
 					},
 				}),
 				cache: "no-store",
