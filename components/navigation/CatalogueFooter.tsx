@@ -83,7 +83,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									>
 										<img
 											alt={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} logo`}
-											className="w-auto max-h-[7vh] object-cover max-w-[150px] lg:max-w-[200px] h-48"
+											className="w-auto max-h-[7vh] rounded-sm object-contain max-w-[150px] lg:max-w-[200px] h-48"
 											height={40}
 											src={logo ?? "/logo.svg"}
 											width={type === "default" ? 120 : 100}
