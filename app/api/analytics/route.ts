@@ -50,10 +50,11 @@ WHERE event = '$pageview'
   AND properties.$current_url NOT ILIKE '%localhost%'
   AND properties.$current_url NOT ILIKE '%test.quicktalog.app%'
   AND properties.$current_url ILIKE '%www.quicktalog.app%'
-  AND timestamp >= toDateTime('${startDate.toISOString()}')
+  AND timestamp >= toDateTime('${startDate.toString}')
   AND timestamp < toDateTime('${endDate.toISOString()}')
 GROUP BY date, current_url
-ORDER BY date DESC;
+ORDER BY date DESC
+LIMIT 1000000
 `,
 					},
 				}),
@@ -81,11 +82,10 @@ ORDER BY date DESC;
 		}
 
 		const analyticsData = eventsData.results
-			.map(([date, hour, current_url, pageview_count, unique_visitors]) => {
+			.map(([date, current_url, pageview_count, unique_visitors]) => {
 				const clean_url = current_url?.split("?")[0] || current_url;
 				return {
 					date,
-					hour,
 					current_url: clean_url,
 					pageview_count,
 					unique_visitors,
@@ -148,7 +148,7 @@ ORDER BY date DESC;
 		const { data: insertedData, error: insertError } = await supabase
 			.from("analytics")
 			.upsert(analyticsDataWithUserId, {
-				onConflict: "date,hour,current_url",
+				onConflict: "date,current_url",
 				ignoreDuplicates: true,
 			})
 			.select();

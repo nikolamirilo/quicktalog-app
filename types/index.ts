@@ -116,7 +116,6 @@ export type Configuration = {
 
 export type Analytics = {
 	date: string;
-	hour: string;
 	current_url: string;
 	pageview_count: number;
 	unique_visitors: number;
