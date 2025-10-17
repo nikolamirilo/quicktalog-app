@@ -1,8 +1,8 @@
 "use client";
-import ConsentModal from "@/components/modals/ConsentModal";
 import { SignIn, SignUp } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import ConsentModal from "@/components/modals/ConsentModal";
 
 export default function Auth() {
 	const searchParams = useSearchParams();
@@ -45,14 +45,14 @@ export default function Auth() {
 								{mode === "signup" ? (
 									<SignUp
 										forceRedirectUrl="/admin/dashboard"
-										signInUrl="/auth?mode=signin"
 										routing="hash"
+										signInUrl="/auth?mode=signin"
 									/>
 								) : (
 									<SignIn
 										forceRedirectUrl="/admin/dashboard"
-										signUpUrl="/auth?mode=signup"
 										routing="hash"
+										signUpUrl="/auth?mode=signup"
 									/>
 								)}
 							</>
@@ -62,8 +62,8 @@ export default function Auth() {
 			</div>
 			<ConsentModal
 				isOpen={showConsentModal}
-				onConfirm={handleConsentConfirm}
 				onCancel={handleConsentCancel}
+				onConfirm={handleConsentConfirm}
 			/>
 		</>
 	);
