@@ -82,7 +82,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 				href: data?.ctaNavbar.url,
 				label: data?.ctaNavbar.label || "Learn more",
 				shortLabel: data?.ctaNavbar.label || "Learn more",
-				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4 mr-2" />,
+				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4 lg:mr-1" />,
 				ariaLabel: data?.ctaNavbar.label || "Learn more",
 			};
 		}
@@ -100,8 +100,8 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 			className="border-b shadow-lg z-50 bg-header-bg flex flex-row justify-between items-center  text-header-text border-card-border font-body tracking-body min-h-[7vh]"
 			role="banner"
 		>
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
-				<div className="flex items-center justify-between py-2 sm:py-3 w-full">
+			<div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
+				<div className="flex items-center justify-between py-2 sm:py-4 w-full">
 					<div className="flex items-center">
 						<Link
 							aria-label={`Go to ${companyName} homepage`}
@@ -121,13 +121,13 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 
 					<nav
 						aria-label="Contact and actions"
-						className="flex items-center space-x-2 sm:space-x-4"
+						className="flex items-center space-x-2 md:space-x-4"
 						role="navigation"
 					>
 						{contactLinks.length > 0 && (
 							<div
 								aria-label="Contact options"
-								className="hidden sm:flex items-center space-x-2"
+								className="flex items-center space-x-2 md:space-x-4"
 								role="group"
 							>
 								{contactLinks.map((linkProps, index) => (
