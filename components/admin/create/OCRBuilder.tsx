@@ -1,22 +1,14 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import React, { useState } from "react";
-import { RiSparkling2Line } from "react-icons/ri";
-import { sendNewCatalogueEmail } from "@/actions/email";
 import LimitsModal from "@/components/modals/LimitsModal";
-import SuccessModal from "@/components/modals/SuccessModal";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { generateUniqueSlug } from "@/helpers/client";
 import { revalidateData } from "@/helpers/server";
+import { generateUniqueSlug } from "@/shared";
 import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";
 import { LanguageSelector } from "./components/LanguageSelector";
 import OcrReader from "./components/OcrReader";
-import PromptExamples from "./components/PromptExamples";
-import PromptInput from "./components/PromptInput";
 import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 

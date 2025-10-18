@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useMainContext } from "@/context/MainContext";
 import {
 	contentVariants,
-	generateUniqueSlug,
 	getCurrencySymbol,
 	getGridStyle,
 } from "@/helpers/client";
@@ -13,6 +12,7 @@ import { CatalogueContentProps } from "@/types/components";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { generateUniqueSlug } from "@/shared";
 import CardsSwitcher from "../cards";
 import SectionHeader from "./SectionHeader";
 

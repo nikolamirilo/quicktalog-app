@@ -4,9 +4,9 @@ import LimitsModal from "@/components/modals/LimitsModal";
 import CatalogueFooter from "@/components/navigation/CatalogueFooter";
 import CatalogueHeader from "@/components/navigation/CatalogueHeader";
 import CatalogueContent from "@/components/sections/CatalogueContent";
-import { DARK_THEMES } from "@/constants";
 import { generateCatalogueMetadata } from "@/constants/metadata";
 import { buildFooterData, buildHeaderData } from "@/helpers/client";
+import { DARK_THEMES } from "@/shared";
 import type { Catalogue } from "@/types";
 
 export const revalidate = 86400;

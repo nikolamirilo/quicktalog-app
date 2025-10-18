@@ -22,13 +22,10 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { defaultServiceCatalogueData } from "@/constants";
-import {
-	cleanValue,
-	generateUniqueSlug,
-	validateStepHelper,
-} from "@/helpers/client";
+import { cleanValue, validateStepHelper } from "@/helpers/client";
 import { revalidateCataloguesData } from "@/helpers/server";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
+import { generateUniqueSlug } from "@/shared";
 import { CategoryItem, ContactInfo, ServicesFormData } from "@/types";
 import { BuilderProps } from "@/types/components";
 import { LimitType } from "@/types/enums";
@@ -382,7 +379,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 				}
 			}
 
-			const serviceCatalogueSlug = generateUniqueSlug(formData.name);
+			const serviceCatalogueSlug =
+				generateUniqueSlug(formData.name) || formData.name;
 
 			const submissionData = {
 				name: serviceCatalogueSlug,

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { generateUniqueSlug } from "@/helpers/client";
+import { generateUniqueSlug } from "@/shared";
 import type { Step1GeneralProps } from "@/types/components";
 import { CurrencySelect } from "../CurrencySelect";
 

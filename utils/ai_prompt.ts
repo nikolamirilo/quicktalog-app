@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { layouts } from "@/constants";
-import { fetchImageFromUnsplash } from "@/helpers/client";
+import { fetchImageFromUnsplash, layouts } from "@/shared";
 import { CatalogueCategory } from "@/types";
 
 // Type definitions for better type safety

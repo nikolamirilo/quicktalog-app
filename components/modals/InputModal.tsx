@@ -13,7 +13,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { generateUniqueSlug } from "@/helpers/client";
+import { generateUniqueSlug } from "@/shared";
 
 interface InputModalProps {
 	isOpen: boolean;

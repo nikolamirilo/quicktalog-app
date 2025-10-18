@@ -1,6 +1,6 @@
 "use client";
-import { layouts, themes } from "@/constants";
 import { useMainContext } from "@/context/MainContext";
+import { layouts, themes } from "@/shared";
 import { Button } from "../ui/button";
 
 const Toggle = ({ type = "home" }: { type?: string }) => {

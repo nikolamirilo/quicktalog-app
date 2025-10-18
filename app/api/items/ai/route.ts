@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { fetchImageFromUnsplash, generateUniqueSlug } from "@/helpers/client";
+import { fetchImageFromUnsplash, generateUniqueSlug } from "@/shared";
 import {
 	createErrorResponse,
 	extractJSONFromResponse,
@@ -14,7 +14,6 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: NextRequest) {
 	try {
-		// Early validation and parsing
 		const body = (await req.json()) as GenerationRequest;
 		const { prompt, formData, shouldGenerateImages } = body;
 
@@ -26,7 +25,6 @@ export async function POST(req: NextRequest) {
 			return createErrorResponse("Service name is required", 400);
 		}
 
-		// Authentication check early
 		const user = await currentUser();
 		if (!user) {
 			return createErrorResponse("User not authenticated", 401);
@@ -34,7 +32,6 @@ export async function POST(req: NextRequest) {
 
 		const supabase = await createClient();
 
-		// Generate AI response
 		const generationPrompt = generatePromptForAI(
 			prompt,
 			formData,
@@ -42,7 +39,6 @@ export async function POST(req: NextRequest) {
 		);
 		const aiResponse = await chatCompletion(generationPrompt);
 
-		// Parse and validate AI response
 		let generatedData: GeneratedData;
 		try {
 			generatedData = extractJSONFromResponse(aiResponse);

@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { themes } from "@/constants";
+import { themes } from "@/shared";
 import { ThemeSelectProps } from "@/types/components";
 
 const ThemeSelect = ({

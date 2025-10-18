@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { layouts } from "@/constants";
+import { layouts } from "@/shared";
 import type { Step2CategoriesProps } from "@/types/components";
 
 const Step2Categories: React.FC<Step2CategoriesProps> = ({
