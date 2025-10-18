@@ -50,7 +50,7 @@ WHERE event = '$pageview'
   AND properties.$current_url NOT ILIKE '%localhost%'
   AND properties.$current_url NOT ILIKE '%test.quicktalog.app%'
   AND properties.$current_url ILIKE '%www.quicktalog.app%'
-  AND timestamp >= toDateTime('${startDate.toString}')
+  AND timestamp >= toDateTime('${startDate.toISOString()}')
   AND timestamp < toDateTime('${endDate.toISOString()}')
 GROUP BY date, current_url
 ORDER BY date DESC

@@ -1,3 +1,4 @@
+import { generateUniqueSlug } from "@/helpers/client";
 import { revalidateCataloguesData } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
 
@@ -22,11 +23,13 @@ export async function POST(request: Request) {
 			status,
 		} = await request.json();
 
+		const slug = generateUniqueSlug(name);
+
 		const { error } = await supabase
 			.from("catalogues")
 			.insert([
 				{
-					name,
+					name: slug || name,
 					created_by,
 					services,
 					theme,
