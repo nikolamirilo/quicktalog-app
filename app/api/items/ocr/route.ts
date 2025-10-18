@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { generateUniqueSlug } from "@quicktalog/common";
 import { NextRequest, NextResponse } from "next/server";
-import { generateUniqueSlug } from "@/shared";
 import { CatalogueCategory } from "@/types";
 import { chatCompletion } from "@/utils/deepseek";
 import {

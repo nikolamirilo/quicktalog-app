@@ -1,4 +1,5 @@
 "use client";
+import { layouts } from "@quicktalog/common";
 import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 import * as React from "react";
 import { FaPen } from "react-icons/fa6";
@@ -9,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { layouts } from "@/shared";
 import type { Step2CategoriesProps } from "@/types/components";
 
 const Step2Categories: React.FC<Step2CategoriesProps> = ({

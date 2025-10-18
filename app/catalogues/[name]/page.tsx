@@ -1,3 +1,4 @@
+import { DARK_THEMES } from "@quicktalog/common";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import LimitsModal from "@/components/modals/LimitsModal";
@@ -6,7 +7,6 @@ import CatalogueHeader from "@/components/navigation/CatalogueHeader";
 import CatalogueContent from "@/components/sections/CatalogueContent";
 import { generateCatalogueMetadata } from "@/constants/metadata";
 import { buildFooterData, buildHeaderData } from "@/helpers/client";
-import { DARK_THEMES } from "@/shared";
 import type { Catalogue } from "@/types";
 
 export const revalidate = 86400;

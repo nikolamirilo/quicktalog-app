@@ -1,10 +1,10 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
+import { generateUniqueSlug } from "@quicktalog/common";
 import React, { useState } from "react";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { revalidateData } from "@/helpers/server";
-import { generateUniqueSlug } from "@/shared";
 import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";
 import { LanguageSelector } from "./components/LanguageSelector";

@@ -1,5 +1,6 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
+import { generateUniqueSlug } from "@quicktalog/common";
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
@@ -25,7 +26,6 @@ import { defaultServiceCatalogueData } from "@/constants";
 import { cleanValue, validateStepHelper } from "@/helpers/client";
 import { revalidateCataloguesData } from "@/helpers/server";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
-import { generateUniqueSlug } from "@/shared";
 import { CategoryItem, ContactInfo, ServicesFormData } from "@/types";
 import { BuilderProps } from "@/types/components";
 import { LimitType } from "@/types/enums";

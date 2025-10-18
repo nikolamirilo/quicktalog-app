@@ -11,8 +11,8 @@ import {
 import { CatalogueContentProps } from "@/types/components";
 import "swiper/css";
 import "swiper/css/pagination";
+import { generateUniqueSlug } from "@quicktalog/common";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { generateUniqueSlug } from "@/shared";
 import CardsSwitcher from "../cards";
 import SectionHeader from "./SectionHeader";
 

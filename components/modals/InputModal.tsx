@@ -1,5 +1,6 @@
 "use client";
 
+import { generateUniqueSlug } from "@quicktalog/common";
 import { Link2 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -13,7 +14,6 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
-import { generateUniqueSlug } from "@/shared";
 
 interface InputModalProps {
 	isOpen: boolean;

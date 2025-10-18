@@ -1,4 +1,4 @@
-import { layouts, themes } from "@/shared";
+import { layouts, themes } from "@quicktalog/common";
 import { ILinkItem, ISocials } from "./components";
 import { Status } from "./enums";
 

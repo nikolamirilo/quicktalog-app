@@ -1,5 +1,5 @@
+import { fetchImageFromUnsplash, layouts } from "@quicktalog/common";
 import { NextResponse } from "next/server";
-import { fetchImageFromUnsplash, layouts } from "@/shared";
 import { CatalogueCategory } from "@/types";
 
 // Type definitions for better type safety

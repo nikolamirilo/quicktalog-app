@@ -1,9 +1,9 @@
 "use client";
+import { themes } from "@quicktalog/common";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useMainContext } from "@/context/MainContext";
-import { themes } from "@/shared";
 
 const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	const context = useMainContext();

@@ -1,6 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { fetchImageFromUnsplash, generateUniqueSlug } from "@quicktalog/common";
 import { NextRequest, NextResponse } from "next/server";
-import { fetchImageFromUnsplash, generateUniqueSlug } from "@/shared";
 import {
 	createErrorResponse,
 	extractJSONFromResponse,

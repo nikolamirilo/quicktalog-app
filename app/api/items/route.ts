@@ -1,5 +1,5 @@
+import { generateUniqueSlug } from "@quicktalog/common";
 import { revalidateCataloguesData } from "@/helpers/server";
-import { generateUniqueSlug } from "@/shared";
 import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = "force-dynamic";
