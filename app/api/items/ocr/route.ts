@@ -1,5 +1,6 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { generateUniqueSlug } from "@/helpers/client";
 import { CatalogueCategory } from "@/types";
 import { chatCompletion } from "@/utils/deepseek";
 import {
@@ -260,8 +261,10 @@ export async function POST(req: NextRequest) {
 
 		console.log("\n === STEP 7: DATABASE OPERATIONS ===");
 
+		const slug = generateUniqueSlug(formData.name);
+
 		const catalogueData = {
-			name: formData.name,
+			name: slug || formData.name,
 			status: "active",
 			title: formData.title,
 			currency: formData.currency,

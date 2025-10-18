@@ -1,16 +1,16 @@
-import { fetchImageFromUnsplash } from "@/helpers/client";
+import { currentUser } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+import { fetchImageFromUnsplash, generateUniqueSlug } from "@/helpers/client";
 import {
 	createErrorResponse,
 	extractJSONFromResponse,
 	GeneratedData,
-	generatePromptForAI,
 	GenerationRequest,
+	generatePromptForAI,
 	insertCatalogueData,
 } from "@/utils/ai_prompt";
 import { chatCompletion } from "@/utils/deepseek";
 import { createClient } from "@/utils/supabase/server";
-import { currentUser } from "@clerk/nextjs/server";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
 	try {
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 			}
 		}
 
-		const catalogueSlug = formData.name;
+		const catalogueSlug = generateUniqueSlug(formData.name) || formData.name;
 		await insertCatalogueData(
 			supabase,
 			formData,
