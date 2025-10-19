@@ -116,7 +116,7 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 									return (
 										<Card
 											className="border border-product-border shadow-product-shadow bg-product-background rounded-xl"
-											key={`${item.name}-${itemIndex}`}
+											key={`${categoryIndex}-${itemIndex}`}
 										>
 											<div
 												className="flex justify-between items-center p-2 sm:p-4 cursor-pointer"
