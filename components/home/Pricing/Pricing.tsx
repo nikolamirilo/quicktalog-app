@@ -84,7 +84,6 @@ const Pricing: React.FC = () => {
 	const filteredTiers = tiers.filter(
 		(item) => item?.type === "standard" && item?.id > 0,
 	);
-	console.log(filteredTiers);
 
 	return (
 		<div className="space-y-6 mx-4">
