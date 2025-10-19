@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import { withUt } from "uploadthing/tw";
+
 const withMT = require("@material-tailwind/react/utils/withMT");
 
 export default withUt(
