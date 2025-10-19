@@ -293,12 +293,15 @@ const LimitsModal = ({
 										<div className="text-product-foreground-accent mb-1">
 											Current Plan
 										</div>
-										<div className="font-semibold text-lg flex items-center justify-start space-x-1">
-											<span className="text-product-foreground text-xl">
-												{formatLimit(content.currentLimit)}
+										<div className="text-base flex items-center justify-start space-x-1">
+											<span className="text-product-foreground text-lg">
+												<strong>{formatLimit(content.currentLimit)}</strong>{" "}
+												<span className="text-base">
+													{content.feature.toLowerCase()}
+												</span>
 											</span>
 										</div>
-										<div className="text-base text-product-foreground-accent mt-1">
+										<div className="text-base text-product-foreground mt-1 font-medium">
 											{currentPlan.name}
 										</div>
 									</div>
@@ -307,13 +310,16 @@ const LimitsModal = ({
 										<ArrowRight className="w-5 h-5 text-product-primary" />
 									</div>
 
-									<div className="text-sm text-right flex-1">
+									<div className="text-base text-product-foreground mt-1 font-medium text-right flex-1">
 										<div className="text-product-foreground-accent mb-1">
 											Required Plan
 										</div>
-										<div className="font-semibold text-lg flex items-center justify-end space-x-1">
-											<span className="text-product-foreground text-xl">
-												{formatLimit(content.nextLimit)}
+										<div className="text-base flex items-center justify-end space-x-1">
+											<span className="text-product-foreground text-lg">
+												<strong>{formatLimit(content.nextLimit)}</strong>{" "}
+												<span className="text-base">
+													{content.feature.toLowerCase()}
+												</span>
 											</span>
 										</div>
 										<div className="text-base text-product-foreground mt-1 font-medium">
@@ -338,11 +344,14 @@ const LimitsModal = ({
 										<ul className="space-y-2 text-sm text-product-foreground-accent">
 											<li className="flex items-start">
 												<Layers className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-												<span>
-													<strong className="text-product-foreground">
+												<span className="text-product-foreground">
+													<strong>
 														{formatLimit(requiredPlan.features.catalogues)}
 													</strong>{" "}
-													catalogues with{" "}
+													{requiredPlan.features.catalogues > 1
+														? "catalogues"
+														: "catalogue"}{" "}
+													with{" "}
 													<strong>
 														{formatLimit(
 															requiredPlan.features.categories_per_catalogue,
@@ -354,19 +363,30 @@ const LimitsModal = ({
 															requiredPlan.features.items_per_catalogue,
 														)}
 													</strong>{" "}
-													per catalogue to manage all your product lines
+													items per catalogue to manage all your product lines
 												</span>
 											</li>
-											<li className="flex items-start">
-												<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-												<span>
-													<strong className="text-product-foreground">
-														{formatLimit(requiredPlan.features.ai_prompts)}
-													</strong>{" "}
-													AI prompts per month
-												</span>
-											</li>
-											{requiredPlan.features.ocr_ai_import > 0 && (
+											{requiredPlan.features.ai_prompts > 0 && (
+												<li className="flex items-start">
+													<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+													<span>
+														<strong className="text-product-foreground">
+															{formatLimit(requiredPlan.features.ai_prompts)}
+														</strong>{" "}
+														AI prompts per month
+													</span>
+												</li>
+											)}
+											{currentPlan.features.branding == false &&
+											requiredPlan.features.branding == true ? (
+												<li className="flex items-start">
+													<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+													<span className="font-semibold text-product-foreground">
+														Custom Branding
+													</span>
+												</li>
+											) : null}
+											{requiredPlan.features.ocr_ai_import > 1 && (
 												<li className="flex items-start">
 													<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
 													<span>
