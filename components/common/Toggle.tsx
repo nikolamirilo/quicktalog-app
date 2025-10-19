@@ -1,5 +1,5 @@
 "use client";
-import { layouts, themes } from "@/constants";
+import { layouts, themes } from "@quicktalog/common";
 import { useMainContext } from "@/context/MainContext";
 import { Button } from "../ui/button";
 

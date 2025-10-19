@@ -163,7 +163,7 @@ const ItemDropdownMenu = ({
 										Embed
 									</span>
 								</DropdownMenuItem>
-								<DropdownMenuItem
+								{/* <DropdownMenuItem
 									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 									disabled={planId < 2}
 									onClick={() =>
@@ -177,7 +177,7 @@ const ItemDropdownMenu = ({
 										<FaRegFilePdf size={18} />
 										PDF
 									</span>
-								</DropdownMenuItem>
+								</DropdownMenuItem> */}
 							</DropdownMenuSubContent>
 						</DropdownMenuSub>
 

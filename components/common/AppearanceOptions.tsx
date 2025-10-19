@@ -1,9 +1,9 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { themes } from "@/constants";
-import { useMainContext } from "@/context/MainContext";
+import { themes } from "@quicktalog/common";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useMainContext } from "@/context/MainContext";
 
 const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	const context = useMainContext();
@@ -98,16 +98,16 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 						{/* Navigation Arrows with Layout Info */}
 						<div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
 							<Button
-								type="button"
-								variant="outline"
-								size="sm"
-								onClick={handlePreviousLayout}
 								className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
+								onClick={handlePreviousLayout}
+								size="sm"
 								style={{
 									borderColor: "var(--section-border)",
 									backgroundColor: "var(--background)",
 									color: "var(--foreground)",
 								}}
+								type="button"
+								variant="outline"
 							>
 								<ChevronLeft className="w-4 h-4" />
 							</Button>
@@ -131,16 +131,16 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 							</div>
 
 							<Button
-								type="button"
-								variant="outline"
-								size="sm"
-								onClick={handleNextLayout}
 								className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
+								onClick={handleNextLayout}
+								size="sm"
 								style={{
 									borderColor: "var(--section-border)",
 									backgroundColor: "var(--background)",
 									color: "var(--foreground)",
 								}}
+								type="button"
+								variant="outline"
 							>
 								<ChevronRight className="w-4 h-4" />
 							</Button>
@@ -167,16 +167,16 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 					{/* Navigation Arrows with Theme Info */}
 					<div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
 						<Button
-							type="button"
-							variant="outline"
-							size="sm"
-							onClick={handlePreviousTheme}
 							className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
+							onClick={handlePreviousTheme}
+							size="sm"
 							style={{
 								borderColor: "var(--section-border)",
 								backgroundColor: "var(--background)",
 								color: "var(--foreground)",
 							}}
+							type="button"
+							variant="outline"
 						>
 							<ChevronLeft className="w-4 h-4" />
 						</Button>
@@ -208,16 +208,16 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 						</div>
 
 						<Button
-							type="button"
-							variant="outline"
-							size="sm"
-							onClick={handleNextTheme}
 							className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
+							onClick={handleNextTheme}
+							size="sm"
 							style={{
 								borderColor: "var(--section-border)",
 								backgroundColor: "var(--background)",
 								color: "var(--foreground)",
 							}}
+							type="button"
+							variant="outline"
 						>
 							<ChevronRight className="w-4 h-4" />
 						</Button>

@@ -1,5 +1,6 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
+import { generateUniqueSlug } from "@quicktalog/common";
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
@@ -22,11 +23,7 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { defaultServiceCatalogueData } from "@/constants";
-import {
-	cleanValue,
-	generateUniqueSlug,
-	validateStepHelper,
-} from "@/helpers/client";
+import { cleanValue, validateStepHelper } from "@/helpers/client";
 import { revalidateCataloguesData } from "@/helpers/server";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
 import { CategoryItem, ContactInfo, ServicesFormData } from "@/types";
@@ -382,7 +379,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 				}
 			}
 
-			const serviceCatalogueSlug = generateUniqueSlug(formData.name);
+			const serviceCatalogueSlug =
+				generateUniqueSlug(formData.name) || formData.name;
 
 			const submissionData = {
 				name: serviceCatalogueSlug,

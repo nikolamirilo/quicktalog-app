@@ -1,5 +1,5 @@
+import { themes } from "@quicktalog/common";
 import { Label } from "@/components/ui/label";
-import { themes } from "@/constants";
 import { ThemeSelectProps } from "@/types/components";
 
 const ThemeSelect = ({

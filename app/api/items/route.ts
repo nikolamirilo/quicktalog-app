@@ -1,4 +1,4 @@
-import { generateUniqueSlug } from "@/helpers/client";
+import { generateUniqueSlug } from "@quicktalog/common";
 import { revalidateCataloguesData } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
 

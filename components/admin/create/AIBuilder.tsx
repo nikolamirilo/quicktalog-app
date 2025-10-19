@@ -1,5 +1,6 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
+import { generateUniqueSlug } from "@quicktalog/common";
 import React, { useState } from "react";
 import { RiSparkling2Line } from "react-icons/ri";
 import { sendNewCatalogueEmail } from "@/actions/email";
@@ -9,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { generateUniqueSlug } from "@/helpers/client";
 import { revalidateData } from "@/helpers/server";
 import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";

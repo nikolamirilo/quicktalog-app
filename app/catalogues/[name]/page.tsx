@@ -1,10 +1,10 @@
+import { DARK_THEMES } from "@quicktalog/common";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import LimitsModal from "@/components/modals/LimitsModal";
 import CatalogueFooter from "@/components/navigation/CatalogueFooter";
 import CatalogueHeader from "@/components/navigation/CatalogueHeader";
 import CatalogueContent from "@/components/sections/CatalogueContent";
-import { DARK_THEMES } from "@/constants";
 import { generateCatalogueMetadata } from "@/constants/metadata";
 import { buildFooterData, buildHeaderData } from "@/helpers/client";
 import type { Catalogue } from "@/types";

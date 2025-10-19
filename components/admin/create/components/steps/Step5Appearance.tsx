@@ -1,4 +1,5 @@
 "use client";
+import { themes } from "@quicktalog/common";
 import * as React from "react";
 import { FiInfo } from "react-icons/fi";
 import { MdDesktopMac, MdPhoneAndroid } from "react-icons/md";
@@ -8,7 +9,6 @@ import BrowserFrame from "@/components/common/BrowserFrame";
 import InformModal from "@/components/modals/InformModal";
 import CatalogueContent from "@/components/sections/CatalogueContent";
 import { Card } from "@/components/ui/card";
-import { themes } from "@/constants";
 import { useMainContext } from "@/context/MainContext";
 import type { Step5AppearanceProps } from "@/types/components";
 import "swiper/css";
