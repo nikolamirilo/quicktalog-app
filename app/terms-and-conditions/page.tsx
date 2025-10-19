@@ -9,14 +9,8 @@ import { getPageSchema } from "@/constants/schemas";
 export const metadata: Metadata = generatePageMetadata("terms");
 
 export default function TermsAndConditionsPage() {
-	const termsPageSchema = getPageSchema("terms");
-
 	return (
 		<>
-			<script
-				dangerouslySetInnerHTML={{ __html: JSON.stringify(termsPageSchema) }}
-				type="application/ld+json"
-			/>
 			<Navbar />
 			<div className="max-w-3xl mx-auto px-4 py-36">
 				<h1 className="text-3xl font-bold mb-6">Terms & Conditions</h1>
@@ -186,7 +180,55 @@ export default function TermsAndConditionsPage() {
 				</ul>
 
 				<h2 className="text-xl font-bold mt-8 mb-4">
-					7. Prohibited Activities & Sales Conduct
+					7. Prohibited Content & Automatic Deletion
+				</h2>
+				<p className="mb-4">
+					Quicktalog is committed to maintaining a safe and lawful platform. The
+					following types of content are strictly prohibited from being uploaded
+					or shared through catalogs created on our platform:
+				</p>
+				<ul className="list-disc list-inside space-y-2 mb-4">
+					<li>
+						<strong>Illegal products or services:</strong> Any content promoting
+						illegal goods, services, or activities including but not limited to
+						drugs, weapons, explosives, or stolen goods.
+					</li>
+					<li>
+						<strong>Adult or sexually explicit content:</strong> Pornography,
+						nudity, escort services, prostitution, sexual services, or any
+						sexually explicit material.
+					</li>
+					<li>
+						<strong>Violence and harm:</strong> Content that promotes,
+						glorifies, or incites violence, self-harm, or harm to others.
+					</li>
+					<li>
+						<strong>Hate speech and discrimination:</strong> Content that
+						promotes hatred, discrimination, or harassment based on race,
+						ethnicity, religion, gender, sexual orientation, disability, or any
+						other protected characteristic.
+					</li>
+					<li>
+						<strong>Child exploitation:</strong> Any content involving minors in
+						inappropriate, exploitative, or harmful situations.
+					</li>
+					<li>
+						<strong>Any other illegal, harmful, or unethical content:</strong>{" "}
+						Any content that violates local, state, national, or international
+						laws, or that we determine to be harmful, offensive, or contrary to
+						our community standards and values.
+					</li>
+				</ul>
+				<p className="mb-4 font-semibold p-4 bg-red-50 border-l-4 border-red-400 text-red-800">
+					<strong>Automatic Deletion Policy:</strong> Catalogs found to contain
+					any prohibited content will be automatically deleted from our platform
+					without prior notice. Users who repeatedly violate this policy may
+					have their accounts permanently suspended. We reserve the right to
+					report illegal content to appropriate law enforcement authorities.
+				</p>
+
+				<h2 className="text-xl font-bold mt-8 mb-4">
+					8. Prohibited Activities & Sales Conduct
 				</h2>
 				<ul className="list-disc list-inside space-y-2">
 					<li>
@@ -200,7 +242,7 @@ export default function TermsAndConditionsPage() {
 				</ul>
 
 				<h2 className="text-xl font-bold mt-8 mb-4">
-					8. Compliance & Policy Updates
+					9. Compliance & Policy Updates
 				</h2>
 				<ul className="list-disc list-inside space-y-2">
 					<li>

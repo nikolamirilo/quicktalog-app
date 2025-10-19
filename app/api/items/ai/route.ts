@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 	try {
 		const body = (await req.json()) as GenerationRequest;
 		const { prompt, formData, shouldGenerateImages } = body;
-
+		//
 		if (!prompt?.trim()) {
 			return createErrorResponse("Prompt is required", 400);
 		}
@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
 		}
 
 		const supabase = await createClient();
+
+		//
 
 		const generationPrompt = generatePromptForAI(
 			prompt,
