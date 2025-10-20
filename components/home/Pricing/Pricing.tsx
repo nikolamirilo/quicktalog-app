@@ -159,7 +159,7 @@ const Pricing: React.FC = () => {
 					>
 						<PricingColumn
 							billingCycle={billingCycle}
-							highlight={!user && tier.id == 2 ? true : false}
+							highlight={tier.id == 2 ? true : false}
 							paddle={paddle}
 							price={
 								prices[

@@ -141,19 +141,6 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 		}
 	};
 
-	const getButtonText = () => {
-		if (!user) return "Get Started";
-
-		const currentTier = filteredTiers.find((t) =>
-			Object.values(t.priceId).includes(user.plan_id),
-		);
-
-		if (!currentTier) return "Get Started";
-		if (currentTier.name === tier.name) return "Current Plan";
-		return currentTier.id > tier.id ? "Downgrade" : "Upgrade";
-	};
-
-	// Row mode layout
 	if (mode === "row") {
 		return (
 			<div
@@ -244,13 +231,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 						<Button
 							className="w-full py-2.5 rounded-lg font-semibold transition-all duration-200 hover:scale-[1.02] text-sm"
 							onClick={handleButtonClick}
-							variant={
-								highlight || getButtonText() === "Upgrade"
-									? "cta"
-									: "cta-secondary"
-							}
+							variant={tier.id == 2 ? "cta" : "cta-secondary"}
 						>
-							{getButtonText()}
+							Get Started
 						</Button>
 					</div>
 				</div>
@@ -324,11 +307,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				<Button
 					className="w-full py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-[1.02]"
 					onClick={handleButtonClick}
-					variant={
-						highlight || getButtonText() === "Upgrade" ? "cta" : "cta-secondary"
-					}
+					variant={tier.id == 2 ? "cta" : "cta-secondary"}
 				>
-					{getButtonText()}
+					Get Started
 				</Button>
 			</div>
 

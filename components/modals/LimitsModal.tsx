@@ -183,7 +183,7 @@ const LimitsModal = ({
 
 	return (
 		<AlertDialog open={isOpen}>
-			<AlertDialogContent className="w-[95vw] max-w-md mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow rounded-lg overflow-hidden">
+			<AlertDialogContent className="w-[95vw] max-w-md xl:max-w-lg mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow rounded-lg overflow-hidden">
 				{/* Header */}
 				<AlertDialogHeader className="relative p-6 sm:p-8 text-center bg-hero-product-background space-y-0">
 					{onClose ? (
@@ -288,42 +288,47 @@ const LimitsModal = ({
 							{/* Current vs Next Tier Comparison */}
 							<div className="space-y-4">
 								{/* Limit Comparison */}
-								<div className="border-2 border-product-primary flex items-center justify-between p-4 rounded-xl bg-product-hover-background">
-									<div className="text-sm flex-1">
-										<div className="text-product-foreground-accent mb-1">
-											Current Plan
-										</div>
-										<div className="text-base flex items-center justify-start space-x-1">
-											<span className="text-product-foreground text-lg">
-												<strong>{formatLimit(content.currentLimit)}</strong>{" "}
-												<span className="text-base">
+								<div className="w-full max-w-3xl">
+									<div className="border-2 border-product-primary flex items-center justify-between p-4 rounded-xl bg-product-hover-background">
+										{/* Current Plan */}
+										<div className="flex-1 min-w-0">
+											<div className="text-xs text-product-foreground-accent mb-2">
+												Current Plan
+											</div>
+											<div className="flex items-baseline space-x-1 mb-1">
+												<span className="text-base font-bold text-product-foreground">
+													{formatLimit(content.currentLimit)}
+												</span>
+												<span className="text-sm text-product-foreground">
 													{content.feature.toLowerCase()}
 												</span>
-											</span>
+											</div>
+											<div className="text-sm text-product-foreground font-medium">
+												{currentPlan.name}
+											</div>
 										</div>
-										<div className="text-base text-product-foreground mt-1 font-medium">
-											{currentPlan.name}
-										</div>
-									</div>
 
-									<div className="px-4">
-										<ArrowRight className="w-5 h-5 text-product-primary" />
-									</div>
-
-									<div className="text-base text-product-foreground mt-1 font-medium text-right flex-1">
-										<div className="text-product-foreground-accent mb-1">
-											Required Plan
+										{/* Arrow */}
+										<div className="px-6 flex-shrink-0">
+											<ArrowRight className="w-5 h-5 text-product-primary" />
 										</div>
-										<div className="text-base flex items-center justify-end space-x-1">
-											<span className="text-product-foreground text-lg">
-												<strong>{formatLimit(content.nextLimit)}</strong>{" "}
-												<span className="text-base">
+
+										{/* Required Plan */}
+										<div className="flex-1 min-w-0 text-right">
+											<div className="text-xs text-product-foreground-accent mb-2">
+												Required Plan
+											</div>
+											<div className="flex items-baseline justify-end space-x-1 mb-1">
+												<span className="text-base font-bold text-product-foreground">
+													{formatLimit(content.nextLimit)}
+												</span>
+												<span className="text-sm text-product-foreground">
 													{content.feature.toLowerCase()}
 												</span>
-											</span>
-										</div>
-										<div className="text-base text-product-foreground mt-1 font-medium">
-											{requiredPlan.name}
+											</div>
+											<div className="text-sm text-product-foreground font-medium">
+												{requiredPlan.name}
+											</div>
 										</div>
 									</div>
 								</div>
