@@ -241,7 +241,7 @@ const LimitsModal = ({
 					<AlertDialogTitle className="text-xl sm:text-2xl font-bold mb-2 text-product-foreground text-center">
 						{isTraffic
 							? "Catalogue Not Found"
-							: `Need More ${content.feature}?`}
+							: `Need ${+content.currentLimit > 0 ? "More" : ""} ${content.feature}?`}
 					</AlertDialogTitle>
 					<AlertDialogDescription className="text-sm sm:text-base text-product-foreground-accent text-center leading-relaxed">
 						{isTraffic
