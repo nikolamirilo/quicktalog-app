@@ -59,7 +59,7 @@ const ItemDropdownMenu = ({
 	if (isDuplicateModalOpen) {
 		return (
 			<InputModal
-				description="Please provide name for the catalogue"
+				description="Please provide a name for the catalogue"
 				errors={errors}
 				isOpen={isDuplicateModalOpen}
 				name={formData.name}
