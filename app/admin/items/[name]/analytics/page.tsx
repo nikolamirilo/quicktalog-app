@@ -48,14 +48,12 @@ export default async function page({ params }: { params: tParams }) {
 				body: JSON.stringify({
 					query: {
 						kind: "HogQLQuery",
-						query: `select timestamp, properties.distinct_id, properties.$browser, properties.$device_type, properties.$geoip_country_name from events where properties.$current_url like '${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${name}' and event='$pageview'`,
+						query: `select timestamp, properties.distinct_id, properties.$browser, properties.$device_type, properties.$geoip_country_name from events where properties.$current_url like '${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${name}' and event='$pageview' LIMIT 1000000`,
 					},
 				}),
 				cache: "no-store",
 			},
 		);
-
-		// Check if the response is ok
 		if (!res.ok) {
 			const errorText = await res.text();
 			throw new Error(
@@ -132,13 +130,13 @@ export default async function page({ params }: { params: tParams }) {
 								<div className="flex-shrink-0">
 									<svg
 										className="h-8 w-8 text-red-400"
-										viewBox="0 0 20 20"
 										fill="currentColor"
+										viewBox="0 0 20 20"
 									>
 										<path
-											fillRule="evenodd"
-											d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
 											clipRule="evenodd"
+											d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+											fillRule="evenodd"
 										/>
 									</svg>
 								</div>

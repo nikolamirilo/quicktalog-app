@@ -30,6 +30,7 @@ import {
 	handleDownloadPDF,
 	handleDownloadPng,
 } from "@/helpers/client";
+import { useCatalogueName } from "@/hooks/useCatalogueName";
 
 const ItemDropdownMenu = ({
 	catalogue,
@@ -44,20 +45,31 @@ const ItemDropdownMenu = ({
 	matchedTier,
 	planId,
 }) => {
-	const [name, setName] = useState("");
+	const [formData, setFormData] = useState({ name: "" });
 	const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
+	const [errors, setErrors] = useState<{ [key: string]: string }>({});
+	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+	const { handleNameChange } = useCatalogueName({
+		initialName: "name",
+		type: "create",
+		setFormData,
+		setErrors,
+		setTouched,
+	});
 	if (isDuplicateModalOpen) {
 		return (
 			<InputModal
 				description="Please provide name for the catalogue"
+				errors={errors}
 				isOpen={isDuplicateModalOpen}
-				name={name}
+				name={formData.name}
 				onCancel={() => setIsDuplicateModalOpen(false)}
+				onChange={handleNameChange}
 				onConfirm={() => {
-					handleDuplicateCatalogue(catalogue.id, name);
+					handleDuplicateCatalogue(catalogue.id, formData.name);
 				}}
-				setName={setName}
 				title="Duplicate Catalogue"
+				touched={touched}
 			/>
 		);
 	} else {
