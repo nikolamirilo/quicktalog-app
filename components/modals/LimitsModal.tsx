@@ -374,7 +374,7 @@ const LimitsModal = ({
 											{requiredPlan.features.ai_prompts > 0 && (
 												<li className="flex items-start">
 													<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-													<span>
+													<span className="text-product-foreground">
 														<strong className="text-product-foreground">
 															{formatLimit(requiredPlan.features.ai_prompts)}
 														</strong>{" "}
@@ -394,8 +394,8 @@ const LimitsModal = ({
 											{requiredPlan.features.ocr_ai_import > 1 && (
 												<li className="flex items-start">
 													<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-													<span>
-														<strong className="text-product-foreground">
+													<span className="text-product-foreground">
+														<strong>
 															{formatLimit(requiredPlan.features.ocr_ai_import)}
 														</strong>{" "}
 														OCR AI imports to digitize printed materials
@@ -404,7 +404,7 @@ const LimitsModal = ({
 											)}
 											<li className="flex items-start">
 												<TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-												<span>
+												<span className="text-product-foreground">
 													<strong className="text-product-foreground">
 														{requiredPlan.features.traffic_limit.toLocaleString()}
 													</strong>{" "}
@@ -414,11 +414,9 @@ const LimitsModal = ({
 											{requiredPlan.features.newsletter && (
 												<li className="flex items-start">
 													<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-													<span>
-														<strong className="text-product-foreground">
-															Newsletter feature
-														</strong>{" "}
-														to keep customers engaged
+													<span className="text-product-foreground">
+														<strong>Newsletter feature</strong> to keep
+														customers engaged
 													</span>
 												</li>
 											)}
