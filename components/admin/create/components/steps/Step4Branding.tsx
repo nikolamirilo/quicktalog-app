@@ -582,7 +582,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 						</div>
 						<Switch
 							checked={!!formData.configuration?.newsletter?.enabled}
-							disabled={isFreePlan ? isFreePlan : isProPlan ? isProPlan : false}
+							disabled={!userData.currentPlan.features.newsletter}
 							onCheckedChange={() => handleToggle("newsletter")}
 						/>
 					</div>
