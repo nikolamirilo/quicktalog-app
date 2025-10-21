@@ -2,6 +2,7 @@
 import { revalidateData } from "@/helpers/server";
 import { Status } from "@/types/enums";
 import { createClient } from "@/utils/supabase/server";
+import { generateUniqueSlug } from "@quicktalog/common";
 
 export async function deleteItem(id: string): Promise<boolean> {
 	try {
@@ -77,7 +78,7 @@ export async function duplicateItem(id: string, name: string) {
 		// Remove id and update name
 		const { id: _oldId, ...rest } = data;
 		let suffix = "-copy";
-		let tryName = name;
+		let tryName = generateUniqueSlug(name);
 		let count = 1;
 		while (true) {
 			const { data: exists } = await supabase
