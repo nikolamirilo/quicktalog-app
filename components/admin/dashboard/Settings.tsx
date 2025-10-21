@@ -1,13 +1,13 @@
 // components/Settings.tsx
 "use client";
 
-import CookiePreferencesModal from "@/components/common/CookiePreferencesModal";
-import { Button } from "@/components/ui/button";
 import { SignOutButton, UserProfile } from "@clerk/nextjs";
 import { useState } from "react";
 import { FiSettings } from "react-icons/fi";
 import { LuCookie } from "react-icons/lu";
 import { MdLogout } from "react-icons/md";
+import CookiePreferencesModal from "@/components/common/CookiePreferencesModal";
+import { Button } from "@/components/ui/button";
 
 const Settings = () => {
 	const [isCookieSettingsOpen, setIsCookieSettingsOpen] = useState(false);
@@ -24,13 +24,13 @@ const Settings = () => {
 			</h2>
 			<div className="flex flex-col max-w-[300px] mx-auto md:mx-0 md:flex-row gap-5 my-8">
 				<Button
-					onClick={() => setIsCookieSettingsOpen(true)}
 					aria-label="Manage cookie preferences"
+					onClick={() => setIsCookieSettingsOpen(true)}
 				>
 					<LuCookie className="w-4 h-4" />
 					Manage Cookie Preferences
 				</Button>
-				<SignOutButton redirectUrl="/" component="div">
+				<SignOutButton component="div" redirectUrl="/">
 					<Button variant="destructive">
 						<MdLogout /> Sign Out
 					</Button>

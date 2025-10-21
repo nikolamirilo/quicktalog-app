@@ -8,7 +8,7 @@ import { UserData } from "@/types";
 export const dynamic = "force-dynamic";
 export default async function page() {
 	const userData: UserData = await getUserData();
-	if (userData && userData.currentPlan.id > 2) {
+	if (userData && userData.currentPlan.features.ocr_ai_import > 0) {
 		return (
 			<div className="product font-lora min-h-screen">
 				<Navbar />
@@ -24,7 +24,11 @@ export default async function page() {
 		return (
 			<LimitsModal
 				currentPlan={userData.currentPlan}
-				isOpen={userData && userData.currentPlan.id > 2 ? false : true}
+				isOpen={
+					userData && userData.currentPlan.features.ocr_ai_import > 0
+						? false
+						: true
+				}
 				requiredPlan={userData.nextPlan}
 				type="ocr"
 			/>

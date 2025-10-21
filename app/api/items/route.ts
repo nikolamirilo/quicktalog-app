@@ -1,5 +1,5 @@
 import { generateUniqueSlug } from "@quicktalog/common";
-import { revalidateCataloguesData } from "@/helpers/server";
+import { revalidateData } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 				headers: { "Content-Type": "application/json" },
 			});
 		}
-		await revalidateCataloguesData(name);
+		await revalidateData();
 		return new Response(
 			JSON.stringify({ catalogueUrl: `/catalogues/${name}`, slug: name }),
 			{
@@ -120,7 +120,7 @@ export async function PATCH(request: Request) {
 			});
 		}
 
-		await revalidateCataloguesData(name);
+		await revalidateData();
 
 		return new Response(
 			JSON.stringify({ catalogueUrl: `/catalogues/${name}`, slug: name }),

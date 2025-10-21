@@ -38,7 +38,6 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 	setErrors,
 }) => {
 	const isFreePlan = userData?.currentPlan.id === 0;
-	const isProPlan = userData?.currentPlan.id === 1;
 	const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 	const [currentField, setCurrentField] = useState("");
 
@@ -582,7 +581,7 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 						</div>
 						<Switch
 							checked={!!formData.configuration?.newsletter?.enabled}
-							disabled={isFreePlan ? isFreePlan : isProPlan ? isProPlan : false}
+							disabled={!userData.currentPlan.features.newsletter}
 							onCheckedChange={() => handleToggle("newsletter")}
 						/>
 					</div>

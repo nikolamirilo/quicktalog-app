@@ -19,13 +19,8 @@ export async function revalidateCataloguesData(catalogueName: string) {
 
 		// Revalidate the page path
 		revalidatePath(`/catalogues/${catalogueName}`, "page");
-
-		// Also revalidate using tags for more comprehensive cache invalidation
 		revalidateTag(`catalogue-${catalogueName}`);
 		revalidateTag("catalogue-detail");
-
-		// Revalidate related pages that might show this catalogue
-		revalidatePath("/catalogues", "page");
 		revalidateTag("catalogues-list");
 
 		console.log(`Successfully revalidated: /catalogues/${catalogueName}`);

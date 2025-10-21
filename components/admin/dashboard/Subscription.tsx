@@ -64,19 +64,23 @@ export default function Subscription({
 		if (
 			name?.includes("pro") ||
 			name?.includes("premium") ||
-			name?.includes("growth")
+			name?.includes("growth") ||
+			name?.includes("custom")
 		)
 			return <Star className="w-5 h-5" />;
 		if (name?.includes("enterprise")) return <Shield className="w-5 h-5" />;
+
 		return <Zap className="w-5 h-5" />;
 	};
 
 	const getPlanColor = (planName: string) => {
 		const name = planName?.toLowerCase();
+		console.log(name);
 		if (
 			name?.includes("pro") ||
 			name?.includes("premium") ||
-			name?.includes("growth")
+			name?.includes("growth") ||
+			name?.includes("custom")
 		)
 			return "bg-product-primary";
 		if (name?.includes("enterprise")) return "bg-product-secondary";
@@ -141,6 +145,7 @@ export default function Subscription({
 	const currentPrice = pricingPlan.priceId
 		? prices[pricingPlan.priceId[pricingPlan.billing_period]]
 		: "0";
+	console.log(currentPrice);
 
 	const defaultDate = new Date().toISOString();
 

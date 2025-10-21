@@ -142,7 +142,7 @@ export type Step1GeneralProps = {
 	touched?: { [key: string]: boolean };
 	setTouched: any;
 	setErrors: any;
-	type?: string;
+	type: "create" | "edit";
 };
 
 export type Step2CategoriesProps = {

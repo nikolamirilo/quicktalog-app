@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useCatalogueName } from "@/hooks/useCatalogueName";
 import type { Step1GeneralProps } from "@/types/components";
 import { CurrencySelect } from "../CurrencySelect";
 
@@ -21,131 +22,26 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 	setTouched,
 	type,
 }) => {
-	const [names, setNames] = useState([]);
 	const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 	const [currentField, setCurrentField] = useState("");
 	const [previewUrl, setPreviewUrl] = useState("");
 
-	const normalize = (str: string) =>
-		str.trim().toLowerCase().replace(/\s+/g, "-");
-
-	const nameExists = useMemo(() => {
-		if (type !== "create" || !formData.name || !names.length) return false;
-		return names.some((n) => normalize(n.name) === normalize(formData.name));
-	}, [formData.name, names, type]);
-
 	const handleCurrencyChange = (value: string) => {
 		setFormData((prev: any) => ({ ...prev, currency: value }));
 	};
-
-	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newName = e.target.value;
-
-		handleInputChange(e);
-
-		if (setTouched) {
-			setTouched((prev: any) => ({ ...prev, name: true }));
-		}
-
-		const isValid = /^[a-zA-Z0-9\s]*$/.test(newName);
-
-		if (!isValid && setErrors) {
-			setErrors((prev: any) => ({
-				...prev,
-				name: "Name must only contain letters, numbers, and spaces (no special characters).",
-			}));
-			return; // stop further duplicate checks if invalid
-		} else if (isValid && setErrors) {
-			// clear only this specific error if user fixes it
-			setErrors((prev: any) => {
-				const newErrors = { ...prev };
-				if (
-					newErrors.name ===
-					"Name must only contain letters, numbers, and spaces (no special characters)."
-				) {
-					delete newErrors.name;
-				}
-				return newErrors;
-			});
-		}
-
-		// Existing duplicate check (only in create flow)
-		if (type === "create") {
-			if (newName.trim() && names.length > 0) {
-				const exists = names.some(
-					(n) => normalize(n.name) === normalize(newName),
-				);
-
-				if (exists && setErrors) {
-					setErrors((prev: any) => ({
-						...prev,
-						name: "This name is already in use. Please choose a different name.",
-					}));
-				} else if (!exists && setErrors) {
-					// Clear only duplicate error
-					setErrors((prev: any) => {
-						const newErrors = { ...prev };
-						if (
-							newErrors.name ===
-							"This name is already in use. Please choose a different name."
-						) {
-							delete newErrors.name;
-						}
-						return newErrors;
-					});
-				}
-			} else if (!newName.trim() && setErrors) {
-				// Clear duplicate error if empty
-				setErrors((prev: any) => {
-					const newErrors = { ...prev };
-					if (
-						newErrors.name ===
-						"This name is already in use. Please choose a different name."
-					) {
-						delete newErrors.name;
-					}
-					return newErrors;
-				});
-			}
-		}
-	};
+	const { handleNameChange, nameExists } = useCatalogueName({
+		initialName: "name",
+		type: "create",
+		setFormData,
+		setErrors,
+		setTouched,
+	});
 
 	useEffect(() => {
 		const baseURL = process.env.NEXT_PUBLIC_BASE_URL!;
 		const slug = generateUniqueSlug(formData.name);
 		setPreviewUrl(`${baseURL}/catalogues/${slug}`);
 	}, [formData.name]);
-
-	useEffect(() => {
-		if (type !== "create") return;
-
-		async function getAllNames() {
-			try {
-				const res = await fetch("/api/items", {
-					method: "GET",
-					cache: "no-store",
-				});
-				const data = await res.json();
-				// Set names state immediately with the fetched data
-				setNames(data);
-				if (formData.name && data.length > 0) {
-					const exists = data.some(
-						(n) => normalize(n.name) === normalize(formData.name),
-					);
-					if (exists && setErrors) {
-						setErrors((prev: any) => ({
-							...prev,
-							name: "This name is already in use. Please choose a different name.",
-						}));
-					}
-				}
-			} catch (error) {
-				console.error("Failed to fetch names:", error);
-				setNames([]);
-			}
-		}
-		getAllNames();
-	}, [type]);
 
 	const getFieldExplanation = (field: string): string => {
 		const explanations: { [key: string]: string } = {

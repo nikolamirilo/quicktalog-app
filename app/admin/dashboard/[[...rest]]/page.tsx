@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getUserData } from "@/actions/users";
 import Dashboard from "@/components/admin/dashboard/Dashboard";
 import FloatingActionMenu from "@/components/admin/dashboard/FloatingActionMenu";
@@ -5,7 +6,6 @@ import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { Button } from "@/components/ui/button";
 import type { AreLimitesReached, UserData } from "@/types";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -40,10 +40,10 @@ export default async function page() {
 	return (
 		<div className="product font-lora min-h-screen">
 			<Navbar />
-			<Dashboard user={user} pricingPlan={currentPlan} usage={usage} />
+			<Dashboard pricingPlan={currentPlan} usage={usage} user={user} />
 			<FloatingActionMenu
-				planId={currentPlan.id}
 				areLimitsReached={areLimitesReached}
+				planId={currentPlan.id}
 			/>
 			<Footer />
 		</div>
