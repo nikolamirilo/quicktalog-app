@@ -12,7 +12,13 @@ import OcrReader from "./components/OcrReader";
 import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 
-export default function OCRBuilder({ userData }: { userData: UserData }) {
+export default function OCRBuilder({
+	userData,
+	api_url,
+}: {
+	userData: UserData;
+	api_url: string;
+}) {
 	const [formData, setFormData] = useState({
 		name: "",
 		theme: "theme-elegant",
@@ -76,7 +82,7 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
 			try {
-				const response = await fetch("http://127.0.0.1:8787/api/ocr", {
+				const response = await fetch(`${api_url}/api/ocr`, {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -88,8 +94,8 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 				});
 
 				if (response.ok) {
-					const data = await response.json();
-					console.log(data);
+					const { slug } = await response.json();
+					console.log(slug);
 				} else {
 					const errorData = await response.json();
 					console.error("Error response:", errorData);

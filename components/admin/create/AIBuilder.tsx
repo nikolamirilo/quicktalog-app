@@ -19,7 +19,13 @@ import PromptInput from "./components/PromptInput";
 import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 
-export default function AIBuilder({ userData }: { userData: UserData }) {
+export default function AIBuilder({
+	userData,
+	api_url,
+}: {
+	userData: UserData;
+	api_url: string;
+}) {
 	const [formData, setFormData] = useState({
 		name: "",
 		theme: "theme-elegant",
@@ -62,6 +68,8 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 		return Object.keys(newErrors).length === 0 && !hasErrors;
 	};
 
+	console.log(userData);
+
 	const handleSubmit = async () => {
 		if (!validate()) return;
 
@@ -85,11 +93,17 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
 
-			const response = await fetch("/api/items/ai", {
+			const response = await fetch(`${api_url}/api/ai`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ formData: data, prompt, shouldGenerateImages }),
+				body: JSON.stringify({
+					formData: data,
+					prompt,
+					shouldGenerateImages,
+					userId: user.id,
+				}),
 			});
+			console.log(response);
 
 			const contactData = {
 				email: user.emailAddresses[0]?.emailAddress || "",
@@ -97,8 +111,8 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 			};
 
 			if (response.ok) {
-				const { catalogueUrl, slug } = await response.json();
-				setCatalogueUrl(catalogueUrl);
+				const { slug } = await response.json();
+				setCatalogueUrl(`/catalogues/${slug}`);
 				await sendNewCatalogueEmail(contactData, formData.name, slug);
 				setShowSuccessModal(true);
 			} else {
