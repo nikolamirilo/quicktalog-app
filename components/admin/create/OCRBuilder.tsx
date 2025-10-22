@@ -76,14 +76,20 @@ export default function OCRBuilder({ userData }: { userData: UserData }) {
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
 			try {
-				const response = await fetch("/api/items/ocr", {
+				const response = await fetch("http://127.0.0.1:8787/api/ocr", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ ocr_text: extractedText, formData: data }),
+					body: JSON.stringify({
+						input_text: extractedText,
+						formData: data,
+						shouldGenerateImages: true,
+						userId: user.id,
+					}),
 				});
 
 				if (response.ok) {
-					await response.json();
+					const data = await response.json();
+					console.log(data);
 				} else {
 					const errorData = await response.json();
 					console.error("Error response:", errorData);

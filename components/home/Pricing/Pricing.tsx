@@ -7,10 +7,10 @@ import {
 } from "@paddle/paddle-js";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
+import { getUserData } from "@/actions/users";
 import { tiers } from "@/constants/pricing";
 import { usePaddlePrices } from "@/hooks/usePaddelPrices";
 import type { User } from "@/types";
-import { createClient } from "@/utils/supabase/client";
 import MiniCTA from "../MiniCTA";
 import PricingColumn from "./PricingColumn";
 
@@ -45,7 +45,6 @@ const Pricing: React.FC = () => {
 	const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
 	const [user, setUser] = useState<User>(null);
 	const { user: clerkUser } = useUser();
-	const supabase = createClient();
 
 	const { prices } = usePaddlePrices(paddle, "US");
 
@@ -63,21 +62,16 @@ const Pricing: React.FC = () => {
 		}
 	}, []);
 
+	console.log(user);
+
 	useEffect(() => {
 		if (!clerkUser?.id) return;
-
 		async function fetchUserData() {
-			const res = await supabase
-				.from("users")
-				.select("*")
-				.eq("id", clerkUser.id)
-				.single();
-
-			if (res.data) {
-				setUser(res.data);
+			const data = await getUserData(clerkUser.id);
+			if (data) {
+				setUser(data);
 			}
 		}
-
 		fetchUserData();
 	}, [clerkUser?.id]);
 
