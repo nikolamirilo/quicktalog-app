@@ -214,7 +214,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 						{/* Services Section */}
 						<section
 							aria-label="Services and items"
-							className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pt-8 sm:pt-12 md:pt-16 pb-8 min-h-[60vh]"
+							className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pt-8 sm:pt-8 lg:pt-10 pb-8 min-h-[60vh]"
 						>
 							<CatalogueContent
 								currency={item.currency}
