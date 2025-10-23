@@ -202,17 +202,11 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 									{item.title}
 								</h1>
 								{item.subtitle && (
-									// <p
-									// 	aria-describedby={item.title}
-									// 	className="text-text text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
-									// >
-
 									<HtmlContent
 										aria-describedby={item.title}
 										className="text-text text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
 										html={item.subtitle}
 									/>
-									// </p>
 								)}
 							</div>
 						</section>
