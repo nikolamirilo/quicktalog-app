@@ -113,7 +113,6 @@ export default function DescriptionEditor({
 		if (!isInternalChange.current && editorRef.current) {
 			if (editorRef.current.innerHTML !== value) {
 				editorRef.current.innerHTML = value || "";
-				// Update active formats after loading content
 				setTimeout(() => {
 					updateActiveFormats();
 				}, 0);
@@ -121,6 +120,10 @@ export default function DescriptionEditor({
 		}
 		isInternalChange.current = false;
 	}, [value]);
+
+	useEffect(() => {
+		execCommand("justifyCenter");
+	}, []);
 
 	return (
 		<div
@@ -154,7 +157,7 @@ export default function DescriptionEditor({
 				</div>
 			</div>
 			<div
-				className="min-h-[200px] p-4 focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 text-left"
+				className="min-h-[200px] p-4 focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 "
 				contentEditable
 				data-placeholder={placeholder}
 				onFocus={handleFocus}
