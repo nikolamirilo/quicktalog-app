@@ -9,7 +9,7 @@ export default function DescriptionEditor({
 	name = "description",
 	placeholder = "Start typing...",
 	className = "",
-	maxLength = 1000,
+	maxLength = 750,
 }) {
 	const editorRef = useRef(null);
 	const isInternalChange = useRef(false);
