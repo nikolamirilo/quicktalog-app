@@ -1,6 +1,8 @@
 import { DARK_THEMES } from "@quicktalog/common";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
+import HtmlContent from "@/components/common/HtmlContent";
 import LimitsModal from "@/components/modals/LimitsModal";
 import CatalogueFooter from "@/components/navigation/CatalogueFooter";
 import CatalogueHeader from "@/components/navigation/CatalogueHeader";
@@ -200,12 +202,17 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 									{item.title}
 								</h1>
 								{item.subtitle && (
-									<p
+									// <p
+									// 	aria-describedby={item.title}
+									// 	className="text-text text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
+									// >
+
+									<HtmlContent
 										aria-describedby={item.title}
 										className="text-text text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
-									>
-										{item.subtitle}
-									</p>
+										html={item.subtitle}
+									/>
+									// </p>
 								)}
 							</div>
 						</section>
