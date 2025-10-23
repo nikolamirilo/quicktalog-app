@@ -167,7 +167,7 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({
 													{item.subtitle && (
 														<HtmlContent
 															aria-describedby={item.title}
-															className="text-text text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
+															className="text-text text-base !text-center sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
 															html={item.subtitle}
 														/>
 													)}

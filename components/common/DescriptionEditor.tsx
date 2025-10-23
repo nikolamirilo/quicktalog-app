@@ -1,6 +1,6 @@
 "use client";
 
-import { AlignCenter, AlignLeft, AlignRight, Bold, Italic } from "lucide-react";
+import { Bold, Italic } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export default function DescriptionEditor({
@@ -16,60 +16,15 @@ export default function DescriptionEditor({
 	const [activeFormats, setActiveFormats] = useState({
 		bold: false,
 		italic: false,
-		alignLeft: false,
-		alignCenter: false,
-		alignRight: false,
 	});
-
-	const detectAlignment = () => {
-		if (!editorRef.current) return { left: false, center: false, right: false };
-
-		const selection = window.getSelection();
-		if (!selection || !selection.rangeCount) {
-			// No selection, check the first element or the editor itself
-			const firstChild = editorRef.current.firstChild;
-			const element =
-				firstChild?.nodeType === Node.ELEMENT_NODE
-					? (firstChild as Element)
-					: editorRef.current;
-			const align = window.getComputedStyle(element).textAlign;
-
-			return {
-				left: align === "left" || align === "start",
-				center: align === "center",
-				right: align === "right" || align === "end",
-			};
-		}
-
-		const node = selection.anchorNode;
-		const element =
-			node?.nodeType === Node.ELEMENT_NODE
-				? (node as Element)
-				: node?.parentElement;
-
-		if (element && editorRef.current.contains(element)) {
-			const align = window.getComputedStyle(element).textAlign;
-			return {
-				left: align === "left" || align === "start",
-				center: align === "center",
-				right: align === "right" || align === "end",
-			};
-		}
-
-		return { left: false, center: false, right: false };
-	};
 
 	const updateActiveFormats = () => {
 		const bold = document.queryCommandState("bold");
 		const italic = document.queryCommandState("italic");
-		const alignment = detectAlignment();
 
 		setActiveFormats({
 			bold,
 			italic,
-			alignLeft: alignment.left,
-			alignCenter: alignment.center,
-			alignRight: alignment.right,
 		});
 	};
 
@@ -158,7 +113,6 @@ export default function DescriptionEditor({
 		if (!isInternalChange.current && editorRef.current) {
 			if (editorRef.current.innerHTML !== value) {
 				editorRef.current.innerHTML = value || "";
-				// Update active formats after loading content
 				setTimeout(() => {
 					updateActiveFormats();
 				}, 0);
@@ -166,6 +120,10 @@ export default function DescriptionEditor({
 		}
 		isInternalChange.current = false;
 	}, [value]);
+
+	useEffect(() => {
+		execCommand("justifyCenter");
+	}, []);
 
 	return (
 		<div
@@ -175,8 +133,8 @@ export default function DescriptionEditor({
 				<button
 					className={`p-2 rounded ${
 						activeFormats.bold
-							? "bg-blue-200 hover:bg-blue-300"
-							: "hover:bg-gray-200"
+							? "bg-product-primary"
+							: "hover:bg-product-hover-background"
 					}`}
 					onClick={() => execCommand("bold")}
 					type="button"
@@ -186,54 +144,20 @@ export default function DescriptionEditor({
 				<button
 					className={`p-2 rounded ${
 						activeFormats.italic
-							? "bg-blue-200 hover:bg-blue-300"
-							: "hover:bg-gray-200"
+							? "bg-product-primary"
+							: "hover:bg-product-hover-background"
 					}`}
 					onClick={() => execCommand("italic")}
 					type="button"
 				>
 					<Italic size={20} />
 				</button>
-				<div className="w-px bg-gray-300 mx-1"></div>
-				<button
-					className={`p-2 rounded ${
-						activeFormats.alignLeft
-							? "bg-blue-200 hover:bg-blue-300"
-							: "hover:bg-gray-200"
-					}`}
-					onClick={() => execCommand("justifyLeft")}
-					type="button"
-				>
-					<AlignLeft size={20} />
-				</button>
-				<button
-					className={`p-2 rounded ${
-						activeFormats.alignCenter
-							? "bg-blue-200 hover:bg-blue-300"
-							: "hover:bg-gray-200"
-					}`}
-					onClick={() => execCommand("justifyCenter")}
-					type="button"
-				>
-					<AlignCenter size={20} />
-				</button>
-				<button
-					className={`p-2 rounded ${
-						activeFormats.alignRight
-							? "bg-blue-200 hover:bg-blue-300"
-							: "hover:bg-gray-200"
-					}`}
-					onClick={() => execCommand("justifyRight")}
-					type="button"
-				>
-					<AlignRight size={20} />
-				</button>
 				<div className="ml-auto text-sm text-gray-600">
 					{editorRef.current?.innerText?.length || 0} / {maxLength}
 				</div>
 			</div>
 			<div
-				className="min-h-[200px] p-4 focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 text-left"
+				className="min-h-[200px] p-4 focus:outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400 "
 				contentEditable
 				data-placeholder={placeholder}
 				onFocus={handleFocus}

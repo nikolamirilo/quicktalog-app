@@ -204,7 +204,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 								{item.subtitle && (
 									<HtmlContent
 										aria-describedby={item.title}
-										className="text-text text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
+										className="text-text !text-center text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
 										html={item.subtitle}
 									/>
 								)}
