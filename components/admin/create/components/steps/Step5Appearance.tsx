@@ -15,6 +15,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import HtmlContent from "@/components/common/HtmlContent";
 import type { Catalogue } from "@/types";
 import ThemeSelect from "../ThemeSelect";
 
@@ -164,12 +165,11 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({
 														{item.title}
 													</h1>
 													{item.subtitle && (
-														<p
+														<HtmlContent
 															aria-describedby={item.title}
-															className={`text-text font-lora font-normal leading-relaxed ${isMobileView ? "text-base sm:text-base md:text-base lg:text-base px-2" : "text-base sm:text-lg md:text-xl lg:text-2xl px-5"} max-w-[900px]`}
-														>
-															{item.subtitle}
-														</p>
+															className="text-text text-base !text-center sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
+															html={item.subtitle}
+														/>
 													)}
 												</div>
 											</section>

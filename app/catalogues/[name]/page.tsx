@@ -1,6 +1,8 @@
 import { DARK_THEMES } from "@quicktalog/common";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
+import HtmlContent from "@/components/common/HtmlContent";
 import LimitsModal from "@/components/modals/LimitsModal";
 import CatalogueFooter from "@/components/navigation/CatalogueFooter";
 import CatalogueHeader from "@/components/navigation/CatalogueHeader";
@@ -200,12 +202,11 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 									{item.title}
 								</h1>
 								{item.subtitle && (
-									<p
+									<HtmlContent
 										aria-describedby={item.title}
-										className="text-text text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
-									>
-										{item.subtitle}
-									</p>
+										className="text-text !text-center text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
+										html={item.subtitle}
+									/>
 								)}
 							</div>
 						</section>
@@ -213,7 +214,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 						{/* Services Section */}
 						<section
 							aria-label="Services and items"
-							className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pt-8 sm:pt-12 md:pt-16 pb-8 min-h-[60vh]"
+							className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pt-8 sm:pt-8 lg:pt-10 pb-8 min-h-[60vh]"
 						>
 							<CatalogueContent
 								currency={item.currency}

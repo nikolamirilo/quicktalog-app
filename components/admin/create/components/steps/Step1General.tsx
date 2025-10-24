@@ -3,6 +3,7 @@ import { generateUniqueSlug } from "@quicktalog/common";
 import { AlertCircle, CheckCircle, FileText, Link2 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { FiInfo } from "react-icons/fi";
+import DescriptionEditor from "@/components/common/DescriptionEditor";
 import InformModal from "@/components/modals/InformModal";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,8 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 		setCurrentField(field);
 		setIsInfoModalOpen(true);
 	};
+
+	console.log(formData);
 
 	return (
 		<Card
@@ -205,13 +208,14 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 					>
 						Catalogue Description
 					</Label>
-					<Textarea
+					<DescriptionEditor
 						className="flex-1 border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
-						id="subtitle"
 						name="subtitle"
-						onChange={handleInputChange}
+						onChange={(e) => {
+							handleInputChange(e);
+						}}
 						placeholder="Add a catchy intro for your catalogue"
-						value={formData.subtitle || ""}
+						value={formData.subtitle}
 					/>
 				</div>
 			</div>
