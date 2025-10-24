@@ -56,7 +56,6 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 						type: "custom_branding",
 					}
 				: null,
-			// { text: `${features.analytics} analytics`, type: "analytics" },
 			{
 				text: `${features.traffic_limit.toLocaleString()} page views per month`,
 				type: "traffic-limit",

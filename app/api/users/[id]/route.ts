@@ -109,13 +109,8 @@ export async function GET(
 			{ pageview_count: 0, unique_visitors: 0 },
 		) || { pageview_count: 0, unique_visitors: 0 };
 
-		const {
-			cookie_preferences,
-			created_at,
-			customer_id,
-			plan_id,
-			...adjustedUser
-		} = user;
+		const { cookie_preferences, created_at, customer_id, ...adjustedUser } =
+			user;
 		const userData: UserData = {
 			...adjustedUser,
 			currentPlan: { ...pricingPlan, billing_period: billingPeriod || "year" },

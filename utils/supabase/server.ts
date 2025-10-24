@@ -5,8 +5,8 @@ export async function createClient(isUsingCookies: boolean = true) {
 	if (!isUsingCookies) {
 		// Return a basic Supabase client without cookies for build-time usage
 		return createServerClient(
-			process.env.NEXT_PUBLIC_SUPABASE_URL!,
-			process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+			process.env.SUPABASE_URL!,
+			process.env.SUPABASE_ANON_KEY!,
 			{
 				cookies: {
 					getAll() {
@@ -24,8 +24,8 @@ export async function createClient(isUsingCookies: boolean = true) {
 	const { cookies } = await import("next/headers");
 	const cookieStore = await cookies();
 	return createServerClient(
-		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		process.env.SUPABASE_URL!,
+		process.env.SUPABASE_ANON_KEY!,
 		{
 			cookies: {
 				getAll() {
