@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import HtmlContent from "@/components/common/HtmlContent";
+import Overlay from "@/components/common/Overlay";
 import LimitsModal from "@/components/modals/LimitsModal";
 import CatalogueFooter from "@/components/navigation/CatalogueFooter";
 import CatalogueHeader from "@/components/navigation/CatalogueHeader";
@@ -158,6 +159,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 					className={`${item.theme || "theme-elegant"} bg-background text-foreground min-h-screen flex flex-col`}
 					role="application"
 				>
+					{item.theme.includes("advent") && <Overlay emoji="❄️" />}
 					{/* <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogueSchema) }}

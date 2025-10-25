@@ -1,0 +1,485 @@
+/* Clerk Auth Widget Product Theme Overrides */
+.cl-internal-1fsg6zy,
+/* main container */
+	.cl-card,
+.cl-signIn-root,
+.cl-signUp-root {
+	font-family: var(--font-family-body, "Inter", sans-serif) !important;
+	outline: none !important;
+	background: var(--product-background) !important;
+	border: 1px solid var(--product-border) !important;
+	border-radius: 1.25rem !important;
+	box-shadow: none !important;
+}
+
+/* Override the global border-border class for Clerk components */
+.cl-card,
+.cl-internal-1fsg6zy,
+.cl-signIn-root,
+.cl-signUp-root,
+.cl-card *,
+.cl-internal-1fsg6zy *,
+.cl-signIn-root *,
+.cl-signUp-root * {
+	border-color: transparent !important;
+}
+
+/* Remove any additional borders or outlines from inner elements */
+.cl-card *,
+.cl-internal-1fsg6zy *,
+.cl-signIn-root *,
+.cl-signUp-root * {
+	outline: none !important;
+}
+
+/* Restore borders only for specific elements that need them */
+.cl-formFieldInput,
+.cl-formFieldInputWrapper {
+	border-color: var(--product-border) !important;
+}
+
+.cl-formFieldInput:focus,
+.cl-formFieldInputWrapper:focus-within {
+	border-color: var(--product-primary) !important;
+}
+
+.cl-formButtonSecondary {
+	border-color: var(--product-primary) !important;
+}
+
+.cl-socialButtonsBlockButton {
+	border-color: var(--product-border) !important;
+}
+
+.cl-socialButtonsBlockButton:hover {
+	border-color: var(--product-primary) !important;
+}
+
+/* Remove borders from all other Clerk elements */
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-internal-1b5y6t5,
+.cl-internal-1b5y6t6,
+.cl-formFieldLabel,
+.cl-footerActionLink,
+.cl-dividerText,
+.cl-formFieldErrorText {
+	border: none !important;
+}
+
+/* Typography - Headers */
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-internal-1b5y6t5,
+.cl-internal-1b5y6t6 {
+	font-family: var(--font-family-heading, "Lora", serif) !important;
+	font-weight: 700 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: var(--letter-spacing-heading, -0.02em) !important;
+}
+
+.cl-headerSubtitle {
+	font-weight: 400 !important;
+	color: var(--product-foreground-accent) !important;
+	letter-spacing: var(--letter-spacing-body, 0) !important;
+}
+
+/* Form fields - matching contact page exactly */
+.cl-formFieldInput,
+.cl-formFieldInputWrapper {
+	font-family: var(--font-family-body, "Inter", sans-serif) !important;
+	font-weight: 400 !important;
+	/* rounded-xl = 12px = 0.75rem */
+	color: var(--product-foreground) !important;
+	letter-spacing: var(--letter-spacing-body, 0) !important;
+	outline: none !important;
+	background: var(--product-background) !important;
+	border: 2px solid var(--product-border) !important;
+	border-radius: 0.75rem !important;
+	box-shadow: var(--product-shadow) !important;
+	transition: all 0.3s ease !important;
+}
+
+.cl-formFieldInput:focus,
+.cl-formFieldInputWrapper:focus-within {
+	outline: none !important;
+	background: var(--product-hover-background) !important;
+	border-color: var(--product-primary) !important;
+	box-shadow: var(--product-hover-shadow) !important;
+}
+
+.cl-formFieldInput::placeholder {
+	color: var(--product-foreground-accent) !important;
+}
+
+/* Labels */
+.cl-formFieldLabel {
+	font-family: var(--font-family-heading, "Lora", serif) !important;
+	font-weight: 600 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: var(--letter-spacing-heading, -0.02em) !important;
+}
+
+/* Primary buttons */
+.cl-formButtonPrimary {
+	font-family: var(--font-family-heading, "Lora", serif) !important;
+	font-weight: 600 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: var(--letter-spacing-heading, -0.02em) !important;
+	outline: none !important;
+	background: var(--product-primary) !important;
+	border: none !important;
+	border-radius: 0.5rem !important;
+	box-shadow: none !important;
+}
+
+.cl-formButtonPrimary:hover {
+	background: var(--product-primary-accent) !important;
+}
+
+/* Secondary buttons */
+.cl-formButtonSecondary {
+	font-family: var(--font-family-heading, "Lora", serif) !important;
+	font-weight: 600 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: var(--letter-spacing-heading, -0.02em) !important;
+	outline: none !important;
+	background: transparent !important;
+	border: 1px solid var(--product-primary) !important;
+	border-radius: 0.5rem !important;
+	box-shadow: none !important;
+}
+
+.cl-formButtonSecondary:hover {
+	color: var(--product-foreground) !important;
+	background: var(--product-primary) !important;
+}
+
+/* Social buttons */
+.cl-socialButtonsBlockButton {
+	display: flex !important;
+	gap: 0.5rem !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-height: 2.75rem !important;
+	padding: 0.75rem 1rem !important;
+	font-family: var(--font-family-body, "Inter", sans-serif) !important;
+	font-size: 0.875rem !important;
+	font-weight: 600 !important;
+	/* Match input fields */
+	color: var(--product-foreground) !important;
+	cursor: pointer !important;
+	outline: none !important;
+	background: var(--product-background) !important;
+	border: 2px solid var(--product-border) !important;
+	border-radius: 0.75rem !important;
+	box-shadow: var(--product-shadow) !important;
+	transition: all 0.3s ease !important;
+}
+
+.cl-socialButtonsBlockButton:hover {
+	background: var(--product-hover-background) !important;
+	border-color: var(--product-primary) !important;
+	box-shadow: var(--product-hover-shadow) !important;
+}
+
+/* Social button icons */
+.cl-socialButtonsBlockButton svg,
+.cl-socialButtonsBlockButton img {
+	flex-shrink: 0 !important;
+	width: 1.25rem !important;
+	height: 1.25rem !important;
+}
+
+/* Social button text */
+.cl-socialButtonsBlockButton span {
+	font-weight: 600 !important;
+	letter-spacing: 0.025em !important;
+}
+
+/* Social buttons container */
+.cl-socialButtonsBlock {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 0.75rem !important;
+	width: 100% !important;
+}
+
+/* Links */
+.cl-footerActionLink {
+	font-family: var(--font-family-body, "Inter", sans-serif) !important;
+	font-weight: 500 !important;
+	color: var(--product-primary) !important;
+	text-decoration: none !important;
+}
+
+.cl-footerActionLink:hover {
+	color: var(--product-primary-accent) !important;
+	text-decoration: underline !important;
+}
+
+/* Footer section with border */
+.cl-footer {
+	padding-top: 1rem !important;
+	margin-top: 1rem !important;
+	border-top: 1px solid var(--product-border) !important;
+}
+
+/* Divider */
+.cl-dividerLine {
+	background: var(--product-border) !important;
+}
+
+.cl-dividerText {
+	font-family: var(--font-family-body, "Inter", sans-serif) !important;
+	font-weight: 400 !important;
+	color: var(--product-foreground-accent) !important;
+}
+
+/* Error messages */
+.cl-formFieldErrorText {
+	font-family: var(--font-family-body, "Inter", sans-serif) !important;
+	font-weight: 400 !important;
+	color: #ef4444 !important;
+}
+
+/* Loading states */
+.cl-formButtonPrimary:disabled {
+	cursor: not-allowed !important;
+	opacity: 0.7 !important;
+}
+
+/* UserButton dropdown positioning - Mobile menu only */
+.mobile-menu .cl-userButtonPopoverCardRoot {
+	position: relative !important;
+	display: inline-block !important;
+}
+
+.mobile-menu .cl-userButtonPopoverCardRoot .cl-userButtonPopoverCard {
+	position: absolute !important;
+	top: 100% !important;
+	right: auto !important;
+	bottom: auto !important;
+	left: 0 !important;
+	z-index: 1000 !important;
+	margin-top: 0.5rem !important;
+	transform: none !important;
+}
+
+/* Target all possible Clerk dropdown classes in mobile menu */
+.mobile-menu .cl-userButtonPopoverCard,
+.mobile-menu .cl-userButtonPopoverCardRoot .cl-userButtonPopoverCard,
+.mobile-menu [class*="cl-userButtonPopoverCard"],
+.mobile-menu .cl-userButtonPopoverCardRoot [class*="cl-userButtonPopoverCard"] {
+	position: absolute !important;
+	top: 100% !important;
+	right: auto !important;
+	bottom: auto !important;
+	left: 0 !important;
+	z-index: 1001 !important;
+	margin-top: 0.5rem !important;
+	transform: none !important;
+}
+
+/* Override any fixed positioning that might be applied */
+.mobile-menu .cl-userButtonPopoverCard[style*="position: fixed"],
+.mobile-menu .cl-userButtonPopoverCard[style*="position:fixed"] {
+	position: absolute !important;
+	top: 100% !important;
+	right: auto !important;
+	bottom: auto !important;
+	left: 0 !important;
+	margin-top: 0.5rem !important;
+	transform: none !important;
+}
+
+/* Custom UserButton dropdown classes for mobile menu */
+.mobile-menu-dropdown-root {
+	position: relative !important;
+	display: inline-block !important;
+}
+
+.mobile-menu-dropdown {
+	position: absolute !important;
+	top: 100% !important;
+	right: auto !important;
+	bottom: auto !important;
+	left: 0 !important;
+	z-index: 1001 !important;
+	margin-top: 0.5rem !important;
+	transform: none !important;
+}
+
+/* Target Clerk's portal container and force positioning */
+body > div[class*="cl-userButtonPopoverCard"],
+body > div[class*="cl-userButtonPopoverCardRoot"],
+body > div[class*="cl-userButtonPopover"],
+body > div[class*="cl-userButtonPopoverCardRoot"] > div,
+body > div[class*="cl-userButtonPopoverCard"] > div {
+	position: absolute !important;
+	top: 100% !important;
+	right: auto !important;
+	bottom: auto !important;
+	left: 0 !important;
+	z-index: 1001 !important;
+	margin-top: 0.5rem !important;
+	transform: none !important;
+}
+
+/* Force all Clerk dropdowns in mobile context to be positioned correctly */
+.mobile-menu ~ div[class*="cl-userButtonPopoverCard"],
+.mobile-menu ~ div[class*="cl-userButtonPopoverCardRoot"],
+.mobile-menu ~ div[class*="cl-userButtonPopover"] {
+	position: absolute !important;
+	top: 100% !important;
+	right: auto !important;
+	bottom: auto !important;
+	left: 0 !important;
+	z-index: 1001 !important;
+	margin-top: 0.5rem !important;
+	transform: none !important;
+}
+
+/* Mobile menu UserButton dropdown positioning - ensure it stays below the button */
+@media (max-width: 768px) {
+	.mobile-menu .cl-userButtonPopoverCardRoot .cl-userButtonPopoverCard,
+	.mobile-menu .cl-userButtonPopoverCard,
+	.mobile-menu [class*="cl-userButtonPopoverCard"] {
+		position: absolute !important;
+		top: 100% !important;
+		right: auto !important;
+		bottom: auto !important;
+		left: 0 !important;
+		z-index: 1001 !important;
+		margin-top: 0.5rem !important;
+		transform: none !important;
+	}
+
+	/* Target any portal-rendered dropdowns */
+	body > div[class*="cl-userButtonPopoverCard"],
+	body > div[class*="cl-userButtonPopoverCardRoot"],
+	body > div[class*="cl-userButtonPopover"] {
+		position: absolute !important;
+		top: 100% !important;
+		right: auto !important;
+		bottom: auto !important;
+		left: 0 !important;
+		z-index: 1001 !important;
+		margin-top: 0.5rem !important;
+		transform: none !important;
+	}
+}
+
+/* Custom ultra-thin scrollbar for dashboard tab bar only */
+.dashboard-tabbar-scroll::-webkit-scrollbar {
+	height: 3px;
+}
+
+.dashboard-tabbar-scroll::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.dashboard-tabbar-scroll::-webkit-scrollbar-thumb {
+	background: var(--product-primary);
+	/* product-primary */
+	border-radius: 2px;
+}
+
+/* Footer CTA Button Font Override */
+.footer-cta-button {
+	font-family: var(--font-family-heading, "Lora", serif) !important;
+	font-weight: var(--font-weight-heading, 600) !important;
+	letter-spacing: var(--letter-spacing-heading, -0.02em) !important;
+}
+
+/* Mobile Preview Styles - Force mobile responsive behavior */
+.mobile-preview .grid {
+	grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.mobile-preview .md\:grid-cols-2 {
+	grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.mobile-preview .flex-wrap {
+	flex-direction: column !important;
+}
+
+.mobile-preview .justify-start {
+	align-items: center !important;
+}
+
+.mobile-preview .swiper-slide {
+	width: 160px !important;
+}
+
+.mobile-preview .sm\:\!w-\[220px\] {
+	width: 160px !important;
+}
+
+.mobile-preview .md\:\!w-\[260px\] {
+	width: 160px !important;
+}
+
+.mobile-preview .lg\:\!w-\[320px\] {
+	width: 160px !important;
+}
+
+/* Force mobile font sizes in mobile preview to match actual mobile specs */
+.mobile-preview h1 {
+	font-size: 30px !important;
+}
+
+.mobile-preview h2 {
+	font-size: 20px !important;
+}
+
+.mobile-preview h3,
+.mobile-preview h5 {
+	font-size: 16px !important;
+}
+
+.mobile-preview p {
+	font-size: 14px !important;
+}
+
+.mobile-preview span {
+	font-size: 16px !important;
+}
+
+/* Override responsive font sizes in mobile preview */
+.mobile-preview .sm\:text-\[22px\] {
+	font-size: 16px !important;
+}
+
+.mobile-preview .sm\:text-\[18px\] {
+	font-size: 16px !important;
+}
+
+.mobile-preview .sm\:text-\[16px\] {
+	font-size: 14px !important;
+}
+
+.mobile-preview .sm\:text-\[15px\] {
+	font-size: 14px !important;
+}
+
+.mobile-preview .sm\:text-\[14px\] {
+	font-size: 14px !important;
+}
+
+.mobile-preview .md\:text-\[22px\] {
+	font-size: 16px !important;
+}
+
+.mobile-preview .md\:text-\[18px\] {
+	font-size: 16px !important;
+}
+
+.mobile-preview .md\:text-\[16px\] {
+	font-size: 14px !important;
+}
+
+.mobile-preview .md\:text-\[14px\] {
+	font-size: 14px !important;
+}

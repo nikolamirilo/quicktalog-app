@@ -62,8 +62,6 @@ const Pricing: React.FC = () => {
 		}
 	}, []);
 
-	console.log(user);
-
 	useEffect(() => {
 		if (!clerkUser?.id) return;
 		async function fetchUserData() {

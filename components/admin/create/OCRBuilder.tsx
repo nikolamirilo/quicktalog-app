@@ -1,14 +1,17 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug } from "@quicktalog/common";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { IoTimerOutline } from "react-icons/io5";
+import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { revalidateData } from "@/helpers/server";
 import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";
 import { LanguageSelector } from "./components/LanguageSelector";
-import OcrReader from "./components/OcrReader";
+import OCRImport from "./components/OCRImport";
 import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 
@@ -33,6 +36,8 @@ export default function OCRBuilder({
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
+	const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
+	const router = useRouter();
 
 	const handleInputChange = (
 		e:
@@ -43,79 +48,80 @@ export default function OCRBuilder({
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const validate = () => {
+	const validateForm = (): boolean => {
 		const newErrors: { [key: string]: string } = {};
-		const hasErrors = Object.keys(errors).length > 0;
-		if (!formData.name.trim()) newErrors.name = "Catalogue Name is required";
-		if (!formData.title.trim())
+
+		if (!formData.name.trim()) {
+			newErrors.name = "Catalogue Name is required";
+		}
+		if (!formData.title.trim()) {
 			newErrors.title = "Catalogue Heading is required";
-		if (!formData.currency.trim()) newErrors.currency = "Currency is required";
-		if (!formData.theme.trim()) newErrors.theme = "Theme is required";
-		if (!formData.language.trim()) newErrors.language = "Language is required";
+		}
+		if (!formData.currency.trim()) {
+			newErrors.currency = "Currency is required";
+		}
+		if (!formData.theme.trim()) {
+			newErrors.theme = "Theme is required";
+		}
+		if (!formData.language.trim()) {
+			newErrors.language = "Language is required";
+		}
+
 		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0 && !hasErrors;
+		return Object.keys(newErrors).length === 0;
 	};
 
-	const handleSubmit = async () => {
-		if (!validate()) return;
-
-		if (!extractedText.trim()) {
-			return;
+	function checkValidity() {
+		if (!validateForm()) {
+			alert("Please fill in all required fields before importing.");
+			return false;
 		}
 
 		if (!user || !user.id) {
-			console.log("Issue with fetching user data");
-			return;
+			console.error("User data not available");
+			alert("User authentication error. Please try logging in again.");
+			return false;
+		}
+		if (
+			userData.usage.prompts >= userData.currentPlan.features.ai_prompts ||
+			userData.usage.catalogues >= userData.currentPlan.features.catalogues
+		) {
+			setShowLimitsModal(true);
+			return false;
 		}
 
 		setIsSubmitting(true);
-		try {
-			if (
-				userData.usage.prompts >= userData.currentPlan.features.ai_prompts ||
-				userData.usage.catalogues >= userData.currentPlan.features.catalogues
-			) {
-				setShowLimitsModal(true);
-				setIsSubmitting(false);
-				return;
-			}
+		return true;
+	}
 
+	const handleExtractComplete = async (text: string) => {
+		try {
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
-			try {
-				const response = await fetch(`${api_url}/api/ocr`, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						input_text: extractedText,
-						formData: data,
-						shouldGenerateImages: true,
-						userId: user.id,
-					}),
-				});
 
-				if (response.ok) {
-					const { slug } = await response.json();
-					console.log(slug);
-				} else {
-					const errorData = await response.json();
-					console.error("Error response:", errorData);
-				}
-			} catch (error) {
-				console.error("Error submitting OCR data:", error);
-			} finally {
-				setIsSubmitting(false);
-				await revalidateData();
-			}
+			fetch(`${api_url}/api/ocr`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					input_text: text,
+					formData: data,
+					shouldGenerateImages: true,
+					userId: user.id,
+				}),
+			});
+
+			setShowInfoModal(true);
+			await revalidateData();
 		} catch (error) {
-			console.error("Submission error:", error);
+			console.error("Error submitting OCR data:", error);
+			alert("An error occurred while submitting. Please try again.");
 		} finally {
 			setIsSubmitting(false);
-			await revalidateData();
 		}
 	};
 
 	const handleLanguageChange = (value: string) => {
-		setFormData((prev: any) => ({ ...prev, language: value }));
+		setFormData((prev) => ({ ...prev, language: value }));
 	};
 
 	return (
@@ -129,7 +135,7 @@ export default function OCRBuilder({
 					title="Scan & Import your catalogue"
 				/>
 				<CardContent className="p-6 sm:p-8 pt-0">
-					<form className="space-y-6" onSubmit={handleSubmit}>
+					<div className="space-y-6">
 						<Step1General
 							errors={errors}
 							formData={formData}
@@ -148,22 +154,37 @@ export default function OCRBuilder({
 							touched={touched}
 						/>
 
-						<OcrReader
+						<OCRImport
+							checkValidity={checkValidity}
 							extractedText={extractedText}
 							formData={formData}
 							isSubmitting={isSubmitting}
-							onSubmit={handleSubmit}
+							onExtractComplete={handleExtractComplete}
 							setExtractedText={setExtractedText}
 						/>
-					</form>
+					</div>
 				</CardContent>
 			</Card>
+
 			{showLimitsModal && (
 				<LimitsModal
 					currentPlan={userData?.currentPlan}
 					isOpen={showLimitsModal}
 					requiredPlan={userData?.nextPlan}
 					type="ocr"
+				/>
+			)}
+
+			{showInfoModal && (
+				<InformModal
+					confirmText="Go to Dashboard"
+					icon={<IoTimerOutline color="#ffc107" size={30} />}
+					isOpen={showInfoModal}
+					message="Your import has started and will complete in about 5 minutes. You can return to the dashboard shortly to find your catalogue ready."
+					onConfirm={() => {
+						router.push("/admin/dashboard");
+					}}
+					title="OCR import has started"
 				/>
 			)}
 		</div>

@@ -1,0 +1,50 @@
+.product {
+	--product-background: #ffffff;
+	--product-foreground: #171717;
+	--product-primary: #ffc107;
+	--product-secondary: #010e58;
+	--product-primary-accent: #e5c230;
+	--product-foreground-accent: #454545;
+	--hero-product-background: #f3f3f5;
+
+	--product-border: #eaeaea;
+	--product-hover-background: #fff9e5;
+	--product-icon: #e5c230;
+	--product-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+	--product-hover-scale: 1.02;
+	--product-hover-shadow: 0 4px 10px rgba(229, 194, 48, 0.15);
+
+	/* Gradient backgrounds */
+	--product-gradient-primary: linear-gradient(
+		to bottom right,
+		var(--product-background),
+		var(--hero-product-background)
+	);
+
+	/* Navbar button hover enhancements */
+	--navbar-button-hover-bg: #f0f0f0;
+	--navbar-button-hover-text: #d3af37;
+	--navbar-button-hover-border: #d3af37;
+	--navbar-button-hover-shadow: 0 4px 12px rgba(211, 175, 55, 0.25);
+	--navbar-button-active-bg: #fff3cd;
+	--navbar-button-active-text: #856404;
+	--navbar-button-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	--navbar-button-hover-transform: translateY(-2px);
+	--navbar-button-focus-ring: 0 0 0 3px rgba(211, 175, 55, 0.2);
+	--navbar-button-hover-scale: 1.05;
+	--navbar-button-active: #000;
+	--error-color: #ff0000;
+	color: var(--product-foreground);
+	background: var(--product-background);
+
+	@apply text-lg;
+}
+
+.home #logos svg {
+	@apply w-fit h-10 sm:h-12;
+}
+
+.home .benefit-section:last-of-type > div {
+	@apply mb-10;
+}

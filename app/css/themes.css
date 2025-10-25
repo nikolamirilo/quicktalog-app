@@ -1,0 +1,270 @@
+.theme-luxury {
+	--background: #fff8e7;
+	--foreground: #1a1a1a;
+	--heading: #1a1a1a;
+	--text: #080808;
+	--button: #d3af37;
+	--button-text: #1a1a1a;
+	--price: #8b6914;
+
+	--primary: #d3af37;
+	--secondary: #856d3d;
+	--accent: #f0e3b2;
+	--primary-foreground: #1a1a1a;
+	--secondary-foreground: #ffffff;
+
+	--card-bg: #ffffff;
+	--card-text: #333333;
+	--card-heading: #1a1a1a;
+	--card-description: #333333;
+	--card-border: #d9d9d9;
+
+	--section-bg: #e6e6e6;
+	--section-heading: #1a1a1a;
+	--section-border: #d9d9d9;
+	--section-icon: #d3af37;
+	--section-hover: #f2f2f2;
+
+	/* Simplified Header and Footer colors using theme's best colors */
+	--header-bg: #ffffff;
+	--footer-bg: #ffffff;
+	--header-text: #1a1a1a;
+	--footer-text: #1a1a1a;
+	--header-border: #d9d9d9;
+	--footer-border: #d9d9d9;
+
+	/* Modern Section Header Variables */
+	--section-header-bg: #ffffff;
+	--section-header-text: #1a1a1a;
+	--section-header-border: #d3af37;
+	--section-header-shadow: 0 4px 20px rgba(211, 175, 55, 0.15);
+	--section-header-hover-bg: #f8f4e0;
+	--section-header-hover-shadow: 0 8px 30px rgba(211, 175, 55, 0.25);
+	--section-header-accent: #d3af37;
+	--section-header-gradient: linear-gradient(135deg, #ffffff 0%, #f8f4e0 100%);
+
+	/* Typography Variables */
+	--font-family-heading: var(--font-playfair-display);
+	--font-family-body: var(--font-inter);
+	--font-weight-heading: 600;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.02em;
+	--letter-spacing-body: 0;
+}
+
+.theme-creative {
+	--background: #15161e;
+	--foreground: #f8f8f1;
+	--heading: #f8f8f1;
+	--text: #aab7d4;
+	--button: #ff6b6b;
+	--button-text: #f8f8f1;
+	--price: #ff8fa3;
+
+	--primary: #ff6b6b;
+	--secondary: #6b8bff;
+	--accent: #ffd166;
+	--primary-foreground: #1d1e28;
+	--secondary-foreground: #ffffff;
+
+	--card-bg: #3a3b55;
+	--card-text: #f8f8f1;
+	--card-heading: #ffffff;
+	--card-description: #e8edf5;
+	--card-border: #3c3d4f;
+
+	--section-bg: #2a2b39;
+	--section-heading: #f8f8f1;
+	--section-border: #3c3d4f;
+	--section-icon: #f8f8f1;
+	--section-hover: #343545;
+
+	/* Simplified Header and Footer colors using theme's best colors */
+	--header-bg: #2a2b39;
+	--footer-bg: #2a2b39;
+	--header-text: #f8f8f1;
+	--footer-text: #f8f8f1;
+	--header-border: #3c3d4f;
+	--footer-border: #3c3d4f;
+
+	/* Modern Section Header Variables */
+	--section-header-bg: #2a2b39;
+	--section-header-text: #f8f8f1;
+	--section-header-border: #ff6b6b;
+	--section-header-shadow: 0 4px 20px rgba(255, 107, 107, 0.2);
+	--section-header-hover-bg: #343545;
+	--section-header-hover-shadow: 0 8px 30px rgba(255, 107, 107, 0.3);
+	--section-header-accent: #ff6b6b;
+	--section-header-gradient: linear-gradient(135deg, #2a2b39 0%, #343545 100%);
+
+	/* Typography Variables */
+	--font-family-heading: var(--font-inter);
+	--font-family-body: var(--font-inter);
+	--font-weight-heading: 700;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.025em;
+	--letter-spacing-body: 0;
+}
+
+.theme-organic {
+	--background: #f5f3ea;
+	--foreground: #354834;
+	--heading: #354834;
+	--text: #2d3a2a;
+	--button: #5c7453;
+	--button-text: #f5f2de;
+	--price: #5d4a28;
+
+	--primary: #5c7453;
+	--secondary: #cba463;
+	--accent: #aabd6d;
+	--primary-foreground: #f5f2de;
+	--secondary-foreground: #354834;
+
+	--card-bg: #f0efe9;
+	--card-text: #354834;
+	--card-heading: #486345;
+	--card-description: #6b4f3a;
+	--card-border: #e3e0c9;
+
+	--section-bg: #f1eedb;
+	--section-heading: #354834;
+	--section-border: #d3d0ba;
+	--section-icon: #5c7453;
+	--section-hover: #ece8c5;
+
+	/* Updated Header and Footer for more contrast */
+	--header-bg: #ffffff;
+	--footer-bg: #ffffff;
+	--header-text: #354834;
+	--footer-text: #354834;
+	--header-border: #5c7453;
+	--footer-border: #a6b28f;
+
+	/* Modern Section Header Variables */
+	--section-header-bg: #f1eedb;
+	--section-header-text: #354834;
+	--section-header-border: #5c7453;
+	--section-header-shadow: 0 4px 20px rgba(92, 116, 83, 0.15);
+	--section-header-hover-bg: #ece8c5;
+	--section-header-hover-shadow: 0 8px 30px rgba(92, 116, 83, 0.25);
+	--section-header-accent: #5c7453;
+	--section-header-gradient: linear-gradient(135deg, #f4f3ec 0%, #efebc5 100%);
+
+	/* Typography Variables */
+	--font-family-heading: var(--font-nunito);
+	--font-family-body: var(--font-nunito);
+	--font-weight-heading: 700;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.01em;
+	--letter-spacing-body: 0.01em;
+}
+
+.theme-elegant {
+	--background: #121212;
+	--foreground: #fafafa;
+	--heading: #fafafa;
+	--text: #b3b3b3;
+	--button: #6699cc;
+	--button-text: #1a1a1a;
+	--price: #00bcd4;
+
+	--primary: #6699cc;
+	--secondary: #2c2c2c;
+	--accent: #ffd699;
+	--primary-foreground: #ffffff;
+	--secondary-foreground: #fafafa;
+
+	--card-bg: #262626;
+	--card-text: #e6e6e6;
+	--card-heading: #ffffff;
+	--card-description: #b3b3b3;
+	--card-border: #333333;
+
+	--section-bg: #262626;
+	--section-heading: #fafafa;
+	--section-border: #333333;
+	--section-icon: #b3b3b3;
+	--section-hover: #333333;
+
+	/* Enhanced Header and Footer colors for better sophistication */
+	--header-bg: #1f1f1f;
+	--footer-bg: #1f1f1f;
+	--header-text: #ffffff;
+	--footer-text: #fafafa;
+	--header-border: #404040;
+	--footer-border: #404040;
+
+	/* Modern Section Header Variables */
+	--section-header-bg: #1b1c26;
+	--section-header-text: #fafafa;
+	--section-header-border: #6699cc;
+	--section-header-shadow: 0 4px 20px rgba(102, 153, 204, 0.2);
+	--section-header-hover-bg: #333333;
+	--section-header-hover-shadow: 0 8px 30px rgba(102, 153, 204, 0.3);
+	--section-header-accent: #6699cc;
+	--section-header-gradient: linear-gradient(135deg, #262626 0%, #333333 100%);
+
+	/* Typography Variables */
+	--font-family-heading: var(--font-crimson-text);
+	--font-family-body: var(--font-inter);
+	--font-weight-heading: 600;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.015em;
+	--letter-spacing-body: 0;
+	background-image: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+}
+
+.theme-modern {
+	--background: #1a1a2b;
+	--foreground: #ffffff;
+	--heading: #ffffff;
+	--text: #f3f3f3;
+	--button: #8b6cb3;
+	--button-text: #1a1a1a;
+	--price: #ff8fa3;
+
+	--primary: #8b6cb3;
+	--secondary: #33334d;
+	--accent: #e64676;
+	--primary-foreground: #ffffff;
+	--secondary-foreground: #ffffff;
+
+	--card-bg: #2d2d55;
+	--card-text: #f2f2f2;
+	--card-heading: #ffffff;
+	--card-description: #d1d1d1;
+	--card-border: #404040;
+
+	--section-bg: #23233a;
+	--section-heading: #ffffff;
+	--section-border: #404040;
+	--section-icon: #f3f3f3;
+	--section-hover: #2d2d55;
+
+	/* Enhanced Header and Footer colors for better professionalism */
+	--header-bg: #1e1e35;
+	--footer-bg: #1e1e35;
+	--header-text: #ffffff;
+	--footer-text: #f3f3f3;
+	--header-border: #3a3a5a;
+	--footer-border: #3a3a5a;
+
+	/* Modern Section Header Variables */
+	--section-header-bg: #23233a;
+	--section-header-text: #ffffff;
+	--section-header-border: #8b6cb3;
+	--section-header-shadow: 0 4px 20px rgba(139, 108, 179, 0.2);
+	--section-header-hover-bg: #2d2d45;
+	--section-header-hover-shadow: 0 8px 30px rgba(139, 108, 179, 0.3);
+	--section-header-accent: #8b6cb3;
+	--section-header-gradient: linear-gradient(135deg, #23233a 0%, #2d2d45 100%);
+
+	/* Typography Variables */
+	--font-family-heading: var(--font-poppins);
+	--font-family-body: var(--font-inter);
+	--font-weight-heading: 600;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.02em;
+	--letter-spacing-body: 0;
+}
