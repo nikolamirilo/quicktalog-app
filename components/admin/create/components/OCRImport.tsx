@@ -371,7 +371,7 @@ const OCRImport = ({
 						</div>
 					</div>
 					{isProcessing && (
-						<div className="mt-6 p-4 bg-product-secondary border-2 border-product-secondary rounded-xl">
+						<div className="mt-6 p-4 border-2 border-product-secondary rounded-xl">
 							<div className="flex items-center gap-3">
 								<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-product-secondary"></div>
 								<p className="text-product-secondary font-semibold">
