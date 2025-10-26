@@ -370,17 +370,7 @@ const OCRImport = ({
 							</div>
 						</div>
 					</div>
-					{isProcessing && (
-						<div className="mt-6 p-4 border-2 border-product-secondary rounded-xl">
-							<div className="flex items-center gap-3">
-								<div className="animate-spin rounded-full h-6 w-6 border-b-2 border-product-secondary"></div>
-								<p className="text-product-secondary font-semibold">
-									Currently processing: Image {currentProcessingIndex + 1} of{" "}
-									{images.length}
-								</p>
-							</div>
-						</div>
-					)}
+
 					{allImagesProcessed && !hasExtractedText && (
 						<div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
 							<p className="text-yellow-800 font-medium text-center">
