@@ -7,6 +7,8 @@ import { IoTimerOutline } from "react-icons/io5";
 import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { revalidateData } from "@/helpers/server";
 import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";
@@ -36,6 +38,8 @@ export default function OCRBuilder({
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
+	const [shouldGenerateImages, setShouldGenerateImages] =
+		useState<boolean>(false);
 	const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 	const router = useRouter();
 
@@ -105,7 +109,7 @@ export default function OCRBuilder({
 				body: JSON.stringify({
 					input_text: text,
 					formData: data,
-					shouldGenerateImages: false,
+					shouldGenerateImages: shouldGenerateImages,
 					userId: user.id,
 				}),
 			});
@@ -117,6 +121,7 @@ export default function OCRBuilder({
 			alert("An error occurred while submitting. Please try again.");
 		} finally {
 			setIsSubmitting(false);
+			setShouldGenerateImages(false);
 		}
 	};
 
@@ -153,6 +158,19 @@ export default function OCRBuilder({
 							selectedLanguage={formData.language}
 							touched={touched}
 						/>
+
+						<div className="flex items-center gap-2">
+							<Label className="text-sm text-product-foreground font-medium">
+								Generate Images?
+							</Label>
+							<Switch
+								checked={shouldGenerateImages}
+								className="bg-blue-500"
+								onCheckedChange={() =>
+									setShouldGenerateImages(!shouldGenerateImages)
+								}
+							/>
+						</div>
 
 						<OCRImport
 							checkValidity={checkValidity}
