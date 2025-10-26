@@ -1,14 +1,7 @@
+import { Catalogue, CatalogueFormData } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { tiers } from "@/constants/pricing";
-import {
-	Catalogue,
-	ContactItem,
-	FooterData,
-	HeaderData,
-	PricingPlan,
-	ServicesFormData,
-} from "@/types";
+import { ContactItem, FooterData, HeaderData, PricingPlan } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -267,7 +260,7 @@ interface Step1Validation {
 
 interface StepValidationOptions {
 	step: number;
-	formData: ServicesFormData;
+	formData: CatalogueFormData;
 	requiredFields?: {
 		step1?: Array<keyof Step1Validation>;
 	};

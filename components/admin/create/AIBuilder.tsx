@@ -1,9 +1,12 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug } from "@quicktalog/common";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { IoTimerOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
 import { sendNewCatalogueEmail } from "@/actions/email";
+import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
@@ -41,9 +44,9 @@ export default function AIBuilder({
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [catalogueUrl, setCatalogueUrl] = useState("");
-	const [showSuccessModal, setShowSuccessModal] = useState(false);
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
+	const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
+	const router = useRouter();
 
 	const handleInputChange = (
 		e:
@@ -79,21 +82,19 @@ export default function AIBuilder({
 		}
 
 		setIsSubmitting(true);
-		setCatalogueUrl("");
 		try {
 			if (
 				userData.usage.prompts >= userData.currentPlan.features.ai_prompts ||
 				userData.usage.catalogues >= userData.currentPlan.features.catalogues
 			) {
 				setShowLimitsModal(true);
-				setIsSubmitting(false);
 				return;
 			}
 
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
 
-			const response = await fetch(`${api_url}/api/ai`, {
+			fetch(`${api_url}/api/ai`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -103,28 +104,9 @@ export default function AIBuilder({
 					userId: user.id,
 				}),
 			});
-			console.log(response);
-
-			const contactData = {
-				email: user.emailAddresses[0]?.emailAddress || "",
-				name: user.firstName || "",
-			};
-
-			if (response.ok) {
-				const { slug } = await response.json();
-				setCatalogueUrl(`/catalogues/${slug}`);
-				await sendNewCatalogueEmail(contactData, formData.name, slug);
-				setShowSuccessModal(true);
-			} else {
-				const errorData = await response.json();
-				console.error(errorData);
-			}
+			setShowInfoModal(true);
 		} catch (error) {
 			console.error("Submission error:", error);
-		} finally {
-			setIsSubmitting(false);
-			setShouldGenerateImages(false);
-			await revalidateData();
 		}
 	};
 
@@ -205,12 +187,18 @@ export default function AIBuilder({
 				</CardContent>
 			</Card>
 
-			<SuccessModal
-				catalogueUrl={catalogueUrl}
-				isOpen={showSuccessModal}
-				onClose={() => setShowSuccessModal(false)}
-				type="ai"
-			/>
+			{showInfoModal && (
+				<InformModal
+					confirmText="Go to Dashboard"
+					icon={<IoTimerOutline color="#ffc107" size={30} />}
+					isOpen={showInfoModal}
+					message="Your catalogue AI generation has started and will complete in about 5 minutes. You can return to the dashboard shortly to find your catalogue ready."
+					onConfirm={() => {
+						router.push("/admin/dashboard");
+					}}
+					title="Catalogue AI generation has started"
+				/>
+			)}
 			{showLimitsModal && (
 				<LimitsModal
 					currentPlan={userData?.currentPlan}

@@ -198,11 +198,11 @@ export default function OCRBuilder({
 					confirmText="Go to Dashboard"
 					icon={<IoTimerOutline color="#ffc107" size={30} />}
 					isOpen={showInfoModal}
-					message="Your import has started and will complete in about 5 minutes. You can return to the dashboard shortly to find your catalogue ready."
+					message="Your catalogue OCR import has started and will complete in about 5 minutes. You can return to the dashboard shortly to find your catalogue ready."
 					onConfirm={() => {
 						router.push("/admin/dashboard");
 					}}
-					title="OCR import has started"
+					title="Catalogue OCR import has started"
 				/>
 			)}
 		</div>

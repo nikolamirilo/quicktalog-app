@@ -1,4 +1,5 @@
 "use client";
+import { Catalogue } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiScan } from "react-icons/bi";
@@ -18,7 +19,6 @@ import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsMod
 import { Button } from "@/components/ui/button";
 import { tiers } from "@/constants/pricing";
 import { statusOrder } from "@/constants/sort";
-import { Catalogue } from "@/types";
 import { OverviewProps } from "@/types/components";
 import { Status } from "@/types/enums";
 import InformModal from "../../modals/InformModal";
@@ -213,7 +213,8 @@ const Overview = ({
 						</div>
 					)}
 					{catalogues
-						?.sort((a, b) => {
+						?.filter((item: Catalogue) => item.status !== "in preparation")
+						.sort((a, b) => {
 							const statusDiff = statusOrder[a.status] - statusOrder[b.status];
 							if (statusDiff !== 0) return statusDiff;
 							return (

@@ -13,10 +13,10 @@ import { useMainContext } from "@/context/MainContext";
 import type { Step5AppearanceProps } from "@/types/components";
 import "swiper/css";
 import "swiper/css/navigation";
+import type { Catalogue } from "@quicktalog/common";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import HtmlContent from "@/components/common/HtmlContent";
-import type { Catalogue } from "@/types";
 import ThemeSelect from "../ThemeSelect";
 
 const Step5Appearance: React.FC<Step5AppearanceProps> = ({

@@ -1,5 +1,6 @@
+import { Catalogue } from "@quicktalog/common";
 import { getCurrencySymbol } from "@/helpers/client";
-import { Catalogue, CookiePreferences, Currency } from "@/types";
+import { CookiePreferences, Currency } from "@/types";
 import { ILinkItem } from "@/types/components";
 
 export const defaultCookiePreferences: CookiePreferences = {

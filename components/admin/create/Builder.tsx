@@ -1,6 +1,10 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { generateUniqueSlug } from "@quicktalog/common";
+import {
+	CatalogueFormData,
+	CategoryItem,
+	generateUniqueSlug,
+} from "@quicktalog/common";
 import { ArrowLeft, ArrowRight, Edit } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
@@ -26,12 +30,12 @@ import { defaultServiceCatalogueData } from "@/constants";
 import { cleanValue, validateStepHelper } from "@/helpers/client";
 import { revalidateCataloguesData } from "@/helpers/server";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
-import { CategoryItem, ContactInfo, ServicesFormData } from "@/types";
+import { ContactInfo } from "@/types";
 import { BuilderProps } from "@/types/components";
 import { LimitType } from "@/types/enums";
 
 function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
-	const [formData, setFormData] = useState<ServicesFormData>(
+	const [formData, setFormData] = useState<CatalogueFormData>(
 		initialData || defaultServiceCatalogueData,
 	);
 	const [currentStep, setCurrentStep] = useState(1);
@@ -96,7 +100,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 		setIsDirty(true);
 	};
-	const handleReorderCategories = (newOrder: ServicesFormData["services"]) => {
+	const handleReorderCategories = (newOrder: CatalogueFormData["services"]) => {
 		setFormData((prev) => ({
 			...prev,
 			services: newOrder,

@@ -1,4 +1,5 @@
 "use client";
+import { Partner } from "@quicktalog/common";
 import { Plus, Tag, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { FiInfo } from "react-icons/fi";
@@ -19,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { contactTypes } from "@/constants";
-import { Partner } from "@/types";
 import type { Step4BrandingProps } from "@/types/components";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
