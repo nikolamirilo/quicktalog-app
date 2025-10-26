@@ -105,7 +105,7 @@ export default function OCRBuilder({
 				body: JSON.stringify({
 					input_text: text,
 					formData: data,
-					shouldGenerateImages: true,
+					shouldGenerateImages: false,
 					userId: user.id,
 				}),
 			});
