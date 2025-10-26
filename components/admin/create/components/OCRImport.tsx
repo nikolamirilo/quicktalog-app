@@ -305,7 +305,6 @@ const OCRImport = ({
 					type="button"
 					variant="cta"
 				>
-					<BiScan color="black" size={28} />
 					{isProcessing ? (
 						<>
 							<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black ml-2"></div>
@@ -317,7 +316,10 @@ const OCRImport = ({
 							Submitting...
 						</>
 					) : (
-						"Start Importing"
+						<>
+							<BiScan className="mr-2" color="black" size={28} /> Start
+							Importing
+						</>
 					)}
 				</Button>
 			</div>
