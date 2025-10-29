@@ -64,7 +64,7 @@ const SectionHeader = ({
 				>
 					<FiChevronDown
 						aria-hidden="true"
-						className="text-lg text-section-header-accent transition-transform duration-200 ease-out"
+						className="text-lg text-foreground transition-transform duration-200 ease-out"
 						style={{
 							transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
 							willChange: "transform",

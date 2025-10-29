@@ -1,5 +1,5 @@
 import type { Catalogue } from "@quicktalog/common";
-import { DARK_THEMES } from "@quicktalog/common";
+import { themes } from "@quicktalog/common";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
@@ -159,7 +159,17 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 					className={`${item.theme || "theme-elegant"} bg-background text-foreground min-h-screen flex flex-col`}
 					role="application"
 				>
-					{item.theme.includes("advent") && <Overlay emoji="❄️" />}
+					{item.theme.includes("advent") && (
+						<Overlay
+							emoji={
+								item.theme === "theme-advent-1"
+									? "❄️"
+									: item.theme === "theme-advent-2"
+										? "🎁"
+										: ""
+							}
+						/>
+					)}
 					{/* <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogueSchema) }}
@@ -168,7 +178,9 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 					{isFreePlan ? (
 						<CatalogueHeader
 							logo={
-								DARK_THEMES.some((theme) => theme === item.theme)
+								themes.some(
+									(theme) => theme.key === item.theme && theme.type === "dark",
+								)
 									? "/logo-light.svg"
 									: "/logo.svg"
 							}
@@ -180,7 +192,10 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 							logo={
 								item.logo
 									? item.logo
-									: DARK_THEMES.some((theme) => theme === item.theme)
+									: themes.some(
+												(theme) =>
+													theme.key === item.theme && theme.type === "dark",
+											)
 										? "/logo-light.svg"
 										: "/logo.svg"
 							}
@@ -231,7 +246,9 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 					{isFreePlan ? (
 						<CatalogueFooter
 							logo={
-								DARK_THEMES.some((theme) => theme === item.theme)
+								themes.some(
+									(theme) => theme.key === item.theme && theme.type === "dark",
+								)
 									? "/logo-light.svg"
 									: "/logo.svg"
 							}
@@ -243,7 +260,10 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 							logo={
 								item.logo
 									? item.logo
-									: DARK_THEMES.some((theme) => theme === item.theme)
+									: themes.some(
+												(theme) =>
+													theme.key === item.theme && theme.type === "dark",
+											)
 										? "/logo-light.svg"
 										: "/logo.svg"
 							}

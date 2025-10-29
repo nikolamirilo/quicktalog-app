@@ -91,19 +91,19 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									</SmartLink>
 
 									{type === "default" && (
-										<p className="text-sm text-card-description">
+										<p className="text-sm text-footer-text">
 											Digital Catalogue Platform
 										</p>
 									)}
 									{type === "custom" && (
 										<div className="ml-0">
-											<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-section-heading">
+											<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-footer-text">
 												{data?.legal?.name}
 											</h3>
 										</div>
 									)}
 								</div>
-								<p className="text-sm leading-relaxed text-card-description">
+								<p className="text-sm leading-relaxed text-footer-text">
 									{type === "default" ? footerDetails.subheading : ""}
 								</p>
 							</div>
@@ -134,7 +134,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 						{(type === "default" || data?.email) && (
 							<div className="space-y-6">
-								<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
+								<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
 									<div
 										aria-hidden="true"
 										className="w-1 h-5 bg-primary rounded-full"
@@ -145,7 +145,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									<li>
 										<a
 											aria-label={`Send email to ${type === "default" ? footerDetails.email : data?.email || "contact"}`}
-											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
+											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
 											href={`mailto:${type === "default" ? footerDetails.email : data?.email}`}
 										>
 											<FiMail
@@ -161,7 +161,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<li>
 											<a
 												aria-label={`Call ${data?.phone}`}
-												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
+												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
 												href={`tel:${data?.phone}`}
 											>
 												<FiPhone
@@ -176,7 +176,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<li>
 											<Link
 												aria-label="Contact us"
-												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-card-description"
+												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
 												href="/contact"
 											>
 												<FiExternalLink
@@ -194,7 +194,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						<div className="space-y-6">
 							{type === "default" ? (
 								<>
-									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
+									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
 										<div
 											aria-hidden="true"
 											className="w-1 h-5 bg-primary rounded-full"
@@ -204,14 +204,14 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									<ul className="space-y-4">
 										{footerFeatures.map((feature, index) => (
 											<li
-												className="flex items-start space-x-3 group text-card-description"
+												className="flex items-start space-x-3 group text-footer-text"
 												key={`footer-feature-${index}`}
 											>
-												<div className="mt-1 group-hover:scale-110 transition-transform duration-200 text-primary">
+												<div className="mt-1 group-hover:scale-110 transition-transform duration-200 text-footer-text">
 													{feature.icon}
 												</div>
 												<div>
-													<div className="font-semibold text-sm font-heading font-weight-heading tracking-heading text-card-heading">
+													<div className="font-semibold text-sm font-heading font-weight-heading tracking-heading text-footer-text">
 														{feature.title}
 													</div>
 													<div className="text-xs opacity-75">
@@ -224,7 +224,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								</>
 							) : data?.legal?.name || data?.legal?.address ? (
 								<>
-									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
+									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
 										<div
 											aria-hidden="true"
 											className="w-1 h-5 bg-primary rounded-full"
@@ -234,16 +234,16 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									<ul className="space-y-4">
 										{data?.legal?.name && (
 											<li className="flex items-center space-x-3">
-												<MdTitle className="w-4 h-4 flex-shrink-0 text-card-description" />
-												<span className="text-sm text-card-description">
+												<MdTitle className="w-4 h-4 flex-shrink-0 text-footer-text" />
+												<span className="text-sm text-footer-text">
 													{data?.legal?.name}
 												</span>
 											</li>
 										)}
 										{data?.legal?.address && (
 											<li className="flex items-start space-x-3">
-												<FiMapPin className="w-4 h-4 mt-1 flex-shrink-0 text-card-description" />
-												<div className="text-sm text-card-description">
+												<FiMapPin className="w-4 h-4 mt-1 flex-shrink-0 text-footer-text" />
+												<div className="text-sm text-footer-text">
 													<div>{data?.legal?.address}</div>
 												</div>
 											</li>
@@ -283,7 +283,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								</>
 							) : data?.partners && data?.partners.length > 0 ? (
 								<>
-									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-section-heading">
+									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
 										<div
 											aria-hidden="true"
 											className="w-1 h-5 bg-primary rounded-full"
@@ -304,7 +304,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 				</div>
 
 				<div className="border-t py-6 border-footer-border">
-					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-card-description">
+					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-footer-text">
 						<span>
 							© {new Date().getFullYear()}{" "}
 							{type === "default"

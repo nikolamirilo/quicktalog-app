@@ -191,7 +191,7 @@
 	--header-bg: #1f1f1f;
 	--footer-bg: #1f1f1f;
 	--header-text: #ffffff;
-	--footer-text: #fafafa;
+	--footer-text: #ffffff;
 	--header-border: #404040;
 	--footer-border: #404040;
 
@@ -246,7 +246,7 @@
 	--header-bg: #1e1e35;
 	--footer-bg: #1e1e35;
 	--header-text: #ffffff;
-	--footer-text: #f3f3f3;
+	--footer-text: #ffffff;
 	--header-border: #3a3a5a;
 	--footer-border: #3a3a5a;
 
@@ -268,3 +268,260 @@
 	--letter-spacing-heading: -0.02em;
 	--letter-spacing-body: 0;
 }
+
+.theme-winter-light {
+	--background: #f7faff; /* Snow white with blue tint */
+	--foreground: #14273e; /* Navy */
+	--heading: #14273e;
+	--text: #233a57;
+	--button: #1e88e5; /* Clear sky blue */
+	--button-text: #ffffff;
+	--price: #1565c0; /* Cool blue */
+
+	--primary: #1e88e5;
+	--secondary: #e6eef5; /* Silvered gray */
+	--accent: #aee4ff; /* Frost */
+	--primary-foreground: #ffffff;
+	--secondary-foreground: #14273e;
+
+	--card-bg: #ffffff;
+	--card-text: #233a57;
+	--card-heading: #14273e;
+	--card-description: #355172;
+	--card-border: #d7e7fb;
+
+	--section-bg: #f0f6ff;
+	--section-heading: #14273e;
+	--section-border: #c6dcf5;
+	--section-icon: #1e88e5;
+	--section-hover: #e4f0ff;
+
+	/* Header/Footer */
+	--header-bg: #ffffff;
+	--footer-bg: #ffffff;
+	--header-text: #14273e;
+	--footer-text: #14273e;
+	--header-border: #d7e7fb;
+	--footer-border: #d7e7fb;
+
+	/* Modern Section Header Variables */
+	--section-header-bg: #eaf2ff;
+	--section-header-text: #14273e;
+	--section-header-border: #1e88e5;
+	--section-header-shadow: 0 4px 16px rgba(30, 136, 229, 0.12);
+	--section-header-hover-bg: #e4f0ff;
+	--section-header-hover-shadow: 0 8px 24px rgba(30, 136, 229, 0.18);
+	--section-header-accent: #aee4ff;
+	--section-header-gradient: linear-gradient(135deg, #eaf2ff 0%, #e4f0ff 100%);
+
+	/* Typography */
+	--font-family-heading: var(--font-crimson-text);
+	--font-family-body: var(--font-inter);
+	--font-weight-heading: 600;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.015em;
+	--letter-spacing-body: 0;
+
+	/* Hex-snow lattice + dots + polar glow */
+	background-image:
+		repeating-linear-gradient(
+			60deg,
+			rgba(174, 228, 255, 0.06) 0 1px,
+			transparent 1px 18px
+		),
+		repeating-linear-gradient(
+			-60deg,
+			rgba(174, 228, 255, 0.06) 0 1px,
+			transparent 1px 18px
+		), radial-gradient(rgba(20, 39, 62, 0.05) 1px, transparent 1.5px),
+		radial-gradient(rgba(30, 136, 229, 0.04) 1px, transparent 1.5px),
+		radial-gradient(
+			60% 50% at 0% 100%,
+			rgba(174, 228, 255, 0.18),
+			transparent 60%
+		), linear-gradient(180deg, #f7faff 0%, #eef6ff 100%);
+	background-position:
+		0 0,
+		0 0,
+		0 0,
+		12px 12px,
+		0 0,
+		0 0;
+	background-size:
+		28px 28px,
+		28px 28px,
+		24px 24px,
+		24px 24px,
+		auto,
+		auto;
+}
+
+.theme-advent-1 {
+	/* Core palette */
+	--background: #7a1d1d; /* Medium festive red */
+	--foreground: #fff7f1; /* Soft cream text */
+	--heading: #ffe9c6; /* Warm gold for titles */
+	--text: #fff7f1;
+	--price: #f5cf9f; /* Muted gold for highlights */
+
+	--button: #e73b3b; /* Cheerful Christmas red */
+	--button-text: #fffdf9;
+	--button-hover: #c12525;
+	--button-border: #c89156;
+
+	/* Primary tones */
+	--primary: #e73b3b;
+	--secondary: #c89156;
+	--accent: #a59a3a;
+	--primary-foreground: #fffdf9;
+	--secondary-foreground: #3a0f0f;
+
+	/* Cards */
+	--card-bg: #933030;
+	--card-text: #fff7f1;
+	--card-heading: #ffe9c6;
+	--card-description: #f2d9c3;
+	--card-border: #c89156;
+
+	/* Sections */
+	--section-bg: #8c2424;
+	--section-heading: #ffd9b3;
+	--section-border: #c89156;
+	--section-icon: #e73b3b;
+	--section-hover: #a33838;
+
+	/* Header/Footer — light break for visual contrast */
+	--header-bg: #fffaf5; /* Soft white-cream */
+	--footer-bg: #fffaf5;
+	--header-text: #7a1d1d; /* Deep red for contrast */
+	--footer-text: #7a1d1d;
+	--header-border: #e7d2bc;
+	--footer-border: #e7d2bc;
+	--footer-button-bg: #e73b3b;
+	--footer-button-text: #fffdf9;
+	--footer-button-border: #c89156;
+
+	/* Section headers */
+	--section-header-bg: #933030;
+	--section-header-text: #ffe9c6;
+	--section-header-border: #c89156;
+	--section-header-shadow: 0 4px 16px rgba(200, 145, 86, 0.15);
+	--section-header-hover-bg: #a33838;
+	--section-header-hover-shadow: 0 8px 24px rgba(228, 59, 59, 0.25);
+	--section-header-accent: #e73b3b;
+	--section-header-gradient: linear-gradient(135deg, #933030 0%, #7a1d1d 100%);
+
+	/* Typography */
+	--font-family-heading: var(--font-playfair-display);
+	--font-family-body: var(--font-inter);
+	--font-weight-heading: 700;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.02em;
+	--letter-spacing-body: 0;
+
+	background-image:
+		repeating-linear-gradient(
+			45deg,
+			rgba(255, 230, 200, 0.05) 0 2px,
+			transparent 2px 18px
+		),
+		repeating-linear-gradient(
+			-45deg,
+			rgba(255, 230, 200, 0.05) 0 2px,
+			transparent 2px 18px
+		), linear-gradient(180deg, #8c2424 0%, #6a1b1b 100%);
+	background-size:
+		18px 18px,
+		18px 18px,
+		auto;
+}
+
+.theme-advent-2 {
+	--background: #1a2d2a; /* Deep teal/dark pine green background */
+	--foreground: #f5e6d3; /* Light peach/warm beige text */
+	--heading: #8bb3a8; /* Muted grey-green headings */
+	--text: #f5e6d3; /* Light peach for body text */
+	--button: #d4a574; /* Muted coral/terracotta for buttons */
+	--button-text: #1a2d2a;
+	--price: #8bb3a8; /* Muted grey-green for pricing */
+
+	--primary: #d4a574; /* Muted coral/terracotta */
+	--secondary: #4a6b5f; /* Medium teal */
+	--accent: #8bb3a8; /* Muted grey-green accent */
+	--primary-foreground: #1a2d2a;
+	--secondary-foreground: #f5e6d3;
+
+	--card-bg: #2a3f3a; /* Slightly lighter teal for cards */
+	--card-text: #f5e6d3;
+	--card-heading: #8bb3a8;
+	--card-description: #e8d4c1;
+	--card-border: #4a6b5f; /* Medium teal border */
+
+	--section-bg: #233832; /* Medium teal for sections */
+	--section-heading: #8bb3a8;
+	--section-border: #4a6b5f;
+	--section-icon: #d4a574;
+	--section-hover: #2a3f3a;
+
+	/* Header/Footer */
+	--header-bg: #152420; /* Darker teal for header */
+	--footer-bg: #152420;
+	--header-text: #8bb3a8;
+	--footer-text: #f5e6d3;
+	--header-border: #4a6b5f;
+	--footer-border: #4a6b5f;
+	--footer-button-bg: #152420;
+	--footer-button-text: #f5e6d3;
+	--footer-button-border: #4a6b5f;
+
+	/* Modern Section Header Variables */
+	--section-header-bg: #2a3f3a;
+	--section-header-text: #8bb3a8;
+	--section-header-border: #d4a574;
+	--section-header-shadow: 0 4px 16px rgba(212, 165, 116, 0.15);
+	--section-header-hover-bg: #233832;
+	--section-header-hover-shadow: 0 8px 24px rgba(212, 165, 116, 0.25);
+	--section-header-accent: #8bb3a8;
+	--section-header-gradient: linear-gradient(135deg, #2a3f3a 0%, #1a2d2a 100%);
+
+	/* Typography */
+	--font-family-heading: var(--font-playfair-display);
+	--font-family-body: var(--font-inter);
+	--font-weight-heading: 700;
+	--font-weight-body: 400;
+	--letter-spacing-heading: -0.02em;
+	--letter-spacing-body: 0;
+
+	/* Elegant festive patterns with the new color palette */
+	background-image:
+		repeating-linear-gradient(
+			45deg,
+			rgba(139, 179, 168, 0.06) 0 12px,
+			transparent 12px 24px
+		), radial-gradient(rgba(245, 230, 211, 0.04) 0.5px, transparent 1px),
+		radial-gradient(
+			60% 70% at 100% 0%,
+			rgba(212, 165, 116, 0.08),
+			transparent 70%
+		), linear-gradient(180deg, #1a2d2a 0%, #152420 100%);
+	background-position:
+		0 0,
+		0 0,
+		0 0,
+		0 0;
+	background-size:
+		auto,
+		28px 28px,
+		auto,
+		auto;
+}
+
+/* Wood navbar and footer styling for Christmas dark theme */
+/* .theme-advent-2 .navbar,
+.theme-advent-2 header,
+.theme-advent-2 footer {
+	background-image: url('/images/wood-navbar.png');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+} */
