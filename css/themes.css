@@ -437,52 +437,59 @@
 }
 
 .theme-advent-2 {
-	--background: #1a2d2a; /* Deep teal/dark pine green background */
-	--foreground: #f5e6d3; /* Light peach/warm beige text */
-	--heading: #8bb3a8; /* Muted grey-green headings */
-	--text: #f5e6d3; /* Light peach for body text */
-	--button: #d4a574; /* Muted coral/terracotta for buttons */
-	--button-text: #1a2d2a;
-	--price: #8bb3a8; /* Muted grey-green for pricing */
+	/* Cozy Advent palette — pine greens & candlelight golds */
+	--background: #29453f; /* Softer pine green background */
+	--foreground: #f8efe6; /* Gentle warm ivory text */
+	--heading: #d9c9a3; /* Soft gold for titles */
+	--text: #f8efe6;
+	--price: #e3c58f; /* Warm gold tone for pricing */
 
-	--primary: #d4a574; /* Muted coral/terracotta */
-	--secondary: #4a6b5f; /* Medium teal */
-	--accent: #8bb3a8; /* Muted grey-green accent */
-	--primary-foreground: #1a2d2a;
-	--secondary-foreground: #f5e6d3;
+	--button: #e3b67a; /* Golden beige */
+	--button-text: #253630;
+	--button-hover: #d19a56;
+	--button-border: #cfa86a;
 
-	--card-bg: #2a3f3a; /* Slightly lighter teal for cards */
-	--card-text: #f5e6d3;
-	--card-heading: #8bb3a8;
-	--card-description: #e8d4c1;
-	--card-border: #4a6b5f; /* Medium teal border */
+	/* Primary tones */
+	--primary: #e3b67a;
+	--secondary: #557b6c;
+	--accent: #a1c1af;
+	--primary-foreground: #253630;
+	--secondary-foreground: #f8efe6;
 
-	--section-bg: #233832; /* Medium teal for sections */
-	--section-heading: #8bb3a8;
-	--section-border: #4a6b5f;
-	--section-icon: #d4a574;
-	--section-hover: #2a3f3a;
+	/* Cards */
+	--card-bg: #3b5c53;
+	--card-text: #f8efe6;
+	--card-heading: #e3c58f;
+	--card-description: #ecdfcc;
+	--card-border: #89a494;
 
-	/* Header/Footer */
-	--header-bg: #152420; /* Darker teal for header */
-	--footer-bg: #152420;
-	--header-text: #8bb3a8;
-	--footer-text: #f5e6d3;
-	--header-border: #4a6b5f;
-	--footer-border: #4a6b5f;
-	--footer-button-bg: #152420;
-	--footer-button-text: #f5e6d3;
-	--footer-button-border: #4a6b5f;
+	/* Sections */
+	--section-bg: #3b5c53;
+	--section-heading: #e3c58f;
+	--section-border: #cfa86a;
+	--section-icon: #e3b67a;
+	--section-hover: #45695f;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #2a3f3a;
-	--section-header-text: #8bb3a8;
-	--section-header-border: #d4a574;
-	--section-header-shadow: 0 4px 16px rgba(212, 165, 116, 0.15);
-	--section-header-hover-bg: #233832;
-	--section-header-hover-shadow: 0 8px 24px rgba(212, 165, 116, 0.25);
-	--section-header-accent: #8bb3a8;
-	--section-header-gradient: linear-gradient(135deg, #2a3f3a 0%, #1a2d2a 100%);
+	/* Header/Footer — warm beige for balance and contrast */
+	--header-bg: #f6efe6; /* Soft beige, warmer than white */
+	--footer-bg: #f6efe6;
+	--header-text: #2e4a42; /* Deep pine text */
+	--footer-text: #2e4a42;
+	--header-border: #e3b67a; /* Golden accent line */
+	--footer-border: #e3b67a;
+	--footer-button-bg: #e3b67a;
+	--footer-button-text: #253630;
+	--footer-button-border: #cfa86a;
+
+	/* Section headers */
+	--section-header-bg: #3b5c53;
+	--section-header-text: #e3c58f;
+	--section-header-border: #e3b67a;
+	--section-header-shadow: 0 4px 16px rgba(200, 150, 86, 0.1);
+	--section-header-hover-bg: #45695f;
+	--section-header-hover-shadow: 0 8px 24px rgba(200, 150, 86, 0.2);
+	--section-header-accent: #a1c1af;
+	--section-header-gradient: linear-gradient(135deg, #3b5c53 0%, #29453f 100%);
 
 	/* Typography */
 	--font-family-heading: var(--font-playfair-display);
@@ -492,23 +499,18 @@
 	--letter-spacing-heading: -0.02em;
 	--letter-spacing-body: 0;
 
-	/* Elegant festive patterns with the new color palette */
+	/* Subtle festive background pattern */
 	background-image:
 		repeating-linear-gradient(
 			45deg,
-			rgba(139, 179, 168, 0.06) 0 12px,
+			rgba(215, 190, 150, 0.05) 0 12px,
 			transparent 12px 24px
-		), radial-gradient(rgba(245, 230, 211, 0.04) 0.5px, transparent 1px),
+		), radial-gradient(rgba(250, 240, 225, 0.06) 0.5px, transparent 1px),
 		radial-gradient(
 			60% 70% at 100% 0%,
 			rgba(212, 165, 116, 0.08),
 			transparent 70%
-		), linear-gradient(180deg, #1a2d2a 0%, #152420 100%);
-	background-position:
-		0 0,
-		0 0,
-		0 0,
-		0 0;
+		), linear-gradient(180deg, #33564e 0%, #29453f 100%);
 	background-size:
 		auto,
 		28px 28px,
