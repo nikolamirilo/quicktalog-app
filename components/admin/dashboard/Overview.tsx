@@ -156,6 +156,7 @@ const Overview = ({
 				</h2>
 				<div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
 					<Button
+						className="w-9/12 sm:w-fit"
 						disabled={usage.catalogues >= matchedTier.features.catalogues}
 						onClick={() => {
 							router.push("/admin/create");
@@ -168,7 +169,7 @@ const Overview = ({
 						Create Catalogue
 					</Button>
 					<Button
-						className={`${planId < 1 && "animate-pulse"}`}
+						className={`${planId < 1 && "animate-pulse"} w-9/12 sm:w-fit`}
 						disabled={
 							usage.prompts >= matchedTier.features.ai_prompts ||
 							usage.catalogues >= matchedTier.features.catalogues
@@ -185,6 +186,7 @@ const Overview = ({
 						Generate with AI
 					</Button>
 					<Button
+						className="w-9/12 sm:w-fit"
 						disabled={
 							usage.ocr >= matchedTier.features.ocr_ai_import ||
 							usage.catalogues >= matchedTier.features.catalogues

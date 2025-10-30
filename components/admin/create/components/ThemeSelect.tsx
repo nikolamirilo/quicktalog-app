@@ -83,7 +83,7 @@ const ThemeSelect = ({
 
 				{/* Themes container */}
 				<div
-					className="flex flex-row gap-2 overflow-hidden px-10 py-5 transition-all duration-150 ease-in"
+					className="flex flex-row gap-2 overflow-hidden py-5 transition-all duration-150 ease-in px-10 w-full md:w-10/12 mx-auto"
 					ref={containerRef}
 					style={{ scrollBehavior: "smooth" }}
 				>
@@ -91,7 +91,7 @@ const ThemeSelect = ({
 						.sort((a, b) => a.id - b.id)
 						.map((themeItem) => (
 							<button
-								className={`flex-shrink-0 p-3 w-32 h-24 rounded-lg border-2 transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key} ${
+								className={`flex-shrink-0 p-3 w-32 h-24 md:w-40 md:h-32 rounded-lg border-2 transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key} ${
 									themeIndex === themeItem.id
 										? "border-product-primary shadow-md scale-[1.03]"
 										: "hover:shadow-sm"
