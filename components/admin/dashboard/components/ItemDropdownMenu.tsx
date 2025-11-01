@@ -44,6 +44,7 @@ const ItemDropdownMenu = ({
 	usage,
 	matchedTier,
 	planId,
+	disabled,
 }) => {
 	const [formData, setFormData] = useState({ name: "" });
 	const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
@@ -76,7 +77,10 @@ const ItemDropdownMenu = ({
 		return (
 			<div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 z-10">
 				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
+					<DropdownMenuTrigger
+						asChild
+						disabled={disabled && catalogue.status === "in preparation"}
+					>
 						<Button
 							className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 p-0 text-product-foreground hover:text-product-primary hover:bg-product-background/50 transition-colors duration-200"
 							size="sm"
@@ -93,19 +97,20 @@ const ItemDropdownMenu = ({
 						align="end"
 						className="bg-product-background border border-product-border rounded-xl shadow-lg"
 					>
-						<Link href={`/admin/items/${catalogue.name}/edit`} passHref>
-							<DropdownMenuItem
-								asChild
-								className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-							>
+						<DropdownMenuItem
+							asChild
+							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							disabled={disabled}
+						>
+							<Link href={`/admin/items/${catalogue.name}/edit`} passHref>
 								<div className="flex items-center gap-2">
 									<FiEdit size={18} /> Edit
 								</div>
-							</DropdownMenuItem>
-						</Link>
+							</Link>
+						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-							disabled={duplicatingId === catalogue.id}
+							disabled={duplicatingId === catalogue.id || disabled}
 							onClick={() =>
 								handleUpdateItemStatus(
 									catalogue.id,
@@ -122,6 +127,7 @@ const ItemDropdownMenu = ({
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							disabled={disabled}
 							onClick={(e) => {
 								e.preventDefault();
 								setIsLinkCopied(true);
@@ -142,40 +148,40 @@ const ItemDropdownMenu = ({
 								{isLinkCopied === true ? "Link Copied" : `Share`}
 							</span>
 						</DropdownMenuItem>
-
-						<DropdownMenuSub>
-							<DropdownMenuSubTrigger className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-								<span className="flex items-center gap-2">
-									<FiDownload size={18} />
-									Download
-								</span>
-							</DropdownMenuSubTrigger>
-							<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg">
-								<DropdownMenuItem
-									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-									onClick={() => handleDownloadPng(catalogue.name)}
-								>
+						{!disabled && (
+							<DropdownMenuSub>
+								<DropdownMenuSubTrigger className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
 									<span className="flex items-center gap-2">
-										<BsQrCodeScan size={18} />
-										QR Code
+										<FiDownload size={18} />
+										Download
 									</span>
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-									disabled={planId === 0}
-									onClick={() =>
-										handleDownloadHTML(
-											catalogue.name,
-											`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`,
-										)
-									}
-								>
-									<span className="flex items-center gap-2">
-										<ImEmbed2 size={18} />
-										Embed
-									</span>
-								</DropdownMenuItem>
-								{/* <DropdownMenuItem
+								</DropdownMenuSubTrigger>
+								<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg">
+									<DropdownMenuItem
+										className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+										onClick={() => handleDownloadPng(catalogue.name)}
+									>
+										<span className="flex items-center gap-2">
+											<BsQrCodeScan size={18} />
+											QR Code
+										</span>
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+										disabled={planId === 0}
+										onClick={() =>
+											handleDownloadHTML(
+												catalogue.name,
+												`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`,
+											)
+										}
+									>
+										<span className="flex items-center gap-2">
+											<ImEmbed2 size={18} />
+											Embed
+										</span>
+									</DropdownMenuItem>
+									{/* <DropdownMenuItem
 									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 									disabled={planId < 2}
 									onClick={() =>
@@ -190,9 +196,9 @@ const ItemDropdownMenu = ({
 										PDF
 									</span>
 								</DropdownMenuItem> */}
-							</DropdownMenuSubContent>
-						</DropdownMenuSub>
-
+								</DropdownMenuSubContent>
+							</DropdownMenuSub>
+						)}
 						<div
 							className="p-2 sm:p-3 bg-white rounded-xl shadow-sm border border-product-border hidden"
 							id="qr-code"
@@ -205,11 +211,10 @@ const ItemDropdownMenu = ({
 								value={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`}
 							/>
 						</div>
-
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 							disabled={
-								usage.catalogues >= matchedTier.features.catalogues
+								usage.catalogues >= matchedTier.features.catalogues || disabled
 									? true
 									: false || duplicatingId === catalogue.id
 							}
@@ -222,7 +227,6 @@ const ItemDropdownMenu = ({
 								{duplicatingId === catalogue.id ? "Loading..." : "Duplicate"}
 							</span>
 						</DropdownMenuItem>
-
 						<DropdownMenuItem
 							className="text-red-400 hover:bg-red-50 cursor-pointer"
 							disabled={isModalOpen}

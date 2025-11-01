@@ -177,41 +177,20 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 				</div>
 
 				<DialogFooter className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 md:pt-5 border-t border-product-border">
-					{type === "edit" ? (
-						<>
-							<Button
-								className="flex-1 text-xs bg-product-background sm:text-sm"
-								onClick={() => (window.location.href = "/admin/dashboard")}
-								variant="outline"
-							>
-								<FiHome className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-								Return to Dashboard
-							</Button>
-							<Button
-								className="flex-1 text-xs sm:text-sm"
-								onClick={() => window.open(fullURL, "_blank")}
-							>
-								<IoMdOpen className="w-3 h-3 sm:w-4 sm:h-4" /> View Catalogue
-							</Button>
-						</>
-					) : (
-						<>
-							<Button
-								className="flex-1 text-xs bg-product-background sm:text-sm"
-								onClick={() => (window.location.href = "/admin/dashboard")}
-								variant="outline"
-							>
-								<FiHome className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-								Return to Dashboard
-							</Button>
-							<Button
-								className="flex-1 text-xs sm:text-sm"
-								onClick={() => window.open(fullURL, "_blank")}
-							>
-								<IoMdOpen className="w-3 h-3 sm:w-4 sm:h-4" /> View Catalogue
-							</Button>
-						</>
-					)}
+					<Button
+						className="flex-1 w-full md:w-fit text-xs bg-product-background sm:text-sm"
+						onClick={() => (window.location.href = "/admin/dashboard")}
+						variant="outline"
+					>
+						<FiHome className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+						Return to Dashboard
+					</Button>
+					<Button
+						className="flex-1 w-full md:w-fit text-xs sm:text-sm"
+						onClick={() => window.open(fullURL, "_blank")}
+					>
+						<IoMdOpen className="w-3 h-3 sm:w-4 sm:h-4" /> View Catalogue
+					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

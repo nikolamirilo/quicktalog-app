@@ -83,7 +83,7 @@ const ThemeSelect = ({
 
 				{/* Themes container */}
 				<div
-					className="flex flex-row gap-2 overflow-hidden py-5 transition-all duration-150 ease-in px-10 w-full md:w-10/12 mx-auto"
+					className="flex flex-row gap-2 overflow-hidden py-5 transition-all duration-150 ease-in px-10 w-full md:w-11/12 mx-auto"
 					ref={containerRef}
 					style={{ scrollBehavior: "smooth" }}
 				>

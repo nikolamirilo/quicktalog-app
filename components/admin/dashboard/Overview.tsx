@@ -46,6 +46,7 @@ const Overview = ({
 	const matchedTier = tiers.find((tier) => tier.id == planId);
 	const maxAllowedCatalogues = matchedTier?.features.catalogues || 0;
 	const hasExcessCatalogues = catalogues.length > maxAllowedCatalogues;
+
 	async function handleDeleteItem(id: string) {
 		setItemToDelete(id);
 		setIsModalOpen(true);
@@ -84,6 +85,8 @@ const Overview = ({
 		active: "text-white bg-[#00875A]",
 		inactive: "text-white bg-product-secondary",
 		draft: "text-white bg-product-primary",
+		"in preparation": "text-white bg-blue-600",
+		error: "text-white bg-red-600",
 	};
 
 	async function handleDuplicateCatalogue(id: string, name: string) {
@@ -215,7 +218,40 @@ const Overview = ({
 						</div>
 					)}
 					{catalogues
-						?.filter((item: Catalogue) => item.status !== "in preparation")
+						?.filter(
+							(item: Catalogue) =>
+								item.status === "in preparation" || item.status === "error",
+						)
+						.sort((a, b) => {
+							const statusDiff = statusOrder[a.status] - statusOrder[b.status];
+							if (statusDiff !== 0) return statusDiff;
+							return (
+								new Date(b.updated_at).getTime() -
+								new Date(a.updated_at).getTime()
+							);
+						})
+						.map((catalogue: Catalogue, index: number) => (
+							<DashboardItem
+								catalogue={catalogue}
+								duplicatingId={duplicatingId}
+								handleDeleteItem={handleDeleteItem}
+								handleDuplicateCatalogue={handleDuplicateCatalogue}
+								handleUpdateItemStatus={handleUpdateItemStatus}
+								isLinkCopied={isLinkCopied}
+								isModalOpen={isModalOpen}
+								key={`dashboard-item-${index}`}
+								matchedTier={matchedTier}
+								setIsLinkCopied={setIsLinkCopied}
+								sourceConfig={sourceConfig}
+								statusColors={statusColors}
+								usage={usage}
+							/>
+						))}
+					{catalogues
+						?.filter(
+							(item: Catalogue) =>
+								item.status !== "in preparation" && item.status !== "error",
+						)
 						.sort((a, b) => {
 							const statusDiff = statusOrder[a.status] - statusOrder[b.status];
 							if (statusDiff !== 0) return statusDiff;

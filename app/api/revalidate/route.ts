@@ -1,4 +1,4 @@
-import { revalidateData } from "@/helpers/server";
+import { revalidateData, revalidatePageData } from "@/helpers/server";
 
 export const dynamic = "force-dynamic";
 

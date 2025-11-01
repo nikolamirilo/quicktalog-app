@@ -1,5 +1,5 @@
-import Loader from "@/components/navigation/Loader";
 import React from "react";
+import Loader from "@/components/navigation/Loader";
 
 const loading = () => {
 	return <Loader />;
