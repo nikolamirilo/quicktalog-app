@@ -153,7 +153,6 @@ export default function AIBuilder({
 							errors={errors}
 							prompt={prompt}
 							setPrompt={setPrompt}
-							touched={touched}
 						/>
 
 						<div className="flex items-center gap-2">

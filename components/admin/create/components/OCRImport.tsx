@@ -182,8 +182,7 @@ const OCRImport = ({
 
 	return (
 		<div className="flex flex-col items-center text-product-foreground h-fit">
-			{/* Image Upload Controls */}
-			<div className="flex flex-col sm:flex-row gap-4 mb-6 sm:mb-8 items-center w-full max-w-lg">
+			<div className="flex flex-col sm:flex-row gap-4 items-center w-full max-w-lg">
 				<label
 					className="w-full sm:w-auto px-4 py-2 rounded-lg bg-product-primary text-product-secondary font-semibold text-center cursor-pointer
                           transition-all duration-300 ease-in-out flex flex-row items-center justify-center gap-2"
@@ -215,7 +214,13 @@ const OCRImport = ({
 					/>
 				</label>
 			</div>
-
+			<div className="w-full text-base my-4 sm:my-6">
+				<span className="text-product-primary font-bold">Hint: </span>
+				<span className="text-product-foreground-accent">
+					For best results, use high-resolution images in JPEG or PNG format,
+					ensuring the menu or file is clearly visible and unobstructed.
+				</span>
+			</div>
 			{/* Images Grid */}
 			{images.length > 0 && (
 				<div className="w-full max-w-6xl mb-8">
