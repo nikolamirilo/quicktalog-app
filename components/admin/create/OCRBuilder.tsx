@@ -113,15 +113,15 @@ export default function OCRBuilder({
 					userId: user.id,
 				}),
 			});
-
-			setShowInfoModal(true);
-			await revalidateData();
+			setTimeout(() => {
+				setShowInfoModal(true);
+				setIsSubmitting(false);
+			}, 5000);
 		} catch (error) {
 			console.error("Error submitting OCR data:", error);
 			alert("An error occurred while submitting. Please try again.");
 		} finally {
-			setIsSubmitting(false);
-			setShouldGenerateImages(false);
+			await revalidateData();
 		}
 	};
 

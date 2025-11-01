@@ -17,7 +17,7 @@ const PromptInput = ({ prompt, touched, errors, setPrompt }) => {
 				rows={6}
 				value={prompt}
 			/>
-			{touched.prompt && errors.prompt && (
+			{errors.prompt && (
 				<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
 					{errors.prompt}
 				</div>

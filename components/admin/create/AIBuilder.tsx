@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoTimerOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
-import { sendNewCatalogueEmail } from "@/actions/email";
+import { revalidate } from "@/app/catalogues/[name]/page";
 import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
-import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -73,7 +72,8 @@ export default function AIBuilder({
 
 	console.log(userData);
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (e: React.MouseEvent) => {
+		e.preventDefault();
 		if (!validate()) return;
 
 		if (!user || !user.id) {
@@ -104,9 +104,14 @@ export default function AIBuilder({
 					userId: user.id,
 				}),
 			});
-			setShowInfoModal(true);
+			setTimeout(() => {
+				setShowInfoModal(true);
+				setIsSubmitting(false);
+			}, 5000);
 		} catch (error) {
 			console.error("Submission error:", error);
+		} finally {
+			await revalidateData();
 		}
 	};
 
