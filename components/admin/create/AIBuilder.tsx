@@ -192,7 +192,7 @@ export default function AIBuilder({
 					confirmText="Go to Dashboard"
 					icon={<IoTimerOutline color="#ffc107" size={30} />}
 					isOpen={showInfoModal}
-					message="Your catalogue AI generation has started and will complete in about 5 minutes. You can return to the dashboard shortly to find your catalogue ready."
+					message="Your catalogue AI generation is in progress and will finish in about 5 minutes. Head back to the dashboard to monitor the status."
 					onConfirm={() => {
 						router.push("/admin/dashboard");
 					}}
