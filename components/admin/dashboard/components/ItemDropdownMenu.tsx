@@ -66,6 +66,7 @@ const ItemDropdownMenu = ({
 	const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+	const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 	const { handleNameChange } = useCatalogueName({
 		initialName: "name",
 		type: "create",
@@ -93,10 +94,7 @@ const ItemDropdownMenu = ({
 		return (
 			<div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 z-10">
 				<DropdownMenu>
-					<DropdownMenuTrigger
-						asChild
-						disabled={disabled && catalogue.status === "in preparation"}
-					>
+					<DropdownMenuTrigger asChild>
 						<Button
 							className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 p-0 text-product-foreground hover:text-product-primary hover:bg-product-background/50 transition-colors duration-200"
 							size="sm"
@@ -250,7 +248,11 @@ const ItemDropdownMenu = ({
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-red-400 hover:bg-red-50 cursor-pointer"
-							disabled={isModalOpen}
+							disabled={
+								isModalOpen ||
+								(catalogue.status === "in preparation" &&
+									catalogue.created_at > tenMinutesAgo.toISOString())
+							}
 							onClick={() => handleDeleteItem(catalogue.id)}
 						>
 							<span className="flex items-center gap-2">
