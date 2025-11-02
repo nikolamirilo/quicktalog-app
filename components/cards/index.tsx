@@ -35,17 +35,13 @@ const CardsSwitcher = ({
 	}
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const price =
-		record.price === 0
-			? "Free"
-			: record.price
-				? record.price.toLocaleString()
-				: "Free";
+	const price = record.price == 0 ? "Free" : record.price.toLocaleString();
 	const formatedCurrency = price != "Free" ? currency : "";
+	console.log(price);
 
 	const validatedRecord = {
 		...record,
-		price: Number(price),
+		price: price,
 		image:
 			record.image ||
 			"https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbLZJd0wWMZP0cAtUu7EI5sD2VGw41vjTYyfKL",
