@@ -169,7 +169,7 @@ export default function AIBuilder({
 
 						<Button
 							className="h-12 font-medium rounded-lg"
-							disabled={isSubmitting}
+							disabled={isSubmitting || validate()}
 							onClick={handleSubmit}
 							variant="cta"
 						>

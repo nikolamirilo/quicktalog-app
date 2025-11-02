@@ -1,19 +1,15 @@
 "use client";
 import {
-	Camera,
 	CameraIcon,
 	CheckCircle2,
 	Image as ImageIcon,
-	Upload,
 	UploadCloud,
 	X,
 	XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { BiScan } from "react-icons/bi";
-import { MdUploadFile } from "react-icons/md";
 import { createWorker, OEM } from "tesseract.js";
-import { logOcrUsage } from "@/actions/usage";
 import { Button } from "@/components/ui/button";
 import { OCRImageData } from "@/types";
 import { Step1GeneralProps } from "@/types/components";
@@ -123,16 +119,25 @@ const OCRImport = ({
 		}
 	};
 
-	const extractTextFromAllImages = async (): Promise<string> => {
-		if (images.length === 0) return "";
+	const extractTextFromAllImages = async (): Promise<{
+		text: string;
+		success: boolean;
+	}> => {
+		if (images.length === 0) return { text: "", success: false };
 
 		setIsProcessing(true);
 		setExtractedText("");
 		const extractedTexts: string[] = [];
+		const lowQualityImages: number[] = [];
 
 		for (let i = 0; i < images.length; i++) {
 			const imageData = images[i];
 			const text = await processImage(imageData, i);
+
+			if (imageData.confidence !== undefined && imageData.confidence < 60) {
+				lowQualityImages.push(i + 1);
+				continue;
+			}
 
 			if (text && text.trim()) {
 				extractedTexts.push(`--- Image ${i + 1} ---\n${text.trim()}`);
@@ -146,9 +151,17 @@ const OCRImport = ({
 
 		const combinedText = extractedTexts.join("\n\n");
 		setExtractedText(combinedText);
-		await logOcrUsage();
+		let success = true;
 
-		return combinedText;
+		if (lowQualityImages.length > 0) {
+			const imageList = lowQualityImages.join(", ");
+			success = false;
+			alert(
+				`⚠️ Image(s) ${imageList} ${lowQualityImages.length === 1 ? "has" : "have"} poor quality (confidence < 60%) and ${lowQualityImages.length === 1 ? "was" : "were"} excluded. Please upload better quality image(s) for accurate text extraction.`,
+			);
+		}
+
+		return { text: combinedText, success: success };
 	};
 
 	const handleStartImport = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -162,14 +175,22 @@ const OCRImport = ({
 		}
 
 		try {
-			const text = await extractTextFromAllImages();
+			const { text, success } = await extractTextFromAllImages();
 
 			if (!text || !text.trim()) {
 				alert("No text was extracted from images. Please try again.");
 				return;
 			}
 
-			await onExtractComplete(text);
+			if (success === false) {
+				alert(
+					"Confidence level must be above 60%. Please remove low quality images and upload higher quality images to get best results.",
+				);
+				return;
+			}
+			if (success === true) {
+				await onExtractComplete(text);
+			}
 		} catch (error) {
 			console.error("Error during extraction:", error);
 			alert("An error occurred during processing.");
@@ -217,8 +238,9 @@ const OCRImport = ({
 			<div className="w-full text-base my-4 sm:my-6">
 				<span className="text-product-primary font-bold">Hint: </span>
 				<span className="text-product-foreground-accent">
-					For best results, use high-resolution images in JPEG or PNG format,
-					ensuring the menu or file is clearly visible and unobstructed.
+					For <b>best results</b>, use <b>high-resolution</b> images in{" "}
+					<b>JPEG</b> or <b>PNG</b> format, ensuring the menu or file is{" "}
+					<b>clearly visible</b> and <b>unobstructed</b>.
 				</span>
 			</div>
 			{/* Images Grid */}

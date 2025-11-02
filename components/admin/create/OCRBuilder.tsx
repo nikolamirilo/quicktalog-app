@@ -158,7 +158,7 @@ export default function OCRBuilder({
 							touched={touched}
 						/>
 
-						<div className="flex items-center gap-2">
+						{/* <div className="flex items-center gap-2">
 							<Label className="text-sm text-product-foreground font-medium">
 								Generate Images?
 							</Label>
@@ -169,7 +169,7 @@ export default function OCRBuilder({
 									setShouldGenerateImages(!shouldGenerateImages)
 								}
 							/>
-						</div>
+						</div> */}
 
 						<OCRImport
 							checkValidity={checkValidity}
