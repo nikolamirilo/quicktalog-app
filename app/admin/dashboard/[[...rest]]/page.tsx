@@ -1,3 +1,4 @@
+import { UserData } from "@quicktalog/common";
 import Link from "next/link";
 import { getUserData } from "@/actions/users";
 import Dashboard from "@/components/admin/dashboard/Dashboard";
@@ -5,7 +6,7 @@ import FloatingActionMenu from "@/components/admin/dashboard/FloatingActionMenu"
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { Button } from "@/components/ui/button";
-import type { AreLimitesReached, UserData } from "@/types";
+import type { AreLimitesReached } from "@/types";
 
 export const dynamic = "force-dynamic";
 

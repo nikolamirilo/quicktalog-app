@@ -1,7 +1,7 @@
-import { Catalogue, CatalogueFormData } from "@quicktalog/common";
+import { Catalogue, CatalogueFormData, PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ContactItem, FooterData, HeaderData, PricingPlan } from "@/types";
+import { ContactItem, FooterData, HeaderData } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));

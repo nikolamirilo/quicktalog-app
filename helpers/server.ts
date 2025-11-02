@@ -37,8 +37,6 @@ export async function revalidateAllCatalogues() {
 		// Revalidate the catalogues listing page
 		revalidatePath("/catalogues", "page");
 		revalidateTag("catalogues-list");
-
-		// If you have a dashboard that lists catalogues
 		revalidatePath("/dashboard", "page");
 
 		console.log("Successfully revalidated catalogue listings");

@@ -1,6 +1,6 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { generateUniqueSlug } from "@quicktalog/common";
+import { generateUniqueSlug, UserData } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoTimerOutline } from "react-icons/io5";
@@ -10,7 +10,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { revalidateData } from "@/helpers/server";
-import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";
 import { LanguageSelector } from "./components/LanguageSelector";
 import OCRImport from "./components/OCRImport";

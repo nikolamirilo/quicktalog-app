@@ -1,8 +1,8 @@
-import { CatalogueFormData } from "@quicktalog/common";
+import { CatalogueFormData, UserData } from "@quicktalog/common";
 import { getUserData } from "@/actions/users";
 import Builder from "@/components/admin/create/Builder";
 import Navbar from "@/components/navigation/Navbar";
-import { ContactInfo, UserData } from "@/types";
+import { ContactInfo } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function EditServicesPage({

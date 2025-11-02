@@ -1,9 +1,9 @@
+import { UserData } from "@quicktalog/common";
 import { getUserData } from "@/actions/users";
 import AIBuilder from "@/components/admin/create/AIBuilder";
 import LimitsModal from "@/components/modals/LimitsModal";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
-import { UserData } from "@/types";
 
 export const dynamic = "force-dynamic";
 export default async function page() {

@@ -1,7 +1,6 @@
 "use server";
-import { generateUniqueSlug } from "@quicktalog/common";
+import { generateUniqueSlug, Status } from "@quicktalog/common";
 import { revalidateData } from "@/helpers/server";
-import { Status } from "@/types/enums";
 import { createClient } from "@/utils/supabase/server";
 
 export async function deleteItem(id: string): Promise<boolean> {

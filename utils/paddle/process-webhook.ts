@@ -10,7 +10,7 @@ import {
 	SubscriptionTrialingEvent,
 	SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
-import { tiers } from "@/constants/pricing";
+import { tiers } from "@quicktalog/common";
 import { createClient } from "@/utils/supabase/server";
 
 export class ProcessWebhook {

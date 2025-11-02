@@ -1,5 +1,6 @@
 "use client";
 import type { Paddle } from "@paddle/paddle-js";
+import { PricingPlan, tiers, User } from "@quicktalog/common";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -7,9 +8,7 @@ import { BsFillCheckCircleFill } from "react-icons/bs";
 import { FiInfo } from "react-icons/fi";
 import InformModal from "@/components/modals/InformModal";
 import { Button } from "@/components/ui/button";
-import { tiers } from "@/constants/pricing";
 import { formatPrice } from "@/helpers/client";
-import type { PricingPlan, User } from "@/types";
 
 interface PricingColumnProps {
 	tier: PricingPlan;

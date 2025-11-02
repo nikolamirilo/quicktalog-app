@@ -1,5 +1,5 @@
 "use client";
-import { Catalogue } from "@quicktalog/common";
+import { Catalogue, Status, tiers } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiScan } from "react-icons/bi";
@@ -17,10 +17,8 @@ import {
 import CTASection from "@/components/common/CTASection";
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
 import { Button } from "@/components/ui/button";
-import { tiers } from "@/constants/pricing";
 import { statusOrder } from "@/constants/sort";
 import { OverviewProps } from "@/types/components";
-import { Status } from "@/types/enums";
 import InformModal from "../../modals/InformModal";
 import DashboardItem from "./components/DashboardItem";
 import OverallAnalytics from "./components/OverallAnalytics";
@@ -217,41 +215,8 @@ const Overview = ({
 							No catalogues created yet.
 						</div>
 					)}
+
 					{catalogues
-						?.filter(
-							(item: Catalogue) =>
-								item.status === "in preparation" || item.status === "error",
-						)
-						.sort((a, b) => {
-							const statusDiff = statusOrder[a.status] - statusOrder[b.status];
-							if (statusDiff !== 0) return statusDiff;
-							return (
-								new Date(b.updated_at).getTime() -
-								new Date(a.updated_at).getTime()
-							);
-						})
-						.map((catalogue: Catalogue, index: number) => (
-							<DashboardItem
-								catalogue={catalogue}
-								duplicatingId={duplicatingId}
-								handleDeleteItem={handleDeleteItem}
-								handleDuplicateCatalogue={handleDuplicateCatalogue}
-								handleUpdateItemStatus={handleUpdateItemStatus}
-								isLinkCopied={isLinkCopied}
-								isModalOpen={isModalOpen}
-								key={`dashboard-item-${index}`}
-								matchedTier={matchedTier}
-								setIsLinkCopied={setIsLinkCopied}
-								sourceConfig={sourceConfig}
-								statusColors={statusColors}
-								usage={usage}
-							/>
-						))}
-					{catalogues
-						?.filter(
-							(item: Catalogue) =>
-								item.status !== "in preparation" && item.status !== "error",
-						)
 						.sort((a, b) => {
 							const statusDiff = statusOrder[a.status] - statusOrder[b.status];
 							if (statusDiff !== 0) return statusDiff;

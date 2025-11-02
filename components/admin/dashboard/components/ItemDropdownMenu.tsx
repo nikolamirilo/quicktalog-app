@@ -1,4 +1,5 @@
 "use client";
+import { Catalogue, PricingPlan, Usage } from "@quicktalog/common";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
@@ -32,6 +33,21 @@ import {
 } from "@/helpers/client";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
 
+type ItemDropdownMenuProps = {
+	catalogue: Catalogue;
+	duplicatingId: string;
+	handleUpdateItemStatus: any;
+	setIsLinkCopied: any;
+	isLinkCopied: any;
+	isModalOpen: boolean;
+	handleDuplicateCatalogue: any;
+	handleDeleteItem: any;
+	usage: Usage;
+	matchedTier: PricingPlan;
+	planId: number;
+	disabled: boolean;
+};
+
 const ItemDropdownMenu = ({
 	catalogue,
 	duplicatingId,
@@ -45,7 +61,7 @@ const ItemDropdownMenu = ({
 	matchedTier,
 	planId,
 	disabled,
-}) => {
+}: ItemDropdownMenuProps) => {
 	const [formData, setFormData] = useState({ name: "" });
 	const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -110,7 +126,12 @@ const ItemDropdownMenu = ({
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-							disabled={duplicatingId === catalogue.id || disabled}
+							disabled={
+								duplicatingId === catalogue.id ||
+								disabled ||
+								usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit
+							}
 							onClick={() =>
 								handleUpdateItemStatus(
 									catalogue.id,

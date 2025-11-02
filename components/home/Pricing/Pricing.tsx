@@ -5,12 +5,12 @@ import {
 	initializePaddle,
 	type Paddle,
 } from "@paddle/paddle-js";
+import type { User } from "@quicktalog/common";
+import { tiers } from "@quicktalog/common";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { getUserData } from "@/actions/users";
-import { tiers } from "@/constants/pricing";
 import { usePaddlePrices } from "@/hooks/usePaddelPrices";
-import type { User } from "@/types";
 import MiniCTA from "../MiniCTA";
 import PricingColumn from "./PricingColumn";
 

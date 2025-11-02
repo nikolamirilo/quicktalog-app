@@ -1,6 +1,5 @@
-import { Catalogue, Legal, layouts, Partner, themes } from "@quicktalog/common";
+import { Legal, layouts, Partner, themes } from "@quicktalog/common";
 import { ILinkItem, ISocials } from "./components";
-import { Status } from "./enums";
 
 export type Record = {
 	name: string;
@@ -71,18 +70,6 @@ export type ContactInfo = {
 	value: string;
 };
 
-export type Usage = {
-	traffic: { pageview_count: number; unique_visitors: number };
-	ocr: number;
-	prompts: number;
-	catalogues: number;
-};
-
-export type UserData = User & {
-	usage: Usage;
-	currentPlan: PricingPlan;
-	nextPlan: PricingPlan;
-};
 export interface LanguageOption {
 	code: string;
 	name: string;
@@ -101,31 +88,6 @@ export interface OcrState {
 	serviceCatalogueUrl: string;
 	showSuccessModal: boolean;
 }
-
-export type PricingPlan = {
-	id: number;
-	name: string;
-	type: string;
-	priceId: {
-		month: string;
-		year: string;
-	};
-	description: string;
-	features: {
-		support: string;
-		catalogues: number;
-		newsletter: boolean;
-		custom_features: boolean;
-		ocr_ai_import: number;
-		traffic_limit: number;
-		branding: boolean;
-		analytics: string;
-		ai_prompts: number;
-		categories_per_catalogue?: number | "unlimited";
-		items_per_catalogue?: number | "unlimited";
-	};
-	billing_period?: "month" | "year";
-};
 
 export type ContactData = {
 	message: string;

@@ -1,5 +1,6 @@
 "use client";
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
+import { PricingPlan } from "@quicktalog/common";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -7,7 +8,6 @@ import { BsFillCheckCircleFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/helpers/client";
 import { usePaddlePrices } from "@/hooks/usePaddelPrices";
-import { PricingPlan } from "@/types";
 
 interface UpgradePlanModalProps {
 	isOpen: boolean;

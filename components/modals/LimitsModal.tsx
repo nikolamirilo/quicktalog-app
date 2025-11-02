@@ -1,3 +1,4 @@
+import { PricingPlan, tiers } from "@quicktalog/common";
 import {
 	ArrowRight,
 	FolderTree,
@@ -17,8 +18,6 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { tiers } from "@/constants/pricing";
-import { PricingPlan } from "@/types";
 import { LimitType } from "@/types/enums";
 import { Button } from "../ui/button";
 

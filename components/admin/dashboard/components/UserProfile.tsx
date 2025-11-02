@@ -1,4 +1,4 @@
-import { User } from "@/types";
+import { User } from "@quicktalog/common";
 
 const UserProfile = ({ user }: { user: User }) => {
 	return (
@@ -8,11 +8,11 @@ const UserProfile = ({ user }: { user: User }) => {
 			<div className="flex flex-col items-center md:flex-row md:items-center w-full gap-4 sm:gap-6 md:gap-8 z-10">
 				<div className="relative flex-shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32">
 					<img
-						src={user.image}
 						alt="Profile"
-						width={128}
-						height={128}
 						className="rounded-full ring-4 ring-product-primary/30 shadow-lg w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 object-cover"
+						height={128}
+						src={user.image}
+						width={128}
 					/>
 					<div className="absolute -bottom-1 -right-1 sm:-bottom-1 sm:-right-0 w-4 h-4 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-green-500 rounded-full border-2 border-product-background"></div>
 				</div>

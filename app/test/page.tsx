@@ -1,8 +1,8 @@
 "use client";
+import { tiers } from "@quicktalog/common";
 import { useState } from "react";
 import UpgradePlanModal from "@/components/modals/UpgradePlanModal";
 import { Button } from "@/components/ui/button";
-import { tiers } from "@/constants/pricing";
 
 const TestPage = () => {
 	const [showUpgradeModal, setShowUpgradeModal] = useState(false);

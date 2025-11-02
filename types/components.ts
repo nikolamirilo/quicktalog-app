@@ -3,10 +3,14 @@ import {
 	CatalogueCategory,
 	CatalogueFormData,
 	CategoryItem,
+	PricingPlan,
+	Usage,
+	User,
+	UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
-import { OverallAnalytics, PricingPlan, Usage, User } from "@/types";
-import { ContactInfo, FooterData, UserData } from ".";
+import { OverallAnalytics } from "@/types";
+import { ContactInfo, FooterData } from ".";
 
 export type ITestimonial = {
 	name: string;
