@@ -1,12 +1,6 @@
 import { Legal, layouts, Partner, themes } from "@quicktalog/common";
 import { ILinkItem, ISocials } from "./components";
 
-export type Record = {
-	name: string;
-	description: string;
-	price: number | string;
-	image: string;
-};
 export type CookiePreferences = {
 	accepted: boolean;
 	essential: boolean;

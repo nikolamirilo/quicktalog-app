@@ -1,6 +1,6 @@
 "use client";
+import { CategoryItem } from "@quicktalog/common";
 import { memo, useMemo } from "react";
-import { Record } from "@/types";
 
 const CardType3 = memo(
 	({
@@ -8,7 +8,7 @@ const CardType3 = memo(
 		currency,
 		onClick,
 	}: {
-		record: Record;
+		record: CategoryItem;
 		currency: string;
 		onClick: () => void;
 	}) => {

@@ -1,6 +1,6 @@
 "use client";
+import { CategoryItem } from "@quicktalog/common";
 import { useState } from "react";
-import { Record } from "@/types";
 import ItemDetailModal from "../modals/ItemDetailModal";
 import CardType1 from "./CardType1";
 import CardType2 from "./CardType2";
@@ -15,7 +15,7 @@ const CardsSwitcher = ({
 	theme,
 }: {
 	variant: string;
-	record: Record;
+	record: CategoryItem;
 	currency: string;
 	i: number;
 	theme?: string;
@@ -35,9 +35,14 @@ const CardsSwitcher = ({
 	}
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const price = record.price == 0 ? "Free" : record.price.toLocaleString();
+	const price =
+		record.price == "0"
+			? "Free"
+			: Number(record.price).toLocaleString(undefined, {
+					minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
+					maximumFractionDigits: 2,
+				});
 	const formatedCurrency = price != "Free" ? currency : "";
-	console.log(price);
 
 	const validatedRecord = {
 		...record,

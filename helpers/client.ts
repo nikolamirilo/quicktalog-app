@@ -331,7 +331,7 @@ export const validateStepHelper = (
 					break;
 				}
 
-				if (typeof item.price !== "number" || item.price < 0) {
+				if (Number(item.price) < 0) {
 					step3Error = `Price for item "${item.name}" in category "${category.name}" must be 0 or greater.`;
 					break;
 				}
@@ -344,15 +344,6 @@ export const validateStepHelper = (
 
 			if (step3Error) break;
 		}
-		// const totalItems = formData.services.reduce((sum, category) => {
-		//   return sum + category.items.length
-		// }, 0)
-		// if (
-		//   typeof tier.features.items_per_catalogue == "number" &&
-		//   totalItems > tier.features.items_per_catalogue
-		// ) {
-		//   step3Error = `You can add up to ${tier.features.items_per_catalogue} items on your current plan.`
-		// }
 	}
 
 	const isValid =

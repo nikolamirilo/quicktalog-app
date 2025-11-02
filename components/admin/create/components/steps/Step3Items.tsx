@@ -198,7 +198,6 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 																className="border-product-border focus:border-product-primary focus:ring-product-primary/20"
 																id={`item-price-${categoryIndex}-${itemIndex}`}
 																onBlur={(e) => {
-																	// If left empty, reset to 0
 																	if (e.target.value === "") {
 																		handleItemChange(
 																			categoryIndex,
@@ -209,26 +208,26 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 																	}
 																}}
 																onChange={(e) => {
-																	const value =
-																		e.target.value === ""
-																			? 0
-																			: parseFloat(e.target.value);
-																	handleItemChange(
-																		categoryIndex,
-																		itemIndex,
-																		"price",
-																		value,
-																	);
+																	const value = e.target.value;
+																	if (
+																		value === "" ||
+																		/^\d*\.?\d{0,2}$/.test(value)
+																	) {
+																		handleItemChange(
+																			categoryIndex,
+																			itemIndex,
+																			"price",
+																			value === "" ? "" : value,
+																		);
+																	}
 																}}
 																onFocus={(e) => {
-																	// If it's 0 and user focuses, clear it so typing starts clean
-																	if (item.price === 0) {
+																	if (item.price == "0") {
 																		e.target.value = "";
 																	}
 																}}
 																required
-																step="0.01"
-																type="number"
+																type="text"
 																value={item.price}
 															/>
 														</div>
