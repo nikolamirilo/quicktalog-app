@@ -131,8 +131,9 @@ const ItemDropdownMenu = ({
 							disabled={
 								duplicatingId === catalogue.id ||
 								disabled ||
-								usage.traffic.pageview_count >=
-									matchedTier.features.traffic_limit
+								(usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit &&
+									catalogue.status === "inactive")
 							}
 							onClick={() =>
 								handleUpdateItemStatus(

@@ -158,7 +158,10 @@ const Overview = ({
 				<div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
 					<Button
 						className="w-9/12 sm:w-fit"
-						disabled={usage.catalogues >= matchedTier.features.catalogues}
+						disabled={
+							usage.catalogues >= matchedTier.features.catalogues ||
+							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+						}
 						onClick={() => {
 							router.push("/admin/create");
 						}}
@@ -173,7 +176,8 @@ const Overview = ({
 						className={`${planId < 1 && "animate-pulse"} w-9/12 sm:w-fit`}
 						disabled={
 							usage.prompts >= matchedTier.features.ai_prompts ||
-							usage.catalogues >= matchedTier.features.catalogues
+							usage.catalogues >= matchedTier.features.catalogues ||
+							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
 						}
 						onClick={() => {
 							router.push("/admin/create/ai");
@@ -190,7 +194,8 @@ const Overview = ({
 						className="w-9/12 sm:w-fit"
 						disabled={
 							usage.ocr >= matchedTier.features.ocr_ai_import ||
-							usage.catalogues >= matchedTier.features.catalogues
+							usage.catalogues >= matchedTier.features.catalogues ||
+							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
 						}
 						onClick={() => {
 							router.push("/admin/create/ocr");
@@ -207,6 +212,14 @@ const Overview = ({
 						href="/pricing"
 						subtitle=" Upgrade your plan to get more catalogues, features, and higher limits."
 						title="You've reached your current catalogue limit"
+					/>
+				)}
+				{usage.traffic.pageview_count >= matchedTier.features.traffic_limit && (
+					<CTASection
+						ctaLabel="Upgrade plan"
+						href="/pricing"
+						subtitle="Upgrade your plan to increase your traffic limit and unlock more features."
+						title="You've reached your traffic limit"
 					/>
 				)}
 				<div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
