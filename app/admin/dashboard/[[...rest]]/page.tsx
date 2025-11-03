@@ -29,13 +29,17 @@ export default async function page() {
 
 	const { currentPlan, usage, ...user } = userData;
 	const areLimitesReached: AreLimitesReached = {
-		catalogues: usage.catalogues >= currentPlan.features.catalogues,
+		catalogues:
+			usage.catalogues >= currentPlan.features.catalogues ||
+			usage.traffic.pageview_count >= currentPlan.features.traffic_limit,
 		ocr:
 			usage.ocr >= currentPlan.features.ocr_ai_import ||
-			usage.catalogues >= currentPlan.features.catalogues,
+			usage.catalogues >= currentPlan.features.catalogues ||
+			usage.traffic.pageview_count >= currentPlan.features.traffic_limit,
 		prompts:
 			usage.prompts >= currentPlan.features.ai_prompts ||
-			usage.catalogues >= currentPlan.features.catalogues,
+			usage.catalogues >= currentPlan.features.catalogues ||
+			usage.traffic.pageview_count >= currentPlan.features.traffic_limit,
 	};
 
 	return (

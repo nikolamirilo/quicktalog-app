@@ -375,7 +375,10 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 			if (type === "create") {
 				if (
 					!userData ||
-					userData.usage.catalogues >= userData.currentPlan.features.catalogues
+					userData.usage.catalogues >=
+						userData.currentPlan.features.catalogues ||
+					userData.usage.traffic.pageview_count >=
+						userData.currentPlan.features.traffic_limit
 				) {
 					setShowLimitsModal({ isOpen: true, type: "catalogue" });
 					setIsSubmitting(false);

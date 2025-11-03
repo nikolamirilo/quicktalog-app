@@ -33,19 +33,18 @@ export async function GET(
 			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
-		// Find pricing plan
 		const pricingPlan = tiers.find((tier) =>
 			Object.values(tier.priceId).includes(user.plan_id),
 		);
-		const nextPlan = pricingPlan?.name.toLowerCase().includes("custom")
-			? tiers
-					.filter((item) => item.type === "standard")
-					.find(
-						(item) =>
-							item.features.items_per_catalogue >
-							pricingPlan.features.items_per_catalogue,
-					)
-			: tiers.find((tier) => tier.id === pricingPlan.id + 1) || pricingPlan;
+		const nextPlan =
+			tiers
+				.filter((item) => item.type === "standard")
+				.find(
+					(item) =>
+						item.features.items_per_catalogue >
+						pricingPlan.features.items_per_catalogue,
+				) || pricingPlan;
+
 		const billingPeriod = Object.entries(pricingPlan.priceId).find(
 			([_, id]) => id === user.plan_id,
 		)?.[0] as "month" | "year";

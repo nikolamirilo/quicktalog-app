@@ -8,7 +8,12 @@ import Navbar from "@/components/navigation/Navbar";
 export const dynamic = "force-dynamic";
 export default async function page() {
 	const userData: UserData = await getUserData();
-	if (userData && userData.currentPlan.features.ai_prompts > 0) {
+	if (
+		userData &&
+		userData.currentPlan.features.ai_prompts > 0 &&
+		userData.usage.traffic.pageview_count <
+			userData.currentPlan.features.traffic_limit
+	) {
 		return (
 			<div className="product font-lora min-h-screen">
 				<Navbar />
@@ -27,11 +32,7 @@ export default async function page() {
 		return (
 			<LimitsModal
 				currentPlan={userData.currentPlan}
-				isOpen={
-					userData && userData.currentPlan.features.ai_prompts > 0
-						? false
-						: true
-				}
+				isOpen={true}
 				requiredPlan={userData.nextPlan}
 				type="ai"
 			/>
