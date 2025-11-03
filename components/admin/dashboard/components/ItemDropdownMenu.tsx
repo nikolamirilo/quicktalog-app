@@ -116,7 +116,11 @@ const ItemDropdownMenu = ({
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 							disabled={disabled}
 						>
-							<Link href={`/admin/items/${catalogue.name}/edit`} passHref>
+							<Link
+								className="w-full"
+								href={`/admin/items/${catalogue.name}/edit`}
+								passHref
+							>
 								<div className="flex items-center gap-2">
 									<FiEdit size={18} /> Edit
 								</div>

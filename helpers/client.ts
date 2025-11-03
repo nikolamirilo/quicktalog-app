@@ -331,7 +331,7 @@ export const validateStepHelper = (
 					break;
 				}
 
-				if (Number(item.price) < 0) {
+				if (Number(item.price) < 0 || item.price == "" || !item.price) {
 					step3Error = `Price for item "${item.name}" in category "${category.name}" must be 0 or greater.`;
 					break;
 				}

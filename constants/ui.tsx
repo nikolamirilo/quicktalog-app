@@ -65,31 +65,36 @@ export const examplePrompts = [
 		icon: <RiStore2Line size={18} />,
 		category: "Italian Specialties",
 		prompt:
-			"Handmade pasta, wood-fired pizza, and regional wines from Lombardy—crafted with authentic flavors and seasonal ingredients",
+			"Italian restaurant with handmade pasta, wood-fired pizza, and regional wines. \
+            Include sections for appetizers, main dishes, desserts, and drinks.",
 	},
 	{
 		icon: <RiScissorsLine size={18} />,
 		category: "Beauty Treatments",
 		prompt:
-			"Professional haircuts, vibrant coloring, nourishing facials, and luxury manicures using premium salon products",
+			"Beauty studio offering haircuts, coloring, facials, and manicures. \
+            Organize by hair care, skin treatments, and nail services.",
 	},
 	{
 		icon: <RiHeartPulseLine size={18} />,
 		category: "Fitness Programs",
 		prompt:
-			"Personal training sessions, dynamic group classes, strength workouts, and cardio routines designed for every fitness level",
+			"Fitness studio with personal training, group classes, strength programs, and cardio sessions. \
+            Include options for all fitness levels and memberships.",
 	},
 	{
 		icon: <RiGamepadLine size={18} />,
 		category: "Leisure Activities",
 		prompt:
-			"Exciting bowling games, interactive arcade fun, birthday packages, and group-friendly entertainment options",
+			"Family entertainment center with bowling, arcade games, and party packages. \
+            Add sections for activities, food and drinks, and special offers.",
 	},
 	{
 		icon: <RiStore2Line size={18} />,
 		category: "Coffee & Pastries",
 		prompt:
-			"Specialty espresso drinks, freshly baked pastries, light bites, and signature blends for coffee lovers",
+			"Coffee shop serving espresso drinks, teas, and fresh pastries. \
+            Organize by coffee, baked goods, breakfast items, and seasonal specials.",
 	},
 ];
 

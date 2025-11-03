@@ -197,16 +197,6 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 															<Input
 																className="border-product-border focus:border-product-primary focus:ring-product-primary/20"
 																id={`item-price-${categoryIndex}-${itemIndex}`}
-																onBlur={(e) => {
-																	if (e.target.value === "") {
-																		handleItemChange(
-																			categoryIndex,
-																			itemIndex,
-																			"price",
-																			0,
-																		);
-																	}
-																}}
 																onChange={(e) => {
 																	const value = e.target.value;
 																	if (
@@ -219,11 +209,6 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 																			"price",
 																			value === "" ? "" : value,
 																		);
-																	}
-																}}
-																onFocus={(e) => {
-																	if (item.price == "0") {
-																		e.target.value = "";
 																	}
 																}}
 																required

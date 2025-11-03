@@ -196,7 +196,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		const newItemIndex = updatedServices[categoryIndex].items.length;
 		updatedServices[categoryIndex].items = [
 			...updatedServices[categoryIndex].items,
-			{ name: "", description: "", price: undefined, image: "" },
+			{ name: "", description: "", price: "", image: "" },
 		];
 		setFormData((prev) => ({ ...prev, services: updatedServices }));
 		setExpandedItem({ categoryIndex, itemIndex: newItemIndex });

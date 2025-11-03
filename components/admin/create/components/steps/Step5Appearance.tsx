@@ -17,6 +17,7 @@ import type { Catalogue } from "@quicktalog/common";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import HtmlContent from "@/components/common/HtmlContent";
+import Overlay from "@/components/common/Overlay";
 import ThemeSelect from "../ThemeSelect";
 
 const Step5Appearance: React.FC<Step5AppearanceProps> = ({
@@ -149,6 +150,17 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({
 										className={`${item.theme || "theme-elegant"} bg-background text-foreground min-h-screen flex flex-col ${isMobileView ? "mobile-preview" : ""}`}
 										role="application"
 									>
+										{item.theme.includes("advent") && (
+											<Overlay
+												emoji={
+													item.theme === "theme-advent-1"
+														? "❄️"
+														: item.theme === "theme-advent-2"
+															? "🎁"
+															: ""
+												}
+											/>
+										)}
 										<main
 											aria-label="Service catalogue content"
 											className="flex-1 flex flex-col min-h-0"
