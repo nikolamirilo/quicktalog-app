@@ -69,28 +69,8 @@ export default function DescriptionEditor({
 		const text = e.clipboardData.getData("text/plain");
 
 		if (text && editorRef.current) {
-			// Insert plain text using Selection API (avoids deprecated execCommand)
-			const selection = window.getSelection();
-			if (selection && selection.rangeCount > 0) {
-				const range = selection.getRangeAt(0);
-				range.deleteContents(); // Clear any existing selection
-
-				const textNode = document.createTextNode(text);
-				range.insertNode(textNode);
-
-				// Position cursor at the end of the inserted text
-				range.setStartAfter(textNode);
-				range.setEndAfter(textNode);
-				selection.removeAllRanges();
-				selection.addRange(range);
-			} else {
-				// Fallback: append to end if no selection (e.g., not focused)
-				const textNode = document.createTextNode(text);
-				editorRef.current.appendChild(textNode);
-			}
-
-			// Focus the editor
-			editorRef.current.focus();
+			// Use insertText command which inserts plain text without formatting
+			document.execCommand("insertText", false, text);
 
 			// Update content and formats
 			updateContent();
