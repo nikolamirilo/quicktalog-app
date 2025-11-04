@@ -1,17 +1,17 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { generateUniqueSlug } from "@quicktalog/common";
+import { generateUniqueSlug, UserData } from "@quicktalog/common";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { IoTimerOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
-import { sendNewCatalogueEmail } from "@/actions/email";
+import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
-import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { revalidateData } from "@/helpers/server";
-import { UserData } from "@/types";
 import FormHeader from "./components/FormHeader";
 import { LanguageSelector } from "./components/LanguageSelector";
 import PromptExamples from "./components/PromptExamples";
@@ -19,7 +19,13 @@ import PromptInput from "./components/PromptInput";
 import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 
-export default function AIBuilder({ userData }: { userData: UserData }) {
+export default function AIBuilder({
+	userData,
+	api_url,
+}: {
+	userData: UserData;
+	api_url: string;
+}) {
 	const [formData, setFormData] = useState({
 		name: "",
 		theme: "theme-elegant",
@@ -35,9 +41,9 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [catalogueUrl, setCatalogueUrl] = useState("");
-	const [showSuccessModal, setShowSuccessModal] = useState(false);
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
+	const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
+	const router = useRouter();
 
 	const handleInputChange = (
 		e:
@@ -62,7 +68,8 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 		return Object.keys(newErrors).length === 0 && !hasErrors;
 	};
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (e: React.MouseEvent) => {
+		e.preventDefault();
 		if (!validate()) return;
 
 		if (!user || !user.id) {
@@ -71,45 +78,35 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 		}
 
 		setIsSubmitting(true);
-		setCatalogueUrl("");
 		try {
 			if (
 				userData.usage.prompts >= userData.currentPlan.features.ai_prompts ||
 				userData.usage.catalogues >= userData.currentPlan.features.catalogues
 			) {
 				setShowLimitsModal(true);
-				setIsSubmitting(false);
 				return;
 			}
 
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
 
-			const response = await fetch("/api/items/ai", {
+			fetch(`${api_url}/api/ai`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ formData: data, prompt, shouldGenerateImages }),
+				body: JSON.stringify({
+					formData: data,
+					prompt,
+					shouldGenerateImages,
+					userId: user.id,
+				}),
 			});
-
-			const contactData = {
-				email: user.emailAddresses[0]?.emailAddress || "",
-				name: user.firstName || "",
-			};
-
-			if (response.ok) {
-				const { catalogueUrl, slug } = await response.json();
-				setCatalogueUrl(catalogueUrl);
-				await sendNewCatalogueEmail(contactData, formData.name, slug);
-				setShowSuccessModal(true);
-			} else {
-				const errorData = await response.json();
-				console.error(errorData);
-			}
+			setTimeout(() => {
+				setShowInfoModal(true);
+				setIsSubmitting(false);
+			}, 5000);
 		} catch (error) {
 			console.error("Submission error:", error);
 		} finally {
-			setIsSubmitting(false);
-			setShouldGenerateImages(false);
 			await revalidateData();
 		}
 	};
@@ -152,7 +149,6 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 							errors={errors}
 							prompt={prompt}
 							setPrompt={setPrompt}
-							touched={touched}
 						/>
 
 						<div className="flex items-center gap-2">
@@ -191,12 +187,18 @@ export default function AIBuilder({ userData }: { userData: UserData }) {
 				</CardContent>
 			</Card>
 
-			<SuccessModal
-				catalogueUrl={catalogueUrl}
-				isOpen={showSuccessModal}
-				onClose={() => setShowSuccessModal(false)}
-				type="ai"
-			/>
+			{showInfoModal && (
+				<InformModal
+					confirmText="Go to Dashboard"
+					icon={<IoTimerOutline color="#ffc107" size={30} />}
+					isOpen={showInfoModal}
+					message="Your catalogue AI generation is in progress and will finish in about 5 minutes. Head back to the dashboard to monitor the status."
+					onConfirm={() => {
+						router.push("/admin/dashboard");
+					}}
+					title="Catalogue AI generation has started"
+				/>
+			)}
 			{showLimitsModal && (
 				<LimitsModal
 					currentPlan={userData?.currentPlan}

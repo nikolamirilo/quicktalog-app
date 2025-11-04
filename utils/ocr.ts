@@ -1,10 +1,10 @@
+import { CatalogueCategory } from "@quicktalog/common";
 import { OEM, PSM } from "tesseract.js";
 import {
 	MAX_IMAGE_DIMENSION,
 	MIN_EFFECTIVE_DIMENSION,
 	OPTIMAL_DPI,
 } from "@/constants/ocr";
-import { CatalogueCategory } from "@/types";
 
 export const preprocessImage = (imageFile: File): Promise<Blob | null> => {
 	return new Promise((resolve) => {

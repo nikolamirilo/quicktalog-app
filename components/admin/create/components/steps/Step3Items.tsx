@@ -197,38 +197,22 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 															<Input
 																className="border-product-border focus:border-product-primary focus:ring-product-primary/20"
 																id={`item-price-${categoryIndex}-${itemIndex}`}
-																onBlur={(e) => {
-																	// If left empty, reset to 0
-																	if (e.target.value === "") {
+																onChange={(e) => {
+																	const value = e.target.value;
+																	if (
+																		value === "" ||
+																		/^\d*\.?\d{0,2}$/.test(value)
+																	) {
 																		handleItemChange(
 																			categoryIndex,
 																			itemIndex,
 																			"price",
-																			0,
+																			value === "" ? "" : value,
 																		);
 																	}
 																}}
-																onChange={(e) => {
-																	const value =
-																		e.target.value === ""
-																			? 0
-																			: parseFloat(e.target.value);
-																	handleItemChange(
-																		categoryIndex,
-																		itemIndex,
-																		"price",
-																		value,
-																	);
-																}}
-																onFocus={(e) => {
-																	// If it's 0 and user focuses, clear it so typing starts clean
-																	if (item.price === 0) {
-																		e.target.value = "";
-																	}
-																}}
 																required
-																step="0.01"
-																type="number"
+																type="text"
 																value={item.price}
 															/>
 														</div>
@@ -349,7 +333,6 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
 				message="This step is where you add the actual services or products to your categories. For each item, you can set the name, price, description, and upload an image. Items are organized under the categories you created in Step 2. You can expand each category to add multiple items, and each item can have detailed descriptions and pricing information."
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title="Add Items Explained"
 			/>

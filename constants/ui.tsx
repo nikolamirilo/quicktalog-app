@@ -1,4 +1,3 @@
-import { IBenefit } from "@/types/components";
 import { JSX } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import {
@@ -29,6 +28,7 @@ import {
 	FiUsers,
 	FiZap,
 } from "react-icons/fi";
+import { IoMdHelpCircleOutline } from "react-icons/io";
 import { IoDiamondOutline } from "react-icons/io5";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { PiPaintBrushDuotone } from "react-icons/pi";
@@ -38,26 +38,24 @@ import {
 	RiScissorsLine,
 	RiStore2Line,
 } from "react-icons/ri";
-
-import { IStats } from "@/types/components";
-import { IoMdHelpCircleOutline } from "react-icons/io";
 import { TbFileAnalytics } from "react-icons/tb";
+import { IBenefit, IStats } from "@/types/components";
 
 export const stats: IStats[] = [
 	{
 		title: "5 Minutes",
-		icon: <FiClock size={34} className="text-product-primary" />,
+		icon: <FiClock className="text-product-primary" size={34} />,
 		description: "Average time to create your first digital catalog.",
 	},
 	{
 		title: "Any Industry",
-		icon: <FiUsers size={34} className="text-product-primary" />,
+		icon: <FiUsers className="text-product-primary" size={34} />,
 		description:
 			"Perfect for any business that needs to showcase products or services.",
 	},
 	{
 		title: "OCR Import",
-		icon: <FiZap size={34} className="text-product-primary" />,
+		icon: <FiZap className="text-product-primary" size={34} />,
 		description:
 			"Convert existing paper catalogs instantly with AI technology.",
 	},
@@ -67,31 +65,31 @@ export const examplePrompts = [
 		icon: <RiStore2Line size={18} />,
 		category: "Italian Specialties",
 		prompt:
-			"Handmade pasta, wood-fired pizza, and regional wines from Lombardy—crafted with authentic flavors and seasonal ingredients",
+			"Italian restaurant with handmade pasta, wood-fired pizza, and regional wines. Include sections for appetizers, main dishes, desserts, and drinks.",
 	},
 	{
 		icon: <RiScissorsLine size={18} />,
 		category: "Beauty Treatments",
 		prompt:
-			"Professional haircuts, vibrant coloring, nourishing facials, and luxury manicures using premium salon products",
+			"Beauty studio offering haircuts, coloring, facials, and manicures. Organize by hair care, skin treatments, and nail services.",
 	},
 	{
 		icon: <RiHeartPulseLine size={18} />,
 		category: "Fitness Programs",
 		prompt:
-			"Personal training sessions, dynamic group classes, strength workouts, and cardio routines designed for every fitness level",
+			"Fitness studio with personal training, group classes, strength programs, and cardio sessions. Include options for all fitness levels and memberships.",
 	},
 	{
 		icon: <RiGamepadLine size={18} />,
 		category: "Leisure Activities",
 		prompt:
-			"Exciting bowling games, interactive arcade fun, birthday packages, and group-friendly entertainment options",
+			"Family entertainment center with bowling, arcade games, and party packages. Add sections for activities, food and drinks, and special offers.",
 	},
 	{
 		icon: <RiStore2Line size={18} />,
 		category: "Coffee & Pastries",
 		prompt:
-			"Specialty espresso drinks, freshly baked pastries, light bites, and signature blends for coffee lovers",
+			"Coffee shop serving espresso drinks, teas, and fresh pastries. Organize by coffee, baked goods, breakfast items, and seasonal specials.",
 	},
 ];
 
@@ -181,34 +179,34 @@ export const getPlatformIconByName = (
 ): JSX.Element | null => {
 	switch (platformName) {
 		case "facebook": {
-			return <FaFacebook size={24} className="min-w-fit" />;
+			return <FaFacebook className="min-w-fit" size={24} />;
 		}
 		case "github": {
-			return <FaGithub size={24} className="min-w-fit" />;
+			return <FaGithub className="min-w-fit" size={24} />;
 		}
 		case "instagram": {
-			return <FaInstagram size={24} className="min-w-fit" />;
+			return <FaInstagram className="min-w-fit" size={24} />;
 		}
 		case "linkedin": {
-			return <FaLinkedin size={24} className="min-w-fit" />;
+			return <FaLinkedin className="min-w-fit" size={24} />;
 		}
 		case "threads": {
-			return <FaThreads size={24} className="min-w-fit" />;
+			return <FaThreads className="min-w-fit" size={24} />;
 		}
 		case "website": {
-			return <BsGlobe2 size={24} className="min-w-fit" />;
+			return <BsGlobe2 className="min-w-fit" size={24} />;
 		}
 		case "twitter": {
-			return <FaTwitter size={24} className="min-w-fit" />;
+			return <FaTwitter className="min-w-fit" size={24} />;
 		}
 		case "youtube": {
-			return <FaYoutube size={24} className="min-w-fit" />;
+			return <FaYoutube className="min-w-fit" size={24} />;
 		}
 		case "x": {
-			return <FaXTwitter size={24} className="min-w-fit" />;
+			return <FaXTwitter className="min-w-fit" size={24} />;
 		}
 		case "tiktok": {
-			return <FaTiktok size={24} className="min-w-fit" />;
+			return <FaTiktok className="min-w-fit" size={24} />;
 		}
 		default:
 			console.log(

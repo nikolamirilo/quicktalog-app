@@ -1,7 +1,9 @@
-import { Status } from "@/types/enums";
+import { Status } from "@quicktalog/common";
 
 export const statusOrder: Record<Status, number> = {
-	active: 1,
-	inactive: 2,
+	"in preparation": 1,
+	error: 2,
 	draft: 3,
+	active: 4,
+	inactive: 5,
 };

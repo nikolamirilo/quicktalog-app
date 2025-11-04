@@ -1,4 +1,5 @@
 "use client";
+import { Catalogue, Status, tiers } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BiScan } from "react-icons/bi";
@@ -16,11 +17,8 @@ import {
 import CTASection from "@/components/common/CTASection";
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
 import { Button } from "@/components/ui/button";
-import { tiers } from "@/constants/pricing";
 import { statusOrder } from "@/constants/sort";
-import { Catalogue } from "@/types";
 import { OverviewProps } from "@/types/components";
-import { Status } from "@/types/enums";
 import InformModal from "../../modals/InformModal";
 import DashboardItem from "./components/DashboardItem";
 import OverallAnalytics from "./components/OverallAnalytics";
@@ -46,6 +44,7 @@ const Overview = ({
 	const matchedTier = tiers.find((tier) => tier.id == planId);
 	const maxAllowedCatalogues = matchedTier?.features.catalogues || 0;
 	const hasExcessCatalogues = catalogues.length > maxAllowedCatalogues;
+
 	async function handleDeleteItem(id: string) {
 		setItemToDelete(id);
 		setIsModalOpen(true);
@@ -84,6 +83,8 @@ const Overview = ({
 		active: "text-white bg-[#00875A]",
 		inactive: "text-white bg-product-secondary",
 		draft: "text-white bg-product-primary",
+		"in preparation": "text-white bg-blue-600",
+		error: "text-white bg-red-600",
 	};
 
 	async function handleDuplicateCatalogue(id: string, name: string) {
@@ -156,7 +157,11 @@ const Overview = ({
 				</h2>
 				<div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
 					<Button
-						disabled={usage.catalogues >= matchedTier.features.catalogues}
+						className="w-9/12 sm:w-fit"
+						disabled={
+							usage.catalogues >= matchedTier.features.catalogues ||
+							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+						}
 						onClick={() => {
 							router.push("/admin/create");
 						}}
@@ -168,10 +173,11 @@ const Overview = ({
 						Create Catalogue
 					</Button>
 					<Button
-						className={`${planId < 1 && "animate-pulse"}`}
+						className={`${planId < 1 && "animate-pulse"} w-9/12 sm:w-fit`}
 						disabled={
 							usage.prompts >= matchedTier.features.ai_prompts ||
-							usage.catalogues >= matchedTier.features.catalogues
+							usage.catalogues >= matchedTier.features.catalogues ||
+							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
 						}
 						onClick={() => {
 							router.push("/admin/create/ai");
@@ -185,9 +191,11 @@ const Overview = ({
 						Generate with AI
 					</Button>
 					<Button
+						className="w-9/12 sm:w-fit"
 						disabled={
 							usage.ocr >= matchedTier.features.ocr_ai_import ||
-							usage.catalogues >= matchedTier.features.catalogues
+							usage.catalogues >= matchedTier.features.catalogues ||
+							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
 						}
 						onClick={() => {
 							router.push("/admin/create/ocr");
@@ -206,14 +214,23 @@ const Overview = ({
 						title="You've reached your current catalogue limit"
 					/>
 				)}
+				{usage.traffic.pageview_count >= matchedTier.features.traffic_limit && (
+					<CTASection
+						ctaLabel="Upgrade plan"
+						href="/pricing"
+						subtitle="Upgrade your plan to increase your traffic limit and reactivate your catalogues."
+						title="You've reached your traffic limit"
+					/>
+				)}
 				<div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
 					{catalogues.length === 0 && (
 						<div className="col-span-full text-product-foreground-accent text-base sm:text-lg">
 							No catalogues created yet.
 						</div>
 					)}
+
 					{catalogues
-						?.sort((a, b) => {
+						.sort((a, b) => {
 							const statusDiff = statusOrder[a.status] - statusOrder[b.status];
 							if (statusDiff !== 0) return statusDiff;
 							return (
@@ -270,7 +287,6 @@ const Overview = ({
 									? "This shows how many people have subscribed to your newsletter service. These are users who have opted in to receive updates from you."
 									: "Select a metric to see its explanation."
 				}
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title={`${currentMetric} Explained`}
 			/>

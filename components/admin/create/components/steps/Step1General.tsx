@@ -235,11 +235,9 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 				</div>
 			) : null}
 			<InformModal
-				cancelText=""
 				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
 				message={getFieldExplanation(currentField)}
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title={`${currentField
 					.replace(/-/g, " ")

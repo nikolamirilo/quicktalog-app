@@ -1,6 +1,6 @@
 "use client";
+import { CategoryItem } from "@quicktalog/common";
 import { useState } from "react";
-import { Record } from "@/types";
 import ItemDetailModal from "../modals/ItemDetailModal";
 import CardType1 from "./CardType1";
 import CardType2 from "./CardType2";
@@ -15,7 +15,7 @@ const CardsSwitcher = ({
 	theme,
 }: {
 	variant: string;
-	record: Record;
+	record: CategoryItem;
 	currency: string;
 	i: number;
 	theme?: string;
@@ -36,22 +36,22 @@ const CardsSwitcher = ({
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const price =
-		record.price === 0
+		record.price == "0"
 			? "Free"
-			: record.price
-				? record.price.toLocaleString()
-				: "Free";
+			: Number(record.price).toLocaleString(undefined, {
+					minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
+					maximumFractionDigits: 2,
+				});
 	const formatedCurrency = price != "Free" ? currency : "";
 
 	const validatedRecord = {
 		...record,
-		price,
+		price: price,
 		image:
 			record.image ||
 			"https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbLZJd0wWMZP0cAtUu7EI5sD2VGw41vjTYyfKL",
 	};
 
-	// Helper function to pick card component
 	const renderCard = () => {
 		switch (variant) {
 			case "variant_1":

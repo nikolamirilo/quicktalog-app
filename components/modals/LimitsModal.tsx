@@ -1,3 +1,4 @@
+import { PricingPlan, tiers } from "@quicktalog/common";
 import {
 	ArrowRight,
 	FolderTree,
@@ -8,7 +9,9 @@ import {
 	Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { BiCustomize } from "react-icons/bi";
 import { IoSearch } from "react-icons/io5";
+import { TbBrandGoogleAnalytics } from "react-icons/tb";
 import {
 	AlertDialog,
 	AlertDialogContent,
@@ -17,8 +20,6 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { tiers } from "@/constants/pricing";
-import { PricingPlan } from "@/types";
 import { LimitType } from "@/types/enums";
 import { Button } from "../ui/button";
 
@@ -53,6 +54,8 @@ const getLimitContent = (
 				return currentPlan.features.items_per_catalogue;
 			case "categories":
 				return currentPlan.features.categories_per_catalogue;
+			case "traffic":
+				return currentPlan.features.traffic_limit;
 			default:
 				return undefined;
 		}
@@ -70,6 +73,8 @@ const getLimitContent = (
 				return requiredPlan.features?.items_per_catalogue;
 			case "categories":
 				return requiredPlan.features?.categories_per_catalogue;
+			case "traffic":
+				return requiredPlan.features?.traffic_limit;
 			default:
 				return undefined;
 		}
@@ -138,6 +143,18 @@ const getLimitContent = (
 					"Perfect organization makes shopping effortless for your customers",
 				valueProposition: "Better navigation = Higher conversions",
 			};
+		case "traffic":
+			return {
+				feature: "Traffic",
+				icon: FolderTree,
+				description: `Better organization drives more sales. Upgrade to create ${nextLimit === "unlimited" ? "unlimited" : nextLimit} categories and help customers find exactly what they need.`,
+				upgradeText: "traffic",
+				currentLimit,
+				nextLimit,
+				benefit:
+					"Perfect organization makes shopping effortless for your customers",
+				valueProposition: "Better navigation = Higher conversions",
+			};
 		default:
 			return {
 				feature: "Premium Features",
@@ -159,8 +176,10 @@ const getIcon = (type: LimitType) => {
 			return Layers;
 		case "categories":
 			return FolderTree;
-		case "traffic":
+		case "notFound":
 			return IoSearch;
+		case "traffic":
+			return TbBrandGoogleAnalytics;
 		case "ai":
 			return Sparkles;
 		case "ocr":
@@ -177,7 +196,7 @@ const LimitsModal = ({
 	requiredPlan = tiers[1],
 	onClose,
 }: LimitsModalProps) => {
-	const isTraffic = type === "traffic";
+	const isNotFound = type === "notFound";
 	const content = getLimitContent(type, currentPlan, requiredPlan);
 	const IconComponent = getIcon(type);
 
@@ -230,7 +249,7 @@ const LimitsModal = ({
 
 					<div className="flex justify-center mb-4">
 						<div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-product-primary shadow-lg">
-							{isTraffic ? (
+							{isNotFound ? (
 								<IoSearch className="w-8 h-8 sm:w-10 sm:h-10 text-product-secondary" />
 							) : (
 								<IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-product-secondary" />
@@ -239,12 +258,12 @@ const LimitsModal = ({
 					</div>
 
 					<AlertDialogTitle className="text-xl sm:text-2xl font-bold mb-2 text-product-foreground text-center">
-						{isTraffic
+						{isNotFound
 							? "Catalogue Not Found"
 							: `Need ${+content.currentLimit > 0 ? "More" : ""} ${content.feature}?`}
 					</AlertDialogTitle>
 					<AlertDialogDescription className="text-sm sm:text-base text-product-foreground-accent text-center leading-relaxed">
-						{isTraffic
+						{isNotFound
 							? "The selected catalogue is inactive or doesn't exist. Join thousands of businesses already using Quicktalog to showcase their offerings digitally."
 							: "Upgrade your plan to unlock more features and take your digital catalogues to the next level."}
 					</AlertDialogDescription>
@@ -252,7 +271,7 @@ const LimitsModal = ({
 
 				{/* Content */}
 				<div className="p-6 sm:p-8 space-y-6">
-					{isTraffic ? (
+					{isNotFound ? (
 						<div className="space-y-6">
 							{/* Quicktalog Promotional Content */}
 							<div className="p-4 sm:p-5 rounded-xl bg-product-hover-background border border-product-border">
@@ -320,123 +339,167 @@ const LimitsModal = ({
 											</div>
 											<div className="flex items-baseline justify-end space-x-1 mb-1">
 												<span className="text-base font-bold text-product-foreground">
-													{formatLimit(content.nextLimit)}
+													{content.currentLimit === content.nextLimit
+														? "TBD"
+														: formatLimit(content.nextLimit)}
 												</span>
 												<span className="text-sm text-product-foreground">
 													{content.feature.toLowerCase()}
 												</span>
 											</div>
 											<div className="text-sm text-product-foreground font-medium">
-												{requiredPlan.name}
+												{content.currentLimit === content.nextLimit
+													? "Custom Plan"
+													: requiredPlan.name}
 											</div>
 										</div>
 									</div>
 								</div>
 
-								{/* Key Benefit */}
-								<div className="p-4 rounded-xl bg-product-hover-background border-2 border-product-primary">
-									<div className="space-y-3">
+								{content.currentLimit !== content.nextLimit ? (
+									// 🔹 Upgrade feature preview
+									<div className="p-4 rounded-xl bg-product-hover-background border-2 border-product-primary">
+										<div className="space-y-3">
+											<div className="flex items-start space-x-3">
+												<div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0">
+													<Sparkles className="w-4 h-4 text-product-secondary" />
+												</div>
+												<div>
+													<h4 className="font-semibold text-product-foreground mb-1">
+														What You'll Get with {requiredPlan.name}
+													</h4>
+												</div>
+											</div>
+
+											<ul className="space-y-2 text-sm text-product-foreground-accent">
+												<li className="flex items-start">
+													<Layers className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+													<span className="text-product-foreground">
+														<strong>
+															{formatLimit(requiredPlan.features.catalogues)}
+														</strong>{" "}
+														{requiredPlan.features.catalogues > 1
+															? "catalogues"
+															: "catalogue"}{" "}
+														with{" "}
+														<strong>
+															{formatLimit(
+																requiredPlan.features.categories_per_catalogue,
+															)}
+														</strong>{" "}
+														categories and{" "}
+														<strong>
+															{formatLimit(
+																requiredPlan.features.items_per_catalogue,
+															)}
+														</strong>{" "}
+														items per catalogue to manage all your product lines
+													</span>
+												</li>
+
+												{requiredPlan.features.ai_prompts > 0 && (
+													<li className="flex items-start">
+														<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+														<span className="text-product-foreground">
+															<strong>
+																{formatLimit(requiredPlan.features.ai_prompts)}
+															</strong>{" "}
+															AI prompts per month
+														</span>
+													</li>
+												)}
+
+												{currentPlan.features.branding === false &&
+													requiredPlan.features.branding === true && (
+														<li className="flex items-start">
+															<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+															<span className="font-semibold text-product-foreground">
+																Custom Branding
+															</span>
+														</li>
+													)}
+
+												{requiredPlan.features.ocr_ai_import > 1 && (
+													<li className="flex items-start">
+														<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+														<span className="text-product-foreground">
+															<strong>
+																{formatLimit(
+																	requiredPlan.features.ocr_ai_import,
+																)}
+															</strong>{" "}
+															OCR AI imports to digitize printed materials
+														</span>
+													</li>
+												)}
+
+												<li className="flex items-start">
+													<TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+													<span className="text-product-foreground">
+														<strong>
+															{requiredPlan.features.traffic_limit.toLocaleString()}
+														</strong>{" "}
+														page views per month to reach more customers
+													</span>
+												</li>
+
+												{requiredPlan.features.newsletter && (
+													<li className="flex items-start">
+														<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
+														<span className="text-product-foreground">
+															<strong>Newsletter feature</strong> to keep
+															customers engaged
+														</span>
+													</li>
+												)}
+											</ul>
+										</div>
+									</div>
+								) : (
+									<div className="p-4 rounded-xl bg-product-hover-background border-2 border-product-primary">
 										<div className="flex items-start space-x-3">
-											<div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0">
-												<Sparkles className="w-4 h-4 text-product-secondary" />
+											<div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0 mt-1">
+												<BiCustomize className="w-4 h-4 text-product-secondary" />
 											</div>
 											<div>
 												<h4 className="font-semibold text-product-foreground mb-1">
-													What You'll Get with {requiredPlan.name}
+													Purchase Custom Plan
 												</h4>
+												<p className="text-sm text-product-foreground-accent">
+													Get limits and features fully tailored to your needs.
+													Contact our team to get more information.
+												</p>
 											</div>
 										</div>
-										<ul className="space-y-2 text-sm text-product-foreground-accent">
-											<li className="flex items-start">
-												<Layers className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-												<span className="text-product-foreground">
-													<strong>
-														{formatLimit(requiredPlan.features.catalogues)}
-													</strong>{" "}
-													{requiredPlan.features.catalogues > 1
-														? "catalogues"
-														: "catalogue"}{" "}
-													with{" "}
-													<strong>
-														{formatLimit(
-															requiredPlan.features.categories_per_catalogue,
-														)}
-													</strong>{" "}
-													categories and{" "}
-													<strong>
-														{formatLimit(
-															requiredPlan.features.items_per_catalogue,
-														)}
-													</strong>{" "}
-													items per catalogue to manage all your product lines
-												</span>
-											</li>
-											{requiredPlan.features.ai_prompts > 0 && (
-												<li className="flex items-start">
-													<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-													<span className="text-product-foreground">
-														<strong className="text-product-foreground">
-															{formatLimit(requiredPlan.features.ai_prompts)}
-														</strong>{" "}
-														AI prompts per month
-													</span>
-												</li>
-											)}
-											{currentPlan.features.branding == false &&
-											requiredPlan.features.branding == true ? (
-												<li className="flex items-start">
-													<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-													<span className="font-semibold text-product-foreground">
-														Custom Branding
-													</span>
-												</li>
-											) : null}
-											{requiredPlan.features.ocr_ai_import > 1 && (
-												<li className="flex items-start">
-													<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-													<span className="text-product-foreground">
-														<strong>
-															{formatLimit(requiredPlan.features.ocr_ai_import)}
-														</strong>{" "}
-														OCR AI imports to digitize printed materials
-													</span>
-												</li>
-											)}
-											<li className="flex items-start">
-												<TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-												<span className="text-product-foreground">
-													<strong className="text-product-foreground">
-														{requiredPlan.features.traffic_limit.toLocaleString()}
-													</strong>{" "}
-													page views per month to reach more customers
-												</span>
-											</li>
-											{requiredPlan.features.newsletter && (
-												<li className="flex items-start">
-													<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-													<span className="text-product-foreground">
-														<strong>Newsletter feature</strong> to keep
-														customers engaged
-													</span>
-												</li>
-											)}
-										</ul>
 									</div>
-								</div>
+								)}
 							</div>
 
-							{/* CTA Button */}
-							<AlertDialogFooter className="sm:justify-center pt-2">
-								<Link
-									className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
-									href="/pricing"
-								>
-									<span className="relative z-10 flex items-center justify-center space-x-2">
-										<span>Upgrade to {requiredPlan.name} Now</span>
-										<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-									</span>
-								</Link>
-							</AlertDialogFooter>
+							{content.currentLimit === content.nextLimit ? (
+								<AlertDialogFooter className="sm:justify-center pt-2">
+									<Link
+										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
+										href="/contact"
+									>
+										<span className="relative z-10 flex items-center justify-center space-x-2">
+											<span>Contact us Now</span>
+											<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+										</span>
+									</Link>
+								</AlertDialogFooter>
+							) : (
+								<AlertDialogFooter className="sm:justify-center pt-2">
+									<Link
+										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
+										href="/pricing"
+									>
+										<span className="relative z-10 flex items-center justify-center space-x-2">
+											<span>Upgrade to {requiredPlan.name} Now</span>
+											<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+										</span>
+									</Link>
+								</AlertDialogFooter>
+							)}
 						</>
 					)}
 				</div>

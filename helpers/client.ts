@@ -1,14 +1,7 @@
+import { Catalogue, CatalogueFormData, PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { tiers } from "@/constants/pricing";
-import {
-	Catalogue,
-	ContactItem,
-	FooterData,
-	HeaderData,
-	PricingPlan,
-	ServicesFormData,
-} from "@/types";
+import { ContactItem, FooterData, HeaderData } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -267,7 +260,7 @@ interface Step1Validation {
 
 interface StepValidationOptions {
 	step: number;
-	formData: ServicesFormData;
+	formData: CatalogueFormData;
 	requiredFields?: {
 		step1?: Array<keyof Step1Validation>;
 	};
@@ -338,7 +331,7 @@ export const validateStepHelper = (
 					break;
 				}
 
-				if (typeof item.price !== "number" || item.price < 0) {
+				if (Number(item.price) < 0 || item.price == "" || !item.price) {
 					step3Error = `Price for item "${item.name}" in category "${category.name}" must be 0 or greater.`;
 					break;
 				}
@@ -351,15 +344,6 @@ export const validateStepHelper = (
 
 			if (step3Error) break;
 		}
-		// const totalItems = formData.services.reduce((sum, category) => {
-		//   return sum + category.items.length
-		// }, 0)
-		// if (
-		//   typeof tier.features.items_per_catalogue == "number" &&
-		//   totalItems > tier.features.items_per_catalogue
-		// ) {
-		//   step3Error = `You can add up to ${tier.features.items_per_catalogue} items on your current plan.`
-		// }
 	}
 
 	const isValid =

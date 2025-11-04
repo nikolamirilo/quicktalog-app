@@ -19,7 +19,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 		icon,
 		label,
 		className:
-			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center bg-header-bg text-header-text border-primary footer-cta-button",
+			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center bg-header-bg text-footer-text border-primary footer-cta-button",
 	});
 
 	const getContactLinks = () => {
@@ -146,7 +146,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						{ctaProps && (
 							<Button
 								asChild
-								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-header-bg text-header-text border-primary footer-cta-button"
+								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-header-text border-primary footer-cta-button"
 								size="default"
 								variant="secondary"
 							>

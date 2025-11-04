@@ -1,5 +1,9 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
+import { Cookie, ExternalLink, Settings } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { COOKIE_KEY } from "@/constants";
 import { CookiePreferences } from "@/types";
@@ -11,10 +15,6 @@ import {
 	updateGTMConsent,
 	updateUserConsent,
 } from "@/utils/cookies";
-import { useUser } from "@clerk/nextjs";
-import { Cookie, ExternalLink, Settings } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
 import CookiePreferencesModal from "./CookiePreferencesModal";
 
 const CookieBanner = () => {
@@ -121,10 +121,10 @@ const CookieBanner = () => {
 									experience, analyze site usage, and assist in marketing
 									efforts. You can choose which types of cookies to allow.{" "}
 									<Link
-										href="/privacy-policy"
 										className="text-product-primary hover:underline inline-flex items-center gap-1"
-										target="_blank"
+										href="/privacy-policy"
 										rel="noopener noreferrer"
+										target="_blank"
 									>
 										Learn more
 										<ExternalLink className="w-3 h-3" />
@@ -134,28 +134,28 @@ const CookieBanner = () => {
 						</div>
 						<div className="flex items-center gap-2 flex-shrink-0">
 							<Button
-								variant="outline"
-								size="sm"
-								onClick={() => setIsSettingsOpen(true)}
-								className="text-xs px-3 py-2"
 								aria-label="Open cookie settings"
+								className="text-xs px-3 py-2"
+								onClick={() => setIsSettingsOpen(true)}
+								size="sm"
+								variant="outline"
 							>
 								<Settings className="w-3 h-3 mr-1" />
 								Customize
 							</Button>
 							<Button
-								variant="outline"
-								size="sm"
-								onClick={handleAcceptEssential}
 								className="text-xs px-3 py-2"
+								onClick={handleAcceptEssential}
+								size="sm"
+								variant="outline"
 							>
 								Essential Only
 							</Button>
 							<Button
-								variant="cta"
-								size="sm"
-								onClick={handleAcceptAll}
 								className="text-xs px-4 py-2"
+								onClick={handleAcceptAll}
+								size="sm"
+								variant="cta"
 							>
 								Accept All
 							</Button>

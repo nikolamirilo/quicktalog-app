@@ -336,7 +336,6 @@ const Step2Categories: React.FC<Step2CategoriesProps> = ({
 				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
 				message="This step helps you organize your services into categories. Categories group related items together (like 'Appetizers', 'Main Courses', 'Desserts'). You can reorder categories using the arrow buttons, and each category can have its own layout style. Categories make it easier for customers to navigate your catalogue and find what they're looking for."
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title="Add Categories Explained"
 			/>

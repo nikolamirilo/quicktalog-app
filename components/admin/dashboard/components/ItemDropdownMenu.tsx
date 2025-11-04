@@ -1,4 +1,5 @@
 "use client";
+import { Catalogue, PricingPlan, Usage } from "@quicktalog/common";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
@@ -32,6 +33,21 @@ import {
 } from "@/helpers/client";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
 
+type ItemDropdownMenuProps = {
+	catalogue: Catalogue;
+	duplicatingId: string;
+	handleUpdateItemStatus: any;
+	setIsLinkCopied: any;
+	isLinkCopied: any;
+	isModalOpen: boolean;
+	handleDuplicateCatalogue: any;
+	handleDeleteItem: any;
+	usage: Usage;
+	matchedTier: PricingPlan;
+	planId: number;
+	disabled: boolean;
+};
+
 const ItemDropdownMenu = ({
 	catalogue,
 	duplicatingId,
@@ -44,11 +60,13 @@ const ItemDropdownMenu = ({
 	usage,
 	matchedTier,
 	planId,
-}) => {
+	disabled,
+}: ItemDropdownMenuProps) => {
 	const [formData, setFormData] = useState({ name: "" });
 	const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+	const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 	const { handleNameChange } = useCatalogueName({
 		initialName: "name",
 		type: "create",
@@ -93,19 +111,30 @@ const ItemDropdownMenu = ({
 						align="end"
 						className="bg-product-background border border-product-border rounded-xl shadow-lg"
 					>
-						<Link href={`/admin/items/${catalogue.name}/edit`} passHref>
-							<DropdownMenuItem
-								asChild
-								className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+						<DropdownMenuItem
+							asChild
+							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							disabled={disabled}
+						>
+							<Link
+								className="w-full"
+								href={`/admin/items/${catalogue.name}/edit`}
+								passHref
 							>
 								<div className="flex items-center gap-2">
 									<FiEdit size={18} /> Edit
 								</div>
-							</DropdownMenuItem>
-						</Link>
+							</Link>
+						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-							disabled={duplicatingId === catalogue.id}
+							disabled={
+								duplicatingId === catalogue.id ||
+								disabled ||
+								(usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit &&
+									catalogue.status !== "active")
+							}
 							onClick={() =>
 								handleUpdateItemStatus(
 									catalogue.id,
@@ -122,6 +151,7 @@ const ItemDropdownMenu = ({
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							disabled={disabled}
 							onClick={(e) => {
 								e.preventDefault();
 								setIsLinkCopied(true);
@@ -142,40 +172,40 @@ const ItemDropdownMenu = ({
 								{isLinkCopied === true ? "Link Copied" : `Share`}
 							</span>
 						</DropdownMenuItem>
-
-						<DropdownMenuSub>
-							<DropdownMenuSubTrigger className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-								<span className="flex items-center gap-2">
-									<FiDownload size={18} />
-									Download
-								</span>
-							</DropdownMenuSubTrigger>
-							<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg">
-								<DropdownMenuItem
-									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-									onClick={() => handleDownloadPng(catalogue.name)}
-								>
+						{!disabled && (
+							<DropdownMenuSub>
+								<DropdownMenuSubTrigger className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
 									<span className="flex items-center gap-2">
-										<BsQrCodeScan size={18} />
-										QR Code
+										<FiDownload size={18} />
+										Download
 									</span>
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-									disabled={planId === 0}
-									onClick={() =>
-										handleDownloadHTML(
-											catalogue.name,
-											`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`,
-										)
-									}
-								>
-									<span className="flex items-center gap-2">
-										<ImEmbed2 size={18} />
-										Embed
-									</span>
-								</DropdownMenuItem>
-								{/* <DropdownMenuItem
+								</DropdownMenuSubTrigger>
+								<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg">
+									<DropdownMenuItem
+										className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+										onClick={() => handleDownloadPng(catalogue.name)}
+									>
+										<span className="flex items-center gap-2">
+											<BsQrCodeScan size={18} />
+											QR Code
+										</span>
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+										disabled={planId === 0}
+										onClick={() =>
+											handleDownloadHTML(
+												catalogue.name,
+												`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`,
+											)
+										}
+									>
+										<span className="flex items-center gap-2">
+											<ImEmbed2 size={18} />
+											Embed
+										</span>
+									</DropdownMenuItem>
+									{/* <DropdownMenuItem
 									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 									disabled={planId < 2}
 									onClick={() =>
@@ -190,9 +220,9 @@ const ItemDropdownMenu = ({
 										PDF
 									</span>
 								</DropdownMenuItem> */}
-							</DropdownMenuSubContent>
-						</DropdownMenuSub>
-
+								</DropdownMenuSubContent>
+							</DropdownMenuSub>
+						)}
 						<div
 							className="p-2 sm:p-3 bg-white rounded-xl shadow-sm border border-product-border hidden"
 							id="qr-code"
@@ -205,13 +235,12 @@ const ItemDropdownMenu = ({
 								value={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`}
 							/>
 						</div>
-
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 							disabled={
-								usage.catalogues >= matchedTier.features.catalogues
-									? true
-									: false || duplicatingId === catalogue.id
+								usage.catalogues >= matchedTier.features.catalogues ||
+								disabled ||
+								duplicatingId === catalogue.id
 							}
 							onClick={() => {
 								setIsDuplicateModalOpen(!isDuplicateModalOpen);
@@ -222,10 +251,13 @@ const ItemDropdownMenu = ({
 								{duplicatingId === catalogue.id ? "Loading..." : "Duplicate"}
 							</span>
 						</DropdownMenuItem>
-
 						<DropdownMenuItem
 							className="text-red-400 hover:bg-red-50 cursor-pointer"
-							disabled={isModalOpen}
+							disabled={
+								isModalOpen ||
+								(catalogue.status === "in preparation" &&
+									catalogue.created_at > tenMinutesAgo.toISOString())
+							}
 							onClick={() => handleDeleteItem(catalogue.id)}
 						>
 							<span className="flex items-center gap-2">

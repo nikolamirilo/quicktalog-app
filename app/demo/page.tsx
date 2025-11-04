@@ -1,6 +1,7 @@
 // @ts-nocheck
 "use client";
 import AppearanceOptions from "@/components/common/AppearanceOptions";
+import Overlay from "@/components/common/Overlay";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import CatalogueContent from "@/components/sections/CatalogueContent";
@@ -42,13 +43,22 @@ const page: React.FC = () => {
 						<div className="flex flex-col justify-center items-center w-full mt-6">
 							<AppearanceOptions />
 						</div>
+						<Overlay
+							emoji={
+								theme === "theme-advent-1"
+									? "❄️"
+									: theme === "theme-advent-2"
+										? "🎁"
+										: ""
+							}
+						/>
 
 						{data && (
 							<CatalogueContent
-								data={data.services}
 								currency={data.currency}
-								type="demo"
+								data={data.services}
 								theme={theme}
+								type="demo"
 							/>
 						)}
 
@@ -63,14 +73,14 @@ const page: React.FC = () => {
 									</div>
 									<div className="flex gap-2">
 										<a
-											href="/auth?mode=signup"
 											className="bg-product-primary text-product-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary-accent transition-colors duration-200 shadow-product-shadow"
+											href="/auth?mode=signup"
 										>
 											Get Started
 										</a>
 										<a
-											href="/pricing"
 											className="text-product-secondary border border-product-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary hover:text-product-foreground transition-all duration-200"
+											href="/pricing"
 										>
 											Pricing
 										</a>

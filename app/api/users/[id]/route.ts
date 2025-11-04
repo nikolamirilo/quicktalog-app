@@ -1,7 +1,6 @@
+import { tiers, UserData } from "@quicktalog/common";
 import { NextRequest, NextResponse } from "next/server";
-import { tiers } from "@/constants/pricing";
 import { endOfMonth, startOfMonth } from "@/helpers/client";
-import { UserData } from "@/types";
 import { createClient } from "@/utils/supabase/server";
 
 export async function GET(
@@ -34,19 +33,18 @@ export async function GET(
 			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
-		// Find pricing plan
 		const pricingPlan = tiers.find((tier) =>
 			Object.values(tier.priceId).includes(user.plan_id),
 		);
-		const nextPlan = pricingPlan?.name.toLowerCase().includes("custom")
-			? tiers
-					.filter((item) => item.type === "standard")
-					.find(
-						(item) =>
-							item.features.items_per_catalogue >
-							pricingPlan.features.items_per_catalogue,
-					)
-			: tiers.find((tier) => tier.id === pricingPlan.id + 1) || pricingPlan;
+		const nextPlan =
+			tiers
+				.filter((item) => item.type === "standard")
+				.find(
+					(item) =>
+						item.features.items_per_catalogue >
+						pricingPlan.features.items_per_catalogue,
+				) || pricingPlan;
+
 		const billingPeriod = Object.entries(pricingPlan.priceId).find(
 			([_, id]) => id === user.plan_id,
 		)?.[0] as "month" | "year";
@@ -109,13 +107,8 @@ export async function GET(
 			{ pageview_count: 0, unique_visitors: 0 },
 		) || { pageview_count: 0, unique_visitors: 0 };
 
-		const {
-			cookie_preferences,
-			created_at,
-			customer_id,
-			plan_id,
-			...adjustedUser
-		} = user;
+		const { cookie_preferences, created_at, customer_id, ...adjustedUser } =
+			user;
 		const userData: UserData = {
 			...adjustedUser,
 			currentPlan: { ...pricingPlan, billing_period: billingPeriod || "year" },

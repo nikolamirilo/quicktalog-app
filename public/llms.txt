@@ -1,0 +1,21 @@
+# Quicktalog
+
+Quicktalog is an AI-powered SaaS platform that enables users to create professional, interactive digital catalogs in minutes. It replaces traditional printed catalogs with mobile-friendly online versions that support real-time updates, AI-generated content, easy sharing via links or QR codes, and performance analytics.
+
+## Key features include:
+
+AI-driven catalog creation based on business descriptions.
+Intuitive editor with professional templates and instant updates.
+Scalable plans for individuals, small businesses, teams, and enterprises.
+Analytics for tracking customer behavior and making data-driven decisions.
+
+## Important notes:
+
+Quicktalog leverages AI for automation, including OCR for content import and limited AI prompts per plan.
+No app downloads required; catalogs are accessible via web links.
+Focuses on simplicity, speed, and unlimited reach for digital product showcasing.
+
+## Optional
+
+Documentation: User guides and tutorials for creating and managing catalogs (assumed path; adjust if different).
+Support: Contact information and help resources.

@@ -33,10 +33,6 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 		}
 	}, [layout]);
 
-	const handleThemeChange = (themeKey: string) => {
-		setTheme(themeKey);
-	};
-
 	const handlePreviousTheme = () => {
 		const currentIndex = themes.findIndex((t) => t.key === theme);
 		const newIndex = currentIndex > 0 ? currentIndex - 1 : themes.length - 1;

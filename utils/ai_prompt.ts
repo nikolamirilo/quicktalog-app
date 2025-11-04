@@ -1,6 +1,9 @@
-import { fetchImageFromUnsplash, layouts } from "@quicktalog/common";
+import {
+	CatalogueCategory,
+	fetchImageFromUnsplash,
+	layouts,
+} from "@quicktalog/common";
 import { NextResponse } from "next/server";
-import { CatalogueCategory } from "@/types";
 
 // Type definitions for better type safety
 export interface GenerationRequest {

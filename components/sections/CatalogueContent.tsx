@@ -33,7 +33,7 @@ const CatalogueContent = ({
 		const initialExpanded = data.reduce(
 			(acc, item, idx) => {
 				const slug = generateUniqueSlug(item.name);
-				acc[slug] = type === "demo" || idx === 0;
+				acc[`${slug}-${item.order}`] = type === "demo" || idx === 0;
 				return acc;
 			},
 			{} as Record<string, boolean>,
@@ -119,13 +119,17 @@ const CatalogueContent = ({
 			{data.map((item) => {
 				const currentLayout = type === "demo" ? layout : item.layout;
 				const slug = generateUniqueSlug(item.name);
-				const isExpanded = expandedSections[slug];
+				const isExpanded = expandedSections[`${slug}-${item.order}`];
 
 				if (!item.items || !Array.isArray(item.items)) {
 					return (
-						<section className="mb-5" id={slug} key={slug}>
+						<section
+							className="mb-5"
+							id={`${slug}-${item.order}`}
+							key={`${slug}-${item.order}`}
+						>
 							<SectionHeader
-								code={slug}
+								code={`${slug}-${item.order}`}
 								isExpanded={isExpanded}
 								onToggle={handleToggleSection}
 								title={item.name}
@@ -144,9 +148,13 @@ const CatalogueContent = ({
 				}
 
 				return (
-					<section className="mb-5" id={slug} key={slug}>
+					<section
+						className="mb-5"
+						id={`${slug}-${item.order}`}
+						key={`${slug}-${item.order}`}
+					>
 						<SectionHeader
-							code={slug}
+							code={`${slug}-${item.order}`}
 							isExpanded={isExpanded}
 							onToggle={handleToggleSection}
 							title={item.name}

@@ -1,4 +1,5 @@
 "use client";
+import { Partner } from "@quicktalog/common";
 import { Plus, Tag, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { FiInfo } from "react-icons/fi";
@@ -19,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { contactTypes } from "@/constants";
-import { Partner } from "@/types";
 import type { Step4BrandingProps } from "@/types/components";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -783,7 +783,6 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 				imageAlt={getFieldExplanation(currentField).imageAlt}
 				isOpen={isInfoModalOpen}
 				message={getFieldExplanation(currentField).message}
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title={`${currentField.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
 			/>

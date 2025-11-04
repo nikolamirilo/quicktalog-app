@@ -1,10 +1,10 @@
 "use client";
+import { PricingPlan, Usage } from "@quicktalog/common";
 import { BiGridAlt, BiScan } from "react-icons/bi";
 import { FiBarChart2 } from "react-icons/fi";
 import { IoAnalyticsOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
 import { Card, CardContent } from "@/components/ui/card";
-import { PricingPlan, Usage } from "@/types";
 import DonutChart from "../../charts/DonutChart";
 
 const MonthlyUsage = ({

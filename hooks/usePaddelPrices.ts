@@ -3,8 +3,8 @@ import {
 	PricePreviewParams,
 	PricePreviewResponse,
 } from "@paddle/paddle-js";
+import { tiers } from "@quicktalog/common";
 import { useEffect, useState } from "react";
-import { tiers } from "@/constants/pricing";
 
 export type PaddlePrices = Record<string, string>;
 

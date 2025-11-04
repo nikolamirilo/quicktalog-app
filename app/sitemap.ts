@@ -1,4 +1,4 @@
-import { Catalogue } from "@/types";
+import { Catalogue } from "@quicktalog/common";
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

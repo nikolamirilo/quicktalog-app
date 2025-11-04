@@ -1,6 +1,6 @@
 // LD JSON Schema constants for structured data
 
-import { Catalogue } from "@/types";
+import { Catalogue } from "@quicktalog/common";
 import { faqs } from "./details";
 
 // Organization schema

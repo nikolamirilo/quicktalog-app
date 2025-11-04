@@ -1,14 +1,16 @@
-import { JSX } from "react";
 import {
 	Catalogue,
 	CatalogueCategory,
+	CatalogueFormData,
 	CategoryItem,
-	OverallAnalytics,
 	PricingPlan,
 	Usage,
 	User,
-} from "@/types";
-import { ContactInfo, FooterData, ServicesFormData, UserData } from ".";
+	UserData,
+} from "@quicktalog/common";
+import { JSX } from "react";
+import { OverallAnalytics } from "@/types";
+import { ContactInfo, FooterData } from ".";
 
 export type ITestimonial = {
 	name: string;
@@ -118,7 +120,7 @@ export type IBenefitBullet = {
 
 export type BuilderProps = {
 	type: "create" | "edit";
-	initialData?: ServicesFormData;
+	initialData?: CatalogueFormData;
 	onSuccess?: (restaurantUrl: string) => void;
 	userData: UserData;
 };
@@ -194,13 +196,13 @@ export type Step3ItemsProps = {
 };
 export type Step5AppearanceProps = {
 	formData: Catalogue;
-	setFormData: React.Dispatch<React.SetStateAction<ServicesFormData>>;
+	setFormData: React.Dispatch<React.SetStateAction<CatalogueFormData>>;
 };
 
 export type Step4BrandingProps = {
 	errors?: { [key: string]: string };
 	setErrors: any;
-	formData: ServicesFormData;
+	formData: CatalogueFormData;
 	userData: UserData;
 	handleAddContact: () => void;
 	handleRemoveContact: (index: number) => void;
@@ -210,7 +212,7 @@ export type Step4BrandingProps = {
 		field: keyof ContactInfo,
 		value: string,
 	) => void;
-	setFormData: React.Dispatch<React.SetStateAction<ServicesFormData>>;
+	setFormData: React.Dispatch<React.SetStateAction<CatalogueFormData>>;
 };
 
 export type PromptExamplesProps = {

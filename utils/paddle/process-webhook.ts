@@ -1,5 +1,3 @@
-import { tiers } from "@/constants/pricing";
-import { createClient } from "@/utils/supabase/server";
 import {
 	CustomerCreatedEvent,
 	CustomerUpdatedEvent,
@@ -8,8 +6,12 @@ import {
 	SubscriptionActivatedEvent,
 	SubscriptionCanceledEvent,
 	SubscriptionCreatedEvent,
+	SubscriptionResumedEvent,
+	SubscriptionTrialingEvent,
 	SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
+import { tiers } from "@quicktalog/common";
+import { createClient } from "@/utils/supabase/server";
 
 export class ProcessWebhook {
 	async processEvent(eventData: EventEntity) {
@@ -46,7 +48,9 @@ export class ProcessWebhook {
 			| SubscriptionCreatedEvent
 			| SubscriptionUpdatedEvent
 			| SubscriptionActivatedEvent
-			| SubscriptionCanceledEvent,
+			| SubscriptionCanceledEvent
+			| SubscriptionTrialingEvent
+			| SubscriptionResumedEvent,
 	) {
 		const supabase = await createClient();
 
@@ -68,8 +72,11 @@ export class ProcessWebhook {
 			return;
 		}
 
-		// Update user plan when subscription is activated
-		if (eventData.eventType === EventName.SubscriptionActivated) {
+		if (
+			eventData.eventType === EventName.SubscriptionActivated ||
+			eventData.eventType === EventName.SubscriptionTrialing ||
+			eventData.eventType === EventName.SubscriptionResumed
+		) {
 			const { error: userError } = await supabase
 				.from("users")
 				.update({ plan_id: subscription.price_id })

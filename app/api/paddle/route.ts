@@ -1,6 +1,6 @@
+import { NextRequest } from "next/server";
 import { getPaddleInstance } from "@/utils/paddle/get-paddle-instance";
 import { ProcessWebhook } from "@/utils/paddle/process-webhook";
-import { NextRequest } from "next/server";
 
 const webhookProcessor = new ProcessWebhook();
 

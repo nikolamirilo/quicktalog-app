@@ -1,7 +1,6 @@
 "use server";
-import { generateUniqueSlug } from "@quicktalog/common";
+import { generateUniqueSlug, Status } from "@quicktalog/common";
 import { revalidateData } from "@/helpers/server";
-import { Status } from "@/types/enums";
 import { createClient } from "@/utils/supabase/server";
 
 export async function deleteItem(id: string): Promise<boolean> {
@@ -68,14 +67,12 @@ export async function updateItemStatus(
 export async function duplicateItem(id: string, name: string) {
 	try {
 		const supabase = await createClient();
-		// Fetch the original record
 		const { data, error } = await supabase
 			.from("catalogues")
 			.select("*")
 			.eq("id", id)
 			.single();
 		if (error || !data) return null;
-		// Remove id and update name
 		const { id: _oldId, ...rest } = data;
 		let suffix = "-copy";
 		let tryName = generateUniqueSlug(name);
