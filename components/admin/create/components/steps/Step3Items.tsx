@@ -333,7 +333,6 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
 				message="This step is where you add the actual services or products to your categories. For each item, you can set the name, price, description, and upload an image. Items are organized under the categories you created in Step 2. You can expand each category to add multiple items, and each item can have detailed descriptions and pricing information."
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title="Add Items Explained"
 			/>
