@@ -212,7 +212,6 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({
 				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
 				message="This step lets you customize the visual appearance of your catalogue. You can choose from different themes that change the colors, fonts, and overall styling of your catalogue. Each theme button shows you exactly how your catalogue will look with that theme applied. You can preview both desktop and mobile versions to see how your catalogue will appear to visitors."
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title="Appearance Explained"
 			/>
