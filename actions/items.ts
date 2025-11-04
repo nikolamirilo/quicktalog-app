@@ -88,7 +88,7 @@ export async function duplicateItem(id: string, name: string) {
 		}
 		const { data: newData, error: insertError } = await supabase
 			.from("catalogues")
-			.insert({ ...rest, name: tryName, status: "draft" })
+			.insert({ ...rest, name: tryName })
 			.select()
 			.single();
 		if (insertError) return null;

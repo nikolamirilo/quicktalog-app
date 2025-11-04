@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoTimerOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
-import { revalidate } from "@/app/catalogues/[name]/page";
 import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Button } from "@/components/ui/button";
@@ -20,13 +19,7 @@ import PromptInput from "./components/PromptInput";
 import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 
-export default function AIBuilder({
-	userData,
-	api_url,
-}: {
-	userData: UserData;
-	api_url: string;
-}) {
+export default function AIBuilder({ userData }: { userData: UserData }) {
 	const [formData, setFormData] = useState({
 		name: "",
 		theme: "theme-elegant",
@@ -69,8 +62,6 @@ export default function AIBuilder({
 		return Object.keys(newErrors).length === 0 && !hasErrors;
 	};
 
-	console.log(userData);
-
 	const handleSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
 		if (!validate()) return;
@@ -93,7 +84,7 @@ export default function AIBuilder({
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
 
-			fetch(`${api_url}/api/ai`, {
+			fetch(`${process.env.BACKEND_BASE_URL!}/api/ai`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -169,7 +160,7 @@ export default function AIBuilder({
 
 						<Button
 							className="h-12 font-medium rounded-lg"
-							disabled={isSubmitting || validate()}
+							disabled={isSubmitting}
 							onClick={handleSubmit}
 							variant="cta"
 						>
