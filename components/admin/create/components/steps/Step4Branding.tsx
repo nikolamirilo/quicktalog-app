@@ -783,7 +783,6 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 				imageAlt={getFieldExplanation(currentField).imageAlt}
 				isOpen={isInfoModalOpen}
 				message={getFieldExplanation(currentField).message}
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title={`${currentField.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
 			/>
