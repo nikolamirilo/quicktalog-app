@@ -401,28 +401,23 @@ body > div[class*="cl-userButtonPopoverCard"] > div {
 	grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
 }
 
-.mobile-preview .flex-wrap {
-	flex-direction: column !important;
+/* Carousel container overflow handling only */
+.mobile-preview .swiper {
+	overflow: hidden !important;
 }
 
-.mobile-preview .justify-start {
-	align-items: center !important;
+.mobile-preview .swiper-wrapper {
+	display: flex !important;
 }
 
+/* Layout 4 carousel cards - 160px width in mobile preview */
 .mobile-preview .swiper-slide {
 	width: 160px !important;
 }
 
-.mobile-preview .sm\:\!w-\[220px\] {
+.mobile-preview .swiper-slide article {
 	width: 160px !important;
-}
-
-.mobile-preview .md\:\!w-\[260px\] {
-	width: 160px !important;
-}
-
-.mobile-preview .lg\:\!w-\[320px\] {
-	width: 160px !important;
+	max-width: 160px !important;
 }
 
 /* Force mobile font sizes in mobile preview to match actual mobile specs */
