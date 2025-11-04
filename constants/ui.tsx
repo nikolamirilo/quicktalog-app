@@ -65,36 +65,31 @@ export const examplePrompts = [
 		icon: <RiStore2Line size={18} />,
 		category: "Italian Specialties",
 		prompt:
-			"Italian restaurant with handmade pasta, wood-fired pizza, and regional wines. \
-            Include sections for appetizers, main dishes, desserts, and drinks.",
+			"Italian restaurant with handmade pasta, wood-fired pizza, and regional wines. Include sections for appetizers, main dishes, desserts, and drinks.",
 	},
 	{
 		icon: <RiScissorsLine size={18} />,
 		category: "Beauty Treatments",
 		prompt:
-			"Beauty studio offering haircuts, coloring, facials, and manicures. \
-            Organize by hair care, skin treatments, and nail services.",
+			"Beauty studio offering haircuts, coloring, facials, and manicures. Organize by hair care, skin treatments, and nail services.",
 	},
 	{
 		icon: <RiHeartPulseLine size={18} />,
 		category: "Fitness Programs",
 		prompt:
-			"Fitness studio with personal training, group classes, strength programs, and cardio sessions. \
-            Include options for all fitness levels and memberships.",
+			"Fitness studio with personal training, group classes, strength programs, and cardio sessions. Include options for all fitness levels and memberships.",
 	},
 	{
 		icon: <RiGamepadLine size={18} />,
 		category: "Leisure Activities",
 		prompt:
-			"Family entertainment center with bowling, arcade games, and party packages. \
-            Add sections for activities, food and drinks, and special offers.",
+			"Family entertainment center with bowling, arcade games, and party packages. Add sections for activities, food and drinks, and special offers.",
 	},
 	{
 		icon: <RiStore2Line size={18} />,
 		category: "Coffee & Pastries",
 		prompt:
-			"Coffee shop serving espresso drinks, teas, and fresh pastries. \
-            Organize by coffee, baked goods, breakfast items, and seasonal specials.",
+			"Coffee shop serving espresso drinks, teas, and fresh pastries. Organize by coffee, baked goods, breakfast items, and seasonal specials.",
 	},
 ];
 
