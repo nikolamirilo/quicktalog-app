@@ -287,7 +287,6 @@ const Overview = ({
 									? "This shows how many people have subscribed to your newsletter service. These are users who have opted in to receive updates from you."
 									: "Select a metric to see its explanation."
 				}
-				onCancel={() => setIsInfoModalOpen(false)}
 				onConfirm={() => setIsInfoModalOpen(false)}
 				title={`${currentMetric} Explained`}
 			/>
