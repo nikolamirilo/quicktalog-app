@@ -19,7 +19,10 @@ export default async function page() {
 				<Navbar />
 				<div className="w-full min-h-screen md:px-8 pt-24 pb-12 bg-gradient-to-br from-product-background to-hero-product-background animate-fade-in">
 					<div className="container mx-auto flex flex-col px-4 gap-8">
-						<AIBuilder userData={userData} />
+						<AIBuilder
+							api_url={process.env.BACKEND_BASE_URL!}
+							userData={userData}
+						/>
 					</div>
 				</div>
 				<Footer />
