@@ -26,7 +26,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { defaultServiceCatalogueData } from "@/constants";
+import { defaultCatalogueData } from "@/constants";
 import { cleanValue, validateStepHelper } from "@/helpers/client";
 import { revalidateCataloguesData } from "@/helpers/server";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
@@ -36,7 +36,7 @@ import { LimitType } from "@/types/enums";
 
 function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 	const [formData, setFormData] = useState<CatalogueFormData>(
-		initialData || defaultServiceCatalogueData,
+		initialData || defaultCatalogueData,
 	);
 	const [currentStep, setCurrentStep] = useState(1);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -88,6 +88,13 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 			type == "create"
 		) {
 			setShowLimitsModal({ isOpen: true, type: "catalogue" });
+		}
+		if (
+			userData.currentPlan.features.traffic_limit <=
+				userData.usage.traffic.pageview_count &&
+			type == "create"
+		) {
+			setShowLimitsModal({ isOpen: true, type: "traffic" });
 		}
 	}, []);
 
@@ -353,7 +360,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		setCurrentStep((prev) => prev - 1);
 	};
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (e: React.MouseEvent) => {
+		e.preventDefault();
 		if (!steps.every((step) => validateStep(step))) {
 			console.error(
 				"Please complete all steps and ensure all fields are valid.",
@@ -375,12 +383,17 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 			if (type === "create") {
 				if (
 					!userData ||
-					userData.usage.catalogues >=
-						userData.currentPlan.features.catalogues ||
-					userData.usage.traffic.pageview_count >=
-						userData.currentPlan.features.traffic_limit
+					userData.usage.catalogues >= userData.currentPlan.features.catalogues
 				) {
 					setShowLimitsModal({ isOpen: true, type: "catalogue" });
+					setIsSubmitting(false);
+					return;
+				}
+				if (
+					userData.usage.traffic.pageview_count >=
+					userData.currentPlan.features.traffic_limit
+				) {
+					setShowLimitsModal({ isOpen: true, type: "traffic" });
 					setIsSubmitting(false);
 					return;
 				}
@@ -434,7 +447,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 
 				if (onSuccess) onSuccess(catalogueUrl);
 				if (type === "create") {
-					setFormData(defaultServiceCatalogueData);
+					setFormData(defaultCatalogueData);
 					setCurrentStep(1);
 				}
 			} else {
@@ -631,18 +644,18 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 											}
 											onClick={handleSubmit}
 										>
-											{type === "edit" ? (
-												<Edit className="h-5 w-5" />
-											) : (
+											{type === "create" ? (
 												<MdOutlinePublishedWithChanges className="h-5 w-5" />
+											) : (
+												<Edit className="h-5 w-5" />
 											)}
 											{isSubmitting
-												? type === "edit"
-													? "Saving..."
-													: "Publishing..."
-												: type === "edit"
-													? "Save Changes"
-													: "Publish"}
+												? type === "create"
+													? "Publishing..."
+													: "Saving..."
+												: type === "create"
+													? "Publish"
+													: "Save Changes"}
 										</Button>
 									)}
 								</div>

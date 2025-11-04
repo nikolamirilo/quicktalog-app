@@ -147,7 +147,7 @@ const Step5Appearance: React.FC<Step5AppearanceProps> = ({
 								<SwiperSlide key={themeItem.key}>
 									<div
 										aria-label={`${item.title} Catalogue`}
-										className={`${item.theme || "theme-elegant"} bg-background text-foreground min-h-screen flex flex-col ${isMobileView ? "mobile-preview" : ""}`}
+										className={`${item.theme || "theme-elegant"} relative bg-background text-foreground min-h-screen flex flex-col ${isMobileView ? "mobile-preview" : ""}`}
 										role="application"
 									>
 										{item.theme.includes("advent") && (

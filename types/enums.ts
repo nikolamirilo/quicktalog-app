@@ -4,4 +4,5 @@ export type LimitType =
 	| "catalogue"
 	| "traffic"
 	| "items"
-	| "categories";
+	| "categories"
+	| "notFound";

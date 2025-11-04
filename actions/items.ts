@@ -67,14 +67,12 @@ export async function updateItemStatus(
 export async function duplicateItem(id: string, name: string) {
 	try {
 		const supabase = await createClient();
-		// Fetch the original record
 		const { data, error } = await supabase
 			.from("catalogues")
 			.select("*")
 			.eq("id", id)
 			.single();
 		if (error || !data) return null;
-		// Remove id and update name
 		const { id: _oldId, ...rest } = data;
 		let suffix = "-copy";
 		let tryName = generateUniqueSlug(name);
@@ -90,7 +88,7 @@ export async function duplicateItem(id: string, name: string) {
 		}
 		const { data: newData, error: insertError } = await supabase
 			.from("catalogues")
-			.insert({ ...rest, name: tryName })
+			.insert({ ...rest, name: tryName, status: "draft" })
 			.select()
 			.single();
 		if (insertError) return null;

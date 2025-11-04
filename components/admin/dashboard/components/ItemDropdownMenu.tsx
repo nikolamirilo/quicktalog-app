@@ -133,7 +133,7 @@ const ItemDropdownMenu = ({
 								disabled ||
 								(usage.traffic.pageview_count >=
 									matchedTier.features.traffic_limit &&
-									catalogue.status === "inactive")
+									catalogue.status !== "active")
 							}
 							onClick={() =>
 								handleUpdateItemStatus(
@@ -238,9 +238,9 @@ const ItemDropdownMenu = ({
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 							disabled={
-								usage.catalogues >= matchedTier.features.catalogues || disabled
-									? true
-									: false || duplicatingId === catalogue.id
+								usage.catalogues >= matchedTier.features.catalogues ||
+								disabled ||
+								duplicatingId === catalogue.id
 							}
 							onClick={() => {
 								setIsDuplicateModalOpen(!isDuplicateModalOpen);

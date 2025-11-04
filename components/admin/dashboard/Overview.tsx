@@ -218,7 +218,7 @@ const Overview = ({
 					<CTASection
 						ctaLabel="Upgrade plan"
 						href="/pricing"
-						subtitle="Upgrade your plan to increase your traffic limit and unlock more features."
+						subtitle="Upgrade your plan to increase your traffic limit and reactivate your catalogues."
 						title="You've reached your traffic limit"
 					/>
 				)}

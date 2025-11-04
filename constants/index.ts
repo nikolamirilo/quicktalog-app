@@ -241,7 +241,7 @@ export const contactTypes = [
 	{ value: "twitter", label: "Twitter" },
 ];
 
-export const defaultServiceCatalogueData: Catalogue = {
+export const defaultCatalogueData: Catalogue = {
 	name: "",
 	status: "draft",
 	theme: "",
@@ -252,17 +252,15 @@ export const defaultServiceCatalogueData: Catalogue = {
 	subtitle: "",
 	services: [
 		{
+			order: 1,
 			name: "",
 			layout: "variant_1",
-			order: 1,
 			items: [],
 		},
 	],
 	partners: [],
 	legal: {},
 	configuration: {},
-	id: "",
-	created_by: "",
 };
 
 export const DEFAULT_LOGO = "/logo.svg";

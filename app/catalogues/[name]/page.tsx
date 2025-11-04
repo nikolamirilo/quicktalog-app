@@ -273,11 +273,11 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 				</div>
 			);
 		} else {
-			return <LimitsModal isOpen={true} type="traffic" />;
+			return <LimitsModal isOpen={true} type="notFound" />;
 		}
 	} catch (error) {
 		console.warn("Service catalogue page error:", error);
-		return <LimitsModal isOpen={true} type="traffic" />;
+		return <LimitsModal isOpen={true} type="notFound" />;
 	}
 };
 
