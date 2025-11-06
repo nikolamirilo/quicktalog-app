@@ -29,33 +29,8 @@ const Analytics = ({ data, rawEvents }: AnalyticsProps) => {
 			count: 0,
 		},
 	);
-	// Average page views per day
 	const avgPageViews =
 		data.length > 0 ? (totalPageViews / data.length).toFixed(2) : "0";
-	// Top browsers
-	// const browserCounts = rawEvents.reduce((acc, e) => {
-	//   const browser = e.properties?.$browser;
-	//   if (browser) acc[browser] = (acc[browser] || 0) + 1;
-	//   return acc;
-	// }, {} as Record<string, number>);
-	// const topBrowsers = Object.entries(browserCounts).map(([browser, count]) => [browser, Number(count)]).sort((a, b) => Number(b[1]) - Number(a[1]));
-	// // Top devices
-	// const deviceCounts = rawEvents.reduce((acc, e) => {
-	//   const device = e.properties?.$device_type;
-	//   if (device) acc[device] = (acc[device] || 0) + 1;
-	//   return acc;
-	// }, {} as Record<string, number>);
-
-	// // Top countries
-	// const countryCounts = rawEvents.reduce((acc, e) => {
-	//   const country = e.properties?.$geoip_country_name;
-	//   if (country) acc[country] = (acc[country] || 0) + 1;
-	//   return acc;
-	// }, {} as Record<string, number>);
-	// const topCountries = Object.entries(countryCounts).map(([country, count]) => [country, Number(count)]).sort((a, b) => Number(b[1]) - Number(a[1]));
-
-	// const topDevices = Object.entries(deviceCounts).map(([device, count]) => [device, Number(count)]).sort((a, b) => Number(b[1]) - Number(a[1]));
-
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
 		return date.toLocaleDateString("en-US", {
