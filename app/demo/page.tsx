@@ -28,10 +28,10 @@ const page: React.FC = () => {
 				>
 					<main>
 						<section className="w-full pt-36 px-4 text-center flex flex-col items-center bg-transparent">
-							<h1 className="text-4xl sm:text-5xl md:text-6xl max-w-[800px] font-lora font-semibold text-foreground tracking-tight mb-4">
+							<h1 className="text-4xl sm:text-5xl md:text-6xl text-heading  max-w-[800px] font-lora font-semibold mb-4">
 								Welcome to Quicktalog Demo!
 							</h1>
-							<div className="w-60 h-[3px] bg-foreground mb-6 rounded-full"></div>
+
 							<p className="text-lg sm:text-xl text-heading max-w-2xl font-lora leading-relaxed mb-6">
 								Customize the look and feel by switching between different
 								layouts and visual themes. Whether you prefer bold and modern or
