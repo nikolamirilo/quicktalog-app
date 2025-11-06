@@ -48,6 +48,8 @@ const ThemeSelect = ({
 		if (formData.theme !== "") {
 			const theme = themes.find((item) => item.key === formData.theme);
 			setThemeIndex(theme.id);
+		} else {
+			setThemeIndex(1);
 		}
 	}, []);
 
@@ -98,9 +100,9 @@ const ThemeSelect = ({
 						.sort((a, b) => a.id - b.id)
 						.map((themeItem) => (
 							<button
-								className={`flex-shrink-0 p-3 w-32 h-24 md:w-40 md:h-32 rounded-lg border-2 transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key} ${
+								className={`flex-shrink-0 p-3 w-32 h-24 md:w-40 md:h-32 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key} ${
 									themeIndex === themeItem.id
-										? "border-product-primary shadow-md scale-[1.03]"
+										? "border-product-primary shadow-md scale-[1.03] border-[3px]"
 										: "hover:shadow-sm"
 								}`}
 								id={`theme-btn-${themeItem.id}`}

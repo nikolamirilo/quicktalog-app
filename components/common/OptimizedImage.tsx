@@ -35,24 +35,14 @@ export const OptimizedImage = ({
 
 	if (hasError) {
 		return (
-			<div
-				className={`${className} bg-gray-50 flex items-center justify-center relative rounded-sm`}
-			>
-				<div className="text-gray-300 text-xs text-center p-2">
-					<svg
-						className="w-5 h-5 mx-auto mb-1"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-					>
-						<path
-							fillRule="evenodd"
-							d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-							clipRule="evenodd"
-						/>
-					</svg>
-					No image
-				</div>
-			</div>
+			<img
+				alt={alt}
+				className={`${className} absolute inset-0 transition-all duration-500 ease-out object-cover w-full h-full opacity-100 scale-100
+				`}
+				loading="eager"
+				sizes="(max-width: 768px) 40vw, 20vw"
+				src="https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q"
+			/>
 		);
 	}
 
@@ -68,50 +58,50 @@ export const OptimizedImage = ({
 			{type === "next" ? (
 				/* Next.js Image */
 				<Image
-					src={src}
 					alt={alt}
-					fill
 					className={`${className} transition-all duration-500 ease-out ${
 						showImage ? "opacity-100 scale-100" : "opacity-0 scale-102"
 					}`}
-					priority={priority}
+					fill
 					loading={priority ? "eager" : "lazy"}
-					onLoad={() => {
-						setIsLoading(false);
-						setShowImage(true);
-					}}
 					onError={() => {
 						setHasError(true);
 						setIsLoading(false);
 						setShowImage(false);
+					}}
+					onLoad={() => {
+						setIsLoading(false);
+						setShowImage(true);
 					}}
 					onLoadStart={() => {
 						setIsLoading(true);
 						setShowImage(false);
 					}}
-					sizes="(max-width: 768px) 40vw, 20vw"
+					priority={priority}
 					quality={85}
+					sizes="(max-width: 768px) 40vw, 20vw"
+					src={src}
 				/>
 			) : (
 				/* Regular HTML img */
 				<img
-					src={src}
 					alt={alt}
 					className={`${className} absolute inset-0 transition-all duration-500 ease-out object-cover w-full h-full ${
 						showImage ? "opacity-100 scale-100" : "opacity-0 scale-102"
 					}`}
+					decoding="async"
 					loading={priority ? "eager" : "lazy"}
-					onLoad={() => {
-						setIsLoading(false);
-						setShowImage(true);
-					}}
 					onError={() => {
 						setHasError(true);
 						setIsLoading(false);
 						setShowImage(false);
 					}}
+					onLoad={() => {
+						setIsLoading(false);
+						setShowImage(true);
+					}}
 					sizes="(max-width: 768px) 40vw, 20vw"
-					decoding="async"
+					src={src}
 				/>
 			)}
 		</div>

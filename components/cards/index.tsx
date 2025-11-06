@@ -48,8 +48,9 @@ const CardsSwitcher = ({
 		...record,
 		price: price,
 		image:
-			record.image ||
-			"https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbLZJd0wWMZP0cAtUu7EI5sD2VGw41vjTYyfKL",
+			record.image != ""
+				? record.image
+				: "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
 	};
 
 	const renderCard = () => {

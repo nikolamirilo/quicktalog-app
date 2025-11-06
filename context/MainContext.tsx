@@ -1,5 +1,4 @@
 "use client";
-import { disableConsoleInProduction } from "@/helpers/client";
 import {
 	createContext,
 	Dispatch,
@@ -8,6 +7,7 @@ import {
 	useEffect,
 	useState,
 } from "react";
+import { disableConsoleInProduction } from "@/helpers/client";
 
 interface MainContextType {
 	layout: string;
@@ -29,7 +29,7 @@ export const MainContextProvider = ({
 	children: React.ReactNode;
 }) => {
 	const [layout, setLayout] = useState("variant_1");
-	const [theme, setTheme] = useState("theme-luxury");
+	const [theme, setTheme] = useState("theme-advent-1");
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	useEffect(() => {
 		disableConsoleInProduction();

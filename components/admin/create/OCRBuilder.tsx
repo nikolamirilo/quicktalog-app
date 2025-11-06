@@ -25,7 +25,7 @@ export default function OCRBuilder({
 }) {
 	const [formData, setFormData] = useState({
 		name: "",
-		theme: "theme-elegant",
+		theme: "theme-advent-1",
 		title: "",
 		currency: "",
 		subtitle: "",

@@ -20,12 +20,12 @@ const CardType4 = memo(
 		return (
 			<article
 				aria-labelledby={`item-title-${slugId}`}
-				className="flex flex-col cursor-pointer !h-full bg-card-bg text-card-text rounded-[16px] border border-card-border shadow-[0_0_5px_1px_rgba(233,245,254,0.2)] w-full sm:w-[220px] md:w-[260px] lg:w-[320px] flex-shrink-0 overflow-hidden"
+				className="flex flex-col cursor-pointer !h-full bg-card-bg text-card-text rounded-[16px] border border-card-border shadow-[0_0_5px_1px_rgba(233,245,254,0.2)] w-full flex-shrink-0 overflow-hidden"
 				onClick={onClick}
 				role="article"
 				tabIndex={0}
 			>
-				<div className="w-full aspect-[4/3] max-h-[120px] sm:max-h-[140px] md:max-h-[180px] bg-gray-100 relative">
+				<div className="aspect-[4/3] w-full bg-transparent relative">
 					<OptimizedImage
 						alt={`Image of ${record.name}`}
 						className="object-cover"
