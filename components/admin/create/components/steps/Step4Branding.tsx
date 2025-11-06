@@ -666,15 +666,17 @@ const Step4Branding: React.FC<Step4BrandingProps> = ({
 							</Button>
 						</div>
 					))}
-					<Button
-						className="w-full py-3 text-base font-medium border-product-border hover:border-product-primary hover:bg-product-primary/5 transition-all duration-200"
-						disabled={isFreePlan}
-						onClick={handleAddContact}
-						type="button"
-						variant="outline"
-					>
-						<Plus className="mr-2 h-5 w-5" /> Add New Contact
-					</Button>
+					{formData.contact.length < contactTypes.length && (
+						<Button
+							className="w-full py-3 text-base font-medium border-product-border hover:border-product-primary hover:bg-product-primary/5 transition-all duration-200"
+							disabled={isFreePlan}
+							onClick={handleAddContact}
+							type="button"
+							variant="outline"
+						>
+							<Plus className="mr-2 h-5 w-5" /> Add New Contact
+						</Button>
+					)}
 				</div>
 
 				<div className="space-y-6 col-span-full">

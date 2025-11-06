@@ -101,10 +101,6 @@ export default function DescriptionEditor({
 		isInternalChange.current = false;
 	}, [value]);
 
-	useEffect(() => {
-		execCommand("justifyCenter");
-	}, []);
-
 	return (
 		<div
 			className={`border border-gray-300 rounded-lg overflow-hidden ${className}`}

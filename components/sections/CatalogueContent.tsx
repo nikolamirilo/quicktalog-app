@@ -184,7 +184,7 @@ const CatalogueContent = ({
 											{item.items.map((record, i) => (
 												<SwiperSlide
 													aria-label={`Item ${i + 1} of ${item.items.length}`}
-													className="!w-[160px] sm:!w-[220px] md:!w-[260px] lg:!w-[320px] py-2 flex-shrink-0 flex flex-col !h-auto"
+													className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto"
 													key={record.name}
 													role="group"
 												>
