@@ -22,7 +22,7 @@ export default function SocialIcon({
 			className={`p-2 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-3 group bg-card-bg text-card-description border border-card-border ${className}`}
 			ariaLabel={`Follow us on ${platform}`}
 		>
-			<div className="group-hover:text-primary transition-colors duration-300">
+			<div className=" transition-colors duration-300">
 				{getPlatformIconByName(platform)}
 			</div>
 		</SmartLink>
