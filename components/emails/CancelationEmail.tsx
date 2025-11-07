@@ -84,7 +84,7 @@ export const CancellationEmail = ({ name }: { name: string }) => (
 				</Section>
 
 				{/* Offboarding Form */}
-				<Section style={contentSection}>
+				<Section style={ctaSection}>
 					<Text style={sectionTitle}>Help Us Improve</Text>
 					<Text style={contentText}>
 						Please fill out our short offboarding{" "}
