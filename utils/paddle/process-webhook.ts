@@ -11,6 +11,7 @@ import {
 	SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
 import { tiers } from "@quicktalog/common";
+import { pauseSubscription } from "@/actions/paddle";
 import { createClient } from "@/utils/supabase/server";
 
 export class ProcessWebhook {
@@ -81,8 +82,34 @@ export class ProcessWebhook {
 				.from("users")
 				.update({ plan_id: subscription.price_id })
 				.eq("customer_id", subscription.customer_id);
-
 			if (userError) console.error("Failed to update user plan:", userError);
+
+			const { data: customerSubscriptions, error: customerSubscriptionsError } =
+				await supabase
+					.from("subscriptions")
+					.select("subscription_id, subscription_status")
+					.eq("customer_id", subscription.customer_id)
+					.eq("subscription_status", "active");
+
+			if (customerSubscriptionsError) {
+				console.error(
+					"Error fetching customer subscriptions:",
+					customerSubscriptionsError,
+				);
+				return;
+			}
+
+			if (!customerSubscriptions || customerSubscriptions.length === 0) {
+				return;
+			}
+
+			const subscriptionsToPause = customerSubscriptions.filter(
+				(item) => item.subscription_id !== subscription.subscription_id,
+			);
+
+			for (const sub of subscriptionsToPause) {
+				await pauseSubscription(sub.subscription_id);
+			}
 		}
 		if (eventData.eventType === EventName.SubscriptionCanceled) {
 			const { error: userError } = await supabase
