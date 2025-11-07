@@ -11,6 +11,7 @@ import {
 	SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
 import { tiers } from "@quicktalog/common";
+import { sendSubscriptionCancelationEmail } from "@/actions/email";
 import { pauseSubscription } from "@/actions/paddle";
 import { createClient } from "@/utils/supabase/server";
 
@@ -112,12 +113,28 @@ export class ProcessWebhook {
 			}
 		}
 		if (eventData.eventType === EventName.SubscriptionCanceled) {
-			const { error: userError } = await supabase
+			const { data: user, error: fetchError } = await supabase
+				.from("users")
+				.select("name, email")
+				.eq("customer_id", subscription.customer_id)
+				.single();
+
+			if (fetchError || !user) {
+				console.log("User not found for cancellation");
+				return;
+			}
+
+			const { error: updateError } = await supabase
 				.from("users")
 				.update({ plan_id: tiers[0].priceId.month })
 				.eq("customer_id", subscription.customer_id);
 
-			if (userError) console.error("Failed to update user plan:", userError);
+			if (updateError) console.log(updateError);
+
+			await sendSubscriptionCancelationEmail({
+				email: user.email,
+				name: user.name,
+			});
 		}
 	}
 
