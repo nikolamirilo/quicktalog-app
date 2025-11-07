@@ -90,20 +90,13 @@ export const CancellationEmail = ({ name }: { name: string }) => (
 						Please fill out our short offboarding{" "}
 						<Link
 							href="https://forms.office.com/r/nxYghvYAEx"
-							style={{ color: "#ffc107" }}
+							style={{ color: "#ffc107", fontWeight: "bold" }}
 						>
 							form
 						</Link>
 						. Your answers directly help us build a better product and possibly
 						bring back the features you needed.
 					</Text>
-
-					<Link
-						href={`${process.env.NEXT_PUBLIC_BASE_URL}/offboarding`}
-						style={ctaButton}
-					>
-						Fill Out the Offboarding Form
-					</Link>
 				</Section>
 
 				{/* Schedule Call / Retention */}
