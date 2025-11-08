@@ -12,7 +12,7 @@ import {
 } from "@paddle/paddle-node-sdk";
 import { tiers } from "@quicktalog/common";
 import { sendSubscriptionCancelationEmail } from "@/actions/email";
-import { pauseSubscription } from "@/actions/paddle";
+import { cancelSubscription } from "@/actions/paddle";
 import { createClient } from "@/utils/supabase/server";
 
 export class ProcessWebhook {
@@ -109,7 +109,7 @@ export class ProcessWebhook {
 			);
 
 			for (const sub of subscriptionsToPause) {
-				await pauseSubscription(sub.subscription_id);
+				await cancelSubscription(sub.subscription_id);
 			}
 		}
 		if (eventData.eventType === EventName.SubscriptionCanceled) {

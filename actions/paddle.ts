@@ -35,10 +35,10 @@ export async function createPaddleCustomer(email: string, full_name: string) {
 	}
 }
 
-export async function pauseSubscription(subscription_id: string) {
+export async function cancelSubscription(subscription_id: string) {
 	try {
 		const response = await fetch(
-			`https://api.paddle.com/subscriptions/${subscription_id}/pause`,
+			`https://api.paddle.com/subscriptions/${subscription_id}/cancel`,
 			{
 				method: "POST",
 				headers: {
@@ -46,7 +46,7 @@ export async function pauseSubscription(subscription_id: string) {
 					Authorization: `Bearer ${process.env.PADDLE_API_KEY}`,
 				},
 				body: JSON.stringify({
-					effective_from: "next_billing_period",
+					effective_from: "immediately",
 				}),
 			},
 		);
