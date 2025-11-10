@@ -87,16 +87,13 @@ export const CancellationEmail = ({ name }: { name: string }) => (
 				<Section style={ctaSection}>
 					<Text style={sectionTitle}>Help Us Improve</Text>
 					<Text style={contentText}>
-						Please fill out our short offboarding{" "}
-						<Link
-							href="https://forms.office.com/r/nxYghvYAEx"
-							style={{ color: "#ffc107", fontWeight: "bold" }}
-						>
-							form
-						</Link>
-						. Your answers directly help us build a better product and possibly
-						bring back the features you needed.
+						Please fill out our short offboarding form. Your answers directly
+						help us build a better product and possibly bring back the features
+						you needed.
 					</Text>
+					<Link href="https://forms.office.com/r/nxYghvYAEx" style={ctaButton}>
+						Leave Feedback
+					</Link>
 				</Section>
 
 				{/* Schedule Call / Retention */}
