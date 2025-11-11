@@ -67,6 +67,10 @@ const Pricing: React.FC = () => {
 			const res = await fetch(`/api/users/${clerkUser.id}`, {
 				credentials: "include",
 			});
+			if (!res.ok) {
++				console.error(`Failed to fetch user data: ${res.status}`);
++				return;
++			}
 			const data = await res.json();
 			if (data) {
 				setUser(data);
@@ -74,6 +78,7 @@ const Pricing: React.FC = () => {
 		}
 		fetchUserData();
 	}, [clerkUser?.id]);
+	
 
 	const filteredTiers = tiers.filter(
 		(item) => item?.type === "standard" && item?.id > 0,
