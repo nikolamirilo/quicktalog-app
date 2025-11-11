@@ -1,5 +1,6 @@
 "use server";
 import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 
 export async function subsribeToNewsletter(email: string) {
 	try {
@@ -49,8 +50,15 @@ export async function getUserData(userId?: string) {
 		const id = userId ?? (await currentUser())?.id;
 		if (!id) throw new Error("User not authenticated");
 
+		const cookieHeader = (await headers()).get("cookie") ?? "";
+
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`,
+			{
+				headers: {
+					Cookie: cookieHeader,
+				},
+			},
 		);
 		if (!res.ok) {
 			throw new Error(
