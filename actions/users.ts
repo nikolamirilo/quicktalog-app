@@ -50,16 +50,13 @@ export async function getUserData(userId?: string) {
 		const id = userId ?? (await currentUser())?.id;
 		if (!id) throw new Error("User not authenticated");
 
-		const cookieHeader = (await headers()).get("cookie") ?? "";
-
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`,
 			{
-				headers: {
-					Cookie: cookieHeader,
-				},
+				cache: "no-store",
 			},
 		);
+		console.log(res);
 		if (!res.ok) {
 			throw new Error(
 				`Failed to fetch user data: ${res.status} ${res.statusText}`,

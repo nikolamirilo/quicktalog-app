@@ -1,4 +1,3 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { UserData } from "@quicktalog/common";
 import Link from "next/link";
 import { getUserData } from "@/actions/users";
@@ -12,11 +11,8 @@ import type { AreLimitesReached } from "@/types";
 export const dynamic = "force-dynamic";
 
 export default async function page() {
-	const clerkUser = await currentUser();
-	const res = await fetch(
-		`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${clerkUser.id}`,
-	);
-	const userData: UserData = await res.json();
+	const userData: UserData = await getUserData();
+
 	if (!userData) {
 		return (
 			<div className="product font-lora min-h-screen">
