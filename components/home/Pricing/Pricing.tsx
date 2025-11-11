@@ -9,7 +9,6 @@ import type { User } from "@quicktalog/common";
 import { tiers } from "@quicktalog/common";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { getUserData } from "@/actions/users";
 import { usePaddlePrices } from "@/hooks/usePaddelPrices";
 import MiniCTA from "../MiniCTA";
 import PricingColumn from "./PricingColumn";
@@ -65,7 +64,10 @@ const Pricing: React.FC = () => {
 	useEffect(() => {
 		if (!clerkUser?.id) return;
 		async function fetchUserData() {
-			const data = await getUserData(clerkUser.id);
+			const res = await fetch(`/api/users/${clerkUser.id}`, {
+				credentials: "include",
+			});
+			const data = await res.json();
 			if (data) {
 				setUser(data);
 			}
