@@ -51,6 +51,7 @@ export async function getUserData(userId?: string) {
 
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`,
+			{ cache: "no-store" }
 		);
 		if (!res.ok) {
 			throw new Error(
