@@ -137,7 +137,7 @@ export const faqs: IFAQ[] = [
 	{
 		question: "How much does it cost to upgrade?",
 		answer:
-			"We offer flexible pricing starting at $10/month for the Pro plan. Our Starter plan is free forever with one catalog. Higher tiers include more catalogs, AI features, OCR import, and advanced analytics to help you grow your business.",
+			"We offer flexible pricing starting at $5/month for the Basic plan. Our Starter plan is free forever with one catalog. Higher tiers include more catalogs, AI features, OCR import, and advanced analytics to help you grow your business.",
 	},
 ];
 
