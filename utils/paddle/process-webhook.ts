@@ -11,6 +11,8 @@ import {
 	SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
 import { tiers } from "@quicktalog/common";
+import { sendSubscriptionCancelationEmail } from "@/actions/email";
+import { cancelSubscription } from "@/actions/paddle";
 import { createClient } from "@/utils/supabase/server";
 
 export class ProcessWebhook {
@@ -77,20 +79,90 @@ export class ProcessWebhook {
 			eventData.eventType === EventName.SubscriptionTrialing ||
 			eventData.eventType === EventName.SubscriptionResumed
 		) {
+			const { data: customerSubscriptions, error: customerSubscriptionsError } =
+				await supabase
+					.from("subscriptions")
+					.select("subscription_id, subscription_status")
+					.eq("customer_id", subscription.customer_id)
+					.eq("subscription_status", "active");
+
+			if (customerSubscriptionsError) {
+				console.error(
+					"Error fetching customer subscriptions:",
+					customerSubscriptionsError,
+				);
+				return;
+			}
+
+			if (!customerSubscriptions || customerSubscriptions.length === 0) {
+				return;
+			}
+
+			const subscriptionsToPause = customerSubscriptions.filter(
+				(item) => item.subscription_id !== subscription.subscription_id,
+			);
+
+			for (const sub of subscriptionsToPause) {
+				await cancelSubscription(sub.subscription_id);
+			}
+
 			const { error: userError } = await supabase
 				.from("users")
 				.update({ plan_id: subscription.price_id })
 				.eq("customer_id", subscription.customer_id);
-
 			if (userError) console.error("Failed to update user plan:", userError);
 		}
-		if (eventData.eventType === EventName.SubscriptionCanceled) {
-			const { error: userError } = await supabase
-				.from("users")
-				.update({ plan_id: tiers[0].priceId.month })
-				.eq("customer_id", subscription.customer_id);
 
-			if (userError) console.error("Failed to update user plan:", userError);
+		if (eventData.eventType === EventName.SubscriptionCanceled) {
+			const { data: customerSubscriptions, error: customerSubscriptionsError } =
+				await supabase
+					.from("subscriptions")
+					.select("subscription_id, subscription_status")
+					.eq("customer_id", subscription.customer_id)
+					.eq("subscription_status", "active");
+
+			if (customerSubscriptionsError) {
+				console.error(
+					"Error fetching customer subscriptions:",
+					customerSubscriptionsError,
+				);
+				return;
+			}
+
+			if (!customerSubscriptions || customerSubscriptions.length === 0) {
+				const { data: user, error: fetchError } = await supabase
+					.from("users")
+					.select("name, email")
+					.eq("customer_id", subscription.customer_id)
+					.single();
+
+				if (fetchError) {
+					console.error("Failed to fetch user:", fetchError);
+					return;
+				}
+				if (!user) {
+					console.error(
+						"User not found for customer_id:",
+						subscription.customer_id,
+					);
+					return;
+				}
+
+				const { error: updateError } = await supabase
+					.from("users")
+					.update({ plan_id: tiers[0].priceId.month })
+					.eq("customer_id", subscription.customer_id);
+
+				if (updateError) {
+					console.error("Failed to update user plan:", updateError);
+					return;
+				}
+
+				await sendSubscriptionCancelationEmail({
+					email: user.email,
+					name: user.name,
+				});
+			}
 		}
 	}
 
@@ -100,7 +172,6 @@ export class ProcessWebhook {
 		const supabase = await createClient();
 
 		if (eventData.data.email) {
-			// Link Paddle customer to user by email
 			const { error } = await supabase
 				.from("users")
 				.update({ customer_id: eventData.data.id })

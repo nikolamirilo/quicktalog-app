@@ -3,7 +3,6 @@ import { createServerClient } from "@supabase/ssr";
 
 export async function createClient(isUsingCookies: boolean = true) {
 	if (!isUsingCookies) {
-		// Return a basic Supabase client without cookies for build-time usage
 		return createServerClient(
 			process.env.SUPABASE_URL!,
 			process.env.SUPABASE_ANON_KEY!,
@@ -12,9 +11,7 @@ export async function createClient(isUsingCookies: boolean = true) {
 					getAll() {
 						return [];
 					},
-					setAll() {
-						// No-op when not using cookies
-					},
+					setAll() {},
 				},
 			},
 		);

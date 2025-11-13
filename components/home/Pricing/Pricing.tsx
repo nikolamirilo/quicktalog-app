@@ -65,7 +65,7 @@ const Pricing: React.FC = () => {
 	useEffect(() => {
 		if (!clerkUser?.id) return;
 		async function fetchUserData() {
-			const data = await getUserData(clerkUser.id);
+			const data = await getUserData(clerkUser?.id);
 			if (data) {
 				setUser(data);
 			}

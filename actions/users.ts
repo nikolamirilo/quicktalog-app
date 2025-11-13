@@ -1,5 +1,6 @@
 "use server";
 import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 
 export async function subsribeToNewsletter(email: string) {
 	try {
@@ -53,6 +54,7 @@ export async function getUserData(userId?: string) {
 			`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`,
 			{ cache: "no-store" }
 		);
+		console.log(res);
 		if (!res.ok) {
 			throw new Error(
 				`Failed to fetch user data: ${res.status} ${res.statusText}`,

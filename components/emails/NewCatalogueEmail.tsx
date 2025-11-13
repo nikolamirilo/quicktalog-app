@@ -39,8 +39,8 @@ export const NewCatalogueEmail = ({
 	return (
 		<Html>
 			<Head>
-				<link rel="preconnect" href="https://fonts.googleapis.com" />
-				<link rel="preconnect" href="https://fonts.gstatic.com" />
+				<link href="https://fonts.googleapis.com" rel="preconnect" />
+				<link href="https://fonts.gstatic.com" rel="preconnect" />
 				<link
 					href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 					rel="stylesheet"
@@ -55,11 +55,11 @@ export const NewCatalogueEmail = ({
 						<Row>
 							<Column align="center">
 								<Img
-									src="https://www.quicktalog.app/images/logo.png"
-									width="120"
-									height="40"
 									alt="Quicktalog Logo"
+									height="40"
+									src="https://www.quicktalog.app/images/logo.png"
 									style={logo}
+									width="120"
 								/>
 							</Column>
 						</Row>
@@ -108,11 +108,11 @@ export const NewCatalogueEmail = ({
 
 						<div style={qrContainer}>
 							<Img
-								src={qrCodeUrl}
-								width="200"
-								height="200"
 								alt="QR Code for your catalog"
+								height="200"
+								src={qrCodeUrl}
 								style={qrCode}
+								width="200"
 							/>
 						</div>
 

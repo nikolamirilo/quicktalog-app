@@ -5,6 +5,7 @@ import {
 	NewCatalogueEmail,
 	WelcomeEmail,
 } from "@/components/emails";
+import CancellationEmail from "@/components/emails/CancelationEmail";
 import { resend } from "@/constants/server";
 import { ContactData } from "@/types";
 
@@ -72,6 +73,27 @@ export async function sendWelcomeEmail(
 			}) as React.ReactElement,
 		});
 		console.log(res);
+		if (res.error == null) {
+			return true;
+		}
+	} catch (error: any) {
+		console.log(error);
+		return false;
+	}
+}
+export async function sendSubscriptionCancelationEmail(
+	contactData: Omit<ContactData, "message" | "subject">,
+) {
+	const { email, name } = contactData;
+	try {
+		const res = await resend.emails.send({
+			from: "Quicktalog<office@quicktalog.app>",
+			to: email,
+			subject: `[Quicktalog] We are Sorry to See You Go`,
+			react: CancellationEmail({
+				name: name,
+			}) as React.ReactElement,
+		});
 		if (res.error == null) {
 			return true;
 		}
