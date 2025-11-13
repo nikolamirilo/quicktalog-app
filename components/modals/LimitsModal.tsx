@@ -199,7 +199,8 @@ const LimitsModal = ({
 	const isNotFound = type === "notFound";
 	const content = getLimitContent(type, currentPlan, requiredPlan);
 	const IconComponent = getIcon(type);
-
+	const isStandardPlanLimitReached =
+		content.currentLimit === content.nextLimit && currentPlan.id >= 4;
 	return (
 		<AlertDialog open={isOpen}>
 			<AlertDialogContent className="w-[95vw] max-w-md xl:max-w-lg mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow rounded-lg overflow-hidden">
@@ -319,7 +320,11 @@ const LimitsModal = ({
 													{formatLimit(content.currentLimit)}
 												</span>
 												<span className="text-sm text-product-foreground">
-													{content.feature.toLowerCase()}
+													{content.feature === "AI Catalogue Generation"
+														? "AI prompts"
+														: content.feature === "OCR AI Import"
+															? "OCR imports"
+															: content.feature.toLowerCase()}
 												</span>
 											</div>
 											<div className="text-sm text-product-foreground font-medium">
@@ -339,16 +344,20 @@ const LimitsModal = ({
 											</div>
 											<div className="flex items-baseline justify-end space-x-1 mb-1">
 												<span className="text-base font-bold text-product-foreground">
-													{content.currentLimit === content.nextLimit
+													{isStandardPlanLimitReached
 														? "TBD"
 														: formatLimit(content.nextLimit)}
 												</span>
 												<span className="text-sm text-product-foreground">
-													{content.feature.toLowerCase()}
+													{content.feature === "AI Catalogue Generation"
+														? "AI prompts"
+														: content.feature === "OCR AI Import"
+															? "OCR imports"
+															: content.feature.toLowerCase()}
 												</span>
 											</div>
 											<div className="text-sm text-product-foreground font-medium">
-												{content.currentLimit === content.nextLimit
+												{isStandardPlanLimitReached
 													? "Custom Plan"
 													: requiredPlan.name}
 											</div>
@@ -356,7 +365,7 @@ const LimitsModal = ({
 									</div>
 								</div>
 
-								{content.currentLimit !== content.nextLimit ? (
+								{!isStandardPlanLimitReached ? (
 									// 🔹 Upgrade feature preview
 									<div className="p-4 rounded-xl bg-product-hover-background border-2 border-product-primary">
 										<div className="space-y-3">

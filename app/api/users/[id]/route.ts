@@ -42,7 +42,7 @@ export async function GET(
 				.find(
 					(item) =>
 						item.features.items_per_catalogue >
-						pricingPlan.features.items_per_catalogue,
+							pricingPlan.features.items_per_catalogue && item.id > 1,
 				) || pricingPlan;
 
 		const billingPeriod = Object.entries(pricingPlan.priceId).find(

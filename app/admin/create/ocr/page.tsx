@@ -1,4 +1,4 @@
-import { UserData } from "@quicktalog/common";
+import { tiers, UserData } from "@quicktalog/common";
 import { getUserData } from "@/actions/users";
 import OCRBuilder from "@/components/admin/create/OCRBuilder";
 import LimitsModal from "@/components/modals/LimitsModal";
@@ -33,7 +33,11 @@ export default async function page() {
 			<LimitsModal
 				currentPlan={userData.currentPlan}
 				isOpen={true}
-				requiredPlan={userData.nextPlan}
+				requiredPlan={
+					userData.nextPlan.features.ocr_ai_import === 0
+						? tiers.find((item) => item.features.ocr_ai_import > 0)
+						: userData.nextPlan
+				}
 				type="ocr"
 			/>
 		);

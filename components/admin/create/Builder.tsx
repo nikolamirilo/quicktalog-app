@@ -382,7 +382,6 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		try {
 			if (type === "create") {
 				if (
-					!userData ||
 					userData.usage.catalogues >= userData.currentPlan.features.catalogues
 				) {
 					setShowLimitsModal({ isOpen: true, type: "catalogue" });

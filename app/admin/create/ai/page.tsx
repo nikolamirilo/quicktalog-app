@@ -1,4 +1,4 @@
-import { UserData } from "@quicktalog/common";
+import { tiers, UserData } from "@quicktalog/common";
 import { getUserData } from "@/actions/users";
 import AIBuilder from "@/components/admin/create/AIBuilder";
 import LimitsModal from "@/components/modals/LimitsModal";
@@ -33,7 +33,11 @@ export default async function page() {
 			<LimitsModal
 				currentPlan={userData.currentPlan}
 				isOpen={true}
-				requiredPlan={userData.nextPlan}
+				requiredPlan={
+					userData.nextPlan.features.ai_prompts === 0
+						? tiers.find((item) => item.features.ai_prompts > 0)
+						: userData.nextPlan
+				}
 				type="ai"
 			/>
 		);
