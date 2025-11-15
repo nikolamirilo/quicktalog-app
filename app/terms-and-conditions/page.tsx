@@ -265,7 +265,29 @@ export default function TermsAndConditionsPage() {
 					these terms, please discontinue using the platform.
 				</p>
 
-				<h2 className="text-xl font-bold mt-8 mb-4">10. Contact Us</h2>
+				<h2 className="text-xl font-bold mt-8 mb-4">
+					10. Third-Party Services & Limitation of Liability
+				</h2>
+				<p className="mb-4">
+					Quicktalog relies on third-party service providers, including but not
+					limited to Supabase, Vercel, Clerk, AWS, Cloudflare and Paddle, for
+					hosting, authentication, data storage, payment processing, and other
+					platform functionality. While we take reasonable steps to maintain a
+					reliable service, we do not control the availability, performance, or
+					security of these external providers.
+				</p>
+				<p className="mb-4">
+					In the event of downtime, service interruption, degraded performance,
+					or failure caused directly or indirectly by these providers,
+					Quicktalog is not legally liable or responsible for any loss, damages,
+					or service unavailability resulting from such third-party issues.
+				</p>
+				<p className="mb-4">
+					By using the platform, you acknowledge and agree that temporary
+					disruptions or outages may occur and that such interruptions do not
+					constitute a breach of these Terms & Conditions.
+				</p>
+				<h2 className="text-xl font-bold mt-8 mb-4">11. Contact Us</h2>
 				<p>
 					If you have any questions regarding these Terms & Conditions, please
 					don't hesitate to reach out to us at{" "}
