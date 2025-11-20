@@ -52,7 +52,7 @@ export async function getUserData(userId?: string) {
 
 		const res = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${id}`,
-			{ cache: "no-store" }
+			{ cache: "no-store" },
 		);
 		console.log(res);
 		if (!res.ok) {

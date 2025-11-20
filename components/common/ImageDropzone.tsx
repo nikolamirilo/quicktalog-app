@@ -159,7 +159,7 @@ const processImage = async (
 };
 
 interface ImageDropzoneProps {
-	type?: "default" | "logo";
+	type?: "default" | "logo" | "qr-editor";
 	setIsUploading: React.Dispatch<boolean>;
 	onUploadComplete: (url: string) => void;
 	onError?: (error: Error) => void;
@@ -262,7 +262,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 
 	return (
 		<div className="notranslate" translate="no">
-			{image ? (
+			{image && type != "qr-editor" ? (
 				<div
 					className={`relative mt-2 ${type === "default" ? "w-48 h-48" : "w-fit h-fit"} rounded-lg border-2 border-product-border overflow-hidden bg-product-background shadow-product-shadow`}
 				>
