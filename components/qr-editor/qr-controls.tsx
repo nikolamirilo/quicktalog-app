@@ -1,12 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
-import { useQr } from "@/context/qr-context";
+import {
+	Check,
+	Circle,
+	CircleDot,
+	Image as ImageIcon,
+	Palette,
+	QrCode,
+	RectangleEllipsis,
+	Settings,
+	Sparkles,
+	Square,
+	SquareDot,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { FaCheckCircle, FaRegTrashAlt } from "react-icons/fa";
+import { LuCircleMinus } from "react-icons/lu";
+import ImageDropzone from "@/components/common/ImageDropzone";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Slider } from "@/components/ui/slider";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
 	Select,
 	SelectContent,
@@ -14,26 +29,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-	Palette,
-	QrCode,
-	Image as ImageIcon,
-	Settings,
-	Check,
-} from "lucide-react";
-import ImageDropzone from "@/components/common/ImageDropzone";
-import { FaCheckCircle } from "react-icons/fa";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQr } from "@/context/QRContext";
 
-// Helper for color input
 const ColorPicker = ({
 	label,
 	value,
@@ -43,27 +43,27 @@ const ColorPicker = ({
 	value: string;
 	onChange: (val: string) => void;
 }) => (
-	<div className="flex items-center justify-between gap-4">
-		<Label className="text-sm font-medium text-muted-foreground">{label}</Label>
+	<div className="flex items-center justify-between gap-3">
+		<Label className="text-sm">{label}</Label>
 		<div className="flex items-center gap-2">
-			<div className="h-8 w-8 rounded-full border border-input overflow-hidden relative">
+			<div className="h-7 w-7 rounded border overflow-hidden relative">
 				<input
+					className="absolute -top-2 -left-2 w-11 h-11 p-0 border-0 cursor-pointer"
+					onChange={(e) => onChange(e.target.value)}
 					type="color"
 					value={value}
-					onChange={(e) => onChange(e.target.value)}
-					className="absolute -top-2 -left-2 w-12 h-12 p-0 border-0 cursor-pointer"
 				/>
 			</div>
 			<Input
-				value={value}
+				className="w-20 h-7 font-mono text-xs"
 				onChange={(e) => onChange(e.target.value)}
-				className="w-24 h-8 font-mono text-xs"
+				value={value}
 			/>
 		</div>
 	</div>
 );
 
-export default function QrControls() {
+export default function QrControls({ name }: { name: string }) {
 	const { options, updateOptions } = useQr();
 	const [isUploading, setIsUploading] = useState(false);
 
@@ -71,80 +71,79 @@ export default function QrControls() {
 		updateOptions({ data: e.target.value });
 	};
 
+	useEffect(() => {
+		updateOptions({
+			data: `${process.env.NEXT_PUBLIC_APP_URL || "https://quicktalog.com"}/catalogues/${name}`,
+		});
+	}, []);
+
 	return (
-		<div className="h-full flex flex-col gap-6">
-			{/* Content Section */}
+		<div className="h-full flex flex-col gap-4">
 			<Card className="bg-gradient-to-br from-background to-muted/20 border-2">
-				<CardHeader>
-					<CardTitle className="text-xl font-bold flex items-center gap-2">
-						<QrCode className="w-5 h-5" />
-						QR Content
+				<CardHeader className="pb-3">
+					<CardTitle className="text-lg font-bold flex items-center gap-2">
+						<QrCode className="w-4 h-4" />
+						Catalogue URL
 					</CardTitle>
 				</CardHeader>
-				<CardContent className="space-y-3">
-					<Label htmlFor="qr-content" className="text-base font-semibold">
-						Website URL or Text
-					</Label>
+				<CardContent>
 					<Input
+						className="h-10 text-sm border-2"
+						disabled={true}
 						id="qr-content"
-						placeholder="https://example.com"
-						value={options.data}
 						onChange={handleDataChange}
-						className="h-12 text-base border-2 focus-visible:ring-2"
+						placeholder={`https://www.quicktalog.com/catalogues/${name}`}
+						value={options.data}
 					/>
 				</CardContent>
 			</Card>
 
-			<Tabs defaultValue="design" className="w-full">
-				<TabsList className="w-full grid grid-cols-4 h-14 bg-muted p-1.5 rounded-xl">
+			<Tabs className="w-full" defaultValue="design">
+				<TabsList className="w-full grid grid-cols-4 gap-4 h-11 bg-muted p-1 rounded-lg">
 					<TabsTrigger
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
 						value="design"
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg transition-all duration-300 ease-in-out"
 					>
-						<Palette className="w-4 h-4 mr-2" /> Colors
+						<Palette className="w-3.5 h-3.5 mr-1.5" /> Colors
 					</TabsTrigger>
 					<TabsTrigger
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
 						value="shapes"
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg transition-all duration-300 ease-in-out"
 					>
-						<QrCode className="w-4 h-4 mr-2" /> Style
+						<QrCode className="w-3.5 h-3.5 mr-1.5" /> Style
 					</TabsTrigger>
 					<TabsTrigger
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
 						value="logo"
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg transition-all duration-300 ease-in-out"
 					>
-						<ImageIcon className="w-4 h-4 mr-2" /> Logo
+						<ImageIcon className="w-3.5 h-3.5 mr-1.5" /> Logo
 					</TabsTrigger>
 					<TabsTrigger
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
 						value="settings"
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-white data-[state=active]:shadow-md rounded-lg transition-all duration-300 ease-in-out"
 					>
-						<Settings className="w-4 h-4 mr-2" /> More
+						<Settings className="w-3.5 h-3.5 mr-1.5" /> Settings
 					</TabsTrigger>
 				</TabsList>
 
-				<ScrollArea className="max-h-[calc(100vh-420px)] pr-4 mt-6">
-					{/* Colors Tab */}
-					<TabsContent value="design" className="space-y-6 mt-0">
+				<ScrollArea className="pr-3 mt-4">
+					<TabsContent className="space-y-4 mt-0" value="design">
 						<Card className="border-2">
-							<CardHeader className="pb-4">
-								<CardTitle className="text-base font-semibold">
-									QR Code Colors
-								</CardTitle>
+							<CardHeader className="pb-3">
+								<CardTitle className="text-sm font-semibold">Colors</CardTitle>
 							</CardHeader>
-							<CardContent className="space-y-5">
+							<CardContent className="space-y-3">
 								<ColorPicker
-									label="Dots Color"
-									value={options.dotsOptions?.color || "#000000"}
+									label="Dots"
 									onChange={(color) =>
 										updateOptions({
 											dotsOptions: { ...options.dotsOptions, color },
 										})
 									}
+									value={options.dotsOptions?.color || "#000000"}
 								/>
 								<ColorPicker
 									label="Background"
-									value={options.backgroundOptions?.color || "#ffffff"}
 									onChange={(color) =>
 										updateOptions({
 											backgroundOptions: {
@@ -153,10 +152,10 @@ export default function QrControls() {
 											},
 										})
 									}
+									value={options.backgroundOptions?.color || "#ffffff"}
 								/>
 								<ColorPicker
-									label="Corner Squares"
-									value={options.cornersSquareOptions?.color || "#000000"}
+									label="Corner Frames"
 									onChange={(color) =>
 										updateOptions({
 											cornersSquareOptions: {
@@ -165,10 +164,10 @@ export default function QrControls() {
 											},
 										})
 									}
+									value={options.cornersSquareOptions?.color || "#000000"}
 								/>
 								<ColorPicker
 									label="Corner Dots"
-									value={options.cornersDotOptions?.color || "#000000"}
 									onChange={(color) =>
 										updateOptions({
 											cornersDotOptions: {
@@ -177,37 +176,30 @@ export default function QrControls() {
 											},
 										})
 									}
+									value={options.cornersDotOptions?.color || "#000000"}
 								/>
 							</CardContent>
 						</Card>
 					</TabsContent>
 
-					{/* Shapes Tab */}
-					<TabsContent value="shapes" className="space-y-6 mt-0">
+					<TabsContent className="space-y-4 mt-0" value="shapes">
 						<Card className="border-2">
-							<CardHeader className="pb-4">
-								<CardTitle className="text-base font-semibold">
-									Dots Pattern
-								</CardTitle>
+							<CardHeader className="pb-3">
+								<CardTitle className="text-sm font-semibold">Dots Pattern</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<div className="grid grid-cols-3 gap-3">
+								<div className="grid grid-cols-2 gap-2">
 									{[
-										"square",
-										"dots",
-										"rounded",
-										"extra-rounded",
-										"classy",
-										"classy-rounded",
-									].map((type) => (
+										{ type: "square", icon: Square, label: "Square" },
+										{ type: "dots", icon: Circle, label: "Dots" },
+										{ type: "rounded", icon: RectangleEllipsis, label: "Rounded" },
+										{ type: "extra-rounded", icon: CircleDot, label: "Extra" },
+										{ type: "classy", icon: Sparkles, label: "Classy" },
+										{ type: "classy-rounded", icon: Sparkles, label: "Classy+" },
+									].map(({ type, icon: Icon, label }) => (
 										<Button
+											className="h-10 gap-1.5 capitalize focus:border-none "
 											key={type}
-											variant={
-												options.dotsOptions?.type === type
-													? "default"
-													: "outline"
-											}
-											className="h-20 flex flex-col gap-2 capitalize border-2"
 											onClick={() =>
 												updateOptions({
 													dotsOptions: {
@@ -216,13 +208,15 @@ export default function QrControls() {
 													},
 												})
 											}
+											size="sm"
+											variant={
+												options.dotsOptions?.type === type
+													? "default"
+													: "outline"
+											}
 										>
-											<div
-												className={`w-6 h-6 bg-current ${type === "rounded" ? "rounded-full" : type === "extra-rounded" ? "rounded-xl" : ""}`}
-											/>
-											<span className="text-xs font-medium">
-												{type.replace("-", " ")}
-											</span>
+											<Icon className="w-3.5 h-3.5" />
+											<span className="text-xs">{label}</span>
 										</Button>
 									))}
 								</div>
@@ -230,22 +224,19 @@ export default function QrControls() {
 						</Card>
 
 						<Card className="border-2">
-							<CardHeader className="pb-4">
-								<CardTitle className="text-base font-semibold">
-									Corner Squares
-								</CardTitle>
+							<CardHeader className="pb-3">
+								<CardTitle className="text-sm font-semibold">Corner Frames</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<div className="grid grid-cols-3 gap-3">
-									{["square", "dot", "extra-rounded"].map((type) => (
+								<div className="grid grid-cols-3 gap-2">
+									{[
+										{ type: "square", icon: Square, label: "Square" },
+										{ type: "dot", icon: Circle, label: "Dot" },
+										{ type: "extra-rounded", icon: RectangleEllipsis, label: "Rounded" },
+									].map(({ type, icon: Icon, label }) => (
 										<Button
+											className="h-10 gap-1.5 capitalize focus:border-none "
 											key={type}
-											variant={
-												options.cornersSquareOptions?.type === type
-													? "default"
-													: "outline"
-											}
-											className="h-20 flex flex-col gap-2 capitalize border-2"
 											onClick={() =>
 												updateOptions({
 													cornersSquareOptions: {
@@ -254,13 +245,15 @@ export default function QrControls() {
 													},
 												})
 											}
+											size="sm"
+											variant={
+												options.cornersSquareOptions?.type === type
+													? "default"
+													: "outline"
+											}
 										>
-											<div
-												className={`w-6 h-6 border-4 border-current ${type === "dot" ? "rounded-full" : type === "extra-rounded" ? "rounded-xl" : ""}`}
-											/>
-											<span className="text-xs font-medium">
-												{type.replace("-", " ")}
-											</span>
+											<Icon className="w-3.5 h-3.5" />
+											<span className="text-xs">{label}</span>
 										</Button>
 									))}
 								</div>
@@ -268,22 +261,18 @@ export default function QrControls() {
 						</Card>
 
 						<Card className="border-2">
-							<CardHeader className="pb-4">
-								<CardTitle className="text-base font-semibold">
-									Corner Dots
-								</CardTitle>
+							<CardHeader className="pb-3">
+								<CardTitle className="text-sm font-semibold">Corner Dots</CardTitle>
 							</CardHeader>
 							<CardContent>
-								<div className="grid grid-cols-2 gap-3">
-									{["square", "dot"].map((type) => (
+								<div className="grid grid-cols-2 gap-2">
+									{[
+										{ type: "square", icon: SquareDot, label: "Square" },
+										{ type: "dot", icon: CircleDot, label: "Dot" },
+									].map(({ type, icon: Icon, label }) => (
 										<Button
+											className="h-10 gap-1.5 capitalize focus:border-none"
 											key={type}
-											variant={
-												options.cornersDotOptions?.type === type
-													? "default"
-													: "outline"
-											}
-											className="h-20 flex flex-col gap-2 capitalize border-2"
 											onClick={() =>
 												updateOptions({
 													cornersDotOptions: {
@@ -292,11 +281,15 @@ export default function QrControls() {
 													},
 												})
 											}
+											size="sm"
+											variant={
+												options.cornersDotOptions?.type === type
+													? "default"
+													: "outline"
+											}
 										>
-											<div
-												className={`w-4 h-4 bg-current ${type === "dot" ? "rounded-full" : ""}`}
-											/>
-											<span className="text-xs font-medium">{type}</span>
+											<Icon className="w-3.5 h-3.5" />
+											<span className="text-xs">{label}</span>
 										</Button>
 									))}
 								</div>
@@ -304,49 +297,51 @@ export default function QrControls() {
 						</Card>
 					</TabsContent>
 
-					{/* Logo Tab */}
-					<TabsContent value="logo" className="space-y-6 mt-0">
+					<TabsContent className="space-y-4 mt-0" value="logo">
 						<Card className="border-2">
-							<CardHeader className="pb-4">
-								<CardTitle className="text-base font-semibold">
-									Logo Upload
-								</CardTitle>
+							<CardHeader className="pb-3">
+								<CardTitle className="text-sm font-semibold">Logo Upload</CardTitle>
 							</CardHeader>
-							<CardContent className="space-y-5">
+							<CardContent className="space-y-4">
 								{options.image == "" ? (
 									<ImageDropzone
-										type="qr-editor"
-										setIsUploading={setIsUploading}
-										onUploadComplete={(url) => updateOptions({ image: url })}
-										onError={(error) => console.error("Upload error:", error)}
-										removeImage={() => updateOptions({ image: "" })}
 										image={options.image || ""}
 										maxDim={512}
+										onError={(error) => console.error("Upload error:", error)}
+										onUploadComplete={(url) => updateOptions({ image: url })}
+										removeImage={() => updateOptions({ image: "" })}
+										setIsUploading={setIsUploading}
 										targetSizeKB={200}
+										type="qr-editor"
 									/>
 								) : (
-									<span className="text-green-500 flex flex-row gap-2 text-base items-center justify-start">
-										<FaCheckCircle className="text-green-500" />
-										Image uploaded successfully!
-									</span>
+									<div className="flex sm:flex-row sm:justify-between sm:items-center flex-col gap-2">
+										<span className="text-green-500 flex flex-row gap-2 text-sm items-center">
+											<FaCheckCircle size={16} />
+											Image uploaded
+										</span>
+										<button
+											className="text-red-500 flex flex-row gap-2 text-sm items-center"
+											onClick={() => updateOptions({ image: "" })}
+										>
+											<LuCircleMinus size={16} />
+											Remove
+										</button>
+									</div>
 								)}
 
 								{options.image && (
 									<>
-										<div className="space-y-3">
+										<div className="space-y-2">
 											<div className="flex items-center justify-between">
-												<Label className="text-sm font-semibold">
-													Logo Size
-												</Label>
+												<Label className="text-sm">Logo Size</Label>
 												<span className="text-sm font-bold text-product-primary">
 													{(options.imageOptions?.imageSize || 0.4).toFixed(1)}x
 												</span>
 											</div>
 											<Slider
-												min={0.1}
 												max={1}
-												step={0.1}
-												value={[options.imageOptions?.imageSize || 0.4]}
+												min={0.1}
 												onValueChange={([val]) =>
 													updateOptions({
 														imageOptions: {
@@ -355,20 +350,18 @@ export default function QrControls() {
 														},
 													})
 												}
-												className="py-1"
+												step={0.1}
+												value={[options.imageOptions?.imageSize || 0.4]}
 											/>
 										</div>
 
-										<div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-											<Label
-												htmlFor="hide-dots"
-												className="text-sm font-semibold cursor-pointer"
-											>
+										<div className="flex items-center justify-between p-2.5 bg-muted/50 rounded">
+											<Label className="text-sm cursor-pointer" htmlFor="hide-dots">
 												Hide Dots Behind Logo
 											</Label>
 											<Switch
-												id="hide-dots"
 												checked={options.imageOptions?.hideBackgroundDots}
+												id="hide-dots"
 												onCheckedChange={(checked) =>
 													updateOptions({
 														imageOptions: {
@@ -385,21 +378,15 @@ export default function QrControls() {
 						</Card>
 					</TabsContent>
 
-					{/* Settings Tab */}
-					<TabsContent value="settings" className="space-y-6 mt-0">
+					<TabsContent className="space-y-4 mt-0" value="settings">
 						<Card className="border-2">
-							<CardHeader className="pb-4">
-								<CardTitle className="text-base font-semibold">
-									QR Code Settings
-								</CardTitle>
+							<CardHeader className="pb-3">
+								<CardTitle className="text-sm font-semibold">Settings</CardTitle>
 							</CardHeader>
-							<CardContent className="space-y-5">
-								<div className="space-y-3">
-									<Label className="text-sm font-semibold">
-										Error Correction Level
-									</Label>
+							<CardContent className="space-y-4">
+								<div className="space-y-2">
+									<Label className="text-sm">Error Correction Level</Label>
 									<Select
-										value={options.qrOptions?.errorCorrectionLevel}
 										onValueChange={(val: any) =>
 											updateOptions({
 												qrOptions: {
@@ -408,8 +395,9 @@ export default function QrControls() {
 												},
 											})
 										}
+										value={options.qrOptions?.errorCorrectionLevel}
 									>
-										<SelectTrigger className="h-11 border-2">
+										<SelectTrigger className="h-9 border-2">
 											<SelectValue />
 										</SelectTrigger>
 										<SelectContent>
@@ -424,22 +412,20 @@ export default function QrControls() {
 									</p>
 								</div>
 
-								<div className="space-y-4 pt-2">
+								<div className="space-y-3">
 									<div className="flex items-center justify-between">
-										<Label className="text-sm font-semibold">
-											Margin (Padding)
-										</Label>
+										<Label className="text-sm">Margin (Padding)</Label>
 										<span className="text-sm font-bold text-primary">
 											{options.margin || 0}px
 										</span>
 									</div>
 									<Slider
-										min={0}
 										max={50}
+										min={0}
+										onValueChange={([val]) => updateOptions({ margin: val })}
 										step={1}
 										value={[options.margin || 0]}
-										onValueChange={([val]) => updateOptions({ margin: val })}
-										className="py-2"
+										className="cursor-pointer"
 									/>
 								</div>
 							</CardContent>
@@ -447,19 +433,6 @@ export default function QrControls() {
 					</TabsContent>
 				</ScrollArea>
 			</Tabs>
-
-			<div className="pt-4">
-				<Button
-					size="lg"
-					className="w-full h-12 text-base font-semibold shadow-lg"
-					onClick={() => {
-						console.log("QR Code Configuration:", options);
-					}}
-				>
-					<Check className="w-5 h-5 mr-2" />
-					Save Configuration
-				</Button>
-			</div>
 		</div>
 	);
 }

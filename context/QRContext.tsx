@@ -1,7 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
 import type { Options } from "qr-code-styling";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 // Define the shape of our context state
 interface QrContextType {
@@ -16,18 +16,18 @@ const defaultOptions: Options = {
 	width: 300,
 	height: 300,
 	type: "svg",
-	data: "https://quicktalog.com",
+	data: process.env.NEXT_PUBLIC_APP_URL || "https://quicktalog.com",
 	image: "",
-	margin: 10,
+	margin: 0,
 	qrOptions: {
 		typeNumber: 0,
 		mode: "Byte",
 		errorCorrectionLevel: "Q",
 	},
 	imageOptions: {
-		hideBackgroundDots: true,
-		imageSize: 0.4,
-		margin: 20,
+		hideBackgroundDots: false,
+		imageSize: 0.5,
+		margin: 0,
 		crossOrigin: "anonymous",
 	},
 	dotsOptions: {
@@ -49,8 +49,16 @@ const defaultOptions: Options = {
 
 const QrContext = createContext<QrContextType | undefined>(undefined);
 
-export function QrProvider({ children }: { children: React.ReactNode }) {
-	const [options, setOptions] = useState<Options>(defaultOptions);
+export function QrProvider({
+	children,
+	initialOptions,
+}: {
+	children: React.ReactNode;
+	initialOptions?: Options;
+}) {
+	const [options, setOptions] = useState<Options>(
+		initialOptions || defaultOptions,
+	);
 	const [qrCodeInstance, setQrCodeInstance] = useState<any>(null);
 
 	const updateOptions = (newOptions: Partial<Options>) => {

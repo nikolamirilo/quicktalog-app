@@ -32,6 +32,7 @@ export default function RootLayout({
 			<head>
 				<ClarityScript />
 				<GoogleTagManager gtmId={process.env.GTM_ID} />
+				<script type="text/javascript" id="hs-script-loader" async defer src="//js-eu1.hs-scripts.com/146895463.js"></script>
 			</head>
 			<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 			<body className="product">

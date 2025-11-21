@@ -1,6 +1,7 @@
 import { MainContextProvider } from "@/context/MainContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import CookieBanner from "../common/CookieBanner";
+import { Toaster } from "../ui/toaster";
 
 export const PageWrapperClient = ({
 	children,
@@ -15,6 +16,7 @@ export const PageWrapperClient = ({
 		>
 			<MainContextProvider>{children}</MainContextProvider>
 			<CookieBanner />
+			<Toaster />
 		</ClerkProvider>
 	);
 };

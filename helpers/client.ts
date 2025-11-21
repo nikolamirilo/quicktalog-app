@@ -2,6 +2,7 @@ import { Catalogue, CatalogueFormData, PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ContactItem, FooterData, HeaderData } from "@/types";
+import { getQrConfig } from "@/actions/qr-configs";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -196,7 +197,7 @@ export const handleDownloadPDF = async (
 	}
 };
 
-export const handleDownloadPng = (catalogueSlug: string) => {
+export const handleDownloadPng = async (catalogueSlug: string) => {
 	const svg = document.querySelector("#qr-code svg");
 	if (!svg) {
 		console.error("QR SVG not found!");

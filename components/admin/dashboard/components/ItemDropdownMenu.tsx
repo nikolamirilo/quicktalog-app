@@ -21,15 +21,10 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
 	handleDownloadHTML,
-	handleDownloadPDF,
-	handleDownloadPng,
 } from "@/helpers/client";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
 
@@ -172,57 +167,35 @@ const ItemDropdownMenu = ({
 								{isLinkCopied === true ? "Link Copied" : `Share`}
 							</span>
 						</DropdownMenuItem>
-						{!disabled && (
-							<DropdownMenuSub>
-								<DropdownMenuSubTrigger className="text-product-foreground hover:bg-product-hover-background cursor-pointer">
-									<span className="flex items-center gap-2">
-										<FiDownload size={18} />
-										Download
-									</span>
-								</DropdownMenuSubTrigger>
-								<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg">
-									<DropdownMenuItem
-										className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-										onClick={() => handleDownloadPng(catalogue.name)}
-									>
-										<span className="flex items-center gap-2">
-											<BsQrCodeScan size={18} />
-											QR Code
-										</span>
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-										disabled={planId === 0}
-										onClick={() =>
-											handleDownloadHTML(
-												catalogue.name,
-												`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`,
-											)
-										}
-									>
-										<span className="flex items-center gap-2">
-											<ImEmbed2 size={18} />
-											Embed
-										</span>
-									</DropdownMenuItem>
-									{/* <DropdownMenuItem
-									className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
-									disabled={planId < 2}
-									onClick={() =>
-										handleDownloadPDF(
-											catalogue.name,
-											`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}?expanded=true`,
-										)
-									}
-								>
-									<span className="flex items-center gap-2">
-										<FaRegFilePdf size={18} />
-										PDF
-									</span>
-								</DropdownMenuItem> */}
-								</DropdownMenuSubContent>
-							</DropdownMenuSub>
-						)}
+						<DropdownMenuItem
+							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							disabled={disabled}
+						>			<Link
+							className="w-full"
+							href={`/admin/items/${catalogue.name}/qr-editor`}
+							passHref
+						>
+								<span className="flex items-center gap-2">
+									<BsQrCodeScan size={18} />
+									QR Code
+								</span>
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							disabled={disabled}
+							onClick={() =>
+								handleDownloadHTML(
+									catalogue.name,
+									`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`,
+								)
+							}
+						>
+							<span className="flex items-center gap-2">
+								<ImEmbed2 size={18} />
+								Embed
+							</span>
+						</DropdownMenuItem>
 						<div
 							className="p-2 sm:p-3 bg-white rounded-xl shadow-sm border border-product-border hidden"
 							id="qr-code"
@@ -231,6 +204,7 @@ const ItemDropdownMenu = ({
 								bgColor="white"
 								className="w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36"
 								fgColor="black"
+
 								size={100}
 								value={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`}
 							/>
