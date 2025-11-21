@@ -44,13 +44,15 @@ export default async function page() {
 
 	return (
 		<div className="product font-lora min-h-screen">
-			{userData.currentPlan.id > 2 && <script
-				type="text/javascript"
-				id="hs-script-loader"
-				async
-				defer
-				src="//js-eu1.hs-scripts.com/146895463.js"
-			></script>}
+			{userData.currentPlan.id > 2 && (
+				<script
+					type="text/javascript"
+					id="hs-script-loader"
+					async
+					defer
+					src="//js-eu1.hs-scripts.com/146895463.js"
+				></script>
+			)}
 			<Navbar />
 			<Dashboard pricingPlan={currentPlan} usage={usage} user={user} />
 
