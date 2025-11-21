@@ -7,6 +7,7 @@ import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { Button } from "@/components/ui/button";
 import type { AreLimitesReached } from "@/types";
+import Script from "next/script";
 
 export const dynamic = "force-dynamic";
 
@@ -45,13 +46,11 @@ export default async function page() {
 	return (
 		<div className="product font-lora min-h-screen">
 			{userData.currentPlan.id > 2 && (
-				<script
-					type="text/javascript"
+				<Script
 					id="hs-script-loader"
-					async
-					defer
-					src="//js-eu1.hs-scripts.com/146895463.js"
-				></script>
+					src="https://js-eu1.hs-scripts.com/146895463.js"
+					strategy="lazyOnload"
+				/>
 			)}
 			<Navbar />
 			<Dashboard pricingPlan={currentPlan} usage={usage} user={user} />
