@@ -73,7 +73,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 				</DialogHeader>
 
 				{/* Two-column layout for better space usage */}
-				<div className={`grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5 ${type === "edit" ? "hidden" : ""}`}>
+				<div
+					className={`grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5 ${type === "edit" ? "hidden" : ""}`}
+				>
 					{/* QR Code Section */}
 					<div className="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-3 sm:p-4 md:p-5 bg-product-background/50 rounded-xl border border-product-border">
 						<div className="flex items-center gap-2">
@@ -147,10 +149,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								<pre className="whitespace-pre-wrap break-all relative m-0">
 									{iframeCode}
 									<button
-										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${copied
-											? "bg-green-500 text-white"
-											: "bg-gray-700 text-gray-300 hover:bg-gray-600"
-											}`}
+										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${
+											copied
+												? "bg-green-500 text-white"
+												: "bg-gray-700 text-gray-300 hover:bg-gray-600"
+										}`}
 										onClick={handleCopyCode}
 									>
 										{copied ? (

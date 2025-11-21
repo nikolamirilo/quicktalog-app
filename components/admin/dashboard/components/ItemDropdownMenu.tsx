@@ -23,9 +23,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-	handleDownloadHTML,
-} from "@/helpers/client";
+import { handleDownloadHTML } from "@/helpers/client";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
 
 type ItemDropdownMenuProps = {
@@ -170,11 +168,13 @@ const ItemDropdownMenu = ({
 						<DropdownMenuItem
 							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
 							disabled={disabled}
-						>			<Link
-							className="w-full"
-							href={`/admin/items/${catalogue.name}/qr-editor`}
-							passHref
 						>
+							{" "}
+							<Link
+								className="w-full"
+								href={`/admin/items/${catalogue.name}/qr-editor`}
+								passHref
+							>
 								<span className="flex items-center gap-2">
 									<BsQrCodeScan size={18} />
 									QR Code
@@ -204,7 +204,6 @@ const ItemDropdownMenu = ({
 								bgColor="white"
 								className="w-24 h-24 sm:w-30 sm:h-30 md:w-36 md:h-36"
 								fgColor="black"
-
 								size={100}
 								value={`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name}`}
 							/>

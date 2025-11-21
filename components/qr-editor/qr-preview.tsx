@@ -100,27 +100,27 @@ export default function QrPreview({ name }: { name: string }) {
 							<Download className="mr-2 h-5 w-5" /> Download QR Code
 						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="center" className="w-[200px] border-none bg-product-background">
+					<DropdownMenuContent
+						align="center"
+						className="w-[200px] border-none bg-product-background"
+					>
 						<DropdownMenuItem
 							className="cursor-pointer text-product-foreground !hover:bg-product-hover-background"
 							onClick={() => handleDownload("png")}
 						>
 							<span className="!w-full">Download as PNG</span>
-
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="cursor-pointer text-product-foreground !hover:bg-product-hover-background"
 							onClick={() => handleDownload("svg")}
 						>
 							<span className="w-full">Download as SVG</span>
-
 						</DropdownMenuItem>
 						<DropdownMenuItem
 							className="cursor-pointer text-product-foreground !hover:bg-product-hover-background"
 							onClick={() => handleDownload("jpeg")}
 						>
 							<span className="w-full">Download as JPEG</span>
-
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -138,4 +138,3 @@ export default function QrPreview({ name }: { name: string }) {
 		</div>
 	);
 }
-

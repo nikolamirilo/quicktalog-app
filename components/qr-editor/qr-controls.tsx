@@ -185,17 +185,27 @@ export default function QrControls({ name }: { name: string }) {
 					<TabsContent className="space-y-4 mt-0" value="shapes">
 						<Card className="border-2">
 							<CardHeader className="pb-3">
-								<CardTitle className="text-sm font-semibold">Dots Pattern</CardTitle>
+								<CardTitle className="text-sm font-semibold">
+									Dots Pattern
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<div className="grid grid-cols-2 gap-2">
 									{[
 										{ type: "square", icon: Square, label: "Square" },
 										{ type: "dots", icon: Circle, label: "Dots" },
-										{ type: "rounded", icon: RectangleEllipsis, label: "Rounded" },
+										{
+											type: "rounded",
+											icon: RectangleEllipsis,
+											label: "Rounded",
+										},
 										{ type: "extra-rounded", icon: CircleDot, label: "Extra" },
 										{ type: "classy", icon: Sparkles, label: "Classy" },
-										{ type: "classy-rounded", icon: Sparkles, label: "Classy+" },
+										{
+											type: "classy-rounded",
+											icon: Sparkles,
+											label: "Classy+",
+										},
 									].map(({ type, icon: Icon, label }) => (
 										<Button
 											className="h-10 gap-1.5 capitalize focus:border-none "
@@ -225,14 +235,20 @@ export default function QrControls({ name }: { name: string }) {
 
 						<Card className="border-2">
 							<CardHeader className="pb-3">
-								<CardTitle className="text-sm font-semibold">Corner Frames</CardTitle>
+								<CardTitle className="text-sm font-semibold">
+									Corner Frames
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<div className="grid grid-cols-3 gap-2">
 									{[
 										{ type: "square", icon: Square, label: "Square" },
 										{ type: "dot", icon: Circle, label: "Dot" },
-										{ type: "extra-rounded", icon: RectangleEllipsis, label: "Rounded" },
+										{
+											type: "extra-rounded",
+											icon: RectangleEllipsis,
+											label: "Rounded",
+										},
 									].map(({ type, icon: Icon, label }) => (
 										<Button
 											className="h-10 gap-1.5 capitalize focus:border-none "
@@ -262,7 +278,9 @@ export default function QrControls({ name }: { name: string }) {
 
 						<Card className="border-2">
 							<CardHeader className="pb-3">
-								<CardTitle className="text-sm font-semibold">Corner Dots</CardTitle>
+								<CardTitle className="text-sm font-semibold">
+									Corner Dots
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<div className="grid grid-cols-2 gap-2">
@@ -300,7 +318,9 @@ export default function QrControls({ name }: { name: string }) {
 					<TabsContent className="space-y-4 mt-0" value="logo">
 						<Card className="border-2">
 							<CardHeader className="pb-3">
-								<CardTitle className="text-sm font-semibold">Logo Upload</CardTitle>
+								<CardTitle className="text-sm font-semibold">
+									Logo Upload
+								</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								{options.image == "" ? (
@@ -356,7 +376,10 @@ export default function QrControls({ name }: { name: string }) {
 										</div>
 
 										<div className="flex items-center justify-between p-2.5 bg-muted/50 rounded">
-											<Label className="text-sm cursor-pointer" htmlFor="hide-dots">
+											<Label
+												className="text-sm cursor-pointer"
+												htmlFor="hide-dots"
+											>
 												Hide Dots Behind Logo
 											</Label>
 											<Switch
@@ -381,7 +404,9 @@ export default function QrControls({ name }: { name: string }) {
 					<TabsContent className="space-y-4 mt-0" value="settings">
 						<Card className="border-2">
 							<CardHeader className="pb-3">
-								<CardTitle className="text-sm font-semibold">Settings</CardTitle>
+								<CardTitle className="text-sm font-semibold">
+									Settings
+								</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-4">
 								<div className="space-y-2">
