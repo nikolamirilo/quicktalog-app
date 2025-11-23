@@ -32,18 +32,18 @@ const defaultOptions: Options = {
 	},
 	dotsOptions: {
 		color: "#000000",
-		type: "rounded",
+		type: "square",
 	},
 	backgroundOptions: {
 		color: "#ffffff",
 	},
 	cornersSquareOptions: {
 		color: "#000000",
-		type: "extra-rounded",
+		type: "square",
 	},
 	cornersDotOptions: {
 		color: "#000000",
-		type: "dot",
+		type: "square",
 	},
 };
 

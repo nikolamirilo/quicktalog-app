@@ -2,11 +2,13 @@
 import { QRCodeSVG } from "qrcode.react";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronDown, Download, Edit } from "lucide-react";
 import { FaCode } from "react-icons/fa6";
 import { FiCheckCircle, FiHome } from "react-icons/fi";
 import { ImEmbed2 } from "react-icons/im";
 import { IoMdCheckmark, IoMdOpen } from "react-icons/io";
-import { IoQrCode, IoShareSocialOutline } from "react-icons/io5";
+import { IoShareSocialOutline } from "react-icons/io5";
 import { MdCheck, MdContentCopy } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +19,15 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client";
 import { SuccessModalProps } from "@/types/components";
+import Link from "next/link";
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
 	isOpen = false,
@@ -26,6 +35,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 	catalogueUrl,
 	type = "regular",
 }) => {
+	const router = useRouter();
 	const [fullURL, setFullURL] = useState("");
 	const [copied, setCopied] = useState(false);
 	const [linkCopied, setLinkCopied] = useState(false);
@@ -120,14 +130,44 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								value={fullURL}
 							/>
 						</div>
-						<Button
-							className="bg-product-background text-xs"
-							onClick={() => handleDownloadPng(catalogueUrl.split("/")[2])}
-							size="sm"
-							variant="outline"
-						>
-							<IoQrCode className="w-3 h-3 sm:w-4 sm:h-4" /> Download QR code
-						</Button>
+
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									className="bg-product-background w-full"
+									variant="outline"
+								>
+									<Download className="w-3 h-3 sm:w-4 sm:h-4" />
+									Download QR Code
+									<ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 ml-auto" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="center" className="min-w-[200px] bg-product-background border-none">
+								<DropdownMenuItem
+								>
+									<button
+										className="cursor-pointer flex !flex-row gap-2 w-full bg-transparent border-none"
+										onClick={() => handleDownloadPng(catalogueUrl.split("/")[2])}
+
+									>
+										<Download size={15} />
+										Download
+									</button>
+
+								</DropdownMenuItem>
+								<DropdownMenuItem
+								>
+									<Link
+										className="cursor-pointer flex !flex-row gap-2 w-full bg-transparent border-none"
+										href={`/admin/items/${catalogueUrl.split("/")[2]}/qr-editor`}
+
+									>
+										<Edit size={15} />
+										Edit
+									</Link>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
 					</div>
 
 					{/* Embed Section */}
@@ -149,11 +189,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								<pre className="whitespace-pre-wrap break-all relative m-0">
 									{iframeCode}
 									<button
-										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${
-											copied
-												? "bg-green-500 text-white"
-												: "bg-gray-700 text-gray-300 hover:bg-gray-600"
-										}`}
+										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${copied
+											? "bg-green-500 text-white"
+											: "bg-gray-700 text-gray-300 hover:bg-gray-600"
+											}`}
 										onClick={handleCopyCode}
 									>
 										{copied ? (
@@ -169,7 +208,6 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								onClick={() =>
 									handleDownloadHTML(catalogueUrl.split("/")[2], fullURL)
 								}
-								size="sm"
 								variant="outline"
 							>
 								<FaCode className="w-3 h-3 sm:w-4 sm:h-4" /> Download HTML code

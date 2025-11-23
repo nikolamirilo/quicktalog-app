@@ -4,6 +4,7 @@ import Navbar from "@/components/navigation/Navbar";
 import QrControls from "@/components/qr-editor/qr-controls";
 import QrPreview from "@/components/qr-editor/qr-preview";
 import { QrProvider } from "@/context/QRContext";
+import { NavigationGuard } from "@/hooks/useBeforeUnload";
 
 export default async function page({
 	params,

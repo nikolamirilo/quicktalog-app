@@ -73,11 +73,12 @@ export default function QrControls({ name }: { name: string }) {
 
 	useEffect(() => {
 		updateOptions({
-			data: `${process.env.NEXT_PUBLIC_APP_URL || "https://quicktalog.com"}/catalogues/${name}`,
+			data: `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${name}`,
 		});
 	}, []);
 
 	return (
+
 		<div className="h-full flex flex-col gap-4">
 			<Card className="bg-gradient-to-br from-background to-muted/20 border-2">
 				<CardHeader className="pb-3">
@@ -92,14 +93,13 @@ export default function QrControls({ name }: { name: string }) {
 						disabled={true}
 						id="qr-content"
 						onChange={handleDataChange}
-						placeholder={`https://www.quicktalog.com/catalogues/${name}`}
 						value={options.data}
 					/>
 				</CardContent>
 			</Card>
 
 			<Tabs className="w-full" defaultValue="design">
-				<TabsList className="w-full grid grid-cols-4 gap-4 h-11 bg-muted p-1 rounded-lg">
+				<TabsList className="w-full grid grid-cols-4 gap-1 sm:gap-4 h-11 bg-muted p-1 rounded-lg">
 					<TabsTrigger
 						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
 						value="design"
@@ -458,6 +458,7 @@ export default function QrControls({ name }: { name: string }) {
 					</TabsContent>
 				</ScrollArea>
 			</Tabs>
+
 		</div>
 	);
 }
