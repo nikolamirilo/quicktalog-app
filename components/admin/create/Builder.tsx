@@ -91,7 +91,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		}
 		if (
 			userData.currentPlan.features.traffic_limit <=
-				userData.usage.traffic.pageview_count &&
+			userData.usage.traffic.pageview_count &&
 			type == "create"
 		) {
 			setShowLimitsModal({ isOpen: true, type: "traffic" });
@@ -429,15 +429,8 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 			if (response.ok) {
 				const responseData = await response.json();
 				const finalSlug = responseData.slug || serviceCatalogueSlug;
-				const contactData = {
-					email: user.emailAddresses[0]?.emailAddress || "",
-					name: user.firstName || "",
-				};
 				revalidateCataloguesData(finalSlug);
 				setIsDirty(false);
-				if (type === "create") {
-					await sendNewCatalogueEmail(contactData, formData.name, finalSlug);
-				}
 
 				const catalogueUrl =
 					responseData.catalogueUrl || `/catalogues/${finalSlug}`;
