@@ -142,25 +142,25 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 									<ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 ml-auto" />
 								</Button>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent align="center" className="min-w-[200px] bg-product-background border-none">
-								<DropdownMenuItem
-								>
+							<DropdownMenuContent
+								align="center"
+								className="min-w-[200px] bg-product-background border-none"
+							>
+								<DropdownMenuItem>
 									<button
 										className="cursor-pointer flex !flex-row gap-2 w-full bg-transparent border-none"
-										onClick={() => handleDownloadPng(catalogueUrl.split("/")[2])}
-
+										onClick={() =>
+											handleDownloadPng(catalogueUrl.split("/")[2])
+										}
 									>
 										<Download size={15} />
 										Download
 									</button>
-
 								</DropdownMenuItem>
-								<DropdownMenuItem
-								>
+								<DropdownMenuItem>
 									<Link
 										className="cursor-pointer flex !flex-row gap-2 w-full bg-transparent border-none"
 										href={`/admin/items/${catalogueUrl.split("/")[2]}/qr-editor`}
-
 									>
 										<Edit size={15} />
 										Edit
@@ -189,10 +189,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								<pre className="whitespace-pre-wrap break-all relative m-0">
 									{iframeCode}
 									<button
-										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${copied
-											? "bg-green-500 text-white"
-											: "bg-gray-700 text-gray-300 hover:bg-gray-600"
-											}`}
+										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${
+											copied
+												? "bg-green-500 text-white"
+												: "bg-gray-700 text-gray-300 hover:bg-gray-600"
+										}`}
 										onClick={handleCopyCode}
 									>
 										{copied ? (

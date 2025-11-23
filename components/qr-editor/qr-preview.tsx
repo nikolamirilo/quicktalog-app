@@ -113,11 +113,13 @@ export default function QrPreview({ name }: { name: string }) {
 				</Card>
 
 				<div className="flex flex-col gap-4 w-full max-w-[500px]">
-					<DropdownMenu onOpenChange={(open) => {
-						if (open) {
-							setIsModalOpen(true);
-						}
-					}}>
+					<DropdownMenu
+						onOpenChange={(open) => {
+							if (open) {
+								setIsModalOpen(true);
+							}
+						}}
+					>
 						<DropdownMenuTrigger asChild>
 							<Button className="w-full shadow-lg cursor-pointer" size="lg">
 								<Download className="mr-2 h-5 w-5" /> Download QR Code
@@ -148,8 +150,6 @@ export default function QrPreview({ name }: { name: string }) {
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
-
-
 			</div>
 			<InformModal
 				isOpen={isModalOpen}

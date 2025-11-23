@@ -78,7 +78,6 @@ export default function QrControls({ name }: { name: string }) {
 	}, []);
 
 	return (
-
 		<div className="h-full flex flex-col gap-4">
 			<Card className="bg-gradient-to-br from-background to-muted/20 border-2">
 				<CardHeader className="pb-3">
@@ -458,7 +457,6 @@ export default function QrControls({ name }: { name: string }) {
 					</TabsContent>
 				</ScrollArea>
 			</Tabs>
-
 		</div>
 	);
 }
