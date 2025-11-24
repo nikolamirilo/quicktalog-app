@@ -171,7 +171,8 @@ const Overview = ({
 										className="w-full"
 										disabled={
 											usage.catalogues >= matchedTier.features.catalogues ||
-											usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+											usage.traffic.pageview_count >=
+												matchedTier.features.traffic_limit
 										}
 										onClick={() => {
 											router.push("/admin/create");
@@ -186,20 +187,19 @@ const Overview = ({
 								</span>
 							</TooltipTrigger>
 							{(usage.catalogues >= matchedTier.features.catalogues ||
-								usage.traffic.pageview_count >= matchedTier.features.traffic_limit) && (
-									<TooltipContent className="max-w-[240px] border-none shadow-lg">
-										<div className="flex flex-col gap-3">
-											<p className="text-sm leading-relaxed">
-												Upgrade to unlock more catalogues and get higher limits.
-											</p>
-											<Link href="/pricing">
-												<Button size="sm" >
-													View Pricing
-												</Button>
-											</Link>
-										</div>
-									</TooltipContent>
-								)}
+								usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit) && (
+								<TooltipContent className="max-w-[240px] border-none shadow-lg">
+									<div className="flex flex-col gap-3">
+										<p className="text-sm leading-relaxed">
+											Upgrade to unlock more catalogues and get higher limits.
+										</p>
+										<Link href="/pricing">
+											<Button size="sm">View Pricing</Button>
+										</Link>
+									</div>
+								</TooltipContent>
+							)}
 						</Tooltip>
 					</TooltipProvider>
 					<TooltipProvider>
@@ -211,7 +211,8 @@ const Overview = ({
 										disabled={
 											usage.prompts >= matchedTier.features.ai_prompts ||
 											usage.catalogues >= matchedTier.features.catalogues ||
-											usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+											usage.traffic.pageview_count >=
+												matchedTier.features.traffic_limit
 										}
 										onClick={() => {
 											router.push("/admin/create/ai");
@@ -228,20 +229,19 @@ const Overview = ({
 							</TooltipTrigger>
 							{(usage.prompts >= matchedTier.features.ai_prompts ||
 								usage.catalogues >= matchedTier.features.catalogues ||
-								usage.traffic.pageview_count >= matchedTier.features.traffic_limit) && (
-									<TooltipContent className="max-w-[240px] border-none shadow-lg">
-										<div className="flex flex-col gap-3">
-											<p className="text-sm leading-relaxed">
-												Upgrade to unlock AI generation and get higher limits.
-											</p>
-											<Link href="/pricing">
-												<Button size="sm" >
-													View Pricing
-												</Button>
-											</Link>
-										</div>
-									</TooltipContent>
-								)}
+								usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit) && (
+								<TooltipContent className="max-w-[240px] border-none shadow-lg">
+									<div className="flex flex-col gap-3">
+										<p className="text-sm leading-relaxed">
+											Upgrade to unlock AI generation and get higher limits.
+										</p>
+										<Link href="/pricing">
+											<Button size="sm">View Pricing</Button>
+										</Link>
+									</div>
+								</TooltipContent>
+							)}
 						</Tooltip>
 					</TooltipProvider>
 					<TooltipProvider>
@@ -253,7 +253,8 @@ const Overview = ({
 										disabled={
 											usage.ocr >= matchedTier.features.ocr_ai_import ||
 											usage.catalogues >= matchedTier.features.catalogues ||
-											usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+											usage.traffic.pageview_count >=
+												matchedTier.features.traffic_limit
 										}
 										onClick={() => {
 											router.push("/admin/create/ocr");
@@ -267,20 +268,19 @@ const Overview = ({
 							</TooltipTrigger>
 							{(usage.ocr >= matchedTier.features.ocr_ai_import ||
 								usage.catalogues >= matchedTier.features.catalogues ||
-								usage.traffic.pageview_count >= matchedTier.features.traffic_limit) && (
-									<TooltipContent className="max-w-[240px] border-none shadow-lg">
-										<div className="flex flex-col gap-3">
-											<p className="text-sm leading-relaxed">
-												Upgrade to unlock OCR import and get higher limits.
-											</p>
-											<Link href="/pricing">
-												<Button size="sm" >
-													View Pricing
-												</Button>
-											</Link>
-										</div>
-									</TooltipContent>
-								)}
+								usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit) && (
+								<TooltipContent className="max-w-[240px] border-none shadow-lg">
+									<div className="flex flex-col gap-3">
+										<p className="text-sm leading-relaxed">
+											Upgrade to unlock OCR import and get higher limits.
+										</p>
+										<Link href="/pricing">
+											<Button size="sm">View Pricing</Button>
+										</Link>
+									</div>
+								</TooltipContent>
+							)}
 						</Tooltip>
 					</TooltipProvider>
 				</div>
