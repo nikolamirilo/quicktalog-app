@@ -70,10 +70,10 @@ const getColorDistance = (color1: string, color2: string): number => {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-				r: parseInt(result[1], 16),
-				g: parseInt(result[2], 16),
-				b: parseInt(result[3], 16),
-			}
+					r: parseInt(result[1], 16),
+					g: parseInt(result[2], 16),
+					b: parseInt(result[3], 16),
+				}
 			: { r: 0, g: 0, b: 0 };
 	};
 
@@ -83,8 +83,8 @@ const getColorDistance = (color1: string, color2: string): number => {
 	// Calculate Euclidean distance in RGB space
 	return Math.sqrt(
 		Math.pow(rgb1.r - rgb2.r, 2) +
-		Math.pow(rgb1.g - rgb2.g, 2) +
-		Math.pow(rgb1.b - rgb2.b, 2)
+			Math.pow(rgb1.g - rgb2.g, 2) +
+			Math.pow(rgb1.b - rgb2.b, 2),
 	);
 };
 
@@ -105,7 +105,9 @@ export default function QrControls({ name }: { name: string }) {
 
 		// Threshold of 50 is quite strict - colors need to be very similar to trigger
 		// Return true if ANY element has low contrast with background
-		return dotDistance < 50 || cornerFrameDistance < 50 || cornerDotDistance < 50;
+		return (
+			dotDistance < 50 || cornerFrameDistance < 50 || cornerDotDistance < 50
+		);
 	}, [
 		options.backgroundOptions?.color,
 		options.dotsOptions?.color,

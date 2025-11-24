@@ -189,10 +189,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								<pre className="whitespace-pre-wrap break-all relative m-0">
 									{iframeCode}
 									<button
-										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${copied
+										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${
+											copied
 												? "bg-green-500 text-white"
 												: "bg-gray-700 text-gray-300 hover:bg-gray-600"
-											}`}
+										}`}
 										onClick={handleCopyCode}
 									>
 										{copied ? (
