@@ -107,22 +107,20 @@ export default function DescriptionEditor({
 		>
 			<div className="bg-gray-50 border-b border-gray-300 p-2 flex gap-2 items-center">
 				<button
-					className={`p-2 rounded ${
-						activeFormats.bold
-							? "bg-product-primary"
-							: "hover:bg-product-hover-background"
-					}`}
+					className={`p-2 rounded ${activeFormats.bold
+						? "bg-product-primary"
+						: "hover:bg-product-hover-background"
+						}`}
 					onClick={() => execCommand("bold")}
 					type="button"
 				>
 					<Bold size={20} />
 				</button>
 				<button
-					className={`p-2 rounded ${
-						activeFormats.italic
-							? "bg-product-primary"
-							: "hover:bg-product-hover-background"
-					}`}
+					className={`p-2 rounded ${activeFormats.italic
+						? "bg-product-primary"
+						: "hover:bg-product-hover-background"
+						}`}
 					onClick={() => execCommand("italic")}
 					type="button"
 				>

@@ -17,12 +17,19 @@ import {
 import CTASection from "@/components/common/CTASection";
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
 import { Button } from "@/components/ui/button";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { statusOrder } from "@/constants/sort";
 import { OverviewProps } from "@/types/components";
 import InformModal from "../../modals/InformModal";
 import DashboardItem from "./components/DashboardItem";
 import OverallAnalytics from "./components/OverallAnalytics";
 import UserProfile from "./components/UserProfile";
+import Link from "next/link";
 
 const Overview = ({
 	user,
@@ -156,55 +163,126 @@ const Overview = ({
 					Catalogues
 				</h2>
 				<div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
-					<Button
-						className="w-9/12 sm:w-fit"
-						disabled={
-							usage.catalogues >= matchedTier.features.catalogues ||
-							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
-						}
-						onClick={() => {
-							router.push("/admin/create");
-						}}
-					>
-						<IoCreateOutline
-							className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-							size={18}
-						/>{" "}
-						Create Catalogue
-					</Button>
-					<Button
-						className={`${planId < 1 && "animate-pulse"} w-9/12 sm:w-fit`}
-						disabled={
-							usage.prompts >= matchedTier.features.ai_prompts ||
-							usage.catalogues >= matchedTier.features.catalogues ||
-							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
-						}
-						onClick={() => {
-							router.push("/admin/create/ai");
-						}}
-						variant="outline"
-					>
-						<RiSparkling2Line
-							className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-							size={18}
-						/>{" "}
-						Generate with AI
-					</Button>
-					<Button
-						className="w-9/12 sm:w-fit"
-						disabled={
-							usage.ocr >= matchedTier.features.ocr_ai_import ||
-							usage.catalogues >= matchedTier.features.catalogues ||
-							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
-						}
-						onClick={() => {
-							router.push("/admin/create/ocr");
-						}}
-						variant="outline"
-					>
-						<BiScan className="sm:w-5 sm:h-5 md:w-6 md:h-6" size={18} />
-						Scan & Import Catalogue
-					</Button>
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span className="w-9/12 sm:w-fit">
+									<Button
+										className="w-full"
+										disabled={
+											usage.catalogues >= matchedTier.features.catalogues ||
+											usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+										}
+										onClick={() => {
+											router.push("/admin/create");
+										}}
+									>
+										<IoCreateOutline
+											className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+											size={18}
+										/>{" "}
+										Create Catalogue
+									</Button>
+								</span>
+							</TooltipTrigger>
+							{(usage.catalogues >= matchedTier.features.catalogues ||
+								usage.traffic.pageview_count >= matchedTier.features.traffic_limit) && (
+									<TooltipContent className="max-w-[240px] border-none shadow-lg">
+										<div className="flex flex-col gap-3">
+											<p className="text-sm leading-relaxed">
+												Upgrade to unlock more catalogues and get higher limits.
+											</p>
+											<Link href="/pricing">
+												<Button size="sm" >
+													View Pricing
+												</Button>
+											</Link>
+										</div>
+									</TooltipContent>
+								)}
+						</Tooltip>
+					</TooltipProvider>
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span className="w-9/12 sm:w-fit">
+									<Button
+										className={`${planId < 1 && "animate-pulse"} w-full`}
+										disabled={
+											usage.prompts >= matchedTier.features.ai_prompts ||
+											usage.catalogues >= matchedTier.features.catalogues ||
+											usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+										}
+										onClick={() => {
+											router.push("/admin/create/ai");
+										}}
+										variant="outline"
+									>
+										<RiSparkling2Line
+											className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+											size={18}
+										/>{" "}
+										Generate with AI
+									</Button>
+								</span>
+							</TooltipTrigger>
+							{(usage.prompts >= matchedTier.features.ai_prompts ||
+								usage.catalogues >= matchedTier.features.catalogues ||
+								usage.traffic.pageview_count >= matchedTier.features.traffic_limit) && (
+									<TooltipContent className="max-w-[240px] border-none shadow-lg">
+										<div className="flex flex-col gap-3">
+											<p className="text-sm leading-relaxed">
+												Upgrade to unlock AI generation and get higher limits.
+											</p>
+											<Link href="/pricing">
+												<Button size="sm" >
+													View Pricing
+												</Button>
+											</Link>
+										</div>
+									</TooltipContent>
+								)}
+						</Tooltip>
+					</TooltipProvider>
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span className="w-9/12 sm:w-fit">
+									<Button
+										className="w-full"
+										disabled={
+											usage.ocr >= matchedTier.features.ocr_ai_import ||
+											usage.catalogues >= matchedTier.features.catalogues ||
+											usage.traffic.pageview_count >= matchedTier.features.traffic_limit
+										}
+										onClick={() => {
+											router.push("/admin/create/ocr");
+										}}
+										variant="outline"
+									>
+										<BiScan className="sm:w-5 sm:h-5 md:w-6 md:h-6" size={18} />
+										Scan & Import Catalogue
+									</Button>
+								</span>
+							</TooltipTrigger>
+							{(usage.ocr >= matchedTier.features.ocr_ai_import ||
+								usage.catalogues >= matchedTier.features.catalogues ||
+								usage.traffic.pageview_count >= matchedTier.features.traffic_limit) && (
+									<TooltipContent className="max-w-[240px] border-none shadow-lg">
+										<div className="flex flex-col gap-3">
+											<p className="text-sm leading-relaxed">
+												Upgrade to unlock OCR import and get higher limits.
+											</p>
+											<Link href="/pricing">
+												<Button size="sm" >
+													View Pricing
+												</Button>
+											</Link>
+										</div>
+									</TooltipContent>
+								)}
+						</Tooltip>
+					</TooltipProvider>
 				</div>
 				{usage.catalogues >= matchedTier.features.catalogues && (
 					<CTASection

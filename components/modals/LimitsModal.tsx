@@ -248,12 +248,12 @@ const LimitsModal = ({
 						</Link>
 					)}
 
-					<div className="flex justify-center mb-4">
+					<div className="flex justify-center mb-2">
 						<div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-product-primary shadow-lg">
 							{isNotFound ? (
-								<IoSearch className="w-8 h-8 sm:w-10 sm:h-10 text-product-secondary" />
+								<IoSearch className="w-6 h-6 sm:w-8 sm:h-8 text-product-secondary" />
 							) : (
-								<IconComponent className="w-8 h-8 sm:w-10 sm:h-10 text-product-secondary" />
+								<IconComponent className="w-6 h-6 sm:w-8 sm:h-8 text-product-secondary" />
 							)}
 						</div>
 					</div>
@@ -276,7 +276,7 @@ const LimitsModal = ({
 						<div className="space-y-6">
 							{/* Quicktalog Promotional Content */}
 							<div className="p-4 sm:p-5 rounded-xl bg-product-hover-background border border-product-border">
-								<h3 className="text-base sm:text-lg font-semibold text-product-foreground mb-3">
+								<h3 className="text-base sm:text-lg font-semibold text-product-foreground mb-2">
 									Create Your Digital Catalog with Quicktalog
 								</h3>
 								<ul className="space-y-2 text-sm text-product-foreground-accent">

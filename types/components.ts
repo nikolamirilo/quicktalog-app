@@ -145,6 +145,7 @@ export type Step1GeneralProps = {
 	setTouched: any;
 	setErrors: any;
 	type: "create" | "edit";
+	handleBlur?: (fieldName: string) => void;
 };
 
 export type Step2CategoriesProps = {

@@ -47,16 +47,14 @@ export const useCatalogueName = ({
 				name: "Name must only contain letters, numbers, and spaces (no special characters).",
 			}));
 			return;
-		} else if (isValid && setErrors) {
-			// Clear format error if user fixes it
+		}
+
+		// Clear any existing name errors when user types valid input
+		if (isValid && setErrors) {
 			setErrors((prev: any) => {
 				const newErrors = { ...prev };
-				if (
-					newErrors.name ===
-					"Name must only contain letters, numbers, and spaces (no special characters)."
-				) {
-					delete newErrors.name;
-				}
+				// Clear all name-related errors
+				delete newErrors.name;
 				return newErrors;
 			});
 		}
@@ -73,31 +71,7 @@ export const useCatalogueName = ({
 						...prev,
 						name: "This name is already in use. Please choose a different name.",
 					}));
-				} else if (!exists && setErrors) {
-					// Clear duplicate error
-					setErrors((prev: any) => {
-						const newErrors = { ...prev };
-						if (
-							newErrors.name ===
-							"This name is already in use. Please choose a different name."
-						) {
-							delete newErrors.name;
-						}
-						return newErrors;
-					});
 				}
-			} else if (!newName.trim() && setErrors) {
-				// Clear duplicate error if empty
-				setErrors((prev: any) => {
-					const newErrors = { ...prev };
-					if (
-						newErrors.name ===
-						"This name is already in use. Please choose a different name."
-					) {
-						delete newErrors.name;
-					}
-					return newErrors;
-				});
 			}
 		}
 	};

@@ -100,14 +100,13 @@ export default function AIBuilder({
 					userId: user.id,
 				}),
 			});
+			await revalidateData();
 			setTimeout(() => {
 				setShowInfoModal(true);
 				setIsSubmitting(false);
 			}, 5000);
 		} catch (error) {
 			console.error("Submission error:", error);
-		} finally {
-			await revalidateData();
 		}
 	};
 
