@@ -1,6 +1,7 @@
 "use client";
 
 import {
+	AlertCircle,
 	Check,
 	Circle,
 	CircleDot,
@@ -13,7 +14,7 @@ import {
 	Square,
 	SquareDot,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaCheckCircle, FaRegTrashAlt } from "react-icons/fa";
 import { LuCircleMinus } from "react-icons/lu";
 import ImageDropzone from "@/components/common/ImageDropzone";
@@ -63,9 +64,54 @@ const ColorPicker = ({
 	</div>
 );
 
+// Helper function to calculate color distance
+const getColorDistance = (color1: string, color2: string): number => {
+	const hexToRgb = (hex: string) => {
+		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		return result
+			? {
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
+			: { r: 0, g: 0, b: 0 };
+	};
+
+	const rgb1 = hexToRgb(color1);
+	const rgb2 = hexToRgb(color2);
+
+	// Calculate Euclidean distance in RGB space
+	return Math.sqrt(
+		Math.pow(rgb1.r - rgb2.r, 2) +
+		Math.pow(rgb1.g - rgb2.g, 2) +
+		Math.pow(rgb1.b - rgb2.b, 2)
+	);
+};
+
 export default function QrControls({ name }: { name: string }) {
 	const { options, updateOptions } = useQr();
 	const [isUploading, setIsUploading] = useState(false);
+
+	// Check for low contrast between background and any QR code elements
+	const hasLowContrast = useMemo(() => {
+		const bgColor = options.backgroundOptions?.color || "#ffffff";
+		const dotColor = options.dotsOptions?.color || "#000000";
+		const cornerFrameColor = options.cornersSquareOptions?.color || "#000000";
+		const cornerDotColor = options.cornersDotOptions?.color || "#000000";
+
+		const dotDistance = getColorDistance(bgColor, dotColor);
+		const cornerFrameDistance = getColorDistance(bgColor, cornerFrameColor);
+		const cornerDotDistance = getColorDistance(bgColor, cornerDotColor);
+
+		// Threshold of 50 is quite strict - colors need to be very similar to trigger
+		// Return true if ANY element has low contrast with background
+		return dotDistance < 50 || cornerFrameDistance < 50 || cornerDotDistance < 50;
+	}, [
+		options.backgroundOptions?.color,
+		options.dotsOptions?.color,
+		options.cornersSquareOptions?.color,
+		options.cornersDotOptions?.color,
+	]);
 
 	const handleDataChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		updateOptions({ data: e.target.value });
@@ -98,27 +144,27 @@ export default function QrControls({ name }: { name: string }) {
 			</Card>
 
 			<Tabs className="w-full" defaultValue="design">
-				<TabsList className="w-full grid grid-cols-4 gap-1 sm:gap-4 h-11 bg-muted p-1 rounded-lg">
+				<TabsList className="w-full grid grid-cols-4 gap-1 sm:gap-2 h-11 bg-muted p-1 rounded-lg">
 					<TabsTrigger
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-400/50 ring-1 ring-white/10"
 						value="design"
 					>
 						<Palette className="w-3.5 h-3.5 mr-1.5" /> Colors
 					</TabsTrigger>
 					<TabsTrigger
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-400/50 ring-1 ring-white/10"
 						value="shapes"
 					>
 						<QrCode className="w-3.5 h-3.5 mr-1.5" /> Style
 					</TabsTrigger>
 					<TabsTrigger
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-400/50 ring-1 ring-white/10"
 						value="logo"
 					>
 						<ImageIcon className="w-3.5 h-3.5 mr-1.5" /> Logo
 					</TabsTrigger>
 					<TabsTrigger
-						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-800/50 ring-1 ring-white/10"
+						className="data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground rounded-lg border border-gray-400/50 ring-1 ring-white/10"
 						value="settings"
 					>
 						<Settings className="w-3.5 h-3.5 mr-1.5" /> Settings
@@ -153,6 +199,7 @@ export default function QrControls({ name }: { name: string }) {
 									}
 									value={options.backgroundOptions?.color || "#ffffff"}
 								/>
+
 								<ColorPicker
 									label="Corner Frames"
 									onChange={(color) =>
@@ -177,6 +224,15 @@ export default function QrControls({ name }: { name: string }) {
 									}
 									value={options.cornersDotOptions?.color || "#000000"}
 								/>
+
+								{hasLowContrast && (
+									<div className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+										<AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+										<p className="text-xs text-amber-600 dark:text-amber-400">
+											The QR code may be unreadable due to low contrast.
+										</p>
+									</div>
+								)}
 							</CardContent>
 						</Card>
 					</TabsContent>

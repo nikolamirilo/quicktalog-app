@@ -1,9 +1,10 @@
 "use client";
+import { ChevronDown, Download, Edit } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ChevronDown, Download, Edit } from "lucide-react";
 import { FaCode } from "react-icons/fa6";
 import { FiCheckCircle, FiHome } from "react-icons/fi";
 import { ImEmbed2 } from "react-icons/im";
@@ -27,7 +28,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client";
 import { SuccessModalProps } from "@/types/components";
-import Link from "next/link";
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
 	isOpen = false,
@@ -138,7 +138,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 									variant="outline"
 								>
 									<Download className="w-3 h-3 sm:w-4 sm:h-4" />
-									Download QR Code
+									QR Code Options
 									<ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 ml-auto" />
 								</Button>
 							</DropdownMenuTrigger>
@@ -189,11 +189,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								<pre className="whitespace-pre-wrap break-all relative m-0">
 									{iframeCode}
 									<button
-										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${
-											copied
+										className={`absolute -top-2 -right-2 p-1 rounded-lg transition-colors duration-300 ${copied
 												? "bg-green-500 text-white"
 												: "bg-gray-700 text-gray-300 hover:bg-gray-600"
-										}`}
+											}`}
 										onClick={handleCopyCode}
 									>
 										{copied ? (
