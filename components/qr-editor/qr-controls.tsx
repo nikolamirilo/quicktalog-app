@@ -70,10 +70,10 @@ const getColorDistance = (color1: string, color2: string): number => {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: { r: 0, g: 0, b: 0 };
 	};
 
@@ -83,8 +83,8 @@ const getColorDistance = (color1: string, color2: string): number => {
 	// Calculate Euclidean distance in RGB space
 	return Math.sqrt(
 		Math.pow(rgb1.r - rgb2.r, 2) +
-			Math.pow(rgb1.g - rgb2.g, 2) +
-			Math.pow(rgb1.b - rgb2.b, 2),
+		Math.pow(rgb1.g - rgb2.g, 2) +
+		Math.pow(rgb1.b - rgb2.b, 2),
 	);
 };
 
@@ -228,9 +228,9 @@ export default function QrControls({ name }: { name: string }) {
 								/>
 
 								{hasLowContrast && (
-									<div className="flex items-start gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+									<div className="flex items-center justify-start gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
 										<AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-										<p className="text-xs text-amber-600 dark:text-amber-400">
+										<p className="text-xs text-product-foreground">
 											The QR code may be unreadable due to low contrast.
 										</p>
 									</div>
@@ -502,12 +502,12 @@ export default function QrControls({ name }: { name: string }) {
 										</span>
 									</div>
 									<Slider
+										className="cursor-pointer"
 										max={50}
 										min={0}
 										onValueChange={([val]) => updateOptions({ margin: val })}
 										step={1}
 										value={[options.margin || 0]}
-										className="cursor-pointer"
 									/>
 								</div>
 							</CardContent>
