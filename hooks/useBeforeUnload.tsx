@@ -1,10 +1,14 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import InformModal from "@/components/modals/InformModal";
 
 export const NavigationGuard = ({ isDirty }) => {
 	const isClientRef = useRef(false);
 	const currentUrlRef = useRef("");
 	const isNavigatingRef = useRef(false);
+	const pendingNavigationRef = useRef<(() => void) | null>(null);
+
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	useEffect(() => {
 		// Set client flag and initial URL
@@ -30,28 +34,35 @@ export const NavigationGuard = ({ isDirty }) => {
 				const isSamePage = link.href === window.location.href;
 
 				if (isInternalLink && !isSamePage) {
-					if (
-						!window.confirm(
-							"You have unsaved changes. Are you sure you want to leave?",
-						)
-					) {
-						e.preventDefault();
-						e.stopPropagation();
-					}
+					// Prevent navigation immediately
+					e.preventDefault();
+					e.stopPropagation();
+
+					// Store the navigation action
+					pendingNavigationRef.current = () => {
+						window.location.href = link.href;
+					};
+
+					// Show modal
+					setIsModalOpen(true);
 				}
 			}
 		};
 
 		const handlePopState = () => {
 			if (isDirty && !isNavigatingRef.current) {
-				if (
-					!window.confirm(
-						"You have unsaved changes. Are you sure you want to leave?",
-					)
-				) {
-					window.history.pushState(null, "", window.location.href);
-					return;
-				}
+				// Prevent back/forward navigation
+				window.history.pushState(null, "", window.location.href);
+
+				// Store the navigation action (go back)
+				pendingNavigationRef.current = () => {
+					isNavigatingRef.current = true;
+					window.history.back();
+				};
+
+				// Show modal
+				setIsModalOpen(true);
+				return;
 			}
 			isNavigatingRef.current = false;
 		};
@@ -94,6 +105,30 @@ export const NavigationGuard = ({ isDirty }) => {
 		};
 	}, [isDirty]);
 
-	// Don't render anything on server or client
-	return null;
+	const handleConfirm = () => {
+		setIsModalOpen(false);
+		// Execute the pending navigation
+		if (pendingNavigationRef.current) {
+			pendingNavigationRef.current();
+			pendingNavigationRef.current = null;
+		}
+	};
+
+	const handleCancel = () => {
+		setIsModalOpen(false);
+		// Clear the pending navigation
+		pendingNavigationRef.current = null;
+	};
+
+	return (
+		<InformModal
+			isOpen={isModalOpen}
+			message="You have unsaved changes. Are you sure you want to leave?"
+			onCancel={handleCancel}
+			onConfirm={handleConfirm}
+			title="Unsaved Changes"
+			confirmText="Leave"
+			cancelText="Stay"
+		/>
+	);
 };

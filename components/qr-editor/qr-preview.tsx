@@ -14,10 +14,10 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useToast } from "@/hooks/use-toast";
 import { useQr } from "@/context/QRContext";
-import InformModal from "../modals/InformModal";
+import { useToast } from "@/hooks/use-toast";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
+import InformModal from "../modals/InformModal";
 
 export default function QrPreview({ name }: { name: string }) {
 	const { options, setQrCodeInstance } = useQr();
@@ -120,15 +120,16 @@ export default function QrPreview({ name }: { name: string }) {
 								setIsModalOpen(true);
 							}
 						}}
+
 					>
 						<DropdownMenuTrigger asChild>
 							<Button className="w-full shadow-lg cursor-pointer" size="lg">
-								<Download className="mr-2 h-5 w-5" /> Download QR Code
+								<Download className="mr-2 h-5 w-5" /> Save & Download QR Code
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent
 							align="center"
-							className="w-[200px] bg-product-background"
+							className="w-[200px] bg-product-background border-none"
 						>
 							<DropdownMenuItem
 								className="cursor-pointer text-product-foreground !hover:bg-product-hover-background"
@@ -164,8 +165,10 @@ export default function QrPreview({ name }: { name: string }) {
 				</div>
 			</div>
 			<InformModal
+				cancelText="No"
+				confirmText="Yes"
 				isOpen={isModalOpen}
-				message=""
+				message="Would you like to save this QR configuration for future use?"
 				onCancel={() => {
 					setIsModalOpen(false);
 				}}
@@ -173,9 +176,7 @@ export default function QrPreview({ name }: { name: string }) {
 					setIsModalOpen(false);
 					handleSaveConfiguration();
 				}}
-				title="Would you like to save this QR configuration for future use?"
-				confirmText="Yes"
-				cancelText="No"
+				title="Save QR Code Configuration"
 			/>
 		</>
 	);

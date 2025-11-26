@@ -24,7 +24,7 @@ export default async function page({
 							{/* Left Column: Controls */}
 							<div className="w-full md:w-1/2 lg:w-8/12 xl:w-2/3">
 								<div className="sticky top-8">
-									<div className="mb-8 pb-6">
+									<div className="pb-6">
 										<h1 className="text-4xl font-bold tracking-tight text-[var(--product-foreground)] mb-2">
 											QR Code Editor
 										</h1>
@@ -37,7 +37,7 @@ export default async function page({
 							</div>
 
 							{/* Right Column: Preview */}
-							<div className="w-full md:w-1/2 lg:w-4/12 xl:w-1/3 bg-product-background rounded-3xl shadow-product-shadow flex items-start py-8 justify-center sticky top-8">
+							<div className="w-full md:w-1/2 lg:w-4/12 xl:w-1/3 bg-product-background rounded-3xl shadow-product-shadow flex items-start p-2 lg:my-24 justify-center">
 								<QrPreview name={name} />
 							</div>
 						</div>

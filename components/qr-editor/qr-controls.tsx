@@ -14,6 +14,7 @@ import {
 	Square,
 	SquareDot,
 } from "lucide-react";
+import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { LuCircleMinus } from "react-icons/lu";
@@ -140,9 +141,12 @@ export default function QrControls({ name }: { name: string }) {
 				</CardHeader>
 				<CardContent>
 					<div className="bg-white/80 rounded-lg p-3">
-						<p className="text-sm font-mono text-gray-700 break-all">
+						<Link
+							className="text-sm font-mono text-product-primary break-all underline"
+							href={options.data}
+						>
 							{options.data}
-						</p>
+						</Link>
 					</div>
 				</CardContent>
 			</Card>
@@ -250,7 +254,8 @@ export default function QrControls({ name }: { name: string }) {
 													Low Contrast Warning
 												</p>
 												<p className="text-xs text-black mt-1">
-													Your QR code may be hard to scan. Try increasing the contrast between colors.
+													Your QR code may be hard to scan. Try increasing the
+													contrast between colors.
 												</p>
 											</div>
 										</div>
@@ -280,7 +285,11 @@ export default function QrControls({ name }: { name: string }) {
 												icon: RectangleEllipsis,
 												label: "Rounded",
 											},
-											{ type: "extra-rounded", icon: CircleDot, label: "Extra" },
+											{
+												type: "extra-rounded",
+												icon: CircleDot,
+												label: "Extra",
+											},
 											{ type: "classy", icon: Sparkles, label: "Classy" },
 											{
 												type: "classy-rounded",
@@ -458,9 +467,14 @@ export default function QrControls({ name }: { name: string }) {
 										<>
 											<div className="space-y-3 p-4 bg-gray-50 rounded-xl">
 												<div className="flex items-center justify-between">
-													<Label className="text-sm font-medium">Logo Size</Label>
+													<Label className="text-sm font-medium">
+														Logo Size
+													</Label>
 													<span className="text-base font-bold text-[var(--product-primary)] bg-white px-3 py-1 rounded-md">
-														{(options.imageOptions?.imageSize || 0.4).toFixed(1)}x
+														{(options.imageOptions?.imageSize || 0.4).toFixed(
+															1,
+														)}
+														x
 													</span>
 												</div>
 												<Slider
@@ -551,14 +565,17 @@ export default function QrControls({ name }: { name: string }) {
 										<div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
 											<Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
 											<p className="text-xs text-blue-700">
-												Higher correction levels allow the QR code to be scanned even if partially damaged or obscured
+												Higher correction levels allow the QR code to be scanned
+												even if partially damaged or obscured
 											</p>
 										</div>
 									</div>
 
 									<div className="space-y-3 p-4 bg-gray-50 rounded-xl">
 										<div className="flex items-center justify-between">
-											<Label className="text-sm font-medium">Margin (Padding)</Label>
+											<Label className="text-sm font-medium">
+												Margin (Padding)
+											</Label>
 											<span className="text-base font-bold text-[var(--product-primary)] bg-white px-3 py-1 rounded-md">
 												{options.margin || 0}px
 											</span>
