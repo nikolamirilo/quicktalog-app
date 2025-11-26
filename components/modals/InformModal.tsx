@@ -45,7 +45,7 @@ export default function InformModal({
 			}}
 			open={isOpen}
 		>
-			<AlertDialogContent className="text-product-foreground w-[95vw] max-w-lg mx-auto p-6 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl">
+			<AlertDialogContent className="font-lora text-product-foreground w-[95vw] max-w-lg mx-auto p-6 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl">
 				<AlertDialogHeader className="space-y-3">
 					<AlertDialogTitle className="text-xl font-bold text-product-foreground font-heading mb-3">
 						<div className="flex flex-row items-center justify-start gap-2">
