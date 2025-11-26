@@ -151,7 +151,7 @@ export default function QrPreview({ name }: { name: string }) {
 						</DropdownMenuContent>
 					</DropdownMenu>
 
-					<Link href="/admin/items">
+					<Link href="/admin/dashboard">
 						<Button
 							className="w-full gap-2 font-medium hover:border-[var(--product-primary)] hover:bg-[var(--product-hover-background)] transition-all"
 							size="lg"
