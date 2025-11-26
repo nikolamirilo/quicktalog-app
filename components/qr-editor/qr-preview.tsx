@@ -120,7 +120,6 @@ export default function QrPreview({ name }: { name: string }) {
 								setIsModalOpen(true);
 							}
 						}}
-
 					>
 						<DropdownMenuTrigger asChild>
 							<Button className="w-full shadow-lg cursor-pointer" size="lg">

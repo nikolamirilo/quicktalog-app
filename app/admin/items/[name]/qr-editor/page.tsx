@@ -29,7 +29,8 @@ export default async function page({
 											QR Code Editor
 										</h1>
 										<p className="text-gray-600 mt-2 text-base">
-											Create beautiful, customized QR codes for your brand with our easy-to-use editor.
+											Create beautiful, customized QR codes for your brand with
+											our easy-to-use editor.
 										</p>
 									</div>
 									<QrControls name={name} />

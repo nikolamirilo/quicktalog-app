@@ -1,5 +1,13 @@
 "use client";
-import { Check, Code, Copy, Download, Edit, Link as LinkIcon, QrCode } from "lucide-react";
+import {
+	Check,
+	Code,
+	Copy,
+	Download,
+	Edit,
+	Link as LinkIcon,
+	QrCode,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
@@ -137,7 +145,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 										</div>
 									</div>
 									<p className="text-xs text-product-foreground-accent text-center px-4">
-										Share this link directly with your customers via email, social media, or messaging apps.
+										Share this link directly with your customers via email,
+										social media, or messaging apps.
 									</p>
 								</div>
 							</TabsContent>
@@ -145,7 +154,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 							<TabsContent value="qr" className="space-y-4 mt-0">
 								<div className="flex flex-col items-center gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
 									<div className="space-y-2 text-center">
-										<Label className="text-sm font-semibold">Scan to View</Label>
+										<Label className="text-sm font-semibold">
+											Scan to View
+										</Label>
 										<div
 											className="p-3 bg-white rounded-xl shadow-sm border border-product-border mx-auto"
 											id="qr-code"
@@ -163,7 +174,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 									<div className="grid grid-cols-2 gap-3 w-full">
 										<Button
 											variant="outline"
-											onClick={() => handleDownloadPng(catalogueUrl.split("/")[2])}
+											onClick={() =>
+												handleDownloadPng(catalogueUrl.split("/")[2])
+											}
 											className="w-full bg-white"
 										>
 											<Download className="w-4 h-4 mr-2" />
@@ -199,8 +212,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 											<Button
 												size="icon"
 												variant="ghost"
-												className={`absolute top-2 right-2 h-8 w-8 hover:bg-gray-800/80 transition-colors ${copied ? "text-green-500 bg-gray-800/50" : "text-gray-400 bg-gray-800/30"
-													}`}
+												className={`absolute top-2 right-2 h-8 w-8 hover:bg-gray-800/80 transition-colors ${
+													copied
+														? "text-green-500 bg-gray-800/50"
+														: "text-gray-400 bg-gray-800/30"
+												}`}
 												onClick={handleCopyCode}
 											>
 												{copied ? (
