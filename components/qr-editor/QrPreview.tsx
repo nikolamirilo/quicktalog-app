@@ -19,7 +19,13 @@ import { useToast } from "@/hooks/use-toast";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
 import InformModal from "../modals/InformModal";
 
-export default function QrPreview({ name, setIsDirty }: { name: string, setIsDirty: (dirty: boolean) => void }) {
+export default function QrPreview({
+	name,
+	setIsDirty,
+}: {
+	name: string;
+	setIsDirty: (dirty: boolean) => void;
+}) {
 	const { options, setQrCodeInstance } = useQr();
 	const ref = useRef<HTMLDivElement>(null);
 	const qrCode = useRef<QRCodeStyling | null>(null);

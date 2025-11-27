@@ -91,7 +91,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		}
 		if (
 			userData.currentPlan.features.traffic_limit <=
-			userData.usage.traffic.pageview_count &&
+				userData.usage.traffic.pageview_count &&
 			type == "create"
 		) {
 			setShowLimitsModal({ isOpen: true, type: "traffic" });

@@ -1,8 +1,8 @@
 import React from "react";
 import { getQrConfig } from "@/actions/qr-configs";
 import Navbar from "@/components/navigation/Navbar";
-import QrControls from "@/components/qr-editor/qr-controls";
-import QrPreview from "@/components/qr-editor/qr-preview";
+import QrControls from "@/components/qr-editor/QrControls";
+import QrPreview from "@/components/qr-editor/QrPreview";
 import { QrProvider } from "@/context/QRContext";
 import QrEditor from "@/components/qr-editor/QrEditor";
 

@@ -3,7 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import InformModal from "@/components/modals/InformModal";
 import { useRouter } from "next/navigation";
 
-export const NavigationGuard = ({ isDirty, setIsDirty }: { isDirty: boolean; setIsDirty: (dirty: boolean) => void }) => {
+export const NavigationGuard = ({
+	isDirty,
+	setIsDirty,
+}: {
+	isDirty: boolean;
+	setIsDirty: (dirty: boolean) => void;
+}) => {
 	const isClientRef = useRef(false);
 	const currentUrlRef = useRef("");
 	const isNavigatingRef = useRef(false);
