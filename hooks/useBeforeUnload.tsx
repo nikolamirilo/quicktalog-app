@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import InformModal from "@/components/modals/InformModal";
+import { useRouter } from "next/navigation";
 
-export const NavigationGuard = ({ isDirty }) => {
+export const NavigationGuard = ({ isDirty, setIsDirty }: { isDirty: boolean; setIsDirty: (dirty: boolean) => void }) => {
 	const isClientRef = useRef(false);
 	const currentUrlRef = useRef("");
 	const isNavigatingRef = useRef(false);
 	const pendingNavigationRef = useRef<(() => void) | null>(null);
-
+	const router = useRouter();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	useEffect(() => {
@@ -17,7 +18,7 @@ export const NavigationGuard = ({ isDirty }) => {
 
 		if (!isDirty) return;
 
-		const handleBeforeUnload = (e) => {
+		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
 			if (isDirty) {
 				e.preventDefault();
 				e.returnValue = "";
@@ -25,10 +26,10 @@ export const NavigationGuard = ({ isDirty }) => {
 			}
 		};
 
-		const handleClick = (e) => {
+		const handleClick = (e: MouseEvent) => {
 			if (!isDirty) return;
 
-			const link = e.target.closest("a");
+			const link = (e.target as HTMLElement).closest("a");
 			if (link && link.href) {
 				const isInternalLink = link.hostname === window.location.hostname;
 				const isSamePage = link.href === window.location.href;
@@ -40,6 +41,7 @@ export const NavigationGuard = ({ isDirty }) => {
 
 					// Store the navigation action
 					pendingNavigationRef.current = () => {
+						isNavigatingRef.current = true;
 						window.location.href = link.href;
 					};
 
@@ -51,7 +53,7 @@ export const NavigationGuard = ({ isDirty }) => {
 
 		const handlePopState = () => {
 			if (isDirty && !isNavigatingRef.current) {
-				// Prevent back/forward navigation
+				// Prevent back/forward navigation by pushing current state again
 				window.history.pushState(null, "", window.location.href);
 
 				// Store the navigation action (go back)
@@ -107,16 +109,12 @@ export const NavigationGuard = ({ isDirty }) => {
 
 	const handleConfirm = () => {
 		setIsModalOpen(false);
-		// Execute the pending navigation
-		if (pendingNavigationRef.current) {
-			pendingNavigationRef.current();
-			pendingNavigationRef.current = null;
-		}
+		setIsDirty(false);
+		router.push("/admin/dashboard");
 	};
 
 	const handleCancel = () => {
 		setIsModalOpen(false);
-		// Clear the pending navigation
 		pendingNavigationRef.current = null;
 	};
 

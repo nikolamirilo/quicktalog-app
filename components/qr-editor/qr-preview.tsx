@@ -19,14 +19,13 @@ import { useToast } from "@/hooks/use-toast";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
 import InformModal from "../modals/InformModal";
 
-export default function QrPreview({ name }: { name: string }) {
+export default function QrPreview({ name, setIsDirty }: { name: string, setIsDirty: (dirty: boolean) => void }) {
 	const { options, setQrCodeInstance } = useQr();
 	const ref = useRef<HTMLDivElement>(null);
 	const qrCode = useRef<QRCodeStyling | null>(null);
 	const [isSaving, setIsSaving] = useState(false);
 	const { toast } = useToast();
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isDirty, setIsDirty] = useState(false);
 	const isInitializedRef = useRef(false);
 
 	// Initialize QR code instance once
@@ -104,7 +103,6 @@ export default function QrPreview({ name }: { name: string }) {
 
 	return (
 		<>
-			<NavigationGuard isDirty={isDirty} />
 			<div className="flex flex-col items-center justify-center gap-6 p-6 w-full">
 				<Card className="p-4 bg-gradient-to-br from-background via-background to-muted/30 shadow-product-shadow flex items-center justify-center relative overflow-visible">
 					<div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none rounded-lg"></div>
@@ -151,7 +149,7 @@ export default function QrPreview({ name }: { name: string }) {
 						</DropdownMenuContent>
 					</DropdownMenu>
 
-					<Link href="/admin/items">
+					<Link href="/admin/dashboard">
 						<Button
 							className="w-full gap-2 font-medium hover:border-[var(--product-primary)] hover:bg-[var(--product-hover-background)] transition-all"
 							size="lg"

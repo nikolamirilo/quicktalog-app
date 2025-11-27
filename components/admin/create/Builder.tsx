@@ -91,7 +91,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 		}
 		if (
 			userData.currentPlan.features.traffic_limit <=
-				userData.usage.traffic.pageview_count &&
+			userData.usage.traffic.pageview_count &&
 			type == "create"
 		) {
 			setShowLimitsModal({ isOpen: true, type: "traffic" });
@@ -535,7 +535,7 @@ function Builder({ type, initialData, onSuccess, userData }: BuilderProps) {
 					onStepChange={handleStepChange}
 				/>
 			)}
-			<NavigationGuard isDirty={isDirty} />
+			<NavigationGuard isDirty={isDirty} setIsDirty={setIsDirty} />
 
 			{/* Main Content */}
 			<div className="flex-1 w-full">

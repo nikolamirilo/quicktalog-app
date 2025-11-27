@@ -1,3 +1,4 @@
+"use client"
 import { MainContextProvider } from "@/context/MainContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import CookieBanner from "../common/CookieBanner";
