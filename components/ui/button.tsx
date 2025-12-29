@@ -32,6 +32,10 @@ const buttonVariants = cva(
           hover:text-product-foreground-accent 
           transition-colors shadow-sm
         `,
+				grayed: `
+          bg-gray-200
+          text-product-foreground
+        `,
 				secondary: `
           bg-product-background 
           text-product-foreground-accent 

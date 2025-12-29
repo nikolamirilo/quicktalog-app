@@ -12,7 +12,7 @@ export async function GET(
 
 		const { data, error } = await supabase
 			.from("catalogues")
-			.select(type === "meta" ? "title, subtitle" : "*")
+			.select(type === "meta" ? "heading, description" : "*")
 			.eq("name", name)
 			.single();
 

@@ -1,6 +1,6 @@
 // LD JSON Schema constants for structured data
 
-import { Catalogue } from "@quicktalog/common";
+import { Catalogue } from "@/types/catalogue";
 import { faqs } from "./details";
 
 // Organization schema
@@ -251,18 +251,18 @@ export function generateCatalogueSchema(item: Catalogue) {
 	return {
 		"@context": "https://schema.org",
 		"@type": "WebPage",
-		name: `${item.title} - Digital Catalogue`,
+		name: `${item.heading} - Digital Catalogue`,
 		description:
-			item.subtitle ||
-			`Explore ${item.title}'s services and offerings in this interactive digital catalogue.`,
+			item.description ||
+			`Explore ${item.heading}'s services and offerings in this interactive digital catalogue.`,
 		url: `https://www.quicktalog.app/catalogues/${item.name}`,
 		mainEntity: {
 			"@type": "Service",
-			name: item.title,
-			description: item.subtitle,
+			name: item.heading,
+			description: item.description,
 			provider: {
 				"@type": "Organization",
-				name: item.title,
+				name: item.heading,
 			},
 			serviceType: "Digital Catalogue",
 			offers: {

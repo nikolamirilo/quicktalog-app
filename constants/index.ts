@@ -65,7 +65,7 @@ export const menuItems: ILinkItem[] = [
 		url: "#testimonials",
 	},
 ];
-export const currencies: Currency[] = [
+export const CURRENCIES: Currency[] = [
 	{ value: "AED", label: "United Arab Emirates dirham", locale: "ar-AE" },
 	{ value: "AFN", label: "Afghan afghani", locale: "fa-AF" },
 	{ value: "ALL", label: "Albanian lek", locale: "sq-AL" },

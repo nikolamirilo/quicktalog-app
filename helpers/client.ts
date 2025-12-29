@@ -1,8 +1,7 @@
-import { Catalogue, CatalogueFormData, PricingPlan } from "@quicktalog/common";
+import { ContactItem } from "@/types";
+import { CatalogueFormData, PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ContactItem, FooterData, HeaderData } from "@/types";
-import { getQrConfig } from "@/actions/qr-configs";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -87,32 +86,7 @@ export function cleanValue(value: any) {
 
 	return value;
 }
-export const buildHeaderData = (item: Catalogue): HeaderData => ({
-	email: getContactValue(item.contact, "email") || "",
-	phone: getContactValue(item.contact, "phone") || "",
-	ctaNavbar: item.configuration?.ctaNavbar,
-});
 
-export const buildFooterData = (item: Catalogue): FooterData => ({
-	name: item.name || "",
-	partners: item.partners,
-	email: getContactValue(item.contact, "email"),
-	phone: getContactValue(item.contact, "phone"),
-	socialLinks: {
-		instagram: getContactValue(item.contact, "instagram"),
-		facebook: getContactValue(item.contact, "facebook"),
-		twitter: getContactValue(item.contact, "twitter"),
-		website: getContactValue(item.contact, "website"),
-		tiktok: getContactValue(item.contact, "tiktok"),
-	},
-	ctaFooter: item.configuration?.ctaFooter,
-	newsletter: item.configuration?.newsletter,
-	legal: item.legal,
-	catalogue: {
-		id: item.id,
-		owner_id: item.created_by,
-	},
-});
 
 export function getCurrencySymbol(code: string, locale = "en-US") {
 	return (0)

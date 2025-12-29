@@ -9,6 +9,10 @@ button:hover {
 	-webkit-tap-highlight-color: transparent !important;
 }
 
+* {
+	font-family: var(--font-lora-regular);
+}
+
 html,
 body {
 	min-height: 100vh;

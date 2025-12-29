@@ -11,6 +11,7 @@ import {
 import { JSX } from "react";
 import { OverallAnalytics } from "@/types";
 import { ContactInfo, FooterData } from ".";
+import { ContentBlock, Item } from "./catalogue";
 
 export type ITestimonial = {
 	name: string;
@@ -73,9 +74,11 @@ export type CatalogueHeaderProps = {
 	logo?: string;
 	data?: {
 		email?: string;
+		emailCta?: boolean;
 		phone?: string;
+		phoneCta?: boolean;
 		ctaNavbar?: {
-			enabled: boolean;
+			isEnabled: boolean;
 			label: string;
 			url: string;
 		};
@@ -89,10 +92,11 @@ export type CatalogueFooterProps = {
 };
 
 export type CatalogueContentProps = {
-	data: CatalogueCategory[];
+	data: ContentBlock[];
 	currency: string;
 	type: "demo" | "item";
 	theme?: string;
+	mode: "edit" | "view";
 };
 
 export type IFAQ = {
@@ -261,4 +265,17 @@ export type OverviewProps = {
 	refreshAll: any;
 	usage: Usage;
 	planId: number;
+};
+
+export type CardProps = {
+	record: Item;
+	currency: string;
+	onClick: () => void;
+	mode?: "view" | "edit";
+	onEdit?: () => void;
+	onDelete?: () => void;
+	onMoveUp?: () => void;
+	onMoveDown?: () => void;
+	isFirst?: boolean;
+	isLast?: boolean;
 };

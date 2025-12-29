@@ -1,5 +1,5 @@
 import { getUserData } from "@/actions/users";
-import Builder from "@/components/admin/create/Builder";
+import Builder from "@/components/create/Builder";
 import Navbar from "@/components/navigation/Navbar";
 
 export const dynamic = "force-dynamic";

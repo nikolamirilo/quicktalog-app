@@ -1,6 +1,6 @@
 import { tiers, UserData } from "@quicktalog/common";
 import { getUserData } from "@/actions/users";
-import OCRBuilder from "@/components/admin/create/OCRBuilder";
+import OCRBuilder from "@/components/create/OCRBuilder";
 import LimitsModal from "@/components/modals/LimitsModal";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";

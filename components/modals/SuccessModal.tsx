@@ -183,7 +183,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 											Download
 										</Button>
 										<Link
-											href={`/admin/items/${catalogueUrl.split("/")[2]}/qr-editor`}
+											href={`/admin/${catalogueUrl.split("/")[2]}/qr-editor`}
 											passHref
 											className="w-full"
 										>

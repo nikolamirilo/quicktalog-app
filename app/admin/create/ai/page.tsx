@@ -1,6 +1,6 @@
 import { tiers, UserData } from "@quicktalog/common";
 import { getUserData } from "@/actions/users";
-import AIBuilder from "@/components/admin/create/AIBuilder";
+import AIBuilder from "@/components/create/AIBuilder";
 import LimitsModal from "@/components/modals/LimitsModal";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";

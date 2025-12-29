@@ -33,7 +33,7 @@ export const NewCatalogueEmail = ({
 }: NewCatalogueEmailProps) => {
 	// Generate QR code URL automatically
 	const catalogueUrl = `${process.env.NEXT_PUBLIC_BASE_URL!}/catalogues/${catalogueSlug}`;
-	const analyticsUrl = `${process.env.NEXT_PUBLIC_BASE_URL!}/admin/items/${catalogueSlug}/analytics`;
+	const analyticsUrl = `${process.env.NEXT_PUBLIC_BASE_URL!}/admin/${catalogueSlug}/analytics`;
 	const qrCodeUrl = generateQRCodeUrl(catalogueUrl);
 
 	return (

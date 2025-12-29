@@ -102,30 +102,23 @@ export type HeaderData = {
 };
 
 export type FooterData = {
-	name: string;
 	email?: string;
 	partners?: Partner[];
 	phone?: string;
-	socialLinks: {
-		instagram?: string;
-		facebook?: string;
-		twitter?: string;
-		website?: string;
-		linkedin?: string;
-		youtube?: string;
-		github?: string;
-		x?: string;
-		threads?: string;
-		tiktok?: string;
+	socials?: string[];
+	socialLinks?: ISocials;
+	cta?: {
+		isEnabled: boolean;
+		label: string;
+		url: string;
 	};
 	ctaFooter?: {
 		enabled: boolean;
 		label: string;
 		url: string;
 	};
-	newsletter?: {
-		enabled: boolean;
-	};
+	newsletter?: boolean;
+	showPartners?: boolean;
 	legal?: Legal;
 	catalogue?: {
 		id?: string;

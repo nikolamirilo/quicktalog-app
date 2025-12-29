@@ -1,0 +1,260 @@
+"use client";
+import { createContext, useContext, useEffect, useState } from "react";
+import { defaultNewCatalogueData } from "@/constants/catalogue";
+import { Catalogue, ContentBlock, Item } from "@/types/catalogue";
+import { useUser } from "@clerk/nextjs";
+
+interface CatalogueContextType {
+	catalogue: Catalogue;
+	resetCatalogue: () => void;
+	updateCatalogue: (partial: Partial<Catalogue>) => void;
+	updateAppearance: (
+		partial: Partial<Catalogue["appearance"]["style"]>,
+	) => void;
+	// Block actions
+	addBlock: (block: ContentBlock, index?: number) => void;
+	removeBlock: (index: number) => void;
+	updateBlock: (index: number, data: Partial<ContentBlock>) => void;
+	moveBlock: (index: number, direction: "up" | "down") => void;
+	// Item actions
+	addItem: (blockIndex: number, item: Item) => void;
+	updateItem: (blockIndex: number, itemIndex: number, item: Item) => void;
+	removeItem: (blockIndex: number, itemIndex: number) => void;
+	moveItem: (
+		blockIndex: number,
+		itemIndex: number,
+		direction: "up" | "down",
+	) => void;
+}
+const CatalogueContext = createContext<CatalogueContextType | null>(null);
+
+export const useCatalogueContext = () => {
+	return useContext(CatalogueContext);
+};
+
+// Helper to re-order blocks/items after modification
+const reorderArray = <T extends { order: number }>(arr: T[]): T[] => {
+	return arr.map((item, index) => ({ ...item, order: index }));
+};
+
+export const CatalogueContextProvider = ({
+	children,
+}: {
+	children: React.ReactNode;
+}) => {
+	const [catalogue, setCatalogue] = useState<Catalogue>(
+		defaultNewCatalogueData,
+	);
+	const { user } = useUser();
+
+	const resetCatalogue = () => {
+		setCatalogue(defaultNewCatalogueData);
+	};
+
+	const updateCatalogue = (partial: Partial<Catalogue>) => {
+		setCatalogue((prev) => ({
+			...prev,
+			...partial,
+		}));
+	};
+
+	// Block Actions
+	const addBlock = (block: ContentBlock, index?: number) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			const blockWithOrder = { ...block, order: newContent.length };
+			if (index !== undefined && index >= 0 && index <= newContent.length) {
+				newContent.splice(index, 0, blockWithOrder);
+			} else {
+				newContent.push(blockWithOrder);
+			}
+			return { ...prev, content: reorderArray(newContent) };
+		});
+	};
+
+	const removeBlock = (index: number) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			newContent.splice(index, 1);
+			// Re-order remaining blocks
+			return { ...prev, content: reorderArray(newContent) };
+		});
+	};
+
+	const updateBlock = (index: number, data: Partial<ContentBlock>) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			if (newContent[index]) {
+				newContent[index] = { ...newContent[index], ...data } as ContentBlock;
+			}
+			return { ...prev, content: newContent };
+		});
+	};
+
+	const moveBlock = (index: number, direction: "up" | "down") => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			const targetIndex = direction === "up" ? index - 1 : index + 1;
+
+			// Bounds check
+			if (targetIndex < 0 || targetIndex >= newContent.length) {
+				return prev;
+			}
+
+			// Swap blocks
+			[newContent[index], newContent[targetIndex]] = [
+				newContent[targetIndex],
+				newContent[index],
+			];
+
+			// Re-order all blocks
+			return { ...prev, content: reorderArray(newContent) };
+		});
+	};
+
+	// Item Actions
+	const addItem = (blockIndex: number, item: Item) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			const originalBlock = newContent[blockIndex];
+
+			if (
+				originalBlock &&
+				(originalBlock.type === "category" ||
+					originalBlock.type === "container")
+			) {
+				const block = { ...originalBlock };
+				const itemWithOrder = { ...item, order: block.items?.length || 0 };
+				block.items = block.items
+					? [...block.items, itemWithOrder]
+					: [itemWithOrder];
+				newContent[blockIndex] = block;
+			}
+			return { ...prev, content: newContent };
+		});
+	};
+
+	const updateItem = (blockIndex: number, itemIndex: number, item: Item) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			const originalBlock = newContent[blockIndex];
+			if (
+				originalBlock &&
+				(originalBlock.type === "category" ||
+					originalBlock.type === "container") &&
+				originalBlock.items &&
+				originalBlock.items[itemIndex]
+			) {
+				const block = { ...originalBlock };
+				const newItems = [...block.items];
+				newItems[itemIndex] = item;
+				block.items = newItems;
+				newContent[blockIndex] = block;
+			}
+			return { ...prev, content: newContent };
+		});
+	};
+
+	const removeItem = (blockIndex: number, itemIndex: number) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			const originalBlock = newContent[blockIndex];
+			if (
+				originalBlock &&
+				(originalBlock.type === "category" ||
+					originalBlock.type === "container") &&
+				originalBlock.items
+			) {
+				const block = { ...originalBlock };
+				const newItems = [...block.items];
+				newItems.splice(itemIndex, 1);
+				// Re-order remaining items
+				block.items = reorderArray(newItems);
+				newContent[blockIndex] = block;
+			}
+			return { ...prev, content: newContent };
+		});
+	};
+
+	const moveItem = (
+		blockIndex: number,
+		itemIndex: number,
+		direction: "up" | "down",
+	) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			const originalBlock = newContent[blockIndex];
+
+			if (
+				originalBlock &&
+				(originalBlock.type === "category" ||
+					originalBlock.type === "container") &&
+				originalBlock.items
+			) {
+				const block = { ...originalBlock };
+				const newItems = [...block.items];
+				const targetIndex = direction === "up" ? itemIndex - 1 : itemIndex + 1;
+
+				// Bounds check
+				if (targetIndex < 0 || targetIndex >= newItems.length) {
+					return prev;
+				}
+
+				// Swap items
+				[newItems[itemIndex], newItems[targetIndex]] = [
+					newItems[targetIndex],
+					newItems[itemIndex],
+				];
+
+				// Re-order all items
+				block.items = reorderArray(newItems);
+				newContent[blockIndex] = block;
+			}
+			return { ...prev, content: newContent };
+		});
+	};
+
+	useEffect(() => {
+		if (user && user.id !== catalogue.created_by) {
+			updateCatalogue({
+				created_by: user.id,
+			});
+		}
+	}, [user, catalogue.created_by]);
+
+	const updateAppearance = (
+		partial: Partial<Catalogue["appearance"]["style"]>,
+	) => {
+		setCatalogue((prev) => ({
+			...prev,
+			appearance: {
+				...prev.appearance,
+				style: {
+					...prev.appearance.style,
+					...partial,
+				},
+			},
+		}));
+	};
+
+	return (
+		<CatalogueContext.Provider
+			value={{
+				catalogue,
+				resetCatalogue,
+				updateCatalogue,
+				updateAppearance,
+				addBlock,
+				removeBlock,
+				updateBlock,
+				moveBlock,
+				addItem,
+				updateItem,
+				removeItem,
+				moveItem,
+			}}
+		>
+			{children}
+		</CatalogueContext.Provider>
+	);
+};
