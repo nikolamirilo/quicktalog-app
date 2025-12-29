@@ -135,12 +135,13 @@ const Items = ({
 								{mode === "edit" && onAddItem && (
 									<button
 										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-700 bg-gray-100/30 rounded-xl hover:bg-[#FFFCF1] hover:border-[#FCD34D] hover:scale-[1.01] transition-all duration-200 cursor-pointer 
-												${currentLayout === "variant_2"
-												? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
-												: currentLayout === "variant_3"
-													? "w-full min-h-[100px]"
-													: "w-full min-h-[110px] sm:min-h-[150px]"
-											}
+												${
+													currentLayout === "variant_2"
+														? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
+														: currentLayout === "variant_3"
+															? "w-full min-h-[100px]"
+															: "w-full min-h-[110px] sm:min-h-[150px]"
+												}
 											`}
 										onClick={() => onAddItem(blockIndex)}
 									>

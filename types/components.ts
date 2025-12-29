@@ -5,7 +5,7 @@ import {
 	PricingPlan,
 	Usage,
 	User,
-	UserData
+	UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
 import { FooterData } from ".";
@@ -151,7 +151,6 @@ export type GeneralInformationInputProps = {
 	type: "create" | "edit";
 	handleBlur?: (fieldName: string) => void;
 };
-
 
 export type PromptExamplesProps = {
 	setPrompt: (prompt: string) => void;

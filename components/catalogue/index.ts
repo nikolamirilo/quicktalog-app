@@ -14,4 +14,3 @@ export { default as ItemInput } from "./inputs/ItemInput";
 export { default as InitCatalogueModal } from "./modals/InitCatalogueModal";
 export { default as ItemDetailModal } from "./modals/ItemDetailModal";
 export { default as ItemModal } from "./modals/ItemModal";
-

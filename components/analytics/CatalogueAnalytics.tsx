@@ -11,7 +11,6 @@ import {
 } from "../ui/card";
 
 const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
-
 	const totalPageViews = rawEvents.length;
 
 	const uniqueVisitors = new Set(

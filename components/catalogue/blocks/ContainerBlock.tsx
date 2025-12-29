@@ -74,10 +74,11 @@ const ContainerBlockComponent = ({
 
 	return (
 		<section
-			className={`mb-5 relative group/container ${mode === "edit"
-				? "border-2 border-dashed border-gray-700 rounded-lg p-4 transition-all"
-				: ""
-				}`}
+			className={`mb-5 relative group/container ${
+				mode === "edit"
+					? "border-2 border-dashed border-gray-700 rounded-lg p-4 transition-all"
+					: ""
+			}`}
 			id={`${slug}-${block.order}`}
 			key={`${slug}-${block.order}`}
 		>
