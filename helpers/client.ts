@@ -87,7 +87,6 @@ export function cleanValue(value: any) {
 	return value;
 }
 
-
 export function getCurrencySymbol(code: string, locale = "en-US") {
 	return (0)
 		.toLocaleString(locale, {

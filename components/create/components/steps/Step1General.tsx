@@ -99,15 +99,16 @@ const Step1General: React.FC<Step1GeneralProps> = ({
 					</div>
 					<div className="relative">
 						<Input
-							className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${errors?.name
+							className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
+								errors?.name
 									? "border-red-500 focus:border-red-500"
 									: formData.name &&
-										!nameExists &&
-										touched?.name &&
-										type === "create"
+											!nameExists &&
+											touched?.name &&
+											type === "create"
 										? "border-green-500 focus:border-green-500"
 										: ""
-								}`}
+							}`}
 							disabled={type === "edit" ? true : false}
 							id="name"
 							name="name"

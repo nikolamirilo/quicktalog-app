@@ -100,8 +100,9 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 								{category.name || "N/A"}
 							</h3>
 							<ChevronDown
-								className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${expandedCategory === categoryIndex ? "rotate-180" : ""
-									}`}
+								className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${
+									expandedCategory === categoryIndex ? "rotate-180" : ""
+								}`}
 							/>
 						</div>
 
@@ -126,10 +127,11 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 													onClick={(e) => e.stopPropagation()}
 												>
 													<Input
-														className={`w-full !text-lg font-medium px-3 py-2 pr-10 rounded-lg border-2 transition-all ${isEditable
+														className={`w-full !text-lg font-medium px-3 py-2 pr-10 rounded-lg border-2 transition-all ${
+															isEditable
 																? "border-product-primary bg-white focus:ring-2 focus:ring-product-primary/20 focus:none outline-none"
 																: "border-transparent bg-transparent cursor-pointer pointer-events-auto"
-															}`}
+														}`}
 														onChange={(e) =>
 															handleItemChange(
 																categoryIndex,
@@ -149,10 +151,11 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 													/>
 													<button
 														aria-label="Edit category name"
-														className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md transition-colors ${isEditable
+														className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md transition-colors ${
+															isEditable
 																? "text-product-primary hover:bg-product-primary/10"
 																: "text-gray-400 hover:text-product-primary hover:bg-gray-100"
-															}`}
+														}`}
 														onClick={() => toggleEditable(itemIndex)}
 														type="button"
 													>
@@ -173,8 +176,9 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 														<Trash2 className="h-4 w-4" />
 													</Button>
 													<ChevronDown
-														className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${isExpanded ? "rotate-180" : ""
-															}`}
+														className={`h-6 w-6 text-product-foreground-accent transition-transform duration-300 ${
+															isExpanded ? "rotate-180" : ""
+														}`}
 													/>
 												</div>
 											</div>
@@ -250,7 +254,7 @@ const Step3Items: React.FC<Step3ItemsProps> = ({
 																<ImageDropzone
 																	image={
 																		imagePreviews[
-																		`${categoryIndex}-${itemIndex}`
+																			`${categoryIndex}-${itemIndex}`
 																		] || item.image
 																	}
 																	onError={(error) => {
