@@ -5,11 +5,11 @@ import { ContentLayout, Item } from "@/types/catalogue";
 import { CatalogueContentProps } from "@/types/components";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import CategoryBlockComponent from "../blocks/CategoryBlock";
+import ContainerBlockComponent from "../blocks/ContainerBlock";
+import CustomCode from "../blocks/CustomCode";
+import IframeBlockComponent from "../blocks/IframeBlock";
 import ItemModal from "../modals/ItemModal";
-import CategoryBlockComponent from "./blocks/CategoryBlock";
-import ContainerBlockComponent from "./blocks/ContainerBlock";
-import CustomCode from "./blocks/CustomCode";
-import IframeBlockComponent from "./blocks/IframeBlock";
 
 const CatalogueContent = ({
 	data,

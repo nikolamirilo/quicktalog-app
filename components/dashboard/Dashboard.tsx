@@ -1,10 +1,10 @@
 // components/admin/dashboard/Dashboard.tsx
 "use client";
-import { lazy, Suspense, useState } from "react";
-import JoinOurCommunity from "@/components/common/JoinOurCommunity";
+import JoinOurCommunity from "@/components/general/JoinOurCommunity";
 import Loader from "@/components/navigation/Loader";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { DashboardProps } from "@/types/components";
+import { lazy, Suspense, useState } from "react";
 import Overview from "./Overview";
 
 const Subscription = lazy(() => import("./Subscription"));

@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import Catalogue from "@/components/catalogue/display/Catalogue";
+import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { generateCatalogueMetadata } from "@/constants/metadata";
 import { Catalogue as CatalogueType } from "@/types/catalogue";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const revalidate = 86400;
 

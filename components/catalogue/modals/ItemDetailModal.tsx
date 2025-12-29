@@ -1,9 +1,5 @@
 "use client";
-import { CategoryItem } from "@quicktalog/common";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { ZoomIn } from "lucide-react";
-import { useState } from "react";
-import { OptimizedImage } from "@/components/common/OptimizedImage";
+import { OptimizedImage } from "@/components/general/OptimizedImage";
 import {
 	Dialog,
 	DialogContent,
@@ -11,6 +7,10 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { CategoryItem } from "@quicktalog/common";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { ZoomIn } from "lucide-react";
+import { useState } from "react";
 
 interface ItemInfoModalProps {
 	isOpen: boolean;

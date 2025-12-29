@@ -1,9 +1,8 @@
-// @ts-nocheck
 "use client";
+import Catalogue from "@/components/catalogue/view/Catalogue";
+import CreateCatalogueCTA from "@/components/general/CreateCatalogueCTA";
 import { useMainContext } from "@/context/MainContext";
 import data from "../../showcase.json";
-import CreateCatalogueCTA from "@/components/common/CreateCatalogueCTA";
-import Catalogue from "@/components/catalogue/display/Catalogue";
 
 const page: React.FC = () => {
 	const { theme, layout } = useMainContext();

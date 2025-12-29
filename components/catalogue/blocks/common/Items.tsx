@@ -1,15 +1,15 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { Plus } from "lucide-react";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
 	contentVariants,
 	getCurrencySymbol,
 	getGridStyle,
 } from "@/helpers/client";
+import { CategoryBlock, ContainerBlock } from "@/types/catalogue";
+import { AnimatePresence, motion } from "framer-motion";
+import { Plus } from "lucide-react";
 import "swiper/css";
 import "swiper/css/pagination";
-import { CategoryBlock, ContainerBlock } from "@/types/catalogue";
-import CardsSwitcher from "./cards";
+import { Swiper, SwiperSlide } from "swiper/react";
+import CardsSwitcher from "../../cards";
 
 interface Props {
 	block: ContainerBlock | CategoryBlock;
@@ -135,13 +135,12 @@ const Items = ({
 								{mode === "edit" && onAddItem && (
 									<button
 										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-700 bg-gray-100/30 rounded-xl hover:bg-[#FFFCF1] hover:border-[#FCD34D] hover:scale-[1.01] transition-all duration-200 cursor-pointer 
-												${
-													currentLayout === "variant_2"
-														? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
-														: currentLayout === "variant_3"
-															? "w-full min-h-[100px]"
-															: "w-full min-h-[110px] sm:min-h-[150px]"
-												}
+												${currentLayout === "variant_2"
+												? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
+												: currentLayout === "variant_3"
+													? "w-full min-h-[100px]"
+													: "w-full min-h-[110px] sm:min-h-[150px]"
+											}
 											`}
 										onClick={() => onAddItem(blockIndex)}
 									>

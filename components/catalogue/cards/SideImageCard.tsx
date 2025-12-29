@@ -1,5 +1,5 @@
 "use client";
-import { OptimizedImage } from "@/components/common/OptimizedImage";
+import { OptimizedImage } from "@/components/general/OptimizedImage";
 import { useCard } from "@/hooks/useCard";
 import { CardProps } from "@/types/components";
 import CardControls from "./common/CardControls";

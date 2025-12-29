@@ -1,8 +1,4 @@
-import { GoogleTagManager } from "@next/third-parties/google";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
-import type { Metadata } from "next";
-import { extractRouterConfig } from "uploadthing/server";
-import ClarityScript from "@/components/analytics/ClarityScript";
+import ClarityScript from "@/components/general/ClarityScript";
 import { PageWrapperClient } from "@/components/wrappers/PageWrapperClient";
 import { generatePageMetadata } from "@/constants/metadata";
 import {
@@ -14,6 +10,10 @@ import {
 	playfairDisplay,
 	poppins,
 } from "@/fonts";
+import { GoogleTagManager } from "@next/third-parties/google";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import type { Metadata } from "next";
+import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/items/uploadthing/core";
 import "./globals.css";
 

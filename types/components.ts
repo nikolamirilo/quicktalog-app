@@ -1,16 +1,14 @@
+import { OverallAnalytics } from "@/types";
 import {
 	Catalogue,
-	CatalogueCategory,
 	CatalogueFormData,
-	CategoryItem,
 	PricingPlan,
 	Usage,
 	User,
-	UserData,
+	UserData
 } from "@quicktalog/common";
 import { JSX } from "react";
-import { OverallAnalytics } from "@/types";
-import { ContactInfo, FooterData } from ".";
+import { FooterData } from ".";
 import { ContentBlock, Item } from "./catalogue";
 
 export type ITestimonial = {
@@ -58,10 +56,11 @@ export type ThemeSelectProps = {
 	formData: {
 		name: string;
 		theme?: string;
-		title?: string;
+		heading?: string;
 		currency?: string;
-		subtitle?: string;
+		description?: string;
 		language?: string;
+		business_type?: string;
 	};
 	setFormData: React.Dispatch<React.SetStateAction<any>>;
 	errors?: { [key: string]: string };
@@ -129,14 +128,15 @@ export type BuilderProps = {
 	userData: UserData;
 };
 
-export type Step1GeneralProps = {
+export type GeneralInformationInputProps = {
 	formData: {
 		name: string;
 		theme?: string;
-		title?: string;
+		heading?: string;
 		currency?: string;
-		subtitle?: string;
+		description?: string;
 		language?: string;
+		business_type?: string;
 	};
 	handleInputChange: (
 		e:
@@ -152,73 +152,6 @@ export type Step1GeneralProps = {
 	handleBlur?: (fieldName: string) => void;
 };
 
-export type Step2CategoriesProps = {
-	formData: {
-		services: CatalogueCategory[];
-	};
-	handleAddCategory: () => void;
-	handleRemoveCategory: (index: number) => void;
-	handleCategoryChange: (
-		index: number,
-		field: "name" | "layout",
-		value: string,
-	) => void;
-	handleReorderCategories?: (newOrder: CatalogueCategory[]) => void;
-	expandedCategory: number | null;
-	setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>;
-	setShowLimitsModal: React.Dispatch<
-		React.SetStateAction<{ isOpen: boolean; type: string }>
-	>;
-	tier: PricingPlan;
-};
-
-export type Step3ItemsProps = {
-	formData: Catalogue;
-	handleAddItem: (categoryIndex: number) => void;
-	handleRemoveItem: (categoryIndex: number, itemIndex: number) => void;
-	handleItemChange: (
-		categoryIndex: number,
-		itemIndex: number,
-		field: keyof CategoryItem,
-		value: string | number,
-	) => void;
-	imagePreviews: { [key: string]: string };
-	setImagePreviews: React.Dispatch<
-		React.SetStateAction<{ [key: string]: string }>
-	>;
-	isUploading: boolean;
-	setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
-	expandedCategory: number | null;
-	setExpandedCategory: React.Dispatch<React.SetStateAction<number | null>>;
-	expandedItem: { categoryIndex: number; itemIndex: number } | null;
-	tier: PricingPlan;
-	setShowLimitsModal: React.Dispatch<
-		React.SetStateAction<{ isOpen: boolean; type: string }>
-	>;
-	setExpandedItem: React.Dispatch<
-		React.SetStateAction<{ categoryIndex: number; itemIndex: number } | null>
-	>;
-};
-export type Step5AppearanceProps = {
-	formData: Catalogue;
-	setFormData: React.Dispatch<React.SetStateAction<CatalogueFormData>>;
-};
-
-export type Step4BrandingProps = {
-	errors?: { [key: string]: string };
-	setErrors: any;
-	formData: CatalogueFormData;
-	userData: UserData;
-	handleAddContact: () => void;
-	handleRemoveContact: (index: number) => void;
-	setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
-	handleContactChange: (
-		index: number,
-		field: keyof ContactInfo,
-		value: string,
-	) => void;
-	setFormData: React.Dispatch<React.SetStateAction<CatalogueFormData>>;
-};
 
 export type PromptExamplesProps = {
 	setPrompt: (prompt: string) => void;
@@ -239,7 +172,7 @@ export type DonutChartProps = {
 	labels: string[];
 };
 
-export type AnalyticsProps = {
+export type CatalogueAnalyticsProps = {
 	data: { date: string; count: number }[];
 	rawEvents: any[];
 };

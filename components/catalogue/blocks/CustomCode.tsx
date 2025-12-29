@@ -1,7 +1,7 @@
 "use client";
 import type { CustomCodeBlock } from "@/types/catalogue";
 import { useEffect, useRef, useState } from "react";
-import BlockControls from "./components/cards/common/BlockControls";
+import BlockControls from "../cards/common/BlockControls";
 
 interface CustomCodeBlockProps {
 	block: CustomCodeBlock;

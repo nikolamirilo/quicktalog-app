@@ -1,4 +1,4 @@
-import ImageDropzone from "@/components/common/ImageDropzone";
+import ImageDropzone from "@/components/general/ImageDropzone";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

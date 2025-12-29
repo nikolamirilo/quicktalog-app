@@ -1,4 +1,4 @@
-import Analytics from "@/components/dashboard/Analytics";
+import CatalogueAnalytics from "@/components/analytics/CatalogueAnalytics";
 import Navbar from "@/components/navigation/Navbar";
 
 type tParams = Promise<{ name: string }>;
@@ -162,7 +162,7 @@ export default async function page({ params }: { params: tParams }) {
 									Track your catalog performance and visitor insights
 								</p>
 							</div>
-							<Analytics data={chartData} rawEvents={rawEvents} />
+							<CatalogueAnalytics data={chartData} rawEvents={rawEvents} />
 						</div>
 					</div>
 				)}

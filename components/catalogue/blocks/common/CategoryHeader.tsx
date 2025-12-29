@@ -1,6 +1,6 @@
 import { FiChevronDown } from "react-icons/fi";
-import { Button } from "../../../../ui/button";
-import BlockControls from "./cards/common/BlockControls";
+import { Button } from "../../../ui/button";
+import BlockControls from "../../cards/common/BlockControls";
 
 const CategoryHeader = ({
 	title,

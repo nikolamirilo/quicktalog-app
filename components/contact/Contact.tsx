@@ -1,8 +1,8 @@
 "use client";
-import Link from "next/link";
-import { useState } from "react";
 import { sendContactEmail } from "@/actions/email";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useState } from "react";
 
 const Contact = ({ type = "regular" }: { type?: string }) => {
 	const [name, setName] = useState("");

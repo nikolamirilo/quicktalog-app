@@ -2,8 +2,8 @@
 import type { CategoryBlock } from "@/types/catalogue";
 import "swiper/css";
 import "swiper/css/pagination";
-import CategoryHeader from "./components/CategoryHeader";
-import Items from "./components/Items";
+import CategoryHeader from "./common/CategoryHeader";
+import Items from "./common/Items";
 
 interface CategoryBlockProps {
 	block: CategoryBlock;

@@ -1,6 +1,6 @@
 "use client";
 import type { IframeBlock } from "@/types/catalogue";
-import BlockControls from "./components/cards/common/BlockControls";
+import BlockControls from "../cards/common/BlockControls";
 
 interface IframeBlockProps {
 	block: IframeBlock;

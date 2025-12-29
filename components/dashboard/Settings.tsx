@@ -1,13 +1,13 @@
 // components/Settings.tsx
 "use client";
 
+import CookiePreferencesModal from "@/components/general/CookiePreferencesModal";
+import { Button } from "@/components/ui/button";
 import { SignOutButton, UserProfile } from "@clerk/nextjs";
 import { useState } from "react";
 import { FiSettings } from "react-icons/fi";
 import { LuCookie } from "react-icons/lu";
 import { MdLogout } from "react-icons/md";
-import CookiePreferencesModal from "@/components/common/CookiePreferencesModal";
-import { Button } from "@/components/ui/button";
 
 const Settings = () => {
 	const [isCookieSettingsOpen, setIsCookieSettingsOpen] = useState(false);

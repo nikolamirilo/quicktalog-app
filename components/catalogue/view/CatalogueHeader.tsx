@@ -1,9 +1,9 @@
+import SmartLink from "@/components/general/SmartLink";
+import { Button } from "@/components/ui/button";
+import { CatalogueHeaderProps } from "@/types/components";
 import Link from "next/link";
 import React from "react";
 import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
-import { CatalogueHeaderProps } from "@/types/components";
-import SmartLink from "../../common/SmartLink";
 
 const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	type = "default",

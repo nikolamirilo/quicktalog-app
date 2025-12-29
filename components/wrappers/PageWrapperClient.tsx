@@ -1,11 +1,11 @@
 "use client";
-import { ClerkProvider } from "@clerk/nextjs";
-import { MainContextProvider } from "@/context/MainContext";
-import { UserContextProvider } from "@/context/UserContext";
-import CookieBanner from "../common/CookieBanner";
-import { Toaster } from "../ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { CatalogueContextProvider } from "@/context/CatalogueContext";
+import { MainContextProvider } from "@/context/MainContext";
+import { UserContextProvider } from "@/context/UserContext";
+import { ClerkProvider } from "@clerk/nextjs";
+import CookieBanner from "../general/CookieBanner";
+import { Toaster } from "../ui/toaster";
 
 export const PageWrapperClient = ({
 	children,

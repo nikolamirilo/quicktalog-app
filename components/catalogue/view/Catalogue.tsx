@@ -1,19 +1,17 @@
 "use client";
-import { themes } from "@quicktalog/common";
-import { Plus } from "lucide-react";
-import React, { useState } from "react";
+import AppearanceOptions from "@/components/general/AppearanceOptions";
 import type { Catalogue } from "@/types/catalogue";
-import Overlay from "../../common/Overlay";
+import { themes } from "@quicktalog/common";
+import { useState } from "react";
+import Overlay from "../../general/Overlay";
+import BuilderSidebar from "../inputs/BuilderSidebar";
+import ContentBlockButton from "../inputs/ContentBlockButton";
 import DescriptionInput from "../inputs/DescriptionInput";
 import HeadingInput from "../inputs/HeadingInput";
+import AddContentModal from "../modals/AddContentModal";
 import CatalogueContent from "./CatalogueContent";
 import CatalogueFooter from "./CatalogueFooter";
 import CatalogueHeader from "./CatalogueHeader";
-import ContentBlockButton from "../inputs/ContentBlockButton";
-import AddContentModal from "../modals/AddContentModal";
-import AppearanceOptions from "@/components/common/AppearanceOptions";
-import { useUserContext } from "@/context/UserContext";
-import BuilderSidebar from "../inputs/BuilderSidebar";
 
 const Catalogue = ({
 	item,

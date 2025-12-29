@@ -1,10 +1,4 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
-import { generateUniqueSlug, UserData } from "@quicktalog/common";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { IoTimerOutline } from "react-icons/io5";
-import { RiSparkling2Line } from "react-icons/ri";
 import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Button } from "@/components/ui/button";
@@ -12,11 +6,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { revalidateData } from "@/helpers/server";
+import { useUser } from "@clerk/nextjs";
+import { generateUniqueSlug, UserData } from "@quicktalog/common";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { IoTimerOutline } from "react-icons/io5";
+import { RiSparkling2Line } from "react-icons/ri";
 import FormHeader from "./components/FormHeader";
-import { LanguageSelector } from "./components/LanguageSelector";
+import GeneralInformationInput from "./components/GeneralInformationInput";
 import PromptExamples from "./components/PromptExamples";
 import PromptInput from "./components/PromptInput";
-import Step1General from "./components/steps/Step1General";
 import ThemeSelect from "./components/ThemeSelect";
 
 export default function AIBuilder({
@@ -29,10 +28,11 @@ export default function AIBuilder({
 	const [formData, setFormData] = useState({
 		name: "",
 		theme: "theme-advent-1",
-		title: "",
+		heading: "",
 		currency: "",
-		subtitle: "",
+		description: "",
 		language: "eng",
+		business_type: "restaurant",
 	});
 	const [shouldGenerateImages, setShouldGenerateImages] =
 		useState<boolean>(false);
@@ -58,11 +58,13 @@ export default function AIBuilder({
 		const newErrors: { [key: string]: string } = {};
 		const hasErrors = Object.keys(errors).length > 0;
 		if (!formData.name.trim()) newErrors.name = "Catalogue Name is required";
-		if (!formData.title.trim())
-			newErrors.title = "Catalogue Heading is required";
+		if (!formData.heading.trim())
+			newErrors.heading = "Catalogue Heading is required";
 		if (!formData.currency.trim()) newErrors.currency = "Currency is required";
 		if (!formData.theme.trim()) newErrors.theme = "Theme is required";
 		if (!formData.language.trim()) newErrors.language = "Language is required";
+		if (!formData.business_type.trim())
+			newErrors.business_type = "Business Type is required";
 		if (!prompt.trim()) newErrors.prompt = "Prompt is required";
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0 && !hasErrors;
@@ -110,10 +112,6 @@ export default function AIBuilder({
 		}
 	};
 
-	const handleLanguageChange = (value: string) => {
-		setFormData((prev: any) => ({ ...prev, language: value }));
-	};
-
 	return (
 		<div className="w-full max-w-4xl mx-auto bg-product-background/95 border border-product-border shadow-md rounded-3xl my-24 md:my-16">
 			<Card
@@ -126,7 +124,7 @@ export default function AIBuilder({
 				/>
 				<CardContent className="p-6 sm:p-8 pt-0">
 					<form className="space-y-6">
-						<Step1General
+						<GeneralInformationInput
 							errors={errors}
 							formData={formData}
 							handleInputChange={handleInputChange}
@@ -137,12 +135,6 @@ export default function AIBuilder({
 							type="create"
 						/>
 						<ThemeSelect formData={formData} setFormData={setFormData} />
-						<LanguageSelector
-							errors={errors}
-							onLanguageChange={handleLanguageChange}
-							selectedLanguage={formData.language}
-							touched={touched}
-						/>
 
 						<PromptInput
 							errors={errors}

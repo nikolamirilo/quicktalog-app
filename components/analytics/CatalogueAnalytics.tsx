@@ -1,5 +1,5 @@
 "use client";
-import type { AnalyticsProps } from "@/types/components";
+import type { CatalogueAnalyticsProps } from "@/types/components";
 import { FiBarChart, FiCalendar, FiTrendingUp, FiUsers } from "react-icons/fi";
 import LineChart from "../charts/LineChart";
 import {
@@ -10,14 +10,14 @@ import {
 	CardTitle,
 } from "../ui/card";
 
-const Analytics = ({ data, rawEvents }: AnalyticsProps) => {
-	// Total page views
+const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
+
 	const totalPageViews = rawEvents.length;
-	// Unique Visitors
+
 	const uniqueVisitors = new Set(
 		rawEvents.map((e) => e.properties?.distinct_id || e.distinct_id),
 	).size;
-	// Most popular day
+
 	const mostPopularDay = data.reduce(
 		(max, d) => (Number(d.count) > Number(max.count) ? d : max),
 		{
@@ -38,7 +38,6 @@ const Analytics = ({ data, rawEvents }: AnalyticsProps) => {
 
 	return (
 		<div className="space-y-8">
-			{/* Key Metrics Grid */}
 			<div className="grid w-full mx-auto grid-cols-1 md:w-full md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
 				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-300 hover:scale-product-hover-scale">
 					<CardContent className="p-6">
@@ -152,4 +151,4 @@ const Analytics = ({ data, rawEvents }: AnalyticsProps) => {
 	);
 };
 
-export default Analytics;
+export default CatalogueAnalytics;

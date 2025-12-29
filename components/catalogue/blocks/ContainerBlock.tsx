@@ -2,8 +2,8 @@
 import type { ContainerBlock } from "@/types/catalogue";
 import "swiper/css";
 import "swiper/css/pagination";
-import Items from "./components/Items";
-import BlockControls from "./components/cards/common/BlockControls";
+import BlockControls from "../cards/common/BlockControls";
+import Items from "./common/Items";
 
 interface ContainerBlockProps {
 	block: ContainerBlock;
@@ -74,11 +74,10 @@ const ContainerBlockComponent = ({
 
 	return (
 		<section
-			className={`mb-5 relative group/container ${
-				mode === "edit"
-					? "border-2 border-dashed border-gray-700 rounded-lg p-4 transition-all"
-					: ""
-			}`}
+			className={`mb-5 relative group/container ${mode === "edit"
+				? "border-2 border-dashed border-gray-700 rounded-lg p-4 transition-all"
+				: ""
+				}`}
 			id={`${slug}-${block.order}`}
 			key={`${slug}-${block.order}`}
 		>
