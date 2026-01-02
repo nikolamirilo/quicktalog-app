@@ -9,7 +9,14 @@ export const defaultNewCatalogueData: Catalogue = {
 	description: "",
 	currency: "EUR",
 	business_type: "",
-	content: [],
+	content: [
+		{
+			id: crypto.randomUUID(),
+			order: 0,
+			type: "text",
+			content: "",
+		},
+	],
 	legal: {
 		legalName: "",
 		termsAndConditions: "",

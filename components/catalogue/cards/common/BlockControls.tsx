@@ -1,6 +1,8 @@
 import { layouts } from "@quicktalog/common";
 import { useEffect, useRef, useState } from "react";
+import { FaRegEdit } from "react-icons/fa";
 import { FiChevronDown, FiChevronUp, FiLayout, FiTrash2 } from "react-icons/fi";
+import { IoMdCheckmark } from "react-icons/io";
 
 const BlockControls = ({
 	onMoveDown,
@@ -10,6 +12,8 @@ const BlockControls = ({
 	onDelete,
 	currentLayout,
 	onLayoutChange,
+	onEdit,
+	isEditing,
 }: {
 	onMoveDown?: () => void;
 	onMoveUp?: () => void;
@@ -18,6 +22,8 @@ const BlockControls = ({
 	onDelete?: () => void;
 	currentLayout?: string;
 	onLayoutChange?: (layout: string) => void;
+	onEdit?: () => void;
+	isEditing?: boolean;
 }) => {
 	const [isLayoutOpen, setIsLayoutOpen] = useState(false);
 	const layoutRef = useRef<HTMLDivElement>(null);
@@ -39,6 +45,27 @@ const BlockControls = ({
 
 	return (
 		<div className="absolute right-2 top-2 z-20 flex items-center gap-1 opacity-0 group-hover:opacity-100 group-hover/container:opacity-100 group-hover/header:opacity-100 transition-all duration-200">
+			{onEdit && (
+				<button
+					aria-label={isEditing ? "Finish editing" : "Edit content"}
+					className={`p-2 rounded-full shadow-sm transition-all duration-200 ${isEditing
+						? "bg-product-primary text-white hover:bg-product-primary/90"
+						: "bg-white/80 text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+						}`}
+					onClick={(e) => {
+						e.stopPropagation();
+						onEdit();
+					}}
+					title={isEditing ? "Finish editing" : "Edit content"}
+					type="button"
+				>
+					{isEditing ? (
+						<IoMdCheckmark className="w-5 h-5" />
+					) : (
+						<FaRegEdit className="w-5 h-5" />
+					)}
+				</button>
+			)}
 			{onLayoutChange && (
 				<div className="relative" ref={layoutRef}>
 					<button
@@ -57,12 +84,11 @@ const BlockControls = ({
 						<div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 overflow-hidden">
 							{layouts.map((layout) => (
 								<button
+									className={`w-full text-left px-4 py-2 text-sm hover:bg-product-hover-background flex items-center justify-between ${currentLayout === layout.key
+										? "text-product-primary bg-product-hover-background"
+										: "text-product-foreground"
+										}`}
 									key={layout.key}
-									className={`w-full text-left px-4 py-2 text-sm hover:bg-product-hover-background flex items-center justify-between ${
-										currentLayout === layout.key
-											? "text-product-primary bg-product-hover-background"
-											: "text-product-foreground"
-									}`}
 									onClick={(e) => {
 										e.stopPropagation();
 										onLayoutChange(layout.key);
@@ -82,11 +108,10 @@ const BlockControls = ({
 			{onMoveUp && (
 				<button
 					aria-label="Move container up"
-					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${
-						isFirst
-							? "text-gray-300 cursor-not-allowed"
-							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
+					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${isFirst
+						? "text-gray-300 cursor-not-allowed"
+						: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+						}`}
 					disabled={isFirst}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -101,11 +126,10 @@ const BlockControls = ({
 			{onMoveDown && (
 				<button
 					aria-label="Move container down"
-					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${
-						isLast
-							? "text-gray-300 cursor-not-allowed"
-							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
+					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${isLast
+						? "text-gray-300 cursor-not-allowed"
+						: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+						}`}
 					disabled={isLast}
 					onClick={(e) => {
 						e.stopPropagation();

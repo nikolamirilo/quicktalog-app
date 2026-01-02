@@ -1,4 +1,7 @@
 "use client";
+import InformModal from "@/components/modals/InformModal";
+import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/helpers/client";
 import type { Paddle } from "@paddle/paddle-js";
 import { PricingPlan, tiers, User } from "@quicktalog/common";
 import clsx from "clsx";
@@ -6,9 +9,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { FiInfo } from "react-icons/fi";
-import InformModal from "@/components/modals/InformModal";
-import { Button } from "@/components/ui/button";
-import { formatPrice } from "@/helpers/client";
 
 interface PricingColumnProps {
 	tier: PricingPlan;
@@ -51,9 +51,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			},
 			features.branding === true
 				? {
-						text: features.branding === true ? "Custom Branding" : null,
-						type: "custom_branding",
-					}
+					text: features.branding === true ? "Custom Branding" : null,
+					type: "custom_branding",
+				}
 				: null,
 			{
 				text: `${features.traffic_limit.toLocaleString()} page views per month`,
@@ -62,15 +62,15 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			features.ai_prompts === 0
 				? null
 				: {
-						text: `${features.ai_prompts} AI prompts per month`,
-						type: "ai-catalogue-generation",
-					},
+					text: `${features.ai_prompts} AI prompts per month`,
+					type: "ai-catalogue-generation",
+				},
 			features.ocr_ai_import === 0
 				? null
 				: {
-						text: `${features.ocr_ai_import} OCR AI imports per month`,
-						type: "ocr-ai-import",
-					},
+					text: `${features.ocr_ai_import} OCR AI imports per month`,
+					type: "ocr-ai-import",
+				},
 
 			features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,
 			features.custom_features
@@ -173,7 +173,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 						<h3
 							className={clsx(
 								"text-lg font-bold mb-2 text-product-primary transition-colors duration-300 font-lora",
-								{ "text-product-primary-accent": highlight && isHovered },
+								{ "text-product-product-primary-accent": highlight && isHovered },
 							)}
 						>
 							{tier.name}
@@ -279,7 +279,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				<h3
 					className={clsx(
 						"text-xl font-bold mb-3 text-product-primary transition-colors duration-300 font-lora",
-						{ "text-product-primary-accent": highlight && isHovered },
+						{ "text-product-product-primary-accent": highlight && isHovered },
 					)}
 				>
 					{tier.name}

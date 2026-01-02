@@ -91,7 +91,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 	return (
 		<footer
-			aria-label={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} footer`}
+			aria-label={`${type === "default" ? "Quicktalog" : data?.legal?.legalName || "Custom"} footer`}
 			className="border-t mt-auto font-body font-weight-body tracking-body bg-footer-bg text-footer-text border-footer-border"
 			role="contentinfo"
 		>
@@ -101,7 +101,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						<div className="space-y-6">
 							<div className="space-y-4">
 								<div
-									aria-label={`Go to ${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} homepage`}
+									aria-label={`Go to ${type === "default" ? "Quicktalog" : data?.legal?.legalName || "Custom"} homepage`}
 									className="flex flex-col items-start space-y-6 mt-2 group transition-transform duration-200 hover:scale-102"
 								>
 									<SmartLink
@@ -110,7 +110,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										}
 									>
 										<img
-											alt={`${type === "default" ? "Quicktalog" : data?.legal?.name || "Custom"} logo`}
+											alt={`${type === "default" ? "Quicktalog" : data?.legal?.legalName || "Custom"} logo`}
 											className="w-auto max-h-[7vh] rounded-sm object-contain max-w-[150px] lg:max-w-[200px] h-48"
 											height={40}
 											src={logo ?? "/logo.svg"}
@@ -126,7 +126,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									{type === "custom" && (
 										<div className="ml-0">
 											<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-footer-text">
-												{data?.legal?.name}
+												{data?.legal?.legalName}
 											</h3>
 										</div>
 									)}
@@ -249,7 +249,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										))}
 									</ul>
 								</>
-							) : data?.legal?.name || data?.legal?.address ? (
+							) : data?.legal?.legalName || data?.legal?.address ? (
 								<>
 									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
 										<div
@@ -259,11 +259,11 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<span>Company Information</span>
 									</h4>
 									<ul className="space-y-4">
-										{data?.legal?.name && (
+										{data?.legal?.legalName && (
 											<li className="flex items-center space-x-3">
 												<MdTitle className="w-4 h-4 flex-shrink-0 text-footer-text" />
 												<span className="text-sm text-footer-text">
-													{data?.legal?.name}
+													{data?.legal?.legalName}
 												</span>
 											</li>
 										)}
@@ -338,7 +338,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							© {new Date().getFullYear()}{" "}
 							{type === "default"
 								? "Quicktalog"
-								: data?.legal?.name || "Your Company"}
+								: data?.legal?.legalName || "Your Company"}
 							. All rights reserved.
 						</span>
 						<nav
@@ -372,20 +372,20 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								</>
 							) : (
 								<>
-									{data?.legal?.privacy_policy && (
+									{data?.legal?.privacyPolicy && (
 										<SmartLink
 											aria-label="Privacy Policy"
 											className="hover:text-primary transition-colors duration-200"
-											href={data?.legal?.privacy_policy}
+											href={data?.legal?.privacyPolicy}
 										>
 											Privacy Policy
 										</SmartLink>
 									)}
-									{data?.legal?.terms_and_conditions && (
+									{data?.legal?.termsAndConditions && (
 										<SmartLink
 											aria-label="Terms of Service"
 											className="hover:text-primary transition-colors duration-200"
-											href={data?.legal?.terms_and_conditions}
+											href={data?.legal?.termsAndConditions}
 										>
 											Terms of Service
 										</SmartLink>
@@ -423,11 +423,10 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</div>
 										<Button
 											aria-label="Subscribe to newsletter"
-											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
-												submitSuccess
-													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
-													: "hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary"
-											}`}
+											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${submitSuccess
+												? "bg-green-500 text-white border-green-500 hover:bg-green-600"
+												: "hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary"
+												}`}
 											disabled={isSubmitting || submitSuccess}
 											size="default"
 											type="submit"

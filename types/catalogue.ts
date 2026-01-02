@@ -9,7 +9,8 @@ export type ContentBlockType =
 	| "category"
 	| "container"
 	| "iframe"
-	| "custom_code";
+	| "custom_code"
+	| "text";
 export type ThemeType = "standard" | "custom";
 export type FontSize = "small" | "medium" | "large";
 export type FontFamily = "mono" | "serif" | "arial" | "monospace";
@@ -45,11 +46,17 @@ export interface CustomCodeBlock extends BaseContentBlock {
 	code: string;
 }
 
+export interface TextBlock extends BaseContentBlock {
+	type: "text";
+	content: string;
+}
+
 export type ContentBlock =
 	| CategoryBlock
 	| ContainerBlock
 	| IframeBlock
-	| CustomCodeBlock;
+	| CustomCodeBlock
+	| TextBlock;
 
 export interface Catalogue {
 	id?: string;

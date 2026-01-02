@@ -134,7 +134,7 @@
 }
 
 .cl-formButtonPrimary:hover {
-	background: var(--product-primary-accent) !important;
+	background: var(--product-product-primary-accent) !important;
 }
 
 /* Secondary buttons */
@@ -214,7 +214,7 @@
 }
 
 .cl-footerActionLink:hover {
-	color: var(--product-primary-accent) !important;
+	color: var(--product-product-primary-accent) !important;
 	text-decoration: underline !important;
 }
 

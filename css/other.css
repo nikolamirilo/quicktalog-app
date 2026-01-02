@@ -33,3 +33,13 @@
 .scrollbar-hide::-webkit-scrollbar {
 	display: none;
 }
+
+.rsw-ce ul {
+	padding-left: 2em;
+	list-style: disc;
+}
+
+.rsw-ce ol {
+	padding-left: 2em;
+	list-style: decimal;
+}

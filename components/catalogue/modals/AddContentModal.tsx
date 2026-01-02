@@ -6,8 +6,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { Code, Folder, Globe, Layout, X } from "lucide-react";
+import { Code, Folder, Globe, Layout, Type, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import RichTextEditor from "../blocks/RichTextEditor";
 import ContentInput from "../inputs/ContentInput";
 import CustomCodeInput from "../inputs/CustomCodeInput";
 import IframeInput from "../inputs/IframeInput";
@@ -18,7 +19,12 @@ interface AddContentModalProps {
 	setIsOpen: (open: boolean) => void;
 }
 
-type ContentOption = "container" | "category" | "iframe" | "custom_code";
+type ContentOption =
+	| "container"
+	| "category"
+	| "iframe"
+	| "custom_code"
+	| "text";
 
 const AddContentModal = ({
 	isOpen,
@@ -34,6 +40,7 @@ const AddContentModal = ({
 		src: "",
 		items: [],
 		code: "",
+		content: "",
 	});
 
 	useEffect(() => {
@@ -45,6 +52,7 @@ const AddContentModal = ({
 				src: "",
 				items: [],
 				code: "",
+				content: "",
 			});
 		}
 	}, [isOpen]);
@@ -83,6 +91,11 @@ const AddContentModal = ({
 				...newBlock,
 				code: blockData.code,
 			};
+		} else if (selectedOption === "text") {
+			newBlock = {
+				...newBlock,
+				content: blockData.content || "<p>New text block</p>",
+			};
 		}
 
 		updateCatalogue({
@@ -113,13 +126,12 @@ const AddContentModal = ({
 					</div>
 					<div className="flex-1 px-3 space-y-2">
 						<Button
-							variant={selectedOption === "container" ? "default" : "ghost"}
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${
-								selectedOption === "container"
+							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "container"
 									? "bg-product-primary shadow-product-shadow hover:text-white  text-white"
 									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-							}`}
+								}`}
 							onClick={() => setSelectedOption("container")}
+							variant={selectedOption === "container" ? "default" : "ghost"}
 						>
 							<Layout
 								className={`w-6 h-6 ${selectedOption === "container" ? "text-white" : "text-product-foreground"}`}
@@ -127,13 +139,12 @@ const AddContentModal = ({
 							<span className="font-medium">Container</span>
 						</Button>
 						<Button
-							variant={selectedOption === "category" ? "default" : "ghost"}
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${
-								selectedOption === "category"
+							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "category"
 									? "bg-product-primary shadow-product-shadow hover:text-white  text-white"
 									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-							}`}
+								}`}
 							onClick={() => setSelectedOption("category")}
+							variant={selectedOption === "category" ? "default" : "ghost"}
 						>
 							<Folder
 								className={`w-6 h-6 ${selectedOption === "category" ? "text-white" : "text-product-foreground"}`}
@@ -141,13 +152,12 @@ const AddContentModal = ({
 							<span className="font-medium">Category</span>
 						</Button>
 						<Button
-							variant={selectedOption === "iframe" ? "default" : "ghost"}
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${
-								selectedOption === "iframe"
+							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "iframe"
 									? "bg-product-primary shadow-product-shadow hover:text-white text-white"
 									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-							}`}
+								}`}
 							onClick={() => setSelectedOption("iframe")}
+							variant={selectedOption === "iframe" ? "default" : "ghost"}
 						>
 							<Globe
 								className={`w-6 h-6 ${selectedOption === "iframe" ? "text-white" : "text-product-foreground"}`}
@@ -155,18 +165,30 @@ const AddContentModal = ({
 							<span className="font-medium">Iframe</span>
 						</Button>
 						<Button
-							variant={selectedOption === "custom_code" ? "default" : "ghost"}
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${
-								selectedOption === "custom_code"
+							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "custom_code"
 									? "bg-product-primary shadow-product-shadow hover:text-white text-white"
 									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-							}`}
+								}`}
 							onClick={() => setSelectedOption("custom_code")}
+							variant={selectedOption === "custom_code" ? "default" : "ghost"}
 						>
 							<Code
 								className={`w-6 h-6 ${selectedOption === "custom_code" ? "text-white" : "text-product-foreground"}`}
 							/>
 							<span className="font-medium">Custom Code</span>
+						</Button>
+						<Button
+							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "text"
+									? "bg-product-primary shadow-product-shadow hover:text-white text-white"
+									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
+								}`}
+							onClick={() => setSelectedOption("text")}
+							variant={selectedOption === "text" ? "default" : "ghost"}
+						>
+							<Type
+								className={`w-6 h-6 ${selectedOption === "text" ? "text-white" : "text-product-foreground"}`}
+							/>
+							<span className="font-medium">Text</span>
 						</Button>
 					</div>
 				</div>
@@ -188,13 +210,15 @@ const AddContentModal = ({
 									"Embed external content like maps or videos."}
 								{selectedOption === "custom_code" &&
 									"Add custom HTML code to your catalogue."}
+								{selectedOption === "text" &&
+									"Add rich text content with formatting."}
 							</p>
 						</div>
 						<Button
-							variant="ghost"
-							size="icon"
-							onClick={onClose}
 							className="text-gray-400 hover:text-product-primary rounded-full hover:bg-gray-100"
+							onClick={onClose}
+							size="icon"
+							variant="ghost"
 						>
 							<X className="w-5 h-5" />
 						</Button>
@@ -204,32 +228,47 @@ const AddContentModal = ({
 						<div className="max-w-2xl">
 							{selectedOption === "category" && (
 								<ContentInput
-									value={blockData}
 									onChange={(val) => setBlockData({ ...blockData, ...val })}
 									type="category"
+									value={blockData}
 								/>
 							)}
 
 							{selectedOption === "container" && (
 								<ContentInput
-									value={blockData}
 									onChange={(val) => setBlockData({ ...blockData, ...val })}
 									type="container"
+									value={blockData}
 								/>
 							)}
 
 							{selectedOption === "iframe" && (
 								<IframeInput
-									value={blockData}
 									onChange={(val) => setBlockData({ ...blockData, ...val })}
+									value={blockData}
 								/>
 							)}
 
 							{selectedOption === "custom_code" && (
 								<CustomCodeInput
-									value={blockData}
 									onChange={(val) => setBlockData({ ...blockData, ...val })}
+									value={blockData}
 								/>
+							)}
+
+							{selectedOption === "text" && (
+								<div className="p-4">
+									<label className="block text-sm font-medium mb-2 text-gray-700">
+										Content
+									</label>
+									<RichTextEditor
+										className="border-gray-200"
+										content={blockData.content || "<p>Text</p>"}
+										onChange={(val) =>
+											setBlockData({ ...blockData, content: val })
+										}
+									/>
+								</div>
 							)}
 						</div>
 					</div>
@@ -237,16 +276,16 @@ const AddContentModal = ({
 					{/* Footer Actions */}
 					<div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-white">
 						<Button
-							variant="outline"
-							onClick={onClose}
 							className="hover:text-product-primary hover:border-product-primary"
+							onClick={onClose}
+							variant="outline"
 						>
 							Cancel
 						</Button>
 						<Button
-							onClick={handleAdd}
-							disabled={!isFormValid()}
 							className="bg-product-primary text-secondary hover:bg-product-primary/90 disabled:opacity-50"
+							disabled={!isFormValid()}
+							onClick={handleAdd}
 						>
 							Add {selectedOption}
 						</Button>

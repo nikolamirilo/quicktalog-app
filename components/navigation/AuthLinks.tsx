@@ -1,9 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { FiGrid, FiUser, FiUserPlus } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
 import { MobileNavLink, NavLink } from "./Navbar"; // Assuming NavLink and MobileNavLink are exported from Navbar.tsx
 
 interface AuthLinksProps {
@@ -94,7 +94,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 								</Button>
 							</Link>
 							<Link href="/auth?mode=signup" onClick={onLinkClick}>
-								<Button className="w-full bg-product-primary text-product-foreground hover:bg-primary-accent hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
+								<Button className="w-full bg-product-primary text-product-foreground hover:bg-product-primary-accent hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
 									<FiUserPlus className="w-4 h-4" />
 									Sign Up
 								</Button>
@@ -126,7 +126,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 						</Button>
 					</Link>
 					<Link href="/auth?mode=signup">
-						<Button className="bg-product-primary text-product-foreground hover:bg-primary-accent hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
+						<Button className="bg-product-primary text-product-foreground hover:bg-product-primary-accent hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
 							<FiUserPlus className="w-4 h-4" />
 							Sign Up
 						</Button>

@@ -75,7 +75,7 @@ export default function InformModal({
 						</AlertDialogCancel>
 					)}
 					<AlertDialogAction
-						className="bg-product-primary text-product-foreground hover:bg-product-primary-accent border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold"
+						className="bg-product-primary text-product-foreground hover:bg-product-product-primary-accent border border-product-primary hover:border-product-product-primary-accent transition-colors duration-200 font-semibold"
 						disabled={loading}
 						onClick={onConfirm}
 					>

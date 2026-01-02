@@ -1,4 +1,5 @@
 "use client";
+import { faqs } from "@/constants/details";
 import {
 	Disclosure,
 	DisclosureButton,
@@ -7,7 +8,6 @@ import {
 import { motion, Variants } from "framer-motion";
 import React, { useState } from "react";
 import { FiMinus, FiPlus } from "react-icons/fi";
-import { faqs } from "@/constants/details";
 
 const containerVariants: Variants = {
 	offscreen: {
@@ -126,7 +126,7 @@ const FAQ: React.FC = () => {
 					transition={{ delay: 0.5 }}
 				>
 					<button
-						className="px-8 py-3 bg-product-primary text-product-foreground rounded-lg font-semibold hover:bg-product-primary-accent transition-all duration-200 hover:scale-105 shadow-product-shadow"
+						className="px-8 py-3 bg-product-primary text-product-foreground rounded-lg font-semibold hover:bg-product-product-primary-accent transition-all duration-200 hover:scale-105 shadow-product-shadow"
 						onClick={handleLoadMore}
 					>
 						Load More Questions

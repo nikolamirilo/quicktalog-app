@@ -13,55 +13,28 @@ Enable small businesses to launch elegant, mobile-first catalogues in minutes, w
 ## 💎 Key Values
 
 - Simplicity of use
-- Quick setup & maintenance
+- Quick creation process
 - Cross-industry support
 
 ---
 
 ## 🚀 Features
 
-- Instant digital catalogue creation
+- Catalogue Builder
 - Advanced customization (themes, layouts)
 - OCR & AI-powered catalogue import
-- Analytics dashboard
-- Multi-location management
-- Collaborative editing
-- Tiered pricing plans
+- Real time analytics
+- Subscription management
 
 ---
 
 ## 📦 Tech Stack
 
 - **Next.js** - full stack web development framework (React.js + Node.js)
-- **TypeScript** - programming language
 - **Tailwind CSS** - styling
-- **Supabase** - database
+- **Supabase** - database & edge functions (monitoring & alerting system)
 - **UploadThing** - static files hosting
-- **Clerk** - authentication and use\*\*r management
+- **Clerk** - authentication and user management
 - **Posthog** - analytics service
 - **Paddle** - payment and tax handling service
-
----
-
-## 🖥️ Getting Started
-
-1. **Clone the repository**
-2. **Install dependencies**
-3. **Configure environment variables**
-   - Copy `.env.example` to `.env` and fill in your Supabase, Clerk, and other keys
-4. **Run the development server**
-5. **Build for production**
-
----
-
-## 📁 Project Structure
-
-- `app` - Next.js App Router pages
-- `components` - UI and feature components
-- `context` - React context providers
-- `data` - Static data files
-- `hooks` - Custom React hooks
-- `lib` - Utility functions
-- `public` - Static assets
-- `types` - TypeScript types
-- `utils` - Utility modules (e.g., uploadthing)
+- **Redis** - caching layer

@@ -29,7 +29,7 @@ const CTASection = ({
 			{type === "default" && (
 				<Link href={href}>
 					<Button
-						className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+						className="w-fit min-w-56 bg-product-primary hover:bg-product-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
 						variant="default"
 					>
 						<Star className="w-4 h-4" />

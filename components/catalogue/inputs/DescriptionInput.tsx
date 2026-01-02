@@ -21,7 +21,7 @@ const DescriptionInput = () => {
           text-center text-gray-600 placeholder:text-gray-400 text-base sm:text-lg
           border rounded-lg
           px-8 py-1.5
-          min-w-[90%] md:min-w-[600px] focus:bg-white ${catalogue.description === "" ? "bg-white border-gray-300 " : "bg-transparent border-none"}
+          min-w-[90%] md:min-w-[600px] h-fit focus:bg-white ${catalogue.description === "" ? "bg-white border-gray-300 " : "bg-transparent border-none"}
         focus:border-gray-500 focus:outline-none
           transition-all
           resize-none overflow-hidden
@@ -30,7 +30,7 @@ const DescriptionInput = () => {
 				onInput={handleInput}
 				placeholder="Add Description"
 				ref={textareaRef}
-				rows={1}
+				rows={2}
 				value={catalogue?.description}
 			/>
 		</div>

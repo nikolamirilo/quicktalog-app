@@ -1,6 +1,6 @@
-import { RiLightbulbLine } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { examplePrompts } from "@/constants/ui";
+import { RiLightbulbLine } from "react-icons/ri";
 
 import type { PromptExamplesProps } from "@/types/components";
 
@@ -12,7 +12,7 @@ const PromptExamples: React.FC<PromptExamplesProps> = ({
 		<div className="mt-8 pt-6 border-t border-product-border">
 			<div className="mb-4">
 				<h3 className="text-lg font-semibold text-product-foreground flex items-center gap-2">
-					<RiLightbulbLine className="text-primary-accent" />
+					<RiLightbulbLine className="text-product-primary-accent" />
 					Business Examples
 				</h3>
 				<p className="text-product-foreground-accent text-sm">
@@ -29,7 +29,7 @@ const PromptExamples: React.FC<PromptExamplesProps> = ({
 						variant="ghost"
 					>
 						<div className="flex flex-row justify-start items-center w-full h-full gap-3">
-							<div className="w-8 h-8 rounded-full bg-primary-accent/10 flex items-center justify-center group-hover:bg-primary-accent/20 transition-colors">
+							<div className="w-8 h-8 rounded-full bg-product-primary-accent/10 flex items-center justify-center group-hover:bg-product-primary-accent/20 transition-colors">
 								<span className="text-product-primary">{example.icon}</span>
 							</div>
 							<div className="flex-1">

@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model analytics {
+  date            DateTime  @default(now()) @db.Timestamptz(6)
+  current_url     String
+  pageview_count  Int
+  unique_visitors Int?
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  user_id         String
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  users           users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([date, current_url], map: "analytics_unique_entry")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model catalogues {
+  id            String   @id(map: "catalogues_v2_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  logo          String?
+  heading       String?
+  description   String?
+  status        String   @default("draft")
+  source        String
+  language      String   @default("en")
+  currency      String   @default("EUR")
+  business_type String?
+  tags          String[] @default([])
+  content       Json     @default("[]")
+  legal         Json     @default("{}")
+  appearance    Json     @default("{}")
+  contact       Json     @default("{}")
+  header        Json     @default("{}")
+  footer        Json     @default("{}")
+  partners      Json     @default("[]")
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  created_by    String
+  users         users    @relation(fields: [created_by], references: [id], onDelete: Cascade, map: "catalogues_v2_created_by_fkey")
+}
+
+model job_logs {
+  job_name          String
+  status            String
+  execution_time_ms Int?
+  log               String?
+  created_at        DateTime? @default(now()) @db.Timestamptz(6)
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
+model newsletter {
+  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String
+  catalogue_id String @db.Uuid
+  owner_id     String
+  users        users  @relation(fields: [owner_id], references: [id], onDelete: Cascade)
+}
+
+model ocr {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  datetime  DateTime @default(now()) @db.Timestamptz(6)
+  user_id   String?
+  catalogue String   @default("")
+  users     users?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model product_newsletter {
+  id    String @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email String
+
+  @@ignore
+}
+
+model prompts {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  datetime  DateTime @default(now()) @db.Timestamptz(6)
+  user_id   String?
+  catalogue String?
+  users     users?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model qr_configs {
+  id         Int       @id @default(autoincrement())
+  catalogue  String    @default("")
+  config     Json
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model subscriptions {
+  subscription_id     String   @id
+  subscription_status String
+  price_id            String?
+  product_id          String?
+  scheduled_change    String?
+  customer_id         String
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime @default(now()) @db.Timestamptz(6)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model users {
+  id                 String       @id
+  name               String?
+  created_at         DateTime?    @default(now()) @db.Timestamptz(6)
+  image              String?      @default("NULL")
+  email              String?
+  plan_id            String?
+  customer_id        String?
+  cookie_preferences Json?
+  consents           Json         @default("{\"refund-policy\": true, \"privacy-policy\": true, \"terms-and-conditions\": true}")
+  analytics          analytics[]
+  catalogues         catalogues[]
+  newsletter         newsletter[]
+  ocr                ocr[]
+  prompts            prompts[]
+}
+
+enum catalogue_source {
+  builder
+  ocr_import
+  ai_prompt
+}
+
+enum content_type {
+  categorized
+  uncategorized
+}
+
+enum status {
+  active
+  inactive
+  draft
+  in_preparation @map("in preparation")
+  error
+}

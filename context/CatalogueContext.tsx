@@ -1,8 +1,8 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
 import { defaultNewCatalogueData } from "@/constants/catalogue";
 import { Catalogue, ContentBlock, Item } from "@/types/catalogue";
 import { useUser } from "@clerk/nextjs";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface CatalogueContextType {
 	catalogue: Catalogue;

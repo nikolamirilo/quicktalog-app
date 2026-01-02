@@ -92,7 +92,7 @@ const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
 									</p>
 								)}
 							</div>
-							<div className="w-12 h-12 bg-product-primary-accent/10 rounded-full flex items-center justify-center">
+							<div className="w-12 h-12 bg-product-product-primary-accent/10 rounded-full flex items-center justify-center">
 								<FiCalendar className="w-6 h-6 text-product-icon" />
 							</div>
 						</div>

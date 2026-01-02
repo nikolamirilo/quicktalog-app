@@ -1,4 +1,5 @@
-import { Legal, layouts, Partner, themes } from "@quicktalog/common";
+import { layouts, themes } from "@quicktalog/common";
+import { Legal, Partner } from "./catalogue";
 import { ILinkItem, ISocials } from "./components";
 
 export type CookiePreferences = {

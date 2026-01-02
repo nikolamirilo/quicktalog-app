@@ -1,11 +1,11 @@
 "use client";
-import Link from "next/link";
-import React, { useState } from "react";
-import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
 import { productNewsletterSignup } from "@/actions/newsletter";
 import { Button } from "@/components/ui/button";
 import { footerDetails, siteDetails } from "@/constants/details";
 import { getPlatformIconByName } from "@/constants/ui";
+import Link from "next/link";
+import React, { useState } from "react";
+import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
 
 const Footer: React.FC = () => {
 	const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -164,11 +164,10 @@ const Footer: React.FC = () => {
 								/>
 							</div>
 							<Button
-								className={`w-full transition-colors duration-200 font-semibold ${
-									submitSuccess
+								className={`w-full transition-colors duration-200 font-semibold ${submitSuccess
 										? "bg-green-500 text-white hover:bg-green-600"
-										: "bg-product-primary text-product-foreground hover:bg-product-primary-accent"
-								}`}
+										: "bg-product-primary text-product-foreground hover:bg-product-product-primary-accent"
+									}`}
 								disabled={isSubmitting || submitSuccess}
 								type="submit"
 							>

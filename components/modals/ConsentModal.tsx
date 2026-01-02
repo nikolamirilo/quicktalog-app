@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -12,6 +10,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import Link from "next/link";
+import { useState } from "react";
 
 interface ConsentModalProps {
 	isOpen: boolean;
@@ -75,7 +75,7 @@ export default function ConsentModal({
 						>
 							I agree to the{" "}
 							<Link
-								className="text-product-primary hover:text-product-primary-accent underline"
+								className="text-product-primary hover:text-product-product-primary-accent underline"
 								href="/terms-and-conditions"
 								target="_blank"
 							>
@@ -99,7 +99,7 @@ export default function ConsentModal({
 						>
 							I agree to the{" "}
 							<Link
-								className="text-product-primary hover:text-product-primary-accent underline"
+								className="text-product-primary hover:text-product-product-primary-accent underline"
 								href="/privacy-policy"
 								target="_blank"
 							>
@@ -123,7 +123,7 @@ export default function ConsentModal({
 						>
 							I agree to the{" "}
 							<Link
-								className="text-product-primary hover:text-product-primary-accent underline"
+								className="text-product-primary hover:text-product-product-primary-accent underline"
 								href="/refund-policy"
 								target="_blank"
 							>
@@ -142,7 +142,7 @@ export default function ConsentModal({
 						Cancel
 					</Button>
 					<Button
-						className="bg-product-primary text-product-foreground hover:bg-product-primary-accent border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+						className="bg-product-primary text-product-foreground hover:bg-product-product-primary-accent border border-product-primary hover:border-product-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
 						disabled={!allConsentsAccepted}
 						onClick={handleConfirm}
 					>

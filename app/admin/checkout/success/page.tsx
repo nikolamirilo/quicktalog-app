@@ -13,10 +13,10 @@ const page = () => {
 						viewBox="0 0 24 24"
 					>
 						<path
+							d="M5 13l4 4L19 7"
 							strokeLinecap="round"
 							strokeLinejoin="round"
 							strokeWidth="2"
-							d="M5 13l4 4L19 7"
 						></path>
 					</svg>
 				</div>
@@ -34,8 +34,8 @@ const page = () => {
 						Have questions? Contact us at:
 					</p>
 					<a
+						className="inline-block mt-2 text-lg sm:text-xl font-medium text-product-primary hover:text-product-product-primary-accent transition-colors duration-200"
 						href="mailto:quicktalog@outlook.com"
-						className="inline-block mt-2 text-lg sm:text-xl font-medium text-product-primary hover:text-product-primary-accent transition-colors duration-200"
 					>
 						quicktalog@outlook.com
 					</a>

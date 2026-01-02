@@ -20,7 +20,6 @@ const Catalogue = ({
 	item: Catalogue;
 	type?: "edit" | "view" | "demo";
 }) => {
-	// const { userData } = useUserContext();
 	const isCustom = type !== "demo";
 	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
 	const isDarkTheme = themes.some(
@@ -61,7 +60,7 @@ const Catalogue = ({
 				{item.appearance.overlay.isEnabled && (
 					<Overlay emoji={item.appearance.overlay.icon} />
 				)}
-				<BuilderSidebar />
+				{type === "edit" && <BuilderSidebar />}
 				<section
 					aria-labelledby={item.heading}
 					className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0"

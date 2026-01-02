@@ -18,7 +18,7 @@ export default withUt(
 					"product-foreground": "var(--product-foreground)",
 					"product-primary": "var(--product-primary)",
 					"product-secondary": "var(--product-secondary)",
-					"primary-accent": "var(--product-primary-accent)",
+					"product-primary-accent": "var(--product-product-primary-accent)",
 					"product-foreground-accent": "var(--product-foreground-accent)",
 					"hero-product-background": "var(--hero-product-background)",
 					"product-border": "var(--product-border)",

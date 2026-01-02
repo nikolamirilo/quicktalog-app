@@ -43,18 +43,18 @@ export default function ErrorPage() {
 
 					{/* Action Buttons */}
 					<div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-						<Button asChild variant="cta" className="w-full sm:w-auto">
-							<Link href="/" className="flex items-center gap-2">
+						<Button asChild className="w-full sm:w-auto" variant="cta">
+							<Link className="flex items-center gap-2" href="/">
 								<FiHome className="w-4 h-4" />
 								Return Home
 							</Link>
 						</Button>
 						<Button
 							asChild
-							variant="outline"
 							className="w-full sm:w-auto border-2 border-product-primary"
+							variant="outline"
 						>
-							<Link href="/admin/dashboard" className="flex items-center gap-2">
+							<Link className="flex items-center gap-2" href="/admin/dashboard">
 								<FiArrowLeft className="w-4 h-4" />
 								Go to Dashboard
 							</Link>
@@ -68,20 +68,20 @@ export default function ErrorPage() {
 						</p>
 						<div className="flex flex-wrap justify-center gap-4 text-sm">
 							<Link
+								className="text-product-primary hover:text-product-product-primary-accent transition-colors duration-200 font-medium"
 								href="/pricing"
-								className="text-product-primary hover:text-product-primary-accent transition-colors duration-200 font-medium"
 							>
 								Pricing
 							</Link>
 							<Link
+								className="text-product-primary hover:text-product-product-primary-accent transition-colors duration-200 font-medium"
 								href="/contact"
-								className="text-product-primary hover:text-product-primary-accent transition-colors duration-200 font-medium"
 							>
 								Contact Support
 							</Link>
 							<Link
+								className="text-product-primary hover:text-product-product-primary-accent transition-colors duration-200 font-medium"
 								href="/demo"
-								className="text-product-primary hover:text-product-primary-accent transition-colors duration-200 font-medium"
 							>
 								Try Demo
 							</Link>

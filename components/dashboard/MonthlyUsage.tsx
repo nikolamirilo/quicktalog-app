@@ -1,10 +1,10 @@
 "use client";
+import { Card, CardContent } from "@/components/ui/card";
 import { PricingPlan, Usage } from "@quicktalog/common";
 import { BiGridAlt, BiScan } from "react-icons/bi";
 import { FiBarChart2 } from "react-icons/fi";
 import { IoAnalyticsOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
-import { Card, CardContent } from "@/components/ui/card";
 import DonutChart from "../charts/DonutChart";
 
 const MonthlyUsage = ({
@@ -41,7 +41,7 @@ const MonthlyUsage = ({
 		title: "AI Prompts",
 		icon: <RiSparkling2Line className="w-6 h-6" />,
 		shown: pricingPlan.features.ai_prompts > 0 ? true : false,
-		color: "text-product-primary-accent",
+		color: "text-product-product-primary-accent",
 	};
 
 	const ocrUsage = {

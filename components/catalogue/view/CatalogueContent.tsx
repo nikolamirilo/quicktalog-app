@@ -9,6 +9,7 @@ import CategoryBlockComponent from "../blocks/CategoryBlock";
 import ContainerBlockComponent from "../blocks/ContainerBlock";
 import CustomCode from "../blocks/CustomCode";
 import IframeBlockComponent from "../blocks/IframeBlock";
+import TextBlockComponent from "../blocks/TextBlock";
 import ItemModal from "../modals/ItemModal";
 
 const CatalogueContent = ({
@@ -267,6 +268,24 @@ const CatalogueContent = ({
 							onMoveDown={() => moveBlock(index, "down")}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}
+						/>
+					);
+				}
+				if (block.type === "text") {
+					return (
+						<TextBlockComponent
+							mode={mode}
+							block={block}
+							key={`${block.id}-${block.order}`}
+							onDelete={handleDeleteClick}
+							slug={block.id}
+							onMoveUp={() => moveBlock(index, "up")}
+							onMoveDown={() => moveBlock(index, "down")}
+							isFirst={index === 0}
+							isLast={index === data.length - 1}
+							onUpdateBlock={
+								updateBlock ? (newData) => updateBlock(index, newData) : undefined
+							}
 						/>
 					);
 				}

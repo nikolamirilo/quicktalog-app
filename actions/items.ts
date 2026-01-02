@@ -202,6 +202,7 @@ export async function getCatalogueByName(name: string) {
 					data: defaultCatalogueData,
 				};
 			}
+			await redis.set(name, JSON.stringify(data));
 			catalogue = data;
 		}
 		return {

@@ -1,4 +1,3 @@
-import { Search, X } from "lucide-react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -22,6 +21,7 @@ import { CURRENCIES } from "@/constants";
 import { BUSINESS_TYPES } from "@/constants/catalogue";
 import { LANGUAGE_OPTIONS } from "@/constants/ocr";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { Search, X } from "lucide-react";
 
 interface InitCatalogueModalProps {
 	isOpen: boolean;
@@ -41,9 +41,9 @@ export default function InitCatalogueModal({
 	// Generate URL based on catalog name
 	const generatedUrl = catalogue.name
 		? `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name
-				.toLowerCase()
-				.replace(/\s+/g, "-")
-				.replace(/[^a-z0-9-]/g, "")}`
+			.toLowerCase()
+			.replace(/\s+/g, "-")
+			.replace(/[^a-z0-9-]/g, "")}`
 		: `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/`;
 
 	const handleConfirm = () => {
@@ -233,7 +233,7 @@ export default function InitCatalogueModal({
 						</AlertDialogCancel>
 					)}
 					<AlertDialogAction
-						className="bg-product-primary text-product-foreground hover:bg-product-primary-accent border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+						className="bg-product-primary text-product-foreground hover:bg-product-product-primary-accent border border-product-primary hover:border-product-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
 						disabled={loading || !isFormValid}
 						onClick={handleConfirm}
 					>
