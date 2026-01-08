@@ -48,6 +48,7 @@ const AddContentModal = ({
 		items: [],
 		code: "",
 		content: "",
+		isExpanded: true,
 	});
 
 	useEffect(() => {
@@ -61,6 +62,7 @@ const AddContentModal = ({
 					items: (editingBlock as any).items || [],
 					code: (editingBlock as any).code || "",
 					content: (editingBlock as any).content || "",
+					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
 				setSelectedOption("container");
@@ -71,6 +73,7 @@ const AddContentModal = ({
 					items: [],
 					code: "",
 					content: "",
+					isExpanded: true,
 				});
 			}
 		}
@@ -90,7 +93,9 @@ const AddContentModal = ({
 				...newBlock,
 				name: blockData.name,
 				layout: blockData.layout,
-				items: editingBlock?.type === "category" ? (editingBlock as any).items : [],
+				items:
+					editingBlock?.type === "category" ? (editingBlock as any).items : [],
+				isExpanded: blockData.isExpanded,
 			};
 		} else if (selectedOption === "container") {
 			newBlock = {

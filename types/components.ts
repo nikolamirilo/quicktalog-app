@@ -1,11 +1,11 @@
 import { OverallAnalytics } from "@/types";
 import {
-    Catalogue,
-    CatalogueFormData,
-    PricingPlan,
-    Usage,
-    User,
-    UserData,
+	Catalogue,
+	CatalogueFormData,
+	PricingPlan,
+	Usage,
+	User,
+	UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
 import { FooterData } from ".";

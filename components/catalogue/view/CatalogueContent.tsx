@@ -51,7 +51,14 @@ const CatalogueContent = ({
 		if (!data || data.length === 0) return;
 		const initialExpanded = data.reduce(
 			(acc, item, idx) => {
-				acc[`${item.id}-${item.order}`] = type === "demo" || idx === 0;
+				const isExpanded =
+					type === "demo"
+						? idx === 0
+						: item.type === "category"
+							? (item as any).isExpanded ?? true
+							: true;
+
+				acc[`${item.id}-${item.order}`] = isExpanded;
 				return acc;
 			},
 			{} as Record<string, boolean>,
