@@ -27,7 +27,7 @@ export interface CategoryBlock extends BaseContentBlock {
 	name: string;
 	layout: ContentLayout;
 	items: Item[];
-	isExpanded: boolean
+	isExpanded: boolean;
 }
 
 export interface ContainerBlock extends BaseContentBlock {

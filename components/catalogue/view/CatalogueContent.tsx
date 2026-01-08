@@ -55,7 +55,7 @@ const CatalogueContent = ({
 					type === "demo"
 						? idx === 0
 						: item.type === "category"
-							? (item as any).isExpanded ?? true
+							? ((item as any).isExpanded ?? true)
 							: true;
 
 				acc[`${item.id}-${item.order}`] = isExpanded;
