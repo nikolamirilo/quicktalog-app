@@ -63,9 +63,9 @@ const CategoryBlockComponent = ({
 					<CategoryHeader
 						code={`${slug}-${block.order}`}
 						isExpanded={isExpanded}
+						mode={mode}
 						onToggle={onToggle}
 						title={block.name}
-						mode={mode}
 					/>
 
 					<div
@@ -92,34 +92,34 @@ const CategoryBlockComponent = ({
 		>
 			<CategoryHeader
 				code={`${slug}-${block.order}`}
+				currentLayout={currentLayout}
 				isExpanded={isExpanded}
-				mode={mode}
-				onDelete={onDelete}
-				onToggle={onToggle}
-				title={block.name}
-				onMoveUp={onMoveUp}
-				onMoveDown={onMoveDown}
 				isFirst={isFirst}
 				isLast={isLast}
-				currentLayout={currentLayout}
+				mode={mode}
+				onDelete={onDelete}
 				onLayoutChange={(layout) =>
 					onUpdateBlock && onUpdateBlock({ layout: layout as any })
 				}
+				onMoveDown={onMoveDown}
+				onMoveUp={onMoveUp}
+				onToggle={onToggle}
+				title={block.name}
 			/>
 
 			<Items
 				block={block}
 				blockIndex={blockIndex}
-				currentLayout={currentLayout}
 				currency={currency}
+				currentLayout={currentLayout}
 				mode={mode}
-				showContent={showContent}
-				theme={theme}
 				onAddItem={onAddItem}
 				onDeleteItem={onDeleteItem}
 				onEditItem={onEditItem}
-				onMoveItemUp={onMoveItemUp}
 				onMoveItemDown={onMoveItemDown}
+				onMoveItemUp={onMoveItemUp}
+				showContent={showContent}
+				theme={theme}
 			/>
 		</section>
 	);

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,7 +12,7 @@ import {
 	FiPlay,
 	FiSmartphone,
 } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
+import CreateCatalogueButton from "../dashboard/components/CreateCatalogueButton";
 
 // Static data for reusability
 const valuePropositions = [
@@ -70,20 +71,7 @@ const Hero: React.FC = () => {
 
 				{/* CTA Buttons */}
 				<div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-					<Button
-						aria-label="Create your digital catalog"
-						className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
-						onClick={() => {
-							if (user) {
-								router.push("/admin/create");
-							} else {
-								router.push("/auth?mode=signup");
-							}
-						}}
-						variant="cta"
-					>
-						Start Creating Now
-					</Button>
+					<CreateCatalogueButton type="home" />
 					<Link href="/demo">
 						<Button
 							aria-label="Try the catalog demo"

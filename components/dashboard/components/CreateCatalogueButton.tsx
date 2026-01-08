@@ -1,62 +1,69 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useCatalogueContext } from "@/context/CatalogueContext";
-import InitCatalogueModal from "@/components/catalogue/modals/InitCatalogueModal";
 import { createCatalogue } from "@/actions/items";
-import { useUser } from "@clerk/nextjs";
+import InitCatalogueModal from "@/components/catalogue/modals/InitCatalogueModal";
 import { Button } from "@/components/ui/button";
-import { IoCreateOutline } from "react-icons/io5";
 import {
 	Tooltip,
 	TooltipContent,
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useCatalogueContext } from "@/context/CatalogueContext";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { IoCreateOutline } from "react-icons/io5";
 import { toast } from "sonner";
 
 interface CreateCatalogueButtonProps {
 	disabled?: boolean;
+	type?: "home" | "dashboard";
 	showUpgradeTooltip?: boolean;
+	className?: string;
 }
 
 const CreateCatalogueButton = ({
 	disabled = false,
 	showUpgradeTooltip = false,
+	type = "dashboard",
+	className = "",
 }: CreateCatalogueButtonProps) => {
 	const router = useRouter();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const { user } = useUser();
-
 	const { catalogue } = useCatalogueContext();
-
+	const { user } = useUser();
 	const handleCreateCatalog = async () => {
 		setLoading(true);
+		if (user) {
+			try {
+				console.log("Creating catalog with data:", catalogue);
+				const result = await createCatalogue(catalogue);
 
-		try {
-			console.log("Creating catalog with data:", catalogue);
-			const result = await createCatalogue(catalogue);
+				if (result.success) {
+					console.log("Catalog created successfully!", result.data);
+					toast.success(
+						`Catalogue "${result.data.name}" created successfully!`,
+					);
+					setIsModalOpen(false);
 
-			if (result.success) {
-				console.log("Catalog created successfully!", result.data);
-				toast.success(`Catalogue "${result.data.name}" created successfully!`);
-				setIsModalOpen(false);
-
-				// Navigate to the builder page with the catalogue name
-				setTimeout(() => {
-					router.push(`/admin/${result.data.name}/builder`);
-				}, 200);
-			} else {
-				console.error("Failed to create catalog:", result.error);
-				toast.error(result.error || "Failed to create catalogue");
+					// Navigate to the builder page with the catalogue name
+					setTimeout(() => {
+						router.push(`/admin/${result.data.name}/builder`);
+					}, 200);
+				} else {
+					console.error("Failed to create catalog:", result.error);
+					toast.error(result.error || "Failed to create catalogue");
+				}
+			} catch (error) {
+				console.error("Unexpected error:", error);
+				toast.error("An unexpected error occurred");
+			} finally {
+				setLoading(false);
 			}
-		} catch (error) {
-			console.error("Unexpected error:", error);
-			toast.error("An unexpected error occurred");
-		} finally {
-			setLoading(false);
+		} else {
+			router.push("/auth?mode=signup");
 		}
 	};
 
@@ -72,17 +79,29 @@ const CreateCatalogueButton = ({
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<span className="w-9/12 sm:w-fit">
-							<Button
-								className="w-full"
-								disabled={disabled}
-								onClick={handleButtonClick}
-							>
-								<IoCreateOutline
-									className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-									size={18}
-								/>{" "}
-								Create Catalogue
-							</Button>
+							{type === "dashboard" ? (
+								<Button
+									className={`w-full ${className}`}
+									disabled={disabled}
+									onClick={handleButtonClick}
+								>
+									<IoCreateOutline
+										className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+										size={18}
+									/>{" "}
+									Create Catalogue
+								</Button>
+							) : (
+								<Button
+									aria-label="Create your digital catalog"
+									className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
+									disabled={disabled}
+									onClick={handleButtonClick}
+									variant="cta"
+								>
+									Start Creating Now
+								</Button>
+							)}
 						</span>
 					</TooltipTrigger>
 					{showUpgradeTooltip && disabled && (
@@ -102,9 +121,9 @@ const CreateCatalogueButton = ({
 
 			<InitCatalogueModal
 				isOpen={isModalOpen}
-				onConfirm={handleCreateCatalog}
-				onCancel={() => setIsModalOpen(false)}
 				loading={loading}
+				onCancel={() => setIsModalOpen(false)}
+				onConfirm={handleCreateCatalog}
 			/>
 		</>
 	);

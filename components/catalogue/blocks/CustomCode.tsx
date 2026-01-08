@@ -51,19 +51,19 @@ const CustomCodeBlockComponent = ({
 		<section className="mb-5 group relative" id={`${slug}-${block.order}`}>
 			{mode === "edit" && (
 				<BlockControls
-					onMoveDown={onMoveDown}
-					onMoveUp={onMoveUp}
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
+					onMoveDown={onMoveDown}
+					onMoveUp={onMoveUp}
 				/>
 			)}
 			<iframe
-				ref={iframeRef}
-				srcDoc={block.code}
 				className="w-full border-0 rounded-lg overflow-hidden"
-				style={{ minHeight: `${iframeHeight}px` }}
+				ref={iframeRef}
 				sandbox="allow-scripts allow-same-origin"
+				srcDoc={block.code}
+				style={{ minHeight: `${iframeHeight}px` }}
 				title="Custom code content"
 			/>
 		</section>

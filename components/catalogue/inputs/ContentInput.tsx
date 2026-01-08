@@ -45,10 +45,9 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 					<div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
 						{layouts.map((layoutOption) => (
 							<div
-								className={`relative cursor-pointer rounded-xl border border-gray-200 p-2 ${
-									value.layout === layoutOption.key &&
+								className={`relative cursor-pointer rounded-xl border border-gray-200 p-2 ${value.layout === layoutOption.key &&
 									"border-product-primary border-2"
-								}`}
+									}`}
 								key={layoutOption.key}
 								onClick={() =>
 									onChange({ ...value, layout: layoutOption.key as any })

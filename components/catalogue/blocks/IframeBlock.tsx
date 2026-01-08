@@ -28,11 +28,11 @@ const IframeBlockComponent = ({
 			{/* Ordering and Delete Controls */}
 			{mode === "edit" && (
 				<BlockControls
-					onMoveDown={onMoveDown}
-					onMoveUp={onMoveUp}
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
+					onMoveDown={onMoveDown}
+					onMoveUp={onMoveUp}
 				/>
 			)}
 			<div className="w-full aspect-video rounded-lg overflow-hidden shadow-md">

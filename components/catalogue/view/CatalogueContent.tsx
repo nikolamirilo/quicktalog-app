@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CategoryBlockComponent from "../blocks/CategoryBlock";
 import ContainerBlockComponent from "../blocks/ContainerBlock";
-import CustomCode from "../blocks/CustomCode";
+import CustomCodeBlockComponent from "../blocks/CustomCode";
 import IframeBlockComponent from "../blocks/IframeBlock";
 import TextBlockComponent from "../blocks/TextBlock";
 import ItemModal from "../modals/ItemModal";
@@ -183,24 +183,24 @@ const CatalogueContent = ({
 							currency={currency}
 							currentLayout={currentLayout}
 							isExpanded={isExpanded}
+							isFirst={index === 0}
+							isLast={index === data.length - 1}
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onAddItem={openAddItemModal}
 							onDelete={handleDeleteClick}
 							onDeleteItem={(itemIndex) => handleDeleteItem(index, itemIndex)}
 							onEditItem={(itemIndex) => handleEditItem(index, itemIndex)}
-							onToggle={handleToggleSection}
-							slug={block.id}
-							theme={theme}
-							onMoveUp={() => moveBlock(index, "up")}
 							onMoveDown={() => moveBlock(index, "down")}
-							isFirst={index === 0}
-							isLast={index === data.length - 1}
-							onMoveItemUp={(itemIndex) => moveItem(index, itemIndex, "up")}
 							onMoveItemDown={(itemIndex) => moveItem(index, itemIndex, "down")}
+							onMoveItemUp={(itemIndex) => moveItem(index, itemIndex, "up")}
+							onMoveUp={() => moveBlock(index, "up")}
+							onToggle={handleToggleSection}
 							onUpdateBlock={
 								updateBlock ? (data) => updateBlock(index, data) : undefined
 							}
+							slug={block.id}
+							theme={theme}
 						/>
 					);
 				} else if (block.type === "container") {
@@ -213,79 +213,81 @@ const CatalogueContent = ({
 							currency={currency}
 							currentLayout={currentLayout}
 							isExpanded={isExpanded}
+							isFirst={index === 0}
+							isLast={index === data.length - 1}
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onAddItem={openAddItemModal}
 							onDelete={handleDeleteClick}
 							onDeleteItem={(itemIndex) => handleDeleteItem(index, itemIndex)}
 							onEditItem={(itemIndex) => handleEditItem(index, itemIndex)}
-							slug={block.id}
-							theme={theme}
-							onMoveUp={moveBlock ? () => moveBlock(index, "up") : undefined}
 							onMoveDown={
 								moveBlock ? () => moveBlock(index, "down") : undefined
-							}
-							isFirst={index === 0}
-							isLast={index === data.length - 1}
-							onMoveItemUp={
-								moveItem
-									? (itemIndex) => moveItem(index, itemIndex, "up")
-									: undefined
 							}
 							onMoveItemDown={
 								moveItem
 									? (itemIndex) => moveItem(index, itemIndex, "down")
 									: undefined
 							}
+							onMoveItemUp={
+								moveItem
+									? (itemIndex) => moveItem(index, itemIndex, "up")
+									: undefined
+							}
+							onMoveUp={moveBlock ? () => moveBlock(index, "up") : undefined}
 							onUpdateBlock={
 								updateBlock ? (data) => updateBlock(index, data) : undefined
 							}
+							slug={block.id}
+							theme={theme}
 						/>
 					);
 				} else if (block.type === "iframe") {
 					return (
 						<IframeBlockComponent
-							mode={mode}
 							block={block}
-							key={`${block.id}-${block.order}`}
-							onDelete={handleDeleteClick}
-							slug={block.id}
-							onMoveUp={() => moveBlock(index, "up")}
-							onMoveDown={() => moveBlock(index, "down")}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}
+							key={`${block.id}-${block.order}`}
+							mode={mode}
+							onDelete={handleDeleteClick}
+							onMoveDown={() => moveBlock(index, "down")}
+							onMoveUp={() => moveBlock(index, "up")}
+							slug={block.id}
 						/>
 					);
 				} else if (block.type === "custom_code") {
 					return (
-						<CustomCode
-							mode={mode}
+						<CustomCodeBlockComponent
 							block={block}
-							key={`${block.id}-${block.order}`}
-							onDelete={handleDeleteClick}
-							slug={block.id}
-							onMoveUp={() => moveBlock(index, "up")}
-							onMoveDown={() => moveBlock(index, "down")}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}
+							key={`${block.id}-${block.order}`}
+							mode={mode}
+							onDelete={handleDeleteClick}
+							onMoveDown={() => moveBlock(index, "down")}
+							onMoveUp={() => moveBlock(index, "up")}
+							slug={block.id}
 						/>
 					);
 				}
 				if (block.type === "text") {
 					return (
 						<TextBlockComponent
-							mode={mode}
 							block={block}
-							key={`${block.id}-${block.order}`}
-							onDelete={handleDeleteClick}
-							slug={block.id}
-							onMoveUp={() => moveBlock(index, "up")}
-							onMoveDown={() => moveBlock(index, "down")}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}
+							key={`${block.id}-${block.order}`}
+							mode={mode}
+							onDelete={handleDeleteClick}
+							onMoveDown={() => moveBlock(index, "down")}
+							onMoveUp={() => moveBlock(index, "up")}
 							onUpdateBlock={
-								updateBlock ? (newData) => updateBlock(index, newData) : undefined
+								updateBlock
+									? (newData) => updateBlock(index, newData)
+									: undefined
 							}
+							slug={block.id}
 						/>
 					);
 				}

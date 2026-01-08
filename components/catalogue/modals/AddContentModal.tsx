@@ -6,9 +6,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { Code, Folder, Globe, Layout, Type, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import RichTextEditor from "../blocks/RichTextEditor";
+import { ContentOptionsSelector } from "../blocks/common/ContentOptionsSelector";
+import RichTextEditor from "../blocks/common/RichTextEditor";
 import ContentInput from "../inputs/ContentInput";
 import CustomCodeInput from "../inputs/CustomCodeInput";
 import IframeInput from "../inputs/IframeInput";
@@ -22,9 +23,9 @@ interface AddContentModalProps {
 type ContentOption =
 	| "container"
 	| "category"
+	| "text"
 	| "iframe"
-	| "custom_code"
-	| "text";
+	| "custom_code";
 
 const AddContentModal = ({
 	isOpen,
@@ -124,73 +125,10 @@ const AddContentModal = ({
 						</AlertDialogTitle>
 						<p className="text-sm text-gray-500 mt-1"></p>
 					</div>
-					<div className="flex-1 px-3 space-y-2">
-						<Button
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "container"
-									? "bg-product-primary shadow-product-shadow hover:text-white  text-white"
-									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-								}`}
-							onClick={() => setSelectedOption("container")}
-							variant={selectedOption === "container" ? "default" : "ghost"}
-						>
-							<Layout
-								className={`w-6 h-6 ${selectedOption === "container" ? "text-white" : "text-product-foreground"}`}
-							/>
-							<span className="font-medium">Container</span>
-						</Button>
-						<Button
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "category"
-									? "bg-product-primary shadow-product-shadow hover:text-white  text-white"
-									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-								}`}
-							onClick={() => setSelectedOption("category")}
-							variant={selectedOption === "category" ? "default" : "ghost"}
-						>
-							<Folder
-								className={`w-6 h-6 ${selectedOption === "category" ? "text-white" : "text-product-foreground"}`}
-							/>
-							<span className="font-medium">Category</span>
-						</Button>
-						<Button
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "iframe"
-									? "bg-product-primary shadow-product-shadow hover:text-white text-white"
-									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-								}`}
-							onClick={() => setSelectedOption("iframe")}
-							variant={selectedOption === "iframe" ? "default" : "ghost"}
-						>
-							<Globe
-								className={`w-6 h-6 ${selectedOption === "iframe" ? "text-white" : "text-product-foreground"}`}
-							/>
-							<span className="font-medium">Iframe</span>
-						</Button>
-						<Button
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "custom_code"
-									? "bg-product-primary shadow-product-shadow hover:text-white text-white"
-									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-								}`}
-							onClick={() => setSelectedOption("custom_code")}
-							variant={selectedOption === "custom_code" ? "default" : "ghost"}
-						>
-							<Code
-								className={`w-6 h-6 ${selectedOption === "custom_code" ? "text-white" : "text-product-foreground"}`}
-							/>
-							<span className="font-medium">Custom Code</span>
-						</Button>
-						<Button
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${selectedOption === "text"
-									? "bg-product-primary shadow-product-shadow hover:text-white text-white"
-									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-								}`}
-							onClick={() => setSelectedOption("text")}
-							variant={selectedOption === "text" ? "default" : "ghost"}
-						>
-							<Type
-								className={`w-6 h-6 ${selectedOption === "text" ? "text-white" : "text-product-foreground"}`}
-							/>
-							<span className="font-medium">Text</span>
-						</Button>
-					</div>
+					<ContentOptionsSelector
+						onSelect={setSelectedOption}
+						selectedOption={selectedOption}
+					/>
 				</div>
 
 				{/* Right Content - 3/4 width */}
@@ -203,15 +141,19 @@ const AddContentModal = ({
 							</h3>
 							<p className="text-sm text-gray-500 mt-1">
 								{selectedOption === "container" &&
-									"A flexible container for mixed content items."}
+									"A layout block that holds multiple items in a single structured section."}
+
 								{selectedOption === "category" &&
-									"A titled section for grouping specific items."}
+									"A collapsible section used to group related items under one heading."}
+
 								{selectedOption === "iframe" &&
-									"Embed external content like maps or videos."}
+									"Embed external content such as maps, videos, or third-party widgets."}
+
 								{selectedOption === "custom_code" &&
-									"Add custom HTML code to your catalogue."}
+									"Insert custom HTML to add advanced or custom functionality."}
+
 								{selectedOption === "text" &&
-									"Add rich text content with formatting."}
+									"Add rich text content with headings, lists, links, and formatting."}
 							</p>
 						</div>
 						<Button

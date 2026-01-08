@@ -79,12 +79,13 @@ export default function InputModal({
 						</label>
 						<div className="relative">
 							<Input
-								className={`bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary pr-10 ${errors.name
+								className={`bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary pr-10 ${
+									errors.name
 										? "border-red-500 focus:border-red-500"
 										: name && !nameExists && touched.name
 											? "border-green-500 focus:border-green-500"
 											: ""
-									}`}
+								}`}
 								id="name"
 								onChange={onChange}
 								placeholder="Enter name..."

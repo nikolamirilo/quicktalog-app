@@ -41,9 +41,9 @@ export default function InitCatalogueModal({
 	// Generate URL based on catalog name
 	const generatedUrl = catalogue.name
 		? `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name
-			.toLowerCase()
-			.replace(/\s+/g, "-")
-			.replace(/[^a-z0-9-]/g, "")}`
+				.toLowerCase()
+				.replace(/\s+/g, "-")
+				.replace(/[^a-z0-9-]/g, "")}`
 		: `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/`;
 
 	const handleConfirm = () => {
