@@ -1,6 +1,6 @@
 "use client";
 import AppearanceOptions from "@/components/general/AppearanceOptions";
-import type { Catalogue } from "@/types/catalogue";
+import type { Catalogue, ContentBlock } from "@/types/catalogue";
 import { themes } from "@quicktalog/common";
 import { useState } from "react";
 import Overlay from "../../general/Overlay";
@@ -22,6 +22,11 @@ const Catalogue = ({
 }) => {
 	const isCustom = type !== "demo";
 	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
+	const [editingBlock, setEditingBlock] = useState<{
+		block: ContentBlock;
+		index: number;
+	} | null>(null);
+
 	const isDarkTheme = themes.some(
 		(theme) =>
 			theme.key === item.appearance.theme.name && theme.type === "dark",
@@ -31,6 +36,15 @@ const Catalogue = ({
 	const customLogo = item.logo || defaultLogo;
 
 	const logoSrc = isCustom ? customLogo : defaultLogo;
+
+	const handleEditBlock = (index: number) => {
+		const block = item.content[index];
+		if (block) {
+			setEditingBlock({ block, index });
+			setIsAddContentOpen(true);
+		}
+	};
+
 	return (
 		<div
 			aria-label={`${item.heading} Catalogue`}
@@ -100,6 +114,7 @@ const Catalogue = ({
 							currency={item.currency}
 							data={item.content}
 							mode={type === "edit" ? "edit" : "view"}
+							onEditBlock={handleEditBlock}
 							theme={item.appearance.theme.name}
 							type="item"
 						/>
@@ -130,8 +145,13 @@ const Catalogue = ({
 			/>
 
 			<AddContentModal
+				blockIndex={editingBlock?.index}
+				editingBlock={editingBlock?.block}
 				isOpen={isAddContentOpen}
-				onClose={() => setIsAddContentOpen(false)}
+				onClose={() => {
+					setIsAddContentOpen(false);
+					setEditingBlock(null);
+				}}
 				setIsOpen={setIsAddContentOpen}
 			/>
 		</div>

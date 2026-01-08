@@ -9,6 +9,7 @@ interface CustomCodeBlockProps {
 	onDelete?: () => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
+	onEdit?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
 	mode: "edit" | "view";
@@ -20,6 +21,7 @@ const CustomCodeBlockComponent = ({
 	onDelete,
 	onMoveUp,
 	onMoveDown,
+	onEdit,
 	isFirst,
 	isLast,
 	mode,
@@ -54,6 +56,7 @@ const CustomCodeBlockComponent = ({
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
+					onEdit={onEdit}
 					onMoveDown={onMoveDown}
 					onMoveUp={onMoveUp}
 				/>

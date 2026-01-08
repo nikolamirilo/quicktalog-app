@@ -18,6 +18,7 @@ interface CategoryBlockProps {
 	blockIndex: number;
 	onDelete?: () => void;
 	onDeleteItem?: (itemIndex: number) => void;
+	onEdit?: () => void;
 	onEditItem?: (itemIndex: number) => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
@@ -38,6 +39,7 @@ const CategoryBlockComponent = ({
 	onAddItem,
 	onDelete,
 	onDeleteItem,
+	onEdit,
 	onEditItem,
 	onToggle,
 	slug,
@@ -98,6 +100,7 @@ const CategoryBlockComponent = ({
 				isLast={isLast}
 				mode={mode}
 				onDelete={onDelete}
+				onEdit={onEdit}
 				onLayoutChange={(layout) =>
 					onUpdateBlock && onUpdateBlock({ layout: layout as any })
 				}

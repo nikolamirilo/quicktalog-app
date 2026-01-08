@@ -15,6 +15,7 @@ const CategoryHeader = ({
 	mode,
 	currentLayout,
 	onLayoutChange,
+	onEdit,
 }: {
 	title: string;
 	code: string;
@@ -28,6 +29,7 @@ const CategoryHeader = ({
 	mode: string;
 	currentLayout?: string;
 	onLayoutChange?: (layout: string) => void;
+	onEdit?: () => void;
 }) => {
 	const showContent = mode === "edit" || isExpanded;
 	return (
@@ -98,6 +100,7 @@ const CategoryHeader = ({
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
+					onEdit={onEdit}
 					currentLayout={currentLayout}
 					onLayoutChange={onLayoutChange}
 				/>

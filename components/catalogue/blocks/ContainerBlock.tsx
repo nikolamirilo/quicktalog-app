@@ -17,6 +17,7 @@ interface ContainerBlockProps {
 	blockIndex: number;
 	onDelete?: () => void;
 	onDeleteItem?: (itemIndex: number) => void;
+	onEdit?: () => void;
 	onEditItem?: (itemIndex: number) => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
@@ -39,6 +40,7 @@ const ContainerBlockComponent = ({
 	blockIndex,
 	onDelete,
 	onDeleteItem,
+	onEdit,
 	onEditItem,
 	onMoveUp,
 	onMoveDown,
@@ -74,11 +76,10 @@ const ContainerBlockComponent = ({
 
 	return (
 		<section
-			className={`mb-5 relative group/container ${
-				mode === "edit"
-					? "border-2 border-dashed border-gray-700 rounded-lg p-4 transition-all"
-					: ""
-			}`}
+			className={`mb-5 relative group/container ${mode === "edit"
+				? "border-2 border-dashed border-gray-700 rounded-lg p-4 transition-all"
+				: ""
+				}`}
 			id={`${slug}-${block.order}`}
 			key={`${slug}-${block.order}`}
 		>
@@ -89,6 +90,7 @@ const ContainerBlockComponent = ({
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
+					onEdit={onEdit}
 					currentLayout={currentLayout}
 					onLayoutChange={(layout) =>
 						onUpdateBlock && onUpdateBlock({ layout: layout as any })

@@ -1,11 +1,11 @@
 import { OverallAnalytics } from "@/types";
 import {
-	Catalogue,
-	CatalogueFormData,
-	PricingPlan,
-	Usage,
-	User,
-	UserData,
+    Catalogue,
+    CatalogueFormData,
+    PricingPlan,
+    Usage,
+    User,
+    UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
 import { FooterData } from ".";
@@ -96,6 +96,7 @@ export type CatalogueContentProps = {
 	type: "demo" | "item";
 	theme?: string;
 	mode: "edit" | "view";
+	onEditBlock?: (index: number) => void;
 };
 
 export type IFAQ = {

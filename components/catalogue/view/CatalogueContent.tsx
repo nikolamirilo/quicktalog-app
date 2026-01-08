@@ -18,6 +18,7 @@ const CatalogueContent = ({
 	type,
 	theme,
 	mode,
+	onEditBlock,
 }: CatalogueContentProps) => {
 	const {
 		addItem,
@@ -190,6 +191,7 @@ const CatalogueContent = ({
 							onAddItem={openAddItemModal}
 							onDelete={handleDeleteClick}
 							onDeleteItem={(itemIndex) => handleDeleteItem(index, itemIndex)}
+							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
 							onEditItem={(itemIndex) => handleEditItem(index, itemIndex)}
 							onMoveDown={() => moveBlock(index, "down")}
 							onMoveItemDown={(itemIndex) => moveItem(index, itemIndex, "down")}
@@ -220,6 +222,7 @@ const CatalogueContent = ({
 							onAddItem={openAddItemModal}
 							onDelete={handleDeleteClick}
 							onDeleteItem={(itemIndex) => handleDeleteItem(index, itemIndex)}
+							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
 							onEditItem={(itemIndex) => handleEditItem(index, itemIndex)}
 							onMoveDown={
 								moveBlock ? () => moveBlock(index, "down") : undefined
@@ -251,6 +254,7 @@ const CatalogueContent = ({
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onDelete={handleDeleteClick}
+							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
 							onMoveDown={() => moveBlock(index, "down")}
 							onMoveUp={() => moveBlock(index, "up")}
 							slug={block.id}
@@ -265,6 +269,7 @@ const CatalogueContent = ({
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onDelete={handleDeleteClick}
+							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
 							onMoveDown={() => moveBlock(index, "down")}
 							onMoveUp={() => moveBlock(index, "up")}
 							slug={block.id}

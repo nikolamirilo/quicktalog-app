@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { ContentBlock } from "@/types/catalogue";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ContentOptionsSelector } from "../blocks/common/ContentOptionsSelector";
@@ -18,6 +19,8 @@ interface AddContentModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	setIsOpen: (open: boolean) => void;
+	editingBlock?: ContentBlock | null;
+	blockIndex?: number | null;
 }
 
 type ContentOption =
@@ -31,8 +34,11 @@ const AddContentModal = ({
 	isOpen,
 	onClose,
 	setIsOpen,
+	editingBlock,
+	blockIndex,
 }: AddContentModalProps) => {
-	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
+	const { catalogue, updateCatalogue, updateBlock } =
+		useCatalogueContext() || {};
 	const [selectedOption, setSelectedOption] =
 		useState<ContentOption>("container");
 	const [blockData, setBlockData] = useState({
@@ -45,26 +51,37 @@ const AddContentModal = ({
 	});
 
 	useEffect(() => {
-		if (!isOpen) {
-			setSelectedOption("container");
-			setBlockData({
-				name: "",
-				layout: "variant_1",
-				src: "",
-				items: [],
-				code: "",
-				content: "",
-			});
+		if (isOpen) {
+			if (editingBlock) {
+				setSelectedOption(editingBlock.type as ContentOption);
+				setBlockData({
+					name: (editingBlock as any).name || "",
+					layout: (editingBlock as any).layout || "variant_1",
+					src: (editingBlock as any).src || "",
+					items: (editingBlock as any).items || [],
+					code: (editingBlock as any).code || "",
+					content: (editingBlock as any).content || "",
+				});
+			} else {
+				setSelectedOption("container");
+				setBlockData({
+					name: "",
+					layout: "variant_1",
+					src: "",
+					items: [],
+					code: "",
+					content: "",
+				});
+			}
 		}
-	}, [isOpen]);
+	}, [isOpen, editingBlock]);
 
 	const handleAdd = () => {
 		if (!catalogue || !updateCatalogue) return;
 
-		const newOrder = catalogue.content.length;
 		let newBlock: any = {
-			id: crypto.randomUUID(),
-			order: newOrder,
+			id: editingBlock?.id || crypto.randomUUID(),
+			order: editingBlock?.order ?? catalogue.content.length,
 			type: selectedOption,
 		};
 
@@ -73,14 +90,15 @@ const AddContentModal = ({
 				...newBlock,
 				name: blockData.name,
 				layout: blockData.layout,
-				items: [],
+				items: editingBlock?.type === "category" ? (editingBlock as any).items : [],
 			};
 		} else if (selectedOption === "container") {
 			newBlock = {
 				...newBlock,
 				name: "Container",
 				layout: blockData.layout,
-				items: [],
+				items:
+					editingBlock?.type === "container" ? (editingBlock as any).items : [],
 			};
 		} else if (selectedOption === "iframe") {
 			newBlock = {
@@ -99,9 +117,13 @@ const AddContentModal = ({
 			};
 		}
 
-		updateCatalogue({
-			content: [...catalogue.content, newBlock],
-		});
+		if (blockIndex !== undefined && blockIndex !== null && updateBlock) {
+			updateBlock(blockIndex, newBlock);
+		} else {
+			updateCatalogue({
+				content: [...catalogue.content, newBlock],
+			});
+		}
 		setIsOpen(false);
 	};
 
@@ -121,7 +143,7 @@ const AddContentModal = ({
 				<div className="w-1/4 bg-gray-200/50 border-r border-gray-300 flex flex-col">
 					<div className="p-6 pb-4">
 						<AlertDialogTitle className="text-xl text-product-foreground">
-							Select content type
+							{editingBlock ? "Edit content" : "Select content type"}
 						</AlertDialogTitle>
 						<p className="text-sm text-gray-500 mt-1"></p>
 					</div>
@@ -229,7 +251,7 @@ const AddContentModal = ({
 							disabled={!isFormValid()}
 							onClick={handleAdd}
 						>
-							Add {selectedOption}
+							{editingBlock ? "Update" : "Add"} {selectedOption}
 						</Button>
 					</div>
 				</div>

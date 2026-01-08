@@ -8,6 +8,7 @@ interface IframeBlockProps {
 	onDelete?: () => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
+	onEdit?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
 	mode: "edit" | "view";
@@ -22,6 +23,7 @@ const IframeBlockComponent = ({
 	isFirst,
 	isLast,
 	mode,
+	onEdit,
 }: IframeBlockProps) => {
 	return (
 		<section className="mb-5 group relative" id={`${slug}-${block.order}`}>
@@ -31,6 +33,7 @@ const IframeBlockComponent = ({
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
+					onEdit={onEdit}
 					onMoveDown={onMoveDown}
 					onMoveUp={onMoveUp}
 				/>
