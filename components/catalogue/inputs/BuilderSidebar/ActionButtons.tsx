@@ -3,13 +3,13 @@ import {
 	publishCatalogue,
 	updateCatalogue as updateCatalogueAction,
 } from "@/actions/items";
+import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { Eye, Rocket, Save } from "lucide-react";
 import React from "react";
-import { toast } from "sonner";
-import SuccessModal from "@/components/modals/SuccessModal";
 import { RxUpdate } from "react-icons/rx";
+import { toast } from "sonner";
 
 const ActionButtons = ({ isOpen }: { isOpen: boolean }) => {
 	const { catalogue, updateCatalogue: updateContextCatalogue } =
@@ -85,19 +85,32 @@ const ActionButtons = ({ isOpen }: { isOpen: boolean }) => {
 		<>
 			{QUICK_ACTIONS.map(({ key, icon: Icon, label, primary, onClick }) => (
 				<Button
-					className={`${isOpen ? "justify-start" : "justify-center"} ${
-						primary
+					className={`${isOpen ? "justify-start" : "justify-center"} ${primary
 							? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
 							: "hover:bg-accent"
-					}`}
+						}
+            /* Mobile: Allow auto width and horizontal padding, hide explicit size constraint if needed */
+            w-auto px-3 md:w-auto md:px-3
+            ${!isOpen && "md:w-9 md:px-0"} 
+          `}
 					key={key}
-					size={isOpen ? "sm" : "icon"}
+					// On mobile, we always want "sm" or auto size to fit text. On desktop, follow isOpen logic.
+					size={isOpen ? "sm" : "default"}
 					title={label}
 					variant={primary ? "default" : "grayed"}
 					onClick={onClick}
 				>
-					<Icon size={isOpen ? 25 : 30} />
-					{isOpen && <span>{label}</span>}
+					<Icon size={isOpen ? 25 : 20} className="mr-2 md:mr-0 md:mb-0" />
+					<span
+						className={`
+              /* Mobile: Always visible */
+              block
+              /* Desktop: Hidden if closed, Block if open */
+              ${isOpen ? "md:block" : "md:hidden"} 
+            `}
+					>
+						{label}
+					</span>
 				</Button>
 			))}
 			<SuccessModal
