@@ -85,10 +85,11 @@ const ActionButtons = ({ isOpen }: { isOpen: boolean }) => {
 		<>
 			{QUICK_ACTIONS.map(({ key, icon: Icon, label, primary, onClick }) => (
 				<Button
-					className={`${isOpen ? "justify-start" : "justify-center"} ${primary
+					className={`${isOpen ? "justify-start" : "justify-center"} ${
+						primary
 							? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
 							: "hover:bg-accent"
-						}
+					}
             /* Mobile: Allow auto width and horizontal padding, hide explicit size constraint if needed */
             w-auto px-3 md:w-auto md:px-3
             ${!isOpen && "md:w-9 md:px-0"} 

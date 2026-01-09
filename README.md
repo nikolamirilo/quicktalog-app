@@ -38,3 +38,4 @@ Enable small businesses to launch elegant, mobile-first catalogues in minutes, w
 - **Posthog** - analytics service
 - **Paddle** - payment and tax handling service
 - **Redis** - caching layer
+- **Prisma** - object relational mapping

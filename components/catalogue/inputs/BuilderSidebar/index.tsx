@@ -31,16 +31,16 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-		{
-			key: "appearance",
-			icon: Palette,
-			label: "Appearance",
-			content: <AppearanceTab />,
-		},
-	];
+	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+	{
+		key: "appearance",
+		icon: Palette,
+		label: "Appearance",
+		content: <AppearanceTab />,
+	},
+];
 
 const tabTriggerClass =
 	"border-transparent data-[state=active]:border-2 data-[state=active]:border-product-primary data-[state=active]:bg-product-hover-background  data-[state=active]:font-bold rounded-lg";
@@ -70,7 +70,6 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
           ${isOpen ? "md:flex-row md:gap-2" : "md:flex-col md:gap-4"}
         `}
 			>
-
 				<Button
 					onClick={() => setIsOpen((v) => !v)}
 					size={isOpen ? "sm" : "icon"}
@@ -87,11 +86,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 					</div>
 					{/* Mobile Icons */}
 					<div className="md:hidden">
-						{isOpen ? (
-							<LuChevronsDown size={25} />
-						) : (
-							<LuChevronsUp size={25} />
-						)}
+						{isOpen ? <LuChevronsDown size={25} /> : <LuChevronsUp size={25} />}
 					</div>
 				</Button>
 				<span
@@ -114,8 +109,6 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 						<span className="ml-1 sr-only">Toggle</span>
 					</Button>
 				</div>
-
-
 			</div>
 
 			{/* Tabs Content */}
