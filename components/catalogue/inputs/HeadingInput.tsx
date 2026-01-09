@@ -12,7 +12,7 @@ const HeadingInput = () => {
 				value={catalogue?.heading}
 				onChange={(e) => updateCatalogue({ heading: e.target.value })}
 				placeholder="Add Heading"
-				className="text-center text-4xl text-gray-700 placeholder:text-gray-400  border border-gray-300 rounded-lg px-6 py-2 w-auto min-w-[300px] bg-white hover:border-gray-400 focus:border-gray-500 focus:outline-none transition-all"
+				className="text-center text-2xl sm:text-4xl text-gray-700 placeholder:text-gray-400  border border-gray-300 rounded-lg px-6 py-2 w-[90%] md:w-auto md:min-w-[300px] bg-white hover:border-gray-400 focus:border-gray-500 focus:outline-none transition-all"
 			/>
 		</div>
 	);

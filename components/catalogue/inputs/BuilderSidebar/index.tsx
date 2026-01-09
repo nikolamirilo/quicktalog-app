@@ -1,13 +1,10 @@
 "use client";
 
 import {
-	Eye,
 	FileText,
 	Home,
 	Layout,
-	Palette,
-	Rocket,
-	Save,
+	Palette
 } from "lucide-react";
 import React, { useState } from "react";
 import { LuChevronsLeft, LuChevronsRight } from "react-icons/lu";
@@ -16,11 +13,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import ActionButtons from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";
 import FooterTab from "./FooterTab";
 import GeneralTab from "./GeneralTab";
 import HeaderTab from "./HeaderTab";
-import ActionButtons from "./ActionButtons";
 
 type TabKey = "general" | "header" | "footer" | "appearance";
 
@@ -34,16 +31,16 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-	{
-		key: "appearance",
-		icon: Palette,
-		label: "Appearance",
-		content: <AppearanceTab />,
-	},
-];
+		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+		{
+			key: "appearance",
+			icon: Palette,
+			label: "Appearance",
+			content: <AppearanceTab />,
+		},
+	];
 
 const tabTriggerClass =
 	"rounded-none border-transparent data-[state=active]:border-2 data-[state=active]:border-product-primary data-[state=active]:bg-product-hover-background  data-[state=active]:font-bold data-[state=active]:rounded-lg";
@@ -53,9 +50,8 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 
 	return (
 		<aside
-			className={`fixed bg-product-background right-0 top-0 h-screen p-2 shadow-lg z-50 transition-all duration-300 flex flex-col ${
-				isOpen ? "w-fit" : "w-16"
-			}`}
+			className={`fixed bg-product-background right-0 top-0 h-screen p-2 shadow-lg z-50 transition-all duration-300 flex flex-col ${isOpen ? "w-fit" : "w-16"
+				}`}
 		>
 			{/* Top actions */}
 			<div

@@ -144,13 +144,23 @@ const AddContentModal = ({
 
 	return (
 		<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-			<AlertDialogContent className="max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-row h-[600px] font-body text-product-foreground">
-				<div className="w-1/4 bg-gray-200/50 border-r border-gray-300 flex flex-col">
-					<div className="p-6 pb-4">
-						<AlertDialogTitle className="text-xl text-product-foreground">
-							{editingBlock ? "Edit content" : "Select content type"}
-						</AlertDialogTitle>
-						<p className="text-sm text-gray-500 mt-1"></p>
+			<AlertDialogContent className="w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-[90vh] md:h-[600px] font-body text-product-foreground">
+				<div className="w-full md:w-1/4 bg-gray-200/50 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col">
+					<div className="p-6 pb-4 flex justify-between items-start">
+						<div>
+							<AlertDialogTitle className="text-xl text-product-foreground">
+								{editingBlock ? "Edit content" : "Select content type"}
+							</AlertDialogTitle>
+							<p className="text-sm text-gray-500 mt-1"></p>
+						</div>
+						<Button
+							className="md:hidden text-gray-400 hover:text-product-primary rounded-full hover:bg-gray-100 -mr-2 -mt-2"
+							onClick={onClose}
+							size="icon"
+							variant="ghost"
+						>
+							<X className="w-5 h-5" />
+						</Button>
 					</div>
 					<ContentOptionsSelector
 						onSelect={setSelectedOption}
@@ -184,7 +194,7 @@ const AddContentModal = ({
 							</p>
 						</div>
 						<Button
-							className="text-gray-400 hover:text-product-primary rounded-full hover:bg-gray-100"
+							className="hidden md:inline-flex text-gray-400 hover:text-product-primary rounded-full hover:bg-gray-100"
 							onClick={onClose}
 							size="icon"
 							variant="ghost"
