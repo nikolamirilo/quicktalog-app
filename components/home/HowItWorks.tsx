@@ -65,8 +65,8 @@ const StepCard: React.FC<{ step: SimpleStep; index: number }> = ({ step }) => {
 							if (parent) {
 								parent.innerHTML = `<div class='flex items-center justify-center h-full bg-gradient-to-br from-product-primary/10 to-product-primary/20'>
                   <div class='w-16 h-16 bg-product-primary/20 rounded-2xl flex items-center justify-center text-product-primary'>${String(
-									step.icon,
-								)}</div></div>`;
+										step.icon,
+									)}</div></div>`;
 							}
 						}}
 						src={step.image}

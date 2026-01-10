@@ -30,7 +30,7 @@ import {
 	sectionTitle,
 	welcomeSection,
 	welcomeText,
-	welcomeTitle
+	welcomeTitle,
 } from "./style";
 
 export const CancellationEmail = ({ name }: { name: string }) => (
