@@ -1,6 +1,6 @@
-import { Catalogue } from "@quicktalog/common";
-import useSWR from "swr";
 import type { OverallAnalytics } from "@/types";
+import { Catalogue } from "@/types/catalogue";
+import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

@@ -32,7 +32,6 @@ export const useCatalogueContext = () => {
 	return useContext(CatalogueContext);
 };
 
-// Helper to re-order blocks/items after modification
 const reorderArray = <T extends { order: number }>(arr: T[]): T[] => {
 	return arr.map((item, index) => ({ ...item, order: index }));
 };
@@ -215,12 +214,12 @@ export const CatalogueContextProvider = ({
 	};
 
 	useEffect(() => {
-		if (user && user.id !== catalogue.created_by) {
+		if (user && user.id !== catalogue.createdBy) {
 			updateCatalogue({
-				created_by: user.id,
+				createdBy: user.id,
 			});
 		}
-	}, [user, catalogue.created_by]);
+	}, [user, catalogue.createdBy]);
 
 	const updateAppearance = (
 		partial: Partial<Catalogue["appearance"]["style"]>,

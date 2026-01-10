@@ -1,9 +1,9 @@
-import { tiers, UserData } from "@quicktalog/common";
-import { getUserData } from "@/actions/users";
 import AIBuilder from "@/components/create/AIBuilder";
 import LimitsModal from "@/components/modals/LimitsModal";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
+import { getUserData } from "@/server_actions/users";
+import { tiers, UserData } from "@quicktalog/common";
 
 export const dynamic = "force-dynamic";
 export default async function page() {

@@ -1,10 +1,4 @@
 "use client";
-import {
-	deleteItem,
-	deleteMultipleItems,
-	duplicateItem,
-	updateItemStatus,
-} from "@/actions/items";
 import CTASection from "@/components/general/CTASection";
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
 import { Button } from "@/components/ui/button";
@@ -15,8 +9,15 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { statusOrder } from "@/constants/sort";
+import {
+	deleteItem,
+	deleteMultipleItems,
+	duplicateItem,
+	updateItemStatus,
+} from "@/server_actions/catalogue";
+import { Catalogue } from "@/types/catalogue";
 import { OverviewProps } from "@/types/components";
-import { Catalogue, Status, tiers } from "@quicktalog/common";
+import { Status, tiers } from "@quicktalog/common";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -282,12 +283,12 @@ const Overview = ({
 					)}
 
 					{catalogues
-						.sort((a, b) => {
+						.sort((a: Catalogue, b: Catalogue) => {
 							const statusDiff = statusOrder[a.status] - statusOrder[b.status];
 							if (statusDiff !== 0) return statusDiff;
 							return (
-								new Date(b.updated_at).getTime() -
-								new Date(a.updated_at).getTime()
+								new Date(b.updatedAt).getTime() -
+								new Date(a.updatedAt).getTime()
 							);
 						})
 						.map((catalogue: Catalogue, index: number) => (

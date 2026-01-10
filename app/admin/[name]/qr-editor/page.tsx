@@ -1,7 +1,7 @@
-import { getQrConfig } from "@/actions/qr-configs";
 import Navbar from "@/components/navigation/Navbar";
 import QrEditor from "@/components/qr-editor/QrEditor";
 import { QrProvider } from "@/context/QRContext";
+import { getQrConfig } from "@/server_actions/qr-configs";
 
 export default async function page({
 	params,

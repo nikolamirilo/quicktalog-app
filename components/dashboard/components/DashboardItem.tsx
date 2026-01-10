@@ -1,13 +1,13 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { FiFileText } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { LuSquareMenu } from "react-icons/lu";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import ItemDropdownMenu from "./ItemDropdownMenu";
 
 const DashboardItem = ({
@@ -75,7 +75,7 @@ const DashboardItem = ({
 
 			<div className="text-product-foreground-accent text-xs 2xl:text-sm break-words">
 				Updated:{" "}
-				{new Date(catalogue.updated_at).toLocaleString("en-US", {
+				{new Date(catalogue.updatedAt).toLocaleString("en-US", {
 					year: "numeric",
 					month: "numeric",
 					day: "numeric",
@@ -85,7 +85,7 @@ const DashboardItem = ({
 			</div>
 			<div className="text-product-foreground-accent text-xs 2xl:text-sm break-words">
 				Created:{" "}
-				{new Date(catalogue.created_at).toLocaleString("en-US", {
+				{new Date(catalogue.createdAt).toLocaleString("en-US", {
 					year: "numeric",
 					month: "numeric",
 					day: "numeric",

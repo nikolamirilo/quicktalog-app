@@ -83,7 +83,7 @@ export const insertCatalogueData = async (
 		currency: formData.currency,
 		theme: formData.theme,
 		subtitle: formData.subtitle,
-		created_by: userId,
+		createdBy: userId,
 		logo: "",
 		legal: {},
 		partners: [],

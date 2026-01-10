@@ -1,8 +1,8 @@
 "use client";
-import { productNewsletterSignup } from "@/actions/newsletter";
 import { Button } from "@/components/ui/button";
 import { footerDetails, siteDetails } from "@/constants/details";
 import { getPlatformIconByName } from "@/constants/ui";
+import { productNewsletterSignup } from "@/server_actions/newsletter";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";

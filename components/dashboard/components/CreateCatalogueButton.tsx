@@ -1,5 +1,4 @@
 "use client";
-import { createCatalogue } from "@/actions/items";
 import InitCatalogueModal from "@/components/catalogue/modals/InitCatalogueModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +8,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { createCatalogue } from "@/server_actions/catalogue";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

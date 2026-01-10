@@ -64,13 +64,7 @@ const TextBlockComponent = ({
 					className="cursor-pointer min-h-[30px]"
 					onClick={() => setIsEditing(true)}
 				>
-					{block.content ? (
-						<HtmlContent className="" html={block.content} />
-					) : (
-						<p className="text-gray-400 text-center italic py-4">
-							Empty Text Block (Click to edit)
-						</p>
-					)}
+					{block.content && <HtmlContent className="" html={block.content} />}
 				</div>
 			)}
 		</section>

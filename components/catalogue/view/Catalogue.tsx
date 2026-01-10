@@ -137,7 +137,7 @@ const Catalogue = ({
 					partners: item.partners,
 					catalogue: {
 						id: item.id,
-						owner_id: item.created_by,
+						owner_id: item.createdBy,
 					},
 				}}
 				logo={logoSrc}

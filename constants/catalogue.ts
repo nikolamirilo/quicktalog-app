@@ -1,6 +1,6 @@
 import { Catalogue } from "@/types/catalogue";
 
-export const defaultNewCatalogueData: Catalogue = {
+export const defaultNewCatalogueData = {
 	name: "",
 	logo: "",
 	status: "draft",
@@ -8,15 +8,8 @@ export const defaultNewCatalogueData: Catalogue = {
 	heading: "",
 	description: "",
 	currency: "EUR",
-	business_type: "",
-	content: [
-		{
-			id: crypto.randomUUID(),
-			order: 0,
-			type: "text",
-			content: "",
-		},
-	],
+	businessType: "",
+	content: [],
 	legal: {
 		legalName: "",
 		termsAndConditions: "",
@@ -63,12 +56,12 @@ export const defaultNewCatalogueData: Catalogue = {
 		newsletter: false,
 		showPartners: false,
 	},
-	created_at: new Date(),
-	updated_at: new Date(),
+	createdAt: new Date().toString(),
+	updatedAt: new Date().toString(),
 	source: "builder",
 	tags: [],
 	partners: [],
-};
+} as Catalogue;
 
 export const BUSINESS_TYPES = [
 	{ value: "restaurant", label: "Restaurant" },

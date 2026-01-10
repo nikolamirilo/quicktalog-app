@@ -1,11 +1,5 @@
 "use client";
 
-import { ArrowLeft, Check, Download } from "lucide-react";
-import Link from "next/link";
-import QRCodeStyling, { Options } from "qr-code-styling";
-import React, { useEffect, useRef, useState } from "react";
-import { FiSave } from "react-icons/fi";
-import { upsertQrConfig } from "@/actions/qr-configs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -16,7 +10,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useQr } from "@/context/QRContext";
 import { useToast } from "@/hooks/use-toast";
-import { NavigationGuard } from "@/hooks/useBeforeUnload";
+import { upsertQrConfig } from "@/server_actions/qr-configs";
+import { ArrowLeft, Download } from "lucide-react";
+import Link from "next/link";
+import QRCodeStyling from "qr-code-styling";
+import { useEffect, useRef, useState } from "react";
 import InformModal from "../modals/InformModal";
 
 export default function QrPreview({

@@ -1,8 +1,9 @@
 "use client";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useMainContext } from "@/context/MainContext";
-import { ContentLayout, Item } from "@/types/catalogue";
+import { Item } from "@/types/catalogue";
 import { CatalogueContentProps } from "@/types/components";
+import { ContentLayout } from "@/types/enums";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CategoryBlockComponent from "../blocks/CategoryBlock";

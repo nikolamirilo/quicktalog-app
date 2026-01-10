@@ -1,4 +1,3 @@
-import { ContactItem } from "@/types";
 import { CatalogueFormData, PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -16,14 +15,6 @@ const now = new Date();
 export const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 export const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-export const getContactValue = (
-	contact: ContactItem[] | undefined,
-	type: string,
-): string | undefined => {
-	if (!contact || !Array.isArray(contact)) return undefined;
-	return contact.find((c) => c.type === type)?.value;
-};
-
 export function disableConsoleInProduction() {
 	if (typeof window === "undefined") return;
 
@@ -33,8 +24,6 @@ export function disableConsoleInProduction() {
 		console.debug = () => {};
 		console.info = () => {};
 		console.warn = () => {};
-		// Optionally preserve console.error for critical errors
-		// console.error = () => {};
 	}
 }
 

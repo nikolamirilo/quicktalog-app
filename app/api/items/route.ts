@@ -1,6 +1,6 @@
-import { generateUniqueSlug } from "@quicktalog/common";
 import { revalidateData } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
+import { generateUniqueSlug } from "@quicktalog/common";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 		const supabase = await createClient();
 		const {
 			name,
-			created_by,
+			createdBy,
 			services,
 			theme,
 			logo,
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 			.insert([
 				{
 					name: slug || name,
-					created_by,
+					createdBy,
 					services,
 					theme,
 					logo,
@@ -100,7 +100,7 @@ export async function PATCH(request: Request) {
 				partners,
 				configuration,
 				status: status || "active",
-				updated_at: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
 			})
 			.eq("name", name)
 			.select();

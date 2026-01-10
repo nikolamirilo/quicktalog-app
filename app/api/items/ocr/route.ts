@@ -1,6 +1,3 @@
-import { currentUser } from "@clerk/nextjs/server";
-import { CatalogueCategory, generateUniqueSlug } from "@quicktalog/common";
-import { NextRequest, NextResponse } from "next/server";
 import { chatCompletion } from "@/utils/deepseek";
 import {
 	generateOrderPrompt,
@@ -8,6 +5,9 @@ import {
 	generatePromptForCategoryProcessing,
 } from "@/utils/ocr";
 import { createClient } from "@/utils/supabase/server";
+import { currentUser } from "@clerk/nextjs/server";
+import { CatalogueCategory, generateUniqueSlug } from "@quicktalog/common";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
 	console.log("🚀 === OCR PROCESSING STARTED ===");
@@ -269,7 +269,7 @@ export async function POST(req: NextRequest) {
 			currency: formData.currency,
 			theme: formData.theme,
 			subtitle: formData.subtitle,
-			created_by: user.id,
+			createdBy: user.id,
 			logo: "",
 			legal: {},
 			partners: [],

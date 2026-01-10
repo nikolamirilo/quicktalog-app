@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserData } from "@/server_actions/users";
 import { useUser as useClerkUser } from "@clerk/nextjs";
 import { UserData } from "@quicktalog/common";
 import {
@@ -9,7 +10,6 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { getUserData } from "@/actions/users";
 
 interface UserContextType {
 	userData: UserData | null;

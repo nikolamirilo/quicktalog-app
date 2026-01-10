@@ -1,6 +1,6 @@
 import { OverallAnalytics } from "@/types";
+import { Catalogue } from "@/types/catalogue";
 import {
-	Catalogue,
 	CatalogueFormData,
 	PricingPlan,
 	Usage,
@@ -8,8 +8,32 @@ import {
 	UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
-import { FooterData } from ".";
 import { ContentBlock, Item } from "./catalogue";
+
+// type FooterData = {
+// 	email?: string;
+// 	partners?: Partner[];
+// 	phone?: string;
+// 	socials?: string[];
+// 	socialLinks?: ISocials;
+// 	cta?: {
+// 		isEnabled: boolean;
+// 		label: string;
+// 		url: string;
+// 	};
+// 	ctaFooter?: {
+// 		enabled: boolean;
+// 		label: string;
+// 		url: string;
+// 	};
+// 	newsletter?: boolean;
+// 	showPartners?: boolean;
+// 	legal?: Legal;
+// 	catalogue?: {
+// 		id?: string;
+// 		owner_id?: string;
+// 	};
+// };
 
 export type ITestimonial = {
 	name: string;
@@ -60,7 +84,7 @@ export type ThemeSelectProps = {
 		currency?: string;
 		description?: string;
 		language?: string;
-		business_type?: string;
+		businessType?: string;
 	};
 	setFormData: React.Dispatch<React.SetStateAction<any>>;
 	errors?: { [key: string]: string };
@@ -86,7 +110,7 @@ export type CatalogueHeaderProps = {
 
 export type CatalogueFooterProps = {
 	type?: "default" | "custom";
-	data?: FooterData;
+	data?: any;
 	logo: string;
 };
 
@@ -137,7 +161,7 @@ export type GeneralInformationInputProps = {
 		currency?: string;
 		description?: string;
 		language?: string;
-		business_type?: string;
+		businessType?: string;
 	};
 	handleInputChange: (
 		e:

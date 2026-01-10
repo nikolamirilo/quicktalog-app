@@ -1,8 +1,8 @@
 "use client";
-import { newsletterSignup } from "@/actions/newsletter";
 import { Button } from "@/components/ui/button";
 import { footerDetails } from "@/constants/details";
 import { footerFeatures } from "@/constants/ui";
+import { newsletterSignup } from "@/server_actions/newsletter";
 import { CatalogueFooterProps } from "@/types/components";
 import Link from "next/link";
 import React, { useState } from "react";

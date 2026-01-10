@@ -74,7 +74,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 	};
 
 	const handleBusinessTypeChange = (value: string) => {
-		setFormData((prev: any) => ({ ...prev, business_type: value }));
+		setFormData((prev: any) => ({ ...prev, businessType: value }));
 	};
 
 	console.log(formData);
@@ -251,13 +251,13 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 					<div className="flex flex-col gap-3">
 						<Label
 							className="text-product-foreground font-medium font-body"
-							htmlFor="business_type"
+							htmlFor="businessType"
 						>
 							Business Type<span className="text-red-500 ml-1">*</span>
 						</Label>
 						<Select
 							onValueChange={handleBusinessTypeChange}
-							value={formData.business_type}
+							value={formData.businessType}
 						>
 							<SelectTrigger className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base">
 								<SelectValue placeholder="Select type" />
@@ -270,9 +270,9 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 								))}
 							</SelectContent>
 						</Select>
-						{touched?.business_type && errors?.business_type && (
+						{touched?.businessType && errors?.businessType && (
 							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-								{errors.business_type}
+								{errors.businessType}
 							</div>
 						)}
 					</div>

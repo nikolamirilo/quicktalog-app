@@ -1,21 +1,33 @@
-export type CatalogueStatus =
-	| "active"
-	| "inactive"
-	| "draft"
-	| "in preparation"
-	| "error";
-export type Source = "builder" | "ocr_import" | "ai_prompt";
-export type ContentBlockType =
-	| "category"
-	| "container"
-	| "iframe"
-	| "custom_code"
-	| "text";
-export type ThemeType = "standard" | "custom";
-export type FontSize = "small" | "medium" | "large";
-export type FontFamily = "mono" | "serif" | "arial" | "monospace";
-export type AnimationLevel = "none" | "minimal" | "medium" | "full";
-export type ShadowLevel = "none" | "low" | "medium" | "high";
+import { catalogues } from "@/drizzle/schema"; // ← your schema file(s)
+import { type InferSelectModel } from "drizzle-orm";
+import {
+	AnimationLevel,
+	ContentLayout,
+	FontFamily,
+	FontSize,
+	ShadowLevel,
+	Source,
+	Status,
+	ThemeType,
+} from "./enums";
+import { Update } from "./functions";
+
+type RawCatalogue = InferSelectModel<typeof catalogues>;
+
+export type Catalogue = Update<
+	RawCatalogue,
+	{
+		status: Status;
+		source: Source;
+		content: ContentBlock[];
+		legal: Legal;
+		appearance: Appearance;
+		contact: Contact;
+		header: Header;
+		footer: Footer;
+		partners: Partner[];
+	}
+>;
 
 export interface BaseContentBlock {
 	id: string;
@@ -59,30 +71,6 @@ export type ContentBlock =
 	| CustomCodeBlock
 	| TextBlock;
 
-export interface Catalogue {
-	id?: string;
-	name: string;
-	logo: string;
-	status: CatalogueStatus;
-	language: string;
-	heading: string;
-	description: string;
-	currency: string;
-	business_type: string;
-	content: ContentBlock[];
-	legal: Legal;
-	appearance: Appearance;
-	contact: Contact;
-	header: Header;
-	footer: Footer;
-	created_at?: Date;
-	created_by?: string;
-	updated_at?: Date;
-	source: Source;
-	tags: string[];
-	partners: Partner[];
-}
-
 export interface ItemDiscount {
 	isOnDiscount: boolean;
 	discountPercentage: number;
@@ -90,6 +78,7 @@ export interface ItemDiscount {
 }
 
 export interface Item {
+	id: string;
 	order: number;
 	name: string;
 	description: string;
@@ -99,12 +88,6 @@ export interface Item {
 	price: number;
 	denominator?: string;
 }
-
-export type ContentLayout =
-	| "variant_1"
-	| "variant_2"
-	| "variant_3"
-	| "variant_4";
 
 export interface Legal {
 	legalName: string;

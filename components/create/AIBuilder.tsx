@@ -32,7 +32,7 @@ export default function AIBuilder({
 		currency: "",
 		description: "",
 		language: "eng",
-		business_type: "restaurant",
+		businessType: "restaurant",
 	});
 	const [shouldGenerateImages, setShouldGenerateImages] =
 		useState<boolean>(false);
@@ -63,8 +63,8 @@ export default function AIBuilder({
 		if (!formData.currency.trim()) newErrors.currency = "Currency is required";
 		if (!formData.theme.trim()) newErrors.theme = "Theme is required";
 		if (!formData.language.trim()) newErrors.language = "Language is required";
-		if (!formData.business_type.trim())
-			newErrors.business_type = "Business Type is required";
+		if (!formData.businessType.trim())
+			newErrors.businessType = "Business Type is required";
 		if (!prompt.trim()) newErrors.prompt = "Prompt is required";
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0 && !hasErrors;

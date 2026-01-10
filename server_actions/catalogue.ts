@@ -1,21 +1,16 @@
 "use server";
 import { defaultCatalogueData } from "@/constants";
+import { drizzleClient } from "@/drizzle/db";
+import { catalogues } from "@/drizzle/migrations/schema";
 import { revalidateData } from "@/helpers/server";
 import { Catalogue } from "@/types/catalogue";
 import { redis } from "@/utils/redis";
-import { createClient } from "@/utils/supabase/server";
 import { generateUniqueSlug, Status } from "@quicktalog/common";
+import { eq, inArray } from "drizzle-orm";
 
 export async function deleteItem(id: string): Promise<boolean> {
 	try {
-		const supabase = await createClient();
-
-		const { error } = await supabase.from("catalogues").delete().eq("id", id);
-
-		if (error) {
-			console.error("Failed to delete service catalogue:", error.message);
-			return false;
-		}
+		await drizzleClient.delete(catalogues).where(eq(catalogues.id, id));
 		await revalidateData();
 		return true;
 	} catch (err) {
@@ -26,15 +21,7 @@ export async function deleteItem(id: string): Promise<boolean> {
 
 export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 	try {
-		const supabase = await createClient();
-
-		const { error } = await supabase.from("catalogues").delete().in("id", ids);
-
-		if (error) {
-			console.error("Failed to delete catalogues:", error.message);
-			return false;
-		}
-
+		await drizzleClient.delete(catalogues).where(inArray(catalogues.id, ids));
 		await revalidateData();
 		return true;
 	} catch (err) {
@@ -48,17 +35,11 @@ export async function updateItemStatus(
 	status: Status,
 ): Promise<boolean> {
 	try {
-		const supabase = await createClient();
+		await drizzleClient
+			.update(catalogues)
+			.set({ status })
+			.where(eq(catalogues.id, id));
 
-		const { error } = await supabase
-			.from("catalogues")
-			.update({ status })
-			.eq("id", id);
-
-		if (error) {
-			console.error("Failed to update status:", error.message);
-			return false;
-		}
 		await revalidateData();
 		return true;
 	} catch (err) {
@@ -69,32 +50,35 @@ export async function updateItemStatus(
 
 export async function duplicateItem(id: string, name: string) {
 	try {
-		const supabase = await createClient();
-		const { data, error } = await supabase
-			.from("catalogues")
-			.select("*")
-			.eq("id", id)
-			.single();
-		if (error || !data) return null;
+		const data = await drizzleClient.query.catalogues.findFirst({
+			where: eq(catalogues.id, id),
+		});
+
+		if (!data) return null;
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { id: _oldId, ...rest } = data;
+
 		let suffix = "-copy";
 		let tryName = generateUniqueSlug(name);
 		let count = 1;
+
 		while (true) {
-			const { data: exists } = await supabase
-				.from("catalogues")
-				.select("id")
-				.eq("name", tryName);
-			if (!exists || exists.length === 0) break;
-			tryName = `${name}${suffix}${count == 1 ? "" : count}`;
+			const exists = await drizzleClient.query.catalogues.findFirst({
+				where: eq(catalogues.name, tryName),
+				columns: { id: true },
+			});
+
+			if (!exists) break;
+			tryName = `${name}${suffix}${count === 1 ? "" : count}`;
 			count++;
 		}
-		const { data: newData, error: insertError } = await supabase
-			.from("catalogues")
-			.insert({ ...rest, name: tryName })
-			.select()
-			.single();
-		if (insertError) return null;
+
+		const [newData] = await drizzleClient
+			.insert(catalogues)
+			.values({ ...rest, name: tryName })
+			.returning();
+
+		if (!newData) return null;
 		await revalidateData();
 		return newData;
 	} catch (err) {
@@ -105,17 +89,14 @@ export async function duplicateItem(id: string, name: string) {
 
 export async function createCatalogue(catalogueData: Catalogue) {
 	try {
-		const supabase = await createClient();
-
 		// Generate unique slug for the name
 		const slug = generateUniqueSlug(catalogueData.name);
 
 		// Check if name already exists
-		const { data: existingCatalogue } = await supabase
-			.from("catalogues")
-			.select("id")
-			.eq("name", slug)
-			.single();
+		const existingCatalogue = await drizzleClient.query.catalogues.findFirst({
+			where: eq(catalogues.name, slug),
+			columns: { id: true },
+		});
 
 		if (existingCatalogue) {
 			return {
@@ -124,19 +105,30 @@ export async function createCatalogue(catalogueData: Catalogue) {
 			};
 		}
 
-		const { data, error } = await supabase
-			.from("catalogues")
-			.insert({ ...catalogueData, name: slug })
-			.select()
-			.single();
+		// Sanitize data: remove Date objects for createdAt/updatedAt to let DB defaults work, or strict string
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { createdAt, updatedAt, ...rest } = catalogueData;
+
+		const [data] = await drizzleClient
+			.insert(catalogues)
+			.values({
+				...rest,
+				name: slug,
+				// Ensure timestamps are strings if we really want to pass them, otherwise omit to use defaultNow()
+				// If the user provided them, we strictly want strings because mode: 'string'
+				...(createdAt ? { createdAt: new Date(createdAt).toISOString() } : {}),
+				...(updatedAt ? { updatedAt: new Date(updatedAt).toISOString() } : {}),
+			})
+			.returning();
+
 		const res = await redis.set(slug, JSON.stringify(data));
 		console.log(res);
 
-		if (error) {
-			console.error("Failed to create catalogue:", error.message);
+		if (!data) {
+			// This path presumably won't happen if insert throws, but good to have
 			return {
 				success: false,
-				error: error.message,
+				error: "Failed to insert catalogue",
 			};
 		}
 
@@ -161,7 +153,7 @@ export async function updateCatalogue(catalogueData: Catalogue) {
 			JSON.stringify(catalogueData),
 		);
 
-		if (res != "OK") {
+		if (res !== "OK") {
 			console.error("Failed to update catalogue:", res);
 			return {
 				success: false,
@@ -187,21 +179,20 @@ export async function getCatalogueByName(name: string) {
 	try {
 		let catalogue = await redis.get(name);
 		if (catalogue === null) {
-			const supabase = await createClient();
-			const { data, error } = await supabase
-				.from("catalogues")
-				.select("*")
-				.eq("name", name)
-				.single();
+			const data = await drizzleClient.query.catalogues.findFirst({
+				where: eq(catalogues.name, name),
+			});
 
-			if (error || !data) {
-				console.error("Failed to fetch catalogue:", error.message);
+			if (!data) {
+				console.error("Failed to fetch catalogue: Not found");
 				return {
 					success: false,
-					error: error.message,
+					error: "Catalogue not found",
 					data: defaultCatalogueData,
 				};
 			}
+			// Drizzle result should match Catalogue type or be compatible
+			// Assuming 'data' structure matches what redis expects
 			await redis.set(name, JSON.stringify(data));
 			catalogue = data;
 		}
@@ -222,18 +213,23 @@ export async function getCatalogueByName(name: string) {
 
 export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 	try {
-		const supabase = await createClient();
 		const catalogueData = { ...data, status: "active" };
-		const { error } = await supabase
-			.from("catalogues")
-			.update(catalogueData)
-			.eq("name", catalogueData.name);
+
+		await drizzleClient
+			.update(catalogues)
+			.set({
+				// Update all fields that might have changed + status
+				...catalogueData,
+				status: "active" as Status, // Ensure status type compatibility
+			})
+			.where(eq(catalogues.name, catalogueData.name));
+
 		const redisRes = await redis.set(
 			catalogueData.name,
 			JSON.stringify(catalogueData),
 		);
-		if (error || redisRes != "OK") {
-			console.error("Failed to publish catalogue:", error?.message);
+		if (redisRes !== "OK") {
+			console.error("Failed to update redis during publish");
 			return false;
 		}
 		await revalidateData();

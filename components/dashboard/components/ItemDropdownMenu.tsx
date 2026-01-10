@@ -1,20 +1,4 @@
 "use client";
-import { Catalogue, PricingPlan, Usage } from "@quicktalog/common";
-import Link from "next/link";
-import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
-import { BsQrCodeScan } from "react-icons/bs";
-import { FaRegCircleCheck, FaRegFilePdf } from "react-icons/fa6";
-import {
-	FiCopy,
-	FiDownload,
-	FiEdit,
-	FiMoreVertical,
-	FiTrash2,
-} from "react-icons/fi";
-import { ImEmbed2 } from "react-icons/im";
-import { LuShare2 } from "react-icons/lu";
-import { VscActivateBreakpoints } from "react-icons/vsc";
 import InputModal from "@/components/modals/InputModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +9,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleDownloadHTML } from "@/helpers/client";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
+import { Catalogue } from "@/types/catalogue";
+import { PricingPlan, Usage } from "@quicktalog/common";
+import Link from "next/link";
+import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
+import { BsQrCodeScan } from "react-icons/bs";
+import { FaRegCircleCheck } from "react-icons/fa6";
+import { FiCopy, FiEdit, FiMoreVertical, FiTrash2 } from "react-icons/fi";
+import { ImEmbed2 } from "react-icons/im";
+import { LuShare2 } from "react-icons/lu";
+import { VscActivateBreakpoints } from "react-icons/vsc";
 
 type ItemDropdownMenuProps = {
 	catalogue: Catalogue;
@@ -52,7 +47,6 @@ const ItemDropdownMenu = ({
 	handleDeleteItem,
 	usage,
 	matchedTier,
-	planId,
 	disabled,
 }: ItemDropdownMenuProps) => {
 	const [formData, setFormData] = useState({ name: "" });
@@ -229,7 +223,7 @@ const ItemDropdownMenu = ({
 							disabled={
 								isModalOpen ||
 								(catalogue.status === "in preparation" &&
-									catalogue.created_at > tenMinutesAgo.toISOString())
+									catalogue.createdAt > tenMinutesAgo.toISOString())
 							}
 							onClick={() => handleDeleteItem(catalogue.id)}
 						>

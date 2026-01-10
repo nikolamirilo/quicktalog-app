@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
 	const startTime = Date.now();
@@ -107,7 +107,7 @@ LIMIT 1000000
 		// Query all relevant catalogues
 		const { data: catalogues, error: catalogueError } = await supabase
 			.from("catalogues")
-			.select("name, created_by")
+			.select("name, createdBy")
 			.in("name", catalogueNames);
 
 		if (catalogueError) {
@@ -121,7 +121,7 @@ LIMIT 1000000
 		// Create lookup map
 		const nameToUserId = {};
 		(catalogues || []).forEach((r) => {
-			nameToUserId[r.name] = r.created_by;
+			nameToUserId[r.name] = r.createdBy;
 		});
 
 		// Add user_id to each analytics row

@@ -6,7 +6,8 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { ContentLayout, Item } from "@/types/catalogue";
+import { Item } from "@/types/catalogue";
+import { ContentLayout } from "@/types/enums";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -19,14 +20,15 @@ interface ItemModalProps {
 	layout?: ContentLayout | null;
 }
 
-const defaultItem: Item = {
+const createDefaultItem = (): Item => ({
+	id: crypto.randomUUID(),
 	order: 0,
 	name: "",
 	description: "",
 	image: "",
 	price: 0,
 	isFree: false,
-};
+});
 
 const ItemModal = ({
 	isOpen,
@@ -36,18 +38,18 @@ const ItemModal = ({
 	currency,
 	layout,
 }: ItemModalProps) => {
-	const [item, setItem] = useState<Item>(initialItem || defaultItem);
+	const [item, setItem] = useState<Item>(initialItem || createDefaultItem());
 
 	useEffect(() => {
 		if (isOpen) {
-			setItem(initialItem || { ...defaultItem });
+			setItem(initialItem || createDefaultItem());
 		}
 	}, [isOpen, initialItem]);
 
 	const handleSave = (addAnother: boolean) => {
 		onSave(item, addAnother);
 		if (addAnother) {
-			setItem({ ...defaultItem });
+			setItem(createDefaultItem());
 		} else {
 			onClose();
 		}

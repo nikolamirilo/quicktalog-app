@@ -1,3 +1,6 @@
+import { sendSubscriptionCancelationEmail } from "@/server_actions/email";
+import { cancelSubscription } from "@/server_actions/paddle";
+import { createClient } from "@/utils/supabase/server";
 import {
 	CustomerCreatedEvent,
 	CustomerUpdatedEvent,
@@ -11,9 +14,6 @@ import {
 	SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
 import { tiers } from "@quicktalog/common";
-import { sendSubscriptionCancelationEmail } from "@/actions/email";
-import { cancelSubscription } from "@/actions/paddle";
-import { createClient } from "@/utils/supabase/server";
 
 export class ProcessWebhook {
 	async processEvent(eventData: EventEntity) {
@@ -185,7 +185,7 @@ export class ProcessWebhook {
 			const { error } = await supabase.from("customers").upsert(
 				{
 					customer_id: eventData.data.id,
-					created_at: new Date().toISOString(),
+					createdAt: new Date().toISOString(),
 				},
 				{ onConflict: "customer_id" },
 			);

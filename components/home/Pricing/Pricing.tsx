@@ -1,4 +1,6 @@
 "use client";
+import { usePaddlePrices } from "@/hooks/usePaddelPrices";
+import { getUserData } from "@/server_actions/users";
 import { useUser } from "@clerk/nextjs";
 import {
 	type Environments,
@@ -9,8 +11,6 @@ import type { User } from "@quicktalog/common";
 import { tiers } from "@quicktalog/common";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { getUserData } from "@/actions/users";
-import { usePaddlePrices } from "@/hooks/usePaddelPrices";
 import MiniCTA from "../MiniCTA";
 import PricingColumn from "./PricingColumn";
 

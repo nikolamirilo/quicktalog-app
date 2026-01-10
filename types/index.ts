@@ -1,28 +1,16 @@
+import { users } from "@/drizzle/schema";
 import { layouts, themes } from "@quicktalog/common";
-import { Legal, Partner } from "./catalogue";
-import { ILinkItem, ISocials } from "./components";
+import { InferSelectModel, Update } from "drizzle-orm";
 
-export type CookiePreferences = {
-	accepted: boolean;
-	essential: boolean;
-	analytics: boolean;
-	marketing: boolean;
-	timestamp: string;
-	version: string;
-};
-
-export type NavbarProps = {
-	itemData?: unknown;
-};
-
-export type Theme = {
+type Item = {
 	key: string;
 	label: string;
 	image: string;
 	description: string;
 };
 
-export type Layout = Theme;
+export type Theme = Item;
+export type Layout = Item;
 
 export type ThemeVariant = (typeof themes)[number]["key"];
 export type LayoutVariant = (typeof layouts)[number]["key"];
@@ -41,16 +29,23 @@ export type Analytics = {
 	unique_visitors: number;
 };
 
-export type User = {
-	id: string;
-	email: string | null;
-	name: string | null;
-	created_at: string;
-	image: string | null;
-	cookie_preferences?: CookiePreferences | null;
-	plan_id: string | null;
-	customer_id: string | null;
+export type CookiePreferences = {
+	accepted: boolean;
+	essential: boolean;
+	analytics: boolean;
+	marketing: boolean;
+	timestamp: string;
+	version: string;
 };
+
+type RawUser = InferSelectModel<typeof users>;
+
+export type User = Update<
+	RawUser,
+	{
+		cookiePreferences: CookiePreferences;
+	}
+>;
 
 export type OCRImageData = {
 	id: string;
@@ -60,28 +55,10 @@ export type OCRImageData = {
 	isProcessed: boolean;
 };
 
-export type ContactInfo = {
-	type: string;
-	value: string;
-};
-
 export interface LanguageOption {
 	code: string;
 	name: string;
 	flag: string;
-}
-
-export interface OcrState {
-	result: string;
-	selectedImage: File | null;
-	processedImageUrl: string;
-	status: string;
-	confidence: number;
-	selectedLanguage: string;
-	detectedLanguage: string;
-	isSubmitting: boolean;
-	serviceCatalogueUrl: string;
-	showSuccessModal: boolean;
 }
 
 export type ContactData = {
@@ -89,50 +66,6 @@ export type ContactData = {
 	email: string;
 	name: string;
 	subject: string;
-};
-
-export type ContactItem = {
-	type: string;
-	value: string;
-};
-
-export type HeaderData = {
-	email: string;
-	phone: string;
-	ctaNavbar?: any;
-};
-
-export type FooterData = {
-	email?: string;
-	partners?: Partner[];
-	phone?: string;
-	socials?: string[];
-	socialLinks?: ISocials;
-	cta?: {
-		isEnabled: boolean;
-		label: string;
-		url: string;
-	};
-	ctaFooter?: {
-		enabled: boolean;
-		label: string;
-		url: string;
-	};
-	newsletter?: boolean;
-	showPartners?: boolean;
-	legal?: Legal;
-	catalogue?: {
-		id?: string;
-		owner_id?: string;
-	};
-};
-
-export type FooterDetails = {
-	subheading: string;
-	quickLinks: ILinkItem[];
-	email: string;
-	telephone: string;
-	socials: ISocials;
 };
 
 export type Currency = {

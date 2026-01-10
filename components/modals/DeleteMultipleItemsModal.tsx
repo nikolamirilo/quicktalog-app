@@ -1,7 +1,4 @@
 "use client";
-import { Catalogue } from "@quicktalog/common";
-import { useState } from "react";
-import { FiAlertTriangle, FiTrash2 } from "react-icons/fi";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +11,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { Catalogue } from "@/types/catalogue";
+import { useState } from "react";
+import { FiAlertTriangle, FiTrash2 } from "react-icons/fi";
 
 interface DeleteMultipleItemsModalProps {
 	isOpen: boolean;
@@ -120,7 +120,7 @@ const DeleteMultipleItemsModal = ({
 								<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-product-foreground-accent">
 									<span>
 										Updated:{" "}
-										{new Date(catalogue.updated_at).toLocaleString("en-US", {
+										{new Date(catalogue.updatedAt).toLocaleString("en-US", {
 											year: "numeric",
 											month: "short",
 											day: "numeric",
@@ -128,7 +128,7 @@ const DeleteMultipleItemsModal = ({
 									</span>
 									<span>
 										Created:{" "}
-										{new Date(catalogue.created_at).toLocaleString("en-US", {
+										{new Date(catalogue.createdAt).toLocaleString("en-US", {
 											year: "numeric",
 											month: "short",
 											day: "numeric",

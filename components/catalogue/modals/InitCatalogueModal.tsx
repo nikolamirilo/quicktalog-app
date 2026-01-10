@@ -36,7 +36,7 @@ export default function InitCatalogueModal({
 	onCancel,
 	loading = false,
 }: InitCatalogueModalProps) {
-	const { catalogue, updateCatalogue } = useCatalogueContext();
+	const { catalogue, updateCatalogue, resetCatalogue } = useCatalogueContext();
 
 	// Generate URL based on catalog name
 	const generatedUrl = catalogue.name
@@ -51,9 +51,10 @@ export default function InitCatalogueModal({
 			catalogue.name &&
 			catalogue.language &&
 			catalogue.currency &&
-			catalogue.business_type
+			catalogue.businessType
 		) {
 			onConfirm();
+			resetCatalogue();
 		}
 	};
 
@@ -61,7 +62,7 @@ export default function InitCatalogueModal({
 		catalogue.name &&
 		catalogue.language &&
 		catalogue.currency &&
-		catalogue.business_type;
+		catalogue.businessType;
 
 	return (
 		<AlertDialog
@@ -173,20 +174,20 @@ export default function InitCatalogueModal({
 						<div className="space-y-2">
 							<Label
 								className="text-sm font-medium text-product-foreground"
-								htmlFor="business_type"
+								htmlFor="businessType"
 							>
 								Business Type
 							</Label>
 							<Select
 								disabled={loading}
 								onValueChange={(value) =>
-									updateCatalogue({ business_type: value })
+									updateCatalogue({ businessType: value })
 								}
-								value={catalogue.business_type}
+								value={catalogue.businessType}
 							>
 								<SelectTrigger
 									className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
-									id="business_type"
+									id="businessType"
 								>
 									<SelectValue placeholder="Select type" />
 								</SelectTrigger>

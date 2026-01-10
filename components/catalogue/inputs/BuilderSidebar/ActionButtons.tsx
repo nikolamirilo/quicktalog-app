@@ -1,11 +1,11 @@
 "use client";
-import {
-	publishCatalogue,
-	updateCatalogue as updateCatalogueAction,
-} from "@/actions/items";
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import {
+	publishCatalogue,
+	updateCatalogue as updateCatalogueAction,
+} from "@/server_actions/catalogue";
 import { Eye, Rocket, Save } from "lucide-react";
 import React from "react";
 import { RxUpdate } from "react-icons/rx";

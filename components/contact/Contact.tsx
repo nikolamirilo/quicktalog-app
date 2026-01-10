@@ -1,6 +1,6 @@
 "use client";
-import { sendContactEmail } from "@/actions/email";
 import { Button } from "@/components/ui/button";
+import { sendContactEmail } from "@/server_actions/email";
 import Link from "next/link";
 import { useState } from "react";
 
