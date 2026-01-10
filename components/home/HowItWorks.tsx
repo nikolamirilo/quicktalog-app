@@ -65,8 +65,8 @@ const StepCard: React.FC<{ step: SimpleStep; index: number }> = ({ step }) => {
 							if (parent) {
 								parent.innerHTML = `<div class='flex items-center justify-center h-full bg-gradient-to-br from-product-primary/10 to-product-primary/20'>
                   <div class='w-16 h-16 bg-product-primary/20 rounded-2xl flex items-center justify-center text-product-primary'>${String(
-										step.icon,
-									)}</div></div>`;
+									step.icon,
+								)}</div></div>`;
 							}
 						}}
 						src={step.image}
@@ -91,7 +91,7 @@ const HowItWorks: React.FC = () => {
 			description:
 				"Create an account and provide more information about your business.",
 			icon: <FiUpload className="w-8 h-8" />,
-			image: "/images/card1-business.svg",
+			image: "/images/card1.svg",
 		},
 		{
 			step: "2",
@@ -99,14 +99,14 @@ const HowItWorks: React.FC = () => {
 			description:
 				"Create categories and add services or products with pricing to build your professional price list.",
 			icon: <MdOutlineLocalOffer className="w-8 h-8" />,
-			image: "/images/card3.svg",
+			image: "/images/card2.svg",
 		},
 		{
 			step: "3",
 			title: "Publish & share",
 			description: "Go live and share your catalogue with the world!",
 			icon: <FiShare2 className="w-8 h-8" />,
-			image: "/images/card5.svg",
+			image: "/images/card3.svg",
 		},
 	];
 

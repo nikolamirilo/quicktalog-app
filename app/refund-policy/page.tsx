@@ -1,5 +1,3 @@
-// app/refund-policy/page.tsx
-
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";

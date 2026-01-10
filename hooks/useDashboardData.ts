@@ -4,7 +4,6 @@ import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-// Individual hooks with SWR for better caching and revalidation
 export function useAnalytics(shouldFetch: boolean) {
 	const { data, error, isLoading, mutate } = useSWR(
 		shouldFetch ? "/api/dashboard/analytics" : null,
@@ -44,14 +43,12 @@ export function useCatalogues(shouldFetch: boolean) {
 	};
 }
 
-// Combined hook for dashboard
 export function useDashboardData(activeTab: string) {
 	const shouldFetchOverviewData = activeTab === "overview";
 
 	const analyticsData = useAnalytics(shouldFetchOverviewData);
 	const cataloguesData = useCatalogues(shouldFetchOverviewData);
 
-	// Manual refresh function that refreshes both
 	const refreshAll = async () => {
 		await Promise.all([analyticsData.refresh(), cataloguesData.refresh()]);
 	};
