@@ -7,7 +7,7 @@ import {
 } from "@/components/emails";
 import CancellationEmail from "@/components/emails/CancelationEmail";
 import { resend } from "@/constants/server";
-import { ContactData } from "@/types";
+import { ContactData } from "@quicktalog/common";
 
 export async function sendContactEmail(contactData: ContactData) {
 	const { message, email, name, subject } = contactData;

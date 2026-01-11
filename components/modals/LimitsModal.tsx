@@ -6,8 +6,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { LimitType } from "@/types/enums";
-import { PricingPlan, tiers } from "@quicktalog/common";
+import { LimitType, PricingPlan, tiers } from "@quicktalog/common";
 import {
 	ArrowRight,
 	FolderTree,

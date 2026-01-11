@@ -1,15 +1,10 @@
-import { drizzleClient } from "@/drizzle/db";
-import {
-	analytics,
-	catalogues,
-	ocr,
-	prompts,
-	users,
-} from "@/drizzle/migrations/schema";
 import { endOfMonth, startOfMonth } from "@/helpers/client";
-import { tiers, UserData } from "@quicktalog/common";
+import { drizzleClient } from "@/utils/drizzle";
+import { schema, tiers } from "@quicktalog/common";
 import { and, count, eq, gte, lt } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+
+const { analytics, catalogues, ocr, prompts, users } = schema;
 
 export async function GET(
 	request: NextRequest,
@@ -112,19 +107,10 @@ export async function GET(
 				{ pageview_count: 0, unique_visitors: 0 },
 			);
 
-			const {
-				cookiePreferences,
-				createdAt,
-				customerId,
-				planId,
-				...adjustedUser
-			} = user;
+			const { cookiePreferences, ...adjustedUser } = user;
 
-			const userData: UserData = {
+			const userData = {
 				...adjustedUser,
-				created_at: createdAt,
-				customer_id: customerId,
-				plan_id: planId,
 				currentPlan: {
 					...pricingPlan,
 					billing_period: billingPeriod || "year",

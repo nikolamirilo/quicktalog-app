@@ -1,4 +1,3 @@
-import React from "react";
 import {
 	Select,
 	SelectContent,
@@ -8,6 +7,7 @@ import {
 } from "@/components/ui/select";
 import { LANGUAGE_OPTIONS } from "@/constants/ocr";
 import { LanguageSelectorProps } from "@/types/components";
+import React from "react";
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 	selectedLanguage,

@@ -1,4 +1,18 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client";
+import { SuccessModalProps } from "@/types/components";
 import {
 	Check,
 	Code,
@@ -16,20 +30,6 @@ import { useEffect, useRef, useState } from "react";
 import { FaCode } from "react-icons/fa6";
 import { FiCheckCircle, FiHome } from "react-icons/fi";
 import { IoMdOpen } from "react-icons/io";
-import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client";
-import { SuccessModalProps } from "@/types/components";
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
 	isOpen = false,
@@ -93,25 +93,25 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 
 				{/* Tabs Layout */}
 				<div className={type === "edit" ? "hidden" : "mt-4 font-lora"}>
-					<Tabs defaultValue="share" className="w-full">
+					<Tabs className="w-full" defaultValue="share">
 						<TabsList className="grid w-full grid-cols-3 h-auto p-0 bg-transparent gap-2">
 							<TabsTrigger
-								value="share"
 								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
+								value="share"
 							>
 								<LinkIcon className="w-4 h-4" />
 								Share
 							</TabsTrigger>
 							<TabsTrigger
-								value="qr"
 								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
+								value="qr"
 							>
 								<QrCode className="w-4 h-4" />
 								QR Code
 							</TabsTrigger>
 							<TabsTrigger
-								value="embed"
 								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
+								value="embed"
 							>
 								<Code className="w-4 h-4" />
 								Embed
@@ -119,22 +119,22 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 						</TabsList>
 
 						<div className="border border-gray-200 rounded-lg rounded-t-none bg-white shadow-product-shadow p-5">
-							<TabsContent value="share" className="space-y-4 mt-0">
+							<TabsContent className="space-y-4 mt-0" value="share">
 								<div className="flex flex-col gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
 									<div className="space-y-3">
 										<Label className="text-sm font-semibold">Direct Link</Label>
 										<div className="flex gap-2">
 											<Input
-												value={fullURL}
-												readOnly
 												className="bg-white font-medium text-sm"
+												readOnly
+												value={fullURL}
 											/>
 											<Button
-												size="icon"
-												variant="outline"
-												onClick={handleCopyLink}
-												title={linkCopied ? "Copied!" : "Copy link"}
 												className="shrink-0"
+												onClick={handleCopyLink}
+												size="icon"
+												title={linkCopied ? "Copied!" : "Copy link"}
+												variant="outline"
 											>
 												{linkCopied ? (
 													<Check className="w-4 h-4 text-green-500" />
@@ -151,7 +151,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								</div>
 							</TabsContent>
 
-							<TabsContent value="qr" className="space-y-4 mt-0">
+							<TabsContent className="space-y-4 mt-0" value="qr">
 								<div className="flex flex-col items-center gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
 									<div className="space-y-2 text-center">
 										<Label className="text-sm font-semibold">
@@ -173,21 +173,21 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 
 									<div className="grid grid-cols-2 gap-3 w-full">
 										<Button
-											variant="outline"
+											className="w-full bg-white"
 											onClick={() =>
 												handleDownloadPng(catalogueUrl.split("/")[2])
 											}
-											className="w-full bg-white"
+											variant="outline"
 										>
 											<Download className="w-4 h-4 mr-2" />
 											Download
 										</Button>
 										<Link
+											className="w-full"
 											href={`/admin/${catalogueUrl.split("/")[2]}/qr-editor`}
 											passHref
-											className="w-full"
 										>
-											<Button variant="outline" className="w-full bg-white">
+											<Button className="w-full bg-white" variant="outline">
 												<Edit className="w-4 h-4 mr-2" />
 												Customize
 											</Button>
@@ -196,7 +196,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 								</div>
 							</TabsContent>
 
-							<TabsContent value="embed" className="space-y-4 mt-0">
+							<TabsContent className="space-y-4 mt-0" value="embed">
 								<div className="flex flex-col gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
 									<div className="space-y-3">
 										<Label className="text-sm font-semibold">Embed Code</Label>
@@ -210,14 +210,13 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 												</pre>
 											</div>
 											<Button
+												className={`absolute top-2 right-2 h-8 w-8 hover:bg-gray-800/80 transition-colors ${copied
+													? "text-green-500 bg-gray-800/50"
+													: "text-gray-400 bg-gray-800/30"
+													}`}
+												onClick={handleCopyCode}
 												size="icon"
 												variant="ghost"
-												className={`absolute top-2 right-2 h-8 w-8 hover:bg-gray-800/80 transition-colors ${
-													copied
-														? "text-green-500 bg-gray-800/50"
-														: "text-gray-400 bg-gray-800/30"
-												}`}
-												onClick={handleCopyCode}
 											>
 												{copied ? (
 													<Check className="w-4 h-4" />
@@ -229,11 +228,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 									</div>
 
 									<Button
-										variant="outline"
+										className="w-full bg-white"
 										onClick={() =>
 											handleDownloadHTML(catalogueUrl.split("/")[2], fullURL)
 										}
-										className="w-full bg-white"
+										variant="outline"
 									>
 										<FaCode className="w-4 h-4 mr-2" /> Download HTML File
 									</Button>

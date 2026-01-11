@@ -1,3 +1,4 @@
+import { IBenefit, IStats } from "@/types/components";
 import { JSX } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import {
@@ -39,7 +40,6 @@ import {
 	RiStore2Line,
 } from "react-icons/ri";
 import { TbFileAnalytics } from "react-icons/tb";
-import { IBenefit, IStats } from "@/types/components";
 
 export const stats: IStats[] = [
 	{

@@ -1,6 +1,6 @@
-import { Catalogue } from "@/types/catalogue";
+import { Catalogue } from "@quicktalog/common";
 
-export const defaultNewCatalogueData = {
+export const defaultCatalogueData = {
 	name: "",
 	logo: "",
 	status: "draft",

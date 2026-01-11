@@ -1,39 +1,18 @@
-import { OverallAnalytics } from "@/types";
-import { Catalogue } from "@/types/catalogue";
 import {
-	CatalogueFormData,
-	PricingPlan,
-	Usage,
-	User,
-	UserData,
+    Catalogue,
+    ContentBlock,
+    Item,
+    OverallAnalytics,
+    PricingPlan,
+    Usage,
+    User,
+    UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
-import { ContentBlock, Item } from "./catalogue";
 
-// type FooterData = {
-// 	email?: string;
-// 	partners?: Partner[];
-// 	phone?: string;
-// 	socials?: string[];
-// 	socialLinks?: ISocials;
-// 	cta?: {
-// 		isEnabled: boolean;
-// 		label: string;
-// 		url: string;
-// 	};
-// 	ctaFooter?: {
-// 		enabled: boolean;
-// 		label: string;
-// 		url: string;
-// 	};
-// 	newsletter?: boolean;
-// 	showPartners?: boolean;
-// 	legal?: Legal;
-// 	catalogue?: {
-// 		id?: string;
-// 		owner_id?: string;
-// 	};
-// };
+export type DisplayItem = Omit<Item, "price"> & {
+	price: string | number;
+};
 
 export type ITestimonial = {
 	name: string;
@@ -148,7 +127,7 @@ export type IBenefitBullet = {
 
 export type BuilderProps = {
 	type: "create" | "edit";
-	initialData?: CatalogueFormData;
+	initialData?: any;
 	onSuccess?: (restaurantUrl: string) => void;
 	userData: UserData;
 };
@@ -225,7 +204,7 @@ export type OverviewProps = {
 };
 
 export type CardProps = {
-	record: Item;
+	record: DisplayItem;
 	currency: string;
 	onClick: () => void;
 	mode?: "view" | "edit";

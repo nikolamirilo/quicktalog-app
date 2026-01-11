@@ -1,6 +1,6 @@
 "use client";
 import HtmlContent from "@/components/general/HtmlContent";
-import type { TextBlock } from "@/types/catalogue";
+import type { TextBlock } from "@quicktalog/common";
 import { useState } from "react";
 import BlockControls from "../cards/common/BlockControls";
 import RichTextEditor from "./common/RichTextEditor";

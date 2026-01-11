@@ -1,4 +1,4 @@
-import { LanguageOption } from "@/types";
+import { LanguageOption } from "@quicktalog/common";
 
 export const OPTIMAL_DPI = 300;
 export const MIN_TEXT_HEIGHT = 20;

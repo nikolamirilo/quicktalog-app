@@ -29,12 +29,12 @@ const SideImageCard = ({
 		>
 			{mode === "edit" && onEdit && onDelete && (
 				<CardControls
-					onDelete={onDelete}
-					onEdit={onEdit}
-					onMoveUp={onMoveUp}
-					onMoveDown={onMoveDown}
 					isFirst={isFirst}
 					isLast={isLast}
+					onDelete={onDelete}
+					onEdit={onEdit}
+					onMoveDown={onMoveDown}
+					onMoveUp={onMoveUp}
 				/>
 			)}
 			<div className="w-[40%] min-w-[90px] sm:min-w-[120px] aspect-[4/3] relative flex-shrink-0">
@@ -47,24 +47,24 @@ const SideImageCard = ({
 
 			<div className="flex flex-col p-1.5 sm:p-3 flex-1 gap-1 sm:gap-2 min-w-0">
 				<CardTitle
+					className="text-[13px] sm:text-[22px]"
 					name={record.name}
 					slugId={slugId}
-					className="text-[13px] sm:text-[22px]"
 				/>
 
 				<CardDescription
+					className="text-[11px] sm:text-[16px] line-clamp-3 sm:line-clamp-4"
 					description={record.description}
 					slugId={slugId}
-					className="text-[11px] sm:text-[16px] line-clamp-3 sm:line-clamp-4"
 				/>
 
 				<div className="pt-0 sm:pt-1 mt-auto">
 					<PriceDisplay
-						price={record.price}
-						currency={currency}
-						discount={record.discount}
-						denominator={record.denominator}
 						className="[&>span:last-child]:text-[13px] [&>span:last-child]:sm:text-[20px] items-start"
+						currency={currency}
+						denominator={record.denominator}
+						discount={record.discount}
+						price={record.price}
 					/>
 				</div>
 			</div>

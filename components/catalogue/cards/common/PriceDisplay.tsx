@@ -1,9 +1,8 @@
-import React from "react";
 import { cn } from "@/helpers/client";
-import { Item } from "@/types/catalogue";
+import { Item } from "@quicktalog/common";
 
 interface PriceDisplayProps {
-	price: number;
+	price: string | number;
 	currency: string;
 	discount?: Item["discount"];
 	denominator?: string;

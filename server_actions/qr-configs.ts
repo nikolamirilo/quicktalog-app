@@ -1,9 +1,8 @@
 "use server";
-
-import { drizzleClient } from "@/drizzle/db";
-import { qrConfigs } from "@/drizzle/migrations/schema";
+import { schema } from "@quicktalog/common";
 import { eq } from "drizzle-orm";
 import type { Options } from "qr-code-styling";
+import { drizzleClient } from "@/utils/drizzle";
 
 export async function upsertQrConfig(
 	catalogue: string,
@@ -12,22 +11,22 @@ export async function upsertQrConfig(
 	try {
 		// First, check if a config already exists for this catalogue
 		const existingConfig = await drizzleClient.query.qrConfigs.findFirst({
-			where: eq(qrConfigs.catalogue, catalogue),
+			where: eq(schema.qrConfigs.catalogue, catalogue),
 			columns: { id: true },
 		});
 
 		if (existingConfig) {
 			// Update existing config
 			await drizzleClient
-				.update(qrConfigs)
+				.update(schema.qrConfigs)
 				.set({
 					config,
 					updatedAt: new Date().toISOString(),
 				})
-				.where(eq(qrConfigs.catalogue, catalogue));
+				.where(eq(schema.qrConfigs.catalogue, catalogue));
 		} else {
 			// Insert new config
-			await drizzleClient.insert(qrConfigs).values({
+			await drizzleClient.insert(schema.qrConfigs).values({
 				catalogue,
 				config,
 			});
@@ -48,7 +47,7 @@ export async function getQrConfig(
 ): Promise<{ success: boolean; config?: Options; error?: string }> {
 	try {
 		const data = await drizzleClient.query.qrConfigs.findFirst({
-			where: eq(qrConfigs.catalogue, catalogue),
+			where: eq(schema.qrConfigs.catalogue, catalogue),
 			columns: { config: true },
 		});
 

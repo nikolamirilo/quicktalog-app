@@ -51,9 +51,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			},
 			features.branding === true
 				? {
-						text: features.branding === true ? "Custom Branding" : null,
-						type: "custom_branding",
-					}
+					text: features.branding === true ? "Custom Branding" : null,
+					type: "custom_branding",
+				}
 				: null,
 			{
 				text: `${features.traffic_limit.toLocaleString()} page views per month`,
@@ -62,15 +62,15 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			features.ai_prompts === 0
 				? null
 				: {
-						text: `${features.ai_prompts} AI prompts per month`,
-						type: "ai-catalogue-generation",
-					},
+					text: `${features.ai_prompts} AI prompts per month`,
+					type: "ai-catalogue-generation",
+				},
 			features.ocr_ai_import === 0
 				? null
 				: {
-						text: `${features.ocr_ai_import} OCR AI imports per month`,
-						type: "ocr-ai-import",
-					},
+					text: `${features.ocr_ai_import} OCR AI imports per month`,
+					type: "ocr-ai-import",
+				},
 
 			features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,
 			features.custom_features
@@ -121,7 +121,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 	const handleButtonClick = () => {
 		if (user) {
 			const matchedTier = filteredTiers.find((tier) =>
-				Object.values(tier.priceId).includes(user.plan_id),
+				Object.values(tier.priceId).includes(user.planId),
 			);
 			if (tier.name === matchedTier.name) {
 				alert("You currently have this plan");

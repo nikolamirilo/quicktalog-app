@@ -11,7 +11,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { Catalogue } from "@/types/catalogue";
+import { Catalogue } from "@quicktalog/common";
 import { useState } from "react";
 import { FiAlertTriangle, FiTrash2 } from "react-icons/fi";
 

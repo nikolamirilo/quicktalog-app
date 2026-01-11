@@ -1,5 +1,8 @@
-import { ITestimonial } from "@/types/components";
-import { ILinkItem, ISocials } from "@/types/components";
+import {
+    ILinkItem,
+    ISocials,
+    ITestimonial,
+} from "@/types/components";
 
 export const siteDetails = {
 	siteName: "Quicktalog",

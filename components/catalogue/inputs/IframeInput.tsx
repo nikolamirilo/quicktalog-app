@@ -1,7 +1,6 @@
-import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { IframeBlock } from "@/types/catalogue";
+import { IframeBlock } from "@quicktalog/common";
 
 interface IframeInputProps {
 	value: Partial<IframeBlock>;
@@ -17,10 +16,10 @@ const IframeInput = ({ value, onChange }: IframeInputProps) => {
 					Source URL <span className="text-red-500">*</span>
 				</Label>
 				<Input
-					value={value.src || ""}
+					className="focus-visible:ring-product-primary"
 					onChange={(e) => onChange({ ...value, src: e.target.value })}
 					placeholder="https://www.google.com/maps/embed?pb=!1m18!1m1..."
-					className="focus-visible:ring-product-primary"
+					value={value.src || ""}
 				/>
 				<p className="text-xs text-gray-500">
 					Enter the full URL of the content you want to embed.
@@ -32,11 +31,11 @@ const IframeInput = ({ value, onChange }: IframeInputProps) => {
 						</div>
 						<div className="aspect-video w-full">
 							<iframe
+								className="w-full h-full"
+								referrerPolicy="no-referrer"
+								sandbox="allow-scripts allow-same-origin allow-popups"
 								src={value.src}
 								title="Preview"
-								className="w-full h-full"
-								sandbox="allow-scripts allow-same-origin allow-popups"
-								referrerPolicy="no-referrer"
 							/>
 						</div>
 					</div>

@@ -1,12 +1,17 @@
 "use server";
-import { defaultCatalogueData } from "@/constants";
-import { drizzleClient } from "@/drizzle/db";
-import { catalogues } from "@/drizzle/migrations/schema";
+import { defaultCatalogueData } from "@/constants/catalogue";
 import { revalidateData } from "@/helpers/server";
-import { Catalogue } from "@/types/catalogue";
+import { drizzleClient } from "@/utils/drizzle";
 import { redis } from "@/utils/redis";
-import { generateUniqueSlug, Status } from "@quicktalog/common";
+import {
+	Catalogue,
+	generateUniqueSlug,
+	schema,
+	Status,
+} from "@quicktalog/common";
 import { eq, inArray } from "drizzle-orm";
+
+const catalogues = schema.catalogues;
 
 export async function deleteItem(id: string): Promise<boolean> {
 	try {

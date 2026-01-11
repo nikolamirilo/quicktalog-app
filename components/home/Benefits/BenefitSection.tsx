@@ -1,9 +1,9 @@
 //@ts-nocheck
 "use client";
-import clsx from "clsx";
-import { motion, Variants } from "framer-motion";
 
 import { IBenefit } from "@/types/components";
+import clsx from "clsx";
+import { motion, Variants } from "framer-motion";
 import SectionTitle from "../SectionTitle";
 import BenefitBullet from "./BenefitBullet";
 

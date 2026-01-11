@@ -1,5 +1,5 @@
+import { CookiePreferences } from "@quicktalog/common";
 import { COOKIE_KEY } from "@/constants";
-import { CookiePreferences } from "@/types";
 
 export const defaultPreferences: CookiePreferences = {
 	accepted: false,

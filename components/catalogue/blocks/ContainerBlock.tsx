@@ -1,5 +1,5 @@
 "use client";
-import type { ContainerBlock } from "@/types/catalogue";
+import type { ContainerBlock } from "@quicktalog/common";
 import "swiper/css";
 import "swiper/css/pagination";
 import BlockControls from "../cards/common/BlockControls";
@@ -86,32 +86,32 @@ const ContainerBlockComponent = ({
 		>
 			{mode === "edit" && (
 				<BlockControls
-					onMoveDown={onMoveDown}
-					onMoveUp={onMoveUp}
+					currentLayout={currentLayout}
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
 					onEdit={onEdit}
-					currentLayout={currentLayout}
 					onLayoutChange={(layout) =>
 						onUpdateBlock && onUpdateBlock({ layout: layout as any })
 					}
+					onMoveDown={onMoveDown}
+					onMoveUp={onMoveUp}
 				/>
 			)}
 
 			<Items
 				block={block}
 				blockIndex={blockIndex}
-				currentLayout={currentLayout}
 				currency={currency}
+				currentLayout={currentLayout}
 				mode={mode}
-				showContent={showContent}
-				theme={theme}
 				onAddItem={onAddItem}
 				onDeleteItem={onDeleteItem}
 				onEditItem={onEditItem}
-				onMoveItemUp={onMoveItemUp}
 				onMoveItemDown={onMoveItemDown}
+				onMoveItemUp={onMoveItemUp}
+				showContent={showContent}
+				theme={theme}
 			/>
 		</section>
 	);

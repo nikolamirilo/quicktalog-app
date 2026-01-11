@@ -1,6 +1,6 @@
 "use client";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { type Catalogue as CatalogueType } from "@/types/catalogue";
+import { type Catalogue as CatalogueType } from "@quicktalog/common";
 import { useEffect } from "react";
 import Catalogue from "../view/Catalogue";
 

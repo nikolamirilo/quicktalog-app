@@ -1,7 +1,7 @@
 "use client";
-import { defaultNewCatalogueData } from "@/constants/catalogue";
-import { Catalogue, ContentBlock, Item } from "@/types/catalogue";
+import { defaultCatalogueData } from "@/constants/catalogue";
 import { useUser } from "@clerk/nextjs";
+import { Catalogue, ContentBlock, Item } from "@quicktalog/common";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface CatalogueContextType {
@@ -42,12 +42,12 @@ export const CatalogueContextProvider = ({
 	children: React.ReactNode;
 }) => {
 	const [catalogue, setCatalogue] = useState<Catalogue>(
-		defaultNewCatalogueData,
+		defaultCatalogueData,
 	);
 	const { user } = useUser();
 
 	const resetCatalogue = () => {
-		setCatalogue(defaultNewCatalogueData);
+		setCatalogue(defaultCatalogueData);
 	};
 
 	const updateCatalogue = (partial: Partial<Catalogue>) => {

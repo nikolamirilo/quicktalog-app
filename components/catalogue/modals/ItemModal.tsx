@@ -6,8 +6,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Item } from "@/types/catalogue";
-import { ContentLayout } from "@/types/enums";
+import { ContentLayout, Item } from "@quicktalog/common";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 

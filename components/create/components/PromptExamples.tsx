@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { examplePrompts } from "@/constants/ui";
-import { RiLightbulbLine } from "react-icons/ri";
-
 import type { PromptExamplesProps } from "@/types/components";
+import { RiLightbulbLine } from "react-icons/ri";
 
 const PromptExamples: React.FC<PromptExamplesProps> = ({
 	setPrompt,

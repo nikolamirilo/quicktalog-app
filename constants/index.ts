@@ -1,7 +1,6 @@
-import { Catalogue } from "@quicktalog/common";
 import { getCurrencySymbol } from "@/helpers/client";
-import { CookiePreferences, Currency } from "@/types";
 import { ILinkItem } from "@/types/components";
+import { CookiePreferences, Currency } from "@quicktalog/common";
 
 export const defaultCookiePreferences: CookiePreferences = {
 	accepted: false,
@@ -241,27 +240,6 @@ export const contactTypes = [
 	{ value: "twitter", label: "Twitter" },
 ];
 
-export const defaultCatalogueData: Catalogue = {
-	name: "",
-	status: "draft",
-	theme: "",
-	logo: "",
-	title: "",
-	currency: "",
-	contact: [],
-	subtitle: "",
-	services: [
-		{
-			order: 1,
-			name: "",
-			layout: "variant_1",
-			items: [],
-		},
-	],
-	partners: [],
-	legal: {},
-	configuration: {},
-};
 
 export const DEFAULT_LOGO = "/logo.svg";
 export const DARK_LOGO = "/logo-light.svg";

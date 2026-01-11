@@ -3,7 +3,7 @@ import {
 	getCurrencySymbol,
 	getGridStyle,
 } from "@/helpers/client";
-import { CategoryBlock, ContainerBlock } from "@/types/catalogue";
+import { CategoryBlock, ContainerBlock } from "@quicktalog/common";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import "swiper/css";
@@ -73,22 +73,22 @@ const Items = ({
 										<CardsSwitcher
 											currency={getCurrencySymbol(currency)}
 											i={i}
-											record={record}
-											theme={theme}
-											variant={currentLayout}
+											isFirst={i === 0}
+											isLast={i === (block.items || []).length - 1}
 											mode={mode}
 											onDelete={
 												onDeleteItem ? () => onDeleteItem(i) : undefined
 											}
 											onEdit={onEditItem ? () => onEditItem(i) : undefined}
-											onMoveUp={
-												onMoveItemUp ? () => onMoveItemUp(i) : undefined
-											}
 											onMoveDown={
 												onMoveItemDown ? () => onMoveItemDown(i) : undefined
 											}
-											isFirst={i === 0}
-											isLast={i === (block.items || []).length - 1}
+											onMoveUp={
+												onMoveItemUp ? () => onMoveItemUp(i) : undefined
+											}
+											record={record}
+											theme={theme}
+											variant={currentLayout}
 										/>
 									</SwiperSlide>
 								))}
@@ -116,19 +116,19 @@ const Items = ({
 									<CardsSwitcher
 										currency={getCurrencySymbol(currency)}
 										i={i}
+										isFirst={i === 0}
+										isLast={i === (block.items || []).length - 1}
 										key={record.name}
-										record={record}
-										theme={theme}
-										variant={currentLayout}
 										mode={mode}
 										onDelete={onDeleteItem ? () => onDeleteItem(i) : undefined}
 										onEdit={onEditItem ? () => onEditItem(i) : undefined}
-										onMoveUp={onMoveItemUp ? () => onMoveItemUp(i) : undefined}
 										onMoveDown={
 											onMoveItemDown ? () => onMoveItemDown(i) : undefined
 										}
-										isFirst={i === 0}
-										isLast={i === (block.items || []).length - 1}
+										onMoveUp={onMoveItemUp ? () => onMoveItemUp(i) : undefined}
+										record={record}
+										theme={theme}
+										variant={currentLayout}
 									/>
 								))}
 

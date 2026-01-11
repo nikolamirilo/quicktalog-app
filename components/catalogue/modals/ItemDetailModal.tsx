@@ -7,7 +7,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { CategoryItem } from "@quicktalog/common";
+import { DisplayItem } from "@/types/components";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ZoomIn } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +15,7 @@ import { useState } from "react";
 interface ItemInfoModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	item?: CategoryItem;
+	item?: DisplayItem;
 	currency: string;
 	theme?: string;
 	variant?: string;

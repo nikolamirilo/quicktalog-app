@@ -1,7 +1,6 @@
-import { Item } from "@/types/catalogue";
 import { useMemo } from "react";
 
-export const useCard = (record: Item) => {
+export const useCard = (record: { name: string }) => {
 	const slugId = useMemo(
 		() => record.name?.replace(/\s+/g, "-").toLowerCase() || "",
 		[record.name],

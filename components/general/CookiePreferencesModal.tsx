@@ -97,19 +97,19 @@ const CookiePreferencesModal = ({
 
 	return (
 		<div
+			aria-labelledby="cookie-settings-title"
+			aria-modal="true"
 			className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 rounded-xl"
 			role="dialog"
-			aria-modal="true"
-			aria-labelledby="cookie-settings-title"
 		>
 			<FocusLock>
 				<div className="bg-product-background rounded-lg shadow-lg max-w-lg w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
 					{/* Header */}
 					<div className="relative p-6 text-center bg-hero-product-background">
 						<button
-							onClick={onClose}
-							className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors"
 							aria-label="Close cookie settings"
+							className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors"
+							onClick={onClose}
 						>
 							<X className="w-5 h-5" />
 						</button>
@@ -119,8 +119,8 @@ const CookiePreferencesModal = ({
 							</div>
 						</div>
 						<h2
-							id="cookie-settings-title"
 							className="text-xl font-semibold mb-2 text-product-foreground"
+							id="cookie-settings-title"
 						>
 							Cookie Settings
 						</h2>
@@ -136,8 +136,8 @@ const CookiePreferencesModal = ({
 								<strong>Your Rights:</strong> Withdraw consent anytime. If
 								signed in, preferences sync with your account.
 								<a
-									href="/privacy"
 									className="text-blue-600 hover:underline ml-1"
+									href="/privacy"
 								>
 									Privacy Policy
 								</a>
@@ -159,11 +159,11 @@ const CookiePreferencesModal = ({
 							</div>
 							<div className="flex-shrink-0">
 								<input
-									type="checkbox"
-									checked
-									disabled
 									aria-label="Essential cookies always enabled"
+									checked
 									className="w-4 h-4 text-product-primary bg-product-background border-product-border rounded focus:ring-product-primary"
+									disabled
+									type="checkbox"
 								/>
 							</div>
 						</div>
@@ -182,11 +182,11 @@ const CookiePreferencesModal = ({
 							</div>
 							<div className="flex-shrink-0">
 								<input
-									type="checkbox"
-									checked={analyticsEnabled}
-									onChange={(e) => setAnalyticsEnabled(e.target.checked)}
 									aria-label="Enable analytics cookies"
+									checked={analyticsEnabled}
 									className="w-4 h-4 text-product-primary bg-product-background border-product-border rounded focus:ring-product-primary cursor-pointer"
+									onChange={(e) => setAnalyticsEnabled(e.target.checked)}
+									type="checkbox"
 								/>
 							</div>
 						</div>
@@ -205,11 +205,11 @@ const CookiePreferencesModal = ({
 							</div>
 							<div className="flex-shrink-0">
 								<input
-									type="checkbox"
-									checked={marketingEnabled}
-									onChange={(e) => setMarketingEnabled(e.target.checked)}
 									aria-label="Enable marketing cookies"
+									checked={marketingEnabled}
 									className="w-4 h-4 text-product-primary bg-product-background border-product-border rounded focus:ring-product-primary cursor-pointer"
+									onChange={(e) => setMarketingEnabled(e.target.checked)}
+									type="checkbox"
 								/>
 							</div>
 						</div>
@@ -225,13 +225,13 @@ const CookiePreferencesModal = ({
 					<div className="p-6 pt-0">
 						<div className="flex flex-col gap-3">
 							<div className="flex gap-3">
-								<Button variant="outline" onClick={onClose} className="flex-1">
+								<Button className="flex-1" onClick={onClose} variant="outline">
 									Cancel
 								</Button>
 								<Button
-									variant="default"
-									onClick={handleSaveSettings}
 									className="flex-1"
+									onClick={handleSaveSettings}
+									variant="default"
 								>
 									Save Settings
 								</Button>

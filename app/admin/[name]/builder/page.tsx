@@ -1,7 +1,7 @@
 import Builder from "@/components/catalogue/builder/CatalogueBuilder";
 import CatalogueInitializer from "@/components/catalogue/builder/CatalogueInitializer";
 import { getCatalogueByName } from "@/server_actions/catalogue";
-import { Catalogue } from "@/types/catalogue";
+import { Catalogue } from "@quicktalog/common";
 
 const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 	const { name } = await params;

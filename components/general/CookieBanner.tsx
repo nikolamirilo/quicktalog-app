@@ -1,12 +1,7 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
-import { Cookie, ExternalLink, Settings } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { COOKIE_KEY } from "@/constants";
-import { CookiePreferences } from "@/types";
 import {
 	initializeGTMConsent,
 	loadPreferences,
@@ -15,6 +10,11 @@ import {
 	updateGTMConsent,
 	updateUserConsent,
 } from "@/utils/cookies";
+import { useUser } from "@clerk/nextjs";
+import { CookiePreferences } from "@quicktalog/common";
+import { Cookie, ExternalLink, Settings } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import CookiePreferencesModal from "./CookiePreferencesModal";
 
 const CookieBanner = () => {

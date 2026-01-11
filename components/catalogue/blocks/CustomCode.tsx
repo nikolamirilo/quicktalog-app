@@ -1,5 +1,5 @@
 "use client";
-import type { CustomCodeBlock } from "@/types/catalogue";
+import type { CustomCodeBlock } from "@quicktalog/common";
 import { useEffect, useRef, useState } from "react";
 import BlockControls from "../cards/common/BlockControls";
 

@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useRef } from "react";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { Catalogue } from "@/types/catalogue";
+import { Catalogue } from "@quicktalog/common";
+import { useEffect, useRef } from "react";
 
 const CatalogueInitializer = ({ catalogue }: { catalogue: Catalogue }) => {
 	const { updateCatalogue, catalogue: currentCatalogue } =

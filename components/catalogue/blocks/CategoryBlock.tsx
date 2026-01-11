@@ -1,5 +1,5 @@
 "use client";
-import type { CategoryBlock } from "@/types/catalogue";
+import type { CategoryBlock } from "@quicktalog/common";
 import "swiper/css";
 import "swiper/css/pagination";
 import CategoryHeader from "./common/CategoryHeader";

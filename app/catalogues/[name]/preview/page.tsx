@@ -1,7 +1,7 @@
 import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
-import { Catalogue as CatalogueType } from "@/types/catalogue";
 import { redis } from "@/utils/redis";
+import { Catalogue as CatalogueType } from "@quicktalog/common";
 
 export const dynamic = "force-dynamic";
 

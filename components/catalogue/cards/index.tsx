@@ -1,12 +1,11 @@
 "use client";
-import { CategoryItem } from "@quicktalog/common";
-import { useState, useMemo } from "react";
-import { Item } from "@/types/catalogue";
-import SideImageCard from "./SideImageCard";
-import TopImageCard from "./TopImageCard";
-import TextOnlyCard from "./TextOnlyCard";
-import CarouselCard from "./CarouselCard";
 import ItemDetailModal from "@/components/catalogue/modals/ItemDetailModal";
+import { Item } from "@quicktalog/common";
+import { useMemo, useState } from "react";
+import CarouselCard from "./CarouselCard";
+import SideImageCard from "./SideImageCard";
+import TextOnlyCard from "./TextOnlyCard";
+import TopImageCard from "./TopImageCard";
 
 const CARD_VARIANTS: Record<string, React.ElementType> = {
 	variant_1: SideImageCard,
@@ -33,7 +32,7 @@ const CardsSwitcher = ({
 	isLast,
 }: {
 	variant: string;
-	record: CategoryItem | Item;
+	record: Item;
 	currency: string;
 	i: number;
 	theme?: string;
@@ -63,12 +62,12 @@ const CardsSwitcher = ({
 
 	const { validatedRecord, formattedCurrency } = useMemo(() => {
 		const price =
-			record.price == "0"
+			record.price == 0
 				? "Free"
 				: Number(record.price).toLocaleString(undefined, {
-						minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
-						maximumFractionDigits: 2,
-					});
+					minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
+					maximumFractionDigits: 2,
+				});
 
 		const formattedCurrency = price !== "Free" ? currency : "";
 
@@ -88,15 +87,15 @@ const CardsSwitcher = ({
 		<>
 			<CardComponent
 				currency={formattedCurrency}
-				onClick={() => setIsModalOpen(true)}
-				record={validatedRecord}
-				mode={mode === "edit" ? "edit" : "view"}
-				onDelete={onDelete}
-				onEdit={onEdit}
-				onMoveUp={onMoveUp}
-				onMoveDown={onMoveDown}
 				isFirst={isFirst}
 				isLast={isLast}
+				mode={mode === "edit" ? "edit" : "view"}
+				onClick={() => setIsModalOpen(true)}
+				onDelete={onDelete}
+				onEdit={onEdit}
+				onMoveDown={onMoveDown}
+				onMoveUp={onMoveUp}
+				record={validatedRecord}
 			/>
 			<ItemDetailModal
 				currency={formattedCurrency}

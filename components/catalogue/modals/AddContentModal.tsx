@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { ContentBlock } from "@/types/catalogue";
+import { ContentBlock } from "@quicktalog/common";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ContentOptionsSelector } from "../blocks/common/ContentOptionsSelector";

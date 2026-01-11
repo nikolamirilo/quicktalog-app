@@ -1,6 +1,6 @@
 "use client";
 import AppearanceOptions from "@/components/general/AppearanceOptions";
-import type { Catalogue, ContentBlock } from "@/types/catalogue";
+import type { Catalogue, ContentBlock } from "@quicktalog/common";
 import { themes } from "@quicktalog/common";
 import { useState } from "react";
 import Overlay from "../../general/Overlay";

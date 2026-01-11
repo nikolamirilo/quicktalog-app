@@ -1,5 +1,5 @@
 "use client";
-import type { IframeBlock } from "@/types/catalogue";
+import type { IframeBlock } from "@quicktalog/common";
 import BlockControls from "../cards/common/BlockControls";
 
 interface IframeBlockProps {

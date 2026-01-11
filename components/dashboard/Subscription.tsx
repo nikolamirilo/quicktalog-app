@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatPrice } from "@/helpers/client";
 import { usePaddlePrices } from "@/hooks/usePaddelPrices";
+import type { SubscriptionProps } from "@/types/components";
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
 import {
 	BarChart3,
@@ -23,8 +24,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCalendar } from "react-icons/fi";
 import { MdOutlineSettings } from "react-icons/md";
-
-import type { SubscriptionProps } from "@/types/components";
 
 export default function Subscription({
 	pricingPlan,
@@ -337,11 +336,10 @@ export default function Subscription({
 								const included = isFeatureIncluded(value);
 								return (
 									<div
-										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-											included
-												? "bg-product-background border border-product-primary"
-												: "bg-product-background border border-product-border"
-										}`}
+										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${included
+											? "bg-product-background border border-product-primary"
+											: "bg-product-background border border-product-border"
+											}`}
 										key={key}
 									>
 										{included ? (
@@ -355,11 +353,10 @@ export default function Subscription({
 												{formatFeatureKey(key)}
 											</p>
 											<p
-												className={`text-sm ${
-													included
-														? "text-product-primary-foreground"
-														: "text-product-foreground-accent"
-												}`}
+												className={`text-sm ${included
+													? "text-product-primary-foreground"
+													: "text-product-foreground-accent"
+													}`}
 											>
 												{formatFeatureValue(key, value)}
 											</p>

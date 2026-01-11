@@ -1,4 +1,4 @@
-import { CatalogueFormData, PricingPlan } from "@quicktalog/common";
+import { PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -223,7 +223,7 @@ interface Step1Validation {
 
 interface StepValidationOptions {
 	step: number;
-	formData: CatalogueFormData;
+	formData: any;
 	requiredFields?: {
 		step1?: Array<keyof Step1Validation>;
 	};

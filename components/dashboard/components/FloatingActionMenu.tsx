@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { AreLimitesReached } from "@/types";
+import { AreLimitesReached } from "@quicktalog/common";
 import { Plus, Scan, Sparkles, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";

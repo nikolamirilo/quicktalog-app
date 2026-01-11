@@ -1,7 +1,7 @@
 import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { generateCatalogueMetadata } from "@/constants/metadata";
-import { Catalogue as CatalogueType } from "@/types/catalogue";
+import { Catalogue as CatalogueType } from "@quicktalog/common";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 

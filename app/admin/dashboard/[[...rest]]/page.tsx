@@ -1,10 +1,10 @@
-import Dashboard from "@/components/dashboard/Dashboard";
 import FloatingActionMenu from "@/components/dashboard/components/FloatingActionMenu";
+import Dashboard from "@/components/dashboard/Dashboard";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { Button } from "@/components/ui/button";
 import { getUserData } from "@/server_actions/users";
-import type { AreLimitesReached } from "@/types";
+import type { AreLimitesReached } from "@quicktalog/common";
 import { UserData } from "@quicktalog/common";
 import Link from "next/link";
 import Script from "next/script";

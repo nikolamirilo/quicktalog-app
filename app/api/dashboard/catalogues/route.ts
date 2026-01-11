@@ -1,8 +1,10 @@
-import { drizzleClient } from "@/drizzle/db";
-import { catalogues } from "@/drizzle/migrations/schema";
+import { drizzleClient } from "@/utils/drizzle";
 import { currentUser } from "@clerk/nextjs/server";
+import { schema } from "@quicktalog/common";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+
+const catalogues = schema.catalogues;
 
 export async function GET() {
 	try {

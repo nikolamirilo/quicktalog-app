@@ -1,6 +1,8 @@
 "use server";
-import { drizzleClient } from "@/drizzle/db";
-import { newsletter, productNewsletter } from "@/drizzle/migrations/schema";
+import { drizzleClient } from "@/utils/drizzle";
+import { schema } from "@quicktalog/common";
+
+const { newsletter, productNewsletter } = schema;
 
 export async function newsletterSignup(
 	email: string,

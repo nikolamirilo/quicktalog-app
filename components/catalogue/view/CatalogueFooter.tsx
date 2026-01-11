@@ -423,11 +423,10 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</div>
 										<Button
 											aria-label="Subscribe to newsletter"
-											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
-												submitSuccess
-													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
-													: "hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary"
-											}`}
+											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${submitSuccess
+												? "bg-green-500 text-white border-green-500 hover:bg-green-600"
+												: "hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary"
+												}`}
 											disabled={isSubmitting || submitSuccess}
 											size="default"
 											type="submit"

@@ -1,9 +1,9 @@
 "use client";
+import { Label } from "@/components/ui/label";
+import { ThemeSelectProps } from "@/types/components";
 import { themes } from "@quicktalog/common";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Label } from "@/components/ui/label";
-import { ThemeSelectProps } from "@/types/components";
 
 const ThemeSelect = ({
 	formData,
@@ -100,11 +100,10 @@ const ThemeSelect = ({
 						.sort((a, b) => a.id - b.id)
 						.map((themeItem) => (
 							<button
-								className={`flex-shrink-0 p-3 w-32 h-24 md:w-40 md:h-32 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key} ${
-									themeIndex === themeItem.id
-										? "border-product-primary shadow-md scale-[1.03] border-[3px]"
-										: "hover:shadow-sm"
-								}`}
+								className={`flex-shrink-0 p-3 w-32 h-24 md:w-40 md:h-32 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key} ${themeIndex === themeItem.id
+									? "border-product-primary shadow-md scale-[1.03] border-[3px]"
+									: "hover:shadow-sm"
+									}`}
 								id={`theme-btn-${themeItem.id}`}
 								key={themeItem.key}
 								onClick={() => setThemeIndex(themeItem.id)}

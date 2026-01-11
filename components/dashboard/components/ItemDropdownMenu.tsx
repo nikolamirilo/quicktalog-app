@@ -9,8 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleDownloadHTML } from "@/helpers/client";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
-import { Catalogue } from "@/types/catalogue";
-import { PricingPlan, Usage } from "@quicktalog/common";
+import { Catalogue, PricingPlan, Usage } from "@quicktalog/common";
 import Link from "next/link";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";

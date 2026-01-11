@@ -1,6 +1,6 @@
-import { FiInfo } from "react-icons/fi";
 import { Card } from "@/components/ui/card";
-import { OverallAnalytics as OverallAnalyticsType } from "@/types";
+import { OverallAnalytics as OverallAnalyticsType } from "@quicktalog/common";
+import { FiInfo } from "react-icons/fi";
 
 const OverallAnalytics = ({
 	setIsInfoModalOpen,

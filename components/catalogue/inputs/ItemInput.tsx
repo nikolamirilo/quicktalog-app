@@ -11,9 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Item } from "@/types/catalogue";
-import { ContentLayout } from "@/types/enums";
-
+import { ContentLayout, Item } from "@quicktalog/common";
 import { useEffect, useState } from "react";
 
 interface ItemInputProps {
