@@ -1,8 +1,6 @@
 import type { NextConfig } from "next";
-import path from "path";
 
 const nextConfig: NextConfig = {
-	outputFileTracingRoot: path.join(__dirname, "../../"),
 	images: {
 		minimumCacheTTL: 2678400,
 		formats: ["image/webp"],
