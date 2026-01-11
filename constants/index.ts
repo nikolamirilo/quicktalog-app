@@ -240,6 +240,5 @@ export const contactTypes = [
 	{ value: "twitter", label: "Twitter" },
 ];
 
-
 export const DEFAULT_LOGO = "/logo.svg";
 export const DARK_LOGO = "/logo-light.svg";

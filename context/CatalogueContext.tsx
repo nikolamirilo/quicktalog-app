@@ -41,9 +41,7 @@ export const CatalogueContextProvider = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const [catalogue, setCatalogue] = useState<Catalogue>(
-		defaultCatalogueData,
-	);
+	const [catalogue, setCatalogue] = useState<Catalogue>(defaultCatalogueData);
 	const { user } = useUser();
 
 	const resetCatalogue = () => {

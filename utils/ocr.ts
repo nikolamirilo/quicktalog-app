@@ -155,7 +155,6 @@ export const detectLanguage = (text: string): string => {
 	return "eng";
 };
 
-
 export const getLanguageParameters = (languageCode: string) => {
 	const baseParams = {
 		tessedit_pageseg_mode: PSM.AUTO,
@@ -204,4 +203,3 @@ export const getLanguageParameters = (languageCode: string) => {
 
 	return languageParams[languageCode] || baseParams;
 };
-

@@ -1,12 +1,12 @@
 import {
-    Catalogue,
-    ContentBlock,
-    Item,
-    OverallAnalytics,
-    PricingPlan,
-    Usage,
-    User,
-    UserData,
+	Catalogue,
+	ContentBlock,
+	Item,
+	OverallAnalytics,
+	PricingPlan,
+	Usage,
+	User,
+	UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
 

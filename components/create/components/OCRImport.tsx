@@ -296,14 +296,15 @@ const OCRImport = ({
 										{imageData.isProcessed && (
 											<div className="flex justify-center">
 												{imageData.confidence !== undefined &&
-													imageData.confidence > 0 ? (
+												imageData.confidence > 0 ? (
 													<div
-														className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${imageData.confidence > 80
-															? "bg-green-100 text-green-800 border border-green-300"
-															: imageData.confidence > 60
-																? "bg-yellow-100 text-yellow-800 border border-yellow-300"
-																: "bg-red-100 text-red-800 border border-red-300"
-															}`}
+														className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
+															imageData.confidence > 80
+																? "bg-green-100 text-green-800 border border-green-300"
+																: imageData.confidence > 60
+																	? "bg-yellow-100 text-yellow-800 border border-yellow-300"
+																	: "bg-red-100 text-red-800 border border-red-300"
+														}`}
 													>
 														<CheckCircle2 size={14} />
 														{imageData.confidence.toFixed(1)}%

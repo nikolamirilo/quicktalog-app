@@ -65,9 +65,9 @@ const CardsSwitcher = ({
 			record.price == 0
 				? "Free"
 				: Number(record.price).toLocaleString(undefined, {
-					minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
-					maximumFractionDigits: 2,
-				});
+						minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
+						maximumFractionDigits: 2,
+					});
 
 		const formattedCurrency = price !== "Free" ? currency : "";
 

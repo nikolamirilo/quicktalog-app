@@ -210,10 +210,11 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 												</pre>
 											</div>
 											<Button
-												className={`absolute top-2 right-2 h-8 w-8 hover:bg-gray-800/80 transition-colors ${copied
-													? "text-green-500 bg-gray-800/50"
-													: "text-gray-400 bg-gray-800/30"
-													}`}
+												className={`absolute top-2 right-2 h-8 w-8 hover:bg-gray-800/80 transition-colors ${
+													copied
+														? "text-green-500 bg-gray-800/50"
+														: "text-gray-400 bg-gray-800/30"
+												}`}
 												onClick={handleCopyCode}
 												size="icon"
 												variant="ghost"
