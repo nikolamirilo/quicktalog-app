@@ -6,7 +6,6 @@ import { useState } from "react";
 import Overlay from "../../general/Overlay";
 import BuilderSidebar from "../inputs/BuilderSidebar";
 import ContentBlockButton from "../inputs/ContentBlockButton";
-import DescriptionInput from "../inputs/DescriptionInput";
 import HeadingInput from "../inputs/HeadingInput";
 import AddContentModal from "../modals/AddContentModal";
 import CatalogueContent from "./CatalogueContent";
@@ -46,115 +45,87 @@ const Catalogue = ({
 	};
 
 	return (
-		<div
-			aria-label={`${item.heading} Catalogue`}
-			className={`${item.appearance.theme.name || "theme-elegant"} bg-background text-foreground min-h-screen flex flex-col`}
-			role="application"
-		>
-			{item.appearance.overlay.isEnabled && (
-				<Overlay emoji={item.appearance.overlay.icon} />
-			)}
-
-			<CatalogueHeader
-				data={{
-					email: item.contact.email,
-					emailCta: item.header.emailCta,
-					phone: item.contact.phone,
-					phoneCta: item.header.phoneCta,
-					ctaNavbar: item.header.cta,
-				}}
-				logo={logoSrc}
-				type={isCustom ? "custom" : "default"}
-			/>
-
-			<main
-				aria-label="Service catalogue content"
-				className="flex-1 flex flex-col min-h-0 relative"
+		<>
+			{type === "edit" && <BuilderSidebar />}
+			<div
+				aria-label={`${item.heading} Catalogue`}
+				className={`${item.appearance.theme.name || "theme-monochrome"} bg-background !font-${item.appearance.style.fontFamily} text-foreground min-h-screen flex flex-col`}
+				role="application"
 			>
 				{item.appearance.overlay.isEnabled && (
 					<Overlay emoji={item.appearance.overlay.icon} />
 				)}
-				{type === "edit" && <BuilderSidebar />}
-				<section
-					aria-labelledby={item.heading}
-					className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0"
+
+				<CatalogueHeader
+					data={item}
+					logo={logoSrc}
+					type={isCustom ? "custom" : "default"}
+				/>
+
+				<main
+					aria-label="Service catalogue content"
+					className="flex-1 flex flex-col min-h-0 relative"
 				>
-					<div className="max-w-4xl mx-auto">
-						{type === "edit" ? (
-							<>
+					{item.appearance.overlay.isEnabled && (
+						<Overlay emoji={item.appearance.overlay.icon} />
+					)}
+					<section
+						aria-labelledby={item.heading}
+						className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0"
+					>
+						<div className="max-w-4xl mx-auto">
+							{type === "edit" ? (
 								<HeadingInput />
-								<DescriptionInput />
-							</>
-						) : (
-							<>
+							) : (
 								<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-lora font-semibold text-heading drop-shadow-sm mb-4">
 									{item.heading}
 								</h1>
-								{item.description && (
-									<div
-										className="text-text !text-center text-base sm:text-lg md:text-xl lg:text-2xl px-5 max-w-[900px] font-lora font-normal leading-relaxed"
-										dangerouslySetInnerHTML={{ __html: item.description }}
-									/>
-								)}
-							</>
-						)}
-					</div>
-					{type === "demo" && (
-						<div className="flex flex-col justify-center items-center w-full mt-6">
-							<AppearanceOptions />
+							)}
 						</div>
-					)}
-				</section>
-				<section
-					aria-label="Services and items"
-					className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pb-8 min-h-[60vh]"
-				>
-					{item && (
-						<CatalogueContent
-							currency={item.currency}
-							data={item.content}
-							mode={type === "edit" ? "edit" : "view"}
-							onEditBlock={handleEditBlock}
-							theme={item.appearance.theme.name}
-							type="item"
-						/>
-					)}
-					{type === "edit" && (
-						<ContentBlockButton setIsAddContentOpen={setIsAddContentOpen} />
-					)}
-				</section>
-			</main>
+						{type === "demo" && (
+							<div className="flex flex-col justify-center items-center w-full mt-6">
+								<AppearanceOptions />
+							</div>
+						)}
+					</section>
+					<section
+						aria-label="Services and items"
+						className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pb-8 min-h-[60vh]"
+					>
+						{item && (
+							<CatalogueContent
+								currency={item.currency}
+								data={item.content}
+								mode={type === "edit" ? "edit" : "view"}
+								onEditBlock={handleEditBlock}
+								theme={item.appearance.theme.name}
+								type="item"
+							/>
+						)}
+						{type === "edit" && (
+							<ContentBlockButton setIsAddContentOpen={setIsAddContentOpen} />
+						)}
+					</section>
+				</main>
 
-			<CatalogueFooter
-				data={{
-					email: item.contact.email,
-					phone: item.contact.phone,
-					cta: item.footer.cta,
-					socials: item.contact.socials,
-					newsletter: item.footer.newsletter,
-					showPartners: item.footer.showPartners,
-					legal: item.legal,
-					partners: item.partners,
-					catalogue: {
-						id: item.id,
-						owner_id: item.createdBy,
-					},
-				}}
-				logo={logoSrc}
-				type={isCustom ? "custom" : "default"}
-			/>
+				<CatalogueFooter
+					data={item}
+					logo={logoSrc}
+					type={isCustom ? "custom" : "default"}
+				/>
 
-			<AddContentModal
-				blockIndex={editingBlock?.index}
-				editingBlock={editingBlock?.block}
-				isOpen={isAddContentOpen}
-				onClose={() => {
-					setIsAddContentOpen(false);
-					setEditingBlock(null);
-				}}
-				setIsOpen={setIsAddContentOpen}
-			/>
-		</div>
+				<AddContentModal
+					blockIndex={editingBlock?.index}
+					editingBlock={editingBlock?.block}
+					isOpen={isAddContentOpen}
+					onClose={() => {
+						setIsAddContentOpen(false);
+						setEditingBlock(null);
+					}}
+					setIsOpen={setIsAddContentOpen}
+				/>
+			</div>
+		</>
 	);
 };
 

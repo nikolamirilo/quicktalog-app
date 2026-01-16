@@ -39,11 +39,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 		setSubmitSuccess(false);
 
 		try {
-			await newsletterSignup(
-				newsletterEmail,
-				data?.catalogue?.id,
-				data?.catalogue?.owner_id,
-			);
+			await newsletterSignup(newsletterEmail, data?.id, data?.source);
 			setNewsletterEmail("");
 			setSubmitSuccess(true);
 			setTimeout(() => setSubmitSuccess(false), 3000);
@@ -60,13 +56,10 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	};
 
 	const getEffectiveSocials = () => {
-		if (data?.socialLinks && Object.keys(data.socialLinks).length > 0) {
-			return data.socialLinks;
-		}
-
-		if (data?.socials && Array.isArray(data.socials)) {
+		// Use contact.socials (string[])
+		if (data?.contact?.socials && Array.isArray(data.contact.socials)) {
 			const links: Record<string, string> = {};
-			data.socials.forEach((url, i) => {
+			data.contact.socials.forEach((url, i) => {
 				if (!url) return;
 				let platform = "link";
 				const lowerUrl = url.toLowerCase();
@@ -80,6 +73,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 				else if (lowerUrl.includes("pinterest")) platform = "pinterest";
 				else platform = `link-${i}`;
 
+				// If multiple same platforms exist, we might overwrite, but typical usage implies unique platforms.
+				// To allow multiple, we might need a different structure, but for now maintaining map behavior to support SocialIcon logic.
+				// Ideally SocialIcon just takes a URL and figures it out, but it takes a 'platform' prop.
 				if (!links[platform]) links[platform] = url;
 			});
 			return links;
@@ -144,7 +140,6 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									>
 										{Object.keys(effectiveSocials).map((platform) => {
 											const socialUrl = effectiveSocials[platform];
-											// Handle generic links or known platforms
 											return (
 												<SocialIcon
 													href={socialUrl || ""}
@@ -159,7 +154,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								)}
 						</div>
 
-						{(type === "default" || data?.email) && (
+						{(type === "default" || data?.contact?.email) && (
 							<div className="space-y-6">
 								<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
 									<div
@@ -171,31 +166,33 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								<ul className="space-y-4">
 									<li>
 										<a
-											aria-label={`Send email to ${type === "default" ? footerDetails.email : data?.email || "contact"}`}
+											aria-label={`Send email to ${type === "default" ? footerDetails.email : data?.contact.email || "contact"}`}
 											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
-											href={`mailto:${type === "default" ? footerDetails.email : data?.email}`}
+											href={`mailto:${type === "default" ? footerDetails.email : data?.contact.email}`}
 										>
 											<FiMail
 												aria-hidden="true"
 												className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 											/>
 											<span>
-												{type === "default" ? footerDetails.email : data?.email}
+												{type === "default"
+													? footerDetails.email
+													: data?.contact.email}
 											</span>
 										</a>
 									</li>
-									{data?.phone && (
+									{data?.contact?.phone && (
 										<li>
 											<a
-												aria-label={`Call ${data?.phone}`}
+												aria-label={`Call ${data?.contact?.phone}`}
 												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
-												href={`tel:${data?.phone}`}
+												href={`tel:${data?.contact?.phone}`}
 											>
 												<FiPhone
 													aria-hidden="true"
 													className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 												/>
-												<span>{data?.phone}</span>
+												<span>{data?.contact.phone}</span>
 											</a>
 										</li>
 									)}
@@ -310,7 +307,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								</>
 							) : data?.partners &&
 								data?.partners.length > 0 &&
-								data?.showPartners ? (
+								data?.footer.showPartners ? (
 								<>
 									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
 										<div
@@ -395,7 +392,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						</nav>
 
 						{/* Enhanced Newsletter for Custom */}
-						{type === "custom" && data?.newsletter ? (
+						{type === "custom" && data?.footer.newsletter ? (
 							<div className="flex flex-col h-full">
 								<div className="flex-1 flex items-center">
 									<form
@@ -458,8 +455,8 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							</div>
 						) : null}
 						{type === "custom" &&
-							(data?.ctaFooter?.enabled || data?.cta?.isEnabled) &&
-							(data?.ctaFooter?.url || data?.cta?.url) && (
+							data?.footer?.cta?.isEnabled &&
+							data?.footer?.cta?.url && (
 								<Button
 									asChild
 									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary footer-cta-button flex items-center gap-2"
@@ -467,11 +464,11 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									variant="secondary"
 								>
 									<SmartLink
-										aria-label={data?.ctaFooter?.label || data?.cta?.label}
-										href={data?.ctaFooter?.url || data?.cta?.url || ""}
+										aria-label={data?.footer?.cta?.label}
+										href={data?.footer?.cta?.url || ""}
 									>
 										<FiExternalLink className="w-4 h-4" />
-										{data?.ctaFooter?.label || data?.cta?.label}
+										{data?.footer?.cta?.label}
 									</SmartLink>
 								</Button>
 							)}

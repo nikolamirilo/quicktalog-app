@@ -43,21 +43,21 @@ const TABS: {
 ];
 
 const tabTriggerClass =
-	"border-transparent data-[state=active]:border-2 data-[state=active]:border-product-primary data-[state=active]:bg-product-hover-background  data-[state=active]:font-bold rounded-lg";
+	"data-[state=active]:!bg-product-primary !bg-[#E3E3E3] data-[state=active]:border-product-primary data-[state=active]:bg-product-hover-background  data-[state=active]:font-bold rounded-lg";
 
 const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
 
 	return (
 		<aside
-			className={`fixed bg-product-background shadow-lg z-50 transition-all duration-300 flex 
+			className={`!z-[1000] fixed bg-product-background shadow-lg transition-all duration-300 flex 
         /* Mobile: Bottom App Bar */
         bottom-0 left-0 w-full flex-col-reverse
         ${isOpen ? "h-[100dvh]" : "h-auto"}
         
         /* Desktop: Right Sidebar */
         md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
-        ${isOpen ? "md:w-fit" : "md:w-16"}
+        ${isOpen ? "md:w-fit md:max-w-[440px]" : "md:w-16"}
       `}
 		>
 			{/* Mobile Actions / Desktop Top actions */}
@@ -111,24 +111,24 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 				</div>
 			</div>
 
+			<div className="w-11/12 mx-auto border-b-[1.5px] pb-3 md:border-b-0 md:pb-0 md:border-t-[1.5px] md:pt-3 border-gray-400"></div>
+
 			{/* Tabs Content */}
 			{isOpen && (
 				<Tabs
-					className={`flex flex-col flex-1 overflow-hidden 
-            border-b-[1.5px] pb-3 md:border-b-0 md:pb-0 md:border-t-[1.5px] md:pt-3 border-gray-400
-          `}
+					className={`flex flex-col flex-1 overflow-hidden           `}
 					defaultValue="general"
 				>
 					<TabsList className="w-full justify-around bg-transparent p-0 py-4 md:py-0 px-3 gap-2 h-auto">
 						{TABS.map(({ key, icon: Icon, label }) => (
 							<TabsTrigger className={tabTriggerClass} key={key} value={key}>
 								<Icon className="w-4 h-4 mr-1" />
-								<span style={{ fontSize: "12px" }}>{label}</span>
+								<span className="text-xs py-[1px]">{label}</span>
 							</TabsTrigger>
 						))}
 					</TabsList>
 					<div className="md:hidden w-full h-[1px] bg-gray-400 my-2"></div>
-					<ScrollArea className="flex-1">
+					<ScrollArea className="flex-1 py-2">
 						<div className="p-4">
 							{TABS.map(({ key, content }) => (
 								<TabsContent className="mt-0" key={key} value={key}>

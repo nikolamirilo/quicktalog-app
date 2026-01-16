@@ -6,10 +6,14 @@ export const defaultCatalogueData = {
 	status: "draft",
 	language: "eng",
 	heading: "",
-	description: "",
 	currency: "EUR",
 	businessType: "",
 	content: [],
+	metadata: {
+		title: "",
+		description: "",
+		icon: "",
+	},
 	legal: {
 		legalName: "",
 		termsAndConditions: "",

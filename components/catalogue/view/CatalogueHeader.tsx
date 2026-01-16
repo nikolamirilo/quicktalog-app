@@ -37,27 +37,27 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 				),
 			);
 		} else if (type === "custom" && data) {
-			if (data?.email && data?.emailCta) {
+			if (data?.contact?.email && data?.header?.emailCta) {
 				links.push(
 					createContactLink(
-						`mailto:${data?.email}`,
+						`mailto:${data?.contact?.email}`,
 						<FiMail
 							aria-hidden="true"
 							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
-						`Send email to ${data?.email}`,
+						`Send email to ${data?.contact?.email}`,
 					),
 				);
 			}
-			if (data?.phone && data?.phoneCta) {
+			if (data?.contact?.phone && data?.header?.phoneCta) {
 				links.push(
 					createContactLink(
-						`tel:${data?.phone}`,
+						`tel:${data?.contact?.phone}`,
 						<FiPhone
 							aria-hidden="true"
 							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
-						`Call ${data?.phone}`,
+						`Call ${data?.contact?.phone}`,
 					),
 				);
 			}
@@ -79,15 +79,15 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 
 		if (
 			type === "custom" &&
-			data?.ctaNavbar?.isEnabled &&
-			data?.ctaNavbar.url
+			data?.header?.cta?.isEnabled &&
+			data?.header?.cta.url
 		) {
 			return {
-				href: data?.ctaNavbar.url,
-				label: data?.ctaNavbar.label || "Learn more",
-				shortLabel: data?.ctaNavbar.label || "Learn more",
+				href: data?.header?.cta.url,
+				label: data?.header?.cta.label || "Learn more",
+				shortLabel: data?.header?.cta.label || "Learn more",
 				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4 lg:mr-1" />,
-				ariaLabel: data?.ctaNavbar.label || "Learn more",
+				ariaLabel: data?.header?.cta.label || "Learn more",
 			};
 		}
 

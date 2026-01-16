@@ -14,6 +14,19 @@ export type DisplayItem = Omit<Item, "price"> & {
 	price: string | number;
 };
 
+export interface ImageDropzoneProps {
+	type?: "default" | "logo" | "qr-editor" | "icon";
+	setIsUploading: React.Dispatch<boolean>;
+	onUploadComplete: (url: string) => void;
+	onError?: (error: Error) => void;
+	maxDim?: number;
+	targetSizeKB?: number;
+	className?: string;
+	disabled?: boolean;
+	removeImage: () => void;
+	image: string;
+}
+
 export type ITestimonial = {
 	name: string;
 	role: string;
@@ -74,22 +87,12 @@ export type ThemeSelectProps = {
 export type CatalogueHeaderProps = {
 	type?: "default" | "custom";
 	logo?: string;
-	data?: {
-		email?: string;
-		emailCta?: boolean;
-		phone?: string;
-		phoneCta?: boolean;
-		ctaNavbar?: {
-			isEnabled: boolean;
-			label: string;
-			url: string;
-		};
-	};
+	data?: Catalogue;
 };
 
 export type CatalogueFooterProps = {
 	type?: "default" | "custom";
-	data?: any;
+	data?: Catalogue;
 	logo: string;
 };
 

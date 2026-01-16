@@ -94,10 +94,8 @@ export async function duplicateItem(id: string, name: string) {
 
 export async function createCatalogue(catalogueData: Catalogue) {
 	try {
-		// Generate unique slug for the name
 		const slug = generateUniqueSlug(catalogueData.name);
 
-		// Check if name already exists
 		const existingCatalogue = await drizzleClient.query.catalogues.findFirst({
 			where: eq(catalogues.name, slug),
 			columns: { id: true },
@@ -110,8 +108,6 @@ export async function createCatalogue(catalogueData: Catalogue) {
 			};
 		}
 
-		// Sanitize data: remove Date objects for createdAt/updatedAt to let DB defaults work, or strict string
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { createdAt, updatedAt, ...rest } = catalogueData;
 
 		const [data] = await drizzleClient
@@ -119,10 +115,6 @@ export async function createCatalogue(catalogueData: Catalogue) {
 			.values({
 				...rest,
 				name: slug,
-				// Ensure timestamps are strings if we really want to pass them, otherwise omit to use defaultNow()
-				// If the user provided them, we strictly want strings because mode: 'string'
-				...(createdAt ? { createdAt: new Date(createdAt).toISOString() } : {}),
-				...(updatedAt ? { updatedAt: new Date(updatedAt).toISOString() } : {}),
 			})
 			.returning();
 
@@ -196,8 +188,6 @@ export async function getCatalogueByName(name: string) {
 					data: defaultCatalogueData,
 				};
 			}
-			// Drizzle result should match Catalogue type or be compatible
-			// Assuming 'data' structure matches what redis expects
 			await redis.set(name, JSON.stringify(data));
 			catalogue = data;
 		}
@@ -218,14 +208,17 @@ export async function getCatalogueByName(name: string) {
 
 export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 	try {
-		const catalogueData = { ...data, status: "active" };
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { createdAt, updatedAt, ...rest } = data;
+		const catalogueData = { ...rest, status: "active" };
 
 		await drizzleClient
 			.update(catalogues)
 			.set({
 				// Update all fields that might have changed + status
-				...catalogueData,
+				...rest,
 				status: "active" as Status, // Ensure status type compatibility
+				updatedAt: new Date().toISOString(),
 			})
 			.where(eq(catalogues.name, catalogueData.name));
 

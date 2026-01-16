@@ -242,7 +242,7 @@ const AddContentModal = ({
 									</label>
 									<RichTextEditor
 										className="border-gray-200"
-										content={blockData.content || "<p>Text</p>"}
+										content={blockData.content || "<p></p>"}
 										onChange={(val) =>
 											setBlockData({ ...blockData, content: val })
 										}

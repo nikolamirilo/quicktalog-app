@@ -10,7 +10,7 @@ const JoinOurCommunity = () => {
 			<p className="text-product-foreground-accen text-sm">
 				Be the first to shape the future of Quicktalog. Get priority support,
 				early updates, and share your feedback directly with our team in our
-				Discord group. Open until December 31, 2025.
+				Discord group. Open until July 2026.
 			</p>
 			<div className="flex justify-center w-[50%]">
 				<Button asChild variant="cta">

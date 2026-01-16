@@ -1,175 +1,10 @@
 "use client";
-import NextImage from "next/image";
+import { loadImage, processImage } from "@/helpers/imageProccessing";
+import { ImageDropzoneProps } from "@/types/components";
+import { UploadDropzone } from "@/utils/uploadthing";
 import React, { useCallback } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
-import { UploadDropzone } from "@/utils/uploadthing";
-
-const loadImage = (file: File): Promise<HTMLImageElement> => {
-	return new Promise((resolve, reject) => {
-		const img = new Image();
-		const url = URL.createObjectURL(file);
-
-		const cleanup = () => URL.revokeObjectURL(url);
-
-		img.onload = () => {
-			cleanup();
-			resolve(img);
-		};
-
-		img.onerror = () => {
-			cleanup();
-			reject(new Error(`Failed to load image: ${file.name}`));
-		};
-
-		img.src = url;
-	});
-};
-
-const calculateDimensions = (width: number, height: number, maxDim: number) => {
-	if (width <= maxDim && height <= maxDim) {
-		return { width, height };
-	}
-
-	const aspectRatio = width / height;
-
-	if (width > height) {
-		return {
-			width: maxDim,
-			height: Math.round(maxDim / aspectRatio),
-		};
-	} else {
-		return {
-			width: Math.round(maxDim * aspectRatio),
-			height: maxDim,
-		};
-	}
-};
-
-const canvasToBlob = (
-	canvas: HTMLCanvasElement,
-	quality: number,
-): Promise<Blob> => {
-	return new Promise((resolve, reject) => {
-		canvas.toBlob(
-			(blob) => {
-				if (blob) {
-					resolve(blob);
-				} else {
-					reject(new Error("Failed to convert canvas to blob"));
-				}
-			},
-			"image/webp",
-			quality,
-		);
-	});
-};
-
-const processImage = async (
-	img: HTMLImageElement,
-	maxDim: number,
-	targetSizeKB: number = 400,
-	fileName: string,
-): Promise<File> => {
-	const { width, height } = calculateDimensions(img.width, img.height, maxDim);
-
-	const canvas = document.createElement("canvas");
-	canvas.width = width;
-	canvas.height = height;
-
-	const ctx = canvas.getContext("2d", {
-		alpha: false,
-		willReadFrequently: false,
-		desynchronized: true,
-	});
-
-	if (!ctx) {
-		throw new Error("Failed to get 2D rendering context");
-	}
-
-	ctx.imageSmoothingEnabled = true;
-	ctx.imageSmoothingQuality = "high";
-
-	ctx.fillStyle = "#FFFFFF";
-	ctx.fillRect(0, 0, width, height);
-
-	ctx.drawImage(img, 0, 0, width, height);
-
-	const targetSizeBytes = targetSizeKB * 1024;
-	const maxSizeBytes = targetSizeKB * 1024; // Enforce strict 400KB limit
-
-	let minQuality = 0.3;
-	let maxQuality = 0.98;
-	let bestBlob: Blob | null = null;
-	let bestQuality = minQuality;
-
-	let currentBlob = await canvasToBlob(canvas, maxQuality);
-
-	if (currentBlob.size <= targetSizeBytes) {
-		bestBlob = currentBlob;
-		bestQuality = maxQuality;
-	} else {
-		let searchMin = minQuality;
-		let searchMax = maxQuality;
-
-		for (let i = 0; i < 8; i++) {
-			const midQuality = (searchMin + searchMax) / 2;
-			const testBlob = await canvasToBlob(canvas, midQuality);
-
-			if (testBlob.size <= targetSizeBytes) {
-				if (
-					testBlob.size > (bestBlob?.size || 0) ||
-					Math.abs(testBlob.size - targetSizeBytes) <
-						Math.abs((bestBlob?.size || 0) - targetSizeBytes)
-				) {
-					bestBlob = testBlob;
-					bestQuality = midQuality;
-				}
-				searchMin = midQuality;
-			} else {
-				searchMax = midQuality;
-			}
-		}
-	}
-
-	if (!bestBlob) {
-		bestBlob = await canvasToBlob(canvas, 0.1);
-		bestQuality = 0.1;
-	}
-
-	if (bestBlob.size > maxSizeBytes) {
-		throw new Error(
-			`Processed image size (${Math.round(bestBlob.size / 1024)}KB) exceeds maximum allowed size of ${targetSizeKB}KB`,
-		);
-	}
-
-	console.log(`Image processing results:
-    - Original: ~${Math.round((img.naturalWidth * img.naturalHeight * 4) / 1024)}KB (estimated)
-    - Compressed: ${Math.round(bestBlob.size / 1024)}KB
-    - Quality: ${Math.round(bestQuality * 100)}%
-    - Dimensions: ${width}x${height}
-    - Target: ${targetSizeKB}KB`);
-
-	const newFileName = fileName.replace(/\.[^.]+$/, ".webp");
-
-	return new File([bestBlob], newFileName, {
-		type: "image/webp",
-		lastModified: Date.now(),
-	});
-};
-
-interface ImageDropzoneProps {
-	type?: "default" | "logo" | "qr-editor";
-	setIsUploading: React.Dispatch<boolean>;
-	onUploadComplete: (url: string) => void;
-	onError?: (error: Error) => void;
-	maxDim?: number;
-	targetSizeKB?: number;
-	className?: string;
-	disabled?: boolean;
-	removeImage: () => void;
-	image: string;
-}
 
 const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 	type = "default",
@@ -264,11 +99,11 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 		<div className="notranslate" translate="no">
 			{image && type != "qr-editor" ? (
 				<div
-					className={`relative mt-2 ${type === "default" ? "w-48 h-48" : "w-fit h-fit"} rounded-lg border-2 border-product-border overflow-hidden bg-product-background shadow-product-shadow`}
+					className={`relative mt-2 ${type === "default" ? "w-48 h-48" : "w-fit h-fit"} rounded-lg overflow-hidden bg-product-background shadow-product-shadow`}
 				>
 					<img
 						alt="Uploaded image preview"
-						className={`${type === "default" ? "w-full h-full object-cover" : "!w-auto max-h-48 !h-auto max-w-96 my-auto"} opacity-0 transition-opacity duration-500 ease-in-out`}
+						className={`${type === "default" ? "w-full h-full object-cover" : type === "icon" ? "max-h-32 h-auto w-auto my-auto max-w-40" : "!w-auto max-h-48 !h-auto max-w-96 my-auto"} opacity-0 transition-opacity duration-500 ease-in-out border-none`}
 						onLoad={(e) => {
 							e.currentTarget.classList.remove("opacity-0");
 						}}
@@ -288,7 +123,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 						appearance={{
 							button: "hidden",
 							label: "text-gray-600 hover:text-product-primary",
-							container: `h-48 w-full`,
+							container: type === "icon" ? `h-32 max-w-56` : `h-48 w-full`,
 						}}
 						className={className}
 						config={{ mode: "auto" }}
@@ -322,7 +157,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 								if (ready && !isUploading)
 									return (
 										<span className="notranslate" translate="no">
-											Image (PNG, JPG, WebP, …, max 400KB)
+											Image (PNG, JPG, SVG, etc.)
 										</span>
 									);
 								if (isUploading) return "";

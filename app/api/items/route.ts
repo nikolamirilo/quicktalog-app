@@ -7,41 +7,20 @@ export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
 	try {
 		const supabase = await createClient();
-		const {
-			name,
-			createdBy,
-			services,
-			theme,
-			logo,
-			title,
-			currency,
-			legal,
-			contact,
-			partners,
-			subtitle,
-			configuration,
-			status,
-		} = await request.json();
+		const data = await request.json();
 
-		const slug = generateUniqueSlug(name);
+		const slug = generateUniqueSlug(data.name);
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { createdAt, updatedAt, id, ...rest } = data;
 
 		const { error } = await supabase
 			.from("catalogues")
 			.insert([
 				{
-					name: slug || name,
-					createdBy,
-					services,
-					theme,
-					logo,
-					title,
-					currency,
-					legal,
-					contact,
-					partners,
-					subtitle,
-					status: status || "active",
-					configuration,
+					...rest,
+					name: slug || data.name,
+					status: data.status || "active",
 				},
 			])
 			.select();

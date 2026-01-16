@@ -95,13 +95,13 @@ const Items = ({
 								{mode === "edit" && onAddItem && (
 									<SwiperSlide className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto">
 										<button
-											className="h-full min-h-[300px] w-full border-2 border-dashed border-gray-700 bg-gray-100/30 rounded-xl hover:bg-[#FFFCF1] hover:border-[#FCD34D] hover:scale-[1.01] transition-all duration-200 flex flex-col items-center justify-center p-6 group cursor-pointer"
+											className="h-full min-h-[300px] w-full border-2 border-dashed border-[var(--text)]/20 bg-[var(--card-bg)]/50 rounded-xl hover:bg-[var(--section-hover)] hover:border-[var(--primary)] hover:scale-[1.01] transition-all duration-200 flex flex-col items-center justify-center p-6 group cursor-pointer"
 											onClick={() => onAddItem(blockIndex)}
 										>
-											<div className="h-12 w-12 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-3 shadow-sm group-hover:border-[#FCD34D] transition-colors">
-												<Plus className="w-6 h-6 text-gray-600 group-hover:text-[#FCD34D] transition-colors" />
+											<div className="h-12 w-12 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--primary)] transition-colors">
+												<Plus className="w-6 h-6 text-[var(--text)]/70 group-hover:text-[var(--primary)] transition-colors" />
 											</div>
-											<span className="text-xl font-medium text-gray-800 group-hover:text-gray-900 ">
+											<span className="text-xl font-medium text-[var(--text)] group-hover:text-[var(--heading)] ">
 												Add New Item
 											</span>
 										</button>
@@ -134,7 +134,7 @@ const Items = ({
 
 								{mode === "edit" && onAddItem && (
 									<button
-										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-700 bg-gray-100/30 rounded-xl hover:bg-[#FFFCF1] hover:border-[#FCD34D] hover:scale-[1.01] transition-all duration-200 cursor-pointer 
+										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--text)]/20 bg-[var(--card-bg)]/50 rounded-xl hover:bg-[var(--section-hover)] hover:border-[var(--primary)] hover:scale-[1.01] transition-all duration-200 cursor-pointer 
 												${
 													currentLayout === "variant_2"
 														? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
@@ -145,10 +145,10 @@ const Items = ({
 											`}
 										onClick={() => onAddItem(blockIndex)}
 									>
-										<div className="h-12 w-12 rounded-full bg-white border border-gray-200 flex items-center justify-center mb-3 shadow-sm group-hover:border-[#FCD34D] transition-colors">
-											<Plus className="w-6 h-6 text-gray-600 group-hover:text-[#FCD34D] transition-colors" />
+										<div className="h-12 w-12 rounded-full bg-[var(--card-bg)] border border-[var(--card-border)] flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--primary)] transition-colors">
+											<Plus className="w-6 h-6 text-[var(--text)]/70 group-hover:text-[var(--primary)] transition-colors" />
 										</div>
-										<span className="text-xl font-medium text-gray-800 group-hover:text-gray-900 ">
+										<span className="text-xl font-medium text-[var(--text)] group-hover:text-[var(--heading)] ">
 											Add New Item
 										</span>
 									</button>

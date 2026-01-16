@@ -252,14 +252,12 @@ export function generateCatalogueSchema(item: Catalogue) {
 		"@context": "https://schema.org",
 		"@type": "WebPage",
 		name: `${item.heading} - Digital Catalogue`,
-		description:
-			item.description ||
-			`Explore ${item.heading}'s services and offerings in this interactive digital catalogue.`,
+		description: `Explore ${item.heading}'s offerings in this interactive digital catalogue.`,
 		url: `https://www.quicktalog.app/catalogues/${item.name}`,
 		mainEntity: {
 			"@type": "Service",
 			name: item.heading,
-			description: item.description,
+			description: `Explore ${item.heading}'s offerings in this interactive digital catalogue.`,
 			provider: {
 				"@type": "Organization",
 				name: item.heading,

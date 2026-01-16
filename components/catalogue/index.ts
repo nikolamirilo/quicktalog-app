@@ -3,7 +3,6 @@ export { default as CategoryHeader } from "./blocks/common/CategoryHeader";
 export { default as CatalogueBuilder } from "./builder/CatalogueBuilder";
 export { default as CatalogueInitializer } from "./builder/CatalogueInitializer";
 export { default as ContentInput } from "./inputs/ContentInput";
-export { default as DescriptionInput } from "./inputs/DescriptionInput";
 export { default as CatalogueContent } from "./view/CatalogueContent";
 export { default as CatalogueFooter } from "./view/CatalogueFooter";
 export { default as CatalogueHeader } from "./view/CatalogueHeader";
