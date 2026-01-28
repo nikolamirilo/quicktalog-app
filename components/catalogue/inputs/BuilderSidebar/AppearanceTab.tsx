@@ -112,11 +112,13 @@ const AppearanceTab = () => {
 								key={themeItem.key}
 								type="button"
 								onClick={() => handleThemeSelect(themeItem.key)}
-								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key
-									} ${isSelected
+								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${
+									themeItem.key
+								} ${
+									isSelected
 										? "border-product-primary shadow-md scale-[1.03] border-[3px]"
 										: "hover:shadow-sm border border-border"
-									}`}
+								}`}
 								style={{
 									borderColor: isSelected
 										? "var(--product-primary)"

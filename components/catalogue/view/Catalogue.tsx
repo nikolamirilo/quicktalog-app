@@ -35,8 +35,7 @@ const contentFontSizeMap: Record<string, string> = {
 const shadowMap: Record<string, string> = {
 	none: "none",
 	low: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-	medium:
-		"0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+	medium: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
 	high: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
 };
 
@@ -69,16 +68,14 @@ const Catalogue = ({
 
 	// Get the font family CSS value from the map
 	const fontFamily =
-		fontFamilyMap[item.appearance.style.fontFamily] ||
-		fontFamilyMap.arial;
+		fontFamilyMap[item.appearance.style.fontFamily] || fontFamilyMap.arial;
 
 	// Get other style values
 	const contentFontSize =
 		contentFontSizeMap[item.appearance.style.contentFontSize || "medium"];
 	// Default to 12 if undefined
 	const borderRadius = `${item.appearance.style.borderRadius ?? 12}px`;
-	const boxShadow =
-		shadowMap[item.appearance.style.shadow || "low"];
+	const boxShadow = shadowMap[item.appearance.style.shadow || "low"];
 	const animationDuration =
 		animationMap[item.appearance.style.animation || "minimal"];
 
@@ -115,7 +112,8 @@ const Catalogue = ({
 						"--box-shadow": boxShadow,
 						"--animation-duration": animationDuration,
 						// Override theme-specific section header shadow if needed
-						"--section-header-shadow": boxShadow !== "none" ? boxShadow : undefined,
+						"--section-header-shadow":
+							boxShadow !== "none" ? boxShadow : undefined,
 					} as React.CSSProperties
 				}
 			>

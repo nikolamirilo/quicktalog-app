@@ -10,7 +10,6 @@ interface CustomCodeInputProps {
 
 const CustomCodeInput = ({ value, onChange }: CustomCodeInputProps) => {
 	return (
-
 		<div className="space-y-4">
 			<Label
 				className="text-product-foreground font-medium font-body"
@@ -31,7 +30,6 @@ const CustomCodeInput = ({ value, onChange }: CustomCodeInputProps) => {
 				Paste valid HTML code. It will be rendered directly in your catalogue.
 			</p>
 		</div>
-
 	);
 };
 

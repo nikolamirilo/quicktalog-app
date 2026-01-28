@@ -11,7 +11,13 @@ import React from "react";
 import { RxUpdate } from "react-icons/rx";
 import { toast } from "sonner";
 
-const ActionButtons = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (value: boolean) => void }) => {
+const ActionButtons = ({
+	isOpen,
+	setIsOpen,
+}: {
+	isOpen: boolean;
+	setIsOpen: (value: boolean) => void;
+}) => {
 	const { catalogue, updateCatalogue: updateContextCatalogue } =
 		useCatalogueContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
@@ -45,7 +51,6 @@ const ActionButtons = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (val
 		}
 	};
 
-
 	const handlePreview = async () => {
 		// Always save first
 		const savedCatalogue = await handleSave();
@@ -61,7 +66,7 @@ const ActionButtons = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (val
 		window.open(
 			`/catalogues/${catalogueName}/preview`,
 			"_blank",
-			"noopener,noreferrer"
+			"noopener,noreferrer",
 		);
 	};
 	const handlePublish = async () => {
@@ -74,7 +79,7 @@ const ActionButtons = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (val
 		toast.promise(promise, {
 			loading: "Publishing...",
 			success: (success) => {
-				setIsOpen(false)
+				setIsOpen(false);
 				if (!success) throw new Error("Failed to update status");
 				updateContextCatalogue({ status: "active" });
 				setIsSuccessModalOpen(true);
@@ -100,10 +105,11 @@ const ActionButtons = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (val
 		<>
 			{QUICK_ACTIONS.map(({ key, icon: Icon, label, primary, onClick }) => (
 				<Button
-					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${primary
-						? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
-						: "hover:bg-product-primary/10 hover:border-product-primary/20"
-						}
+					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${
+						primary
+							? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
+							: "hover:bg-product-primary/10 hover:border-product-primary/20"
+					}
             /* Mobile: Allow auto width and horizontal padding, hide explicit size constraint if needed */
             px-2 md:px-2
             ${!isOpen && "md:w-9 md:px-0"} 

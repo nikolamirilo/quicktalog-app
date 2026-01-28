@@ -316,7 +316,9 @@ const CatalogueContent = ({
 							onMoveDown={() => moveBlock(index, "down")}
 							onMoveUp={() => moveBlock(index, "up")}
 							onUpdateBlock={
-								updateBlock ? (newData) => updateBlock(index, newData) : undefined
+								updateBlock
+									? (newData) => updateBlock(index, newData)
+									: undefined
 							}
 							slug={block.id}
 						/>

@@ -31,16 +31,16 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-		{
-			key: "appearance",
-			icon: Palette,
-			label: "Appearance",
-			content: <AppearanceTab />,
-		},
-	];
+	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+	{
+		key: "appearance",
+		icon: Palette,
+		label: "Appearance",
+		content: <AppearanceTab />,
+	},
+];
 
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
@@ -111,7 +111,9 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 				</div>
 			</div>
 
-			<div className={`mx-auto w-[95%] border-t border-gray-300/70 ${!isOpen && "md:hidden"}`} />
+			<div
+				className={`mx-auto w-[95%] border-t border-gray-300/70 ${!isOpen && "md:hidden"}`}
+			/>
 			{/* Tabs Content */}
 			{isOpen && (
 				<Tabs
@@ -132,7 +134,11 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 					<ScrollArea className="flex-1">
 						<div className="p-4">
 							{TABS.map(({ key, content }) => (
-								<TabsContent className="mt-0 focus-visible:outline-none" key={key} value={key}>
+								<TabsContent
+									className="mt-0 focus-visible:outline-none"
+									key={key}
+									value={key}
+								>
 									{content}
 								</TabsContent>
 							))}

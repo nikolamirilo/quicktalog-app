@@ -77,19 +77,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-								spacing: (editingBlock as any).spacing,
-								border: (editingBlock as any).border,
-							}
+									spacing: (editingBlock as any).spacing,
+									border: (editingBlock as any).border,
+								}
 							: {
-								spacing: 2,
-								border: {
-									isEnabled: true,
-									style: "solid",
-									thickness: 1,
-									color: "#000000",
-									opacity: 100,
+									spacing: 2,
+									border: {
+										isEnabled: true,
+										style: "solid",
+										thickness: 1,
+										color: "#000000",
+										opacity: 100,
+									},
 								},
-							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -248,7 +248,6 @@ const AddContentModal = ({
 						>
 							<X className="w-5 h-5" />
 						</Button>
-
 					</div>
 					<div className="mx-auto w-full border-t border-gray-300/70" />
 					<div className="flex-1 overflow-y-auto mt-4">

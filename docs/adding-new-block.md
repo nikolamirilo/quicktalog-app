@@ -1,62 +1,38 @@
-# Adding a New Content Block Flow
+# Adding a New Content Block
 
-This document outlines the step-by-step flow for adding a new Content Block to the Quicktalog application, using the `DividerBlock` as an example.
+Follow these steps to add a new content block type (e.g., `DividerBlock`, `VideoBlock`).
 
-## 1. Type Definition
-Ensure the block type definition exists. Ideally, this lives in `@quicktalog/common`, but for development, ensure the interface extends `BaseContentBlock`.
+## 1. Type Definitions
+**Updates required in:** `@quicktalog/common` (or local types)
 
-```typescript
-export type DividerBlock = BaseContentBlock & {
-  type: "divider";
-  spacing: number // rem
-  border?: {
-    isEnabled: boolean
-    style?: "solid" | "dashed" | "dotted"
-    thickness?: number // px
-    color?: string
-    opacity?: number //0-100
-  }
-};
-```
+1.  Define the block interface extending `BaseContentBlock`.
+2.  Add the new type to the `ContentBlock` union type.
 
-## 2. Main Block Renderer
-The main rendering loop (likely in `Catalogue.tsx` or `CatalogueContent.tsx`) iterates over `catalogue.content`. You must add a case to handle the new block types.
+## 2. UI Components
+**Create in:** `components/catalogue/blocks/[BlockName].tsx`
+**Create in:** `components/catalogue/inputs/[BlockName]Input.tsx`
 
-```typescript
-{catalogue.content.map((block, index) => {
-    switch(block.type) {
-        // ... existing blocks
-        case "divider":
-             return <DividerBlockRenderer block={block} ... />;
-    }
-})}
-```
+1.  Create the **Renderer Component** (`[BlockName].tsx`) to display the block in the catalogue. Handle both "view" and "edit" modes.
+2.  Create the **Input Component** (`[BlockName]Input.tsx`) for the configuration form in the "Add Content" modal.
 
-## 3. Creating the Renderer Component
-Create a new component (e.g., `components/catalogue/blocks/DividerBlock.tsx`) that visualizes the block.
-- It should accept the block data as props.
-- It should apply the styles (spacing, border, etc.).
-- It should handle "edit mode" capabilities if necessary (e.g., clicking to edit).
+## 3. Modal Integration
+**Update in:** `components/catalogue/modals/AddContentModal.tsx`
 
-## 4. Add Content Modal (`AddContentModal.tsx`)
-This modal allows users to select which block to add.
-1.  **Update `ContentOption` type**: Add `"divider"` to the union type.
-2.  **Update `ContentOptionsSelector`**: Ensure the new option appears in the UI (icon + label).
-3.  **Update `blockData` state**: Add initial state for the new block (e.g., default spacing, border settings).
-4.  **Update Form UI**: Add the input fields for the new block configuration inside the modal (or a separate configuration step).
-    - *For Divider*: Add inputs for Spacing (Slider), Border Style (Dropdown), Color (Picker), etc.
-5.  **Update `handleAdd`**: Ensure the new block object is constructed correctly with the specific `type` and properties before calling `addBlock` or `updateCatalogue`.
+1.  Add the new block key to the `ContentOption` type.
+2.  Update `blockData` state to include initial values for the new block.
+3.  Add the new option to the render logic to show the Input Component when selected.
+4.  Update `handleAdd` to construct the correct block object when saving.
+5.  Add description text for the new block type in the modal header.
 
-## 5. State Management (`CatalogueContext.tsx`)
-The `CatalogueContext` exposes `addBlock` and `updateBlock`.
-- `addBlock` should already handle generic `ContentBlock` types.
-- Ensure any specific validation or logic for the new block is handled (usually not needed if generic).
+## 4. Selection UI
+**Update in:** `components/catalogue/blocks/common/ContentOptionsSelector.tsx`
 
-## 6. Input Components
-If the modal needs specific inputs (like `DividerInput`), create them or reuse existing ones.
-- **Slider**: Use `components/ui/slider.tsx`.
-- **Dropdown**: Use `components/ui/dropdown-menu.tsx` or `select`.
-- **Color Picker**: Use a color picker component.
+1.  Import a suitable icon from `lucide-react`.
+2.  Add the new option key to the `OptionKey` type.
+3.  Add the new option object (key, label, icon) to the `OPTIONS` array.
 
-## 7. Saving
-The `updateCatalogue` or `addBlock` function in context will trigger a state update. If there's a backend sync, it usually happens via an effect or explicit save action in the context. Ensure the new block data structure matches what the backend expects (JSON).
+## 5. Main Renderer
+**Update in:** `components/catalogue/view/CatalogueContent.tsx`
+
+1.  Import the new **Renderer Component**.
+2.  Add a condition in the main rendering loop to render your component when `block.type` matches.

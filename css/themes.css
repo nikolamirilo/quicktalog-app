@@ -42,8 +42,6 @@
 	--section-header-hover-shadow: 0 8px 30px rgba(211, 175, 55, 0.25);
 	--section-header-accent: #d3af37;
 	--section-header-gradient: linear-gradient(135deg, #ffffff 0%, #f8f4e0 100%);
-
-
 }
 .theme-monochrome {
 	--background: #f3f3f3;
@@ -89,8 +87,6 @@
 	--section-header-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 	--section-header-accent: #000000;
 	--section-header-gradient: linear-gradient(135deg, #ffffff 0%, #f3f3f3 100%);
-
-
 }
 
 .theme-creative {
@@ -137,8 +133,6 @@
 	--section-header-hover-shadow: 0 8px 30px rgba(255, 107, 107, 0.3);
 	--section-header-accent: #ff6b6b;
 	--section-header-gradient: linear-gradient(135deg, #2a2b39 0%, #343545 100%);
-
-
 }
 
 .theme-organic {
@@ -185,8 +179,6 @@
 	--section-header-hover-shadow: 0 8px 30px rgba(92, 116, 83, 0.25);
 	--section-header-accent: #5c7453;
 	--section-header-gradient: linear-gradient(135deg, #f4f3ec 0%, #efebc5 100%);
-
-
 }
 
 .theme-elegant {
@@ -233,7 +225,6 @@
 	--section-header-hover-shadow: 0 8px 30px rgba(102, 153, 204, 0.3);
 	--section-header-accent: #6699cc;
 	--section-header-gradient: linear-gradient(135deg, #262626 0%, #333333 100%);
-
 
 	background-image: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
 }
@@ -282,8 +273,6 @@
 	--section-header-hover-shadow: 0 8px 30px rgba(139, 108, 179, 0.3);
 	--section-header-accent: #8b6cb3;
 	--section-header-gradient: linear-gradient(135deg, #23233a 0%, #2d2d45 100%);
-
-
 }
 
 .theme-winter-light {

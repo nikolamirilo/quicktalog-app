@@ -320,12 +320,11 @@ export const validateStepHelper = (
 	};
 };
 
-
 export function extractDomain(url: string): string | null {
-  try {
-    const parsedUrl = new URL(url);
-    return parsedUrl.hostname;
-  } catch {
-    return null; // invalid URL
-  }
+	try {
+		const parsedUrl = new URL(url);
+		return parsedUrl.hostname;
+	} catch {
+		return null; // invalid URL
+	}
 }

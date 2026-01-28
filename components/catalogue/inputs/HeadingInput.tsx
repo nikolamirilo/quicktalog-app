@@ -112,8 +112,9 @@ const HeadingInput = () => {
 				<button
 					type="button"
 					onClick={toggleBold}
-					className={`px-3 py-1 !text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold ? "text-primary bg-primary/10" : "text-foreground/70"
-						}`}
+					className={`px-3 py-1 !text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isBold ? "text-primary bg-primary/10" : "text-foreground/70"
+					}`}
 					title="Bold"
 				>
 					B
@@ -126,8 +127,9 @@ const HeadingInput = () => {
 				<button
 					type="button"
 					onClick={toggleItalic}
-					className={`px-3 py-1 !text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic ? "text-primary bg-primary/10" : "text-foreground/70"
-						}`}
+					className={`px-3 py-1 !text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isItalic ? "text-primary bg-primary/10" : "text-foreground/70"
+					}`}
 					title="Italic"
 				>
 					I
@@ -142,10 +144,30 @@ const HeadingInput = () => {
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent className="bg-card-bg border-none">
-						<SelectItem value="extraLarge" className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary">Extra Large</SelectItem>
-						<SelectItem value="large" className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary">Large</SelectItem>
-						<SelectItem value="medium" className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary">Medium</SelectItem>
-						<SelectItem value="small" className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary">Small</SelectItem>
+						<SelectItem
+							value="extraLarge"
+							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+						>
+							Extra Large
+						</SelectItem>
+						<SelectItem
+							value="large"
+							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+						>
+							Large
+						</SelectItem>
+						<SelectItem
+							value="medium"
+							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+						>
+							Medium
+						</SelectItem>
+						<SelectItem
+							value="small"
+							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+						>
+							Small
+						</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>

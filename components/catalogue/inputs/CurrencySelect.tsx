@@ -1,12 +1,16 @@
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CURRENCIES } from "@/constants"
-import { useCatalogueContext } from "@/context/CatalogueContext"
-
-
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { CURRENCIES } from "@/constants";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 
 const CurrencySelect = ({ disabled = false }: { disabled?: boolean }) => {
-	const { catalogue, updateCatalogue } = useCatalogueContext()
+	const { catalogue, updateCatalogue } = useCatalogueContext();
 	return (
 		<div className="space-y-2">
 			<Label
@@ -35,7 +39,7 @@ const CurrencySelect = ({ disabled = false }: { disabled?: boolean }) => {
 				</SelectContent>
 			</Select>
 		</div>
-	)
-}
+	);
+};
 
-export default CurrencySelect
+export default CurrencySelect;
