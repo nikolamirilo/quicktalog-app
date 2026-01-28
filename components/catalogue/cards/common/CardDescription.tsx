@@ -18,6 +18,7 @@ const CardDescription = ({
 				"text-card-description font-body tracking-body leading-snug",
 				className,
 			)}
+			style={{ fontSize: "var(--content-font-size)" }}
 		>
 			{description}
 		</p>

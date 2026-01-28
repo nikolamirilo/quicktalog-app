@@ -13,6 +13,7 @@ import { ContentOptionsSelector } from "../blocks/common/ContentOptionsSelector"
 import RichTextEditor from "../blocks/common/RichTextEditor";
 import ContentInput from "../inputs/ContentInput";
 import CustomCodeInput from "../inputs/CustomCodeInput";
+import DividerInput from "../inputs/DividerInput";
 import IframeInput from "../inputs/IframeInput";
 
 interface AddContentModalProps {
@@ -28,7 +29,8 @@ type ContentOption =
 	| "category"
 	| "text"
 	| "iframe"
-	| "custom_code";
+	| "custom_code"
+	| "divider";
 
 const AddContentModal = ({
 	isOpen,
@@ -48,6 +50,16 @@ const AddContentModal = ({
 		items: [],
 		code: "",
 		content: "",
+		divider: {
+			spacing: 2,
+			border: {
+				isEnabled: true,
+				style: "solid",
+				thickness: 1,
+				color: "#000000",
+				opacity: 100,
+			},
+		},
 		isExpanded: true,
 	});
 
@@ -62,6 +74,22 @@ const AddContentModal = ({
 					items: (editingBlock as any).items || [],
 					code: (editingBlock as any).code || "",
 					content: (editingBlock as any).content || "",
+					divider:
+						editingBlock.type === "divider"
+							? {
+								spacing: (editingBlock as any).spacing,
+								border: (editingBlock as any).border,
+							}
+							: {
+								spacing: 2,
+								border: {
+									isEnabled: true,
+									style: "solid",
+									thickness: 1,
+									color: "#000000",
+									opacity: 100,
+								},
+							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -73,6 +101,16 @@ const AddContentModal = ({
 					items: [],
 					code: "",
 					content: "",
+					divider: {
+						spacing: 2,
+						border: {
+							isEnabled: true,
+							style: "solid",
+							thickness: 1,
+							color: "#000000",
+							opacity: 100,
+						},
+					},
 					isExpanded: true,
 				});
 			}
@@ -120,6 +158,12 @@ const AddContentModal = ({
 				...newBlock,
 				content: blockData.content || "<p>New text block</p>",
 			};
+		} else if (selectedOption === "divider") {
+			newBlock = {
+				...newBlock,
+				spacing: blockData.divider.spacing,
+				border: blockData.divider.border,
+			};
 		}
 
 		if (blockIndex !== undefined && blockIndex !== null && updateBlock) {
@@ -163,15 +207,15 @@ const AddContentModal = ({
 						</Button>
 					</div>
 					<ContentOptionsSelector
-						onSelect={setSelectedOption}
-						selectedOption={selectedOption}
+						onSelect={setSelectedOption as any}
+						selectedOption={selectedOption as any}
 					/>
 				</div>
 
 				{/* Right Content - 3/4 width */}
-				<div className="flex-1 flex flex-col min-w-0">
+				<div className="flex-1 flex flex-col min-w-0 px-4 ">
 					{/* Header */}
-					<div className="p-6 border-b border-gray-100 flex justify-between items-start">
+					<div className="py-2 border-gray-100 flex justify-between items-start">
 						<div>
 							<h3 className="text-lg font-semibold text-product-foreground capitalize">
 								{selectedOption.split("_").join(" ")}
@@ -191,6 +235,9 @@ const AddContentModal = ({
 
 								{selectedOption === "text" &&
 									"Add rich text content with headings, lists, links, and formatting."}
+
+								{selectedOption === "divider" &&
+									"Add a visual separator with customizable spacing and border styles."}
 							</p>
 						</div>
 						<Button
@@ -201,9 +248,10 @@ const AddContentModal = ({
 						>
 							<X className="w-5 h-5" />
 						</Button>
-					</div>
 
-					<div className="flex-1 overflow-y-auto">
+					</div>
+					<div className="mx-auto w-full border-t border-gray-300/70" />
+					<div className="flex-1 overflow-y-auto mt-4">
 						<div className="max-w-2xl">
 							{selectedOption === "category" && (
 								<ContentInput
@@ -236,7 +284,7 @@ const AddContentModal = ({
 							)}
 
 							{selectedOption === "text" && (
-								<div className="p-4">
+								<div>
 									<label className="block text-sm font-medium mb-2 text-gray-700">
 										Content
 									</label>
@@ -248,6 +296,18 @@ const AddContentModal = ({
 										}
 									/>
 								</div>
+							)}
+
+							{selectedOption === "divider" && (
+								<DividerInput
+									value={blockData.divider as any}
+									onChange={(val) =>
+										setBlockData({
+											...blockData,
+											divider: { ...blockData.divider, ...val } as any,
+										})
+									}
+								/>
 							)}
 						</div>
 					</div>

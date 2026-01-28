@@ -23,8 +23,12 @@ const SideImageCard = ({
 
 	return (
 		<article
-			className="flex bg-card-bg cursor-pointer text-card-text rounded-[12px] border border-card-border shadow-lg overflow-hidden max-w-full min-h-[110px] sm:min-h-[150px] relative group"
+			className="flex bg-card-bg cursor-pointer text-card-text border border-card-border overflow-hidden max-w-full min-h-[110px] sm:min-h-[150px] relative group"
 			onClick={onClick}
+			style={{
+				borderRadius: "var(--border-radius)",
+				boxShadow: "var(--box-shadow)",
+			}}
 			{...rootProps}
 		>
 			{mode === "edit" && onEdit && onDelete && (

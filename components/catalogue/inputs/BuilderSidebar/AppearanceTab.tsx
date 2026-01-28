@@ -97,11 +97,11 @@ const AppearanceTab = () => {
 	};
 
 	return (
-		<div className="space-y-8 p-4">
+		<div className="space-y-4 p-2">
 			{/* Themes Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Themes</h3>
+					<h3 className="text-lg font-bold text-center mx-auto">Themes</h3>
 				</div>
 
 				<div className="grid grid-cols-3 gap-2">
@@ -112,13 +112,11 @@ const AppearanceTab = () => {
 								key={themeItem.key}
 								type="button"
 								onClick={() => handleThemeSelect(themeItem.key)}
-								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${
-									themeItem.key
-								} ${
-									isSelected
+								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key
+									} ${isSelected
 										? "border-product-primary shadow-md scale-[1.03] border-[3px]"
 										: "hover:shadow-sm border border-border"
-								}`}
+									}`}
 								style={{
 									borderColor: isSelected
 										? "var(--product-primary)"
@@ -175,7 +173,7 @@ const AppearanceTab = () => {
 			{/* Style Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Style</h3>
+					<h3 className="text-lg font-bold text-center mx-auto">Style</h3>
 				</div>
 
 				<div className="space-y-6">
@@ -232,10 +230,10 @@ const AppearanceTab = () => {
 						</div>
 					</div>
 
-					{/* Border Radius */}
+					{/* Corner Radius */}
 					<div className="space-y-2">
 						<div className="flex justify-between">
-							<Label>Border Radius</Label>
+							<Label>Corner radius</Label>
 							<span className="text-sm text-muted-foreground">
 								{currentStyle.borderRadius ?? 12}px
 							</span>
@@ -304,7 +302,7 @@ const AppearanceTab = () => {
 			{/* Overlay Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Overlay</h3>
+					<h3 className="text-lg font-bold text-center mx-auto">Overlay</h3>
 				</div>
 
 				<div className="space-y-4">

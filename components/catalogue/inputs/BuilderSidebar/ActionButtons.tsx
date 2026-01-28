@@ -11,7 +11,7 @@ import React from "react";
 import { RxUpdate } from "react-icons/rx";
 import { toast } from "sonner";
 
-const ActionButtons = ({ isOpen }: { isOpen: boolean }) => {
+const ActionButtons = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (value: boolean) => void }) => {
 	const { catalogue, updateCatalogue: updateContextCatalogue } =
 		useCatalogueContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
@@ -20,36 +20,50 @@ const ActionButtons = ({ isOpen }: { isOpen: boolean }) => {
 		console.log("ActionButtons catalogue state:", catalogue);
 	}, [catalogue]);
 
-	const handleSave = async (silent = false) => {
-		console.log("Updating catalogue...", catalogue.id);
-		const res = await updateCatalogueAction(catalogue);
-		if (!res.success) {
-			if (!silent) toast.error(res.error || "Failed to save catalogue");
+	const handleSave = async () => {
+		try {
+			console.log("Updating catalogue...", catalogue.id);
+
+			const promise = updateCatalogueAction(catalogue);
+
+			toast.promise(promise, {
+				loading: "Saving...",
+				success: "Catalogue saved successfully",
+				error: "Failed to save catalogue",
+			});
+
+			const res = await promise;
+
+			if (!res) {
+				throw new Error("Save failed");
+			}
+
+			return res.data;
+		} catch (err) {
+			console.error(err);
 			return null;
 		}
-		if (!silent) toast.success("Changes saved");
-		return catalogue;
 	};
 
+
 	const handlePreview = async () => {
-		let currentCatalogueName = catalogue?.name;
-
 		// Always save first
-		const savedData = await handleSave(true);
-		if (!savedData) return;
+		const savedCatalogue = await handleSave();
+		if (!savedCatalogue) return;
 
-		if (savedData.name) {
-			currentCatalogueName = savedData.name;
-		}
+		const catalogueName = savedCatalogue.name;
 
-		if (!currentCatalogueName) {
+		if (!catalogueName) {
 			toast.error("Catalogue has no name/slug");
 			return;
 		}
 
-		window.open(`/catalogues/${currentCatalogueName}/preview`, "_blank");
+		window.open(
+			`/catalogues/${catalogueName}/preview`,
+			"_blank",
+			"noopener,noreferrer"
+		);
 	};
-
 	const handlePublish = async () => {
 		if (!catalogue?.id) {
 			toast.error("Please save the catalogue first");
@@ -60,6 +74,7 @@ const ActionButtons = ({ isOpen }: { isOpen: boolean }) => {
 		toast.promise(promise, {
 			loading: "Publishing...",
 			success: (success) => {
+				setIsOpen(false)
 				if (!success) throw new Error("Failed to update status");
 				updateContextCatalogue({ status: "active" });
 				setIsSuccessModalOpen(true);
@@ -85,14 +100,14 @@ const ActionButtons = ({ isOpen }: { isOpen: boolean }) => {
 		<>
 			{QUICK_ACTIONS.map(({ key, icon: Icon, label, primary, onClick }) => (
 				<Button
-					className={`${isOpen ? "justify-start" : "justify-center"} ${
-						primary
-							? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
-							: "hover:bg-accent"
-					}
+					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${primary
+						? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
+						: "hover:bg-product-primary/10 hover:border-product-primary/20"
+						}
             /* Mobile: Allow auto width and horizontal padding, hide explicit size constraint if needed */
-            w-auto px-3 md:w-auto md:px-3
+            px-2 md:px-2
             ${!isOpen && "md:w-9 md:px-0"} 
+            hover:scale-105 active:scale-95
           `}
 					key={key}
 					// On mobile, we always want "sm" or auto size to fit text. On desktop, follow isOpen logic.

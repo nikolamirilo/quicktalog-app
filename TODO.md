@@ -1,0 +1,3 @@
+- add templates (modal & template records)
+- implement limitations
+- update metadata on catalogue level

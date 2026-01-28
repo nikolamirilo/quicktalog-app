@@ -39,11 +39,11 @@ const HeaderTab = () => {
 	};
 
 	return (
-		<div className="space-y-8 p-4">
+		<div className="space-y-4 p-2">
 			{/* Interaction Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Interaction</h3>
+					<h3 className="text-lg font-bold text-center mx-auto">Interaction</h3>
 				</div>
 
 				<div className="space-y-4">
@@ -69,7 +69,7 @@ const HeaderTab = () => {
 							onCheckedChange={(checked) =>
 								handleChange("header.cta.isEnabled", checked)
 							}
-							className="data-[state=checked]:bg-yellow-400"
+							className="data-[state=checked]:bg-product-primary"
 						/>
 					</div>
 
@@ -103,7 +103,7 @@ const HeaderTab = () => {
 			{/* Icons Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Icons</h3>
+					<h3 className="text-lg font-bold text-center mx-auto">Icons</h3>
 				</div>
 
 				<div className="space-y-4">

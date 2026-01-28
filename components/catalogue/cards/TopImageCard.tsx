@@ -23,8 +23,12 @@ const TopImageCard = ({
 
 	return (
 		<article
-			className="flex cursor-pointer flex-col bg-card-bg text-card-text rounded-[12px] border border-card-border shadow-[0_0_5px_1px_rgba(233,245,254,0.2)] overflow-hidden w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] relative group"
+			className="flex cursor-pointer flex-col bg-card-bg text-card-text border border-card-border overflow-hidden w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] relative group"
 			onClick={onClick}
+			style={{
+				borderRadius: "var(--border-radius)",
+				boxShadow: "var(--box-shadow)",
+			}}
 			{...rootProps}
 		>
 			{mode === "edit" && onEdit && onDelete && (

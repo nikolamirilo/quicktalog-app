@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import CategoryBlockComponent from "../blocks/CategoryBlock";
 import ContainerBlockComponent from "../blocks/ContainerBlock";
 import CustomCodeBlockComponent from "../blocks/CustomCode";
+import DividerBlockComponent from "../blocks/DividerBlock";
 import IframeBlockComponent from "../blocks/IframeBlock";
 import TextBlockComponent from "../blocks/TextBlock";
 import ItemModal from "../modals/ItemModal";
@@ -298,6 +299,24 @@ const CatalogueContent = ({
 								updateBlock
 									? (newData) => updateBlock(index, newData)
 									: undefined
+							}
+							slug={block.id}
+						/>
+					);
+				}
+				if (block.type === "divider") {
+					return (
+						<DividerBlockComponent
+							block={block}
+							isFirst={index === 0}
+							isLast={index === data.length - 1}
+							key={`${block.id}-${block.order}`}
+							mode={mode}
+							onDelete={handleDeleteClick}
+							onMoveDown={() => moveBlock(index, "down")}
+							onMoveUp={() => moveBlock(index, "up")}
+							onUpdateBlock={
+								updateBlock ? (newData) => updateBlock(index, newData) : undefined
 							}
 							slug={block.id}
 						/>

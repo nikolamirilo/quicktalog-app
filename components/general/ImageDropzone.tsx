@@ -123,7 +123,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 						appearance={{
 							button: "hidden",
 							label: "text-gray-600 hover:text-product-primary",
-							container: type === "icon" ? `h-32 max-w-56` : `h-48 w-full`,
+							container: type === "icon" ? `h-48 w-full` : `h-48 w-full`,
 						}}
 						className={className}
 						config={{ mode: "auto" }}

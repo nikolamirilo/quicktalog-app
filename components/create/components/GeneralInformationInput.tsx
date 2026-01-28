@@ -1,4 +1,5 @@
 "use client";
+import CurrencySelect from "@/components/catalogue/inputs/CurrencySelect";
 import DescriptionEditor from "@/components/general/DescriptionEditor";
 import InformModal from "@/components/modals/InformModal";
 import { Card } from "@/components/ui/card";
@@ -19,7 +20,6 @@ import { generateUniqueSlug } from "@quicktalog/common";
 import { AlertCircle, CheckCircle, FileText, Link2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { FiInfo } from "react-icons/fi";
-import { CurrencySelect } from "./CurrencySelect";
 
 const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 	formData,
@@ -119,16 +119,15 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 						</div>
 						<div className="relative">
 							<Input
-								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
-									errors?.name
-										? "border-red-500 focus:border-red-500"
-										: formData.name &&
-												!nameExists &&
-												touched?.name &&
-												type === "create"
-											? "border-green-500 focus:border-green-500"
-											: ""
-								}`}
+								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${errors?.name
+									? "border-red-500 focus:border-red-500"
+									: formData.name &&
+										!nameExists &&
+										touched?.name &&
+										type === "create"
+										? "border-green-500 focus:border-green-500"
+										: ""
+									}`}
 								disabled={type === "edit" ? true : false}
 								id="name"
 								name="name"
@@ -230,23 +229,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 
 				{/* Row 3: Currency & Business Type */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div className="flex flex-col gap-3">
-						<Label
-							className="text-product-foreground font-medium font-body"
-							htmlFor="currency"
-						>
-							Currency<span className="text-red-500 ml-1">*</span>
-						</Label>
-						<CurrencySelect
-							onChange={handleCurrencyChange}
-							value={formData.currency}
-						/>
-						{touched?.currency && errors?.currency && (
-							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-								{errors.currency}
-							</div>
-						)}
-					</div>
+					<CurrencySelect disabled={type === "edit" ? true : false} />
 
 					<div className="flex flex-col gap-3">
 						<Label

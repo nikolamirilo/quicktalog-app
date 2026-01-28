@@ -10,18 +10,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { CURRENCIES } from "@/constants";
-import { BUSINESS_TYPES } from "@/constants/catalogue";
-import { LANGUAGE_OPTIONS } from "@/constants/ocr";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { Search, X } from "lucide-react";
+import BusinessType from "../inputs/BusinessType";
+import CatalogueNameInput from "../inputs/CatalogueNameInput";
+import CurrencySelect from "../inputs/CurrencySelect";
+import LanguageInput from "../inputs/LanguageInput";
 
 interface InitCatalogueModalProps {
 	isOpen: boolean;
@@ -41,9 +35,9 @@ export default function InitCatalogueModal({
 	// Generate URL based on catalog name
 	const generatedUrl = catalogue.name
 		? `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name
-				.toLowerCase()
-				.replace(/\s+/g, "-")
-				.replace(/[^a-z0-9-]/g, "")}`
+			.toLowerCase()
+			.replace(/\s+/g, "-")
+			.replace(/[^a-z0-9-]/g, "")}`
 		: `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/`;
 
 	const handleConfirm = () => {
@@ -94,112 +88,14 @@ export default function InitCatalogueModal({
 				<div className="space-y-4 py-4">
 					{/* Catalog Name and Language Row */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<div className="space-y-2">
-							<Label
-								className="text-sm font-medium text-product-foreground"
-								htmlFor="catalogName"
-							>
-								Catalog Name
-							</Label>
-							<Input
-								className="bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary"
-								disabled={loading}
-								id="catalogName"
-								onChange={(e) => updateCatalogue({ name: e.target.value })}
-								placeholder="e.g. Burger House"
-								type="text"
-								value={catalogue.name}
-							/>
-						</div>
-
-						<div className="space-y-2">
-							<Label
-								className="text-sm font-medium text-product-foreground"
-								htmlFor="language"
-							>
-								Language
-							</Label>
-							<Select
-								disabled={loading}
-								onValueChange={(value) => updateCatalogue({ language: value })}
-								value={catalogue.language}
-							>
-								<SelectTrigger
-									className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
-									id="language"
-								>
-									<SelectValue placeholder="Select language" />
-								</SelectTrigger>
-								<SelectContent>
-									{LANGUAGE_OPTIONS.map((lang) => (
-										<SelectItem key={lang.code} value={lang.code}>
-											{lang.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
+						<CatalogueNameInput disabled={loading} />
+						<LanguageInput disabled={loading} />
 					</div>
 
 					{/* Currency and Business Type Row */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<div className="space-y-2">
-							<Label
-								className="text-sm font-medium text-product-foreground"
-								htmlFor="currency"
-							>
-								Currency
-							</Label>
-							<Select
-								disabled={loading}
-								onValueChange={(value) => updateCatalogue({ currency: value })}
-								value={catalogue.currency}
-							>
-								<SelectTrigger
-									className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
-									id="currency"
-								>
-									<SelectValue placeholder="Select currency" />
-								</SelectTrigger>
-								<SelectContent>
-									{CURRENCIES.map((curr) => (
-										<SelectItem key={curr.value} value={curr.value}>
-											{curr.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
-
-						<div className="space-y-2">
-							<Label
-								className="text-sm font-medium text-product-foreground"
-								htmlFor="businessType"
-							>
-								Business Type
-							</Label>
-							<Select
-								disabled={loading}
-								onValueChange={(value) =>
-									updateCatalogue({ businessType: value })
-								}
-								value={catalogue.businessType}
-							>
-								<SelectTrigger
-									className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
-									id="businessType"
-								>
-									<SelectValue placeholder="Select type" />
-								</SelectTrigger>
-								<SelectContent>
-									{BUSINESS_TYPES.map((type) => (
-										<SelectItem key={type.value} value={type.value}>
-											{type.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
+						<CurrencySelect disabled={loading} />
+						<BusinessType disabled={loading} />
 					</div>
 
 					{/* URL Preview */}

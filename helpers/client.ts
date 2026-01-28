@@ -319,3 +319,13 @@ export const validateStepHelper = (
 		step3Error,
 	};
 };
+
+
+export function extractDomain(url: string): string | null {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.hostname;
+  } catch {
+    return null; // invalid URL
+  }
+}

@@ -1,4 +1,5 @@
 "use client";
+import { extractDomain } from "@/helpers/client";
 import { useState } from "react";
 import SmartLink from "./SmartLink";
 
@@ -27,7 +28,7 @@ export default function PartnerBadge({
 						className="w-8 h-8 rounded-full"
 						height={32}
 						onError={() => setImageError(true)}
-						src={`https://logo.clearbit.com/${partner.url}`}
+						src={`https://img.logo.dev/${extractDomain(partner.url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
 						width={32}
 					/>
 				)}

@@ -22,8 +22,12 @@ const TextOnlyCard = ({
 
 	return (
 		<article
-			className="bg-card-bg cursor-pointer rounded-[12px] p-2 sm:p-4 text-card-text flex flex-col sm:flex-row sm:flex-wrap border border-card-border shadow-[0_0_5px_1px_rgba(233,245,254,0.2)] gap-1.5 sm:gap-2 sm:items-center sm:justify-between relative group"
+			className="bg-card-bg cursor-pointer p-2 sm:p-4 text-card-text flex flex-col sm:flex-row sm:flex-wrap border border-card-border gap-1.5 sm:gap-2 sm:items-center sm:justify-between relative group"
 			onClick={onClick}
+			style={{
+				borderRadius: "var(--border-radius)",
+				boxShadow: "var(--box-shadow)",
+			}}
 			{...rootProps}
 		>
 			{mode === "edit" && onEdit && onDelete && (

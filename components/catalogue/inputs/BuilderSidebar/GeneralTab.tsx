@@ -2,15 +2,11 @@ import ImageDropzone from "@/components/general/ImageDropzone";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { Info } from "lucide-react";
 import { useState } from "react";
+import CatalogueNameInput from "../CatalogueNameInput";
+import CurrencySelect from "../CurrencySelect";
+import LanguageInput from "../LanguageInput";
 
 const GeneralTab = () => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
@@ -42,22 +38,21 @@ const GeneralTab = () => {
 	};
 
 	return (
-		<div className="space-y-8 p-4">
+		<div className="space-y-4 p-2">
 			{/* Logo Section */}
-			<div className="space-y-4">
+			<div className="space-y-2">
+				<div className="flex items-center">
+					<h3 className="text-lg font-bold text-center mx-auto">
+						General Information
+					</h3>
+				</div>
+				<CatalogueNameInput disabled={true} />
+				<LanguageInput />
+				<CurrencySelect />
+				{/* <BusinessType /> */}
 				<div className="space-y-2">
 					<div className="flex items-center gap-2">
 						<Label className="text-base">Logo</Label>
-						<TooltipProvider>
-							<Tooltip>
-								<TooltipTrigger>
-									<Info className="h-4 w-4 text-muted-foreground" />
-								</TooltipTrigger>
-								<TooltipContent>
-									<p>Upload your business logo here.</p>
-								</TooltipContent>
-							</Tooltip>
-						</TooltipProvider>
 					</div>
 
 					<ImageDropzone
@@ -73,8 +68,8 @@ const GeneralTab = () => {
 
 			{/* Contact Information Section */}
 			<div className="space-y-4">
-				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">
+				<div className="flex items-center">
+					<h3 className="text-lg font-bold text-center mx-auto">
 						Contact Information
 					</h3>
 				</div>
@@ -83,16 +78,6 @@ const GeneralTab = () => {
 					<div className="space-y-2">
 						<div className="flex items-center gap-2">
 							<Label htmlFor="contact-phone">Phone Number</Label>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger>
-										<Info className="h-4 w-4 text-muted-foreground" />
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Contact phone number for your customers.</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
 						</div>
 						<Input
 							id="contact-phone"
@@ -105,16 +90,6 @@ const GeneralTab = () => {
 					<div className="space-y-2">
 						<div className="flex items-center gap-2">
 							<Label htmlFor="contact-email">Email</Label>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger>
-										<Info className="h-4 w-4 text-muted-foreground" />
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Contact email address.</p>
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
 						</div>
 						<Input
 							id="contact-email"
@@ -128,11 +103,11 @@ const GeneralTab = () => {
 
 			{/* Metadata Section */}
 			<div className="space-y-4">
-				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Metadata</h3>
+				<div className="flex items-center">
+					<h3 className="text-lg font-bold text-center mx-auto">Metadata</h3>
 				</div>
 
-				<div className="space-y-4">
+				<div className="space-y-2">
 					<div className="space-y-2">
 						<Label htmlFor="meta-title">Title</Label>
 						<Input

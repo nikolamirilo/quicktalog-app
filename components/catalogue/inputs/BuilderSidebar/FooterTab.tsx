@@ -10,6 +10,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { extractDomain } from "@/helpers/client";
 import { Partner } from "@quicktalog/common";
 import { Info, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -99,11 +100,11 @@ const FooterTab = () => {
 	};
 
 	return (
-		<div className="space-y-8 p-4">
+		<div className="space-y-4 p-2">
 			{/* Interaction Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Interaction</h3>
+					<h3 className="text-lg font-bold text-center mx-auto">Interaction</h3>
 				</div>
 
 				<div className="space-y-4">
@@ -187,7 +188,7 @@ const FooterTab = () => {
 			{/* Business Information Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">
+					<h3 className="text-lg font-bold text-center mx-auto">
 						Business Information
 					</h3>
 				</div>
@@ -288,12 +289,19 @@ const FooterTab = () => {
 			{/* Social Media Links Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="font-serif text-xl font-medium">Social Media Links</h3>
+					<h3 className="text-lg font-bold text-center mx-auto">Social Media Links</h3>
 				</div>
 
 				<div className="space-y-4">
 					{catalogue.contact?.socials?.map((url, index) => (
 						<div key={index} className="flex gap-2">
+							<img
+								alt={`Social Icon go`}
+								className="w-8 h-8 rounded-full"
+								height={32}
+								src={`https://img.logo.dev/${extractDomain(url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
+								width={32}
+							/>
 							<Input value={url} disabled />
 							<Button
 								variant="ghost"
@@ -327,7 +335,7 @@ const FooterTab = () => {
 			<div className="space-y-4">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2">
-						<h3 className="font-serif text-xl font-medium">Partners</h3>
+						<h3 className="text-lg font-bold text-center mx-auto">Partners</h3>
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger>

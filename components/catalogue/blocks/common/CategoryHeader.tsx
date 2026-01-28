@@ -47,6 +47,8 @@ const CategoryHeader = ({
 					fontWeight: "var(--font-weight-heading)",
 					letterSpacing: "var(--letter-spacing-heading)",
 					transform: "translate3d(0, 0, 0)",
+					borderRadius: "var(--border-radius)",
+					transitionDuration: "var(--animation-duration)",
 				}}
 				type="button"
 				variant="section-header"
@@ -54,8 +56,11 @@ const CategoryHeader = ({
 				<div
 					aria-hidden="true"
 					className="absolute inset-0 bg-gradient-to-r from-transparent via-section-header-accent/8 to-transparent 
-          opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out"
-					style={{ willChange: "opacity" }}
+          opacity-0 group-hover:opacity-100 transition-opacity ease-out"
+					style={{
+						willChange: "opacity",
+						transitionDuration: "var(--animation-duration)",
+					}}
 				/>
 
 				<span className="relative z-10">
@@ -64,10 +69,11 @@ const CategoryHeader = ({
 						<span
 							aria-hidden="true"
 							className="absolute left-0 -bottom-1 h-0.5 bg-section-header-accent rounded-full
-              transition-all duration-200 ease-out origin-left"
+              transition-all ease-out origin-left"
 							style={{
 								width: showContent ? "100%" : "0%",
 								willChange: "width",
+								transitionDuration: "var(--animation-duration)",
 							}}
 						/>
 					</span>
@@ -77,15 +83,19 @@ const CategoryHeader = ({
 						<div
 							aria-hidden="true"
 							className="w-7 h-7 bg-section-header-accent/10 rounded-full flex items-center justify-center
-            group-hover:bg-section-header-accent/15 transition-colors duration-150 ease-out"
-							style={{ willChange: "background-color" }}
+            group-hover:bg-section-header-accent/15 transition-colors ease-out"
+							style={{
+								willChange: "background-color",
+								transitionDuration: "var(--animation-duration)",
+							}}
 						>
 							<FiChevronDown
 								aria-hidden="true"
-								className="text-lg text-foreground transition-transform duration-200 ease-out"
+								className="text-lg text-foreground transition-transform ease-out"
 								style={{
 									transform: showContent ? "rotate(180deg)" : "rotate(0deg)",
 									willChange: "transform",
+									transitionDuration: "var(--animation-duration)",
 								}}
 							/>
 						</div>

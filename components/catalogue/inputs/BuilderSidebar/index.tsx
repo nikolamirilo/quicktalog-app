@@ -31,26 +31,26 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-	{
-		key: "appearance",
-		icon: Palette,
-		label: "Appearance",
-		content: <AppearanceTab />,
-	},
-];
+		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+		{
+			key: "appearance",
+			icon: Palette,
+			label: "Appearance",
+			content: <AppearanceTab />,
+		},
+	];
 
 const tabTriggerClass =
-	"data-[state=active]:!bg-product-primary !bg-[#E3E3E3] data-[state=active]:border-product-primary data-[state=active]:bg-product-hover-background  data-[state=active]:font-bold rounded-lg";
+	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
 
 const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
 
 	return (
 		<aside
-			className={`!z-[1000] fixed bg-product-background shadow-lg transition-all duration-300 flex 
+			className={`!z-[1000] fixed bg-product-background shadow-xl transition-all duration-300 flex 
         /* Mobile: Bottom App Bar */
         bottom-0 left-0 w-full flex-col-reverse
         ${isOpen ? "h-[100dvh]" : "h-auto"}
@@ -62,7 +62,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 		>
 			{/* Mobile Actions / Desktop Top actions */}
 			<div
-				className={`flex items-center p-3 justify-around md:justify-around
+				className={`flex items-center py-3 px-2 justify-around md:justify-around
           /* Mobile: Always row, toggle button on right */
           w-full flex-row
           
@@ -74,7 +74,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 					onClick={() => setIsOpen((v) => !v)}
 					size={isOpen ? "sm" : "icon"}
 					variant="grayed"
-					className="ml-auto md:ml-0 md:flex hidden"
+					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95"
 				>
 					{/* Desktop Icons */}
 					<div className="hidden md:block">
@@ -90,14 +90,14 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 					</div>
 				</Button>
 				<span
-					className={`border-gray-400 hidden md:block
+					className={`border-gray-300/70 hidden md:block
             ${isOpen ? "border-r h-6" : "border-b w-full"}
           `}
 				></span>
 
 				{/* Mobile: ActionButtons usually on left/center. Desktop: Top/Center */}
 				<div className="flex md:contents w-full justify-around md:w-auto md:justify-start gap-2 items-center">
-					<ActionButtons isOpen={isOpen} />
+					<ActionButtons isOpen={isOpen} setIsOpen={setIsOpen} />
 					{/* Mobile Toggle Button */}
 					<Button
 						onClick={() => setIsOpen((v) => !v)}
@@ -111,27 +111,28 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 				</div>
 			</div>
 
-			<div className="w-11/12 mx-auto border-b-[1.5px] pb-3 md:border-b-0 md:pb-0 md:border-t-[1.5px] md:pt-3 border-gray-400"></div>
-
+			<div className={`mx-auto w-[95%] border-t border-gray-300/70 ${!isOpen && "md:hidden"}`} />
 			{/* Tabs Content */}
 			{isOpen && (
 				<Tabs
-					className={`flex flex-col flex-1 overflow-hidden           `}
+					className={`flex flex-col flex-1 overflow-hidden bg-gray-50/50`}
 					defaultValue="general"
 				>
-					<TabsList className="w-full justify-around bg-transparent p-0 py-4 md:py-0 px-3 gap-2 h-auto">
-						{TABS.map(({ key, icon: Icon, label }) => (
-							<TabsTrigger className={tabTriggerClass} key={key} value={key}>
-								<Icon className="w-4 h-4 mr-1" />
-								<span className="text-xs py-[1px]">{label}</span>
-							</TabsTrigger>
-						))}
-					</TabsList>
-					<div className="md:hidden w-full h-[1px] bg-gray-400 my-2"></div>
-					<ScrollArea className="flex-1 py-2">
+					<div className="px-2 py-4 bg-product-background">
+						<TabsList className="w-full flex bg-gray-100 p-1 rounded-lg h-auto gap-1">
+							{TABS.map(({ key, icon: Icon, label }) => (
+								<TabsTrigger className={tabTriggerClass} key={key} value={key}>
+									<Icon className="w-4 h-4 mr-1.5" />
+									<span className="text-xs">{label}</span>
+								</TabsTrigger>
+							))}
+						</TabsList>
+					</div>
+
+					<ScrollArea className="flex-1">
 						<div className="p-4">
 							{TABS.map(({ key, content }) => (
-								<TabsContent className="mt-0" key={key} value={key}>
+								<TabsContent className="mt-0 focus-visible:outline-none" key={key} value={key}>
 									{content}
 								</TabsContent>
 							))}

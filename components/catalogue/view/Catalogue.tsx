@@ -3,6 +3,7 @@ import AppearanceOptions from "@/components/general/AppearanceOptions";
 import type { Catalogue, ContentBlock } from "@quicktalog/common";
 import { themes } from "@quicktalog/common";
 import { useState } from "react";
+import HtmlContent from "../../general/HtmlContent";
 import Overlay from "../../general/Overlay";
 import BuilderSidebar from "../inputs/BuilderSidebar";
 import ContentBlockButton from "../inputs/ContentBlockButton";
@@ -11,6 +12,41 @@ import AddContentModal from "../modals/AddContentModal";
 import CatalogueContent from "./CatalogueContent";
 import CatalogueFooter from "./CatalogueFooter";
 import CatalogueHeader from "./CatalogueHeader";
+
+// Map font family keys to CSS variable values
+const fontFamilyMap: Record<string, string> = {
+	arial: "Arial, sans-serif",
+	inter: "var(--font-inter)",
+	lora: "var(--font-lora-regular)",
+	playfair: "var(--font-playfair-display)",
+	nunito: "var(--font-nunito)",
+	crimson: "var(--font-crimson-text)",
+	poppins: "var(--font-poppins)",
+};
+
+// Map font size keys to CSS values
+const contentFontSizeMap: Record<string, string> = {
+	small: "0.875rem",
+	medium: "1rem",
+	large: "1.125rem",
+};
+
+// Map shadow keys to CSS values
+const shadowMap: Record<string, string> = {
+	none: "none",
+	low: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+	medium:
+		"0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+	high: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+};
+
+// Map animation keys to duration values
+const animationMap: Record<string, string> = {
+	none: "0s",
+	minimal: "0.15s",
+	medium: "0.3s",
+	full: "0.5s",
+};
 
 const Catalogue = ({
 	item,
@@ -31,6 +67,21 @@ const Catalogue = ({
 			theme.key === item.appearance.theme.name && theme.type === "dark",
 	);
 
+	// Get the font family CSS value from the map
+	const fontFamily =
+		fontFamilyMap[item.appearance.style.fontFamily] ||
+		fontFamilyMap.arial;
+
+	// Get other style values
+	const contentFontSize =
+		contentFontSizeMap[item.appearance.style.contentFontSize || "medium"];
+	// Default to 12 if undefined
+	const borderRadius = `${item.appearance.style.borderRadius ?? 12}px`;
+	const boxShadow =
+		shadowMap[item.appearance.style.shadow || "low"];
+	const animationDuration =
+		animationMap[item.appearance.style.animation || "minimal"];
+
 	const defaultLogo = isDarkTheme ? "/logo-light.svg" : "/logo.svg";
 	const customLogo = item.logo || defaultLogo;
 
@@ -49,8 +100,24 @@ const Catalogue = ({
 			{type === "edit" && <BuilderSidebar />}
 			<div
 				aria-label={`${item.heading} Catalogue`}
-				className={`${item.appearance.theme.name || "theme-monochrome"} bg-background !font-${item.appearance.style.fontFamily} text-foreground min-h-screen flex flex-col`}
+				className={`${item.appearance.theme.name || "theme-monochrome"} bg-background text-foreground min-h-screen flex flex-col`}
 				role="application"
+				style={
+					{
+						fontFamily,
+						"--font-family-heading": fontFamily,
+						"--font-family-body": fontFamily,
+						"--font-weight-heading": "700",
+						"--font-weight-body": "400",
+						// New Style Variables
+						"--content-font-size": contentFontSize,
+						"--border-radius": borderRadius,
+						"--box-shadow": boxShadow,
+						"--animation-duration": animationDuration,
+						// Override theme-specific section header shadow if needed
+						"--section-header-shadow": boxShadow !== "none" ? boxShadow : undefined,
+					} as React.CSSProperties
+				}
 			>
 				{item.appearance.overlay.isEnabled && (
 					<Overlay emoji={item.appearance.overlay.icon} />
@@ -77,9 +144,16 @@ const Catalogue = ({
 							{type === "edit" ? (
 								<HeadingInput />
 							) : (
-								<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-lora font-semibold text-heading drop-shadow-sm mb-4">
-									{item.heading}
-								</h1>
+								(() => {
+									// Only render if heading has content
+									if (!item.heading) return null;
+									// If heading is plain text (no HTML h1 tag), wrap with default large size
+									const isHtml = item.heading.includes("<h1");
+									const headingHtml = isHtml
+										? item.heading
+										: `<h1 class="text-3xl sm:text-5xl font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center" data-size="large">${item.heading}</h1>`;
+									return <HtmlContent className="" html={headingHtml} />;
+								})()
 							)}
 						</div>
 						{type === "demo" && (

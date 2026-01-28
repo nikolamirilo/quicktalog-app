@@ -23,8 +23,12 @@ const CarouselCard = ({
 
 	return (
 		<article
-			className="flex flex-col cursor-pointer !h-full bg-card-bg text-card-text rounded-[16px] border border-card-border shadow-[0_0_5px_1px_rgba(233,245,254,0.2)] w-full flex-shrink-0 overflow-hidden relative group"
+			className="flex flex-col cursor-pointer !h-full bg-card-bg text-card-text border border-card-border w-full flex-shrink-0 overflow-hidden relative group"
 			onClick={onClick}
+			style={{
+				borderRadius: "var(--border-radius)",
+				boxShadow: "var(--box-shadow)",
+			}}
 			{...rootProps}
 		>
 			{mode === "edit" && onEdit && onDelete && (

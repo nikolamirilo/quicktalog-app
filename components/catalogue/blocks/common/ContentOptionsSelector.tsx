@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Code, Globe, Layout, Type } from "lucide-react";
+import { Code, Globe, Layout, SeparatorHorizontal, Type } from "lucide-react";
 import { TbCategoryPlus } from "react-icons/tb";
 
-type OptionKey = "container" | "category" | "iframe" | "custom_code" | "text";
+type OptionKey = "container" | "category" | "iframe" | "custom_code" | "text" | "divider";
 
 interface ContentOptionsSelectorProps {
 	selectedOption: OptionKey;
@@ -14,12 +14,13 @@ const OPTIONS: {
 	label: string;
 	icon: React.ElementType;
 }[] = [
-	{ key: "container", label: "Container", icon: Layout },
-	{ key: "category", label: "Category", icon: TbCategoryPlus },
-	{ key: "text", label: "Text", icon: Type },
-	{ key: "iframe", label: "Iframe", icon: Globe },
-	{ key: "custom_code", label: "Custom Code", icon: Code },
-];
+		{ key: "container", label: "Container", icon: Layout },
+		{ key: "category", label: "Category", icon: TbCategoryPlus },
+		{ key: "text", label: "Text", icon: Type },
+		{ key: "iframe", label: "Iframe", icon: Globe },
+		{ key: "custom_code", label: "Custom Code", icon: Code },
+		{ key: "divider", label: "Divider", icon: SeparatorHorizontal },
+	];
 
 export function ContentOptionsSelector({
 	selectedOption,
@@ -33,19 +34,17 @@ export function ContentOptionsSelector({
 					const isActive = selectedOption === key;
 					return (
 						<Button
-							className={`${
-								isActive
-									? "!bg-product-hover-background !text-navbar-button-active !border !border-product-primary shadow-sm font-semibold hover:scale-[1.03] hover:transform"
-									: ""
-							} flex items-center justify-center font-body flex-shrink-0 whitespace-nowrap min-w-[80px] h-10 px-4`}
+							className={`${isActive
+								? "!bg-product-hover-background !text-navbar-button-active !border !border-product-primary shadow-sm font-semibold hover:scale-[1.03] hover:transform"
+								: ""
+								} flex items-center justify-center font-body flex-shrink-0 whitespace-nowrap min-w-[80px] h-10 px-4`}
 							key={key}
 							onClick={() => onSelect(key)}
 							variant="nav"
 						>
 							<Icon
-								className={`w-4 h-4 mr-2 ${
-									isActive ? "text-product-primary" : "text-product-foreground"
-								}`}
+								className={`w-4 h-4 mr-2 ${isActive ? "text-product-primary" : "text-product-foreground"
+									}`}
 							/>
 							{label}
 						</Button>
@@ -60,19 +59,17 @@ export function ContentOptionsSelector({
 
 					return (
 						<Button
-							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${
-								isActive
-									? "bg-product-primary shadow-product-shadow text-white hover:text-white"
-									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
-							}`}
+							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${isActive
+								? "bg-product-primary shadow-product-shadow text-white hover:text-white"
+								: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
+								}`}
 							key={key}
 							onClick={() => onSelect(key)}
 							variant={isActive ? "default" : "ghost"}
 						>
 							<Icon
-								className={`w-6 h-6 ${
-									isActive ? "text-white" : "text-product-foreground"
-								}`}
+								className={`w-6 h-6 ${isActive ? "text-white" : "text-product-foreground"
+									}`}
 							/>
 							<span className="font-medium">{label}</span>
 						</Button>
