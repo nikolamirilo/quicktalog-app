@@ -1,4 +1,5 @@
 import { KEYWORDS } from "@/constants";
+import { htmlToText } from "@/helpers/client";
 import { Metadata } from "next";
 
 // Site-wide metadata
@@ -95,7 +96,6 @@ export function generatePageMetadata(
 	page: keyof typeof pageMetadata,
 ): Metadata {
 	const pageData = pageMetadata[page];
-
 	return {
 		title: pageData.title,
 		description: pageData.description,
@@ -130,10 +130,10 @@ export function generateCatalogueMetadata(
 	itemSubtitle: string,
 	name: string,
 ): Metadata {
-	const title = `${itemTitle} | Quicktalog`;
+	const title = `${htmlToText(itemTitle)} | Quicktalog`;
 	const description =
 		itemSubtitle ||
-		`Explore ${itemTitle}'s services and offerings in this interactive digital catalogue.`;
+		`Explore ${htmlToText(name)}'s services and offerings in this interactive digital catalogue.`;
 	return {
 		title,
 		description,

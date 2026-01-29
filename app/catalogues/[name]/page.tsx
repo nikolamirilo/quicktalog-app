@@ -67,7 +67,7 @@ export async function generateMetadata({
 			};
 		}
 
-		const data = await res.json();
+		const data: Catalogue = await res.json();
 
 		if (!data) {
 			return {
@@ -76,8 +76,9 @@ export async function generateMetadata({
 					"The service catalogue you're looking for doesn't exist or has been removed.",
 			};
 		}
-
-		return generateCatalogueMetadata(data.heading, data.description, name);
+		const title = data.metadata?.title || data.heading
+		const description = data.metadata?.description || data.heading
+		return generateCatalogueMetadata(title, description, name);
 	} catch (error) {
 		console.warn("generateMetadata error:", error);
 		return {

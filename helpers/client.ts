@@ -328,3 +328,69 @@ export function extractDomain(url: string): string | null {
 		return null; // invalid URL
 	}
 }
+
+export function htmlToText(html: string): string {
+  if (!html) return "";
+
+  // Use DOMParser (browser + modern runtimes)
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, "text/html");
+
+  // Elements that should create line breaks
+  const blockElements = new Set([
+    "P",
+    "DIV",
+    "BR",
+    "HR",
+    "SECTION",
+    "ARTICLE",
+    "HEADER",
+    "FOOTER",
+    "ASIDE",
+    "LI",
+    "UL",
+    "OL",
+    "TABLE",
+    "TR",
+    "TD",
+    "TH",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6",
+  ]);
+
+  function walk(node: Node): string {
+    let text = "";
+
+    node.childNodes.forEach((child) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        text += child.textContent ?? "";
+      }
+
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        const el = child as HTMLElement;
+        const tag = el.tagName;
+
+        const content = walk(el);
+
+        if (blockElements.has(tag)) {
+          text += content.trim() + "\n";
+        } else {
+          text += content;
+        }
+      }
+    });
+
+    return text;
+  }
+
+  return walk(doc.body)
+    .replace(/\u00A0/g, " ")          // nbsp → space
+    .replace(/[ \t]+/g, " ")          // collapse spaces
+    .replace(/\n{3,}/g, "\n\n")       // limit newlines
+    .trim();
+}
+
