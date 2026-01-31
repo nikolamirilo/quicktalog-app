@@ -44,16 +44,16 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			},
 			{
 				text:
-					features.categories_per_catalogue === "unlimited"
-						? "Unlimited categories & items"
-						: `Up to ${features.categories_per_catalogue} categories & ${features.items_per_catalogue} items per catalogue`,
-				type: "categories_and_items",
+					features.blocks_per_catalogue === "unlimited"
+						? "Unlimited blocks & items"
+						: `Up to ${features.blocks_per_catalogue} blocks & ${features.items_per_catalogue} items per catalogue`,
+				type: "blocks_and_items",
 			},
 			features.branding === true
 				? {
-						text: features.branding === true ? "Custom Branding" : null,
-						type: "custom_branding",
-					}
+					text: features.branding === true ? "Custom Branding" : null,
+					type: "custom_branding",
+				}
 				: null,
 			{
 				text: `${features.traffic_limit.toLocaleString()} page views per month`,
@@ -62,15 +62,15 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			features.ai_prompts === 0
 				? null
 				: {
-						text: `${features.ai_prompts} AI prompts per month`,
-						type: "ai-catalogue-generation",
-					},
+					text: `${features.ai_prompts} AI prompts per month`,
+					type: "ai-catalogue-generation",
+				},
 			features.ocr_ai_import === 0
 				? null
 				: {
-						text: `${features.ocr_ai_import} OCR AI imports per month`,
-						type: "ocr-ai-import",
-					},
+					text: `${features.ocr_ai_import} OCR AI imports per month`,
+					type: "ocr-ai-import",
+				},
 
 			features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,
 			features.custom_features
@@ -98,13 +98,13 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			"ocr-ai-import":
 				"AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
 			"ai-catalogue-generation":
-				"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into categories for your catalog.",
+				"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into blocks for your catalog.",
 			newsletter:
 				"Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
 			"custom-features":
 				"Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
-			categories_and_items:
-				"The total number of categories and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
+			blocks_and_items:
+				"The total number of blocks and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
 			custom_branding:
 				"Control over the visual branding of your catalogues, including logo upload, legal information, partners and contact information represent your business in the best possible way.",
 		};

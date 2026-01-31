@@ -1,13 +1,13 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/helpers/client";
+import { usePaddlePrices } from "@/hooks/usePaddelPrices";
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
 import { PricingPlan } from "@quicktalog/common";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BsFillCheckCircleFill } from "react-icons/bs";
-import { Button } from "@/components/ui/button";
-import { formatPrice } from "@/helpers/client";
-import { usePaddlePrices } from "@/hooks/usePaddelPrices";
 
 interface UpgradePlanModalProps {
 	isOpen: boolean;
@@ -50,15 +50,15 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 	const currentPrice =
 		prices[
-			billingCycle === "monthly"
-				? currentPlan.priceId.month
-				: currentPlan.priceId.year
+		billingCycle === "monthly"
+			? currentPlan.priceId.month
+			: currentPlan.priceId.year
 		];
 	const requiredPrice =
 		prices[
-			billingCycle === "monthly"
-				? requiredPlan.priceId.month
-				: requiredPlan.priceId.year
+		billingCycle === "monthly"
+			? requiredPlan.priceId.month
+			: requiredPlan.priceId.year
 		];
 
 	const displayCurrentPrice = currentPrice ? formatPrice(currentPrice) : "N/A";
@@ -76,7 +76,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 				text:
 					plan.name === "Premium"
 						? "Unlimited categories & items"
-						: `Up to ${plan.features.categories_per_catalogue} categories & ${plan.features.items_per_catalogue} items`,
+						: `Up to ${plan.features.blocks_per_catalogue} categories & ${plan.features.items_per_catalogue} items`,
 				type: "items",
 			});
 		}
@@ -145,7 +145,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 						The {currentPlan.name} plan only comes with{" "}
 						{limitType === "items"
 							? currentPlan.features.items_per_catalogue
-							: currentPlan.features.categories_per_catalogue}{" "}
+							: currentPlan.features.blocks_per_catalogue}{" "}
 						{limitType} per catalogue.
 					</p>
 				</div>
@@ -157,29 +157,26 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 						<div className="relative inline-flex w-full max-w-[260px] bg-product-background border border-product-border rounded-full p-1 shadow-sm">
 							<span
 								aria-hidden="true"
-								className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${
-									billingCycle === "yearly"
+								className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${billingCycle === "yearly"
 										? "translate-x-full"
 										: "translate-x-0"
-								}`}
+									}`}
 							/>
 							<button
-								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
-									billingCycle === "monthly"
+								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${billingCycle === "monthly"
 										? "text-product-foreground font-bold"
 										: "text-product-foreground/60 font-medium"
-								}`}
+									}`}
 								onClick={() => setBillingCycle("monthly")}
 								type="button"
 							>
 								Monthly
 							</button>
 							<button
-								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
-									billingCycle === "yearly"
+								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${billingCycle === "yearly"
 										? "text-product-foreground font-bold"
 										: "text-product-foreground/60 font-medium"
-								}`}
+									}`}
 								onClick={() => setBillingCycle("yearly")}
 								type="button"
 							>

@@ -40,7 +40,8 @@ const CustomCodeBlockComponent = ({
 				const doc = iframe.contentDocument || iframe.contentWindow?.document;
 				if (doc?.body) {
 					// Add a small buffer to prevent potential scrollbar flickering
-					const height = doc.documentElement.scrollHeight || doc.body.scrollHeight;
+					const height =
+						doc.documentElement.scrollHeight || doc.body.scrollHeight;
 					setIframeHeight(Math.max(height, 100));
 				}
 			} catch (e) {

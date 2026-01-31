@@ -52,7 +52,7 @@ const getLimitContent = (
 			case "items":
 				return currentPlan.features.items_per_catalogue;
 			case "categories":
-				return currentPlan.features.categories_per_catalogue;
+				return currentPlan.features.blocks_per_catalogue;
 			case "traffic":
 				return currentPlan.features.traffic_limit;
 			default:
@@ -71,7 +71,7 @@ const getLimitContent = (
 			case "items":
 				return requiredPlan.features?.items_per_catalogue;
 			case "categories":
-				return requiredPlan.features?.categories_per_catalogue;
+				return requiredPlan.features?.blocks_per_catalogue;
 			case "traffic":
 				return requiredPlan.features?.traffic_limit;
 			default:
@@ -392,7 +392,7 @@ const LimitsModal = ({
 														with{" "}
 														<strong>
 															{formatLimit(
-																requiredPlan.features.categories_per_catalogue,
+																requiredPlan.features.blocks_per_catalogue,
 															)}
 														</strong>{" "}
 														categories and{" "}
