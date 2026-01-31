@@ -76,3 +76,6 @@ export const BUSINESS_TYPES = [
 	{ value: "catering", label: "Catering" },
 	{ value: "other", label: "Other" },
 ];
+
+export const DEFAULT_IMAGE =
+	"https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q";

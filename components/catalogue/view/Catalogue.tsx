@@ -10,6 +10,7 @@ import BuilderSidebar from "../inputs/BuilderSidebar";
 import ContentBlockButton from "../inputs/ContentBlockButton";
 import HeadingInput from "../inputs/HeadingInput";
 import AddContentModal from "../modals/AddContentModal";
+import SelectTemplateModal from "../modals/SelectTemplateModal";
 import CatalogueContent from "./CatalogueContent";
 import CatalogueFooter from "./CatalogueFooter";
 import CatalogueHeader from "./CatalogueHeader";
@@ -224,6 +225,7 @@ const Catalogue = ({
 					requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
 					type="categories"
 				/>
+				{type === "edit" && <SelectTemplateModal />}
 			</div>
 		</>
 	);

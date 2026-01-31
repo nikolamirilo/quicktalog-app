@@ -13,9 +13,10 @@ import { eq, inArray } from "drizzle-orm";
 
 const catalogues = schema.catalogues;
 
-export async function deleteItem(id: string): Promise<boolean> {
+export async function deleteItem(name: string): Promise<boolean> {
 	try {
-		await drizzleClient.delete(catalogues).where(eq(catalogues.id, id));
+		await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));
+		await redis.del(name);
 		await revalidateData();
 		return true;
 	} catch (err) {

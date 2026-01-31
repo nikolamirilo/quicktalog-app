@@ -1,5 +1,6 @@
 "use client";
 import ItemDetailModal from "@/components/catalogue/modals/ItemDetailModal";
+import { DEFAULT_IMAGE } from "@/constants/catalogue";
 import { Item } from "@quicktalog/common";
 import { useMemo, useState } from "react";
 import CarouselCard from "./CarouselCard";
@@ -13,9 +14,6 @@ const CARD_VARIANTS: Record<string, React.ElementType> = {
 	variant_3: TextOnlyCard,
 	variant_4: CarouselCard,
 };
-
-const DEFAULT_IMAGE =
-	"https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q";
 
 const CardsSwitcher = ({
 	variant,

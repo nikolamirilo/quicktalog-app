@@ -19,7 +19,7 @@ import FooterTab from "./FooterTab";
 import GeneralTab from "./GeneralTab";
 import HeaderTab from "./HeaderTab";
 
-type TabKey = "general" | "header" | "footer" | "appearance";
+type TabKey = "general" | "templates" | "header" | "footer" | "appearance";
 
 interface SidebarProps {
 	defaultOpen?: boolean;

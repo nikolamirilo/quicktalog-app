@@ -224,7 +224,7 @@ const ItemDropdownMenu = ({
 								(catalogue.status === "in preparation" &&
 									catalogue.createdAt > tenMinutesAgo.toISOString())
 							}
-							onClick={() => handleDeleteItem(catalogue.id)}
+							onClick={() => handleDeleteItem(catalogue.name)}
 						>
 							<span className="flex items-center gap-2">
 								<FiTrash2 size={18} />

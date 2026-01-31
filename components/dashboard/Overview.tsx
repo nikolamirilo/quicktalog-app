@@ -8,6 +8,7 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { statusOrder } from "@/constants/sort";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 import {
 	deleteItem,
 	deleteMultipleItems,
@@ -51,9 +52,10 @@ const Overview = ({
 	const matchedTier = tiers.find((tier) => tier.id == planId);
 	const maxAllowedCatalogues = matchedTier?.features.catalogues || 0;
 	const hasExcessCatalogues = catalogues.length > maxAllowedCatalogues;
+	const { resetCatalogue } = useCatalogueContext();
 
-	async function handleDeleteItem(id: string) {
-		setItemToDelete(id);
+	async function handleDeleteItem(name: string) {
+		setItemToDelete(name);
 		setIsModalOpen(true);
 	}
 
@@ -61,6 +63,7 @@ const Overview = ({
 		if (itemToDelete) {
 			await deleteItem(itemToDelete);
 			await refreshAll();
+			resetCatalogue();
 			setItemToDelete(null);
 			setIsModalOpen(false);
 		}
