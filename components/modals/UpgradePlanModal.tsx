@@ -50,15 +50,15 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 	const currentPrice =
 		prices[
-		billingCycle === "monthly"
-			? currentPlan.priceId.month
-			: currentPlan.priceId.year
+			billingCycle === "monthly"
+				? currentPlan.priceId.month
+				: currentPlan.priceId.year
 		];
 	const requiredPrice =
 		prices[
-		billingCycle === "monthly"
-			? requiredPlan.priceId.month
-			: requiredPlan.priceId.year
+			billingCycle === "monthly"
+				? requiredPlan.priceId.month
+				: requiredPlan.priceId.year
 		];
 
 	const displayCurrentPrice = currentPrice ? formatPrice(currentPrice) : "N/A";
@@ -157,26 +157,29 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 						<div className="relative inline-flex w-full max-w-[260px] bg-product-background border border-product-border rounded-full p-1 shadow-sm">
 							<span
 								aria-hidden="true"
-								className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${billingCycle === "yearly"
+								className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${
+									billingCycle === "yearly"
 										? "translate-x-full"
 										: "translate-x-0"
-									}`}
+								}`}
 							/>
 							<button
-								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${billingCycle === "monthly"
+								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
+									billingCycle === "monthly"
 										? "text-product-foreground font-bold"
 										: "text-product-foreground/60 font-medium"
-									}`}
+								}`}
 								onClick={() => setBillingCycle("monthly")}
 								type="button"
 							>
 								Monthly
 							</button>
 							<button
-								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${billingCycle === "yearly"
+								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
+									billingCycle === "yearly"
 										? "text-product-foreground font-bold"
 										: "text-product-foreground/60 font-medium"
-									}`}
+								}`}
 								onClick={() => setBillingCycle("yearly")}
 								type="button"
 							>
