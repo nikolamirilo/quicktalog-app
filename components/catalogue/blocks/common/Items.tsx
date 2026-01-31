@@ -67,7 +67,7 @@ const Items = ({
 									<SwiperSlide
 										aria-label={`Item ${i + 1} of ${(block.items || []).length}`}
 										className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto"
-										key={record.id}
+										key={record.id || i}
 										role="group"
 									>
 										<CardsSwitcher
@@ -115,11 +115,11 @@ const Items = ({
 							<div className={getGridStyle(currentLayout)}>
 								{(block.items || []).map((record, i) => (
 									<CardsSwitcher
+										key={record.id || i}
 										currency={getCurrencySymbol(currency)}
 										i={i}
 										isFirst={i === 0}
 										isLast={i === (block.items || []).length - 1}
-										key={record.id}
 										mode={mode}
 										onDelete={onDeleteItem ? () => onDeleteItem(i) : undefined}
 										onEdit={onEditItem ? () => onEditItem(i) : undefined}
@@ -136,13 +136,12 @@ const Items = ({
 								{mode === "edit" && onAddItem && (
 									<button
 										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--text)]/20 bg-[var(--card-bg)]/50 hover:bg-[var(--section-hover)] hover:border-[var(--primary)] hover:scale-[1.01] transition-all duration-200 cursor-pointer 
-												${
-													currentLayout === "variant_2"
-														? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
-														: currentLayout === "variant_3"
-															? "w-full min-h-[100px]"
-															: "w-full min-h-[110px] sm:min-h-[150px]"
-												}
+												${currentLayout === "variant_2"
+												? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
+												: currentLayout === "variant_3"
+													? "w-full min-h-[100px]"
+													: "w-full min-h-[110px] sm:min-h-[150px]"
+											}
 											`}
 										onClick={() => onAddItem(blockIndex)}
 										style={{ borderRadius: "var(--border-radius)" }}

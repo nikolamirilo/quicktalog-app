@@ -1,5 +1,4 @@
 import { KEYWORDS } from "@/constants";
-import { htmlToText } from "@/helpers/client";
 import { Metadata } from "next";
 
 // Site-wide metadata
@@ -130,10 +129,10 @@ export function generateCatalogueMetadata(
 	itemSubtitle: string,
 	name: string,
 ): Metadata {
-	const title = `${htmlToText(itemTitle)} | Quicktalog`;
+	const title = `${itemTitle} | Quicktalog`;
 	const description =
 		itemSubtitle ||
-		`Explore ${htmlToText(name)}'s services and offerings in this interactive digital catalogue.`;
+		`Explore ${name}'s services and offerings in this interactive digital catalogue.`;
 	return {
 		title,
 		description,
