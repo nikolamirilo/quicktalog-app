@@ -1,5 +1,4 @@
 "use client";
-import CTASection from "@/components/general/CTASection";
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +24,7 @@ import { FiCpu, FiFileText, FiTool } from "react-icons/fi";
 import { LuSquareMenu } from "react-icons/lu";
 import { RiSparkling2Line } from "react-icons/ri";
 import { TbFileAnalytics } from "react-icons/tb";
+import UpgradePlanCTA from "../general/UpgradePlanCTA";
 import InformModal from "../modals/InformModal";
 import CreateCatalogueButton from "./components/CreateCatalogueButton";
 import DashboardItem from "./components/DashboardItem";
@@ -259,7 +259,7 @@ const Overview = ({
 					</TooltipProvider>
 				</div>
 				{usage.catalogues >= matchedTier.features.catalogues && (
-					<CTASection
+					<UpgradePlanCTA
 						ctaLabel="Upgrade plan"
 						href="/pricing"
 						subtitle=" Upgrade your plan to get more catalogues, features, and higher limits."
@@ -267,7 +267,7 @@ const Overview = ({
 					/>
 				)}
 				{usage.traffic.pageview_count >= matchedTier.features.traffic_limit && (
-					<CTASection
+					<UpgradePlanCTA
 						ctaLabel="Upgrade plan"
 						href="/pricing"
 						subtitle="Upgrade your plan to increase your traffic limit and reactivate your catalogues."

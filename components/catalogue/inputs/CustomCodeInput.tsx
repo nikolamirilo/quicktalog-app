@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import Editor from "@monaco-editor/react";
 
 interface CustomCodeInputProps {
 	value: {
@@ -18,14 +18,23 @@ const CustomCodeInput = ({ value, onChange }: CustomCodeInputProps) => {
 				HTML Code
 				<span className="text-red-500 ml-1">*</span>
 			</Label>
-			<Textarea
-				className="min-h-[200px] font-mono text-sm"
-				id="custom-code-input"
-				onChange={(e) => onChange({ ...value, code: e.target.value })}
-				placeholder="Enter your custom HTML code here..."
-				rows={10}
-				value={value.code || ""}
-			/>
+			<div className="border rounded-md overflow-hidden h-[350px]">
+				<Editor
+					height="100%"
+					width="100%"
+					defaultLanguage="html"
+					value={value.code || ""}
+					onChange={(v) => onChange({ ...value, code: v || "" })}
+					theme="vs-dark"
+					options={{
+						minimap: { enabled: false },
+						fontSize: 14,
+						wordWrap: "on",
+						automaticLayout: true,
+						scrollBeyondLastLine: false,
+					}}
+				/>
+			</div>
 			<p className="text-xs text-gray-500">
 				Paste valid HTML code. It will be rendered directly in your catalogue.
 			</p>

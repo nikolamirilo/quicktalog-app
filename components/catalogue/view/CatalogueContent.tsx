@@ -1,8 +1,9 @@
 "use client";
+import LimitsModal from "@/components/modals/LimitsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useMainContext } from "@/context/MainContext";
 import { CatalogueContentProps } from "@/types/components";
-import { ContentLayout, Item } from "@quicktalog/common";
+import { ContentLayout, Item, tiers, UserData } from "@quicktalog/common";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CategoryBlockComponent from "../blocks/CategoryBlock";
@@ -20,7 +21,8 @@ const CatalogueContent = ({
 	theme,
 	mode,
 	onEditBlock,
-}: CatalogueContentProps) => {
+	userData,
+}: CatalogueContentProps & { userData?: UserData }) => {
 	const {
 		addItem,
 		removeItem,
@@ -46,6 +48,7 @@ const CatalogueContent = ({
 	} | null>(null);
 
 	const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+	const [showLimitsModal, setShowLimitsModal] = useState(false);
 	const searchParams = useSearchParams();
 
 	useEffect(() => {
@@ -120,7 +123,32 @@ const CatalogueContent = ({
 		}
 	};
 
+	const checkItemLimits = () => {
+		if (!userData || !userData.currentPlan) return false;
+
+		const limit = userData.currentPlan.features.items_per_catalogue;
+		if (limit === "unlimited") return false;
+		if (limit === undefined) return false;
+
+		let totalItems = 0;
+		data.forEach((block) => {
+			if (block.type === "category" || block.type === "container") {
+				const b = block as any;
+				if (b.items) {
+					totalItems += b.items.length;
+				}
+			}
+		});
+
+		return totalItems >= limit;
+	};
+
 	const openAddItemModal = (index: number) => {
+		if (checkItemLimits()) {
+			setShowLimitsModal(true);
+			return;
+		}
+
 		const targetBlock = data[index];
 		if (targetBlock.type === "category" || targetBlock.type === "container") {
 			setActiveBlockLayout(targetBlock.layout);
@@ -339,6 +367,13 @@ const CatalogueContent = ({
 					setActiveBlockLayout(null);
 				}}
 				onSave={handleSaveItem}
+			/>
+			<LimitsModal
+				isOpen={showLimitsModal}
+				onClose={() => setShowLimitsModal(false)}
+				currentPlan={userData?.currentPlan}
+				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
+				type="items"
 			/>
 		</main>
 	);

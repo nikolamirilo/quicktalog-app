@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { PricingPlan } from "@quicktalog/common";
 import { Code, Globe, Layout, SeparatorHorizontal, Type } from "lucide-react";
 import { TbCategoryPlus } from "react-icons/tb";
 
@@ -13,6 +14,7 @@ type OptionKey =
 interface ContentOptionsSelectorProps {
 	selectedOption: OptionKey;
 	onSelect: (value: OptionKey) => void;
+	planFeatures?: PricingPlan["features"];
 }
 
 const OPTIONS: {
@@ -23,21 +25,38 @@ const OPTIONS: {
 	{ key: "container", label: "Container", icon: Layout },
 	{ key: "category", label: "Category", icon: TbCategoryPlus },
 	{ key: "text", label: "Text", icon: Type },
+	{ key: "divider", label: "Divider", icon: SeparatorHorizontal },
 	{ key: "iframe", label: "Iframe", icon: Globe },
 	{ key: "custom_code", label: "Custom Code", icon: Code },
-	{ key: "divider", label: "Divider", icon: SeparatorHorizontal },
 ];
 
 export function ContentOptionsSelector({
 	selectedOption,
 	onSelect,
+	planFeatures,
 }: ContentOptionsSelectorProps) {
+	const isLocked = (key: OptionKey) => {
+		if (!planFeatures) return false;
+
+		switch (key) {
+			case "divider":
+				return planFeatures.blocks?.divider === false;
+			case "iframe":
+				return planFeatures.blocks?.iframe === false;
+			case "custom_code":
+				return planFeatures.blocks?.customCode === false;
+			default:
+				return false;
+		}
+	};
+
 	return (
 		<div className="flex-1 px-3 space-y-2">
 			{/* Mobile Dropdown (Slider) */}
 			<div className="md:hidden mobile-tab-scroll flex flex-row gap-2 overflow-x-auto py-2 px-1 bg-product-background/95 mb-4">
 				{OPTIONS.map(({ key, label, icon: Icon }) => {
 					const isActive = selectedOption === key;
+					const locked = isLocked(key);
 					return (
 						<Button
 							className={`${
@@ -48,6 +67,7 @@ export function ContentOptionsSelector({
 							key={key}
 							onClick={() => onSelect(key)}
 							variant="nav"
+							locked={locked}
 						>
 							<Icon
 								className={`w-4 h-4 mr-2 ${
@@ -64,6 +84,7 @@ export function ContentOptionsSelector({
 			<div className="hidden md:block space-y-2">
 				{OPTIONS.map(({ key, label, icon: Icon }) => {
 					const isActive = selectedOption === key;
+					const locked = isLocked(key);
 
 					return (
 						<Button
@@ -75,6 +96,7 @@ export function ContentOptionsSelector({
 							key={key}
 							onClick={() => onSelect(key)}
 							variant={isActive ? "default" : "ghost"}
+							locked={locked}
 						>
 							<Icon
 								className={`w-6 h-6 ${

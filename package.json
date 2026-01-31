@@ -17,6 +17,7 @@
 		"@clerk/nextjs": "^6.23.0",
 		"@headlessui/react": "^2.2.4",
 		"@material-tailwind/react": "^2.1.10",
+		"@monaco-editor/react": "^4.7.0",
 		"@next/third-parties": "^15.5.2",
 		"@paddle/paddle-js": "^1.4.2",
 		"@paddle/paddle-node-sdk": "^3.2.0",

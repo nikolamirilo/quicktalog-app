@@ -67,7 +67,7 @@ const Items = ({
 									<SwiperSlide
 										aria-label={`Item ${i + 1} of ${(block.items || []).length}`}
 										className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto"
-										key={record.name}
+										key={record.id}
 										role="group"
 									>
 										<CardsSwitcher
@@ -119,7 +119,7 @@ const Items = ({
 										i={i}
 										isFirst={i === 0}
 										isLast={i === (block.items || []).length - 1}
-										key={record.name}
+										key={record.id}
 										mode={mode}
 										onDelete={onDeleteItem ? () => onDeleteItem(i) : undefined}
 										onEdit={onEditItem ? () => onEditItem(i) : undefined}

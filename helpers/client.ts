@@ -393,3 +393,10 @@ export function htmlToText(html: string): string {
 		.replace(/\n{3,}/g, "\n\n") // limit newlines
 		.trim();
 }
+
+export function snakeToTitleCase(str: string) {
+	return str
+		.split("_")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");
+}

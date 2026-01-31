@@ -1,7 +1,8 @@
 "use client";
 import AppearanceOptions from "@/components/general/AppearanceOptions";
-import type { Catalogue, ContentBlock } from "@quicktalog/common";
-import { themes } from "@quicktalog/common";
+import LimitsModal from "@/components/modals/LimitsModal";
+import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
+import { themes, tiers } from "@quicktalog/common";
 import { useState } from "react";
 import HtmlContent from "../../general/HtmlContent";
 import Overlay from "../../general/Overlay";
@@ -50,9 +51,11 @@ const animationMap: Record<string, string> = {
 const Catalogue = ({
 	item,
 	type,
+	userData,
 }: {
 	item: Catalogue;
 	type?: "edit" | "view" | "demo";
+	userData?: UserData;
 }) => {
 	const isCustom = type !== "demo";
 	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
@@ -60,6 +63,7 @@ const Catalogue = ({
 		block: ContentBlock;
 		index: number;
 	} | null>(null);
+	const [showLimitsModal, setShowLimitsModal] = useState(false);
 
 	const isDarkTheme = themes.some(
 		(theme) =>
@@ -172,10 +176,23 @@ const Catalogue = ({
 								onEditBlock={handleEditBlock}
 								theme={item.appearance.theme.name}
 								type="item"
+								userData={userData}
 							/>
 						)}
 						{type === "edit" && (
-							<ContentBlockButton setIsAddContentOpen={setIsAddContentOpen} />
+							<ContentBlockButton
+								setIsAddContentOpen={() => {
+									const limit =
+										userData?.currentPlan?.features?.blocks_per_catalogue;
+									if (limit !== "unlimited" && limit !== undefined) {
+										if (item.content.length >= limit) {
+											setShowLimitsModal(true);
+											return;
+										}
+									}
+									setIsAddContentOpen(true);
+								}}
+							/>
 						)}
 					</section>
 				</main>
@@ -186,15 +203,26 @@ const Catalogue = ({
 					type={isCustom ? "custom" : "default"}
 				/>
 
-				<AddContentModal
-					blockIndex={editingBlock?.index}
-					editingBlock={editingBlock?.block}
-					isOpen={isAddContentOpen}
-					onClose={() => {
-						setIsAddContentOpen(false);
-						setEditingBlock(null);
-					}}
-					setIsOpen={setIsAddContentOpen}
+				{userData && (
+					<AddContentModal
+						blockIndex={editingBlock?.index}
+						editingBlock={editingBlock?.block}
+						isOpen={isAddContentOpen}
+						onClose={() => {
+							setIsAddContentOpen(false);
+							setEditingBlock(null);
+						}}
+						setIsOpen={setIsAddContentOpen}
+						userData={userData}
+					/>
+				)}
+
+				<LimitsModal
+					isOpen={showLimitsModal}
+					onClose={() => setShowLimitsModal(false)}
+					currentPlan={userData?.currentPlan}
+					requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
+					type="categories"
 				/>
 			</div>
 		</>
