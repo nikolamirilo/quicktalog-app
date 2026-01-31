@@ -76,7 +76,7 @@ export async function generateMetadata({
 					"The service catalogue you're looking for doesn't exist or has been removed.",
 			};
 		}
-		const title = data.metadata?.title || data.heading;
+		const title = data.metadata.title || data.heading;
 		const description = data.metadata?.description || data.heading;
 		return generateCatalogueMetadata(title, description, name);
 	} catch (error) {
