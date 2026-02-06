@@ -61,19 +61,19 @@ const ItemModal = ({
 		<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
 			<AlertDialogContent className="w-[95vw] md:max-w-2xl p-0 overflow-hidden bg-white rounded-2xl border-none shadow-2xl gap-0 max-h-[90vh] flex flex-col">
 				{/* Header */}
-				<AlertDialogTitle className="p-6 pb-4 relative border-b border-gray-100 flex-shrink-0">
+				<AlertDialogTitle className="p-4 sm:p-6 pb-4 relative border-b border-gray-100 flex-shrink-0">
 					<button
-						className="absolute right-6 top-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
+						className="absolute right-4 sm:right-6 top-4 sm:top-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
 						onClick={onClose}
 					>
 						<X className="w-5 h-5 text-gray-400" />
 					</button>
-					<div className="text-2xl  font-bold text-gray-900">
+					<div className="text-xl sm:text-2xl font-bold text-gray-900">
 						{initialItem ? "Edit Item" : "Add Item"}
 					</div>
 				</AlertDialogTitle>
 
-				<div className="flex-1 overflow-y-auto p-6">
+				<div className="flex-1 overflow-y-auto p-4 sm:p-6">
 					<ItemInput
 						currency={currency}
 						layout={layout}
@@ -82,12 +82,13 @@ const ItemModal = ({
 					/>
 				</div>
 
-				<div className="p-6 pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-gray-100 flex-shrink-0 bg-white">
-					<Button onClick={onClose} variant="secondary">
+				<div className="p-4 sm:p-6 pt-4 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 border-t border-gray-100 flex-shrink-0 bg-white">
+					<Button className="w-full sm:w-auto" onClick={onClose} variant="secondary">
 						Cancel
 					</Button>
 
 					<Button
+						className="w-full sm:w-auto"
 						disabled={!isFormValid}
 						onClick={() => handleSave(true)}
 						variant="outline"
@@ -95,7 +96,7 @@ const ItemModal = ({
 						Add Item & Add Another
 					</Button>
 
-					<Button disabled={!isFormValid} onClick={() => handleSave(false)}>
+					<Button className="w-full sm:w-auto" disabled={!isFormValid} onClick={() => handleSave(false)}>
 						{initialItem ? "Save Item" : "Add Item"}
 					</Button>
 				</div>

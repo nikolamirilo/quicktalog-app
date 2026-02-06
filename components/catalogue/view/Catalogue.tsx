@@ -81,8 +81,6 @@ const Catalogue = ({
 	// Default to 12 if undefined
 	const borderRadius = `${item.appearance.style.borderRadius ?? 12}px`;
 	const boxShadow = shadowMap[item.appearance.style.shadow || "low"];
-	const animationDuration =
-		animationMap[item.appearance.style.animation || "minimal"];
 
 	const defaultLogo = isDarkTheme ? "/logo-light.svg" : "/logo.svg";
 	const customLogo = item.logo || defaultLogo;
@@ -115,7 +113,7 @@ const Catalogue = ({
 						"--content-font-size": contentFontSize,
 						"--border-radius": borderRadius,
 						"--box-shadow": boxShadow,
-						"--animation-duration": animationDuration,
+						"--animation-duration": "0.5s",
 						// Override theme-specific section header shadow if needed
 						"--section-header-shadow":
 							boxShadow !== "none" ? boxShadow : undefined,

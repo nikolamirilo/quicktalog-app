@@ -153,14 +153,14 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 			</div>
 
 			{/* Price Row */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start">
 				<div className="space-y-2">
 					<Label htmlFor="item-price">
 						Item Price ({currency}) <span className="text-red-500">*</span>
 					</Label>
 					<div className="flex gap-2">
 						<Input
-							className="flex-1"
+							className="flex-1 min-w-0"
 							disabled={value.isFree}
 							id="item-price"
 							onChange={(e) => handlePriceStringChange(e.target.value)}
@@ -176,7 +176,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 							}
 							value={value.denominator || "none"}
 						>
-							<SelectTrigger className="w-[100px]">
+							<SelectTrigger className="w-[90px] sm:w-[100px] flex-shrink-0">
 								<SelectValue placeholder="Unit" />
 							</SelectTrigger>
 							<SelectContent>
@@ -190,7 +190,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 					</div>
 				</div>
 
-				<div className="flex gap-6 pt-10">
+				<div className="flex flex-wrap gap-4 sm:gap-6 pt-0 md:pt-10">
 					<div className="flex items-center space-x-2">
 						<Checkbox
 							checked={value.isFree}
@@ -224,7 +224,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 
 			{/* Sale Fields */}
 			{value.discount?.isOnDiscount && !value.isFree && (
-				<div className="grid grid-cols-2 gap-6">
+				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
 					<div className="space-y-2">
 						<Label htmlFor="sale-price">
 							Sale Price ({currency}) <span className="text-red-500">*</span>

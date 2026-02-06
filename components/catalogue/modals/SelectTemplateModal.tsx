@@ -33,19 +33,19 @@ const SelectTemplateModal = () => {
 
 	return (
 		<AlertDialog open={isOpen}>
-			<AlertDialogContent className="max-w-[95vw] w-fit p-0 overflow-hidden bg-white border-none shadow-2xl rounded-3xl">
-				<div className="p-8 pb-0 text-center">
-					<AlertDialogHeader className="mb-2">
-						<AlertDialogTitle className="text-3xl font-heading font-bold text-center w-full">
+			<AlertDialogContent className="max-w-[95vw] md:max-w-4xl w-full p-0 overflow-hidden bg-white border-none shadow-2xl rounded-3xl max-h-[95vh]">
+				<div className="p-3 sm:p-6 md:p-8 pb-2 sm:pb-0 text-center">
+					<AlertDialogHeader className="mb-1 sm:mb-2">
+						<AlertDialogTitle className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-center w-full">
 							Choose a Template
 						</AlertDialogTitle>
-						<AlertDialogDescription className="text-center w-full text-lg">
+						<AlertDialogDescription className="text-center w-full text-xs sm:text-sm md:text-base">
 							Start with a pre-made layout or build from scratch
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 				</div>
 
-				<div className="max-h-[85vh] overflow-y-auto pb-4">
+				<div className="flex-1 overflow-y-auto pb-3 sm:pb-4">
 					<TemplatesInput onComplete={handleComplete} />
 				</div>
 			</AlertDialogContent>

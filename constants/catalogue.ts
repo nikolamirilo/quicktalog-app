@@ -29,7 +29,6 @@ export const defaultCatalogueData = {
 			contentFontSize: "medium",
 			fontFamily: "arial",
 			borderRadius: 12,
-			animation: "minimal",
 			shadow: "low",
 		},
 		overlay: {

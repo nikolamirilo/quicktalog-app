@@ -75,8 +75,8 @@ export default function TemplatesInput({
 	return (
 		<div
 			className={cn(
-				"w-full mx-auto flex flex-col items-end gap-6",
-				direction === "row" ? "p-4" : "p-1",
+				"w-full mx-auto flex flex-col items-end gap-2 sm:gap-4 md:gap-6",
+				direction === "row" ? "p-2 sm:p-4" : "p-1",
 			)}
 		>
 			<div
@@ -94,7 +94,7 @@ export default function TemplatesInput({
 							key={template.id}
 							onClick={() => setSelectedId(template.id)}
 							className={cn(
-								"group relative flex flex-col px-2 py-6 rounded-2xl cursor-pointer transition-all duration-300 h-full border-2",
+								"group relative flex flex-col px-2 py-3 sm:py-4 md:py-6 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2",
 								isSelected
 									? "border-product-primary bg-product-primary/5 shadow-product-shadow ring-1 ring-product-primary"
 									: "border-product-border bg-product-background hover:border-product-primary/50 hover:shadow-lg hover:scale-[1.01]",
@@ -102,27 +102,27 @@ export default function TemplatesInput({
 							)}
 						>
 							{/* Header */}
-							<div className="flex justify-between items-start mb-6 z-10">
+							<div className="flex justify-between items-start mb-2 sm:mb-4 md:mb-6 z-10">
 								<h3
 									className={cn(
-										"font-heading mx-auto mt-4 font-bold text-base text-product-foreground",
+										"font-heading mx-auto mt-1 sm:mt-2 md:mt-4 font-bold text-sm sm:text-base text-product-foreground",
 									)}
 								>
 									{isScratch ? "" : template.title}
 								</h3>
 								{template.badge && (
-									<span className="bg-product-primary text-button-text text-xs font-bold px-3 py-1 rounded-full shadow-sm absolute top-1 right-1">
+									<span className="bg-product-primary text-button-text text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm absolute top-1 right-1">
 										{template.badge}
 									</span>
 								)}
 							</div>
 
 							{/* Visual/Icon */}
-							<div className="flex-grow flex items-center justify-center mb-6 z-0">
+							<div className="flex-grow flex items-center justify-center mb-2 sm:mb-4 md:mb-6 z-0">
 								{isScratch ? (
-									<div className="flex flex-col items-center gap-3 text-gray-400 group-hover:text-product-primary transition-colors">
-										<Plus className="w-10 h-10" />
-										<span className="font-heading font-bold text-lg text-gray-700 group-hover:text-product-foreground transition-colors">
+									<div className="flex flex-col items-center gap-2 sm:gap-3 text-gray-400 group-hover:text-product-primary transition-colors">
+										<Plus className="w-8 h-8 sm:w-10 sm:h-10" />
+										<span className="font-heading font-bold text-base sm:text-lg text-gray-700 group-hover:text-product-foreground transition-colors">
 											{template.title}
 										</span>
 									</div>
@@ -130,23 +130,24 @@ export default function TemplatesInput({
 									<Image
 										src={template?.image}
 										alt={template.title}
-										width={120}
-										height={120}
+										width={80}
+										height={80}
+										className="w-20 h-20 sm:w-28 sm:h-28 md:w-[120px] md:h-[120px]"
 									/>
 								)}
 							</div>
 
 							{/* Description */}
-							<div className="text-center space-y-3 mt-auto">
-								<p className="text-sm text-product-foreground-accent font-medium leading-relaxed">
+							<div className="text-center space-y-1 sm:space-y-2 md:space-y-3 mt-auto">
+								<p className="text-xs sm:text-sm text-product-foreground-accent font-medium leading-snug sm:leading-relaxed">
 									{template.description}
 								</p>
 								{template.details.length > 0 && (
-									<div className="flex items-center justify-center gap-3 text-xs text-gray-500 font-semibold">
+									<div className="flex items-center justify-center gap-2 sm:gap-3 text-[10px] sm:text-xs text-gray-500 font-semibold">
 										{template.details.map((detail, index) => (
 											<div key={index} className="flex items-center gap-1">
 												{index > 0 && (
-													<span className="w-1 h-1 rounded-full bg-gray-300 mr-2" />
+													<span className="w-1 h-1 rounded-full bg-gray-300 mr-1 sm:mr-2" />
 												)}
 												{detail}
 											</div>
@@ -159,7 +160,7 @@ export default function TemplatesInput({
 				})}
 			</div>
 
-			<Button onClick={handleSelect} size="sm" className="font-bold">
+			<Button onClick={handleSelect} size="sm" className="font-bold text-xs sm:text-sm">
 				Select Template
 			</Button>
 		</div>

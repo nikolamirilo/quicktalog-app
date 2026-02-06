@@ -43,7 +43,6 @@ const FONT_OPTIONS = [
 ];
 
 const FONT_SIZES = ["small", "medium", "large"];
-const ANIMATIONS = ["none", "minimal", "medium", "full"];
 const SHADOWS = ["none", "low", "medium", "high"];
 
 const AppearanceTab = () => {
@@ -251,30 +250,6 @@ const AppearanceTab = () => {
 						/>
 					</div>
 
-					{/* Animation */}
-					<div className="space-y-2">
-						<div className="flex justify-between">
-							<Label>Animation</Label>
-							<span className="text-sm text-muted-foreground capitalize">
-								{currentStyle.animation || "minimal"}
-							</span>
-						</div>
-						<Slider
-							value={[
-								getSliderValue(ANIMATIONS, currentStyle.animation || "minimal"),
-							]}
-							min={0}
-							max={3}
-							step={1}
-							onValueChange={(vals) =>
-								handleStyleChange("animation", ANIMATIONS[vals[0]])
-							}
-						/>
-						<div className="flex justify-between text-xs text-muted-foreground px-1">
-							<span>None</span>
-							<span>Full</span>
-						</div>
-					</div>
 
 					{/* Shadow */}
 					<div className="space-y-2">
