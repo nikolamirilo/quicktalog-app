@@ -47,7 +47,9 @@ const TopImageCard = ({
 				/>
 			)}
 			{record.discount?.isOnDiscount && record.discount?.discountPercentage && (
-				<DiscountBadge discountPercentage={record.discount.discountPercentage} />
+				<DiscountBadge
+					discountPercentage={record.discount.discountPercentage}
+				/>
 			)}
 			<div className="aspect-[4/3] bg-gray-100 relative w-full">
 				<OptimizedImage

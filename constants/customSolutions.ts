@@ -175,7 +175,6 @@ const ctaSection = `
   }
 </style>`;
 
-
 export const customCodeTemplates = {
-  ctaSection,
-}
+	ctaSection,
+};

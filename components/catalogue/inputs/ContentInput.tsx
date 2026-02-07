@@ -16,7 +16,6 @@ interface ContentInputProps {
 const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 	return (
 		<div>
-
 			<div className="flex flex-col md:flex-row space-y-4 gap-4 md:items-center">
 				<div className="flex flex-col justify-center gap-4 md:w-8/12">
 					<Label
@@ -52,7 +51,6 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 				) : null}
 			</div>
 
-
 			{/* Layout Selection for this category */}
 			<div className="space-y-4">
 				<Label
@@ -65,9 +63,10 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 				<div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
 					{layouts.map((layoutOption) => (
 						<div
-							className={`relative cursor-pointer rounded-xl border border-gray-200 p-2 ${value.layout === layoutOption.key &&
+							className={`relative cursor-pointer rounded-xl border border-gray-200 p-2 ${
+								value.layout === layoutOption.key &&
 								"border-product-primary border-2"
-								}`}
+							}`}
 							key={layoutOption.key}
 							onClick={() =>
 								onChange({ ...value, layout: layoutOption.key as any })

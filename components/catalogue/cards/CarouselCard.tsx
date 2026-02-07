@@ -47,7 +47,9 @@ const CarouselCard = ({
 				/>
 			)}
 			{record.discount?.isOnDiscount && record.discount?.discountPercentage && (
-				<DiscountBadge discountPercentage={record.discount.discountPercentage} />
+				<DiscountBadge
+					discountPercentage={record.discount.discountPercentage}
+				/>
 			)}
 			<div className="aspect-[4/3] w-full bg-transparent relative">
 				<OptimizedImage

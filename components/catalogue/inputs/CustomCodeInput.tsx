@@ -23,7 +23,11 @@ interface CustomCodeInputProps {
 	userData: UserData;
 }
 
-const CustomCodeInput = ({ value, onChange, userData }: CustomCodeInputProps) => {
+const CustomCodeInput = ({
+	value,
+	onChange,
+	userData,
+}: CustomCodeInputProps) => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [previewTemplate, setPreviewTemplate] = useState<{
 		name: string;
@@ -82,8 +86,9 @@ const CustomCodeInput = ({ value, onChange, userData }: CustomCodeInputProps) =>
 				</div>
 
 				<div
-					className={`border rounded-md overflow-hidden transition-all duration-300 ${isExpanded ? "h-[350px]" : "h-[75px]"
-						}`}
+					className={`border rounded-md overflow-hidden transition-all duration-300 ${
+						isExpanded ? "h-[350px]" : "h-[75px]"
+					}`}
 				>
 					<Editor
 						height="100%"
@@ -144,10 +149,11 @@ const CustomCodeInput = ({ value, onChange, userData }: CustomCodeInputProps) =>
 										Preview
 									</Button>
 									<Button
-										className={`flex-1 ${canUseTemplates
-											? ""
-											: "bg-gray-100 text-gray-400 cursor-not-allowed"
-											}`}
+										className={`flex-1 ${
+											canUseTemplates
+												? ""
+												: "bg-gray-100 text-gray-400 cursor-not-allowed"
+										}`}
 										disabled={!canUseTemplates}
 										onClick={() => canUseTemplates && handleUseTemplate(code)}
 										size="sm"
@@ -173,7 +179,10 @@ const CustomCodeInput = ({ value, onChange, userData }: CustomCodeInputProps) =>
 			</div>
 
 			{/* Preview Modal */}
-			<Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
+			<Dialog
+				open={!!previewTemplate}
+				onOpenChange={() => setPreviewTemplate(null)}
+			>
 				<DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-product-background">
 					<DialogHeader>
 						<DialogTitle>
@@ -187,9 +196,7 @@ const CustomCodeInput = ({ value, onChange, userData }: CustomCodeInputProps) =>
 								<p className="text-sm text-gray-300">Preview</p>
 							</div>
 							<div className="p-6 bg-gray-900" ref={previewRef}>
-								{previewTemplate && (
-									<HtmlContent html={previewTemplate.code} />
-								)}
+								{previewTemplate && <HtmlContent html={previewTemplate.code} />}
 							</div>
 						</div>
 
@@ -202,7 +209,9 @@ const CustomCodeInput = ({ value, onChange, userData }: CustomCodeInputProps) =>
 								Close
 							</Button>
 							<Button
-								onClick={() => previewTemplate && handleUseTemplate(previewTemplate.code)}
+								onClick={() =>
+									previewTemplate && handleUseTemplate(previewTemplate.code)
+								}
 								type="button"
 								className="bg-product-primary hover:bg-product-primary/90"
 							>

@@ -116,10 +116,11 @@ const ActionButtons = ({
 		<>
 			{QUICK_ACTIONS.map(({ key, icon: Icon, label, primary, onClick }) => (
 				<Button
-					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${primary
+					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${
+						primary
 							? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
 							: "hover:bg-product-primary/10 hover:border-product-primary/20"
-						}
+					}
             /* Mobile: Allow auto width and horizontal padding, hide explicit size constraint if needed */
             px-2 md:px-2
             ${!isOpen && "md:w-9 md:px-0"} 

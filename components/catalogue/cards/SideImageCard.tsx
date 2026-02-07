@@ -47,7 +47,9 @@ const SideImageCard = ({
 				/>
 			)}
 			{record.discount?.isOnDiscount && record.discount?.discountPercentage && (
-				<DiscountBadge discountPercentage={record.discount.discountPercentage} />
+				<DiscountBadge
+					discountPercentage={record.discount.discountPercentage}
+				/>
 			)}
 			<div className="w-[40%] min-w-[90px] sm:min-w-[120px] aspect-[4/3] relative flex-shrink-0">
 				<OptimizedImage

@@ -83,19 +83,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-								spacing: (editingBlock as any).spacing,
-								border: (editingBlock as any).border,
-							}
+									spacing: (editingBlock as any).spacing,
+									border: (editingBlock as any).border,
+								}
 							: {
-								spacing: 2,
-								border: {
-									isEnabled: true,
-									style: "solid",
-									thickness: 1,
-									color: "#000000",
-									opacity: 100,
+									spacing: 2,
+									border: {
+										isEnabled: true,
+										style: "solid",
+										thickness: 1,
+										color: "#000000",
+										opacity: 100,
+									},
 								},
-							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -356,7 +356,7 @@ const AddContentModal = ({
 										)}
 
 										{selectedOption === "text" && (
-											<div >
+											<div>
 												<label className="block text-sm font-medium mb-2 text-gray-700">
 													Content
 												</label>
