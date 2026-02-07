@@ -5,6 +5,7 @@ import { CardProps } from "@/types/components";
 import CardControls from "./common/CardControls";
 import CardDescription from "./common/CardDescription";
 import CardTitle from "./common/CardTitle";
+import DiscountBadge from "./common/DiscountBadge";
 import PriceDisplay from "./common/PriceDisplay";
 
 const TopImageCard = ({
@@ -18,6 +19,8 @@ const TopImageCard = ({
 	onMoveDown,
 	isFirst,
 	isLast,
+	blockIndex,
+	itemIndex,
 }: CardProps) => {
 	const { slugId, rootProps } = useCard(record);
 
@@ -33,13 +36,18 @@ const TopImageCard = ({
 		>
 			{mode === "edit" && onEdit && onDelete && (
 				<CardControls
+					blockIndex={blockIndex}
 					isFirst={isFirst}
 					isLast={isLast}
+					itemIndex={itemIndex}
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}
 					onMoveUp={onMoveUp}
 				/>
+			)}
+			{record.discount?.isOnDiscount && record.discount?.discountPercentage && (
+				<DiscountBadge discountPercentage={record.discount.discountPercentage} />
 			)}
 			<div className="aspect-[4/3] bg-gray-100 relative w-full">
 				<OptimizedImage

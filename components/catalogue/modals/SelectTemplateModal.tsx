@@ -8,33 +8,63 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import TemplatesInput from "../inputs/TemplatesInput";
 
-const SelectTemplateModal = () => {
+interface SelectTemplateModalProps {
+	isOpen?: boolean;
+	onClose?: () => void;
+}
+
+const SelectTemplateModal = ({
+	isOpen: externalIsOpen,
+	onClose: externalOnClose,
+}: SelectTemplateModalProps = {}) => {
 	const { catalogue } = useCatalogueContext();
-	const [isOpen, setIsOpen] = useState(false);
+	const [internalIsOpen, setInternalIsOpen] = useState(false);
+
+	// Determine if the modal should be open based on external or internal state
+	const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+
+	// Helper to handle closing the modal correctly
+	const handleClose = () => {
+		if (externalOnClose) {
+			externalOnClose();
+		} else {
+			setInternalIsOpen(false);
+		}
+	};
 
 	useEffect(() => {
-		// Open modal if content is empty
-		if (catalogue.content.length === 0) {
-			setIsOpen(true);
-		} else {
-			// Ensure it closes if content is populated (e.g. by other means)
-			// But we might want to let the user dismiss it manually if we added a cancel button.
-			// Here we rely on selection to close.
-			setIsOpen(false);
+		// Only check auto-open if not externally controlled
+		if (externalIsOpen === undefined) {
+			if (catalogue.content.length === 0) {
+				setInternalIsOpen(true);
+			} else {
+				setInternalIsOpen(false);
+			}
 		}
-	}, [catalogue.content.length]);
+	}, [catalogue.content.length, externalIsOpen]);
 
 	const handleComplete = () => {
-		setIsOpen(false);
+		handleClose();
 	};
 
 	return (
-		<AlertDialog open={isOpen}>
-			<AlertDialogContent className="max-w-[95vw] md:max-w-4xl w-full p-0 overflow-hidden bg-white border-none shadow-2xl rounded-3xl max-h-[95vh]">
-				<div className="p-3 sm:p-6 md:p-8 pb-2 sm:pb-0 text-center">
+		<AlertDialog onOpenChange={(open) => !open && handleClose()} open={isOpen}>
+			<AlertDialogContent className="fixed w-full h-fit max-h-none left-0 top-0 translate-x-0 translate-y-0 rounded-none sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] sm:max-w-[95vw] sm:max-h-[95vh] sm:rounded-3xl md:max-w-4xl p-0 overflow-hidden bg-white border-none shadow-2xl flex flex-col">
+				{/* Dismiss button - show if externally controlled or if we want to allow dismissal */}
+				{(externalIsOpen !== undefined || internalIsOpen) && (
+					<button
+						className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors z-[60]"
+						onClick={handleClose}
+					>
+						<X className="w-5 h-5 text-gray-500" />
+					</button>
+				)}
+
+				<div className="p-4 sm:p-6 md:p-8 pb-2 sm:pb-0 text-center flex-shrink-0 pt-10 sm:pt-6">
 					<AlertDialogHeader className="mb-1 sm:mb-2">
 						<AlertDialogTitle className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-center w-full">
 							Choose a Template

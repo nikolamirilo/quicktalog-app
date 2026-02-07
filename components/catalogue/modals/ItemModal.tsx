@@ -83,7 +83,11 @@ const ItemModal = ({
 				</div>
 
 				<div className="p-4 sm:p-6 pt-4 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 border-t border-gray-100 flex-shrink-0 bg-white">
-					<Button className="w-full sm:w-auto" onClick={onClose} variant="secondary">
+					<Button
+						className="w-full sm:w-auto"
+						onClick={onClose}
+						variant="outline"
+					>
 						Cancel
 					</Button>
 
@@ -96,7 +100,11 @@ const ItemModal = ({
 						Add Item & Add Another
 					</Button>
 
-					<Button className="w-full sm:w-auto" disabled={!isFormValid} onClick={() => handleSave(false)}>
+					<Button
+						className="w-full sm:w-auto"
+						disabled={!isFormValid}
+						onClick={() => handleSave(false)}
+					>
 						{initialItem ? "Save Item" : "Add Item"}
 					</Button>
 				</div>

@@ -4,6 +4,7 @@ import { CardProps } from "@/types/components";
 import CardControls from "./common/CardControls";
 import CardDescription from "./common/CardDescription";
 import CardTitle from "./common/CardTitle";
+import DiscountBadge from "./common/DiscountBadge";
 import PriceDisplay from "./common/PriceDisplay";
 
 const TextOnlyCard = ({
@@ -17,6 +18,8 @@ const TextOnlyCard = ({
 	onMoveDown,
 	isFirst,
 	isLast,
+	blockIndex,
+	itemIndex,
 }: CardProps) => {
 	const { slugId, rootProps } = useCard(record);
 
@@ -32,12 +35,21 @@ const TextOnlyCard = ({
 		>
 			{mode === "edit" && onEdit && onDelete && (
 				<CardControls
+					blockIndex={blockIndex}
 					isFirst={isFirst}
 					isLast={isLast}
+					itemIndex={itemIndex}
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}
 					onMoveUp={onMoveUp}
+				/>
+			)}
+			{record.discount?.isOnDiscount && record.discount?.discountPercentage && (
+				<DiscountBadge
+					discountPercentage={record.discount.discountPercentage}
+					position="right"
+					size="small"
 				/>
 			)}
 			<div className="flex flex-col flex-1 gap-0.5 sm:gap-1 min-w-0">
@@ -53,7 +65,7 @@ const TextOnlyCard = ({
 				/>
 			</div>
 
-			<div className="pt-1 sm:pt-0 sm:pl-4 flex-shrink-0 text-right">
+			<div className="pt-1 sm:pt-0 sm:pl-2 flex-shrink-0 text-right">
 				<PriceDisplay
 					className="[&>span:last-child]:text-[16px] [&>span:last-child]:sm:text-[22px]"
 					currency={currency}

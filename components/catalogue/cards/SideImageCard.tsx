@@ -5,6 +5,7 @@ import { CardProps } from "@/types/components";
 import CardControls from "./common/CardControls";
 import CardDescription from "./common/CardDescription";
 import CardTitle from "./common/CardTitle";
+import DiscountBadge from "./common/DiscountBadge";
 import PriceDisplay from "./common/PriceDisplay";
 
 const SideImageCard = ({
@@ -18,6 +19,8 @@ const SideImageCard = ({
 	onMoveDown,
 	isFirst,
 	isLast,
+	blockIndex,
+	itemIndex,
 }: CardProps) => {
 	const { slugId, rootProps } = useCard(record);
 
@@ -33,13 +36,18 @@ const SideImageCard = ({
 		>
 			{mode === "edit" && onEdit && onDelete && (
 				<CardControls
+					blockIndex={blockIndex}
 					isFirst={isFirst}
 					isLast={isLast}
+					itemIndex={itemIndex}
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}
 					onMoveUp={onMoveUp}
 				/>
+			)}
+			{record.discount?.isOnDiscount && record.discount?.discountPercentage && (
+				<DiscountBadge discountPercentage={record.discount.discountPercentage} />
 			)}
 			<div className="w-[40%] min-w-[90px] sm:min-w-[120px] aspect-[4/3] relative flex-shrink-0">
 				<OptimizedImage
@@ -68,6 +76,7 @@ const SideImageCard = ({
 						currency={currency}
 						denominator={record.denominator}
 						discount={record.discount}
+						layout="horizontal"
 						price={record.price}
 					/>
 				</div>

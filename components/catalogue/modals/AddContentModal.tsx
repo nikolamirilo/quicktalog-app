@@ -83,19 +83,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-									spacing: (editingBlock as any).spacing,
-									border: (editingBlock as any).border,
-								}
+								spacing: (editingBlock as any).spacing,
+								border: (editingBlock as any).border,
+							}
 							: {
-									spacing: 2,
-									border: {
-										isEnabled: true,
-										style: "solid",
-										thickness: 1,
-										color: "#000000",
-										opacity: 100,
-									},
+								spacing: 2,
+								border: {
+									isEnabled: true,
+									style: "solid",
+									thickness: 1,
+									color: "#000000",
+									opacity: 100,
 								},
+							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -180,7 +180,7 @@ const AddContentModal = ({
 		} else if (selectedOption === "container") {
 			newBlock = {
 				...newBlock,
-				name: "Container",
+				name: blockData.name,
 				layout: blockData.layout,
 				items:
 					editingBlock?.type === "container" ? (editingBlock as any).items : [],
@@ -220,7 +220,7 @@ const AddContentModal = ({
 
 	const isFormValid = () => {
 		if (isLocked(selectedOption)) return false;
-		if (selectedOption === "category")
+		if (selectedOption === "category" || selectedOption === "container")
 			return (blockData.name?.trim().length ?? 0) > 0;
 		if (selectedOption === "iframe")
 			return (blockData.src?.trim().length ?? 0) > 0;
@@ -351,16 +351,17 @@ const AddContentModal = ({
 													setBlockData({ ...blockData, ...val })
 												}
 												value={blockData}
+												userData={userData}
 											/>
 										)}
 
 										{selectedOption === "text" && (
-											<div>
+											<div >
 												<label className="block text-sm font-medium mb-2 text-gray-700">
 													Content
 												</label>
 												<RichTextEditor
-													className="border-gray-200"
+													className="px-0.5"
 													content={blockData.content || "<p></p>"}
 													onChange={(val) =>
 														setBlockData({ ...blockData, content: val })

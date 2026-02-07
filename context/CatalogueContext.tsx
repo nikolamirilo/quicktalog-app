@@ -25,6 +25,11 @@ interface CatalogueContextType {
 		itemIndex: number,
 		direction: "up" | "down",
 	) => void;
+	moveItemToBlock: (
+		fromBlockIndex: number,
+		itemIndex: number,
+		toBlockIndex: number,
+	) => void;
 }
 const CatalogueContext = createContext<CatalogueContextType | null>(null);
 
@@ -211,6 +216,43 @@ export const CatalogueContextProvider = ({
 		});
 	};
 
+	const moveItemToBlock = (
+		fromBlockIndex: number,
+		itemIndex: number,
+		toBlockIndex: number,
+	) => {
+		setCatalogue((prev) => {
+			const newContent = [...prev.content];
+			const fromBlock = newContent[fromBlockIndex];
+			const toBlock = newContent[toBlockIndex];
+
+			if (
+				!fromBlock ||
+				!toBlock ||
+				!(fromBlock.type === "category" || fromBlock.type === "container") ||
+				!(toBlock.type === "category" || toBlock.type === "container") ||
+				!fromBlock.items ||
+				!fromBlock.items[itemIndex]
+			) {
+				return prev;
+			}
+
+			const fromBlockCopy = { ...fromBlock, items: [...fromBlock.items] };
+			const toBlockCopy = { ...toBlock, items: [...(toBlock.items || [])] };
+
+			const [movedItem] = fromBlockCopy.items.splice(itemIndex, 1);
+			toBlockCopy.items.push({ ...movedItem, order: toBlockCopy.items.length });
+
+			fromBlockCopy.items = reorderArray(fromBlockCopy.items);
+			toBlockCopy.items = reorderArray(toBlockCopy.items);
+
+			newContent[fromBlockIndex] = fromBlockCopy as ContentBlock;
+			newContent[toBlockIndex] = toBlockCopy as ContentBlock;
+
+			return { ...prev, content: newContent };
+		});
+	};
+
 	useEffect(() => {
 		if (user && user.id !== catalogue.createdBy) {
 			updateCatalogue({
@@ -249,6 +291,7 @@ export const CatalogueContextProvider = ({
 				updateItem,
 				removeItem,
 				moveItem,
+				moveItemToBlock,
 			}}
 		>
 			{children}

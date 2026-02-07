@@ -110,11 +110,11 @@ const HeadingInput = () => {
 			<div className="flex flex-wrap items-center justify-center gap-1 sm:gap-0 mb-2 px-2 py-1 bg-transparent">
 				{/* Bold Button */}
 				<button
-					type="button"
-					onClick={toggleBold}
 					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold ? "text-primary bg-primary/10" : "text-foreground/70"
 						}`}
+					onClick={toggleBold}
 					title="Bold"
+					type="button"
 				>
 					B
 				</button>
@@ -124,11 +124,11 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					type="button"
-					onClick={toggleItalic}
 					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic ? "text-primary bg-primary/10" : "text-foreground/70"
 						}`}
+					onClick={toggleItalic}
 					title="Italic"
+					type="button"
 				>
 					I
 				</button>
@@ -137,32 +137,32 @@ const HeadingInput = () => {
 				<div className="w-px h-5 bg-foreground/20 mx-1" />
 
 				{/* Font Size Dropdown */}
-				<Select value={headingSize} onValueChange={handleSizeChange}>
+				<Select onValueChange={handleSizeChange} value={headingSize}>
 					<SelectTrigger className="min-w-[110px] sm:min-w-[130px] w-fit h-8 text-xs sm:text-sm border-0 bg-transparent text-foreground/70 hover:text-primary hover:bg-primary/10 cursor-pointer focus:ring-0 focus:ring-offset-0 transition-all duration-200">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent className="bg-card-bg border-none">
 						<SelectItem
-							value="extraLarge"
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+							value="extraLarge"
 						>
 							Extra Large
 						</SelectItem>
 						<SelectItem
-							value="large"
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+							value="large"
 						>
 							Large
 						</SelectItem>
 						<SelectItem
-							value="medium"
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+							value="medium"
 						>
 							Medium
 						</SelectItem>
 						<SelectItem
-							value="small"
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+							value="small"
 						>
 							Small
 						</SelectItem>
@@ -172,15 +172,15 @@ const HeadingInput = () => {
 
 			{/* Editable Heading */}
 			<div
-				ref={editorRef}
+				className={`text-center ${HEADING_SIZE_CLASSES[headingSize]} text-foreground border-card-border border-2 border-dashed rounded-lg px-4 sm:px-6 py-2 w-[95%] sm:w-[90%] md:w-auto bg-transparent md:min-w-[300px] focus:border-primary outline-none transition-all empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/40`}
 				contentEditable
-				suppressContentEditableWarning
+				data-placeholder="+ Add Heading"
 				onInput={handleInput}
-				onSelect={updateSelection}
 				onKeyUp={updateSelection}
 				onMouseUp={updateSelection}
-				data-placeholder="+ Add Heading"
-				className={`text-center ${HEADING_SIZE_CLASSES[headingSize]} text-foreground border-card-border border-2 border-dashed rounded-lg px-4 sm:px-6 py-2 w-[95%] sm:w-[90%] md:w-auto bg-transparent md:min-w-[300px] focus:border-primary outline-none transition-all empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/40`}
+				onSelect={updateSelection}
+				ref={editorRef}
+				suppressContentEditableWarning
 			/>
 		</div>
 	);

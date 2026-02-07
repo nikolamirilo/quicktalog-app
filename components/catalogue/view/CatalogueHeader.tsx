@@ -152,7 +152,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 								asChild
 								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-header-text border-primary footer-cta-button"
 								size="default"
-								variant="secondary"
+								variant="outline"
 							>
 								<SmartLink
 									aria-label={ctaProps.ariaLabel}

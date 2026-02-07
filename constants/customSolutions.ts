@@ -1,4 +1,4 @@
-export const ctaSection = `
+const ctaSection = `
 <div class="qt-cta-section">
   <div class="qt-cta-animation" id="qt-lottie-cta"></div>
   <div class="qt-cta-content">
@@ -174,3 +174,8 @@ export const ctaSection = `
     }
   }
 </style>`;
+
+
+export const customCodeTemplates = {
+  ctaSection,
+}

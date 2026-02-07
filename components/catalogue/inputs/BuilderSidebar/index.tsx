@@ -31,16 +31,16 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-	{
-		key: "appearance",
-		icon: Palette,
-		label: "Appearance",
-		content: <AppearanceTab />,
-	},
-];
+		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+		{
+			key: "appearance",
+			icon: Palette,
+			label: "Appearance",
+			content: <AppearanceTab />,
+		},
+	];
 
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
@@ -50,7 +50,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 
 	return (
 		<aside
-			className={`!z-[1000] fixed bg-product-background shadow-xl transition-all duration-300 flex 
+			className={`!z-[1000] fixed bg-product-background shadow-xl flex 
         /* Mobile: Bottom App Bar */
         bottom-0 left-0 w-full flex-col-reverse
         ${isOpen ? "h-[100dvh]" : "h-auto"}
@@ -59,7 +59,27 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
         md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
         ${isOpen ? "md:w-fit md:max-w-[440px]" : "md:w-16"}
       `}
+			style={{
+				transform: isOpen
+					? "translateX(0)"
+					: window.innerWidth >= 768
+						? "translateX(0)"
+						: "translateY(0)",
+				transition:
+					"width 0.8s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.8s cubic-bezier(0.4, 0, 0.2, 1), height 0.5s ease-in-out, transform 0.5s ease-in-out",
+			}}
 		>
+			{/* Backdrop blur overlay for mobile when open */}
+			{isOpen && (
+				<div
+					className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm -z-10 transition-opacity duration-300"
+					onClick={() => setIsOpen(false)}
+					style={{
+						animation: "fadeIn 0.3s ease-out",
+					}}
+				/>
+			)}
+
 			{/* Mobile Actions / Desktop Top actions */}
 			<div
 				className={`flex items-center py-3 px-2 justify-around md:justify-around
@@ -68,13 +88,16 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
           
           /* Desktop: Column when closed, Row when open */
           ${isOpen ? "md:flex-row md:gap-2" : "md:flex-col md:gap-4"}
+          
+          /* Smooth transitions */
+          transition-all duration-300 ease-in-out
         `}
 			>
 				<Button
 					onClick={() => setIsOpen((v) => !v)}
 					size={isOpen ? "sm" : "icon"}
 					variant="grayed"
-					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95"
+					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95 transition-transform duration-200"
 				>
 					{/* Desktop Icons */}
 					<div className="hidden md:block">
@@ -90,7 +113,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 					</div>
 				</Button>
 				<span
-					className={`border-gray-300/70 hidden md:block
+					className={`border-gray-300/70 hidden md:block transition-all duration-300
             ${isOpen ? "border-r h-6" : "border-b w-full"}
           `}
 				></span>
@@ -103,7 +126,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 						onClick={() => setIsOpen((v) => !v)}
 						size="sm"
 						variant="grayed"
-						className="md:hidden"
+						className="md:hidden transition-transform duration-200 hover:scale-105 active:scale-95"
 					>
 						{isOpen ? <LuChevronsDown size={25} /> : <LuChevronsUp size={25} />}
 						<span className="ml-1 sr-only">Toggle</span>
@@ -112,27 +135,50 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 			</div>
 
 			<div
-				className={`mx-auto w-[95%] border-t border-gray-300/70 ${!isOpen && "md:hidden"}`}
+				className={`mx-auto w-[95%] border-t border-gray-300/70 transition-opacity duration-300 ${!isOpen && "md:hidden"}`}
 			/>
 			{/* Tabs Content */}
 			{isOpen && (
 				<Tabs
-					className={`flex flex-col flex-1 overflow-hidden bg-gray-50/50`}
+					className={`flex flex-col flex-1 overflow-hidden bg-gray-50/50 
+            /* Slide and fade in animation */
+            animate-in fade-in slide-in-from-bottom-4 md:slide-in-from-right-4 duration-500
+          `}
 					defaultValue="general"
 				>
-					<div className="px-2 py-4 bg-product-background">
+					<div
+						className="px-2 py-4 bg-product-background transition-all duration-300"
+						style={{
+							animation: "slideDown 0.4s ease-out 0.1s both",
+						}}
+					>
 						<TabsList className="w-full flex bg-gray-100 p-1 rounded-lg h-auto gap-1">
-							{TABS.map(({ key, icon: Icon, label }) => (
-								<TabsTrigger className={tabTriggerClass} key={key} value={key}>
+							{TABS.map(({ key, icon: Icon, label }, index) => (
+								<TabsTrigger
+									className={tabTriggerClass}
+									key={key}
+									value={key}
+									style={{
+										animation: `fadeInScale 0.3s ease-out ${0.1 + index * 0.05}s both`,
+									}}
+								>
 									<Icon className="w-4 h-4 mr-1.5" />
 									<span className="text-xs">{label}</span>
 								</TabsTrigger>
 							))}
 						</TabsList>
 					</div>
+					<div
+						className={`mx-auto w-[95%] border-t border-gray-300/70 ${!isOpen && "md:hidden"}`}
+					/>
 
 					<ScrollArea className="flex-1">
-						<div className="p-4">
+						<div
+							className="p-4"
+							style={{
+								animation: "fadeInUp 0.5s ease-out 0.2s both",
+							}}
+						>
 							{TABS.map(({ key, content }) => (
 								<TabsContent
 									className="mt-0 focus-visible:outline-none"
@@ -146,6 +192,51 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 					</ScrollArea>
 				</Tabs>
 			)}
+
+			{/* Keyframe animations */}
+			<style jsx>{`
+				@keyframes fadeIn {
+					from {
+						opacity: 0;
+					}
+					to {
+						opacity: 1;
+					}
+				}
+
+				@keyframes slideDown {
+					from {
+						opacity: 0;
+						transform: translateY(-10px);
+					}
+					to {
+						opacity: 1;
+						transform: translateY(0);
+					}
+				}
+
+				@keyframes fadeInScale {
+					from {
+						opacity: 0;
+						transform: scale(0.95);
+					}
+					to {
+						opacity: 1;
+						transform: scale(1);
+					}
+				}
+
+				@keyframes fadeInUp {
+					from {
+						opacity: 0;
+						transform: translateY(10px);
+					}
+					to {
+						opacity: 1;
+						transform: translateY(0);
+					}
+				}
+			`}</style>
 		</aside>
 	);
 };

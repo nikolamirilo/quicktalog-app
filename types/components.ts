@@ -217,4 +217,6 @@ export type CardProps = {
 	onMoveDown?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
+	blockIndex?: number;
+	itemIndex?: number;
 };

@@ -160,7 +160,11 @@ export default function TemplatesInput({
 				})}
 			</div>
 
-			<Button onClick={handleSelect} size="sm" className="font-bold text-xs sm:text-sm">
+			<Button
+				onClick={handleSelect}
+				size="sm"
+				className="font-bold text-xs sm:text-sm"
+			>
 				Select Template
 			</Button>
 		</div>

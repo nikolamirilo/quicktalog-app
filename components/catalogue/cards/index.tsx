@@ -28,6 +28,7 @@ const CardsSwitcher = ({
 	onMoveDown,
 	isFirst,
 	isLast,
+	blockIndex,
 }: {
 	variant: string;
 	record: Item;
@@ -41,6 +42,7 @@ const CardsSwitcher = ({
 	onMoveDown?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
+	blockIndex?: number;
 }) => {
 	// Validate record data early
 	if (!record || !record.name || record.price === undefined) {
@@ -84,9 +86,11 @@ const CardsSwitcher = ({
 	return (
 		<>
 			<CardComponent
+				blockIndex={blockIndex}
 				currency={formattedCurrency}
 				isFirst={isFirst}
 				isLast={isLast}
+				itemIndex={i}
 				mode={mode === "edit" ? "edit" : "view"}
 				onClick={() => setIsModalOpen(true)}
 				onDelete={onDelete}

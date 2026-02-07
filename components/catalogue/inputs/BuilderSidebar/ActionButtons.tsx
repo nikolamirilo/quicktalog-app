@@ -1,4 +1,5 @@
 "use client";
+import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
@@ -6,7 +7,7 @@ import {
 	publishCatalogue,
 	updateCatalogue as updateCatalogueAction,
 } from "@/server_actions/catalogue";
-import { Eye, Rocket, Save } from "lucide-react";
+import { Eye, LayoutTemplate, Rocket, Save } from "lucide-react";
 import React from "react";
 import { RxUpdate } from "react-icons/rx";
 import { toast } from "sonner";
@@ -21,6 +22,7 @@ const ActionButtons = ({
 	const { catalogue, updateCatalogue: updateContextCatalogue } =
 		useCatalogueContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
+	const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState(false);
 
 	React.useEffect(() => {
 		console.log("ActionButtons catalogue state:", catalogue);
@@ -91,6 +93,15 @@ const ActionButtons = ({
 
 	const QUICK_ACTIONS = [
 		{ key: "save", icon: Save, label: "Save", onClick: () => handleSave() },
+		{
+			key: "templates",
+			icon: LayoutTemplate,
+			label: "Templates",
+			onClick: () => {
+				setIsOpen(false);
+				setIsTemplateModalOpen(true);
+			},
+		},
 		{ key: "preview", icon: Eye, label: "Preview", onClick: handlePreview },
 		{
 			key: "publish",
@@ -105,11 +116,10 @@ const ActionButtons = ({
 		<>
 			{QUICK_ACTIONS.map(({ key, icon: Icon, label, primary, onClick }) => (
 				<Button
-					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${
-						primary
+					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${primary
 							? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
 							: "hover:bg-product-primary/10 hover:border-product-primary/20"
-					}
+						}
             /* Mobile: Allow auto width and horizontal padding, hide explicit size constraint if needed */
             px-2 md:px-2
             ${!isOpen && "md:w-9 md:px-0"} 
@@ -117,12 +127,12 @@ const ActionButtons = ({
           `}
 					key={key}
 					// On mobile, we always want "sm" or auto size to fit text. On desktop, follow isOpen logic.
+					onClick={onClick}
 					size={isOpen ? "sm" : "default"}
 					title={label}
 					variant={primary ? "default" : "grayed"}
-					onClick={onClick}
 				>
-					<Icon size={isOpen ? 25 : 20} className="mr-2 md:mr-0 md:mb-0" />
+					<Icon className="mr-2 md:mr-0 md:mb-0" size={isOpen ? 25 : 20} />
 					<span
 						className={`
               /* Mobile: Always visible */
@@ -136,11 +146,17 @@ const ActionButtons = ({
 				</Button>
 			))}
 			<SuccessModal
+				catalogueUrl={`/catalogues/${catalogue.name}`}
 				isOpen={isSuccessModalOpen}
 				onClose={() => setIsSuccessModalOpen(false)}
-				catalogueUrl={`/catalogues/${catalogue.name}`}
 				type="regular"
 			/>
+			{isTemplateModalOpen && (
+				<SelectTemplateModal
+					isOpen={isTemplateModalOpen}
+					onClose={() => setIsTemplateModalOpen(false)}
+				/>
+			)}
 		</>
 	);
 };

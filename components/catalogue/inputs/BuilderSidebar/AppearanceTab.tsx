@@ -108,16 +108,13 @@ const AppearanceTab = () => {
 						const isSelected = currentThemeName === themeItem.key;
 						return (
 							<button
-								key={themeItem.key}
-								type="button"
-								onClick={() => handleThemeSelect(themeItem.key)}
-								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${
-									themeItem.key
-								} ${
-									isSelected
+								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key
+									} ${isSelected
 										? "border-product-primary shadow-md scale-[1.03] border-[3px]"
 										: "hover:shadow-sm border border-border"
-								}`}
+									}`}
+								key={themeItem.key}
+								onClick={() => handleThemeSelect(themeItem.key)}
 								style={{
 									borderColor: isSelected
 										? "var(--product-primary)"
@@ -126,6 +123,7 @@ const AppearanceTab = () => {
 									color: "var(--foreground)",
 									fontFamily: "var(--font-family-body)",
 								}}
+								type="button"
 							>
 								{/* Preview Circle */}
 								<div
@@ -153,18 +151,18 @@ const AppearanceTab = () => {
 
 				{visibleCount < sortedThemes.length && (
 					<Button
-						variant="outline"
-						onClick={() => setVisibleCount((prev) => prev + 6)}
 						className="w-full"
+						onClick={() => setVisibleCount((prev) => prev + 6)}
+						variant="outline"
 					>
 						Show more
 					</Button>
 				)}
 				{visibleCount > sortedThemes.length && (
 					<Button
-						variant="outline"
-						onClick={() => setVisibleCount(3)}
 						className="w-full"
+						onClick={() => setVisibleCount(3)}
+						variant="outline"
 					>
 						Show less
 					</Button>
@@ -182,8 +180,8 @@ const AppearanceTab = () => {
 					<div className="space-y-2">
 						<Label>Font Family</Label>
 						<Select
-							value={currentStyle.fontFamily || "arial"}
 							onValueChange={(value) => handleStyleChange("fontFamily", value)}
+							value={currentStyle.fontFamily || "arial"}
 						>
 							<SelectTrigger>
 								<SelectValue placeholder="Select font family" />
@@ -191,9 +189,9 @@ const AppearanceTab = () => {
 							<SelectContent>
 								{FONT_OPTIONS.map((font) => (
 									<SelectItem
+										className={font.className}
 										key={font.value}
 										value={font.value}
-										className={font.className}
 									>
 										<span className={font.className}>{font.label}</span>
 									</SelectItem>
@@ -211,18 +209,18 @@ const AppearanceTab = () => {
 							</span>
 						</div>
 						<Slider
+							max={2}
+							min={0}
+							onValueChange={(vals) =>
+								handleStyleChange("contentFontSize", FONT_SIZES[vals[0]])
+							}
+							step={1}
 							value={[
 								getSliderValue(
 									FONT_SIZES,
 									currentStyle.contentFontSize || "medium",
 								),
 							]}
-							min={0}
-							max={2}
-							step={1}
-							onValueChange={(vals) =>
-								handleStyleChange("contentFontSize", FONT_SIZES[vals[0]])
-							}
 						/>
 						<div className="flex justify-between text-xs text-muted-foreground px-1">
 							<span>Small</span>
@@ -240,16 +238,15 @@ const AppearanceTab = () => {
 							</span>
 						</div>
 						<Slider
-							value={[currentStyle.borderRadius ?? 12]}
-							min={0}
 							max={16}
-							step={1}
+							min={0}
 							onValueChange={(vals) =>
 								handleStyleChange("borderRadius", vals[0])
 							}
+							step={1}
+							value={[currentStyle.borderRadius ?? 12]}
 						/>
 					</div>
-
 
 					{/* Shadow */}
 					<div className="space-y-2">
@@ -260,13 +257,13 @@ const AppearanceTab = () => {
 							</span>
 						</div>
 						<Slider
-							value={[getSliderValue(SHADOWS, currentStyle.shadow || "low")]}
-							min={0}
 							max={3}
-							step={1}
+							min={0}
 							onValueChange={(vals) =>
 								handleStyleChange("shadow", SHADOWS[vals[0]])
 							}
+							step={1}
+							value={[getSliderValue(SHADOWS, currentStyle.shadow || "low")]}
 						/>
 						<div className="flex justify-between text-xs text-muted-foreground px-1">
 							<span>None</span>
@@ -297,9 +294,9 @@ const AppearanceTab = () => {
 						<div className="space-y-2">
 							<Label>Overlay Icon</Label>
 							<Input
+								onChange={(e) => handleOverlayChange("icon", e.target.value)}
 								placeholder="e.g. 🎁"
 								value={currentOverlay.icon || ""}
-								onChange={(e) => handleOverlayChange("icon", e.target.value)}
 							/>
 						</div>
 					)}
