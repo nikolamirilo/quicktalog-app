@@ -21,7 +21,7 @@ const HEADING_SIZE_CLASSES: Record<HeadingSize, string> = {
 const HeadingInput = () => {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
 	const editorRef = useRef<HTMLDivElement>(null);
-	const [headingSize, setHeadingSize] = useState<HeadingSize>("large");
+	const [headingSize, setHeadingSize] = useState<HeadingSize>("medium");
 	const [isBold, setIsBold] = useState(false);
 	const [isItalic, setIsItalic] = useState(false);
 
@@ -110,9 +110,8 @@ const HeadingInput = () => {
 			<div className="flex flex-wrap items-center justify-center gap-1 sm:gap-0 mb-2 px-2 py-1 bg-transparent">
 				{/* Bold Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isBold ? "text-primary bg-primary/10" : "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold ? "text-primary bg-primary/10" : "text-foreground/70"
+						}`}
 					onClick={toggleBold}
 					title="Bold"
 					type="button"
@@ -125,9 +124,8 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isItalic ? "text-primary bg-primary/10" : "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic ? "text-primary bg-primary/10" : "text-foreground/70"
+						}`}
 					onClick={toggleItalic}
 					title="Italic"
 					type="button"
