@@ -124,3 +124,11 @@ a.selected:after {
 		@apply bg-product-background text-product-foreground;
 	}
 }
+
+/* Move Hubspot chat widget up on mobile to not interfere with app bar */
+@media (max-width: 768px) {
+	#hubspot-messages-iframe-container {
+		margin-bottom: 70px !important;
+	}
+}
+

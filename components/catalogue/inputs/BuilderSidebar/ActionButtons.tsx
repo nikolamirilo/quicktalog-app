@@ -116,31 +116,28 @@ const ActionButtons = ({
 		<>
 			{QUICK_ACTIONS.map(({ key, icon: Icon, label, primary, onClick }) => (
 				<Button
-					className={`${isOpen ? "flex-1" : "justify-center md:w-9 px-0"} ${
-						primary
+					className={`
+						flex-1
+						${isOpen ? "md:px-3" : "md:flex-none justify-center md:w-9 md:px-0"} 
+						px-1.5 sm:px-2
+						${primary
 							? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
 							: "hover:bg-product-primary/10 hover:border-product-primary/20"
-					}
-            /* Mobile: Allow auto width and horizontal padding, hide explicit size constraint if needed */
-            px-2 md:px-2
-            ${!isOpen && "md:w-9 md:px-0"} 
-            hover:scale-105 active:scale-95
-          `}
+						}
+						hover:scale-105 active:scale-95 transition-all duration-300
+					`}
 					key={key}
-					// On mobile, we always want "sm" or auto size to fit text. On desktop, follow isOpen logic.
 					onClick={onClick}
-					size={isOpen ? "sm" : "default"}
+					size="sm"
 					title={label}
 					variant={primary ? "default" : "grayed"}
 				>
-					<Icon className="mr-2 md:mr-0 md:mb-0" size={isOpen ? 25 : 20} />
+					<Icon className={`mr-1.5 md:mr-2 ${!isOpen && "md:mr-0"} shrink-0 transition-all duration-300`} size={18} />
 					<span
 						className={`
-              /* Mobile: Always visible */
-              block
-              /* Desktop: Hidden if closed, Block if open */
-              ${isOpen ? "md:block" : "md:hidden"} 
-            `}
+							${isOpen ? "md:block" : "md:hidden"} 
+							block text-[11px] sm:text-xs font-medium whitespace-nowrap overflow-hidden text-ellipsis
+						`}
 					>
 						{label}
 					</span>

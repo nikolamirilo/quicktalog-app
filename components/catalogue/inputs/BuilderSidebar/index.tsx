@@ -31,16 +31,16 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-	{
-		key: "appearance",
-		icon: Palette,
-		label: "Appearance",
-		content: <AppearanceTab />,
-	},
-];
+		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+		{
+			key: "appearance",
+			icon: Palette,
+			label: "Appearance",
+			content: <AppearanceTab />,
+		},
+	];
 
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
@@ -57,7 +57,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
         
         /* Desktop: Right Sidebar */
         md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
-        ${isOpen ? "md:w-fit md:max-w-[440px]" : "md:w-16"}
+        ${isOpen ? "md:w-fit md:max-w-[500px]" : "md:w-16"}
       `}
 			style={{
 				transform: isOpen
@@ -80,19 +80,28 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 				/>
 			)}
 
-			{/* Mobile Actions / Desktop Top actions */}
 			<div
-				className={`flex items-center py-3 px-2 justify-around md:justify-around
-          /* Mobile: Always row, toggle button on right */
+				className={`relative flex items-center pt-3 pb-3 px-2 sm:px-4 justify-around md:justify-around bg-product-background rounded-none shadow-[0_-8px_30px_-5px_rgba(0,0,0,0.12)] md:shadow-none border-t border-gray-100 md:border-t-0
+          /* Mobile: Row, height fits content */
           w-full flex-row
           
           /* Desktop: Column when closed, Row when open */
-          ${isOpen ? "md:flex-row md:gap-2" : "md:flex-col md:gap-4"}
+          ${isOpen ? "md:flex-row md:gap-2 md:py-3" : "md:flex-col md:gap-4 md:py-3"}
           
           /* Smooth transitions */
           transition-all duration-300 ease-in-out
         `}
 			>
+				{/* Mobile Toggle Button (Centered, overlapping top edge) */}
+				<button
+					onClick={() => setIsOpen((v) => !v)}
+					className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-12 h-12 flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[1010]"
+					style={{ WebkitTapHighlightColor: "transparent" }}
+					title="Toggle Sidebar"
+				>
+					{isOpen ? <LuChevronsDown size={26} /> : <LuChevronsUp size={26} />}
+				</button>
+
 				<Button
 					onClick={() => setIsOpen((v) => !v)}
 					size={isOpen ? "sm" : "icon"}
@@ -107,10 +116,6 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 							<LuChevronsLeft size={25} />
 						)}
 					</div>
-					{/* Mobile Icons */}
-					<div className="md:hidden">
-						{isOpen ? <LuChevronsDown size={25} /> : <LuChevronsUp size={25} />}
-					</div>
 				</Button>
 				<span
 					className={`border-gray-300/70 hidden md:block transition-all duration-300
@@ -119,18 +124,8 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 				></span>
 
 				{/* Mobile: ActionButtons usually on left/center. Desktop: Top/Center */}
-				<div className="flex md:contents w-full justify-around md:w-auto md:justify-start gap-2 items-center">
+				<div className="flex md:contents w-full justify-around md:w-auto md:justify-start gap-1.5 sm:gap-2.5 items-center">
 					<ActionButtons isOpen={isOpen} setIsOpen={setIsOpen} />
-					{/* Mobile Toggle Button */}
-					<Button
-						onClick={() => setIsOpen((v) => !v)}
-						size="sm"
-						variant="grayed"
-						className="md:hidden transition-transform duration-200 hover:scale-105 active:scale-95"
-					>
-						{isOpen ? <LuChevronsDown size={25} /> : <LuChevronsUp size={25} />}
-						<span className="ml-1 sr-only">Toggle</span>
-					</Button>
 				</div>
 			</div>
 
@@ -140,7 +135,7 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 			{/* Tabs Content */}
 			{isOpen && (
 				<Tabs
-					className={`flex flex-col flex-1 overflow-hidden bg-gray-50/50 
+					className={`flex flex-col flex-1 overflow-hidden bg-product-background md:bg-gray-50/50 
             /* Slide and fade in animation */
             animate-in fade-in slide-in-from-bottom-4 md:slide-in-from-right-4 duration-500
           `}
