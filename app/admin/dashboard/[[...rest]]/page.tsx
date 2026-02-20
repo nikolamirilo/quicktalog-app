@@ -7,7 +7,6 @@ import { getUserData } from "@/server_actions/users";
 import type { AreLimitesReached } from "@quicktalog/common";
 import { UserData } from "@quicktalog/common";
 import Link from "next/link";
-import Script from "next/script";
 
 export const dynamic = "force-dynamic";
 
@@ -45,13 +44,6 @@ export default async function page() {
 
 	return (
 		<div className="product font-lora min-h-screen">
-			{userData.currentPlan.id > 2 && (
-				<Script
-					id="hs-script-loader"
-					src="https://js-eu1.hs-scripts.com/146895463.js"
-					strategy="lazyOnload"
-				/>
-			)}
 			<Navbar />
 			<Dashboard pricingPlan={currentPlan} usage={usage} user={user} />
 

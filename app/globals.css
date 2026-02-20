@@ -128,6 +128,6 @@ a.selected:after {
 /* Move Hubspot chat widget up on mobile to not interfere with app bar */
 @media (max-width: 768px) {
 	#hubspot-messages-iframe-container {
-		margin-bottom: 70px !important;
+		margin-bottom: 50px !important;
 	}
 }
