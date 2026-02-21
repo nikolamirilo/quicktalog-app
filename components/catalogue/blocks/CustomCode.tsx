@@ -32,7 +32,9 @@ const CustomCodeBlockComponent = ({
 
 	useEffect(() => {
 		if (!containerRef.current) return;
-		const oldScripts = Array.from(containerRef.current.querySelectorAll("script"));
+		const oldScripts = Array.from(
+			containerRef.current.querySelectorAll("script"),
+		);
 		const newScripts: HTMLScriptElement[] = [];
 
 		const loadScripts = async () => {
@@ -71,7 +73,11 @@ const CustomCodeBlockComponent = ({
 	}, [block.code]);
 
 	return (
-		<section ref={containerRef} className="mb-5 group relative" id={`${slug}-${block.order}`}>
+		<section
+			ref={containerRef}
+			className="mb-5 group relative"
+			id={`${slug}-${block.order}`}
+		>
 			{mode === "edit" && (
 				<BlockControls
 					isFirst={isFirst}

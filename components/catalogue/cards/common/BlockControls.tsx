@@ -48,10 +48,11 @@ const BlockControls = ({
 			{onEdit && (
 				<button
 					aria-label={isEditing ? "Finish editing" : "Edit content"}
-					className={`p-2 rounded-full shadow-sm transition-all duration-200 ${isEditing
-						? "bg-product-primary text-white hover:bg-product-primary/90"
-						: "bg-white/80 text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-						}`}
+					className={`p-2 rounded-full shadow-sm transition-all duration-200 ${
+						isEditing
+							? "bg-product-primary text-white hover:bg-product-primary/90"
+							: "bg-white/80 text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+					}`}
 					onClick={(e) => {
 						e.stopPropagation();
 						onEdit();
@@ -84,10 +85,11 @@ const BlockControls = ({
 						<div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 overflow-hidden">
 							{layouts.map((layout) => (
 								<button
-									className={`w-full text-left px-4 py-2 text-sm hover:bg-product-hover-background flex items-center justify-between ${currentLayout === layout.key
-										? "text-product-primary bg-product-hover-background"
-										: "text-product-foreground"
-										}`}
+									className={`w-full text-left px-4 py-2 text-sm hover:bg-product-hover-background flex items-center justify-between ${
+										currentLayout === layout.key
+											? "text-product-primary bg-product-hover-background"
+											: "text-product-foreground"
+									}`}
 									key={layout.key}
 									onClick={(e) => {
 										e.stopPropagation();
@@ -108,10 +110,11 @@ const BlockControls = ({
 			{onMoveUp && (
 				<button
 					aria-label="Move container up"
-					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${isFirst
-						? "text-gray-300 cursor-not-allowed"
-						: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-						}`}
+					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${
+						isFirst
+							? "text-gray-300 cursor-not-allowed"
+							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+					}`}
 					disabled={isFirst}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -126,10 +129,11 @@ const BlockControls = ({
 			{onMoveDown && (
 				<button
 					aria-label="Move container down"
-					className={`p-2 bg-white/80 text-gray-600 rounded-full shadow-sm transition-all duration-200 ${isLast
-						? "text-gray-300 cursor-not-allowed"
-						: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-						}`}
+					className={`p-2 bg-white/80 text-gray-600 rounded-full shadow-sm transition-all duration-200 ${
+						isLast
+							? "text-gray-300 cursor-not-allowed"
+							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+					}`}
 					disabled={isLast}
 					onClick={(e) => {
 						e.stopPropagation();

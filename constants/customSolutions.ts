@@ -182,7 +182,6 @@ const ctaSection = `
   }
 </style>`;
 
-
 // ─────────────────────────────────────────────
 // 2. jewelryCollection
 // ─────────────────────────────────────────────
@@ -360,7 +359,6 @@ const giftShopBanner = `
 </style>
 `;
 
-
 const travelDestination = `
 <div class="qt-travel-card">
   <div class="qt-travel-scene">
@@ -437,10 +435,9 @@ const travelDestination = `
 </style>
 `;
 
-
 export const customCodeTemplates = {
-  ctaSection,
-  jewelryCollection,
-  giftShopBanner,
-  travelDestination,
+	ctaSection,
+	jewelryCollection,
+	giftShopBanner,
+	travelDestination,
 };
