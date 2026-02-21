@@ -16,16 +16,18 @@ export default function PartnerBadge({
 
 	return (
 		<SmartLink
-			className="flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 hover:scale-102 hover:shadow-md cursor-pointer bg-card-bg text-card-description border border-card-border"
+			className="group flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 hover:scale-105 hover:bg-primary/5 cursor-pointer border border-card shadow-sm hover:shadow-md hover:border-primary/30 bg-transparent text-secondary"
 			href={partner.url}
 		>
-			<div className="w-8 h-8 flex items-center justify-center">
+			<div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
 				{imageError ? (
-					<span className="text-lg">{partner.name.charAt(0)}</span>
+					<div className="w-full h-full rounded-full bg-secondary/10 flex items-center justify-center font-heading font-weight-heading text-secondary">
+						<span className="text-lg leading-none">{partner.name.charAt(0)}</span>
+					</div>
 				) : (
 					<img
 						alt={`${partner.name} logo`}
-						className="w-8 h-8 rounded-full"
+						className="w-8 h-8 rounded-full object-cover border border-card transition-transform group-hover:scale-110 duration-200"
 						height={32}
 						onError={() => setImageError(true)}
 						src={`https://img.logo.dev/${extractDomain(partner.url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
@@ -33,11 +35,11 @@ export default function PartnerBadge({
 					/>
 				)}
 			</div>
-			<div className="flex-1">
-				<div className="font-semibold text-sm font-heading font-weight-heading tracking-heading text-card-heading">
+			<div className="flex-1 min-w-0">
+				<div className="font-semibold text-sm font-heading font-weight-heading tracking-heading text-secondary truncate">
 					{partner.name}
 				</div>
-				<div className="text-xs text-card-description">
+				<div className="text-xs text-secondary/70 truncate group-hover:text-secondary transition-colors duration-200">
 					{partner.description}
 				</div>
 			</div>

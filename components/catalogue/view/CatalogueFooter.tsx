@@ -292,7 +292,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 									<Button
 										asChild
-										className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary footer-cta-button"
+										className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-secondary bg-transparent text-secondary border-card footer-cta-button"
 										size="default"
 										variant="outline"
 									>
@@ -408,7 +408,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 											<input
 												aria-describedby="newsletter-description"
 												aria-invalid={submitError ? "true" : "false"}
-												className="w-48 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-card-bg text-card-text border border-card-border"
+												className="w-48 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-transparent text-secondary border border-card"
 												disabled={isSubmitting || submitSuccess}
 												id="newsletter-email"
 												onChange={(e) => setNewsletterEmail(e.target.value)}
@@ -420,11 +420,10 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</div>
 										<Button
 											aria-label="Subscribe to newsletter"
-											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
-												submitSuccess
+											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${submitSuccess
 													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
-													: "hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary"
-											}`}
+													: "hover:bg-primary/10 hover:text-secondary bg-transparent text-secondary border-card"
+												}`}
 											disabled={isSubmitting || submitSuccess}
 											size="default"
 											type="submit"
@@ -459,7 +458,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							data?.footer?.cta?.url && (
 								<Button
 									asChild
-									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary footer-cta-button flex items-center gap-2"
+									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-secondary bg-transparent text-secondary border-card footer-cta-button flex items-center gap-2"
 									size="default"
 									variant="outline"
 								>

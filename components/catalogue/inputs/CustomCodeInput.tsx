@@ -62,7 +62,7 @@ const PreviewItem = memo(
 				if (typeof (window as any).lottie !== "undefined") {
 					try {
 						(window as any).lottie.destroy();
-					} catch (e) { }
+					} catch (e) {}
 				}
 				newScripts.forEach((script) => {
 					if (script.parentNode) {
@@ -234,8 +234,9 @@ const CustomCodeInput = ({
 				</div>
 
 				<div
-					className={`border rounded-md overflow-hidden transition-all duration-300 ${isExpanded ? "h-[350px]" : "h-[75px]"
-						}`}
+					className={`border rounded-md overflow-hidden transition-all duration-300 ${
+						isExpanded ? "h-[350px]" : "h-[75px]"
+					}`}
 				>
 					<Editor
 						height="100%"
