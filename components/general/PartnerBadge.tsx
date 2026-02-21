@@ -16,20 +16,20 @@ export default function PartnerBadge({
 
 	return (
 		<SmartLink
-			className="group flex items-center space-x-3 p-3 rounded-lg transition-all duration-300 hover:scale-105 hover:bg-primary/5 cursor-pointer border border-card-heading shadow-sm hover:shadow-md hover:border-primary/30 bg-transparent text-secondary"
+			className="group flex items-center gap-3 px-4 py-3 rounded-xl border border-card-border bg-card-bg hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 hover:scale-[1.02] cursor-pointer"
 			href={partner.url}
 		>
-			<div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+			{/* Logo */}
+			{/* Logo */}
+			<div className="w-9 p-1 h-9 flex-shrink-0 rounded-full overflow-hidden">
 				{imageError ? (
-					<div className="w-full h-full rounded-full bg-secondary/10 flex items-center justify-center font-heading font-weight-heading text-secondary">
-						<span className="text-lg leading-none">
-							{partner.name.charAt(0)}
-						</span>
+					<div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+						{partner.name.charAt(0)}
 					</div>
 				) : (
 					<img
 						alt={`${partner.name} logo`}
-						className="w-8 h-8 rounded-full object-cover heading transition-transform group-hover:scale-110 duration-200"
+						className="w-full h-full object-cover"
 						height={32}
 						onError={() => setImageError(true)}
 						src={`https://img.logo.dev/${extractDomain(partner.url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
@@ -37,14 +37,27 @@ export default function PartnerBadge({
 					/>
 				)}
 			</div>
+
+			{/* Text */}
 			<div className="flex-1 min-w-0">
-				<div className="font-semibold text-sm font-heading font-weight-heading tracking-heading text-card-heading truncate">
+				<p className="text-sm font-semibold text-card-heading truncate leading-tight">
 					{partner.name}
-				</div>
-				<div className="text-xs text-card-heading truncate group-hover:text-secondary transition-colors duration-200">
+				</p>
+				<p className="text-xs text-card-heading/60 truncate mt-0.5">
 					{partner.description}
-				</div>
+				</p>
 			</div>
+
+			{/* Arrow */}
+			<svg
+				className="w-4 h-4 text-card-heading/30 group-hover:text-primary/50 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth={2}
+				viewBox="0 0 24 24"
+			>
+				<path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+			</svg>
 		</SmartLink>
 	);
 }
