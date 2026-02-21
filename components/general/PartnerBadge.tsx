@@ -22,7 +22,9 @@ export default function PartnerBadge({
 			<div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
 				{imageError ? (
 					<div className="w-full h-full rounded-full bg-secondary/10 flex items-center justify-center font-heading font-weight-heading text-secondary">
-						<span className="text-lg leading-none">{partner.name.charAt(0)}</span>
+						<span className="text-lg leading-none">
+							{partner.name.charAt(0)}
+						</span>
 					</div>
 				) : (
 					<img
