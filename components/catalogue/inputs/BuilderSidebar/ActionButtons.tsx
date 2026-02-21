@@ -54,7 +54,11 @@ const ActionButtons = ({
 			toast.error("Catalogue has no name/slug");
 			return;
 		}
-		window.open(`/catalogues/${catalogueName}/preview`, "_blank", "noopener,noreferrer");
+		window.open(
+			`/catalogues/${catalogueName}/preview`,
+			"_blank",
+			"noopener,noreferrer",
+		);
 	};
 
 	const handlePublish = async () => {
@@ -106,10 +110,11 @@ const ActionButtons = ({
                         flex-1
                         ${isOpen ? "md:px-3" : "md:flex-none justify-center md:w-9 md:px-0 flex flex-col h-fit py-2 gap-0"}
                         px-1.5 sm:px-2
-                        ${primary
-								? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
-								: "hover:bg-product-primary/10 hover:border-product-primary/20"
-							}
+                        ${
+													primary
+														? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
+														: "hover:bg-product-primary/10 hover:border-product-primary/20"
+												}
                         hover:scale-105 active:scale-95 transition-all duration-300
                     `}
 						key={key}
@@ -118,8 +123,12 @@ const ActionButtons = ({
 						title={label}
 						variant={primary ? "default" : "grayed"}
 					>
-						<Icon className={`mr-1.5 md:mr-0 ${!isOpen && "md:mr-0 w-4 h-4"} shrink-0 transition-all duration-300`} />
-						<span className={`${isOpen ? "md:block" : "md:hidden"} block text-[11px] sm:text-xs font-medium whitespace-nowrap overflow-hidden text-ellipsis`}>
+						<Icon
+							className={`mr-1.5 md:mr-0 ${!isOpen && "md:mr-0 w-4 h-4"} shrink-0 transition-all duration-300`}
+						/>
+						<span
+							className={`${isOpen ? "md:block" : "md:hidden"} block text-[11px] sm:text-xs font-medium whitespace-nowrap overflow-hidden text-ellipsis`}
+						>
 							{label}
 						</span>
 					</Button>
