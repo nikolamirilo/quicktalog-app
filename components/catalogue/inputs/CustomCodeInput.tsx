@@ -62,7 +62,7 @@ const PreviewItem = memo(
 				if (typeof (window as any).lottie !== "undefined") {
 					try {
 						(window as any).lottie.destroy();
-					} catch (e) {}
+					} catch (e) { }
 				}
 				newScripts.forEach((script) => {
 					if (script.parentNode) {
@@ -234,9 +234,8 @@ const CustomCodeInput = ({
 				</div>
 
 				<div
-					className={`border rounded-md overflow-hidden transition-all duration-300 ${
-						isExpanded ? "h-[350px]" : "h-[75px]"
-					}`}
+					className={`border rounded-md overflow-hidden transition-all duration-300 ${isExpanded ? "h-[350px]" : "h-[75px]"
+						}`}
 				>
 					<Editor
 						height="100%"
@@ -260,7 +259,7 @@ const CustomCodeInput = ({
 			</div>
 
 			{/* Template Library Section */}
-			<div className="space-y-4 pt-4 border-t border-gray-200">
+			{/* <div className="space-y-4 pt-4 border-t border-gray-200">
 				<div>
 					<h3 className="text-product-foreground font-semibold font-body mb-1">
 						Custom Code Library
@@ -268,9 +267,9 @@ const CustomCodeInput = ({
 					<p className="text-xs text-gray-500 mb-6">
 						Pre-made components ready to be added to your catalogue
 					</p>
-				</div>
+				</div> */}
 
-				{/* <div className="grid grid-cols-2 gap-4 w-full pb-8 grid-flow-dense">
+			{/* <div className="grid grid-cols-2 gap-4 w-full pb-8 grid-flow-dense">
 					{Object.entries(customCodeTemplates).map(([key, code]) => {
 						const isHorizontal = [
 							"ctaSection",
@@ -292,7 +291,7 @@ const CustomCodeInput = ({
 						);
 					})}
 				</div> */}
-			</div>
+			{/* </div> */}
 		</div>
 	);
 };

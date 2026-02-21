@@ -31,7 +31,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					"mailto:quicktalog@outlook.com",
 					<FiMail
 						aria-hidden="true"
-						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
+						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-secondary"
 					/>,
 					"Send email to quicktalog@outlook.com",
 				),
@@ -43,7 +43,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						`mailto:${data?.contact?.email}`,
 						<FiMail
 							aria-hidden="true"
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
+							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-secondary"
 						/>,
 						`Send email to ${data?.contact?.email}`,
 					),
@@ -55,7 +55,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						`tel:${data?.contact?.phone}`,
 						<FiPhone
 							aria-hidden="true"
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
+							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-secondary"
 						/>,
 						`Call ${data?.contact?.phone}`,
 					),
@@ -86,7 +86,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 				href: data?.header?.cta.url,
 				label: data?.header?.cta.label || "Learn more",
 				shortLabel: data?.header?.cta.label || "Learn more",
-				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4 lg:mr-1" />,
+				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4" />,
 				ariaLabel: data?.header?.cta.label || "Learn more",
 			};
 		}
@@ -150,7 +150,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						{ctaProps && (
 							<Button
 								asChild
-								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-header-text border-primary footer-cta-button"
+								className="font-heading tracking-heading text-xs sm:text-sm lg:text-base transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-secondary text-secondary border-primary footer-cta-button"
 								size="default"
 								variant="outline"
 							>
