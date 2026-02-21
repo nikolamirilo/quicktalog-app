@@ -139,9 +139,9 @@ const Catalogue = ({
 					)}
 					<section
 						aria-labelledby={item.heading}
-						className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0"
+						className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0 w-full"
 					>
-						<div className="max-w-4xl mx-auto">
+						<div className="max-w-[95%] sm:max-w-5xl mx-auto">
 							{type === "edit" ? (
 								<HeadingInput />
 							) : (

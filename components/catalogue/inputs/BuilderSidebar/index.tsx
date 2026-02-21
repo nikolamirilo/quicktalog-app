@@ -31,16 +31,16 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-	{
-		key: "appearance",
-		icon: Palette,
-		label: "Appearance",
-		content: <AppearanceTab />,
-	},
-];
+		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+		{
+			key: "appearance",
+			icon: Palette,
+			label: "Appearance",
+			content: <AppearanceTab />,
+		},
+	];
 
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
@@ -95,11 +95,11 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 				{/* Mobile Toggle Button (Centered, overlapping top edge) */}
 				<button
 					onClick={() => setIsOpen((v) => !v)}
-					className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-12 h-12 flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[1010]"
+					className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-[3.5rem] h-[3.5rem] flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[1010]"
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title="Toggle Sidebar"
 				>
-					{isOpen ? <LuChevronsDown size={26} /> : <LuChevronsUp size={26} />}
+					{isOpen ? <LuChevronsDown size={32} /> : <LuChevronsUp size={32} />}
 				</button>
 
 				<Button
