@@ -19,7 +19,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 		icon,
 		label,
 		className:
-			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center bg-transparent text-secondary border-card hover:bg-primary/10 hover:text-secondary footer-cta-button",
+			"font-heading tracking-heading px-2 h-9 rounded-lg border-2 border-solid border-[var(--text)]/20 hover:border-[var(--primary)] hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center bg-transparent text-card-heading hover:bg-primary/10 footer-cta-button",
 	});
 
 	const getContactLinks = () => {
@@ -31,7 +31,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					"mailto:quicktalog@outlook.com",
 					<FiMail
 						aria-hidden="true"
-						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-secondary"
+						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-card-heading"
 					/>,
 					"Send email to quicktalog@outlook.com",
 				),
@@ -43,7 +43,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						`mailto:${data?.contact?.email}`,
 						<FiMail
 							aria-hidden="true"
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-secondary"
+							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-card-heading"
 						/>,
 						`Send email to ${data?.contact?.email}`,
 					),
@@ -55,7 +55,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						`tel:${data?.contact?.phone}`,
 						<FiPhone
 							aria-hidden="true"
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-secondary"
+							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200 text-card-heading"
 						/>,
 						`Call ${data?.contact?.phone}`,
 					),
@@ -150,7 +150,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						{ctaProps && (
 							<Button
 								asChild
-								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-secondary bg-transparent text-secondary border-card footer-cta-button"
+								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border-2 border-solid border-[var(--text)]/20 hover:border-[var(--primary)] hover:bg-primary/10 bg-transparent text-card-heading footer-cta-button"
 								size="default"
 								variant="outline"
 							>
