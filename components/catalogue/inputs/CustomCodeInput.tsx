@@ -1,19 +1,89 @@
 "use client";
 import HtmlContent from "@/components/general/HtmlContent";
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { customCodeTemplates } from "@/constants/customSolutions";
 import Editor from "@monaco-editor/react";
 import { UserData } from "@quicktalog/common";
-import { ChevronDown, ChevronUp, Eye, Lock } from "lucide-react";
-import { useRef, useState } from "react";
-import { FaCheck } from "react-icons/fa";
+import { ChevronDown, ChevronUp, Lock } from "lucide-react";
+import { memo, useEffect, useRef, useState } from "react";
+
+const PreviewItem = memo(({ code, label, onSelect, canUse, isHorizontal }: { code: string, label: string, onSelect: () => void, canUse: boolean, isHorizontal: boolean }) => {
+	const ref = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!ref.current) return;
+		const container = ref.current;
+
+		const oldScripts = Array.from(container.querySelectorAll("script"));
+		const newScripts: HTMLScriptElement[] = [];
+
+		let isActive = true;
+
+		const loadScripts = async () => {
+			for (const oldScript of oldScripts) {
+				if (!isActive) break;
+				if (oldScript.src) {
+					if (!document.querySelector(`script[src="${oldScript.src}"]`)) {
+						await new Promise<void>((resolve) => {
+							const newScript = document.createElement("script");
+							newScript.src = oldScript.src;
+							newScript.onload = () => resolve();
+							newScript.onerror = () => resolve();
+							document.body.appendChild(newScript);
+							newScripts.push(newScript);
+						});
+					}
+				} else {
+					const newScript = document.createElement("script");
+					newScript.textContent = oldScript.textContent;
+					document.body.appendChild(newScript);
+					newScripts.push(newScript);
+				}
+			}
+		};
+
+		loadScripts();
+
+		return () => {
+			isActive = false;
+			if (typeof (window as any).lottie !== "undefined") {
+				try {
+					(window as any).lottie.destroy();
+				} catch (e) { }
+			}
+			newScripts.forEach((script) => {
+				if (script.parentNode) {
+					script.parentNode.removeChild(script);
+				}
+			});
+		};
+	}, [code]);
+
+	return (
+		<div className={`group relative rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md overflow-hidden ${isHorizontal ? "col-span-2" : "col-span-1"}`}>
+			<div ref={ref} className="pointer-events-none w-full relative" style={{ zoom: 0.5 } as any}>
+				<HtmlContent html={code} />
+			</div>
+			{/* Overlay */}
+			<div className="absolute inset-0 z-10 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4">
+				<span className="text-white font-semibold mb-4 text-xl drop-shadow-md">{label}</span>
+				<Button
+					variant={canUse ? "default" : "secondary"}
+					onClick={onSelect}
+					disabled={!canUse}
+					className={canUse ? "bg-white text-black hover:bg-gray-100 px-6 font-bold shadow-lg" : "shadow-lg"}
+				>
+					{canUse ? (
+						<>Select Template</>
+					) : (
+						<><Lock className="w-4 h-4 mr-2" /> Premium</>
+					)}
+				</Button>
+			</div>
+		</div>
+	);
+});
+
 
 interface CustomCodeInputProps {
 	value: {
@@ -34,6 +104,56 @@ const CustomCodeInput = ({
 		code: string;
 	} | null>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
+	const hasRunPreviewCode = useRef<string | null>(null);
+
+	useEffect(() => {
+		if (!previewRef.current || !previewTemplate) {
+			hasRunPreviewCode.current = null;
+			return;
+		}
+		if (hasRunPreviewCode.current === previewTemplate.code) return;
+		hasRunPreviewCode.current = previewTemplate.code;
+
+		const oldScripts = Array.from(previewRef.current.querySelectorAll("script"));
+		const newScripts: HTMLScriptElement[] = [];
+		let isActive = true;
+
+		const loadScripts = async () => {
+			for (const oldScript of oldScripts) {
+				if (!isActive) break;
+				await new Promise<void>((resolve) => {
+					const newScript = document.createElement("script");
+					Array.from(oldScript.attributes).forEach((attr) => {
+						newScript.setAttribute(attr.name, attr.value);
+					});
+					newScript.textContent = oldScript.textContent;
+
+					if (newScript.src) {
+						newScript.onload = () => resolve();
+						newScript.onerror = () => resolve();
+					}
+
+					document.body.appendChild(newScript);
+					newScripts.push(newScript);
+
+					if (!newScript.src) {
+						resolve();
+					}
+				});
+			}
+		};
+
+		loadScripts();
+
+		return () => {
+			isActive = false;
+			newScripts.forEach((script) => {
+				if (script.parentNode) {
+					script.parentNode.removeChild(script);
+				}
+			});
+		};
+	}, [previewTemplate]);
 
 	// Check if user has access to premium features (Growth or Premium plans)
 	const canUseTemplates = userData?.planId && userData.currentPlan.id >= 2; // 2 = Growth, 3 = Premium
@@ -49,7 +169,6 @@ const CustomCodeInput = ({
 	const handleUseTemplate = (code: string) => {
 		if (!canUseTemplates) return;
 		onChange({ ...value, code });
-		setPreviewTemplate(null);
 	};
 
 	return (
@@ -86,9 +205,8 @@ const CustomCodeInput = ({
 				</div>
 
 				<div
-					className={`border rounded-md overflow-hidden transition-all duration-300 ${
-						isExpanded ? "h-[350px]" : "h-[75px]"
-					}`}
+					className={`border rounded-md overflow-hidden transition-all duration-300 ${isExpanded ? "h-[350px]" : "h-[75px]"
+						}`}
 				>
 					<Editor
 						height="100%"
@@ -117,110 +235,34 @@ const CustomCodeInput = ({
 					<h3 className="text-product-foreground font-semibold font-body mb-1">
 						Custom Code Library
 					</h3>
-					<p className="text-xs text-gray-500">
-						Pre-made components you can use in your catalogue
+					<p className="text-xs text-gray-500 mb-6">
+						Pre-made components ready to be added to your catalogue
 					</p>
 				</div>
 
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-					{Object.entries(customCodeTemplates).map(([key, code]) => (
-						<div
-							key={key}
-							className="group border-2 border-gray-200 rounded-xl p-5 transition-all duration-200 bg-gradient-to-br from-white to-gray-50"
-						>
-							<div className="space-y-3">
-								<div className="flex-1">
-									<h4 className="font-semibold text-base text-product-foreground mb-1.5">
-										{toTitleCase(key)}
-									</h4>
-									<p className="text-xs text-gray-600 leading-relaxed">
-										Pre-built component ready to use
-									</p>
-								</div>
-								<div className="flex items-center gap-2">
-									<Button
-										variant="outline"
-										className="flex-1"
-										onClick={() => setPreviewTemplate({ name: key, code })}
-										size="sm"
-										type="button"
-									>
-										<Eye className="w-4 h-4 mr-2" />
-										Preview
-									</Button>
-									<Button
-										className={`flex-1 ${
-											canUseTemplates
-												? ""
-												: "bg-gray-100 text-gray-400 cursor-not-allowed"
-										}`}
-										disabled={!canUseTemplates}
-										onClick={() => canUseTemplates && handleUseTemplate(code)}
-										size="sm"
-										type="button"
-									>
-										{canUseTemplates ? (
-											<>
-												<FaCheck className="w-4 h-4 mr-2" />
-												Select
-											</>
-										) : (
-											<>
-												<Lock className="w-4 h-4 mr-2" />
-												Premium
-											</>
-										)}
-									</Button>
-								</div>
-							</div>
-						</div>
-					))}
-				</div>
+				{/* <div className="grid grid-cols-2 gap-4 w-full pb-8 grid-flow-dense">
+					{Object.entries(customCodeTemplates).map(([key, code]) => {
+						const isHorizontal = [
+							"ctaSection",
+							"jewelryCollection",
+							"giftShopBanner",
+							"cafeLoyalty",
+							"fashionLookbook"
+						].includes(key);
+
+						return (
+							<PreviewItem
+								key={key}
+								code={code}
+								label={toTitleCase(key)}
+								onSelect={() => handleUseTemplate(code)}
+								canUse={canUseTemplates}
+								isHorizontal={isHorizontal}
+							/>
+						);
+					})}
+				</div> */}
 			</div>
-
-			{/* Preview Modal */}
-			<Dialog
-				open={!!previewTemplate}
-				onOpenChange={() => setPreviewTemplate(null)}
-			>
-				<DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-product-background">
-					<DialogHeader>
-						<DialogTitle>
-							{previewTemplate && toTitleCase(previewTemplate.name)}
-						</DialogTitle>
-					</DialogHeader>
-
-					<div className="space-y-4">
-						<div className="border rounded-lg overflow-hidden bg-gray-900">
-							<div className="p-4 bg-gray-800 border-b border-gray-700">
-								<p className="text-sm text-gray-300">Preview</p>
-							</div>
-							<div className="p-6 bg-gray-900" ref={previewRef}>
-								{previewTemplate && <HtmlContent html={previewTemplate.code} />}
-							</div>
-						</div>
-
-						<div className="flex justify-end gap-3">
-							<Button
-								onClick={() => setPreviewTemplate(null)}
-								type="button"
-								variant="outline"
-							>
-								Close
-							</Button>
-							<Button
-								onClick={() =>
-									previewTemplate && handleUseTemplate(previewTemplate.code)
-								}
-								type="button"
-								className="bg-product-primary hover:bg-product-primary/90"
-							>
-								Use Template
-							</Button>
-						</div>
-					</div>
-				</DialogContent>
-			</Dialog>
 		</div>
 	);
 };

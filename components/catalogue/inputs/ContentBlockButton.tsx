@@ -6,7 +6,7 @@ const ContentBlockButton = ({
 	return (
 		<div className="max-w-6xl mx-auto px-4 block">
 			<button
-				className="mt-4 w-full group border-2 border-dashed border-border bg-background rounded-xl flex flex-col items-center justify-center relative cursor-pointer transition-all hover:bg-accent hover:border-primary hover:scale-[1.01] py-12"
+				className="mt-4 w-full group border-2 border-dashed border-border bg-background rounded-xl flex flex-col items-center justify-center relative cursor-pointer transition-all hover:bg-section-hover hover:border-primary hover:scale-[1.01] py-12"
 				onClick={() => setIsAddContentOpen(true)}
 			>
 				<img
