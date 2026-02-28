@@ -10,7 +10,7 @@ const CreateCatalogueCTA = () => {
 					</div>
 					<div className="flex gap-2">
 						<a
-							className="bg-product-primary text-product-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-product-primary-accent transition-colors duration-200 shadow-product-shadow"
+							className="bg-product-primary text-product-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary-accent transition-colors duration-200 shadow-product-shadow"
 							href="/auth?mode=signup"
 						>
 							Get Started

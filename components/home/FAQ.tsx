@@ -90,7 +90,7 @@ const FAQ: React.FC = () => {
 							{({ open }) => (
 								<>
 									<DisclosureButton
-										className="flex w-full items-center justify-between px-6 py-4 text-left hover:bg-product-hover-background transition-all duration-200 group"
+										className="flex w-full items-center justify-between px-6 py-4 text-left hover:bg-product-background-hover transition-all duration-200 group"
 										onClick={() => toggleItem(index)}
 									>
 										<span className="text-lg font-semibold text-product-foreground group-hover:text-product-primary transition-colors duration-200">
@@ -126,7 +126,7 @@ const FAQ: React.FC = () => {
 					transition={{ delay: 0.5 }}
 				>
 					<button
-						className="px-8 py-3 bg-product-primary text-product-foreground rounded-lg font-semibold hover:bg-product-product-primary-accent transition-all duration-200 hover:scale-105 shadow-product-shadow"
+						className="px-8 py-3 bg-product-primary text-product-foreground rounded-lg font-semibold hover:bg-product-primary-accent transition-all duration-200 hover:scale-105 shadow-product-shadow"
 						onClick={handleLoadMore}
 					>
 						Load More Questions

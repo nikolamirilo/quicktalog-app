@@ -51,9 +51,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			},
 			features.branding === true
 				? {
-						text: features.branding === true ? "Custom Branding" : null,
-						type: "custom_branding",
-					}
+					text: features.branding === true ? "Custom Branding" : null,
+					type: "custom_branding",
+				}
 				: null,
 			{
 				text: `${features.traffic_limit.toLocaleString()} page views per month`,
@@ -62,15 +62,15 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			features.ai_prompts === 0
 				? null
 				: {
-						text: `${features.ai_prompts} AI prompts per month`,
-						type: "ai-catalogue-generation",
-					},
+					text: `${features.ai_prompts} AI prompts per month`,
+					type: "ai-catalogue-generation",
+				},
 			features.ocr_ai_import === 0
 				? null
 				: {
-						text: `${features.ocr_ai_import} OCR AI imports per month`,
-						type: "ocr-ai-import",
-					},
+					text: `${features.ocr_ai_import} OCR AI imports per month`,
+					type: "ocr-ai-import",
+				},
 
 			features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,
 			features.custom_features
@@ -145,9 +145,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				className={clsx(
 					"group relative w-full bg-product-background text-product-foreground rounded-xl border border-product-border transition-all duration-300 ease-out",
 					{
-						"shadow-[var(--product-shadow)] hover:shadow-[var(--product-hover-shadow)]":
+						"shadow-[var(--product-shadow)] hover:shadow-[var(--product-shadow-hover)]":
 							!highlight,
-						"shadow-[var(--product-hover-shadow)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)]":
+						"shadow-[var(--product-shadow-hover)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)]":
 							highlight,
 						"hover:scale-[1.01]": true,
 					},
@@ -156,7 +156,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				onMouseLeave={() => setIsHovered(false)}
 				style={{
 					boxShadow: highlight
-						? "var(--product-hover-shadow)"
+						? "var(--product-shadow-hover)"
 						: "var(--product-shadow)",
 				}}
 			>
@@ -174,7 +174,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 							className={clsx(
 								"text-lg font-bold mb-2 text-product-primary transition-colors duration-300 font-lora",
 								{
-									"text-product-product-primary-accent": highlight && isHovered,
+									"text-product-primary-accent": highlight && isHovered,
 								},
 							)}
 						>
@@ -261,9 +261,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			className={clsx(
 				"group relative w-full max-w-sm mx-auto bg-product-background text-product-foreground rounded-2xl border border-product-border lg:max-w-full transition-all duration-300 ease-out h-full flex flex-col",
 				{
-					"shadow-[var(--product-shadow)] hover:shadow-[var(--product-hover-shadow)]":
+					"shadow-[var(--product-shadow)] hover:shadow-[var(--product-shadow-hover)]":
 						!highlight,
-					"shadow-[var(--product-hover-shadow)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.18)]":
+					"shadow-[var(--product-shadow-hover)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.18)]":
 						highlight,
 					"hover:scale-[1.02] hover:-translate-y-1": true,
 				},
@@ -272,7 +272,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			onMouseLeave={() => setIsHovered(false)}
 			style={{
 				boxShadow: highlight
-					? "var(--product-hover-shadow)"
+					? "var(--product-shadow-hover)"
 					: "var(--product-shadow)",
 			}}
 		>
@@ -281,7 +281,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				<h3
 					className={clsx(
 						"text-xl font-bold mb-3 text-product-primary transition-colors duration-300 font-lora",
-						{ "text-product-product-primary-accent": highlight && isHovered },
+						{ "text-product-primary-accent": highlight && isHovered },
 					)}
 				>
 					{tier.name}

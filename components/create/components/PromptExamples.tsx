@@ -21,7 +21,7 @@ const PromptExamples: React.FC<PromptExamplesProps> = ({
 			<div className="grid gap-3">
 				{examplePrompts.map((example, index) => (
 					<Button
-						className="text-left p-4 rounded-lg bg-transparent hover:bg-product-hover-background border border-product-border transition-all group !h-fit max-w-full text-wrap"
+						className="text-left p-4 rounded-lg bg-transparent hover:bg-product-background-hover border border-product-border transition-all group !h-fit max-w-full text-wrap"
 						disabled={disabled}
 						key={`example-${index}`}
 						onClick={() => setPrompt(example.prompt)}

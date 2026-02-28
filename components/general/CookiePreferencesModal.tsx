@@ -105,7 +105,7 @@ const CookiePreferencesModal = ({
 			<FocusLock>
 				<div className="bg-product-background rounded-lg shadow-lg max-w-lg w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
 					{/* Header */}
-					<div className="relative p-6 text-center bg-hero-product-background">
+					<div className="relative p-6 text-center bg-product-background-hero">
 						<button
 							aria-label="Close cookie settings"
 							className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors"
@@ -143,7 +143,7 @@ const CookiePreferencesModal = ({
 								</a>
 							</p>
 						</div>
-						<div className="flex items-start justify-between p-4 rounded-lg bg-product-hover-background">
+						<div className="flex items-start justify-between p-4 rounded-lg bg-product-background-hover">
 							<div className="flex-1 pr-3">
 								<h3 className="text-sm font-medium text-product-foreground mb-1">
 									Essential Cookies

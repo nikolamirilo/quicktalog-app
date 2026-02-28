@@ -204,7 +204,7 @@ const LimitsModal = ({
 		<AlertDialog open={isOpen}>
 			<AlertDialogContent className="w-[95vw] max-w-md xl:max-w-lg mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow rounded-lg overflow-hidden">
 				{/* Header */}
-				<AlertDialogHeader className="relative p-6 sm:p-8 text-center bg-hero-product-background space-y-0">
+				<AlertDialogHeader className="relative p-6 sm:p-8 text-center bg-product-background-hero space-y-0">
 					{onClose ? (
 						<button
 							aria-label="Close"
@@ -274,7 +274,7 @@ const LimitsModal = ({
 					{isNotFound ? (
 						<div className="space-y-6">
 							{/* Quicktalog Promotional Content */}
-							<div className="p-4 sm:p-5 rounded-xl bg-product-hover-background border border-product-border">
+							<div className="p-4 sm:p-5 rounded-xl bg-product-background-hover border border-product-border">
 								<h3 className="text-base sm:text-lg font-semibold text-product-foreground mb-2">
 									Create Your Digital Catalog with Quicktalog
 								</h3>
@@ -308,7 +308,7 @@ const LimitsModal = ({
 							<div className="space-y-4">
 								{/* Limit Comparison */}
 								<div className="w-full max-w-3xl">
-									<div className="border-2 border-product-primary flex items-center justify-between p-4 rounded-xl bg-product-hover-background">
+									<div className="border-2 border-product-primary flex items-center justify-between p-4 rounded-xl bg-product-background-hover">
 										{/* Current Plan */}
 										<div className="flex-1 min-w-0">
 											<div className="text-xs text-product-foreground-accent mb-2">
@@ -366,7 +366,7 @@ const LimitsModal = ({
 
 								{!isStandardPlanLimitReached ? (
 									// 🔹 Upgrade feature preview
-									<div className="p-4 rounded-xl bg-product-hover-background border-2 border-product-primary">
+									<div className="p-4 rounded-xl bg-product-background-hover border-2 border-product-primary">
 										<div className="space-y-3">
 											<div className="flex items-start space-x-3">
 												<div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0">
@@ -464,7 +464,7 @@ const LimitsModal = ({
 										</div>
 									</div>
 								) : (
-									<div className="p-4 rounded-xl bg-product-hover-background border-2 border-product-primary">
+									<div className="p-4 rounded-xl bg-product-background-hover border-2 border-product-primary">
 										<div className="flex items-start space-x-3">
 											<div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0 mt-1">
 												<BiCustomize className="w-4 h-4 text-product-secondary" />
@@ -486,7 +486,7 @@ const LimitsModal = ({
 							{content.currentLimit === content.nextLimit ? (
 								<AlertDialogFooter className="sm:justify-center pt-2">
 									<Link
-										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-product-primary-accent"
+										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
 										href="/contact"
 									>
 										<span className="relative z-10 flex items-center justify-center space-x-2">
@@ -498,7 +498,7 @@ const LimitsModal = ({
 							) : (
 								<AlertDialogFooter className="sm:justify-center pt-2">
 									<Link
-										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-product-primary-accent"
+										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
 										href="/pricing"
 									>
 										<span className="relative z-10 flex items-center justify-center space-x-2">

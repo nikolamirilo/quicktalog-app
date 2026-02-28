@@ -258,7 +258,7 @@ const OCRImport = ({
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
 						{images.map((imageData, index) => (
 							<div className="relative group" key={imageData.id}>
-								<div className="p-2 rounded-2xl border-2 border-product-border bg-hero-product-background shadow-product hover:shadow-xl transition-all duration-300 hover:scale-105">
+								<div className="p-2 rounded-2xl border-2 border-product-border bg-product-background-hero shadow-product hover:shadow-xl transition-all duration-300 hover:scale-105">
 									{/* Remove button */}
 									<button
 										className="absolute top-1 right-1 z-10 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all shadow-lg hover:shadow-xl hover:scale-110"
@@ -296,15 +296,14 @@ const OCRImport = ({
 										{imageData.isProcessed && (
 											<div className="flex justify-center">
 												{imageData.confidence !== undefined &&
-												imageData.confidence > 0 ? (
+													imageData.confidence > 0 ? (
 													<div
-														className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
-															imageData.confidence > 80
+														className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${imageData.confidence > 80
 																? "bg-green-100 text-green-800 border border-green-300"
 																: imageData.confidence > 60
 																	? "bg-yellow-100 text-yellow-800 border border-yellow-300"
 																	: "bg-red-100 text-red-800 border border-red-300"
-														}`}
+															}`}
 													>
 														<CheckCircle2 size={14} />
 														{imageData.confidence.toFixed(1)}%
@@ -352,7 +351,7 @@ const OCRImport = ({
 			</div>
 			{/* Processing Summary */}
 			<div className="flex flex-col gap-6 w-full mb-8">
-				<div className="p-8 rounded-2xl border-2 border-product-border bg-gradient-to-br from-hero-product-background to-product-background shadow-xl">
+				<div className="p-8 rounded-2xl border-2 border-product-border bg-gradient-to-br from-product-background-hero to-product-background shadow-xl">
 					<div className="flex items-center gap-3 mb-6">
 						<div className="p-2 bg-product-primary rounded-lg">
 							<BiScan color="black" size={24} />

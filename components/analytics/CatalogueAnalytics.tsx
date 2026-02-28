@@ -38,7 +38,7 @@ const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
 	return (
 		<div className="space-y-8">
 			<div className="grid w-full mx-auto grid-cols-1 md:w-full md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-300 hover:scale-product-hover-scale">
+				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-300 hover:scale-product-scale-hover">
 					<CardContent className="p-6">
 						<div className="flex items-center justify-between">
 							<div>
@@ -56,7 +56,7 @@ const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
 					</CardContent>
 				</Card>
 
-				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-300 hover:scale-product-hover-scale">
+				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-300 hover:scale-product-scale-hover">
 					<CardContent className="p-6">
 						<div className="flex items-center justify-between">
 							<div>
@@ -74,7 +74,7 @@ const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
 					</CardContent>
 				</Card>
 
-				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-300 hover:scale-product-hover-scale">
+				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-300 hover:scale-product-scale-hover">
 					<CardContent className="p-6">
 						<div className="flex items-center justify-between">
 							<div>
@@ -92,14 +92,14 @@ const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
 									</p>
 								)}
 							</div>
-							<div className="w-12 h-12 bg-product-product-primary-accent/10 rounded-full flex items-center justify-center">
+							<div className="w-12 h-12 bg-product-primary-accent/10 rounded-full flex items-center justify-center">
 								<FiCalendar className="w-6 h-6 text-product-icon" />
 							</div>
 						</div>
 					</CardContent>
 				</Card>
 
-				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-300 hover:scale-product-hover-scale">
+				<Card className="bg-product-background border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-300 hover:scale-product-scale-hover">
 					<CardContent className="p-6">
 						<div className="flex items-center justify-between">
 							<div>

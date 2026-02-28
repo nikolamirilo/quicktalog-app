@@ -41,7 +41,7 @@ const MonthlyUsage = ({
 		title: "AI Prompts",
 		icon: <RiSparkling2Line className="w-6 h-6" />,
 		shown: pricingPlan.features.ai_prompts > 0 ? true : false,
-		color: "text-product-product-primary-accent",
+		color: "text-product-primary-accent",
 	};
 
 	const ocrUsage = {
@@ -56,7 +56,7 @@ const MonthlyUsage = ({
 	const charts = [trafficUsage, cataloguesUsage, aiPromptsUsage, ocrUsage];
 
 	return (
-		<div className="max-w-6xl space-y-8 bg-gradient-to-br from-product-background to-hero-product-background  rounded-3xl">
+		<div className="max-w-6xl space-y-8 bg-gradient-to-br from-product-background to-product-background-hero  rounded-3xl">
 			{/* Header Section */}
 			<div className="space-y-4">
 				<h2

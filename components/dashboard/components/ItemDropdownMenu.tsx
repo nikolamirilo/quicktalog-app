@@ -99,7 +99,7 @@ const ItemDropdownMenu = ({
 					>
 						<DropdownMenuItem
 							asChild
-							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 							disabled={disabled}
 						>
 							<Link
@@ -113,7 +113,7 @@ const ItemDropdownMenu = ({
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 							disabled={
 								duplicatingId === catalogue.id ||
 								disabled ||
@@ -136,7 +136,7 @@ const ItemDropdownMenu = ({
 							</span>
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 							disabled={disabled}
 							onClick={(e) => {
 								e.preventDefault();
@@ -159,7 +159,7 @@ const ItemDropdownMenu = ({
 							</span>
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 							disabled={disabled}
 						>
 							{" "}
@@ -175,7 +175,7 @@ const ItemDropdownMenu = ({
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem
-							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 							disabled={disabled}
 							onClick={() =>
 								handleDownloadHTML(
@@ -202,7 +202,7 @@ const ItemDropdownMenu = ({
 							/>
 						</div>
 						<DropdownMenuItem
-							className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+							className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 							disabled={
 								usage.catalogues >= matchedTier.features.catalogues ||
 								disabled ||

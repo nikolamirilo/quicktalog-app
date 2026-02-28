@@ -57,11 +57,10 @@ const CardControls = ({
 		<div className="absolute top-2 right-2 flex gap-1 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
 			{onMoveUp && (
 				<button
-					className={`p-2 bg-white rounded-full shadow-md transition-colors ${
-						isFirst
+					className={`p-2 bg-white rounded-full shadow-md transition-colors ${isFirst
 							? "text-gray-300 cursor-not-allowed"
 							: "text-gray-600 hover:bg-gray-50"
-					}`}
+						}`}
 					disabled={isFirst}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -74,11 +73,10 @@ const CardControls = ({
 			)}
 			{onMoveDown && (
 				<button
-					className={`p-2 bg-white rounded-full shadow-md transition-colors ${
-						isLast
+					className={`p-2 bg-white rounded-full shadow-md transition-colors ${isLast
 							? "text-gray-300 cursor-not-allowed"
 							: "text-gray-600 hover:bg-gray-50"
-					}`}
+						}`}
 					disabled={isLast}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -104,7 +102,7 @@ const CardControls = ({
 					className="bg-product-background border border-product-border rounded-xl shadow-lg"
 				>
 					<DropdownMenuItem
-						className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+						className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 						onClick={(e) => {
 							e.stopPropagation();
 							onEdit();
@@ -136,7 +134,7 @@ const CardControls = ({
 							<>
 								<DropdownMenuSeparator className="my-1" />
 								<DropdownMenuSub>
-									<DropdownMenuSubTrigger className="cursor-pointer text-product-foreground hover:bg-product-hover-background">
+									<DropdownMenuSubTrigger className="cursor-pointer text-product-foreground hover:bg-product-background-hover">
 										<span className="flex items-center gap-2">
 											<FolderInput className="w-4 h-4" />
 											Move to
@@ -147,7 +145,7 @@ const CardControls = ({
 											{availableBlocks.map(({ block, index }) => (
 												<DropdownMenuItem
 													key={block.id}
-													className="text-product-foreground hover:bg-product-hover-background cursor-pointer"
+													className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
 													onClick={(e) => {
 														e.stopPropagation();
 														moveItemToBlock(blockIndex, itemIndex, index);
@@ -156,7 +154,7 @@ const CardControls = ({
 													<span className="flex items-center justify-between gap-3 w-full">
 														<span className="font-medium truncate flex-1">
 															{block.type === "category" ||
-															block.type === "container"
+																block.type === "container"
 																? block.name
 																: "Unnamed"}
 														</span>

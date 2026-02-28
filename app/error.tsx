@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function ErrorPage() {
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-product-background to-hero-product-background flex items-center justify-center p-4">
+		<div className="min-h-screen bg-gradient-to-br from-product-background to-product-background-hero flex items-center justify-center p-4">
 			{/* Background Pattern */}
 			<div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]"></div>
 
@@ -68,19 +68,19 @@ export default function ErrorPage() {
 						</p>
 						<div className="flex flex-wrap justify-center gap-4 text-sm">
 							<Link
-								className="text-product-primary hover:text-product-product-primary-accent transition-colors duration-200 font-medium"
+								className="text-product-primary hover:text-product-primary-accent transition-colors duration-200 font-medium"
 								href="/pricing"
 							>
 								Pricing
 							</Link>
 							<Link
-								className="text-product-primary hover:text-product-product-primary-accent transition-colors duration-200 font-medium"
+								className="text-product-primary hover:text-product-primary-accent transition-colors duration-200 font-medium"
 								href="/contact"
 							>
 								Contact Support
 							</Link>
 							<Link
-								className="text-product-primary hover:text-product-product-primary-accent transition-colors duration-200 font-medium"
+								className="text-product-primary hover:text-product-primary-accent transition-colors duration-200 font-medium"
 								href="/demo"
 							>
 								Try Demo

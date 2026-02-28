@@ -83,7 +83,7 @@ export default function Subscription({
 		)
 			return "bg-product-primary";
 		if (name?.includes("enterprise")) return "bg-product-secondary";
-		if (name?.includes("starter")) return "bg-product-product-primary-accent";
+		if (name?.includes("starter")) return "bg-product-primary-accent";
 		return "bg-product-primary";
 	};
 
@@ -164,7 +164,7 @@ export default function Subscription({
 							You haven't selected a Subscription plan yet. Choose a plan to get
 							started.
 						</p>
-						<Button className="bg-product-primary text-product-foreground hover:bg-product-product-primary-accent">
+						<Button className="bg-product-primary text-product-foreground hover:bg-product-primary-accent">
 							View Available Plans
 						</Button>
 					</CardContent>
@@ -192,7 +192,7 @@ export default function Subscription({
 					</p>
 				</div>
 				<Button
-					className="w-fit min-w-56 bg-product-primary hover:bg-product-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+					className="w-fit min-w-56 bg-product-primary hover:bg-product-primary-accent shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
 					onClick={() => router.push("/pricing")}
 					variant="default"
 				>
@@ -336,11 +336,10 @@ export default function Subscription({
 								const included = isFeatureIncluded(value);
 								return (
 									<div
-										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-											included
+										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${included
 												? "bg-product-background border border-product-primary"
 												: "bg-product-background border border-product-border"
-										}`}
+											}`}
 										key={key}
 									>
 										{included ? (
@@ -354,11 +353,10 @@ export default function Subscription({
 												{formatFeatureKey(key)}
 											</p>
 											<p
-												className={`text-sm ${
-													included
+												className={`text-sm ${included
 														? "text-product-primary-foreground"
 														: "text-product-foreground-accent"
-												}`}
+													}`}
 											>
 												{formatFeatureValue(key, value)}
 											</p>

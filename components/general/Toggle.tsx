@@ -1,6 +1,6 @@
 "use client";
-import { layouts, themes } from "@quicktalog/common";
 import { useMainContext } from "@/context/MainContext";
+import { layouts, themes } from "@quicktalog/common";
 import { Button } from "../ui/button";
 
 const Toggle = ({ type = "home" }: { type?: string }) => {
@@ -33,11 +33,10 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 								<Button
 									className={`
                   relative flex-1 px-3 py-3 text-xs sm:text-sm transition-all duration-300 ease-out
-                  ${
-										layout === layoutOption.key
-											? "shadow-product-hover-shadow scale-105 transform font-semibold"
+                  ${layout === layoutOption.key
+											? "shadow-product-shadow-hover scale-105 transform font-semibold"
 											: ""
-									}
+										}
                   rounded-xl
                   hover:shadow-md hover:scale-102 transform
                   active:scale-95
@@ -103,11 +102,10 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 					>
 						{themes.map((themeOption) => (
 							<button
-								className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-102 ${themeOption.key} ${
-									theme === themeOption.key
+								className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-102 ${themeOption.key} ${theme === themeOption.key
 										? "border-product-primary shadow-md"
 										: "hover:shadow-sm"
-								}`}
+									}`}
 								key={themeOption.key}
 								onClick={() => setTheme(themeOption.key)}
 								style={{

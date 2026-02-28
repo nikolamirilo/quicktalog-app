@@ -37,7 +37,7 @@ export default function Dashboard({
 
 	function getSidebarButtonClass(isActive: boolean) {
 		return isActive
-			? "font-bold !bg-product-hover-background !text-navbar-button-active !border !border-product-primary shadow-sm hover:scale-[1.03] hover:transform"
+			? "font-bold !bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm hover:scale-[1.03] hover:transform"
 			: "font-medium";
 	}
 
@@ -50,7 +50,7 @@ export default function Dashboard({
 					strategy="lazyOnload"
 				/>
 			)}
-			<div className="w-full min-h-screen px-4 sm:px-4 relative md:px-6 lg:px-8 pt-32 pb-12 bg-gradient-to-br from-product-background to-hero-product-background animate-fade-in">
+			<div className="w-full min-h-screen px-4 sm:px-4 relative md:px-6 lg:px-8 pt-32 pb-12 bg-gradient-to-br from-product-background to-product-background-hero animate-fade-in">
 				<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8">
 					{/* Sidebar tabs (hidden on mobile) */}
 					<Suspense

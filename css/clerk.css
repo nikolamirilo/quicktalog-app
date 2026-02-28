@@ -103,9 +103,9 @@
 .cl-formFieldInput:focus,
 .cl-formFieldInputWrapper:focus-within {
 	outline: none !important;
-	background: var(--product-hover-background) !important;
+	background: var(--product-background-hover) !important;
 	border-color: var(--product-primary) !important;
-	box-shadow: var(--product-hover-shadow) !important;
+	box-shadow: var(--product-shadow-hover) !important;
 }
 
 .cl-formFieldInput::placeholder {
@@ -134,7 +134,7 @@
 }
 
 .cl-formButtonPrimary:hover {
-	background: var(--product-product-primary-accent) !important;
+	background: var(--product-primary-accent) !important;
 }
 
 /* Secondary buttons */
@@ -178,9 +178,9 @@
 }
 
 .cl-socialButtonsBlockButton:hover {
-	background: var(--product-hover-background) !important;
+	background: var(--product-background-hover) !important;
 	border-color: var(--product-primary) !important;
-	box-shadow: var(--product-hover-shadow) !important;
+	box-shadow: var(--product-shadow-hover) !important;
 }
 
 /* Social button icons */
@@ -214,7 +214,7 @@
 }
 
 .cl-footerActionLink:hover {
-	color: var(--product-product-primary-accent) !important;
+	color: var(--product-primary-accent) !important;
 	text-decoration: underline !important;
 }
 

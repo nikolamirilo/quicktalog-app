@@ -12,12 +12,12 @@ export default async function page() {
 		userData &&
 		userData.currentPlan.features.ai_prompts > 0 &&
 		userData.usage.traffic.pageview_count <
-			userData.currentPlan.features.traffic_limit
+		userData.currentPlan.features.traffic_limit
 	) {
 		return (
 			<div className="product font-lora min-h-screen">
 				<Navbar />
-				<div className="w-full min-h-screen md:px-8 pt-24 pb-12 bg-gradient-to-br from-product-background to-hero-product-background animate-fade-in">
+				<div className="w-full min-h-screen md:px-8 pt-24 pb-12 bg-gradient-to-br from-product-background to-product-background-hero animate-fade-in">
 					<div className="container mx-auto flex flex-col px-4 gap-8">
 						<AIBuilder
 							api_url={process.env.BACKEND_BASE_URL!}

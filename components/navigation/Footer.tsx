@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
 	};
 
 	return (
-		<footer className="bg-hero-product-background text-product-foreground py-16 border-t border-product-border">
+		<footer className="bg-product-background-hero text-product-foreground py-16 border-t border-product-border">
 			<div className="max-w-7xl w-full mx-auto px-6">
 				{/* Main footer content */}
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
@@ -164,11 +164,10 @@ const Footer: React.FC = () => {
 								/>
 							</div>
 							<Button
-								className={`w-full transition-colors duration-200 font-semibold ${
-									submitSuccess
-										? "bg-green-500 text-white hover:bg-green-600"
-										: "bg-product-primary text-product-foreground hover:bg-product-product-primary-accent"
-								}`}
+								className={`w-full transition-colors duration-200 font-semibold ${submitSuccess
+									? "bg-green-500 text-white hover:bg-green-600"
+									: "bg-product-primary text-product-foreground hover:bg-product-primary-accent"
+									}`}
 								disabled={isSubmitting || submitSuccess}
 								type="submit"
 							>

@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
-import QrPreview from "./QrPreview";
-import QrControls from "./QrControls";
 import { NavigationGuard } from "@/hooks/useBeforeUnload";
+import { useState } from "react";
+import QrControls from "./QrControls";
+import QrPreview from "./QrPreview";
 
 const QrEditor = ({ name }: { name: string }) => {
 	const [isDirty, setIsDirty] = useState(false);
@@ -10,7 +10,7 @@ const QrEditor = ({ name }: { name: string }) => {
 		<>
 			<NavigationGuard isDirty={isDirty} setIsDirty={setIsDirty} />
 
-			<div className="min-h-screen px-2 sm:px-[10%] bg-gradient-to-br from-product-background to-hero-product-background py-24 font-lora">
+			<div className="min-h-screen px-2 sm:px-[10%] bg-gradient-to-br from-product-background to-product-background-hero py-24 font-lora">
 				<div className="container mx-auto px-4 py-8 max-w-7xl">
 					<div className="flex flex-col md:flex-row gap-8 lg:gap-12 items-start">
 						{/* Left Column: Controls */}

@@ -79,13 +79,12 @@ export default function InputModal({
 						</label>
 						<div className="relative">
 							<Input
-								className={`bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary pr-10 ${
-									errors.name
+								className={`bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary pr-10 ${errors.name
 										? "border-red-500 focus:border-red-500"
 										: name && !nameExists && touched.name
 											? "border-green-500 focus:border-green-500"
 											: ""
-								}`}
+									}`}
 								id="name"
 								onChange={onChange}
 								placeholder="Enter name..."
@@ -149,7 +148,7 @@ export default function InputModal({
 						</AlertDialogCancel>
 					)}
 					<AlertDialogAction
-						className="bg-product-primary text-product-foreground hover:bg-product-product-primary-accent border border-product-primary hover:border-product-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+						className="bg-product-primary text-product-foreground hover:bg-product-primary-accent border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
 						disabled={loading || !isValid}
 						onClick={handleConfirm}
 					>

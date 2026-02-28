@@ -133,19 +133,19 @@ export default function QrPreview({
 							className="w-[200px] bg-product-background border-none"
 						>
 							<DropdownMenuItem
-								className="cursor-pointer text-product-foreground !hover:bg-product-hover-background"
+								className="cursor-pointer text-product-foreground !hover:bg-product-background-hover"
 								onClick={() => handleDownload("png")}
 							>
 								<span className="!w-full">Download as PNG</span>
 							</DropdownMenuItem>
 							<DropdownMenuItem
-								className="cursor-pointer text-product-foreground !hover:bg-product-hover-background"
+								className="cursor-pointer text-product-foreground !hover:bg-product-background-hover"
 								onClick={() => handleDownload("svg")}
 							>
 								<span className="w-full">Download as SVG</span>
 							</DropdownMenuItem>
 							<DropdownMenuItem
-								className="cursor-pointer text-product-foreground !hover:bg-product-hover-background"
+								className="cursor-pointer text-product-foreground !hover:bg-product-background-hover"
 								onClick={() => handleDownload("jpeg")}
 							>
 								<span className="w-full">Download as JPEG</span>
@@ -155,7 +155,7 @@ export default function QrPreview({
 
 					<Link href="/admin/dashboard">
 						<Button
-							className="w-full gap-2 font-medium hover:border-[var(--product-primary)] hover:bg-[var(--product-hover-background)] transition-all"
+							className="w-full gap-2 font-medium hover:border-[var(--product-primary)] hover:bg-[var(--product-background-hover)] transition-all"
 							size="lg"
 							variant="outline"
 						>

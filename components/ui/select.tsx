@@ -19,7 +19,7 @@ const SelectTrigger = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Trigger
 		className={cn(
-			"flex h-10 w-full items-center justify-between rounded-md border text-product-foreground border-product-border px-3 py-2 text-sm shadow-product-shadow transition-[var(--navbar-button-transition)] hover:bg-product-hover-background hover:shadow-[var(--product-hover-shadow)]  focus:ring-[var(--navbar-button-focus-ring)] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+			"flex h-10 w-full items-center justify-between rounded-md border text-product-foreground border-product-border px-3 py-2 text-sm shadow-product-shadow transition-[var(--product-nav-transition)] hover:bg-product-background-hover hover:shadow-[var(--product-shadow-hover)]  focus:ring-[var(--product-nav-focus-ring)] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
 			className,
 		)}
 		ref={ref}
@@ -33,7 +33,7 @@ const SelectTrigger = React.forwardRef<
 			<ChevronDown
 				className={cn(
 					"h-5 w-5 text-product-icon transition-transform duration-200 ease-in-out",
-					"data-[state=open]:rotate-180 data-[state=open]:text-product-product-primary-accent",
+					"data-[state=open]:rotate-180 data-[state=open]:text-product-primary-accent",
 				)}
 			/>
 		</SelectPrimitive.Icon>
@@ -85,9 +85,9 @@ const SelectContent = React.forwardRef<
 	<SelectPrimitive.Portal>
 		<SelectPrimitive.Content
 			className={cn(
-				"relative z-[2000] max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-product-background text-product-foreground border-product-border shadow-[var(--product-shadow)] transition-[var(--navbar-button-transition)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin] notranslate",
+				"relative z-[2000] max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-product-background text-product-foreground border-product-border shadow-[var(--product-shadow)] transition-[var(--product-nav-transition)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin] notranslate",
 				position === "popper" &&
-					"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+				"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
 				className,
 			)}
 			position={position}
@@ -100,7 +100,7 @@ const SelectContent = React.forwardRef<
 				className={cn(
 					"p-1 notranslate",
 					position === "popper" &&
-						"h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
+					"h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
 				)}
 				translate="no"
 			>
@@ -138,7 +138,7 @@ const SelectItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Item
 		className={cn(
-			"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none bg-product-background text-product-foreground hover:bg-product-hover-background hover:text-product-foreground-accent focus:bg-product-primary focus:text-product-background transition-[var(--navbar-button-transition)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50 notranslate",
+			"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none bg-product-background text-product-foreground hover:bg-product-background-hover hover:text-product-foreground-accent focus:bg-product-primary focus:text-product-background transition-[var(--product-nav-transition)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50 notranslate",
 			className,
 		)}
 		ref={ref}
@@ -182,5 +182,6 @@ export {
 	SelectScrollUpButton,
 	SelectSeparator,
 	SelectTrigger,
-	SelectValue,
+	SelectValue
 };
+

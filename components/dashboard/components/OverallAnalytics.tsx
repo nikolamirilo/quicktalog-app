@@ -13,7 +13,7 @@ const OverallAnalytics = ({
 }) => {
 	return (
 		<div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
+			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-200 animate-fade-in relative">
 				<button
 					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {
@@ -30,7 +30,7 @@ const OverallAnalytics = ({
 					{overallAnalytics.totalPageViews}
 				</div>
 			</Card>
-			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
+			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-200 animate-fade-in relative">
 				<button
 					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {
@@ -47,7 +47,7 @@ const OverallAnalytics = ({
 					{overallAnalytics.totalUniqueVisitors}
 				</div>
 			</Card>
-			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
+			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-200 animate-fade-in relative">
 				<button
 					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {
@@ -64,7 +64,7 @@ const OverallAnalytics = ({
 					{overallAnalytics.totalServiceCatalogues}
 				</div>
 			</Card>
-			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-hover-shadow transition-all duration-200 animate-fade-in relative">
+			<Card className="p-3 sm:p-4 md:p-6 flex flex-col items-center justify-between bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-shadow-hover transition-all duration-200 animate-fade-in relative">
 				<button
 					className="absolute top-2 right-2 hover:rounded-full transition-colors duration-200 z-10 hover:text-product-primary"
 					onClick={() => {

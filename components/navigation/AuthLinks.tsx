@@ -24,15 +24,15 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 		if (isMobile) {
 			return (
 				<div className="border-t border-product-border pt-3 sm:pt-4 mt-3 sm:mt-4">
-					<div className="w-full h-10 bg-product-hover-background animate-pulse rounded mb-2"></div>
-					<div className="w-full h-10 bg-product-hover-background animate-pulse rounded"></div>
+					<div className="w-full h-10 bg-product-background-hover animate-pulse rounded mb-2"></div>
+					<div className="w-full h-10 bg-product-background-hover animate-pulse rounded"></div>
 				</div>
 			);
 		}
 		return (
 			<div className="ml-3 flex items-center gap-2">
-				<div className="w-20 h-9 bg-product-hover-background animate-pulse rounded"></div>
-				<div className="w-20 h-9 bg-product-hover-background animate-pulse rounded"></div>
+				<div className="w-20 h-9 bg-product-background-hover animate-pulse rounded"></div>
+				<div className="w-20 h-9 bg-product-background-hover animate-pulse rounded"></div>
 			</div>
 		);
 	}
@@ -51,7 +51,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 								Dashboard
 							</MobileNavLink>
 							<div
-								className="w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 hover:bg-navbar-button-hover-bg hover:text-navbar-button-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-navbar-button-hover-border hover:font-bold cursor-pointer"
+								className="w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 hover:bg-product-nav-hover-bg hover:text-product-nav-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-product-nav-hover-border hover:font-bold cursor-pointer"
 								onClick={() => {
 									const userButton = document.querySelector(
 										".cl-userButtonBox",

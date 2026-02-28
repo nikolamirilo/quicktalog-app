@@ -122,7 +122,7 @@ const Contact = ({ type = "regular" }: { type?: string }) => {
 								</label>
 								<div className="relative">
 									<input
-										className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-hover-background transition-all duration-300 shadow-product-shadow hover:shadow-product-hover-shadow"
+										className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover"
 										id="name"
 										onChange={(e) => setName(e.target.value)}
 										placeholder="Jane Doe"
@@ -158,7 +158,7 @@ const Contact = ({ type = "regular" }: { type?: string }) => {
 								</label>
 								<div className="relative">
 									<input
-										className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-hover-background transition-all duration-300 shadow-product-shadow hover:shadow-product-hover-shadow"
+										className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover"
 										id="company"
 										onChange={(e) => setCompany(e.target.value)}
 										placeholder="Your Company"
@@ -195,7 +195,7 @@ const Contact = ({ type = "regular" }: { type?: string }) => {
 								</label>
 								<div className="relative">
 									<input
-										className={`w-full px-4 py-4 bg-product-background border-2 rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-hover-background transition-all duration-300 shadow-product-shadow hover:shadow-product-hover-shadow ${email && !isValidEmail(email) ? "border-red-500" : "border-product-border"}`}
+										className={`w-full px-4 py-4 bg-product-background border-2 rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover ${email && !isValidEmail(email) ? "border-red-500" : "border-product-border"}`}
 										id="email"
 										onChange={(e) => setEmail(e.target.value)}
 										placeholder="name@company.com"
@@ -238,7 +238,7 @@ const Contact = ({ type = "regular" }: { type?: string }) => {
 								</label>
 								<div className="relative">
 									<select
-										className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground focus:outline-none focus:border-product-primary focus:bg-product-hover-background transition-all duration-300 shadow-product-shadow hover:shadow-product-hover-shadow appearance-none cursor-pointer"
+										className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover appearance-none cursor-pointer"
 										id="subject"
 										onChange={(e) => setSubject(e.target.value)}
 										required
@@ -279,7 +279,7 @@ const Contact = ({ type = "regular" }: { type?: string }) => {
 							</label>
 							<div className="relative">
 								<textarea
-									className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-hover-background transition-all duration-300 shadow-product-shadow hover:shadow-product-hover-shadow resize-none"
+									className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover resize-none"
 									id="message"
 									onChange={(e) => setMessage(e.target.value)}
 									placeholder="Tell us about your business, goals, or any questions you have."
