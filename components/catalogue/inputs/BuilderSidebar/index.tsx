@@ -25,21 +25,25 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-		{
-			key: "appearance",
-			icon: Palette,
-			label: "Appearance",
-			content: <AppearanceTab />,
-		},
-	];
+	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+	{
+		key: "appearance",
+		icon: Palette,
+		label: "Appearance",
+		content: <AppearanceTab />,
+	},
+];
 
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
 
-const BuilderSidebar: React.FC = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
+const BuilderSidebar: React.FC = ({
+	defaultOpen = false,
+}: {
+	defaultOpen?: boolean;
+}) => {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
 
 	return (
@@ -55,10 +59,11 @@ const BuilderSidebar: React.FC = ({ defaultOpen = false }: { defaultOpen?: boole
     [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]
     [&]:md:[transition-duration:800ms,800ms,500ms,500ms]
     
-    ${isOpen
-					? "translate-y-0 md:translate-x-0"
-					: "translate-y-0 md:translate-x-0"
-				}
+    ${
+			isOpen
+				? "translate-y-0 md:translate-x-0"
+				: "translate-y-0 md:translate-x-0"
+		}
   `}
 		>
 			{/* Backdrop blur overlay for mobile when open */}

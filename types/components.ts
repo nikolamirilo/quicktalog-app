@@ -14,8 +14,12 @@ export type DisplayItem = Omit<Item, "price"> & {
 	price: string | number;
 };
 
-export type TabKey = "general" | "templates" | "header" | "footer" | "appearance";
-
+export type TabKey =
+	| "general"
+	| "templates"
+	| "header"
+	| "footer"
+	| "appearance";
 
 export interface ImageDropzoneProps {
 	type?: "default" | "logo" | "qr-editor" | "icon";

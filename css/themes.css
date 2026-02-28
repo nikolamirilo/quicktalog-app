@@ -27,7 +27,11 @@
 
 	--catalogue-category-shadow: 0 4px 20px rgba(211, 175, 55, 0.15);
 	--catalogue-category-accent: #d3af37;
-	--catalogue-category-gradient: linear-gradient(135deg, #ffffff 0%, #f8f4e0 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#ffffff 0%,
+		#f8f4e0 100%
+	);
 	--catalogue-category-border: #d3af37;
 }
 
@@ -60,7 +64,11 @@
 
 	--catalogue-category-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 	--catalogue-category-accent: #000000;
-	--catalogue-category-gradient: linear-gradient(135deg, #ffffff 0%, #f3f3f3 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#ffffff 0%,
+		#f3f3f3 100%
+	);
 	--catalogue-category-border: #000000;
 }
 
@@ -93,7 +101,11 @@
 
 	--catalogue-category-shadow: 0 4px 20px rgba(255, 107, 107, 0.2);
 	--catalogue-category-accent: #ff6b6b;
-	--catalogue-category-gradient: linear-gradient(135deg, #2a2b39 0%, #343545 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#2a2b39 0%,
+		#343545 100%
+	);
 	--catalogue-category-border: #ff6b6b;
 }
 
@@ -126,7 +138,11 @@
 
 	--catalogue-category-shadow: 0 4px 20px rgba(92, 116, 83, 0.15);
 	--catalogue-category-accent: #5c7453;
-	--catalogue-category-gradient: linear-gradient(135deg, #f4f3ec 0%, #efebc5 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#f4f3ec 0%,
+		#efebc5 100%
+	);
 	--catalogue-category-border: #5c7453;
 }
 
@@ -159,7 +175,11 @@
 
 	--catalogue-category-shadow: 0 4px 20px rgba(102, 153, 204, 0.2);
 	--catalogue-category-accent: #6699cc;
-	--catalogue-category-gradient: linear-gradient(135deg, #262626 0%, #333333 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#262626 0%,
+		#333333 100%
+	);
 	--catalogue-category-border: #6699cc;
 
 	background-image: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
@@ -194,7 +214,11 @@
 
 	--catalogue-category-shadow: 0 4px 20px rgba(139, 108, 179, 0.2);
 	--catalogue-category-accent: #8b6cb3;
-	--catalogue-category-gradient: linear-gradient(135deg, #23233a 0%, #2d2d45 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#23233a 0%,
+		#2d2d45 100%
+	);
 	--catalogue-category-border: #8b6cb3;
 }
 
@@ -227,7 +251,11 @@
 
 	--catalogue-category-shadow: 0 4px 16px rgba(30, 136, 229, 0.12);
 	--catalogue-category-accent: #aee4ff;
-	--catalogue-category-gradient: linear-gradient(135deg, #eaf2ff 0%, #e4f0ff 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#eaf2ff 0%,
+		#e4f0ff 100%
+	);
 	--catalogue-category-border: #1e88e5;
 
 	/* Typography */
@@ -239,16 +267,22 @@
 
 	/* Hex-snow lattice + dots + polar glow */
 	background-image:
-		repeating-linear-gradient(60deg,
+		repeating-linear-gradient(
+			60deg,
 			rgba(174, 228, 255, 0.06) 0 1px,
-			transparent 1px 18px),
-		repeating-linear-gradient(-60deg,
+			transparent 1px 18px
+		),
+		repeating-linear-gradient(
+			-60deg,
 			rgba(174, 228, 255, 0.06) 0 1px,
-			transparent 1px 18px), radial-gradient(rgba(20, 39, 62, 0.05) 1px, transparent 1.5px),
+			transparent 1px 18px
+		), radial-gradient(rgba(20, 39, 62, 0.05) 1px, transparent 1.5px),
 		radial-gradient(rgba(30, 136, 229, 0.04) 1px, transparent 1.5px),
-		radial-gradient(60% 50% at 0% 100%,
+		radial-gradient(
+			60% 50% at 0% 100%,
 			rgba(174, 228, 255, 0.18),
-			transparent 60%), linear-gradient(180deg, #f7faff 0%, #eef6ff 100%);
+			transparent 60%
+		), linear-gradient(180deg, #f7faff 0%, #eef6ff 100%);
 	background-position:
 		0 0,
 		0 0,
@@ -294,7 +328,11 @@
 
 	--catalogue-category-shadow: 0 4px 16px rgba(200, 145, 86, 0.15);
 	--catalogue-category-accent: #c89156;
-	--catalogue-category-gradient: linear-gradient(135deg, #933030 0%, #7a1d1d 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#933030 0%,
+		#7a1d1d 100%
+	);
 	--catalogue-category-border: #c89156;
 
 	/* Typography */
@@ -305,12 +343,16 @@
 	--catalogue-spacing-heading: -0.02em;
 
 	background-image:
-		repeating-linear-gradient(45deg,
+		repeating-linear-gradient(
+			45deg,
 			rgba(255, 230, 200, 0.05) 0 2px,
-			transparent 2px 18px),
-		repeating-linear-gradient(-45deg,
+			transparent 2px 18px
+		),
+		repeating-linear-gradient(
+			-45deg,
 			rgba(255, 230, 200, 0.05) 0 2px,
-			transparent 2px 18px), linear-gradient(180deg, #8c2424 0%, #6a1b1b 100%);
+			transparent 2px 18px
+		), linear-gradient(180deg, #8c2424 0%, #6a1b1b 100%);
 	background-size:
 		18px 18px,
 		18px 18px,
@@ -346,7 +388,11 @@
 
 	--catalogue-category-shadow: 0 4px 16px rgba(200, 150, 86, 0.1);
 	--catalogue-category-accent: #a1c1af;
-	--catalogue-category-gradient: linear-gradient(135deg, #3b5c53 0%, #29453f 100%);
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#3b5c53 0%,
+		#29453f 100%
+	);
 	--catalogue-category-border: #e3b67a;
 
 	/* Typography */
@@ -358,12 +404,16 @@
 
 	/* Subtle festive background pattern */
 	background-image:
-		repeating-linear-gradient(45deg,
+		repeating-linear-gradient(
+			45deg,
 			rgba(215, 190, 150, 0.05) 0 12px,
-			transparent 12px 24px), radial-gradient(rgba(250, 240, 225, 0.06) 0.5px, transparent 1px),
-		radial-gradient(60% 70% at 100% 0%,
+			transparent 12px 24px
+		), radial-gradient(rgba(250, 240, 225, 0.06) 0.5px, transparent 1px),
+		radial-gradient(
+			60% 70% at 100% 0%,
 			rgba(212, 165, 116, 0.08),
-			transparent 70%), linear-gradient(180deg, #33564e 0%, #29453f 100%);
+			transparent 70%
+		), linear-gradient(180deg, #33564e 0%, #29453f 100%);
 	background-size:
 		auto,
 		28px 28px,

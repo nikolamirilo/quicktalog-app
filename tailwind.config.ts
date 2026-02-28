@@ -59,7 +59,8 @@ export default withUt(
 					"catalogue-section-border": "var(--catalogue-section-border)",
 
 					/* Navigation (Header & Footer) */
-					"catalogue-navigation-background": "var(--catalogue-navigation-background)",
+					"catalogue-navigation-background":
+						"var(--catalogue-navigation-background)",
 					"catalogue-navigation-text": "var(--catalogue-navigation-text)",
 					"catalogue-navigation-border": "var(--catalogue-navigation-border)",
 

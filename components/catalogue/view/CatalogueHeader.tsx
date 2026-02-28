@@ -12,7 +12,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	data,
 	logo,
 }) => {
-	const { catalogue } = useCatalogueContext()
+	const { catalogue } = useCatalogueContext();
 	const createContactLink = (
 		href: string,
 		icon: React.ReactNode,
