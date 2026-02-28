@@ -12,7 +12,7 @@ export default async function page() {
 		userData &&
 		userData.currentPlan.features.ai_prompts > 0 &&
 		userData.usage.traffic.pageview_count <
-		userData.currentPlan.features.traffic_limit
+			userData.currentPlan.features.traffic_limit
 	) {
 		return (
 			<div className="product font-lora min-h-screen">

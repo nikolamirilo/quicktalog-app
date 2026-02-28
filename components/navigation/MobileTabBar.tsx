@@ -9,10 +9,11 @@ export default function MobileTabBar({ setActiveTab, activeTab }) {
 					key={tab.value}
 					onClick={() => setActiveTab(tab.value)}
 					variant="nav"
-					className={`${activeTab === tab.value
-						? "!bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm font-semibold hover:scale-[1.03] hover:transform"
-						: ""
-						} flex items-center justify-start font-body flex-shrink-0 whitespace-nowrap`}
+					className={`${
+						activeTab === tab.value
+							? "!bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm font-semibold hover:scale-[1.03] hover:transform"
+							: ""
+					} flex items-center justify-start font-body flex-shrink-0 whitespace-nowrap`}
 					aria-current={activeTab === tab.value ? "page" : undefined}
 				>
 					<span className="flex items-center justify-center">{tab.icon}</span>

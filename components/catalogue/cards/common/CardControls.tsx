@@ -57,10 +57,11 @@ const CardControls = ({
 		<div className="absolute top-2 right-2 flex gap-1 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
 			{onMoveUp && (
 				<button
-					className={`p-2 bg-white rounded-full shadow-md transition-colors ${isFirst
+					className={`p-2 bg-white rounded-full shadow-md transition-colors ${
+						isFirst
 							? "text-gray-300 cursor-not-allowed"
 							: "text-gray-600 hover:bg-gray-50"
-						}`}
+					}`}
 					disabled={isFirst}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -73,10 +74,11 @@ const CardControls = ({
 			)}
 			{onMoveDown && (
 				<button
-					className={`p-2 bg-white rounded-full shadow-md transition-colors ${isLast
+					className={`p-2 bg-white rounded-full shadow-md transition-colors ${
+						isLast
 							? "text-gray-300 cursor-not-allowed"
 							: "text-gray-600 hover:bg-gray-50"
-						}`}
+					}`}
 					disabled={isLast}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -154,7 +156,7 @@ const CardControls = ({
 													<span className="flex items-center justify-between gap-3 w-full">
 														<span className="font-medium truncate flex-1">
 															{block.type === "category" ||
-																block.type === "container"
+															block.type === "container"
 																? block.name
 																: "Unnamed"}
 														</span>

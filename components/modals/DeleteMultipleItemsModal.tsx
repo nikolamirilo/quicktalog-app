@@ -86,10 +86,11 @@ const DeleteMultipleItemsModal = ({
 				<div className="flex flex-wrap overflow-y-auto pr-2 gap-3 max-h-96">
 					{catalogues.map((catalogue) => (
 						<Card
-							className={`p-4 flex items-center gap-4 w-[45%] transition-all duration-200 ${selectedIds.includes(catalogue.id)
+							className={`p-4 flex items-center gap-4 w-[45%] transition-all duration-200 ${
+								selectedIds.includes(catalogue.id)
 									? "border-red-500 bg-red-50/50"
 									: "border-product-border bg-product-background hover:shadow-product-shadow-hover"
-								}`}
+							}`}
 							key={catalogue.id}
 						>
 							<Checkbox
@@ -107,9 +108,10 @@ const DeleteMultipleItemsModal = ({
 										{catalogue.name}
 									</h3>
 									<Badge
-										className={`${statusColors[catalogue.status] ||
+										className={`${
+											statusColors[catalogue.status] ||
 											"bg-gray-100 text-gray-700"
-											} shrink-0`}
+										} shrink-0`}
 									>
 										{catalogue.status.toUpperCase()}
 									</Badge>

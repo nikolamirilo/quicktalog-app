@@ -29,7 +29,6 @@ export default withUt(
 					"product-scale-hover": "var(--product-scale-hover)",
 					"product-shadow-hover": "var(--product-shadow-hover)",
 
-
 					/* Navbar button hover colors */
 					"product-nav-hover-bg": "var(--product-nav-hover-bg)",
 					"product-nav-hover-text": "var(--product-nav-hover-text)",

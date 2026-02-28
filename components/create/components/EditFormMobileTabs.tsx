@@ -17,10 +17,11 @@ export default function EditFormMobileTabs({
 			{editSteps.map((step) => (
 				<Button
 					aria-current={currentStep === step.value ? "page" : undefined}
-					className={`${currentStep === step.value
-						? "!bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm font-semibold hover:scale-[1.03] hover:transform"
-						: ""
-						} flex items-center justify-center font-body flex-shrink-0 whitespace-nowrap min-w-[80px]`}
+					className={`${
+						currentStep === step.value
+							? "!bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm font-semibold hover:scale-[1.03] hover:transform"
+							: ""
+					} flex items-center justify-center font-body flex-shrink-0 whitespace-nowrap min-w-[80px]`}
 					key={step.value}
 					onClick={() => onStepChange(step.value)}
 					variant="nav"
