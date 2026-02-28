@@ -98,6 +98,18 @@ const GeneralTab = () => {
 							onChange={(e) => handleChange("contact.email", e.target.value)}
 						/>
 					</div>
+
+					<div className="space-y-2">
+						<div className="flex items-center gap-2">
+							<Label htmlFor="contact-website">Website</Label>
+						</div>
+						<Input
+							id="contact-website"
+							placeholder="e.g. https://www.example.com"
+							value={catalogue.contact?.website || ""}
+							onChange={(e) => handleChange("contact.website", e.target.value)}
+						/>
+					</div>
 				</div>
 			</div>
 

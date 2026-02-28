@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { footerDetails } from "@/constants/details";
 import { footerFeatures } from "@/constants/ui";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 import { newsletterSignup } from "@/server_actions/newsletter";
 import { CatalogueFooterProps } from "@/types/components";
 import Link from "next/link";
@@ -24,6 +25,8 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	data,
 	logo,
 }) => {
+	const { catalogue } = useCatalogueContext();
+	const activeData = catalogue?.name ? catalogue : data;
 	const [newsletterEmail, setNewsletterEmail] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState("");
@@ -39,7 +42,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 		setSubmitSuccess(false);
 
 		try {
-			await newsletterSignup(newsletterEmail, data?.id, data?.source);
+			await newsletterSignup(newsletterEmail, activeData?.id, activeData?.source);
 			setNewsletterEmail("");
 			setSubmitSuccess(true);
 			setTimeout(() => setSubmitSuccess(false), 3000);
@@ -47,7 +50,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 			console.error("Newsletter signup failed:", error);
 			const message =
 				error?.message ||
-				error?.response?.data?.message ||
+				error?.response?.activeData?.message ||
 				"Failed to subscribe. Please try again.";
 			setSubmitError(message);
 		} finally {
@@ -57,9 +60,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 	const getEffectiveSocials = () => {
 		// Use contact.socials (string[])
-		if (data?.contact?.socials && Array.isArray(data.contact.socials)) {
+		if (activeData?.contact?.socials && Array.isArray(activeData.contact.socials)) {
 			const links: Record<string, string> = {};
-			data.contact.socials.forEach((url, i) => {
+			activeData.contact.socials.forEach((url, i) => {
 				if (!url) return;
 				let platform = "link";
 				const lowerUrl = url.toLowerCase();
@@ -87,7 +90,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 	return (
 		<footer
-			aria-label={`${type === "default" ? "Quicktalog" : data?.legal?.legalName || "Custom"} footer`}
+			aria-label={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} footer`}
 			className="border-t mt-auto font-body font-weight-body bg-catalogue-navigation-background text-catalogue-navigation-text border-catalogue-navigation-border"
 			role="contentinfo"
 		>
@@ -97,7 +100,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						<div className="space-y-6">
 							<div className="space-y-4">
 								<div
-									aria-label={`Go to ${type === "default" ? "Quicktalog" : data?.legal?.legalName || "Custom"} homepage`}
+									aria-label={`Go to ${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} homepage`}
 									className="flex flex-col items-start space-y-6 mt-2 group transition-transform duration-200 hover:scale-102"
 								>
 									<SmartLink
@@ -106,7 +109,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										}
 									>
 										<img
-											alt={`${type === "default" ? "Quicktalog" : data?.legal?.legalName || "Custom"} logo`}
+											alt={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} logo`}
 											className="w-auto max-h-[7vh] rounded-sm object-contain max-w-[150px] lg:max-w-[200px] h-48"
 											height={40}
 											src={logo ?? "/logo.svg"}
@@ -122,7 +125,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									{type === "custom" && (
 										<div className="ml-0">
 											<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
-												{data?.legal?.legalName}
+												{activeData?.legal?.legalName}
 											</h3>
 										</div>
 									)}
@@ -154,7 +157,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								)}
 						</div>
 
-						{(type === "default" || data?.contact?.email) && (
+						{(type === "default" || activeData?.contact?.email) && (
 							<div className="space-y-6">
 								<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 									<div
@@ -166,9 +169,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								<ul className="space-y-4">
 									<li>
 										<a
-											aria-label={`Send email to ${type === "default" ? footerDetails.email : data?.contact.email || "contact"}`}
+											aria-label={`Send email to ${type === "default" ? footerDetails.email : activeData?.contact.email || "contact"}`}
 											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
-											href={`mailto:${type === "default" ? footerDetails.email : data?.contact.email}`}
+											href={`mailto:${type === "default" ? footerDetails.email : activeData?.contact.email}`}
 										>
 											<FiMail
 												aria-hidden="true"
@@ -177,22 +180,22 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 											<span>
 												{type === "default"
 													? footerDetails.email
-													: data?.contact.email}
+													: activeData?.contact.email}
 											</span>
 										</a>
 									</li>
-									{data?.contact?.phone && (
+									{activeData?.contact?.phone && (
 										<li>
 											<a
-												aria-label={`Call ${data?.contact?.phone}`}
+												aria-label={`Call ${activeData?.contact?.phone}`}
 												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
-												href={`tel:${data?.contact?.phone}`}
+												href={`tel:${activeData?.contact?.phone}`}
 											>
 												<FiPhone
 													aria-hidden="true"
 													className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
 												/>
-												<span>{data?.contact.phone}</span>
+												<span>{activeData?.contact.phone}</span>
 											</a>
 										</li>
 									)}
@@ -246,7 +249,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										))}
 									</ul>
 								</>
-							) : data?.legal?.legalName || data?.legal?.address ? (
+							) : activeData?.legal?.legalName || activeData?.legal?.address ? (
 								<>
 									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 										<div
@@ -256,19 +259,19 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<span>Company Information</span>
 									</h4>
 									<ul className="space-y-4">
-										{data?.legal?.legalName && (
+										{activeData?.legal?.legalName && (
 											<li className="flex items-center space-x-3">
 												<MdTitle className="w-4 h-4 flex-shrink-0 text-catalogue-navigation-text" />
 												<span className="text-sm text-catalogue-navigation-text">
-													{data?.legal?.legalName}
+													{activeData?.legal?.legalName}
 												</span>
 											</li>
 										)}
-										{data?.legal?.address && (
+										{activeData?.legal?.address && (
 											<li className="flex items-start space-x-3">
 												<FiMapPin className="w-4 h-4 mt-1 flex-shrink-0 text-catalogue-navigation-text" />
 												<div className="text-sm text-catalogue-navigation-text">
-													<div>{data?.legal?.address}</div>
+													<div>{activeData?.legal?.address}</div>
 												</div>
 											</li>
 										)}
@@ -305,9 +308,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</Link>
 									</Button>
 								</>
-							) : data?.partners &&
-								data?.partners.length > 0 &&
-								data?.footer.showPartners ? (
+							) : activeData?.partners &&
+								activeData?.partners.length > 0 &&
+								activeData?.footer.showPartners ? (
 								<>
 									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 										<div
@@ -317,7 +320,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<span>Trusted Partners</span>
 									</h4>
 									<ul className="space-y-3">
-										{data?.partners.map((partner, index) => (
+										{activeData?.partners.map((partner, index) => (
 											<li key={`partner-${index}`}>
 												<PartnerBadge partner={partner} />
 											</li>
@@ -335,7 +338,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							© {new Date().getFullYear()}{" "}
 							{type === "default"
 								? "Quicktalog"
-								: data?.legal?.legalName || "Your Company"}
+								: activeData?.legal?.legalName || "Your Company"}
 							. All rights reserved.
 						</span>
 						<nav
@@ -369,20 +372,20 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								</>
 							) : (
 								<>
-									{data?.legal?.privacyPolicy && (
+									{activeData?.legal?.privacyPolicy && (
 										<SmartLink
 											aria-label="Privacy Policy"
 											className="hover:text-primary transition-colors duration-200"
-											href={data?.legal?.privacyPolicy}
+											href={activeData?.legal?.privacyPolicy}
 										>
 											Privacy Policy
 										</SmartLink>
 									)}
-									{data?.legal?.termsAndConditions && (
+									{activeData?.legal?.termsAndConditions && (
 										<SmartLink
 											aria-label="Terms of Service"
 											className="hover:text-primary transition-colors duration-200"
-											href={data?.legal?.termsAndConditions}
+											href={activeData?.legal?.termsAndConditions}
 										>
 											Terms of Service
 										</SmartLink>
@@ -392,7 +395,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						</nav>
 
 						{/* Enhanced Newsletter for Custom */}
-						{type === "custom" && data?.footer.newsletter ? (
+						{type === "custom" && activeData?.footer.newsletter ? (
 							<div className="flex flex-col h-full">
 								<div className="flex-1 flex items-center">
 									<form
@@ -420,11 +423,10 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</div>
 										<Button
 											aria-label="Subscribe to newsletter"
-											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
-												submitSuccess
+											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${submitSuccess
 													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
 													: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
-											}`}
+												}`}
 											disabled={isSubmitting || submitSuccess}
 											size="default"
 											type="submit"
@@ -455,8 +457,8 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							</div>
 						) : null}
 						{type === "custom" &&
-							data?.footer?.cta?.isEnabled &&
-							data?.footer?.cta?.url && (
+							activeData?.footer?.cta?.isEnabled &&
+							activeData?.footer?.cta?.url && (
 								<Button
 									asChild
 									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary footer-cta-button flex items-center gap-2"
@@ -464,11 +466,11 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									variant="outline"
 								>
 									<SmartLink
-										aria-label={data?.footer?.cta?.label}
-										href={data?.footer?.cta?.url || ""}
+										aria-label={activeData?.footer?.cta?.label}
+										href={activeData?.footer?.cta?.url || ""}
 									>
 										<FiExternalLink className="w-4 h-4" />
-										{data?.footer?.cta?.label}
+										{activeData?.footer?.cta?.label}
 									</SmartLink>
 								</Button>
 							)}

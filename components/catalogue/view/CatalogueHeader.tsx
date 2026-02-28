@@ -13,6 +13,8 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	logo,
 }) => {
 	const { catalogue } = useCatalogueContext();
+	const activeData = catalogue?.name ? catalogue : data;
+
 	const createContactLink = (
 		href: string,
 		icon: React.ReactNode,
@@ -39,28 +41,28 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					"Send email to quicktalog@outlook.com",
 				),
 			);
-		} else if (type === "custom" && data) {
-			if (data?.contact?.email && data?.header?.emailCta) {
+		} else if (type === "custom" && activeData) {
+			if (activeData?.contact?.email && activeData?.header?.emailCta) {
 				links.push(
 					createContactLink(
-						`mailto:${data?.contact?.email}`,
+						`mailto:${activeData?.contact?.email}`,
 						<FiMail
 							aria-hidden="true"
 							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
-						`Send email to ${data?.contact?.email}`,
+						`Send email to ${activeData?.contact?.email}`,
 					),
 				);
 			}
-			if (data?.contact?.phone && data?.header?.phoneCta) {
+			if (activeData?.contact?.phone && activeData?.header?.phoneCta) {
 				links.push(
 					createContactLink(
-						`tel:${data?.contact?.phone}`,
+						`tel:${activeData?.contact?.phone}`,
 						<FiPhone
 							aria-hidden="true"
 							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
-						`Call ${data?.contact?.phone}`,
+						`Call ${activeData?.contact?.phone}`,
 					),
 				);
 			}
@@ -82,15 +84,15 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 
 		if (
 			type === "custom" &&
-			data?.header?.cta?.isEnabled &&
-			data?.header?.cta.url
+			activeData?.header?.cta?.isEnabled &&
+			activeData?.header?.cta.url
 		) {
 			return {
-				href: data?.header?.cta.url,
-				label: data?.header?.cta.label || "Learn more",
-				shortLabel: data?.header?.cta.label || "Learn more",
+				href: activeData?.header?.cta.url,
+				label: activeData?.header?.cta.label || "Learn more",
+				shortLabel: activeData?.header?.cta.label || "Learn more",
 				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4 lg:mr-1" />,
-				ariaLabel: data?.header?.cta.label || "Learn more",
+				ariaLabel: activeData?.header?.cta.label || "Learn more",
 			};
 		}
 
@@ -113,7 +115,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						<Link
 							aria-label={`Go to ${companyName} homepage`}
 							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
-							href={type === "default" ? `/` : "/"}
+							href={type === "default" ? `/` : `${catalogue.contact.website ? catalogue.contact.website : "/"}`}
 						>
 							<img
 								alt={`${companyName} logo`}
