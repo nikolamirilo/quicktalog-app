@@ -11,7 +11,7 @@ const CardTitle = ({ name, slugId, className }: CardTitleProps) => {
 	return (
 		<h3
 			className={cn(
-				"font-heading tracking-heading text-card-heading leading-tight truncate",
+				"font-heading tracking-heading text-catalogue-card-heading leading-tight truncate",
 				className,
 			)}
 			id={`item-title-${slugId}`}

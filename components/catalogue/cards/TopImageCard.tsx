@@ -26,7 +26,7 @@ const TopImageCard = ({
 
 	return (
 		<article
-			className="flex cursor-pointer flex-col bg-card-bg text-card-text border border-card-border overflow-hidden w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] relative group"
+			className="flex cursor-pointer flex-col bg-catalogue-card-background text-catalogue-card-text border border-catalogue-card-border overflow-hidden w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] relative group"
 			onClick={onClick}
 			style={{
 				borderRadius: "var(--border-radius)",

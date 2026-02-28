@@ -81,10 +81,10 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 					<h3
 						className="text-xl font-semibold text-center"
 						style={{
-							color: "var(--section-heading)",
-							fontFamily: "var(--font-family-heading)",
-							fontWeight: "var(--font-weight-heading)",
-							letterSpacing: "var(--letter-spacing-heading)",
+							color: "var(--catalogue-heading)",
+							fontFamily: "var(--catalogue-font-heading)",
+							fontWeight: "var(--catalogue-weight-heading)",
+							letterSpacing: "var(--catalogue-spacing-heading)",
 						}}
 					>
 						Choose Layout Style
@@ -92,15 +92,15 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 
 					<div className="w-full max-w-xs">
 						{/* Navigation Arrows with Layout Info */}
-						<div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
+						<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product-shadow border border-catalogue-section-border mb-4">
 							<Button
 								className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 								onClick={handlePreviousLayout}
 								size="sm"
 								style={{
-									borderColor: "var(--section-border)",
-									backgroundColor: "var(--background)",
-									color: "var(--foreground)",
+									borderColor: "var(--catalogue-section-border)",
+									backgroundColor: "var(--catalogue-background)",
+									color: "var(--catalogue-foreground)",
 								}}
 								type="button"
 								variant="outline"
@@ -112,9 +112,9 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 								<div
 									className="text-base font-medium"
 									style={{
-										color: "var(--heading)",
-										fontFamily: "var(--font-family-heading)",
-										fontWeight: "var(--font-weight-heading)",
+										color: "var(--catalogue-heading)",
+										fontFamily: "var(--catalogue-font-heading)",
+										fontWeight: "var(--catalogue-weight-heading)",
 									}}
 								>
 									{[
@@ -131,9 +131,9 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 								onClick={handleNextLayout}
 								size="sm"
 								style={{
-									borderColor: "var(--section-border)",
-									backgroundColor: "var(--background)",
-									color: "var(--foreground)",
+									borderColor: "var(--catalogue-section-border)",
+									backgroundColor: "var(--catalogue-background)",
+									color: "var(--catalogue-foreground)",
 								}}
 								type="button"
 								variant="outline"
@@ -150,10 +150,10 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 				<h3
 					className="text-xl font-semibold text-center"
 					style={{
-						color: "var(--section-heading)",
-						fontFamily: "var(--font-family-heading)",
-						fontWeight: "var(--font-weight-heading)",
-						letterSpacing: "var(--letter-spacing-heading)",
+						color: "var(--catalogue-heading)",
+						fontFamily: "var(--catalogue-font-heading)",
+						fontWeight: "var(--catalogue-weight-heading)",
+						letterSpacing: "var(--catalogue-spacing-heading)",
 					}}
 				>
 					Choose Color Theme
@@ -161,15 +161,15 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 
 				<div className="w-full max-w-xs">
 					{/* Navigation Arrows with Theme Info */}
-					<div className="flex items-center justify-between p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border mb-4">
+					<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product-shadow border border-catalogue-section-border mb-4">
 						<Button
 							className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 							onClick={handlePreviousTheme}
 							size="sm"
 							style={{
-								borderColor: "var(--section-border)",
-								backgroundColor: "var(--background)",
-								color: "var(--foreground)",
+								borderColor: "var(--catalogue-section-border)",
+								backgroundColor: "var(--catalogue-background)",
+								color: "var(--catalogue-foreground)",
 							}}
 							type="button"
 							variant="outline"
@@ -185,7 +185,7 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 									backgroundColor: themes[activeIndex]
 										? `var(--primary, #3b82f6)`
 										: "#3b82f6",
-									borderColor: "var(--foreground)",
+									borderColor: "var(--catalogue-foreground)",
 								}}
 							></div>
 
@@ -193,9 +193,9 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 								<div
 									className="text-base font-medium"
 									style={{
-										color: "var(--heading)",
-										fontFamily: "var(--font-family-heading)",
-										fontWeight: "var(--font-weight-heading)",
+										color: "var(--catalogue-heading)",
+										fontFamily: "var(--catalogue-font-heading)",
+										fontWeight: "var(--catalogue-weight-heading)",
 									}}
 								>
 									{themes[activeIndex]?.label || "Elegant"}
@@ -208,9 +208,9 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 							onClick={handleNextTheme}
 							size="sm"
 							style={{
-								borderColor: "var(--section-border)",
-								backgroundColor: "var(--background)",
-								color: "var(--foreground)",
+								borderColor: "var(--catalogue-section-border)",
+								backgroundColor: "var(--catalogue-background)",
+								color: "var(--catalogue-foreground)",
 							}}
 							type="button"
 							variant="outline"

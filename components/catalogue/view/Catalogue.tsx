@@ -105,17 +105,17 @@ const Catalogue = ({
 				style={
 					{
 						fontFamily,
-						"--font-family-heading": fontFamily,
-						"--font-family-body": fontFamily,
-						"--font-weight-heading": "700",
-						"--font-weight-body": "400",
+						"--catalogue-font-heading": fontFamily,
+						"--catalogue-font-body": fontFamily,
+						"--catalogue-weight-heading": "700",
+						"--catalogue-weight-body": "400",
 						// New Style Variables
 						"--content-font-size": contentFontSize,
 						"--border-radius": borderRadius,
 						"--box-shadow": boxShadow,
 						"--animation-duration": "0.5s",
 						// Override theme-specific section header shadow if needed
-						"--section-header-shadow":
+						"--catalogue-category-shadow":
 							boxShadow !== "none" ? boxShadow : undefined,
 					} as React.CSSProperties
 				}

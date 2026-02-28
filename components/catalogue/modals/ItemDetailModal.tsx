@@ -35,11 +35,11 @@ export default function ItemDetailModal({
 		<>
 			<Dialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
 				<DialogContent
-					className={`text-card-text max-w-sm w-[90vw] sm:max-w-md sm:w-full p-0 bg-card-bg border border-card-border shadow-lg rounded-2xl overflow-hidden fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] flex flex-col ${theme || ""}`}
+					className={`text-catalogue-card-text max-w-sm w-[90vw] sm:max-w-md sm:w-full p-0 bg-catalogue-card-background border border-catalogue-card-border shadow-lg rounded-2xl overflow-hidden fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90vh] flex flex-col ${theme || ""}`}
 				>
 					{/* Image Section - Only show for variants that have images */}
 					{item.image && variant !== "variant_3" && (
-						<div className="relative w-full h-80 bg-card-bg/10 flex-shrink-0 overflow-hidden">
+						<div className="relative w-full h-80 bg-catalogue-card-background/10 flex-shrink-0 overflow-hidden">
 							<OptimizedImage
 								alt={item.name}
 								className="w-full h-full object-cover"
@@ -64,18 +64,18 @@ export default function ItemDetailModal({
 					<div className="flex-1 overflow-y-auto">
 						<div className="p-4 sm:p-6">
 							<DialogHeader className="space-y-4 text-left mb-6">
-								<DialogTitle className="text-xl sm:text-2xl font-bold text-card-heading font-heading leading-tight">
+								<DialogTitle className="text-xl sm:text-2xl font-bold text-catalogue-card-heading font-heading leading-tight">
 									{item.name}
 								</DialogTitle>
-								<DialogDescription className="text-card-description text-sm sm:text-base leading-relaxed">
+								<DialogDescription className="text-catalogue-card-description text-sm sm:text-base leading-relaxed">
 									{item.description}
 								</DialogDescription>
 							</DialogHeader>
 
 							{/* Price Section */}
-							<div className="mt-6 pt-4 border-t border-card-border">
+							<div className="mt-6 pt-4 border-t border-catalogue-card-border">
 								<div className="flex items-center justify-center sm:justify-between flex-col sm:flex-row gap-2 sm:gap-0">
-									<span className="text-xs sm:text-sm text-card-description uppercase tracking-wide font-medium">
+									<span className="text-xs sm:text-sm text-catalogue-card-description uppercase tracking-wide font-medium">
 										Price
 									</span>
 									<div className="flex items-center gap-1">

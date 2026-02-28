@@ -1,6 +1,5 @@
 "use client";
 import parse from "html-react-parser";
-import "../../css/rich-text-editor.css";
 
 export default function HtmlContent({
 	html,

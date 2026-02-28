@@ -43,3 +43,16 @@
 	padding-left: 2em;
 	list-style: decimal;
 }
+
+
+.rsw-ce ul,
+.rich-text-content ul {
+	padding-left: 2em;
+	list-style: disc;
+}
+
+.rsw-ce ol,
+.rich-text-content ol {
+	padding-left: 2em;
+	list-style: decimal;
+}

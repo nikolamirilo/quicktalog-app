@@ -42,10 +42,10 @@ const CategoryHeader = ({
 				id={`section-header-${code}`}
 				onClick={() => onToggle(code)}
 				style={{
-					background: "var(--section-header-gradient)",
-					fontFamily: "var(--font-family-heading)",
-					fontWeight: "var(--font-weight-heading)",
-					letterSpacing: "var(--letter-spacing-heading)",
+					background: "var(--catalogue-category-gradient)",
+					fontFamily: "var(--catalogue-font-heading)",
+					fontWeight: "var(--catalogue-weight-heading)",
+					letterSpacing: "var(--catalogue-spacing-heading)",
 					transform: "translate3d(0, 0, 0)",
 					borderRadius: "var(--border-radius)",
 					transitionDuration: "var(--animation-duration)",
@@ -55,7 +55,7 @@ const CategoryHeader = ({
 			>
 				<div
 					aria-hidden="true"
-					className="absolute inset-0 bg-gradient-to-r from-transparent via-section-header-accent/8 to-transparent 
+					className="absolute inset-0 bg-gradient-to-r from-transparent via-catalogue-category-accent/8 to-transparent 
           opacity-0 group-hover:opacity-100 transition-opacity ease-out"
 					style={{
 						willChange: "opacity",
@@ -68,7 +68,7 @@ const CategoryHeader = ({
 						{title}
 						<span
 							aria-hidden="true"
-							className="absolute left-0 -bottom-1 h-0.5 bg-section-header-accent rounded-full
+							className="absolute left-0 -bottom-1 h-0.5 bg-catalogue-category-accent rounded-full
               transition-all ease-out origin-left"
 							style={{
 								width: showContent ? "100%" : "0%",
@@ -82,8 +82,8 @@ const CategoryHeader = ({
 					<div className="relative z-10 flex items-center ml-auto">
 						<div
 							aria-hidden="true"
-							className="w-7 h-7 bg-section-header-accent/10 rounded-full flex items-center justify-center
-            group-hover:bg-section-header-accent/15 transition-colors ease-out"
+							className="w-7 h-7 bg-catalogue-category-accent/10 rounded-full flex items-center justify-center
+            group-hover:bg-catalogue-category-accent/15 transition-colors ease-out"
 							style={{
 								willChange: "background-color",
 								transitionDuration: "var(--animation-duration)",

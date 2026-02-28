@@ -143,7 +143,7 @@ const HeadingInput = () => {
 					<SelectTrigger className="min-w-[110px] sm:min-w-[130px] w-fit h-8 text-xs sm:text-sm border-0 bg-transparent text-foreground/70 hover:text-primary hover:bg-primary/10 cursor-pointer focus:ring-0 focus:ring-offset-0 transition-all duration-200">
 						<SelectValue />
 					</SelectTrigger>
-					<SelectContent className="bg-card-bg border-none">
+					<SelectContent className="bg-catalogue-card-background border-none">
 						<SelectItem
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
 							value="extraLarge"
@@ -174,7 +174,7 @@ const HeadingInput = () => {
 
 			{/* Editable Heading */}
 			<div
-				className={`text-center ${HEADING_SIZE_CLASSES[headingSize]} text-foreground border-card-border border-2 border-dashed rounded-lg px-4 sm:px-6 py-2 sm:w-[90%] md:w-auto bg-transparent md:min-w-[300px] focus:border-primary outline-none w-full transition-all empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/40`}
+				className={`text-center ${HEADING_SIZE_CLASSES[headingSize]} text-foreground border-catalogue-card-border border-2 border-dashed rounded-lg px-4 sm:px-6 py-2 sm:w-[90%] md:w-auto bg-transparent md:min-w-[300px] focus:border-primary outline-none w-full transition-all empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/40`}
 				contentEditable
 				data-placeholder="+ Add Heading"
 				onInput={handleInput}

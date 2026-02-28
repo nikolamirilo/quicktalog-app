@@ -1,337 +1,254 @@
 .theme-luxury {
-	--background: #fff8e7;
-	--foreground: #1a1a1a;
-	--heading: #1a1a1a;
-	--text: #080808;
-	--button-text: #1a1a1a;
-	--price: #8b6914;
+	--catalogue-background: #fff8e7;
+	--catalogue-foreground: #1a1a1a;
+	--catalogue-heading: #1a1a1a;
+	--catalogue-text: #080808;
+	--catalogue-button-text: #1a1a1a;
+	--catalogue-price: #8b6914;
 
-	--primary: #d3af37;
-	--secondary: #856d3d;
-	--accent: #f0e3b2;
-	--primary-foreground: #1a1a1a;
-	--secondary-foreground: #ffffff;
+	--catalogue-primary: #d3af37;
+	--catalogue-secondary: #856d3d;
+	--catalogue-accent: #f0e3b2;
+	--catalogue-primary-foreground: #1a1a1a;
+	--catalogue-secondary-foreground: #ffffff;
 
-	--card-bg: #ffffff;
-	--card-text: #333333;
-	--card-heading: #1a1a1a;
-	--card-description: #333333;
-	--card-border: #d9d9d9;
+	--catalogue-card-background: #ffffff;
+	--catalogue-card-text: #333333;
+	--catalogue-card-heading: #1a1a1a;
+	--catalogue-card-description: #333333;
+	--catalogue-card-border: #d9d9d9;
 
-	--section-bg: #e6e6e6;
-	--section-heading: #1a1a1a;
-	--section-border: #d9d9d9;
-	--section-hover: #f2f2f2;
+	--catalogue-section-background: #e6e6e6;
+	--catalogue-section-border: #d9d9d9;
 
-	/* Simplified Header and Footer colors using theme's best colors */
-	--header-bg: #ffffff;
-	--footer-bg: #ffffff;
-	--header-text: #1a1a1a;
-	--footer-text: #1a1a1a;
-	--header-border: #d9d9d9;
-	--footer-border: #d9d9d9;
+	--catalogue-navigation-background: #ffffff;
+	--catalogue-navigation-text: #1a1a1a;
+	--catalogue-navigation-border: #d9d9d9;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #ffffff;
-	--section-header-text: #1a1a1a;
-	--section-header-border: #d3af37;
-	--section-header-shadow: 0 4px 20px rgba(211, 175, 55, 0.15);
-	--section-header-hover-bg: #f8f4e0;
-	--section-header-hover-shadow: 0 8px 30px rgba(211, 175, 55, 0.25);
-	--section-header-accent: #d3af37;
-	--section-header-gradient: linear-gradient(135deg, #ffffff 0%, #f8f4e0 100%);
+	--catalogue-category-shadow: 0 4px 20px rgba(211, 175, 55, 0.15);
+	--catalogue-category-accent: #d3af37;
+	--catalogue-category-gradient: linear-gradient(135deg, #ffffff 0%, #f8f4e0 100%);
+	--catalogue-category-border: #d3af37;
 }
+
 .theme-monochrome {
-	--background: #f3f3f3;
-	--foreground: #000000;
-	--heading: #000000;
-	--text: #1a1a1a;
-	--button-text: #ffffff;
-	--price: #000000;
+	--catalogue-background: #f3f3f3;
+	--catalogue-foreground: #000000;
+	--catalogue-heading: #000000;
+	--catalogue-text: #1a1a1a;
+	--catalogue-button-text: #ffffff;
+	--catalogue-price: #000000;
 
-	--primary: #000000;
-	--secondary: #4d4d4d;
-	--accent: #e6e6e6;
-	--primary-foreground: #ffffff;
-	--secondary-foreground: #ffffff;
+	--catalogue-primary: #000000;
+	--catalogue-secondary: #4d4d4d;
+	--catalogue-accent: #e6e6e6;
+	--catalogue-primary-foreground: #ffffff;
+	--catalogue-secondary-foreground: #ffffff;
 
-	--card-bg: #ffffff;
-	--card-text: #1a1a1a;
-	--card-heading: #000000;
-	--card-description: #333333;
-	--card-border: #e0e0e0;
+	--catalogue-card-background: #ffffff;
+	--catalogue-card-text: #1a1a1a;
+	--catalogue-card-heading: #000000;
+	--catalogue-card-description: #333333;
+	--catalogue-card-border: #e0e0e0;
 
-	--section-bg: #f7f7f7;
-	--section-heading: #000000;
-	--section-border: #e0e0e0;
-	--section-hover: #f0f0f0;
+	--catalogue-section-background: #f7f7f7;
+	--catalogue-section-border: #e0e0e0;
 
-	/* Header and Footer */
-	--header-bg: #ffffff;
-	--footer-bg: #ffffff;
-	--header-text: #000000;
-	--footer-text: #000000;
-	--header-border: #e0e0e0;
-	--footer-border: #e0e0e0;
+	--catalogue-navigation-background: #ffffff;
+	--catalogue-navigation-text: #000000;
+	--catalogue-navigation-border: #e0e0e0;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #ffffff;
-	--section-header-text: #000000;
-	--section-header-border: #000000;
-	--section-header-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-	--section-header-hover-bg: #f5f5f5;
-	--section-header-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-	--section-header-accent: #000000;
-	--section-header-gradient: linear-gradient(135deg, #ffffff 0%, #f3f3f3 100%);
+	--catalogue-category-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+	--catalogue-category-accent: #000000;
+	--catalogue-category-gradient: linear-gradient(135deg, #ffffff 0%, #f3f3f3 100%);
+	--catalogue-category-border: #000000;
 }
 
 .theme-creative {
-	--background: #15161e;
-	--foreground: #f8f8f1;
-	--heading: #f8f8f1;
-	--text: #aab7d4;
-	--button-text: #f8f8f1;
-	--price: #ff8fa3;
+	--catalogue-background: #15161e;
+	--catalogue-foreground: #f8f8f1;
+	--catalogue-heading: #f8f8f1;
+	--catalogue-text: #aab7d4;
+	--catalogue-button-text: #f8f8f1;
+	--catalogue-price: #ff8fa3;
 
-	--primary: #ff6b6b;
-	--secondary: #6b8bff;
-	--accent: #ffd166;
-	--primary-foreground: #1d1e28;
-	--secondary-foreground: #ffffff;
+	--catalogue-primary: #ff6b6b;
+	--catalogue-secondary: #6b8bff;
+	--catalogue-accent: #ffd166;
+	--catalogue-primary-foreground: #1d1e28;
+	--catalogue-secondary-foreground: #ffffff;
 
-	--card-bg: #3a3b55;
-	--card-text: #f8f8f1;
-	--card-heading: #ffffff;
-	--card-description: #e8edf5;
-	--card-border: #3c3d4f;
+	--catalogue-card-background: #3a3b55;
+	--catalogue-card-text: #f8f8f1;
+	--catalogue-card-heading: #ffffff;
+	--catalogue-card-description: #e8edf5;
+	--catalogue-card-border: #3c3d4f;
 
-	--section-bg: #2a2b39;
-	--section-heading: #f8f8f1;
-	--section-border: #3c3d4f;
-	--section-hover: #343545;
+	--catalogue-section-background: #2a2b39;
+	--catalogue-section-border: #3c3d4f;
 
-	/* Simplified Header and Footer colors using theme's best colors */
-	--header-bg: #2a2b39;
-	--footer-bg: #2a2b39;
-	--header-text: #f8f8f1;
-	--footer-text: #f8f8f1;
-	--header-border: #3c3d4f;
-	--footer-border: #3c3d4f;
+	--catalogue-navigation-background: #2a2b39;
+	--catalogue-navigation-text: #f8f8f1;
+	--catalogue-navigation-border: #3c3d4f;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #2a2b39;
-	--section-header-text: #f8f8f1;
-	--section-header-border: #ff6b6b;
-	--section-header-shadow: 0 4px 20px rgba(255, 107, 107, 0.2);
-	--section-header-hover-bg: #343545;
-	--section-header-hover-shadow: 0 8px 30px rgba(255, 107, 107, 0.3);
-	--section-header-accent: #ff6b6b;
-	--section-header-gradient: linear-gradient(135deg, #2a2b39 0%, #343545 100%);
+	--catalogue-category-shadow: 0 4px 20px rgba(255, 107, 107, 0.2);
+	--catalogue-category-accent: #ff6b6b;
+	--catalogue-category-gradient: linear-gradient(135deg, #2a2b39 0%, #343545 100%);
+	--catalogue-category-border: #ff6b6b;
 }
 
 .theme-organic {
-	--background: #f5f3ea;
-	--foreground: #354834;
-	--heading: #354834;
-	--text: #2d3a2a;
-	--button-text: #f5f2de;
-	--price: #5d4a28;
+	--catalogue-background: #f5f3ea;
+	--catalogue-foreground: #354834;
+	--catalogue-heading: #354834;
+	--catalogue-text: #2d3a2a;
+	--catalogue-button-text: #f5f2de;
+	--catalogue-price: #5d4a28;
 
-	--primary: #5c7453;
-	--secondary: #cba463;
-	--accent: #aabd6d;
-	--primary-foreground: #f5f2de;
-	--secondary-foreground: #354834;
+	--catalogue-primary: #5c7453;
+	--catalogue-secondary: #cba463;
+	--catalogue-accent: #aabd6d;
+	--catalogue-primary-foreground: #f5f2de;
+	--catalogue-secondary-foreground: #354834;
 
-	--card-bg: #f0efe9;
-	--card-text: #354834;
-	--card-heading: #486345;
-	--card-description: #6b4f3a;
-	--card-border: #e3e0c9;
+	--catalogue-card-background: #f0efe9;
+	--catalogue-card-text: #354834;
+	--catalogue-card-heading: #486345;
+	--catalogue-card-description: #6b4f3a;
+	--catalogue-card-border: #e3e0c9;
 
-	--section-bg: #f1eedb;
-	--section-heading: #354834;
-	--section-border: #d3d0ba;
-	--section-hover: #ece8c5;
+	--catalogue-section-background: #f1eedb;
+	--catalogue-section-border: #d3d0ba;
 
-	/* Updated Header and Footer for more contrast */
-	--header-bg: #ffffff;
-	--footer-bg: #ffffff;
-	--header-text: #354834;
-	--footer-text: #354834;
-	--header-border: #5c7453;
-	--footer-border: #a6b28f;
+	--catalogue-navigation-background: #ffffff;
+	--catalogue-navigation-text: #354834;
+	--catalogue-navigation-border: #5c7453;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #f1eedb;
-	--section-header-text: #354834;
-	--section-header-border: #5c7453;
-	--section-header-shadow: 0 4px 20px rgba(92, 116, 83, 0.15);
-	--section-header-hover-bg: #ece8c5;
-	--section-header-hover-shadow: 0 8px 30px rgba(92, 116, 83, 0.25);
-	--section-header-accent: #5c7453;
-	--section-header-gradient: linear-gradient(135deg, #f4f3ec 0%, #efebc5 100%);
+	--catalogue-category-shadow: 0 4px 20px rgba(92, 116, 83, 0.15);
+	--catalogue-category-accent: #5c7453;
+	--catalogue-category-gradient: linear-gradient(135deg, #f4f3ec 0%, #efebc5 100%);
+	--catalogue-category-border: #5c7453;
 }
 
 .theme-elegant {
-	--background: #121212;
-	--foreground: #fafafa;
-	--heading: #fafafa;
-	--text: #b3b3b3;
-	--button-text: #1a1a1a;
-	--price: #00bcd4;
+	--catalogue-background: #121212;
+	--catalogue-foreground: #fafafa;
+	--catalogue-heading: #fafafa;
+	--catalogue-text: #b3b3b3;
+	--catalogue-button-text: #1a1a1a;
+	--catalogue-price: #00bcd4;
 
-	--primary: #6699cc;
-	--secondary: #2c2c2c;
-	--accent: #ffd699;
-	--primary-foreground: #ffffff;
-	--secondary-foreground: #fafafa;
+	--catalogue-primary: #6699cc;
+	--catalogue-secondary: #2c2c2c;
+	--catalogue-accent: #ffd699;
+	--catalogue-primary-foreground: #ffffff;
+	--catalogue-secondary-foreground: #fafafa;
 
-	--card-bg: #262626;
-	--card-text: #e6e6e6;
-	--card-heading: #ffffff;
-	--card-description: #b3b3b3;
-	--card-border: #333333;
+	--catalogue-card-background: #262626;
+	--catalogue-card-text: #e6e6e6;
+	--catalogue-card-heading: #ffffff;
+	--catalogue-card-description: #b3b3b3;
+	--catalogue-card-border: #333333;
 
-	--section-bg: #262626;
-	--section-heading: #fafafa;
-	--section-border: #333333;
-	--section-hover: #333333;
+	--catalogue-section-background: #262626;
+	--catalogue-section-border: #333333;
 
-	/* Enhanced Header and Footer colors for better sophistication */
-	--header-bg: #1f1f1f;
-	--footer-bg: #1f1f1f;
-	--header-text: #ffffff;
-	--footer-text: #ffffff;
-	--header-border: #404040;
-	--footer-border: #404040;
+	--catalogue-navigation-background: #1f1f1f;
+	--catalogue-navigation-text: #ffffff;
+	--catalogue-navigation-border: #404040;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #1b1c26;
-	--section-header-text: #fafafa;
-	--section-header-border: #6699cc;
-	--section-header-shadow: 0 4px 20px rgba(102, 153, 204, 0.2);
-	--section-header-hover-bg: #333333;
-	--section-header-hover-shadow: 0 8px 30px rgba(102, 153, 204, 0.3);
-	--section-header-accent: #6699cc;
-	--section-header-gradient: linear-gradient(135deg, #262626 0%, #333333 100%);
+	--catalogue-category-shadow: 0 4px 20px rgba(102, 153, 204, 0.2);
+	--catalogue-category-accent: #6699cc;
+	--catalogue-category-gradient: linear-gradient(135deg, #262626 0%, #333333 100%);
+	--catalogue-category-border: #6699cc;
 
 	background-image: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
 }
 
 .theme-modern {
-	--background: #1a1a2b;
-	--foreground: #ffffff;
-	--heading: #ffffff;
-	--text: #f3f3f3;
-	--button-text: #1a1a1a;
-	--price: #ff8fa3;
+	--catalogue-background: #1a1a2b;
+	--catalogue-foreground: #ffffff;
+	--catalogue-heading: #ffffff;
+	--catalogue-text: #f3f3f3;
+	--catalogue-button-text: #1a1a1a;
+	--catalogue-price: #ff8fa3;
 
-	--primary: #8b6cb3;
-	--secondary: #33334d;
-	--accent: #e64676;
-	--primary-foreground: #ffffff;
-	--secondary-foreground: #ffffff;
+	--catalogue-primary: #8b6cb3;
+	--catalogue-secondary: #33334d;
+	--catalogue-accent: #e64676;
+	--catalogue-primary-foreground: #ffffff;
+	--catalogue-secondary-foreground: #ffffff;
 
-	--card-bg: #2d2d55;
-	--card-text: #f2f2f2;
-	--card-heading: #ffffff;
-	--card-description: #d1d1d1;
-	--card-border: #404040;
+	--catalogue-card-background: #2d2d55;
+	--catalogue-card-text: #f2f2f2;
+	--catalogue-card-heading: #ffffff;
+	--catalogue-card-description: #d1d1d1;
+	--catalogue-card-border: #404040;
 
-	--section-bg: #23233a;
-	--section-heading: #ffffff;
-	--section-border: #404040;
-	--section-hover: #2d2d55;
+	--catalogue-section-background: #23233a;
+	--catalogue-section-border: #404040;
 
-	/* Enhanced Header and Footer colors for better professionalism */
-	--header-bg: #1e1e35;
-	--footer-bg: #1e1e35;
-	--header-text: #ffffff;
-	--footer-text: #ffffff;
-	--header-border: #3a3a5a;
-	--footer-border: #3a3a5a;
+	--catalogue-navigation-background: #1e1e35;
+	--catalogue-navigation-text: #ffffff;
+	--catalogue-navigation-border: #3a3a5a;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #23233a;
-	--section-header-text: #ffffff;
-	--section-header-border: #8b6cb3;
-	--section-header-shadow: 0 4px 20px rgba(139, 108, 179, 0.2);
-	--section-header-hover-bg: #2d2d45;
-	--section-header-hover-shadow: 0 8px 30px rgba(139, 108, 179, 0.3);
-	--section-header-accent: #8b6cb3;
-	--section-header-gradient: linear-gradient(135deg, #23233a 0%, #2d2d45 100%);
+	--catalogue-category-shadow: 0 4px 20px rgba(139, 108, 179, 0.2);
+	--catalogue-category-accent: #8b6cb3;
+	--catalogue-category-gradient: linear-gradient(135deg, #23233a 0%, #2d2d45 100%);
+	--catalogue-category-border: #8b6cb3;
 }
 
 .theme-winter-light {
-	--background: #f7faff; /* Snow white with blue tint */
-	--foreground: #14273e; /* Navy */
-	--heading: #14273e;
-	--text: #233a57;
-	--button-text: #ffffff;
-	--price: #1565c0; /* Cool blue */
+	--catalogue-background: #f7faff;
+	--catalogue-foreground: #14273e;
+	--catalogue-heading: #14273e;
+	--catalogue-text: #233a57;
+	--catalogue-button-text: #ffffff;
+	--catalogue-price: #1565c0;
 
-	--primary: #1e88e5;
-	--secondary: #e6eef5; /* Silvered gray */
-	--accent: #aee4ff; /* Frost */
-	--primary-foreground: #ffffff;
-	--secondary-foreground: #14273e;
+	--catalogue-primary: #1e88e5;
+	--catalogue-secondary: #e6eef5;
+	--catalogue-accent: #aee4ff;
+	--catalogue-primary-foreground: #ffffff;
+	--catalogue-secondary-foreground: #14273e;
 
-	--card-bg: #ffffff;
-	--card-text: #233a57;
-	--card-heading: #14273e;
-	--card-description: #355172;
-	--card-border: #d7e7fb;
+	--catalogue-card-background: #ffffff;
+	--catalogue-card-text: #233a57;
+	--catalogue-card-heading: #14273e;
+	--catalogue-card-description: #355172;
+	--catalogue-card-border: #d7e7fb;
 
-	--section-bg: #f0f6ff;
-	--section-heading: #14273e;
-	--section-border: #c6dcf5;
-	--section-hover: #e4f0ff;
+	--catalogue-section-background: #f0f6ff;
+	--catalogue-section-border: #c6dcf5;
 
-	/* Header/Footer */
-	--header-bg: #ffffff;
-	--footer-bg: #ffffff;
-	--header-text: #14273e;
-	--footer-text: #14273e;
-	--header-border: #d7e7fb;
-	--footer-border: #d7e7fb;
+	--catalogue-navigation-background: #ffffff;
+	--catalogue-navigation-text: #14273e;
+	--catalogue-navigation-border: #d7e7fb;
 
-	/* Modern Section Header Variables */
-	--section-header-bg: #eaf2ff;
-	--section-header-text: #14273e;
-	--section-header-border: #1e88e5;
-	--section-header-shadow: 0 4px 16px rgba(30, 136, 229, 0.12);
-	--section-header-hover-bg: #e4f0ff;
-	--section-header-hover-shadow: 0 8px 24px rgba(30, 136, 229, 0.18);
-	--section-header-accent: #aee4ff;
-	--section-header-gradient: linear-gradient(135deg, #eaf2ff 0%, #e4f0ff 100%);
+	--catalogue-category-shadow: 0 4px 16px rgba(30, 136, 229, 0.12);
+	--catalogue-category-accent: #aee4ff;
+	--catalogue-category-gradient: linear-gradient(135deg, #eaf2ff 0%, #e4f0ff 100%);
+	--catalogue-category-border: #1e88e5;
 
 	/* Typography */
-	--font-family-heading: var(--font-crimson-text);
-	--font-family-body: var(--font-inter);
-	--font-weight-heading: 600;
-	--font-weight-body: 400;
-	--letter-spacing-heading: -0.015em;
-	--letter-spacing-body: 0;
+	--catalogue-font-heading: var(--font-crimson-text);
+	--catalogue-font-body: var(--font-inter);
+	--catalogue-weight-heading: 600;
+	--catalogue-weight-body: 400;
+	--catalogue-spacing-heading: -0.015em;
 
 	/* Hex-snow lattice + dots + polar glow */
 	background-image:
-		repeating-linear-gradient(
-			60deg,
+		repeating-linear-gradient(60deg,
 			rgba(174, 228, 255, 0.06) 0 1px,
-			transparent 1px 18px
-		),
-		repeating-linear-gradient(
-			-60deg,
+			transparent 1px 18px),
+		repeating-linear-gradient(-60deg,
 			rgba(174, 228, 255, 0.06) 0 1px,
-			transparent 1px 18px
-		), radial-gradient(rgba(20, 39, 62, 0.05) 1px, transparent 1.5px),
+			transparent 1px 18px), radial-gradient(rgba(20, 39, 62, 0.05) 1px, transparent 1.5px),
 		radial-gradient(rgba(30, 136, 229, 0.04) 1px, transparent 1.5px),
-		radial-gradient(
-			60% 50% at 0% 100%,
+		radial-gradient(60% 50% at 0% 100%,
 			rgba(174, 228, 255, 0.18),
-			transparent 60%
-		), linear-gradient(180deg, #f7faff 0%, #eef6ff 100%);
+			transparent 60%), linear-gradient(180deg, #f7faff 0%, #eef6ff 100%);
 	background-position:
 		0 0,
 		0 0,
@@ -349,71 +266,51 @@
 }
 
 .theme-advent-1 {
-	/* Core palette */
-	--background: #7a1d1d; /* Medium festive red */
-	--foreground: #fff7f1; /* Soft cream text */
-	--heading: #ffe9c6; /* Warm gold for titles */
-	--text: #fff7f1;
-	--price: #f5cf9f; /* Muted gold for highlights */
-	--button-text: #fffdf9;
+	--catalogue-background: #7a1d1d;
+	--catalogue-foreground: #fff7f1;
+	--catalogue-heading: #ffe9c6;
+	--catalogue-text: #fff7f1;
+	--catalogue-button-text: #fffdf9;
+	--catalogue-price: #f5cf9f;
 
-	/* Primary tones */
-	--primary: #e73b3b;
-	--secondary: #c89156;
-	--accent: #a59a3a;
-	--primary-foreground: #fffdf9;
-	--secondary-foreground: #3a0f0f;
+	--catalogue-primary: #e73b3b;
+	--catalogue-secondary: #c89156;
+	--catalogue-accent: #a59a3a;
+	--catalogue-primary-foreground: #fffdf9;
+	--catalogue-secondary-foreground: #3a0f0f;
 
-	/* Cards */
-	--card-bg: #933030;
-	--card-text: #fff7f1;
-	--card-heading: #ffe9c6;
-	--card-description: #f2d9c3;
-	--card-border: #c89156;
+	--catalogue-card-background: #933030;
+	--catalogue-card-text: #fff7f1;
+	--catalogue-card-heading: #ffe9c6;
+	--catalogue-card-description: #f2d9c3;
+	--catalogue-card-border: #c89156;
 
-	/* Sections */
-	--section-bg: #8c2424;
-	--section-heading: #ffd9b3;
-	--section-border: #c89156;
-	--section-hover: #a33838;
+	--catalogue-section-background: #8c2424;
+	--catalogue-section-border: #c89156;
 
-	/* Header/Footer — light break for visual contrast */
-	--header-bg: #fffaf5; /* Soft white-cream */
-	--footer-bg: #fffaf5;
-	--header-text: #7a1d1d; /* Deep red for contrast */
-	--footer-text: #7a1d1d;
-	--header-border: #e7d2bc;
-	--footer-border: #e7d2bc;
+	--catalogue-navigation-background: #fffaf5;
+	--catalogue-navigation-text: #7a1d1d;
+	--catalogue-navigation-border: #e7d2bc;
 
-	/* Section headers */
-	--section-header-bg: #933030;
-	--section-header-text: #ffe9c6;
-	--section-header-border: #c89156;
-	--section-header-shadow: 0 4px 16px rgba(200, 145, 86, 0.15);
-	--section-header-hover-bg: #a33838;
-	--section-header-hover-shadow: 0 8px 24px rgba(228, 59, 59, 0.25);
-	--section-header-accent: #c89156;
-	--section-header-gradient: linear-gradient(135deg, #933030 0%, #7a1d1d 100%);
+	--catalogue-category-shadow: 0 4px 16px rgba(200, 145, 86, 0.15);
+	--catalogue-category-accent: #c89156;
+	--catalogue-category-gradient: linear-gradient(135deg, #933030 0%, #7a1d1d 100%);
+	--catalogue-category-border: #c89156;
 
 	/* Typography */
-	--font-family-heading: var(--font-playfair-display);
-	--font-family-body: var(--font-inter);
-	--font-weight-heading: 700;
-	--font-weight-body: 400;
-	--letter-spacing-heading: -0.02em;
-	--letter-spacing-body: 0;
+	--catalogue-font-heading: var(--font-playfair-display);
+	--catalogue-font-body: var(--font-inter);
+	--catalogue-weight-heading: 700;
+	--catalogue-weight-body: 400;
+	--catalogue-spacing-heading: -0.02em;
 
 	background-image:
-		repeating-linear-gradient(
-			45deg,
+		repeating-linear-gradient(45deg,
 			rgba(255, 230, 200, 0.05) 0 2px,
-			transparent 2px 18px
-		),
-		repeating-linear-gradient(
-			-45deg,
+			transparent 2px 18px),
+		repeating-linear-gradient(-45deg,
 			rgba(255, 230, 200, 0.05) 0 2px,
-			transparent 2px 18px
-		), linear-gradient(180deg, #8c2424 0%, #6a1b1b 100%);
+			transparent 2px 18px), linear-gradient(180deg, #8c2424 0%, #6a1b1b 100%);
 	background-size:
 		18px 18px,
 		18px 18px,
@@ -421,85 +318,55 @@
 }
 
 .theme-advent-2 {
-	/* Cozy Advent palette — pine greens & candlelight golds */
-	--background: #29453f; /* Softer pine green background */
-	--foreground: #f8efe6; /* Gentle warm ivory text */
-	--heading: #d9c9a3; /* Soft gold for titles */
-	--text: #f8efe6;
-	--price: #e3c58f; /* Warm gold tone for pricing */
-	--button-text: #253630;
+	--catalogue-background: #29453f;
+	--catalogue-foreground: #f8efe6;
+	--catalogue-heading: #d9c9a3;
+	--catalogue-text: #f8efe6;
+	--catalogue-button-text: #253630;
+	--catalogue-price: #e3c58f;
 
-	/* Primary tones */
-	--primary: #e3b67a;
-	--secondary: #557b6c;
-	--accent: #a1c1af;
-	--primary-foreground: #253630;
-	--secondary-foreground: #f8efe6;
+	--catalogue-primary: #e3b67a;
+	--catalogue-secondary: #557b6c;
+	--catalogue-accent: #a1c1af;
+	--catalogue-primary-foreground: #253630;
+	--catalogue-secondary-foreground: #f8efe6;
 
-	/* Cards */
-	--card-bg: #3b5c53;
-	--card-text: #f8efe6;
-	--card-heading: #e3c58f;
-	--card-description: #ecdfcc;
-	--card-border: #89a494;
+	--catalogue-card-background: #3b5c53;
+	--catalogue-card-text: #f8efe6;
+	--catalogue-card-heading: #e3c58f;
+	--catalogue-card-description: #ecdfcc;
+	--catalogue-card-border: #89a494;
 
-	/* Sections */
-	--section-bg: #3b5c53;
-	--section-heading: #e3c58f;
-	--section-border: #cfa86a;
-	--section-hover: #45695f;
+	--catalogue-section-background: #3b5c53;
+	--catalogue-section-border: #cfa86a;
 
-	/* Header/Footer — warm beige for balance and contrast */
-	--header-bg: #f6efe6; /* Soft beige, warmer than white */
-	--footer-bg: #f6efe6;
-	--header-text: #2e4a42; /* Deep pine text */
-	--footer-text: #2e4a42;
-	--header-border: #e3b67a; /* Golden accent line */
-	--footer-border: #e3b67a;
+	--catalogue-navigation-background: #f6efe6;
+	--catalogue-navigation-text: #2e4a42;
+	--catalogue-navigation-border: #e3b67a;
 
-	/* Section headers */
-	--section-header-bg: #3b5c53;
-	--section-header-text: #e3c58f;
-	--section-header-border: #e3b67a;
-	--section-header-shadow: 0 4px 16px rgba(200, 150, 86, 0.1);
-	--section-header-hover-bg: #45695f;
-	--section-header-hover-shadow: 0 8px 24px rgba(200, 150, 86, 0.2);
-	--section-header-accent: #a1c1af;
-	--section-header-gradient: linear-gradient(135deg, #3b5c53 0%, #29453f 100%);
+	--catalogue-category-shadow: 0 4px 16px rgba(200, 150, 86, 0.1);
+	--catalogue-category-accent: #a1c1af;
+	--catalogue-category-gradient: linear-gradient(135deg, #3b5c53 0%, #29453f 100%);
+	--catalogue-category-border: #e3b67a;
 
 	/* Typography */
-	--font-family-heading: var(--font-playfair-display);
-	--font-family-body: var(--font-inter);
-	--font-weight-heading: 700;
-	--font-weight-body: 400;
-	--letter-spacing-heading: -0.02em;
-	--letter-spacing-body: 0;
+	--catalogue-font-heading: var(--font-playfair-display);
+	--catalogue-font-body: var(--font-inter);
+	--catalogue-weight-heading: 700;
+	--catalogue-weight-body: 400;
+	--catalogue-spacing-heading: -0.02em;
 
 	/* Subtle festive background pattern */
 	background-image:
-		repeating-linear-gradient(
-			45deg,
+		repeating-linear-gradient(45deg,
 			rgba(215, 190, 150, 0.05) 0 12px,
-			transparent 12px 24px
-		), radial-gradient(rgba(250, 240, 225, 0.06) 0.5px, transparent 1px),
-		radial-gradient(
-			60% 70% at 100% 0%,
+			transparent 12px 24px), radial-gradient(rgba(250, 240, 225, 0.06) 0.5px, transparent 1px),
+		radial-gradient(60% 70% at 100% 0%,
 			rgba(212, 165, 116, 0.08),
-			transparent 70%
-		), linear-gradient(180deg, #33564e 0%, #29453f 100%);
+			transparent 70%), linear-gradient(180deg, #33564e 0%, #29453f 100%);
 	background-size:
 		auto,
 		28px 28px,
 		auto,
 		auto;
 }
-
-/* Wood navbar and footer styling for Christmas dark theme */
-/* .theme-advent-2 .navbar,
-.theme-advent-2 header,
-.theme-advent-2 footer {
-	background-image: url('/images/wood-navbar.png');
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-} */

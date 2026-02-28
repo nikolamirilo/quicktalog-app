@@ -19,7 +19,7 @@ export default function SocialIcon({
 	return (
 		<SmartLink
 			href={normalizedHref}
-			className={`p-2 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-3 group bg-card-bg text-card-heading border border-card-border ${className}`}
+			className={`p-2 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-3 group bg-catalogue-card-background text-catalogue-card-heading border border-catalogue-card-border ${className}`}
 			ariaLabel={`Follow us on ${platform}`}
 		>
 			<div className=" transition-colors duration-300">

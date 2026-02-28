@@ -1,5 +1,7 @@
+"use client";
 import SmartLink from "@/components/general/SmartLink";
 import { Button } from "@/components/ui/button";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 import { CatalogueHeaderProps } from "@/types/components";
 import Link from "next/link";
 import React from "react";
@@ -10,6 +12,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	data,
 	logo,
 }) => {
+	const { catalogue } = useCatalogueContext()
 	const createContactLink = (
 		href: string,
 		icon: React.ReactNode,
@@ -19,7 +22,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 		icon,
 		label,
 		className:
-			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center bg-header-bg text-footer-text border-primary footer-cta-button",
+			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center bg-catalogue-navigation-background text-catalogue-navigation-text border-primary footer-cta-button",
 	});
 
 	const getContactLinks = () => {
@@ -101,7 +104,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	return (
 		<header
 			aria-label={`${companyName} header navigation`}
-			className="border-b shadow-lg z-50 bg-header-bg flex flex-row justify-between items-center  text-header-text border-card-border font-body tracking-body min-h-[7vh]"
+			className="border-b shadow-lg z-50 bg-catalogue-navigation-background flex flex-row justify-between items-center  text-catalogue-navigation-text border-catalogue-card-border font-body min-h-[7vh]"
 			role="banner"
 		>
 			<div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
@@ -110,7 +113,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						<Link
 							aria-label={`Go to ${companyName} homepage`}
 							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
-							href={type === "default" ? "/" : ""}
+							href={type === "default" ? `/` : "/"}
 						>
 							<img
 								alt={`${companyName} logo`}
@@ -150,7 +153,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						{ctaProps && (
 							<Button
 								asChild
-								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary text-header-text border-primary footer-cta-button"
+								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary text-catalogue-navigation-text border-primary footer-cta-button"
 								size="default"
 								variant="outline"
 							>

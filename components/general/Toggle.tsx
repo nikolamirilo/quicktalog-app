@@ -16,17 +16,17 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 					<h3
 						className="text-xl font-semibold text-center"
 						style={{
-							color: "var(--section-heading)",
-							fontFamily: "var(--font-family-heading)",
-							fontWeight: "var(--font-weight-heading)",
-							letterSpacing: "var(--letter-spacing-heading)",
+							color: "var(--catalogue-heading)",
+							fontFamily: "var(--catalogue-font-heading)",
+							fontWeight: "var(--catalogue-weight-heading)",
+							letterSpacing: "var(--catalogue-spacing-heading)",
 						}}
 					>
 						Choose Layout Style
 					</h3>
 					<div className="w-full max-w-2xl">
 						<div
-							className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border"
+							className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-2 rounded-2xl bg-catalogue-section-background shadow-product-shadow border border-catalogue-section-border"
 							role="group"
 						>
 							{layouts.map((layoutOption) => (
@@ -51,18 +51,18 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 									style={{
 										backgroundColor:
 											layout === layoutOption.key
-												? "var(--primary)"
+												? "var(--catalogue-primary)"
 												: "transparent",
 										color:
 											layout === layoutOption.key
 												? "var(--primary-foreground)"
-												: "var(--section-heading)",
-										fontFamily: "var(--font-family-body)",
+												: "var(--catalogue-heading)",
+										fontFamily: "var(--catalogue-font-body)",
 										fontWeight:
 											layout === layoutOption.key
-												? "var(--font-weight-heading)"
-												: "var(--font-weight-body)",
-										letterSpacing: "var(--letter-spacing-body)",
+												? "var(--catalogue-weight-heading)"
+												: "var(--catalogue-weight-body)",
+										letterSpacing: "var(--catalogue-spacing-heading)",
 									}}
 									type="button"
 									variant="ghost"
@@ -73,7 +73,7 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 									{layout === layoutOption.key && (
 										<div
 											className="absolute inset-0 rounded-xl opacity-20 blur-sm"
-											style={{ backgroundColor: "var(--primary)" }}
+											style={{ backgroundColor: "var(--catalogue-primary)" }}
 										/>
 									)}
 								</Button>
@@ -88,17 +88,17 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 				<h3
 					className="text-xl font-semibold text-center"
 					style={{
-						color: "var(--section-heading)",
-						fontFamily: "var(--font-family-heading)",
-						fontWeight: "var(--font-weight-heading)",
-						letterSpacing: "var(--letter-spacing-heading)",
+						color: "var(--catalogue-heading)",
+						fontFamily: "var(--catalogue-font-heading)",
+						fontWeight: "var(--catalogue-weight-heading)",
+						letterSpacing: "var(--catalogue-spacing-heading)",
 					}}
 				>
 					Choose Color Theme
 				</h3>
 				<div className="w-full max-w-4xl">
 					<div
-						className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-3 rounded-2xl bg-section-bg shadow-product-shadow border border-section-border"
+						className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 p-3 rounded-2xl bg-catalogue-section-background shadow-product-shadow border border-catalogue-section-border"
 						role="group"
 					>
 						{themes.map((themeOption) => (
@@ -114,10 +114,10 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 									borderColor:
 										theme === themeOption.key
 											? "var(--product-primary)"
-											: "var(--section-border)",
-									backgroundColor: "var(--background)",
-									color: "var(--foreground)",
-									fontFamily: "var(--font-family-body)",
+											: "var(--catalogue-section-border)",
+									backgroundColor: "var(--catalogue-background)",
+									color: "var(--catalogue-foreground)",
+									fontFamily: "var(--catalogue-font-body)",
 								}}
 								type="button"
 							>
@@ -125,17 +125,17 @@ const Toggle = ({ type = "home" }: { type?: string }) => {
 									<div
 										className="w-8 h-8 mx-auto mb-2 rounded-full border-2"
 										style={{
-											backgroundColor: "var(--primary)",
-											borderColor: "var(--foreground)",
+											backgroundColor: "var(--catalogue-primary)",
+											borderColor: "var(--catalogue-foreground)",
 										}}
 									></div>
 									<div
 										className="text-xs font-medium"
 										style={{
-											color: "var(--heading)",
-											fontFamily: "var(--font-family-heading)",
-											fontWeight: "var(--font-weight-heading)",
-											letterSpacing: "var(--letter-spacing-heading)",
+											color: "var(--catalogue-heading)",
+											fontFamily: "var(--catalogue-font-heading)",
+											fontWeight: "var(--catalogue-weight-heading)",
+											letterSpacing: "var(--catalogue-spacing-heading)",
 										}}
 									>
 										{themeOption.label}

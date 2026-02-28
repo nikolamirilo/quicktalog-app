@@ -374,7 +374,7 @@ const FooterTab = () => {
 						))}
 
 						{isAddingPartner ? (
-							<div className="space-y-3 p-4 rounded-lg bg-card-bg border-gray-300 border">
+							<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background border-gray-300 border">
 								<Input
 									placeholder="Partner Name"
 									value={newPartner.name}

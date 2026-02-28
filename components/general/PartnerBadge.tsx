@@ -16,7 +16,7 @@ export default function PartnerBadge({
 
 	return (
 		<SmartLink
-			className="group flex items-center gap-3 px-4 py-3 rounded-xl border border-card-border bg-card-bg hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+			className="group flex items-center gap-3 px-4 py-3 rounded-xl border border-catalogue-card-border bg-catalogue-card-background hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 hover:scale-[1.02] cursor-pointer"
 			href={partner.url}
 		>
 			{/* Logo */}
@@ -40,17 +40,17 @@ export default function PartnerBadge({
 
 			{/* Text */}
 			<div className="flex-1 min-w-0">
-				<p className="text-sm font-semibold text-card-heading truncate leading-tight">
+				<p className="text-sm font-semibold text-catalogue-card-heading truncate leading-tight">
 					{partner.name}
 				</p>
-				<p className="text-xs text-card-heading/60 truncate mt-0.5">
+				<p className="text-xs text-catalogue-card-heading/60 truncate mt-0.5">
 					{partner.description}
 				</p>
 			</div>
 
 			{/* Arrow */}
 			<svg
-				className="w-4 h-4 text-card-heading/30 group-hover:text-primary/50 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0"
+				className="w-4 h-4 text-catalogue-card-heading/30 group-hover:text-primary/50 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth={2}

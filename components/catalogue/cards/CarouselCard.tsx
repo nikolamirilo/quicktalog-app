@@ -26,7 +26,7 @@ const CarouselCard = ({
 
 	return (
 		<article
-			className="flex flex-col cursor-pointer !h-full bg-card-bg text-card-text border border-card-border w-full flex-shrink-0 overflow-hidden relative group"
+			className="flex flex-col cursor-pointer !h-full bg-catalogue-card-background text-catalogue-card-text border border-catalogue-card-border w-full flex-shrink-0 overflow-hidden relative group"
 			onClick={onClick}
 			style={{
 				borderRadius: "var(--border-radius)",

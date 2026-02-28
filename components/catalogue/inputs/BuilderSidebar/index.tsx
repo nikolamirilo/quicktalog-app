@@ -12,18 +12,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { TabKey } from "@/types/components";
 import ActionButtons from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";
 import FooterTab from "./FooterTab";
 import GeneralTab from "./GeneralTab";
 import HeaderTab from "./HeaderTab";
-
-type TabKey = "general" | "templates" | "header" | "footer" | "appearance";
-
-interface SidebarProps {
-	defaultOpen?: boolean;
-}
 
 const TABS: {
 	key: TabKey;
@@ -31,43 +25,41 @@ const TABS: {
 	label: string;
 	content: React.ReactNode;
 }[] = [
-	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-	{
-		key: "appearance",
-		icon: Palette,
-		label: "Appearance",
-		content: <AppearanceTab />,
-	},
-];
+		{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
+		{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
+		{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
+		{
+			key: "appearance",
+			icon: Palette,
+			label: "Appearance",
+			content: <AppearanceTab />,
+		},
+	];
 
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
 
-const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
+const BuilderSidebar: React.FC = ({ defaultOpen = false }: { defaultOpen?: boolean }) => {
 	const [isOpen, setIsOpen] = useState(defaultOpen);
 
 	return (
 		<aside
 			className={`!z-[1000] fixed bg-product-background shadow-xl flex 
-        /* Mobile: Bottom App Bar */
-        bottom-0 left-0 w-full flex-col-reverse
-        ${isOpen ? "h-[100dvh]" : "h-auto"}
-        
-        /* Desktop: Right Sidebar */
-        md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
-        ${isOpen ? "md:w-fit md:max-w-[500px]" : "md:w-16"}
-      `}
-			style={{
-				transform: isOpen
-					? "translateX(0)"
-					: window.innerWidth >= 768
-						? "translateX(0)"
-						: "translateY(0)",
-				transition:
-					"width 0.8s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.8s cubic-bezier(0.4, 0, 0.2, 1), height 0.5s ease-in-out, transform 0.5s ease-in-out",
-			}}
+    bottom-0 left-0 w-full flex-col-reverse
+    ${isOpen ? "h-[100dvh]" : "h-auto"}
+    md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
+    ${isOpen ? "md:w-fit md:max-w-[500px]" : "md:w-16"}
+    
+    transition-[width,max-width,height,transform]
+    duration-500
+    [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]
+    [&]:md:[transition-duration:800ms,800ms,500ms,500ms]
+    
+    ${isOpen
+					? "translate-y-0 md:translate-x-0"
+					: "translate-y-0 md:translate-x-0"
+				}
+  `}
 		>
 			{/* Backdrop blur overlay for mobile when open */}
 			{isOpen && (
@@ -187,51 +179,6 @@ const BuilderSidebar: React.FC<SidebarProps> = ({ defaultOpen = false }) => {
 					</ScrollArea>
 				</Tabs>
 			)}
-
-			{/* Keyframe animations */}
-			<style jsx>{`
-				@keyframes fadeIn {
-					from {
-						opacity: 0;
-					}
-					to {
-						opacity: 1;
-					}
-				}
-
-				@keyframes slideDown {
-					from {
-						opacity: 0;
-						transform: translateY(-10px);
-					}
-					to {
-						opacity: 1;
-						transform: translateY(0);
-					}
-				}
-
-				@keyframes fadeInScale {
-					from {
-						opacity: 0;
-						transform: scale(0.95);
-					}
-					to {
-						opacity: 1;
-						transform: scale(1);
-					}
-				}
-
-				@keyframes fadeInUp {
-					from {
-						opacity: 0;
-						transform: translateY(10px);
-					}
-					to {
-						opacity: 1;
-						transform: translateY(0);
-					}
-				}
-			`}</style>
 		</aside>
 	);
 };

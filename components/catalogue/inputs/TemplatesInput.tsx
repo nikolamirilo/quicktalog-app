@@ -111,7 +111,7 @@ export default function TemplatesInput({
 									{isScratch ? "" : template.title}
 								</h3>
 								{template.badge && (
-									<span className="bg-product-primary text-button-text text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm absolute top-1 right-1">
+									<span className="bg-product-primary text-catalogue-button-text text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm absolute top-1 right-1">
 										{template.badge}
 									</span>
 								)}

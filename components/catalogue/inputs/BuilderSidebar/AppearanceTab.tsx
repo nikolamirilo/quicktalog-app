@@ -120,10 +120,10 @@ const AppearanceTab = () => {
 								style={{
 									borderColor: isSelected
 										? "var(--product-primary)"
-										: "var(--section-border)",
-									backgroundColor: "var(--background)",
-									color: "var(--foreground)",
-									fontFamily: "var(--font-family-body)",
+										: "var(--catalogue-section-border)",
+									backgroundColor: "var(--catalogue-background)",
+									color: "var(--catalogue-foreground)",
+									fontFamily: "var(--catalogue-font-body)",
 								}}
 								type="button"
 							>
@@ -131,17 +131,17 @@ const AppearanceTab = () => {
 								<div
 									className="w-8 h-8 mb-2 rounded-full border-2"
 									style={{
-										backgroundColor: "var(--primary)",
-										borderColor: "var(--foreground)",
+										backgroundColor: "var(--catalogue-primary)",
+										borderColor: "var(--catalogue-foreground)",
 									}}
 								/>
 								<span
 									className="text-xs font-medium"
 									style={{
-										color: "var(--heading)",
-										fontFamily: "var(--font-family-heading)",
-										fontWeight: "var(--font-weight-heading)",
-										letterSpacing: "var(--letter-spacing-heading)",
+										color: "var(--catalogue-heading)",
+										fontFamily: "var(--catalogue-font-heading)",
+										fontWeight: "var(--catalogue-weight-heading)",
+										letterSpacing: "var(--catalogue-spacing-heading)",
 									}}
 								>
 									{themeItem.label}

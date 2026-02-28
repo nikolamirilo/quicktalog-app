@@ -14,7 +14,7 @@ const ContentBlockButton = ({
 					cursor-pointer relative overflow-hidden
 					transition-all duration-300 ease-out
 					py-14
-					hover:border-primary hover:bg-section-hover
+					hover:border-primary hover:bg-catalogue-section-background
 					hover:-translate-y-0.5 hover:shadow-lg
 					active:translate-y-0 active:shadow-sm
 				"
@@ -25,7 +25,7 @@ const ContentBlockButton = ({
 					className="
 						pointer-events-none absolute inset-0 opacity-0
 						group-hover:opacity-100 transition-opacity duration-300
-						bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,hsl(var(--primary)/0.07),transparent)]
+						bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,hsl(var(--catalogue-primary)/0.07),transparent)]
 					"
 					aria-hidden="true"
 				/>

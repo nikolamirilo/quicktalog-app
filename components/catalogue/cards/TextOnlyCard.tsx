@@ -25,7 +25,7 @@ const TextOnlyCard = ({
 
 	return (
 		<article
-			className="bg-card-bg cursor-pointer p-2 sm:p-4 text-card-text flex flex-col sm:flex-row sm:flex-wrap border border-card-border gap-1.5 sm:gap-2 sm:items-center sm:justify-between relative group"
+			className="bg-catalogue-card-background cursor-pointer p-2 sm:p-4 text-catalogue-card-text flex flex-col sm:flex-row sm:flex-wrap border border-catalogue-card-border gap-1.5 sm:gap-2 sm:items-center sm:justify-between relative group"
 			onClick={onClick}
 			style={{
 				borderRadius: "var(--border-radius)",

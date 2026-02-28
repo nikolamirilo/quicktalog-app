@@ -26,7 +26,7 @@ const SideImageCard = ({
 
 	return (
 		<article
-			className="flex bg-card-bg cursor-pointer text-card-text border border-card-border overflow-hidden max-w-full min-h-[110px] sm:min-h-[150px] relative group"
+			className="flex bg-catalogue-card-background cursor-pointer text-catalogue-card-text border border-catalogue-card-border overflow-hidden max-w-full min-h-[110px] sm:min-h-[150px] relative group"
 			onClick={onClick}
 			style={{
 				borderRadius: "var(--border-radius)",

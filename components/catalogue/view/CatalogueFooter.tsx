@@ -88,7 +88,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	return (
 		<footer
 			aria-label={`${type === "default" ? "Quicktalog" : data?.legal?.legalName || "Custom"} footer`}
-			className="border-t mt-auto font-body font-weight-body tracking-body bg-footer-bg text-footer-text border-footer-border"
+			className="border-t mt-auto font-body font-weight-body bg-catalogue-navigation-background text-catalogue-navigation-text border-catalogue-navigation-border"
 			role="contentinfo"
 		>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -115,19 +115,19 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									</SmartLink>
 
 									{type === "default" && (
-										<p className="text-sm text-footer-text">
+										<p className="text-sm text-catalogue-navigation-text">
 											Digital Catalogue Platform
 										</p>
 									)}
 									{type === "custom" && (
 										<div className="ml-0">
-											<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-footer-text">
+											<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 												{data?.legal?.legalName}
 											</h3>
 										</div>
 									)}
 								</div>
-								<p className="text-sm leading-relaxed text-footer-text">
+								<p className="text-sm leading-relaxed text-catalogue-navigation-text">
 									{type === "default" ? footerDetails.subheading : ""}
 								</p>
 							</div>
@@ -156,7 +156,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 						{(type === "default" || data?.contact?.email) && (
 							<div className="space-y-6">
-								<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
+								<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 									<div
 										aria-hidden="true"
 										className="w-1 h-5 bg-primary rounded-full"
@@ -167,7 +167,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									<li>
 										<a
 											aria-label={`Send email to ${type === "default" ? footerDetails.email : data?.contact.email || "contact"}`}
-											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
+											className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
 											href={`mailto:${type === "default" ? footerDetails.email : data?.contact.email}`}
 										>
 											<FiMail
@@ -185,7 +185,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<li>
 											<a
 												aria-label={`Call ${data?.contact?.phone}`}
-												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
+												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
 												href={`tel:${data?.contact?.phone}`}
 											>
 												<FiPhone
@@ -200,7 +200,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<li>
 											<Link
 												aria-label="Contact us"
-												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-footer-text"
+												className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
 												href="/contact"
 											>
 												<FiExternalLink
@@ -218,7 +218,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						<div className="space-y-6">
 							{type === "default" ? (
 								<>
-									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
+									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 										<div
 											aria-hidden="true"
 											className="w-1 h-5 bg-primary rounded-full"
@@ -228,14 +228,14 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									<ul className="space-y-4">
 										{footerFeatures.map((feature, index) => (
 											<li
-												className="flex items-start space-x-3 group text-footer-text"
+												className="flex items-start space-x-3 group text-catalogue-navigation-text"
 												key={`footer-feature-${index}`}
 											>
-												<div className="mt-1 group-hover:scale-110 transition-transform duration-200 text-footer-text">
+												<div className="mt-1 group-hover:scale-110 transition-transform duration-200 text-catalogue-navigation-text">
 													{feature.icon}
 												</div>
 												<div>
-													<div className="font-semibold text-sm font-heading font-weight-heading tracking-heading text-footer-text">
+													<div className="font-semibold text-sm font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 														{feature.title}
 													</div>
 													<div className="text-xs opacity-75">
@@ -248,7 +248,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								</>
 							) : data?.legal?.legalName || data?.legal?.address ? (
 								<>
-									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
+									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 										<div
 											aria-hidden="true"
 											className="w-1 h-5 bg-primary rounded-full"
@@ -258,16 +258,16 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 									<ul className="space-y-4">
 										{data?.legal?.legalName && (
 											<li className="flex items-center space-x-3">
-												<MdTitle className="w-4 h-4 flex-shrink-0 text-footer-text" />
-												<span className="text-sm text-footer-text">
+												<MdTitle className="w-4 h-4 flex-shrink-0 text-catalogue-navigation-text" />
+												<span className="text-sm text-catalogue-navigation-text">
 													{data?.legal?.legalName}
 												</span>
 											</li>
 										)}
 										{data?.legal?.address && (
 											<li className="flex items-start space-x-3">
-												<FiMapPin className="w-4 h-4 mt-1 flex-shrink-0 text-footer-text" />
-												<div className="text-sm text-footer-text">
+												<FiMapPin className="w-4 h-4 mt-1 flex-shrink-0 text-catalogue-navigation-text" />
+												<div className="text-sm text-catalogue-navigation-text">
 													<div>{data?.legal?.address}</div>
 												</div>
 											</li>
@@ -292,7 +292,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 									<Button
 										asChild
-										className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary footer-cta-button"
+										className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary footer-cta-button"
 										size="default"
 										variant="outline"
 									>
@@ -309,7 +309,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								data?.partners.length > 0 &&
 								data?.footer.showPartners ? (
 								<>
-									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-footer-text">
+									<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
 										<div
 											aria-hidden="true"
 											className="w-1 h-5 bg-primary rounded-full"
@@ -329,8 +329,8 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 					</div>
 				</div>
 
-				<div className="border-t py-6 border-footer-border">
-					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-footer-text">
+				<div className="border-t py-6 border-catalogue-navigation-border">
+					<div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-catalogue-navigation-text">
 						<span>
 							© {new Date().getFullYear()}{" "}
 							{type === "default"
@@ -408,7 +408,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 											<input
 												aria-describedby="newsletter-description"
 												aria-invalid={submitError ? "true" : "false"}
-												className="w-48 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-card-bg text-card-text border border-card-border"
+												className="w-48 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-catalogue-card-background text-catalogue-card-text border border-catalogue-card-border"
 												disabled={isSubmitting || submitSuccess}
 												id="newsletter-email"
 												onChange={(e) => setNewsletterEmail(e.target.value)}
@@ -423,7 +423,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
 												submitSuccess
 													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
-													: "hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary"
+													: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
 											}`}
 											disabled={isSubmitting || submitSuccess}
 											size="default"
@@ -459,7 +459,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							data?.footer?.cta?.url && (
 								<Button
 									asChild
-									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-card-bg text-foreground border-primary footer-cta-button flex items-center gap-2"
+									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary footer-cta-button flex items-center gap-2"
 									size="default"
 									variant="outline"
 								>
