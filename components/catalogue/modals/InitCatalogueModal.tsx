@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { Search, X } from "lucide-react";
+import { useState } from "react";
 import BusinessType from "../inputs/BusinessType";
 import CatalogueNameInput from "../inputs/CatalogueNameInput";
 import CurrencySelect from "../inputs/CurrencySelect";
@@ -35,17 +36,20 @@ export default function InitCatalogueModal({
 	// Generate URL based on catalog name
 	const generatedUrl = catalogue.name
 		? `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name
-				.toLowerCase()
-				.replace(/\s+/g, "-")
-				.replace(/[^a-z0-9-]/g, "")}`
+			.toLowerCase()
+			.replace(/\s+/g, "-")
+			.replace(/[^a-z0-9-]/g, "")}`
 		: `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/`;
+
+	const [hasNameError, setHasNameError] = useState(false);
 
 	const handleConfirm = () => {
 		if (
 			catalogue.name &&
 			catalogue.language &&
 			catalogue.currency &&
-			catalogue.businessType
+			catalogue.businessType &&
+			!hasNameError
 		) {
 			onConfirm();
 			resetCatalogue();
@@ -56,7 +60,8 @@ export default function InitCatalogueModal({
 		catalogue.name &&
 		catalogue.language &&
 		catalogue.currency &&
-		catalogue.businessType;
+		catalogue.businessType &&
+		!hasNameError;
 
 	return (
 		<AlertDialog
@@ -86,9 +91,12 @@ export default function InitCatalogueModal({
 				</AlertDialogHeader>
 
 				<div className="space-y-4 py-4">
-					{/* Catalog Name and Language Row */}
+					{/* Catalogue Name and Language Row */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<CatalogueNameInput disabled={loading} />
+						<CatalogueNameInput
+							disabled={loading}
+							onErrorChange={setHasNameError}
+						/>
 						<LanguageInput disabled={loading} />
 					</div>
 

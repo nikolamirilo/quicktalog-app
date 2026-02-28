@@ -1,5 +1,15 @@
 "use client";
 
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { defaultCatalogueData } from "@/constants/catalogue";
 import {
@@ -57,17 +67,28 @@ export default function TemplatesInput({
 	onComplete,
 	direction = "row",
 }: TemplatesInputProps) {
-	const { updateCatalogue } = useCatalogueContext();
+	const { catalogue, updateCatalogue } = useCatalogueContext();
 	const [selectedId, setSelectedId] = useState<string>("quick-start");
+	const [showConfirmModal, setShowConfirmModal] = useState(false);
+	const [pendingTemplate, setPendingTemplate] = useState<any>(null);
+
+	const executeSelect = (templateToUse: any) => {
+		updateCatalogue({
+			content: templateToUse.value as unknown as ContentBlock[],
+		});
+		if (onComplete) {
+			onComplete();
+		}
+	};
 
 	const handleSelect = () => {
 		const selectedTemplate = templates.find((t) => t.id === selectedId);
 		if (selectedTemplate) {
-			updateCatalogue({
-				content: selectedTemplate.value as unknown as ContentBlock[],
-			});
-			if (onComplete) {
-				onComplete();
+			if (catalogue?.content && catalogue.content.length > 0) {
+				setPendingTemplate(selectedTemplate);
+				setShowConfirmModal(true);
+			} else {
+				executeSelect(selectedTemplate);
 			}
 		}
 	};
@@ -94,7 +115,7 @@ export default function TemplatesInput({
 							key={template.id}
 							onClick={() => setSelectedId(template.id)}
 							className={cn(
-								"group relative flex flex-col px-2 py-3 sm:py-4 md:py-6 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2",
+								"group relative flex flex-col p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2",
 								isSelected
 									? "border-product-primary bg-product-primary/5 shadow-product-shadow ring-1 ring-product-primary"
 									: "border-product-border bg-product-background hover:border-product-primary/50 hover:shadow-lg hover:scale-[1.01]",
@@ -102,43 +123,44 @@ export default function TemplatesInput({
 							)}
 						>
 							{/* Header */}
-							<div className="flex justify-between items-start mb-2 sm:mb-4 md:mb-6 z-10">
+							<div className="flex justify-between items-start mb-4 sm:mb-6 md:mb-8 z-10 w-full">
 								<h3
 									className={cn(
-										"font-heading mx-auto mt-1 sm:mt-2 md:mt-4 font-bold text-sm sm:text-base text-product-foreground",
+										"font-heading font-bold text-sm sm:text-base md:text-lg text-product-foreground w-full text-center",
 									)}
 								>
 									{isScratch ? "" : template.title}
 								</h3>
 								{template.badge && (
-									<span className="bg-product-primary text-catalogue-button-text text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm absolute top-1 right-1">
+									<span className="bg-product-primary text-catalogue-button-text text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm absolute top-2 right-2 sm:top-3 sm:right-3">
 										{template.badge}
 									</span>
 								)}
 							</div>
 
 							{/* Visual/Icon */}
-							<div className="flex-grow flex items-center justify-center mb-2 sm:mb-4 md:mb-6 z-0">
+							<div className="flex-grow flex items-center justify-center mb-4 sm:mb-6 md:mb-8 z-0 w-full h-[120px] sm:h-[160px] md:h-[200px]">
 								{isScratch ? (
-									<div className="flex flex-col items-center gap-2 sm:gap-3 text-gray-400 group-hover:text-product-primary transition-colors">
-										<Plus className="w-8 h-8 sm:w-10 sm:h-10" />
+									<div className="flex flex-col items-center justify-center gap-2 sm:gap-3 text-gray-400 group-hover:text-product-primary transition-colors h-full">
+										<Plus className="w-10 h-10 sm:w-16 sm:h-16" />
 										<span className="font-heading font-bold text-base sm:text-lg text-gray-700 group-hover:text-product-foreground transition-colors">
 											{template.title}
 										</span>
 									</div>
 								) : (
-									<Image
-										src={template?.image}
-										alt={template.title}
-										width={80}
-										height={80}
-										className="w-20 h-20 sm:w-28 sm:h-28 md:w-[120px] md:h-[120px]"
-									/>
+									<div className="relative w-full h-full flex items-center justify-center">
+										<Image
+											src={template?.image}
+											alt={template.title}
+											fill
+											className="object-contain"
+										/>
+									</div>
 								)}
 							</div>
 
 							{/* Description */}
-							<div className="text-center space-y-1 sm:space-y-2 md:space-y-3 mt-auto">
+							<div className="text-center space-y-2 sm:space-y-3 md:space-y-4 mt-auto">
 								<p className="text-xs sm:text-sm text-product-foreground-accent font-medium leading-snug sm:leading-relaxed">
 									{template.description}
 								</p>
@@ -167,6 +189,28 @@ export default function TemplatesInput({
 			>
 				Select Template
 			</Button>
+
+			<AlertDialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Change Template?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This will change your existing content. Please save it first to not lose progress.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={() => {
+								if (pendingTemplate) executeSelect(pendingTemplate);
+							}}
+							className="bg-red-600 hover:bg-red-700 text-white"
+						>
+							Continue
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

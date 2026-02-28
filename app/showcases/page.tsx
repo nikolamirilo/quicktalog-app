@@ -34,7 +34,7 @@ const page = () => {
 				<Navbar />
 				<Section
 					id="showcases"
-					title="Explore Real Catalog Examples"
+					title="Explore Real Catalogue Examples"
 					description="Discover how businesses across industries are using Quicktalog to create stunning digital catalogs. From fashion boutiques to electronics stores, see the possibilities for your own catalog."
 				>
 					<Suspense fallback={<SectionSkeleton height="h-96" />}>

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TemplatesInput from "../inputs/TemplatesInput";
 
 interface SelectTemplateModalProps {
@@ -23,6 +23,7 @@ const SelectTemplateModal = ({
 }: SelectTemplateModalProps = {}) => {
 	const { catalogue } = useCatalogueContext();
 	const [internalIsOpen, setInternalIsOpen] = useState(false);
+	const hasAutoOpened = useRef(false);
 
 	// Determine if the modal should be open based on external or internal state
 	const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
@@ -38,11 +39,10 @@ const SelectTemplateModal = ({
 
 	useEffect(() => {
 		// Only check auto-open if not externally controlled
-		if (externalIsOpen === undefined) {
+		if (externalIsOpen === undefined && !hasAutoOpened.current) {
 			if (catalogue.content.length === 0) {
 				setInternalIsOpen(true);
-			} else {
-				setInternalIsOpen(false);
+				hasAutoOpened.current = true;
 			}
 		}
 	}, [catalogue.content.length, externalIsOpen]);
@@ -53,7 +53,7 @@ const SelectTemplateModal = ({
 
 	return (
 		<AlertDialog onOpenChange={(open) => !open && handleClose()} open={isOpen}>
-			<AlertDialogContent className="fixed w-full h-fit max-h-none left-0 top-0 translate-x-0 translate-y-0 rounded-none sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] sm:max-w-[95vw] sm:max-h-[95vh] sm:rounded-3xl md:max-w-4xl p-0 overflow-hidden bg-white border-none shadow-2xl flex flex-col">
+			<AlertDialogContent className="fixed w-full max-h-[100dvh] h-[100dvh] sm:h-fit left-0 top-0 translate-x-0 translate-y-0 rounded-none sm:left-[50%] sm:top-[50%] sm:translate-x-[-50%] sm:translate-y-[-50%] sm:max-w-[95vw] sm:max-h-[95vh] sm:rounded-3xl md:max-w-6xl p-0 overflow-hidden bg-white border-none shadow-2xl flex flex-col">
 				{/* Dismiss button - show if externally controlled or if we want to allow dismissal */}
 				{(externalIsOpen !== undefined || internalIsOpen) && (
 					<button

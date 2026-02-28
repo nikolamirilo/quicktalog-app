@@ -58,7 +58,7 @@ const CTA: React.FC = () => {
 							className="text-2xl sm:text-3xl md:text-5xl md:leading-tight font-semibold mb-4 max-w-3xl"
 							variants={childVariants}
 						>
-							Start With Our Free Online Catalog Maker
+							Start With Our Free Online Catalogue Maker
 						</motion.h2>
 
 						<motion.p
@@ -107,7 +107,7 @@ const CTA: React.FC = () => {
 						>
 							<Link href="/auth?mode=signup">
 								<Button variant="cta" className="text-lg px-8 py-4 h-14">
-									Create Your Catalog Now
+									Create Your Catalogue Now
 									<FiArrowRight className="w-5 h-5 ml-2" />
 								</Button>
 							</Link>

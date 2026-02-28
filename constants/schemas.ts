@@ -49,15 +49,15 @@ export const websiteSchema = {
 export const serviceSchema = {
 	"@context": "https://schema.org",
 	"@type": "Service",
-	name: "Digital Catalog Creation Service",
-	description:
+	name: "Digital Catalogue Creation Service",
+	description:	
 		"Professional digital catalog creation and management service for businesses. Create interactive, mobile-friendly catalogs with AI-powered tools, OCR import, and real-time analytics.",
 	provider: {
 		"@type": "Organization",
 		name: "Quicktalog",
 		url: "https://www.quicktalog.app",
 	},
-	serviceType: "Digital Catalog Software",
+	serviceType: "Digital Catalogue Software",
 	areaServed: "Worldwide",
 	hasOfferCatalog: {
 		"@type": "OfferCatalog",
@@ -129,7 +129,7 @@ export const pricingPageSchema = {
 	url: "https://www.quicktalog.app/pricing",
 	mainEntity: {
 		"@type": "Product",
-		name: "Quicktalog Digital Catalog Service",
+		name: "Quicktalog Digital Catalogue Creation Service",
 		description: "Digital catalog creation and management service",
 		offers: [
 			{
@@ -158,7 +158,7 @@ export const pricingPageSchema = {
 export const contactPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "ContactPage",
-	name: "Contact Us - Get Help with Your Digital Catalog | Quicktalog",
+	name: "Contact Us - Get Help with Your Digital Catalogue | Quicktalog",
 	description:
 		"Need help creating your digital catalog? Contact our support team for assistance with setup, customization, and getting the most out of Quicktalog.",
 	url: "https://www.quicktalog.app/contact",
@@ -178,7 +178,7 @@ export const contactPageSchema = {
 export const demoPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
-	name: "Try the Demo - Test Our Catalog Maker | Quicktalog",
+	name: "Try the Demo - Test Our Catalogue Maker | Quicktalog",
 	description:
 		"Try our free online catalog maker in the demo. Create a sample catalog and see how easy it is to build professional digital catalogs.",
 	url: "https://www.quicktalog.app/demo",
@@ -207,7 +207,7 @@ export const showcasesPageSchema = {
 	url: "https://www.quicktalog.app/showcases",
 	mainEntity: {
 		"@type": "ItemList",
-		name: "Digital Catalog Examples",
+		name: "Digital Catalogue Examples",
 		description: "Real examples of digital catalogs created with Quicktalog",
 	},
 };

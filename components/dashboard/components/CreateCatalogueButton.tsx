@@ -32,9 +32,9 @@ const CreateCatalogueButton = ({
 	const router = useRouter();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const { catalogue } = useCatalogueContext();
+	const { catalogue, resetCatalogue } = useCatalogueContext();
 	const { user } = useUser();
-	const handleCreateCatalog = async () => {
+	const handleCreateCatalogue = async () => {
 		setLoading(true);
 		if (user) {
 			try {
@@ -42,7 +42,7 @@ const CreateCatalogueButton = ({
 				const result = await createCatalogue(catalogue);
 
 				if (result.success) {
-					console.log("Catalog created successfully!", result.data);
+					console.log("Catalogue created successfully!", result.data);
 					toast.success(
 						`Catalogue "${result.data.name}" created successfully!`,
 					);
@@ -68,7 +68,12 @@ const CreateCatalogueButton = ({
 	};
 
 	const handleButtonClick = () => {
+		if (!user) {
+			router.push("/auth?mode=signup");
+			return;
+		}
 		if (!disabled) {
+			resetCatalogue();
 			setIsModalOpen(true);
 		}
 	};
@@ -123,7 +128,7 @@ const CreateCatalogueButton = ({
 				isOpen={isModalOpen}
 				loading={loading}
 				onCancel={() => setIsModalOpen(false)}
-				onConfirm={handleCreateCatalog}
+				onConfirm={handleCreateCatalogue}
 			/>
 		</>
 	);

@@ -54,7 +54,7 @@ const Hero: React.FC = () => {
 
 			<div className="mx-auto max-w-4xl text-center">
 				<h1 className="mx-auto max-w-lg text-4xl font-bold text-product-foreground md:max-w-3xl md:text-6xl md:leading-tight">
-					Create a Stunning Digital Catalog in Minutes
+					Create a Stunning Digital Catalogue in Minutes
 				</h1>
 				<p className="mx-auto mt-4 max-w-2xl text-lg text-product-foreground-accent md:text-xl">
 					The best free online catalog maker for businesses. Turn your services,

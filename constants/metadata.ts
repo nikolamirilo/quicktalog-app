@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 // Site-wide metadata
 export const siteMetadata = {
-	title: "Quicktalog - Free Online Catalog Maker",
+	title: "Quicktalog - Free Online Catalogue Maker",
 	description:
 		"Create stunning digital catalogs in minutes with our free online catalog maker. Perfect for restaurants, salons, gyms, retail & more. No code required, mobile-friendly, QR code sharing.",
 	keywords: KEYWORDS,
@@ -41,13 +41,13 @@ export const pageMetadata = {
 		url: "https://www.quicktalog.app/pricing",
 	},
 	contact: {
-		title: "Contact Us - Get Help with Your Digital Catalog | Quicktalog",
+		title: "Contact Us - Get Help with Your Digital Catalogue| Quicktalog",
 		description:
 			"Need help creating your digital catalog? Contact our support team for assistance with setup, customization, and getting the most out of Quicktalog.",
 		url: "https://www.quicktalog.app/contact",
 	},
 	demo: {
-		title: "Try the Demo - Test Our Catalog Maker | Quicktalog",
+		title: "Try the Demo - Test Our CatalogueMaker | Quicktalog",
 		description:
 			"Try our free online catalog maker in the demo. Create a sample catalog and see how easy it is to build professional digital catalogs.",
 		url: "https://www.quicktalog.app/demo",

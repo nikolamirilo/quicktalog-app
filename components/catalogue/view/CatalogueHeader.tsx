@@ -115,7 +115,11 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						<Link
 							aria-label={`Go to ${companyName} homepage`}
 							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
-							href={type === "default" ? `/` : `${catalogue.contact.website ? catalogue.contact.website : "/"}`}
+							href={
+								type === "default"
+									? `/`
+									: `${catalogue.contact.website ? catalogue.contact.website : "/"}`
+							}
 						>
 							<img
 								alt={`${companyName} logo`}

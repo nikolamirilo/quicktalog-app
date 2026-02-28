@@ -78,7 +78,7 @@ export const NewCatalogueEmail = ({
 
 					{/* Catalogue Link Section */}
 					<Section style={linkSection}>
-						<Text style={sectionTitle}>Your Catalog is Live</Text>
+						<Text style={sectionTitle}>Your Catalogue is Live</Text>
 						<Text style={contentText}>
 							Share this link with your customers to let them browse your
 							catalog:

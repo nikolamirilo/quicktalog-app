@@ -71,10 +71,10 @@ const getColorDistance = (color1: string, color2: string): number => {
 		const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result
 			? {
-					r: parseInt(result[1], 16),
-					g: parseInt(result[2], 16),
-					b: parseInt(result[3], 16),
-				}
+				r: parseInt(result[1], 16),
+				g: parseInt(result[2], 16),
+				b: parseInt(result[3], 16),
+			}
 			: { r: 0, g: 0, b: 0 };
 	};
 
@@ -84,8 +84,8 @@ const getColorDistance = (color1: string, color2: string): number => {
 	// Calculate Euclidean distance in RGB space
 	return Math.sqrt(
 		Math.pow(rgb1.r - rgb2.r, 2) +
-			Math.pow(rgb1.g - rgb2.g, 2) +
-			Math.pow(rgb1.b - rgb2.b, 2),
+		Math.pow(rgb1.g - rgb2.g, 2) +
+		Math.pow(rgb1.b - rgb2.b, 2),
 	);
 };
 
@@ -128,12 +128,12 @@ export default function QrControls({ name }: { name: string }) {
 
 	return (
 		<div className="h-full flex flex-col gap-5 font-lora">
-			{/* Catalog URL Reference Card */}
+			{/* CatalogueURL Reference Card */}
 			<Card className="bg-gradient-to-br from-[var(--product-primary)]/5 to-[var(--product-background-hover)] shadow-product-shadow">
 				<CardHeader className="pb-3">
 					<CardTitle className="text-base font-semibold flex items-center gap-2 text-[var(--product-foreground)]">
 						<Info className="w-4 h-4 text-[var(--product-primary)]" />
-						Your Catalog URL
+						Your CatalogueURL
 					</CardTitle>
 					<p className="text-xs text-muted-foreground mt-1">
 						This QR code links to your catalog. The URL cannot be changed.
@@ -298,11 +298,10 @@ export default function QrControls({ name }: { name: string }) {
 											},
 										].map(({ type, icon: Icon, label }) => (
 											<Button
-												className={`h-11 gap-2 font-medium transition-all ${
-													options.dotsOptions?.type === type
-														? "bg-[var(--product-primary)] hover:bg-[var(--product-primary-accent)] text-white shadow-md"
-														: "bg-gray-100 hover:bg-gray-200 hover:border-[var(--product-primary)]/50"
-												}`}
+												className={`h-11 gap-2 font-medium transition-all ${options.dotsOptions?.type === type
+													? "bg-[var(--product-primary)] hover:bg-[var(--product-primary-accent)] text-white shadow-md"
+													: "bg-gray-100 hover:bg-gray-200 hover:border-[var(--product-primary)]/50"
+													}`}
 												key={type}
 												onClick={() =>
 													updateOptions({
@@ -349,11 +348,10 @@ export default function QrControls({ name }: { name: string }) {
 											},
 										].map(({ type, icon: Icon, label }) => (
 											<Button
-												className={`h-11 gap-2 font-medium transition-all ${
-													options.cornersSquareOptions?.type === type
-														? "bg-[var(--product-primary)] hover:bg-[var(--product-primary-accent)] text-white shadow-md"
-														: "bg-gray-100 hover:bg-gray-200 hover:border-[var(--product-primary)]/50"
-												}`}
+												className={`h-11 gap-2 font-medium transition-all ${options.cornersSquareOptions?.type === type
+													? "bg-[var(--product-primary)] hover:bg-[var(--product-primary-accent)] text-white shadow-md"
+													: "bg-gray-100 hover:bg-gray-200 hover:border-[var(--product-primary)]/50"
+													}`}
 												key={type}
 												onClick={() =>
 													updateOptions({
@@ -395,11 +393,10 @@ export default function QrControls({ name }: { name: string }) {
 											{ type: "dot", icon: CircleDot, label: "Dot" },
 										].map(({ type, icon: Icon, label }) => (
 											<Button
-												className={`h-11 gap-2 font-medium transition-all ${
-													options.cornersDotOptions?.type === type
-														? "bg-[var(--product-primary)] hover:bg-[var(--product-primary-accent)] text-white shadow-md"
-														: "bg-gray-100 hover:bg-gray-200 hover:border-[var(--product-primary)]/50"
-												}`}
+												className={`h-11 gap-2 font-medium transition-all ${options.cornersDotOptions?.type === type
+													? "bg-[var(--product-primary)] hover:bg-[var(--product-primary-accent)] text-white shadow-md"
+													: "bg-gray-100 hover:bg-gray-200 hover:border-[var(--product-primary)]/50"
+													}`}
 												key={type}
 												onClick={() =>
 													updateOptions({

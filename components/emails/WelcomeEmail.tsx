@@ -56,7 +56,7 @@ export const WelcomeEmail = ({ name }: { name: string }) => (
 			/>
 		</Head>
 		<Preview>
-			Welcome to Quicktalog - Your Digital Catalog Journey Starts Here!
+			Welcome to Quicktalog - Your Digital Catalogue Journey Starts Here!
 		</Preview>
 
 		<Body style={main}>

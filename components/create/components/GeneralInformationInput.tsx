@@ -119,16 +119,15 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 						</div>
 						<div className="relative">
 							<Input
-								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
-									errors?.name
+								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${type === "create" && errors?.name
 										? "border-red-500 focus:border-red-500"
 										: formData.name &&
-												!nameExists &&
-												touched?.name &&
-												type === "create"
+											!nameExists &&
+											touched?.name &&
+											type === "create"
 											? "border-green-500 focus:border-green-500"
 											: ""
-								}`}
+									}`}
 								disabled={type === "edit" ? true : false}
 								id="name"
 								name="name"
@@ -157,7 +156,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 									Great! This name is available.
 								</div>
 							)}
-						{touched?.name && errors?.name && (
+						{type === "create" && touched?.name && errors?.name && (
 							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body flex items-center gap-2">
 								<AlertCircle className="h-4 w-4" />
 								{errors.name}

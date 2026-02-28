@@ -126,7 +126,7 @@ export const benefits: IBenefit[] = [
 			"Your catalog is often the first impression a customer has of your business. Make it a great one with a beautiful, mobile-friendly design that builds trust and drives sales.",
 		bullets: [
 			{
-				title: "Professional Catalog Templates",
+				title: "Professional Catalogue Templates",
 				description:
 					"Choose from a variety of professionally designed catalog templates that look great on any device.",
 				icon: <FiEdit3 size={26} />,

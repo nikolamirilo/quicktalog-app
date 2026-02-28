@@ -42,7 +42,11 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 		setSubmitSuccess(false);
 
 		try {
-			await newsletterSignup(newsletterEmail, activeData?.id, activeData?.source);
+			await newsletterSignup(
+				newsletterEmail,
+				activeData?.id,
+				activeData?.source,
+			);
 			setNewsletterEmail("");
 			setSubmitSuccess(true);
 			setTimeout(() => setSubmitSuccess(false), 3000);
@@ -60,7 +64,10 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 	const getEffectiveSocials = () => {
 		// Use contact.socials (string[])
-		if (activeData?.contact?.socials && Array.isArray(activeData.contact.socials)) {
+		if (
+			activeData?.contact?.socials &&
+			Array.isArray(activeData.contact.socials)
+		) {
 			const links: Record<string, string> = {};
 			activeData.contact.socials.forEach((url, i) => {
 				if (!url) return;
@@ -423,10 +430,11 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</div>
 										<Button
 											aria-label="Subscribe to newsletter"
-											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${submitSuccess
+											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
+												submitSuccess
 													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
 													: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
-												}`}
+											}`}
 											disabled={isSubmitting || submitSuccess}
 											size="default"
 											type="submit"

@@ -276,7 +276,7 @@ const LimitsModal = ({
 							{/* Quicktalog Promotional Content */}
 							<div className="p-4 sm:p-5 rounded-xl bg-product-background-hover border border-product-border">
 								<h3 className="text-base sm:text-lg font-semibold text-product-foreground mb-2">
-									Create Your Digital Catalog with Quicktalog
+									Create Your Digital Catalogue with Quicktalog
 								</h3>
 								<ul className="space-y-2 text-sm text-product-foreground-accent">
 									<li className="flex items-start">

@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
 	return {
-		name: "Quicktalog - Digital Catalog Builder",
+		name: "Quicktalog - Digital CatalogueBuilder",
 		short_name: "Quicktalog",
 		description:
 			"Create stunning digital catalogs in minutes with our free online catalog maker. Perfect for restaurants, salons, gyms, retail & more. No code required, mobile-friendly, QR code sharing.",

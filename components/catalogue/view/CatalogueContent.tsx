@@ -6,6 +6,7 @@ import { CatalogueContentProps } from "@/types/components";
 import { ContentLayout, Item, tiers, UserData } from "@quicktalog/common";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { FiFileMinus } from "react-icons/fi";
 import CategoryBlockComponent from "../blocks/CategoryBlock";
 import ContainerBlockComponent from "../blocks/ContainerBlock";
 import CustomCodeBlockComponent from "../blocks/CustomCode";
@@ -184,13 +185,20 @@ const CatalogueContent = ({
 			>
 				<div
 					aria-live="polite"
-					className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center"
-					role="alert"
+					className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 px-8 py-20 text-center"
+					role="status"
 				>
-					<h2 className="text-lg font-semibold text-yellow-800 mb-2">
-						No Data Available
+					<div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm border border-gray-100">
+						<FiFileMinus size={40} />
+					</div>
+
+					{/* Text */}
+					<h2 className="text-xl font-semibold text-gray-800">
+						Nothing here yet
 					</h2>
-					<p className="text-yellow-700">No data has been loaded yet.</p>
+					<p className="mt-1.5 text-lg text-gray-500 max-w-lg">
+						Content you add will appear here. Get started by adding your first item.
+					</p>
 				</div>
 			</main>
 		);
