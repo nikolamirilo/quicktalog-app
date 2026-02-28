@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 
 const CatalogueNameInput = ({
 	disabled = false,
-	onErrorChange
+	onErrorChange,
 }: {
 	disabled?: boolean;
 	onErrorChange?: (hasError: boolean) => void;
@@ -51,12 +51,13 @@ const CatalogueNameInput = ({
 			</Label>
 			<div className="relative">
 				<Input
-					className={`bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary pr-10 ${!disabled && errors?.name
-						? "border-red-500 focus:border-red-500"
-						: catalogue.name && !nameExists && touched?.name && !disabled
-							? "border-green-500 focus:border-green-500"
-							: ""
-						}`}
+					className={`bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary pr-10 ${
+						!disabled && errors?.name
+							? "border-red-500 focus:border-red-500"
+							: catalogue.name && !nameExists && touched?.name && !disabled
+								? "border-green-500 focus:border-green-500"
+								: ""
+					}`}
 					disabled={disabled}
 					id="catalogName"
 					onChange={disabled ? undefined : handleNameChange}
@@ -74,14 +75,19 @@ const CatalogueNameInput = ({
 					</div>
 				)}
 			</div>
-			{!disabled && catalogue.name && !errors?.name && touched?.name && !nameExists && (
-				<div className="text-green-600 text-xs mt-2 p-2 bg-green-50 border border-green-200 rounded-lg font-body flex items-center gap-2">
-					Great! This name is available.
-				</div>
-			)}
+			{!disabled &&
+				catalogue.name &&
+				!errors?.name &&
+				touched?.name &&
+				!nameExists && (
+					<div className="text-green-600 text-xs mt-2 p-2 bg-green-50 border border-green-200 rounded-lg font-body flex items-center gap-2">
+						Great! This name is available.
+					</div>
+				)}
 			{!disabled && touched?.name && (errors?.name || nameExists) && (
 				<div className="text-red-500 text-xs mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body flex items-center gap-2">
-					{errors?.name || "This name is already in use. Please choose a different name."}
+					{errors?.name ||
+						"This name is already in use. Please choose a different name."}
 				</div>
 			)}
 		</div>

@@ -195,7 +195,8 @@ export default function TemplatesInput({
 					<AlertDialogHeader>
 						<AlertDialogTitle>Change Template?</AlertDialogTitle>
 						<AlertDialogDescription>
-							This will change your existing content. Please save it first to not lose progress.
+							This will change your existing content. Please save it first to
+							not lose progress.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>

@@ -197,7 +197,8 @@ const CatalogueContent = ({
 						Nothing here yet
 					</h2>
 					<p className="mt-1.5 text-lg text-gray-500 max-w-lg">
-						Content you add will appear here. Get started by adding your first item.
+						Content you add will appear here. Get started by adding your first
+						item.
 					</p>
 				</div>
 			</main>

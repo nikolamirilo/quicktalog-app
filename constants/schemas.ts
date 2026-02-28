@@ -50,7 +50,7 @@ export const serviceSchema = {
 	"@context": "https://schema.org",
 	"@type": "Service",
 	name: "Digital Catalogue Creation Service",
-	description:	
+	description:
 		"Professional digital catalog creation and management service for businesses. Create interactive, mobile-friendly catalogs with AI-powered tools, OCR import, and real-time analytics.",
 	provider: {
 		"@type": "Organization",
