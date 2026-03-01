@@ -25,8 +25,8 @@ import { themes } from "@quicktalog/common";
 import { useState } from "react";
 
 const FONT_OPTIONS = [
-	{ label: "Arial", value: "arial", className: "font-sans" },
 	{ label: "Inter", value: "inter", className: inter.className },
+	{ label: "Arial", value: "arial", className: "font-sans" },
 	{ label: "Lora", value: "lora", className: loraRegular.className },
 	{ label: "Nunito", value: "nunito", className: nunito.className },
 	{
@@ -180,26 +180,38 @@ const AppearanceTab = () => {
 				<div className="space-y-6">
 					{/* Font Family */}
 					<div className="space-y-2">
-						<Label>Font Family</Label>
-						<Select
-							onValueChange={(value) => handleStyleChange("fontFamily", value)}
-							value={currentStyle.fontFamily || "arial"}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select font family" />
-							</SelectTrigger>
-							<SelectContent>
-								{FONT_OPTIONS.map((font) => (
-									<SelectItem
-										className={font.className}
-										key={font.value}
-										value={font.value}
-									>
-										<span className={font.className}>{font.label}</span>
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+						<Label>Font Style</Label>
+						{(() => {
+							const isValidFont = FONT_OPTIONS.some(
+								(f) => f.value === currentStyle.fontFamily,
+							);
+							const computedFontFamily = isValidFont
+								? currentStyle.fontFamily
+								: "inter";
+							return (
+								<Select
+									onValueChange={(value) =>
+										handleStyleChange("fontFamily", value)
+									}
+									value={computedFontFamily}
+								>
+									<SelectTrigger>
+										<SelectValue placeholder="Select font" />
+									</SelectTrigger>
+									<SelectContent>
+										{FONT_OPTIONS.map((font) => (
+											<SelectItem
+												className={font.className}
+												key={font.value}
+												value={font.value}
+											>
+												<span className={font.className}>{font.label}</span>
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							);
+						})()}
 					</div>
 
 					{/* Content Font Size */}

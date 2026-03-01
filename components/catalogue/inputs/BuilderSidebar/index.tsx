@@ -1,7 +1,7 @@
 "use client";
 
 import { FileText, Home, Layout, Palette } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import {
 	LuChevronsDown,
 	LuChevronsLeft,
@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 import { TabKey } from "@/types/components";
 import ActionButtons from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";
@@ -39,12 +40,10 @@ const TABS: {
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
 
-const BuilderSidebar: React.FC = ({
-	defaultOpen = false,
-}: {
-	defaultOpen?: boolean;
-}) => {
-	const [isOpen, setIsOpen] = useState(defaultOpen);
+const BuilderSidebar: React.FC = () => {
+	const context = useCatalogueContext();
+	const isOpen = context?.isSidebarOpen ?? false;
+	const setIsOpen = context?.setIsSidebarOpen ?? (() => {});
 
 	return (
 		<aside
@@ -52,7 +51,7 @@ const BuilderSidebar: React.FC = ({
     bottom-0 left-0 w-full flex-col-reverse
     ${isOpen ? "h-[100dvh]" : "h-auto"}
     md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
-    ${isOpen ? "md:w-fit md:max-w-[500px]" : "md:w-16"}
+    ${isOpen ? "md:w-fit md:max-w-[520px]" : "md:w-16"}
     
     transition-[width,max-width,height,transform]
     duration-500
@@ -91,8 +90,8 @@ const BuilderSidebar: React.FC = ({
 			>
 				{/* Mobile Toggle Button (Centered, overlapping top edge) */}
 				<button
-					onClick={() => setIsOpen((v) => !v)}
-					className="md:hidden absolute -top-8 left-1/2 -translate-x-1/2 w-[3.5rem] h-[3.5rem] flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[1010]"
+					onClick={() => setIsOpen(!isOpen)}
+					className="md:hidden absolute -top-7 left-1/2 -translate-x-1/2 w-[3.5rem] h-[3.5rem] flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[1010]"
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title="Toggle Sidebar"
 				>
@@ -100,7 +99,7 @@ const BuilderSidebar: React.FC = ({
 				</button>
 
 				<Button
-					onClick={() => setIsOpen((v) => !v)}
+					onClick={() => setIsOpen(!isOpen)}
 					size={isOpen ? "sm" : "icon"}
 					variant="grayed"
 					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95 transition-transform duration-200"

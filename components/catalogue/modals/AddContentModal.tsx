@@ -44,7 +44,7 @@ const AddContentModal = ({
 	blockIndex,
 	userData,
 }: AddContentModalProps) => {
-	const { catalogue, updateCatalogue, updateBlock } =
+	const { catalogue, updateCatalogue, updateBlock, setIsSidebarOpen } =
 		useCatalogueContext() || {};
 	const [selectedOption, setSelectedOption] =
 		useState<ContentOption>("container");
@@ -71,6 +71,7 @@ const AddContentModal = ({
 
 	useEffect(() => {
 		if (isOpen) {
+			setIsSidebarOpen?.(false);
 			if (editingBlock) {
 				setSelectedOption(editingBlock.type as ContentOption);
 				setBlockData({

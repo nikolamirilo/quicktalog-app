@@ -1,4 +1,3 @@
-import React from "react";
 import { cn } from "@/helpers/client";
 
 interface CardTitleProps {
@@ -15,6 +14,7 @@ const CardTitle = ({ name, slugId, className }: CardTitleProps) => {
 				className,
 			)}
 			id={`item-title-${slugId}`}
+			style={{ fontSize: "var(--title-font-size)" }}
 		>
 			{name}
 		</h3>

@@ -27,7 +27,7 @@ export const defaultCatalogueData = {
 		},
 		style: {
 			contentFontSize: "medium",
-			fontFamily: "arial",
+			fontFamily: "inter",
 			borderRadius: 12,
 			shadow: "low",
 		},

@@ -137,7 +137,7 @@ const Items = ({
 
 								{mode === "edit" && onAddItem && (
 									<button
-										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--catalogue-text)]/20 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 cursor-pointer
+										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-catalogue-text/20 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 cursor-pointer
 												${
 													currentLayout === "variant_2"
 														? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"

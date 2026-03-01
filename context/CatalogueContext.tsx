@@ -11,6 +11,9 @@ interface CatalogueContextType {
 	updateAppearance: (
 		partial: Partial<Catalogue["appearance"]["style"]>,
 	) => void;
+	// Sidebar state
+	isSidebarOpen: boolean;
+	setIsSidebarOpen: (open: boolean) => void;
 	// Block actions
 	addBlock: (block: ContentBlock, index?: number) => void;
 	removeBlock: (index: number) => void;
@@ -47,6 +50,7 @@ export const CatalogueContextProvider = ({
 	children: React.ReactNode;
 }) => {
 	const [catalogue, setCatalogue] = useState<Catalogue>(defaultCatalogueData);
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { user } = useUser();
 
 	const resetCatalogue = () => {
@@ -283,6 +287,8 @@ export const CatalogueContextProvider = ({
 				resetCatalogue,
 				updateCatalogue,
 				updateAppearance,
+				isSidebarOpen,
+				setIsSidebarOpen,
 				addBlock,
 				removeBlock,
 				updateBlock,

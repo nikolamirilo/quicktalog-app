@@ -6,6 +6,7 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 import { ContentLayout, Item } from "@quicktalog/common";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -37,10 +38,12 @@ const ItemModal = ({
 	currency,
 	layout,
 }: ItemModalProps) => {
+	const { setIsSidebarOpen } = useCatalogueContext() || {};
 	const [item, setItem] = useState<Item>(initialItem || createDefaultItem());
 
 	useEffect(() => {
 		if (isOpen) {
+			setIsSidebarOpen?.(false);
 			setItem(initialItem || createDefaultItem());
 		}
 	}, [isOpen, initialItem]);

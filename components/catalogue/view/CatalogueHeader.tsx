@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { CatalogueHeaderProps } from "@/types/components";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
+import CatalogueSidebar from "./CatalogueSidebar";
 
 const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	type = "default",
@@ -14,6 +15,9 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 }) => {
 	const { catalogue } = useCatalogueContext();
 	const activeData = catalogue?.name ? catalogue : data;
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+	const themeClass = activeData?.appearance?.theme?.name || "theme-monochrome";
 
 	const createContactLink = (
 		href: string,
@@ -38,7 +42,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						aria-hidden="true"
 						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 					/>,
-					"Send email to quicktalog@outlook.com",
+					"Email",
 				),
 			);
 		} else if (type === "custom" && activeData) {
@@ -50,7 +54,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 							aria-hidden="true"
 							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
-						`Send email to ${activeData?.contact?.email}`,
+						`Email`,
 					),
 				);
 			}
@@ -62,7 +66,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 							aria-hidden="true"
 							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
 						/>,
-						`Call ${activeData?.contact?.phone}`,
+						`Phone`,
 					),
 				);
 			}
@@ -132,9 +136,10 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						</Link>
 					</div>
 
+					{/* Desktop Navigation */}
 					<nav
 						aria-label="Contact and actions"
-						className="flex items-center space-x-2 md:space-x-4"
+						className="hidden md:flex items-center space-x-2 md:space-x-4"
 						role="navigation"
 					>
 						{contactLinks.length > 0 && (
@@ -149,6 +154,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 										className={linkProps.className}
 										href={linkProps.href}
 										key={`contact-${index}`}
+										title={linkProps.label}
 									>
 										{linkProps.icon}
 									</Link>
@@ -169,12 +175,22 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 									href={ctaProps.href}
 								>
 									{ctaProps.icon}
-									<span className="hidden sm:inline">{ctaProps.label}</span>
-									<span className="sm:hidden">{ctaProps.shortLabel}</span>
+									<span>{ctaProps.label}</span>
 								</SmartLink>
 							</Button>
 						)}
 					</nav>
+
+					{/* Mobile Navigation (Hamburger) */}
+					<div className="md:hidden flex items-center">
+						<CatalogueSidebar
+							isOpen={isMobileMenuOpen}
+							onOpenChange={setIsMobileMenuOpen}
+							contactLinks={contactLinks}
+							ctaProps={ctaProps}
+							themeClass={themeClass}
+						/>
+					</div>
 				</div>
 			</div>
 		</header>

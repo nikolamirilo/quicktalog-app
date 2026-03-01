@@ -1,5 +1,4 @@
 "use client";
-import parse from "html-react-parser";
 
 export default function HtmlContent({
 	html,
@@ -10,8 +9,11 @@ export default function HtmlContent({
 	className?: string;
 }) {
 	return (
-		<div className={`rich-text-content ${className || ""}`} {...props}>
-			{parse(html)}
-		</div>
+		<div
+			className={`rich-text-content ${className || ""}`}
+			dangerouslySetInnerHTML={{ __html: html }}
+			suppressHydrationWarning
+			{...props}
+		/>
 	);
 }

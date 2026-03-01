@@ -17,8 +17,8 @@ import CatalogueHeader from "./CatalogueHeader";
 
 // Map font family keys to CSS variable values
 const fontFamilyMap: Record<string, string> = {
-	arial: "Arial, sans-serif",
 	inter: "var(--font-inter)",
+	arial: "Arial, sans-serif",
 	lora: "var(--font-lora-regular)",
 	playfair: "var(--font-playfair-display)",
 	nunito: "var(--font-nunito)",
@@ -26,11 +26,18 @@ const fontFamilyMap: Record<string, string> = {
 	poppins: "var(--font-poppins)",
 };
 
-// Map font size keys to CSS values
+// Map font size keys to responsive CSS clamp values
 const contentFontSizeMap: Record<string, string> = {
-	small: "0.875rem",
-	medium: "1rem",
-	large: "1.125rem",
+	small: "clamp(0.75rem, 0.7rem + 0.15vw, 0.875rem)",
+	medium: "clamp(0.875rem, 0.8rem + 0.25vw, 1rem)",
+	large: "clamp(1rem, 0.9rem + 0.5vw, 1.125rem)",
+};
+
+// Map font size keys to responsive CSS clamp values for titles
+const titleFontSizeMap: Record<string, string> = {
+	small: "clamp(1rem, 0.9rem + 0.25vw, 1.125rem)",
+	medium: "clamp(1.125rem, 1rem + 0.5vw, 1.25rem)",
+	large: "clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem)",
 };
 
 // Map shadow keys to CSS values
@@ -73,11 +80,12 @@ const Catalogue = ({
 
 	// Get the font family CSS value from the map
 	const fontFamily =
-		fontFamilyMap[item.appearance.style.fontFamily] || fontFamilyMap.arial;
+		fontFamilyMap[item.appearance.style.fontFamily] || fontFamilyMap.inter;
 
 	// Get other style values
-	const contentFontSize =
-		contentFontSizeMap[item.appearance.style.contentFontSize || "medium"];
+	const contentFontSizeKey = item.appearance.style.contentFontSize || "medium";
+	const contentFontSize = contentFontSizeMap[contentFontSizeKey];
+	const titleFontSize = titleFontSizeMap[contentFontSizeKey];
 	// Default to 12 if undefined
 	const borderRadius = `${item.appearance.style.borderRadius ?? 12}px`;
 	const boxShadow = shadowMap[item.appearance.style.shadow || "low"];
@@ -97,7 +105,22 @@ const Catalogue = ({
 
 	return (
 		<>
-			{type === "edit" && <BuilderSidebar />}
+			{type === "edit" && (
+				<>
+					<BuilderSidebar />
+					<style
+						dangerouslySetInnerHTML={{
+							__html: `
+						@media (max-width: 768px) {
+							#hubspot-messages-iframe-container {
+								display: none !important;
+							}
+						}
+					`,
+						}}
+					/>
+				</>
+			)}
 			<div
 				aria-label={`${item.heading} Catalogue`}
 				className={`${item.appearance.theme.name || "theme-monochrome"} bg-background text-foreground min-h-screen flex flex-col`}
@@ -111,6 +134,7 @@ const Catalogue = ({
 						"--catalogue-weight-body": "400",
 						// New Style Variables
 						"--content-font-size": contentFontSize,
+						"--title-font-size": titleFontSize,
 						"--border-radius": borderRadius,
 						"--box-shadow": boxShadow,
 						"--animation-duration": "0.5s",
