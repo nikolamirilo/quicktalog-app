@@ -81,7 +81,13 @@ export async function generateMetadata({
 		const description = data.metadata?.description || htmlToText(data.heading);
 		const opengraphImage = data.metadata.icon || "/opengraph-image.png";
 		const twitterImage = data.metadata.icon || "/twitter-image.png";
-		return generateCatalogueMetadata(title, description, name, opengraphImage, twitterImage);
+		return generateCatalogueMetadata(
+			title,
+			description,
+			name,
+			opengraphImage,
+			twitterImage,
+		);
 	} catch (error) {
 		console.warn("generateMetadata error:", error);
 		return {

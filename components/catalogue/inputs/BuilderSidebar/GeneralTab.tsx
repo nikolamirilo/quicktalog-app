@@ -56,7 +56,10 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 						<PopoverTrigger type="button">
 							<Info className="h-4 w-4 text-muted-foreground" />
 						</PopoverTrigger>
-						<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+						<PopoverContent
+							side="top"
+							className="z-[2000] w-[200px] p-3 text-sm"
+						>
 							<p>Basic settings for your catalogue.</p>
 						</PopoverContent>
 					</Popover>
@@ -67,7 +70,9 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 				{/* <BusinessType /> */}
 				<div className="relative w-full">
 					{!hasBranding && <LimitsOverlay size="sm" />}
-					<div className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}>
+					<div
+						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
+					>
 						<div className="flex items-center gap-2">
 							<Label className="text-base">Logo</Label>
 						</div>
@@ -92,7 +97,10 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 						<PopoverTrigger type="button">
 							<Info className="h-4 w-4 text-muted-foreground" />
 						</PopoverTrigger>
-						<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+						<PopoverContent
+							side="top"
+							className="z-[2000] w-[200px] p-3 text-sm"
+						>
 							<p>Contact details displayed to your customers.</p>
 						</PopoverContent>
 					</Popover>
@@ -145,15 +153,24 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 						<PopoverTrigger type="button">
 							<Info className="h-4 w-4 text-muted-foreground" />
 						</PopoverTrigger>
-						<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
-							<p>Metadata enhances your catalogue's appearance when shared on social media or found in search engines. The icon will be displayed in the browser tab when visitors view your catalogue.</p>
+						<PopoverContent
+							side="top"
+							className="z-[2000] w-[200px] p-3 text-sm"
+						>
+							<p>
+								Metadata enhances your catalogue's appearance when shared on
+								social media or found in search engines. The icon will be
+								displayed in the browser tab when visitors view your catalogue.
+							</p>
 						</PopoverContent>
 					</Popover>
 				</div>
 
 				<div className="relative w-full">
 					{!hasBranding && <LimitsOverlay />}
-					<div className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}>
+					<div
+						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
+					>
 						<div className="space-y-2">
 							<Label htmlFor="meta-title">Title</Label>
 							<Input

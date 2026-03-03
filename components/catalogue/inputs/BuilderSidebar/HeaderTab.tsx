@@ -41,11 +41,13 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	return (
-		<div className={`relative w-full ${!hasBranding ? "h-[calc(100vh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}>
-			{!hasBranding && (
-				<LimitsOverlay size="lg" />
-			)}
-			<div className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}>
+		<div
+			className={`relative w-full ${!hasBranding ? "h-[calc(100vh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}
+		>
+			{!hasBranding && <LimitsOverlay size="lg" />}
+			<div
+				className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
+			>
 				{/* Interaction Section */}
 				<div className="space-y-4">
 					<div className="flex items-center gap-2">
@@ -54,7 +56,10 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 							<PopoverTrigger type="button">
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
-							<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+							<PopoverContent
+								side="top"
+								className="z-[2000] w-[200px] p-3 text-sm"
+							>
 								<p>Manage the call-to-action button in your header.</p>
 							</PopoverContent>
 						</Popover>
@@ -70,7 +75,10 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 									<PopoverTrigger type="button" className="inline-flex">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
-									<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+									<PopoverContent
+										side="top"
+										className="z-[2000] w-[200px] p-3 text-sm"
+									>
 										<p>Enable a call-to-action button in the header.</p>
 									</PopoverContent>
 								</Popover>
@@ -120,7 +128,10 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 							<PopoverTrigger type="button">
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
-							<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+							<PopoverContent
+								side="top"
+								className="z-[2000] w-[200px] p-3 text-sm"
+							>
 								<p>Toggle display of contact icons in your header.</p>
 							</PopoverContent>
 						</Popover>
@@ -136,7 +147,10 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 									<PopoverTrigger type="button" className="inline-flex">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
-									<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+									<PopoverContent
+										side="top"
+										className="z-[2000] w-[200px] p-3 text-sm"
+									>
 										<p>Show a phone icon in the header.</p>
 									</PopoverContent>
 								</Popover>
@@ -159,7 +173,10 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 									<PopoverTrigger type="button" className="inline-flex">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
-									<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+									<PopoverContent
+										side="top"
+										className="z-[2000] w-[200px] p-3 text-sm"
+									>
 										<p>Show an email icon in the header.</p>
 									</PopoverContent>
 								</Popover>

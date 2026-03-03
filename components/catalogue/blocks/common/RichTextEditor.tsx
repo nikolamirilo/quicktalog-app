@@ -28,10 +28,16 @@ export default function RichTextEditor({
 	const isCatalogue = themeMode === "catalogue";
 	const toolbarBg = isCatalogue ? "bg-catalogue-background" : "bg-gray-50";
 	const editorBg = isCatalogue ? "bg-catalogue-card-background" : "bg-white";
-	const borderColor = isCatalogue ? "border-catalogue-card-border" : "border-gray-300";
+	const borderColor = isCatalogue
+		? "border-catalogue-card-border"
+		: "border-gray-300";
 	const textColor = isCatalogue ? "text-catalogue-card-text" : "text-gray-900";
-	const selectHover = isCatalogue ? "hover:bg-catalogue-background" : "hover:bg-gray-100";
-	const btnHover = isCatalogue ? "hover:bg-catalogue-card-background" : "hover:bg-gray-100";
+	const selectHover = isCatalogue
+		? "hover:bg-catalogue-background"
+		: "hover:bg-gray-100";
+	const btnHover = isCatalogue
+		? "hover:bg-catalogue-card-background"
+		: "hover:bg-gray-100";
 	const btnActive = isCatalogue ? "bg-catalogue-card-border" : "bg-gray-200";
 	const btnIdle = isCatalogue ? "bg-transparent" : "bg-white";
 	const dividerColor = isCatalogue ? "bg-catalogue-card-border" : "bg-gray-300";
@@ -144,7 +150,9 @@ export default function RichTextEditor({
 	return (
 		<div className={className}>
 			{editable && (
-				<div className={`flex flex-wrap gap-1 mb-2 p-2 ${toolbarBg} border ${borderColor} rounded ${textColor}`}>
+				<div
+					className={`flex flex-wrap gap-1 mb-2 p-2 ${toolbarBg} border ${borderColor} rounded ${textColor}`}
+				>
 					<ToolbarButton
 						command="bold"
 						onClick={() => execCommand("bold")}

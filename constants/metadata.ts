@@ -129,7 +129,7 @@ export function generateCatalogueMetadata(
 	itemSubtitle: string,
 	name: string,
 	opengraphImage: string,
-	twitterImage: string
+	twitterImage: string,
 ): Metadata {
 	const title = `${itemTitle} | Quicktalog`;
 	const description =

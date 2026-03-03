@@ -101,11 +101,13 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	return (
-		<div className={`relative w-full ${!hasBranding ? "h-[calc(100vh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}>
-			{!hasBranding && (
-				<LimitsOverlay size="lg" />
-			)}
-			<div className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}>
+		<div
+			className={`relative w-full ${!hasBranding ? "h-[calc(100vh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}
+		>
+			{!hasBranding && <LimitsOverlay size="lg" />}
+			<div
+				className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
+			>
 				{/* Interaction Section */}
 				<div className="space-y-4">
 					<div className="flex items-center gap-2">
@@ -114,7 +116,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 							<PopoverTrigger type="button">
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
-							<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+							<PopoverContent
+								side="top"
+								className="z-[2000] w-[200px] p-3 text-sm"
+							>
 								<p>Setup calls to action and newsletter signup.</p>
 							</PopoverContent>
 						</Popover>
@@ -130,7 +135,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									<PopoverTrigger type="button" className="inline-flex">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
-									<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+									<PopoverContent
+										side="top"
+										className="z-[2000] w-[200px] p-3 text-sm"
+									>
 										<p>Enable a call-to-action button in the footer.</p>
 									</PopoverContent>
 								</Popover>
@@ -175,7 +183,9 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									</p>
 								</div>
 							)}
-							<div className={`flex items-center justify-between ${!plan?.features?.newsletter ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}>
+							<div
+								className={`flex items-center justify-between ${!plan?.features?.newsletter ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
+							>
 								<div className="flex items-center gap-2">
 									<Label htmlFor="footer-newsletter" className="text-base">
 										Newsletter
@@ -184,7 +194,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										<PopoverTrigger type="button" className="inline-flex">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
-										<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+										<PopoverContent
+											side="top"
+											className="z-[2000] w-[200px] p-3 text-sm"
+										>
 											<p>Enable newsletter subscription form in the footer.</p>
 										</PopoverContent>
 									</Popover>
@@ -210,7 +223,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<PopoverTrigger type="button">
 									<Info className="h-4 w-4 text-muted-foreground" />
 								</PopoverTrigger>
-								<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+								<PopoverContent
+									side="top"
+									className="z-[2000] w-[200px] p-3 text-sm"
+								>
 									<p>Company details and legal links.</p>
 								</PopoverContent>
 							</Popover>
@@ -224,7 +240,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										<PopoverTrigger type="button" className="inline-flex">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
-										<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+										<PopoverContent
+											side="top"
+											className="z-[2000] w-[200px] p-3 text-sm"
+										>
 											<p>Your officially registered business name.</p>
 										</PopoverContent>
 									</Popover>
@@ -232,7 +251,9 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Input
 									placeholder="e.g. Quicktalog Inc."
 									value={catalogue.legal?.legalName || ""}
-									onChange={(e) => handleChange("legal.legalName", e.target.value)}
+									onChange={(e) =>
+										handleChange("legal.legalName", e.target.value)
+									}
 								/>
 							</div>
 
@@ -243,7 +264,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										<PopoverTrigger type="button" className="inline-flex">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
-										<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+										<PopoverContent
+											side="top"
+											className="z-[2000] w-[200px] p-3 text-sm"
+										>
 											<p>Your physical business address.</p>
 										</PopoverContent>
 									</Popover>
@@ -251,7 +275,9 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Input
 									placeholder="e.g. 123 Main St, San Francisco, CA"
 									value={catalogue.legal?.address || ""}
-									onChange={(e) => handleChange("legal.address", e.target.value)}
+									onChange={(e) =>
+										handleChange("legal.address", e.target.value)
+									}
 								/>
 							</div>
 
@@ -262,7 +288,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										<PopoverTrigger type="button" className="inline-flex">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
-										<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+										<PopoverContent
+											side="top"
+											className="z-[2000] w-[200px] p-3 text-sm"
+										>
 											<p>Link to your terms and conditions page.</p>
 										</PopoverContent>
 									</Popover>
@@ -283,7 +312,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										<PopoverTrigger type="button" className="inline-flex">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
-										<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+										<PopoverContent
+											side="top"
+											className="z-[2000] w-[200px] p-3 text-sm"
+										>
 											<p>Link to your privacy policy page.</p>
 										</PopoverContent>
 									</Popover>
@@ -309,7 +341,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<PopoverTrigger type="button">
 									<Info className="h-4 w-4 text-muted-foreground" />
 								</PopoverTrigger>
-								<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+								<PopoverContent
+									side="top"
+									className="z-[2000] w-[200px] p-3 text-sm"
+								>
 									<p>Add links to your social media profiles.</p>
 								</PopoverContent>
 							</Popover>
@@ -363,7 +398,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									<PopoverTrigger type="button" className="inline-flex mt-1">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
-									<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+									<PopoverContent
+										side="top"
+										className="z-[2000] w-[200px] p-3 text-sm"
+									>
 										<p>Show trusted partners in the footer.</p>
 									</PopoverContent>
 								</Popover>
@@ -398,14 +436,20 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 											placeholder="Partner Name"
 											value={newPartner.name}
 											onChange={(e) =>
-												setNewPartner((prev) => ({ ...prev, name: e.target.value }))
+												setNewPartner((prev) => ({
+													...prev,
+													name: e.target.value,
+												}))
 											}
 										/>
 										<Input
 											placeholder="Partner URL"
 											value={newPartner.url}
 											onChange={(e) =>
-												setNewPartner((prev) => ({ ...prev, url: e.target.value }))
+												setNewPartner((prev) => ({
+													...prev,
+													url: e.target.value,
+												}))
 											}
 										/>
 										<Input

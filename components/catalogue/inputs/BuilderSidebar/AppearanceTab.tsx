@@ -113,7 +113,10 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 						<PopoverTrigger type="button">
 							<Info className="h-4 w-4 text-muted-foreground" />
 						</PopoverTrigger>
-						<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+						<PopoverContent
+							side="top"
+							className="z-[2000] w-[200px] p-3 text-sm"
+						>
 							<p>Select the overall visual theme for your catalogue.</p>
 						</PopoverContent>
 					</Popover>
@@ -124,11 +127,13 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 						const isSelected = currentThemeName === themeItem.key;
 						return (
 							<button
-								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key
-									} ${isSelected
+								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${
+									themeItem.key
+								} ${
+									isSelected
 										? "border-product-primary shadow-md scale-[1.03] border-[3px]"
 										: "hover:shadow-sm border border-border"
-									}`}
+								}`}
 								key={themeItem.key}
 								onClick={() => handleThemeSelect(themeItem.key)}
 								style={{
@@ -188,14 +193,19 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 			{/* Style + Overlay Section */}
 			<div className="relative w-full">
 				{!hasStyles && <LimitsOverlay />}
-				<div className={`space-y-4 ${!hasStyles ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}>
+				<div
+					className={`space-y-4 ${!hasStyles ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
+				>
 					<div className="flex items-center gap-2">
 						<h3 className="text-lg font-bold">Style</h3>
 						<Popover>
 							<PopoverTrigger type="button">
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
-							<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+							<PopoverContent
+								side="top"
+								className="z-[2000] w-[200px] p-3 text-sm"
+							>
 								<p>Customize fonts, rounded corners, shadows, and overlay.</p>
 							</PopoverContent>
 						</Popover>
@@ -317,7 +327,10 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 									<PopoverTrigger type="button">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
-									<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+									<PopoverContent
+										side="top"
+										className="z-[2000] w-[200px] p-3 text-sm"
+									>
 										<p>Add a floating icon overlay to your catalogue.</p>
 									</PopoverContent>
 								</Popover>
@@ -338,7 +351,9 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 									<div className="space-y-2">
 										<Label>Overlay Icon</Label>
 										<Input
-											onChange={(e) => handleOverlayChange("icon", e.target.value)}
+											onChange={(e) =>
+												handleOverlayChange("icon", e.target.value)
+											}
 											placeholder="e.g. 🎁"
 											value={currentOverlay.icon || ""}
 										/>

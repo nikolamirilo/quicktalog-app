@@ -21,31 +21,44 @@ import FooterTab from "./FooterTab";
 import GeneralTab from "./GeneralTab";
 import HeaderTab from "./HeaderTab";
 
-
-
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
 
 const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const context = useCatalogueContext();
 	const isOpen = context?.isSidebarOpen ?? false;
-	const setIsOpen = context?.setIsSidebarOpen ?? (() => { });
+	const setIsOpen = context?.setIsSidebarOpen ?? (() => {});
 	const TABS: {
 		key: TabKey;
 		icon: React.ElementType;
 		label: string;
 		content: React.ReactNode;
 	}[] = [
-			{ key: "general", icon: Home, label: "General", content: <GeneralTab plan={userData.currentPlan} /> },
-			{ key: "header", icon: Layout, label: "Header", content: <HeaderTab plan={userData.currentPlan} /> },
-			{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab plan={userData.currentPlan} /> },
-			{
-				key: "appearance",
-				icon: Palette,
-				label: "Appearance",
-				content: <AppearanceTab plan={userData.currentPlan} />
-			},
-		];
+		{
+			key: "general",
+			icon: Home,
+			label: "General",
+			content: <GeneralTab plan={userData.currentPlan} />,
+		},
+		{
+			key: "header",
+			icon: Layout,
+			label: "Header",
+			content: <HeaderTab plan={userData.currentPlan} />,
+		},
+		{
+			key: "footer",
+			icon: FileText,
+			label: "Footer",
+			content: <FooterTab plan={userData.currentPlan} />,
+		},
+		{
+			key: "appearance",
+			icon: Palette,
+			label: "Appearance",
+			content: <AppearanceTab plan={userData.currentPlan} />,
+		},
+	];
 
 	return (
 		<aside
@@ -60,10 +73,11 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
     [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]
     [&]:md:[transition-duration:800ms,800ms,500ms,500ms]
     
-    ${isOpen
-					? "translate-y-0 md:translate-x-0"
-					: "translate-y-0 md:translate-x-0"
-				}
+    ${
+			isOpen
+				? "translate-y-0 md:translate-x-0"
+				: "translate-y-0 md:translate-x-0"
+		}
   `}
 		>
 			{/* Backdrop blur overlay for mobile when open */}

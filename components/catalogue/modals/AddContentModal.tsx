@@ -84,19 +84,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-								spacing: (editingBlock as any).spacing,
-								border: (editingBlock as any).border,
-							}
+									spacing: (editingBlock as any).spacing,
+									border: (editingBlock as any).border,
+								}
 							: {
-								spacing: 2,
-								border: {
-									isEnabled: true,
-									style: "solid",
-									thickness: 1,
-									color: "#000000",
-									opacity: 100,
+									spacing: 2,
+									border: {
+										isEnabled: true,
+										style: "solid",
+										thickness: 1,
+										color: "#000000",
+										opacity: 100,
+									},
 								},
-							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -150,7 +150,9 @@ const AddContentModal = ({
 			blocksLimit !== undefined &&
 			!editingBlock
 		) {
-			const nonTextBlocksCount = catalogue.content.filter((block: any) => block.type !== "text").length;
+			const nonTextBlocksCount = catalogue.content.filter(
+				(block: any) => block.type !== "text",
+			).length;
 			if (nonTextBlocksCount >= blocksLimit) {
 				return "items"; // Utilizing 'items' type for LimitsModal as generic 'limit reached', or we might need a 'blocks' type if added
 			}
