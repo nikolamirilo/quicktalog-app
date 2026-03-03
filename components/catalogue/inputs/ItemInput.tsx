@@ -125,8 +125,23 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 		}
 	};
 
+	const handlePriceBlur = () => {
+		const numPrice = parseFloat(priceString) || 0;
+		if (priceString !== "" && numPrice === 0) {
+			onChange({ ...value, price: 0, isFree: true, discount: undefined });
+		}
+	};
+
+	const handleDiscountBlur = () => {
+		const dp = value.discount?.discountPercentage || 0;
+		const dsString = discountPriceString.trim();
+		if (dp === 100 || (dsString !== "" && (parseFloat(dsString) || 0) === 0)) {
+			onChange({ ...value, price: 0, isFree: true, discount: undefined });
+		}
+	};
+
 	return (
-		<div className="space-y-6 p-1">
+		<div className="space-y-2md:space-y-4 p-1 !z-[90000]">
 			{/* Item Name */}
 			<div className="space-y-2">
 				<Label htmlFor="item-name">
@@ -135,7 +150,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 				<Input
 					id="item-name"
 					onChange={(e) => onChange({ ...value, name: e.target.value })}
-					placeholder="e.g. Pancakessadsad"
+					placeholder="e.g. Pancakes"
 					value={value.name}
 				/>
 			</div>
@@ -147,27 +162,29 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 					className="resize-none min-h-[100px]"
 					id="item-description"
 					onChange={(e) => onChange({ ...value, description: e.target.value })}
-					placeholder="e.g. Pancakes with cherries"
+					placeholder="e.g. Pancakes with Nutella, cherries, and ice cream"
 					value={value.description}
 				/>
 			</div>
 
 			{/* Price Row */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-start">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-end">
 				<div className="space-y-2">
 					<Label htmlFor="item-price">
-						Item Price ({currency}) <span className="text-red-500">*</span>
+						Item Price ({currency})
 					</Label>
 					<div className="flex gap-2">
 						<Input
 							className="flex-1 min-w-0"
 							disabled={value.isFree}
 							id="item-price"
+							onBlur={handlePriceBlur}
 							onChange={(e) => handlePriceStringChange(e.target.value)}
 							type="text"
 							value={value.isFree ? "0" : priceString}
 						/>
 						<Select
+							disabled={value.isFree}
 							onValueChange={(val) =>
 								onChange({
 									...value,
@@ -190,7 +207,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 					</div>
 				</div>
 
-				<div className="flex flex-wrap gap-4 sm:gap-6 pt-0 md:pt-10">
+				<div className="flex h-10 items-center gap-4 sm:gap-6">
 					<div className="flex items-center space-x-2">
 						<Checkbox
 							checked={value.isFree}
@@ -212,11 +229,11 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 						<Checkbox
 							checked={!!value.discount?.isOnDiscount}
 							disabled={value.isFree}
-							id="on-sale"
+							id="discount"
 							onCheckedChange={(checked) => toggleDiscount(checked as boolean)}
 						/>
-						<Label className="font-normal cursor-pointer" htmlFor="on-sale">
-							On Sale
+						<Label className="font-normal cursor-pointer" htmlFor="discount">
+							Discount
 						</Label>
 					</div>
 				</div>
@@ -231,6 +248,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 						</Label>
 						<Input
 							id="sale-price"
+							onBlur={handleDiscountBlur}
 							onChange={(e) => handleDiscountPriceStringChange(e.target.value)}
 							type="text"
 							value={discountPriceString}
@@ -243,6 +261,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 						<div className="relative">
 							<Input
 								id="sale-percentage"
+								onBlur={handleDiscountBlur}
 								onChange={(e) =>
 									handleDiscountChange("discountPercentage", e.target.value)
 								}
@@ -269,7 +288,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 							className="rounded-none border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:shadow-none px-4 pb-2"
 							value="upload"
 						>
-							Upload File <span className="text-red-500 ml-1">*</span>
+							Upload File
 						</TabsTrigger>
 						<TabsTrigger
 							className="rounded-none border-b-2 border-transparent data-[state=active]:border-gray-900 data-[state=active]:shadow-none px-4 pb-2"

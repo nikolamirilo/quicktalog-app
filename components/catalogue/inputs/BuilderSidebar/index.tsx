@@ -14,36 +14,38 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { TabKey } from "@/types/components";
+import { UserData } from "@quicktalog/common";
 import ActionButtons from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";
 import FooterTab from "./FooterTab";
 import GeneralTab from "./GeneralTab";
 import HeaderTab from "./HeaderTab";
 
-const TABS: {
-	key: TabKey;
-	icon: React.ElementType;
-	label: string;
-	content: React.ReactNode;
-}[] = [
-	{ key: "general", icon: Home, label: "General", content: <GeneralTab /> },
-	{ key: "header", icon: Layout, label: "Header", content: <HeaderTab /> },
-	{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab /> },
-	{
-		key: "appearance",
-		icon: Palette,
-		label: "Appearance",
-		content: <AppearanceTab />,
-	},
-];
+
 
 const tabTriggerClass =
 	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
 
-const BuilderSidebar: React.FC = () => {
+const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const context = useCatalogueContext();
 	const isOpen = context?.isSidebarOpen ?? false;
-	const setIsOpen = context?.setIsSidebarOpen ?? (() => {});
+	const setIsOpen = context?.setIsSidebarOpen ?? (() => { });
+	const TABS: {
+		key: TabKey;
+		icon: React.ElementType;
+		label: string;
+		content: React.ReactNode;
+	}[] = [
+			{ key: "general", icon: Home, label: "General", content: <GeneralTab plan={userData.currentPlan} /> },
+			{ key: "header", icon: Layout, label: "Header", content: <HeaderTab plan={userData.currentPlan} /> },
+			{ key: "footer", icon: FileText, label: "Footer", content: <FooterTab plan={userData.currentPlan} /> },
+			{
+				key: "appearance",
+				icon: Palette,
+				label: "Appearance",
+				content: <AppearanceTab plan={userData.currentPlan} />
+			},
+		];
 
 	return (
 		<aside
@@ -58,11 +60,10 @@ const BuilderSidebar: React.FC = () => {
     [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]
     [&]:md:[transition-duration:800ms,800ms,500ms,500ms]
     
-    ${
-			isOpen
-				? "translate-y-0 md:translate-x-0"
-				: "translate-y-0 md:translate-x-0"
-		}
+    ${isOpen
+					? "translate-y-0 md:translate-x-0"
+					: "translate-y-0 md:translate-x-0"
+				}
   `}
 		>
 			{/* Backdrop blur overlay for mobile when open */}
@@ -91,7 +92,7 @@ const BuilderSidebar: React.FC = () => {
 				{/* Mobile Toggle Button (Centered, overlapping top edge) */}
 				<button
 					onClick={() => setIsOpen(!isOpen)}
-					className="md:hidden absolute -top-7 left-1/2 -translate-x-1/2 w-[3.5rem] h-[3.5rem] flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[1010]"
+					className="md:hidden absolute -top-7 left-1/2 -translate-x-1/2 w-[3.5rem] h-[3.5rem] flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[200]"
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title="Toggle Sidebar"
 				>

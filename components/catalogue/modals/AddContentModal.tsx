@@ -17,7 +17,7 @@ import RichTextEditor from "../blocks/common/RichTextEditor";
 import ContentInput from "../inputs/ContentInput";
 import CustomCodeInput from "../inputs/CustomCodeInput";
 import DividerInput from "../inputs/DividerInput";
-import IframeInput from "../inputs/IframeInput";
+import EmbeddingInput from "../inputs/EmbeddingInput";
 
 interface AddContentModalProps {
 	isOpen: boolean;
@@ -32,7 +32,7 @@ type ContentOption =
 	| "container"
 	| "category"
 	| "text"
-	| "iframe"
+	| "embedding"
 	| "custom_code"
 	| "divider";
 
@@ -84,19 +84,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-									spacing: (editingBlock as any).spacing,
-									border: (editingBlock as any).border,
-								}
+								spacing: (editingBlock as any).spacing,
+								border: (editingBlock as any).border,
+							}
 							: {
-									spacing: 2,
-									border: {
-										isEnabled: true,
-										style: "solid",
-										thickness: 1,
-										color: "#000000",
-										opacity: 100,
-									},
+								spacing: 2,
+								border: {
+									isEnabled: true,
+									style: "solid",
+									thickness: 1,
+									color: "#000000",
+									opacity: 100,
 								},
+							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -130,8 +130,8 @@ const AddContentModal = ({
 		switch (key) {
 			case "divider":
 				return userData.currentPlan.features.blocks.divider === false;
-			case "iframe":
-				return userData.currentPlan.features.blocks.iframe === false;
+			case "embedding":
+				return userData.currentPlan.features.blocks.embedding === false;
 			case "custom_code":
 				return userData.currentPlan.features.blocks.customCode === false;
 			default:
@@ -142,12 +142,16 @@ const AddContentModal = ({
 	const checkLimits = () => {
 		// Check blocks limit
 		const blocksLimit = userData?.currentPlan?.features?.blocks_per_catalogue;
+
+		if (selectedOption === "text") return null;
+
 		if (
 			blocksLimit !== "unlimited" &&
 			blocksLimit !== undefined &&
 			!editingBlock
 		) {
-			if (catalogue.content.length >= blocksLimit) {
+			const nonTextBlocksCount = catalogue.content.filter((block: any) => block.type !== "text").length;
+			if (nonTextBlocksCount >= blocksLimit) {
 				return "items"; // Utilizing 'items' type for LimitsModal as generic 'limit reached', or we might need a 'blocks' type if added
 			}
 		}
@@ -186,10 +190,10 @@ const AddContentModal = ({
 				items:
 					editingBlock?.type === "container" ? (editingBlock as any).items : [],
 			};
-		} else if (selectedOption === "iframe") {
+		} else if (selectedOption === "embedding") {
 			newBlock = {
 				...newBlock,
-				src: blockData.src,
+				code: blockData.code,
 			};
 		} else if (selectedOption === "custom_code") {
 			newBlock = {
@@ -223,8 +227,8 @@ const AddContentModal = ({
 		if (isLocked(selectedOption)) return false;
 		if (selectedOption === "category" || selectedOption === "container")
 			return (blockData.name?.trim().length ?? 0) > 0;
-		if (selectedOption === "iframe")
-			return (blockData.src?.trim().length ?? 0) > 0;
+		if (selectedOption === "embedding")
+			return (blockData.code?.trim().length ?? 0) > 0;
 		if (selectedOption === "custom_code")
 			return (blockData.code?.trim().length ?? 0) > 0;
 		return true;
@@ -235,7 +239,7 @@ const AddContentModal = ({
 	return (
 		<>
 			<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-				<AlertDialogContent className="w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-[90vh] md:h-[600px] font-body text-product-foreground">
+				<AlertDialogContent className="w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-[90vh] md:h-[600px] lg:h-[650px] font-body text-product-foreground">
 					<div className="w-full md:w-1/4 bg-gray-200/50 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col">
 						<div className="p-6 pb-4 flex justify-between items-start">
 							<div>
@@ -267,14 +271,14 @@ const AddContentModal = ({
 								<h3 className="text-lg font-semibold text-product-foreground capitalize">
 									{selectedOption.split("_").join(" ")}
 								</h3>
-								<p className="text-sm text-gray-500 mt-1">
+								<p className="text-sm text-gray-700 mt-1">
 									{selectedOption === "container" &&
 										"A layout block that holds multiple items in a single structured section."}
 
 									{selectedOption === "category" &&
 										"A collapsible section used to group related items under one heading."}
 
-									{selectedOption === "iframe" &&
+									{selectedOption === "embedding" &&
 										"Embed external content such as maps, videos, or third-party widgets."}
 
 									{selectedOption === "custom_code" &&
@@ -297,8 +301,8 @@ const AddContentModal = ({
 							</Button>
 						</div>
 						<div className="mx-auto w-full border-t border-gray-300/70" />
-						<div className="flex-1 overflow-y-auto mt-4">
-							<div className="max-w-2xl">
+						<div className="flex-1 overflow-y-auto mt-4 px-1 pb-8 flex flex-col">
+							<div className="max-w-2xl w-full">
 								{locked ? (
 									<UpgradePlanCTA
 										ctaLabel="Upgrade"
@@ -307,7 +311,7 @@ const AddContentModal = ({
 										subtitle={
 											selectedOption === "divider"
 												? "Upgrade your plan to unlock Divider blocks for better content separation."
-												: selectedOption === "iframe"
+												: selectedOption === "embedding"
 													? "Embed capabilities like maps and videos are available in higher tiers."
 													: selectedOption === "custom_code"
 														? "Custom HTML integration requires the Growth plan or higher."
@@ -337,8 +341,8 @@ const AddContentModal = ({
 											/>
 										)}
 
-										{selectedOption === "iframe" && (
-											<IframeInput
+										{selectedOption === "embedding" && (
+											<EmbeddingInput
 												onChange={(val) =>
 													setBlockData({ ...blockData, ...val })
 												}

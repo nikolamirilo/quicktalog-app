@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-	MdCode,
 	MdFormatAlignCenter,
 	MdFormatAlignLeft,
 	MdFormatAlignRight,
@@ -16,6 +15,7 @@ interface RichTextEditorProps {
 	onChange: (html: string) => void;
 	editable?: boolean;
 	className?: string;
+	themeMode?: "light" | "catalogue";
 }
 
 export default function RichTextEditor({
@@ -23,28 +23,50 @@ export default function RichTextEditor({
 	onChange,
 	editable = true,
 	className = "",
+	themeMode = "light",
 }: RichTextEditorProps) {
+	const isCatalogue = themeMode === "catalogue";
+	const toolbarBg = isCatalogue ? "bg-catalogue-background" : "bg-gray-50";
+	const editorBg = isCatalogue ? "bg-catalogue-card-background" : "bg-white";
+	const borderColor = isCatalogue ? "border-catalogue-card-border" : "border-gray-300";
+	const textColor = isCatalogue ? "text-catalogue-card-text" : "text-gray-900";
+	const selectHover = isCatalogue ? "hover:bg-catalogue-background" : "hover:bg-gray-100";
+	const btnHover = isCatalogue ? "hover:bg-catalogue-card-background" : "hover:bg-gray-100";
+	const btnActive = isCatalogue ? "bg-catalogue-card-border" : "bg-gray-200";
+	const btnIdle = isCatalogue ? "bg-transparent" : "bg-white";
+	const dividerColor = isCatalogue ? "bg-catalogue-card-border" : "bg-gray-300";
+
 	const editorRef = useRef<HTMLDivElement>(null);
-	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [isFocused, setIsFocused] = useState(false);
-	const [showSource, setShowSource] = useState(false);
+	const [fontSize, setFontSize] = useState("default");
 
 	useEffect(() => {
-		if (
-			!showSource &&
-			editorRef.current &&
-			editorRef.current.innerHTML !== content
-		) {
+		if (editorRef.current && editorRef.current.innerHTML !== content) {
 			editorRef.current.innerHTML = content;
 		}
-		if (
-			showSource &&
-			textareaRef.current &&
-			textareaRef.current.value !== content
-		) {
-			textareaRef.current.value = content;
+	}, [content]);
+
+	const handleSelectionChange = () => {
+		if (isFocused) {
+			try {
+				const size = document.queryCommandValue("fontSize");
+				if (size) {
+					setFontSize(size.toString());
+				} else {
+					setFontSize("default");
+				}
+			} catch {
+				// ignore
+			}
 		}
-	}, [content, showSource]);
+	};
+
+	useEffect(() => {
+		document.addEventListener("selectionchange", handleSelectionChange);
+		return () => {
+			document.removeEventListener("selectionchange", handleSelectionChange);
+		};
+	}, [isFocused]);
 
 	const execCommand = (command: string, value?: string) => {
 		if (!editorRef.current) return;
@@ -66,20 +88,9 @@ export default function RichTextEditor({
 	};
 
 	const handleInput = () => {
-		if (showSource && textareaRef.current) {
-			onChange(textareaRef.current.value);
-		} else if (editorRef.current) {
+		if (editorRef.current) {
 			onChange(editorRef.current.innerHTML);
 		}
-	};
-
-	const toggleSource = () => {
-		if (showSource && textareaRef.current) {
-			onChange(textareaRef.current.value);
-		} else if (editorRef.current) {
-			onChange(editorRef.current.innerHTML);
-		}
-		setShowSource(!showSource);
 	};
 
 	const handleMouseDown = (e: React.MouseEvent) => {
@@ -119,9 +130,7 @@ export default function RichTextEditor({
 
 		return (
 			<button
-				className={`px-3 py-1.5 border border-gray-300 hover:bg-gray-100 transition-colors text-sm font-medium flex items-center justify-center ${
-					isActive ? "bg-gray-200" : "bg-white"
-				}`}
+				className={`px-3 py-1.5 border ${borderColor} ${btnHover} transition-colors text-sm font-medium flex items-center justify-center ${textColor} ${isActive ? btnActive : btnIdle}`}
 				onClick={onClick}
 				onMouseDown={handleMouseDown}
 				title={title}
@@ -135,7 +144,7 @@ export default function RichTextEditor({
 	return (
 		<div className={className}>
 			{editable && (
-				<div className="flex flex-wrap gap-1 mb-2 p-2 bg-gray-50 border border-gray-300 rounded">
+				<div className={`flex flex-wrap gap-1 mb-2 p-2 ${toolbarBg} border ${borderColor} rounded ${textColor}`}>
 					<ToolbarButton
 						command="bold"
 						onClick={() => execCommand("bold")}
@@ -160,7 +169,7 @@ export default function RichTextEditor({
 						<MdFormatUnderlined className="w-4 h-4" />
 					</ToolbarButton>
 
-					<div className="w-px bg-gray-300 mx-1" />
+					<div className={`w-px ${dividerColor} mx-1`} />
 
 					<ToolbarButton
 						command="insertUnorderedList"
@@ -178,7 +187,7 @@ export default function RichTextEditor({
 						<MdFormatListNumbered className="w-4 h-4" />
 					</ToolbarButton>
 
-					<div className="w-px bg-gray-300 mx-1" />
+					<div className={`w-px ${dividerColor} mx-1`} />
 
 					<ToolbarButton
 						command="justifyLeft"
@@ -204,18 +213,16 @@ export default function RichTextEditor({
 						<MdFormatAlignRight className="w-4 h-4" />
 					</ToolbarButton>
 
-					<div className="w-px bg-gray-300 mx-1" />
+					<div className={`w-px ${dividerColor} mx-1`} />
 
 					<select
-						className="px-2 py-1 border border-gray-300 rounded text-sm bg-white hover:bg-gray-100 cursor-pointer"
-						defaultValue="default"
+						className={`px-2 py-1 border ${borderColor} rounded text-sm ${editorBg} ${selectHover} cursor-pointer ${textColor}`}
+						value={fontSize}
 						onChange={(e) => {
 							const value = e.target.value;
 							if (value !== "default") {
 								execCommand("fontSize", value);
-								setTimeout(() => {
-									e.target.value = "default";
-								}, 0);
+								setFontSize(value);
 							}
 						}}
 						onMouseDown={handleSelectMouseDown}
@@ -229,42 +236,18 @@ export default function RichTextEditor({
 						<option value="6">Very Large</option>
 						<option value="7">Huge</option>
 					</select>
-
-					<div className="w-px bg-gray-300 mx-1" />
-
-					<button
-						className={`px-3 py-1.5 border border-gray-300 hover:bg-gray-100 transition-colors text-sm font-medium flex items-center justify-center ${
-							showSource ? "bg-gray-200" : "bg-white"
-						}`}
-						onClick={toggleSource}
-						title="View Source"
-						type="button"
-					>
-						<MdCode className="w-4 h-4" />
-					</button>
 				</div>
 			)}
 
-			{showSource ? (
-				<textarea
-					className="w-full min-h-[200px] p-4 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-product-primary focus:border-transparent bg-white font-mono text-sm"
-					defaultValue={content}
-					onInput={handleInput}
-					ref={textareaRef}
-					spellCheck={false}
-					style={{ resize: "vertical" }}
-				/>
-			) : (
-				<div
-					className="min-h-[200px] rich-text-content p-4 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-product-primary focus:border-transparent bg-white"
-					contentEditable={editable}
-					onBlur={() => setIsFocused(false)}
-					onFocus={() => setIsFocused(true)}
-					onInput={handleInput}
-					ref={editorRef}
-					style={{ resize: "vertical", overflow: "auto" }}
-				/>
-			)}
+			<div
+				className={`min-h-[200px] rich-text-content p-4 border ${borderColor} rounded focus:outline-none focus:ring-1 focus:ring-product-primary focus:border-transparent ${editorBg} ${textColor}`}
+				contentEditable={editable}
+				onBlur={() => setIsFocused(false)}
+				onFocus={() => setIsFocused(true)}
+				onInput={handleInput}
+				ref={editorRef}
+				style={{ resize: "vertical", overflow: "auto" }}
+			/>
 		</div>
 	);
 }

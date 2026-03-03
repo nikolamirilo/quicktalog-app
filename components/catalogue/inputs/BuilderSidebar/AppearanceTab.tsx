@@ -4,6 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import {
 	Select,
 	SelectContent,
 	SelectItem,
@@ -21,8 +26,10 @@ import {
 	playfairDisplay,
 	poppins,
 } from "@/fonts";
-import { themes } from "@quicktalog/common";
+import { PricingPlan, themes } from "@quicktalog/common";
+import { Info } from "lucide-react";
 import { useState } from "react";
+import LimitsOverlay from "./LimitsOverlay";
 
 const FONT_OPTIONS = [
 	{ label: "Inter", value: "inter", className: inter.className },
@@ -45,12 +52,13 @@ const FONT_OPTIONS = [
 const FONT_SIZES = ["small", "medium", "large"];
 const SHADOWS = ["none", "low", "medium", "high"];
 
-const AppearanceTab = () => {
+const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue, updateAppearance } =
 		useCatalogueContext() || {};
+	const hasStyles = plan?.features?.apperance?.styles;
 	const [visibleCount, setVisibleCount] = useState(3);
 
-	if (!catalogue || !updateCatalogue) return null;
+	if (!catalogue || !updateCatalogue || !updateAppearance) return null;
 
 	const currentThemeName = catalogue.appearance?.theme?.name;
 	const currentStyle = catalogue.appearance?.style || ({} as any);
@@ -100,7 +108,15 @@ const AppearanceTab = () => {
 			{/* Themes Section */}
 			<div className="space-y-4">
 				<div className="flex items-center gap-2">
-					<h3 className="text-lg font-bold text-center mx-auto">Themes</h3>
+					<h3 className="text-lg font-bold">Themes</h3>
+					<Popover>
+						<PopoverTrigger type="button">
+							<Info className="h-4 w-4 text-muted-foreground" />
+						</PopoverTrigger>
+						<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+							<p>Select the overall visual theme for your catalogue.</p>
+						</PopoverContent>
+					</Popover>
 				</div>
 
 				<div className="grid grid-cols-3 gap-2">
@@ -108,13 +124,11 @@ const AppearanceTab = () => {
 						const isSelected = currentThemeName === themeItem.key;
 						return (
 							<button
-								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${
-									themeItem.key
-								} ${
-									isSelected
+								className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${themeItem.key
+									} ${isSelected
 										? "border-product-primary shadow-md scale-[1.03] border-[3px]"
 										: "hover:shadow-sm border border-border"
-								}`}
+									}`}
 								key={themeItem.key}
 								onClick={() => handleThemeSelect(themeItem.key)}
 								style={{
@@ -171,149 +185,168 @@ const AppearanceTab = () => {
 				)}
 			</div>
 
-			{/* Style Section */}
-			<div className="space-y-4">
-				<div className="flex items-center gap-2">
-					<h3 className="text-lg font-bold text-center mx-auto">Style</h3>
-				</div>
-
-				<div className="space-y-6">
-					{/* Font Family */}
-					<div className="space-y-2">
-						<Label>Font Style</Label>
-						{(() => {
-							const isValidFont = FONT_OPTIONS.some(
-								(f) => f.value === currentStyle.fontFamily,
-							);
-							const computedFontFamily = isValidFont
-								? currentStyle.fontFamily
-								: "inter";
-							return (
-								<Select
-									onValueChange={(value) =>
-										handleStyleChange("fontFamily", value)
-									}
-									value={computedFontFamily}
-								>
-									<SelectTrigger>
-										<SelectValue placeholder="Select font" />
-									</SelectTrigger>
-									<SelectContent>
-										{FONT_OPTIONS.map((font) => (
-											<SelectItem
-												className={font.className}
-												key={font.value}
-												value={font.value}
-											>
-												<span className={font.className}>{font.label}</span>
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							);
-						})()}
+			{/* Style + Overlay Section */}
+			<div className="relative w-full">
+				{!hasStyles && <LimitsOverlay />}
+				<div className={`space-y-4 ${!hasStyles ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}>
+					<div className="flex items-center gap-2">
+						<h3 className="text-lg font-bold">Style</h3>
+						<Popover>
+							<PopoverTrigger type="button">
+								<Info className="h-4 w-4 text-muted-foreground" />
+							</PopoverTrigger>
+							<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+								<p>Customize fonts, rounded corners, shadows, and overlay.</p>
+							</PopoverContent>
+						</Popover>
 					</div>
 
-					{/* Content Font Size */}
-					<div className="space-y-2">
-						<div className="flex justify-between">
-							<Label>Content Font Size</Label>
-							<span className="text-sm text-muted-foreground capitalize">
-								{currentStyle.contentFontSize || "medium"}
-							</span>
-						</div>
-						<Slider
-							max={2}
-							min={0}
-							onValueChange={(vals) =>
-								handleStyleChange("contentFontSize", FONT_SIZES[vals[0]])
-							}
-							step={1}
-							value={[
-								getSliderValue(
-									FONT_SIZES,
-									currentStyle.contentFontSize || "medium",
-								),
-							]}
-						/>
-						<div className="flex justify-between text-xs text-muted-foreground px-1">
-							<span>Small</span>
-							<span>Medium</span>
-							<span>Large</span>
-						</div>
-					</div>
-
-					{/* Corner Radius */}
-					<div className="space-y-2">
-						<div className="flex justify-between">
-							<Label>Corner radius</Label>
-							<span className="text-sm text-muted-foreground">
-								{currentStyle.borderRadius ?? 12}px
-							</span>
-						</div>
-						<Slider
-							max={16}
-							min={0}
-							onValueChange={(vals) =>
-								handleStyleChange("borderRadius", vals[0])
-							}
-							step={1}
-							value={[currentStyle.borderRadius ?? 12]}
-						/>
-					</div>
-
-					{/* Shadow */}
-					<div className="space-y-2">
-						<div className="flex justify-between">
-							<Label>Shadow</Label>
-							<span className="text-sm text-muted-foreground capitalize">
-								{currentStyle.shadow || "low"}
-							</span>
-						</div>
-						<Slider
-							max={3}
-							min={0}
-							onValueChange={(vals) =>
-								handleStyleChange("shadow", SHADOWS[vals[0]])
-							}
-							step={1}
-							value={[getSliderValue(SHADOWS, currentStyle.shadow || "low")]}
-						/>
-						<div className="flex justify-between text-xs text-muted-foreground px-1">
-							<span>None</span>
-							<span>High</span>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			{/* Overlay Section */}
-			<div className="space-y-4">
-				<div className="flex items-center gap-2">
-					<h3 className="text-lg font-bold text-center mx-auto">Overlay</h3>
-				</div>
-
-				<div className="space-y-4">
-					<div className="flex items-center justify-between">
-						<Label>Enable Overlay</Label>
-						<Switch
-							checked={currentOverlay.isEnabled || false}
-							onCheckedChange={(checked) =>
-								handleOverlayChange("isEnabled", checked)
-							}
-						/>
-					</div>
-
-					{currentOverlay.isEnabled && (
+					<div className="space-y-6">
+						{/* Font Family */}
 						<div className="space-y-2">
-							<Label>Overlay Icon</Label>
-							<Input
-								onChange={(e) => handleOverlayChange("icon", e.target.value)}
-								placeholder="e.g. 🎁"
-								value={currentOverlay.icon || ""}
+							<Label>Font Style</Label>
+							{(() => {
+								const isValidFont = FONT_OPTIONS.some(
+									(f) => f.value === currentStyle.fontFamily,
+								);
+								const computedFontFamily = isValidFont
+									? currentStyle.fontFamily
+									: "inter";
+								return (
+									<Select
+										onValueChange={(value) =>
+											handleStyleChange("fontFamily", value)
+										}
+										value={computedFontFamily}
+									>
+										<SelectTrigger>
+											<SelectValue placeholder="Select font" />
+										</SelectTrigger>
+										<SelectContent>
+											{FONT_OPTIONS.map((font) => (
+												<SelectItem
+													className={font.className}
+													key={font.value}
+													value={font.value}
+												>
+													<span className={font.className}>{font.label}</span>
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								);
+							})()}
+						</div>
+
+						{/* Content Font Size */}
+						<div className="space-y-2">
+							<div className="flex justify-between">
+								<Label>Content Font Size</Label>
+								<span className="text-sm text-muted-foreground capitalize">
+									{currentStyle.contentFontSize || "medium"}
+								</span>
+							</div>
+							<Slider
+								max={2}
+								min={0}
+								onValueChange={(vals) =>
+									handleStyleChange("contentFontSize", FONT_SIZES[vals[0]])
+								}
+								step={1}
+								value={[
+									getSliderValue(
+										FONT_SIZES,
+										currentStyle.contentFontSize || "medium",
+									),
+								]}
+							/>
+							<div className="flex justify-between text-xs text-muted-foreground px-1">
+								<span>Small</span>
+								<span>Medium</span>
+								<span>Large</span>
+							</div>
+						</div>
+
+						{/* Corner Radius */}
+						<div className="space-y-2">
+							<div className="flex justify-between">
+								<Label>Corner radius</Label>
+								<span className="text-sm text-muted-foreground">
+									{currentStyle.borderRadius ?? 12}px
+								</span>
+							</div>
+							<Slider
+								max={16}
+								min={0}
+								onValueChange={(vals) =>
+									handleStyleChange("borderRadius", vals[0])
+								}
+								step={1}
+								value={[currentStyle.borderRadius ?? 12]}
 							/>
 						</div>
-					)}
+
+						{/* Shadow */}
+						<div className="space-y-2">
+							<div className="flex justify-between">
+								<Label>Shadow</Label>
+								<span className="text-sm text-muted-foreground capitalize">
+									{currentStyle.shadow || "low"}
+								</span>
+							</div>
+							<Slider
+								max={3}
+								min={0}
+								onValueChange={(vals) =>
+									handleStyleChange("shadow", SHADOWS[vals[0]])
+								}
+								step={1}
+								value={[getSliderValue(SHADOWS, currentStyle.shadow || "low")]}
+							/>
+							<div className="flex justify-between text-xs text-muted-foreground px-1">
+								<span>None</span>
+								<span>High</span>
+							</div>
+						</div>
+
+						{/* Overlay */}
+						<div className="space-y-4 pt-2">
+							<div className="flex items-center gap-2">
+								<Label className="text-base font-semibold">Overlay</Label>
+								<Popover>
+									<PopoverTrigger type="button">
+										<Info className="h-4 w-4 text-muted-foreground" />
+									</PopoverTrigger>
+									<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+										<p>Add a floating icon overlay to your catalogue.</p>
+									</PopoverContent>
+								</Popover>
+							</div>
+
+							<div className="space-y-4">
+								<div className="flex items-center justify-between">
+									<Label>Enable Overlay</Label>
+									<Switch
+										checked={currentOverlay.isEnabled || false}
+										onCheckedChange={(checked) =>
+											handleOverlayChange("isEnabled", checked)
+										}
+									/>
+								</div>
+
+								{currentOverlay.isEnabled && (
+									<div className="space-y-2">
+										<Label>Overlay Icon</Label>
+										<Input
+											onChange={(e) => handleOverlayChange("icon", e.target.value)}
+											placeholder="e.g. 🎁"
+											value={currentOverlay.icon || ""}
+										/>
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

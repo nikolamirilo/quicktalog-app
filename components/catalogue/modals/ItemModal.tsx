@@ -18,6 +18,8 @@ interface ItemModalProps {
 	initialItem?: Item;
 	currency: string;
 	layout?: ContentLayout | null;
+	checkItemLimits?: () => boolean;
+	onShowLimits?: () => void;
 }
 
 const createDefaultItem = (): Item => ({
@@ -37,6 +39,8 @@ const ItemModal = ({
 	initialItem,
 	currency,
 	layout,
+	checkItemLimits,
+	onShowLimits,
 }: ItemModalProps) => {
 	const { setIsSidebarOpen } = useCatalogueContext() || {};
 	const [item, setItem] = useState<Item>(initialItem || createDefaultItem());
@@ -49,6 +53,13 @@ const ItemModal = ({
 	}, [isOpen, initialItem]);
 
 	const handleSave = (addAnother: boolean) => {
+		// If adding a new item, check limits before saving
+		if (!initialItem && checkItemLimits && checkItemLimits()) {
+			onShowLimits?.();
+			onClose();
+			return;
+		}
+
 		onSave(item, addAnother);
 		if (addAnother) {
 			setItem(createDefaultItem());
@@ -58,11 +69,11 @@ const ItemModal = ({
 	};
 
 	const isFormValid =
-		item.name && (item.isFree || item.price > 0 || item.price === 0);
+		item.name.trim().length > 0 && (item.isFree || item.price >= 0);
 
 	return (
 		<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-			<AlertDialogContent className="w-[95vw] md:max-w-2xl p-0 overflow-hidden bg-white rounded-2xl border-none shadow-2xl gap-0 max-h-[90vh] flex flex-col">
+			<AlertDialogContent className="w-[95vw] md:max-w-2xl p-0 overflow-hidden !z-[1100] bg-white rounded-2xl border-none shadow-2xl gap-0 max-h-[90vh] flex flex-col">
 				{/* Header */}
 				<AlertDialogTitle className="p-4 sm:p-6 pb-4 relative border-b border-gray-100 flex-shrink-0">
 					<button
@@ -94,14 +105,16 @@ const ItemModal = ({
 						Cancel
 					</Button>
 
-					<Button
-						className="w-full sm:w-auto"
-						disabled={!isFormValid}
-						onClick={() => handleSave(true)}
-						variant="outline"
-					>
-						Add Item & Add Another
-					</Button>
+					{!initialItem && (
+						<Button
+							className="w-full sm:w-auto"
+							disabled={!isFormValid}
+							onClick={() => handleSave(true)}
+							variant="outline"
+						>
+							Add Item & Add Another
+						</Button>
+					)}
 
 					<Button
 						className="w-full sm:w-auto"

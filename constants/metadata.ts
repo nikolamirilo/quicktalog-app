@@ -128,6 +128,8 @@ export function generateCatalogueMetadata(
 	itemTitle: string,
 	itemSubtitle: string,
 	name: string,
+	opengraphImage: string,
+	twitterImage: string
 ): Metadata {
 	const title = `${itemTitle} | Quicktalog`;
 	const description =
@@ -138,6 +140,10 @@ export function generateCatalogueMetadata(
 		description,
 		generator: "Quicktalog",
 		applicationName: "Quicktalog",
+		icons: {
+			icon: opengraphImage,
+			apple: opengraphImage,
+		},
 		keywords: [...KEYWORDS, itemTitle],
 		authors: [{ name: "Quicktalog" }],
 		creator: "Quicktalog",
@@ -151,13 +157,13 @@ export function generateCatalogueMetadata(
 			description,
 			url: `https://www.quicktalog.app/catalogues/${name}`,
 			type: "website",
-			images: ["/opengraph-image.png"],
+			images: [opengraphImage],
 		},
 		twitter: {
 			card: "summary_large_image",
 			title,
 			description,
-			images: ["/twitter-image.png"],
+			images: [twitterImage],
 			creator: "Quicktalog",
 			site: `https://www.quicktalog.app/catalogues/${name}`,
 		},

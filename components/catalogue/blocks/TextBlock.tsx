@@ -40,7 +40,7 @@ const TextBlockComponent = ({
 
 	return (
 		<section
-			className={`mb-5 group relative min-h-[50px] rounded-lg border-2 border-transparent hover:border-dashed hover:border-gray-300 p-2 transition-all ${isEditing ? "border-dashed border-gray-300 bg-gray-50/50" : ""}`}
+			className={`mb-5 group relative min-h-[50px] rounded-lg border-2 border-transparent hover:border-dashed p-2 transition-all ${isEditing ? "border-dashed border-catalogue-card-border bg-catalogue-background/50" : "hover:border-catalogue-card-border"}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
 			<BlockControls
@@ -58,6 +58,7 @@ const TextBlockComponent = ({
 					onChange={(html) =>
 						onUpdateBlock && onUpdateBlock({ ...block, content: html })
 					}
+					themeMode="catalogue"
 				/>
 			) : (
 				<div

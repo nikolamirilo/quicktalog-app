@@ -430,11 +430,10 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										</div>
 										<Button
 											aria-label="Subscribe to newsletter"
-											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
-												submitSuccess
+											className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${submitSuccess
 													? "bg-green-500 text-white border-green-500 hover:bg-green-600"
 													: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
-											}`}
+												}`}
 											disabled={isSubmitting || submitSuccess}
 											size="default"
 											type="submit"
@@ -469,7 +468,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							activeData?.footer?.cta?.url && (
 								<Button
 									asChild
-									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary footer-cta-button flex items-center gap-2"
+									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary flex items-center gap-2"
 									size="default"
 									variant="outline"
 								>

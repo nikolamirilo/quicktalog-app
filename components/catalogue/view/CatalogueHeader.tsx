@@ -6,6 +6,12 @@ import { CatalogueHeaderProps } from "@/types/components";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
+import {
+	contentFontSizeMap,
+	fontFamilyMap,
+	shadowMap,
+	titleFontSizeMap,
+} from "./Catalogue";
 import CatalogueSidebar from "./CatalogueSidebar";
 
 const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
@@ -19,6 +25,29 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 
 	const themeClass = activeData?.appearance?.theme?.name || "theme-monochrome";
 
+	const fontFamily =
+		fontFamilyMap[activeData?.appearance?.style?.fontFamily] ||
+		fontFamilyMap.inter;
+	const contentFontSizeKey =
+		activeData?.appearance?.style?.contentFontSize || "medium";
+	const contentFontSize = contentFontSizeMap[contentFontSizeKey];
+	const titleFontSize = titleFontSizeMap[contentFontSizeKey];
+	const borderRadius = `${activeData?.appearance?.style?.borderRadius ?? 12}px`;
+	const boxShadow = shadowMap[activeData?.appearance?.style?.shadow || "low"];
+
+	const inlineStyles = {
+		fontFamily,
+		"--catalogue-font-heading": fontFamily,
+		"--catalogue-font-body": fontFamily,
+		"--catalogue-weight-heading": "700",
+		"--catalogue-weight-body": "400",
+		"--content-font-size": contentFontSize,
+		"--title-font-size": titleFontSize,
+		"--border-radius": borderRadius,
+		"--box-shadow": boxShadow,
+		"--animation-duration": "0.5s",
+	} as React.CSSProperties;
+
 	const createContactLink = (
 		href: string,
 		icon: React.ReactNode,
@@ -28,7 +57,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 		icon,
 		label,
 		className:
-			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center bg-catalogue-navigation-background text-catalogue-navigation-text border-primary footer-cta-button",
+			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center !bg-catalogue-navigation-background !text-catalogue-navigation-text !border-primary footer-cta-button",
 	});
 
 	const getContactLinks = () => {
@@ -110,7 +139,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	return (
 		<header
 			aria-label={`${companyName} header navigation`}
-			className="border-b shadow-lg z-50 bg-catalogue-navigation-background flex flex-row justify-between items-center  text-catalogue-navigation-text border-catalogue-card-border font-body min-h-[7vh]"
+			className="border-b shadow-lg z-50 !bg-catalogue-navigation-background flex flex-row justify-between items-center !text-catalogue-navigation-text !border-catalogue-card-border font-body min-h-[7vh]"
 			role="banner"
 		>
 			<div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
@@ -165,7 +194,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						{ctaProps && (
 							<Button
 								asChild
-								className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary text-catalogue-navigation-text border-primary footer-cta-button"
+								className="font-heading hover:!bg-primary/10 hover:!text-primary !bg-catalogue-card-background !text-foreground !border-primary tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button"
 								size="default"
 								variant="outline"
 							>
@@ -189,6 +218,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 							contactLinks={contactLinks}
 							ctaProps={ctaProps}
 							themeClass={themeClass}
+							inlineStyles={inlineStyles}
 						/>
 					</div>
 				</div>

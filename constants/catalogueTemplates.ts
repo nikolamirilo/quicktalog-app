@@ -281,20 +281,6 @@ export const standardTemplate = [
 					discountedPrice: 0,
 				},
 			},
-			{
-				order: 2,
-				id: crypto.randomUUID(),
-				name: "Tap Water",
-				description: "Complimentary tap water served with your meal.",
-				price: 0,
-				image: "",
-				isFree: true,
-				discount: {
-					isOnDiscount: false,
-					discountPercentage: 0,
-					discountedPrice: 0,
-				},
-			},
 		],
 	},
 ];

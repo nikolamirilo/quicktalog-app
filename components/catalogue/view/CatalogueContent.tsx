@@ -11,7 +11,7 @@ import CategoryBlockComponent from "../blocks/CategoryBlock";
 import ContainerBlockComponent from "../blocks/ContainerBlock";
 import CustomCodeBlockComponent from "../blocks/CustomCode";
 import DividerBlockComponent from "../blocks/DividerBlock";
-import IframeBlockComponent from "../blocks/IframeBlock";
+import EmbeddingBlockComponent from "../blocks/EmbeddingBlock";
 import TextBlockComponent from "../blocks/TextBlock";
 import ItemModal from "../modals/ItemModal";
 
@@ -290,9 +290,9 @@ const CatalogueContent = ({
 							theme={theme}
 						/>
 					);
-				} else if (block.type === "iframe") {
+				} else if (block.type === "embedding") {
 					return (
-						<IframeBlockComponent
+						<EmbeddingBlockComponent
 							block={block}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}
@@ -376,6 +376,8 @@ const CatalogueContent = ({
 					setActiveBlockLayout(null);
 				}}
 				onSave={handleSaveItem}
+				checkItemLimits={checkItemLimits}
+				onShowLimits={() => setShowLimitsModal(true)}
 			/>
 			<LimitsModal
 				isOpen={showLimitsModal}

@@ -79,7 +79,9 @@ export async function generateMetadata({
 		}
 		const title = data.metadata.title || data.name || htmlToText(data.heading);
 		const description = data.metadata?.description || htmlToText(data.heading);
-		return generateCatalogueMetadata(title, description, name);
+		const opengraphImage = data.metadata.icon || "/opengraph-image.png";
+		const twitterImage = data.metadata.icon || "/twitter-image.png";
+		return generateCatalogueMetadata(title, description, name, opengraphImage, twitterImage);
 	} catch (error) {
 		console.warn("generateMetadata error:", error);
 		return {

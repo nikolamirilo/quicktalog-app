@@ -44,15 +44,14 @@ const BlockControls = ({
 	}, []);
 
 	return (
-		<div className="absolute right-2 top-2 z-20 flex items-center gap-1 opacity-0 group-hover:opacity-100 group-hover/container:opacity-100 group-hover/header:opacity-100 transition-all duration-200">
+		<div className="absolute right-2 top-2 z-20 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-hover/container:opacity-100 md:group-hover/header:opacity-100 transition-all duration-200">
 			{onEdit && (
 				<button
 					aria-label={isEditing ? "Finish editing" : "Edit content"}
-					className={`p-2 rounded-full shadow-sm transition-all duration-200 ${
-						isEditing
+					className={`p-2 rounded-full shadow-sm transition-all duration-200 ${isEditing
 							? "bg-product-primary text-white hover:bg-product-primary/90"
 							: "bg-white/80 text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
+						}`}
 					onClick={(e) => {
 						e.stopPropagation();
 						onEdit();
@@ -85,11 +84,10 @@ const BlockControls = ({
 						<div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 overflow-hidden">
 							{layouts.map((layout) => (
 								<button
-									className={`w-full text-left px-4 py-2 text-sm hover:bg-product-background-hover flex items-center justify-between ${
-										currentLayout === layout.key
+									className={`w-full text-left px-4 py-2 text-sm hover:bg-product-background-hover flex items-center justify-between ${currentLayout === layout.key
 											? "text-product-primary bg-product-background-hover"
 											: "text-product-foreground"
-									}`}
+										}`}
 									key={layout.key}
 									onClick={(e) => {
 										e.stopPropagation();
@@ -110,11 +108,10 @@ const BlockControls = ({
 			{onMoveUp && (
 				<button
 					aria-label="Move container up"
-					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${
-						isFirst
+					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${isFirst
 							? "text-gray-300 cursor-not-allowed"
 							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
+						}`}
 					disabled={isFirst}
 					onClick={(e) => {
 						e.stopPropagation();
@@ -129,11 +126,10 @@ const BlockControls = ({
 			{onMoveDown && (
 				<button
 					aria-label="Move container down"
-					className={`p-2 bg-white/80 text-gray-600 rounded-full shadow-sm transition-all duration-200 ${
-						isLast
+					className={`p-2 bg-white/80 text-gray-600 rounded-full shadow-sm transition-all duration-200 ${isLast
 							? "text-gray-300 cursor-not-allowed"
 							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
+						}`}
 					disabled={isLast}
 					onClick={(e) => {
 						e.stopPropagation();

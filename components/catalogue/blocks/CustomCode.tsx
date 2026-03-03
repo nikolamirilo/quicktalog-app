@@ -41,17 +41,31 @@ const CustomCodeBlockComponent = ({
 			for (const oldScript of oldScripts) {
 				await new Promise<void>((resolve) => {
 					const newScript = document.createElement("script");
+
+					// Copy all attributes
 					Array.from(oldScript.attributes).forEach((attr) => {
 						newScript.setAttribute(attr.name, attr.value);
 					});
-					newScript.textContent = oldScript.textContent;
+
+					// Copy inline content if any
+					if (oldScript.innerHTML) {
+						newScript.innerHTML = oldScript.innerHTML;
+					} else if (oldScript.textContent) {
+						newScript.textContent = oldScript.textContent;
+					}
 
 					if (newScript.src) {
 						newScript.onload = () => resolve();
 						newScript.onerror = () => resolve();
 					}
 
-					document.body.appendChild(newScript);
+					// Insert the new script exactly where the old one was
+					if (oldScript.parentNode) {
+						oldScript.parentNode.replaceChild(newScript, oldScript);
+					} else {
+						containerRef.current?.appendChild(newScript);
+					}
+
 					newScripts.push(newScript);
 
 					if (!newScript.src) {

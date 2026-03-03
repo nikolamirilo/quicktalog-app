@@ -5,7 +5,9 @@
 @layer theme, base, clerk, components, utilities;
 
 *,
-button:hover {
+button,
+button:hover,
+button:focus {
 	-webkit-tap-highlight-color: transparent !important;
 }
 

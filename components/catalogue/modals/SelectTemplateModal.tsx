@@ -46,12 +46,16 @@ const SelectTemplateModal = ({
 	useEffect(() => {
 		// Only check auto-open if not externally controlled
 		if (externalIsOpen === undefined && !hasAutoOpened.current) {
-			if (catalogue.content.length === 0) {
+			// We need to wait for catalogue to be properly loaded from the DB before deciding.
+			// defaultCatalogueData doesn't have an ID. Wait until it gets populated.
+			if (!catalogue.id) return;
+
+			if (catalogue.content && catalogue.content.length === 0) {
 				setInternalIsOpen(true);
 			}
 			hasAutoOpened.current = true; // Mark as checked regardless of whether we opened it or not
 		}
-	}, [externalIsOpen, catalogue.content.length]);
+	}, [externalIsOpen, catalogue]);
 
 	const handleComplete = () => {
 		handleClose();

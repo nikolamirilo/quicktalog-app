@@ -16,7 +16,7 @@ import CatalogueFooter from "./CatalogueFooter";
 import CatalogueHeader from "./CatalogueHeader";
 
 // Map font family keys to CSS variable values
-const fontFamilyMap: Record<string, string> = {
+export const fontFamilyMap: Record<string, string> = {
 	inter: "var(--font-inter)",
 	arial: "Arial, sans-serif",
 	lora: "var(--font-lora-regular)",
@@ -27,21 +27,21 @@ const fontFamilyMap: Record<string, string> = {
 };
 
 // Map font size keys to responsive CSS clamp values
-const contentFontSizeMap: Record<string, string> = {
+export const contentFontSizeMap: Record<string, string> = {
 	small: "clamp(0.75rem, 0.7rem + 0.15vw, 0.875rem)",
 	medium: "clamp(0.875rem, 0.8rem + 0.25vw, 1rem)",
 	large: "clamp(1rem, 0.9rem + 0.5vw, 1.125rem)",
 };
 
 // Map font size keys to responsive CSS clamp values for titles
-const titleFontSizeMap: Record<string, string> = {
+export const titleFontSizeMap: Record<string, string> = {
 	small: "clamp(1rem, 0.9rem + 0.25vw, 1.125rem)",
 	medium: "clamp(1.125rem, 1rem + 0.5vw, 1.25rem)",
 	large: "clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem)",
 };
 
 // Map shadow keys to CSS values
-const shadowMap: Record<string, string> = {
+export const shadowMap: Record<string, string> = {
 	none: "none",
 	low: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
 	medium: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
@@ -102,12 +102,12 @@ const Catalogue = ({
 			setIsAddContentOpen(true);
 		}
 	};
-
+	if (!userData) return null;
 	return (
 		<>
 			{type === "edit" && (
 				<>
-					<BuilderSidebar />
+					<BuilderSidebar userData={userData} />
 					<style
 						dangerouslySetInnerHTML={{
 							__html: `
