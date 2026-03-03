@@ -1,5 +1,6 @@
 "use client";
 import InitCatalogueModal from "@/components/catalogue/modals/InitCatalogueModal";
+import LimitsModal from "@/components/modals/LimitsModal";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -8,8 +9,9 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { useUserContext } from "@/context/UserContext";
 import { createCatalogue } from "@/server_actions/catalogue";
-import { useUser } from "@clerk/nextjs";
+import { tiers } from "@quicktalog/common";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -31,12 +33,13 @@ const CreateCatalogueButton = ({
 }: CreateCatalogueButtonProps) => {
 	const router = useRouter();
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [limitsModal, setLimitsModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const { catalogue, resetCatalogue } = useCatalogueContext();
-	const { user } = useUser();
+	const { userData } = useUserContext();
 	const handleCreateCatalogue = async () => {
 		setLoading(true);
-		if (user) {
+		if (userData) {
 			try {
 				console.log("Creating catalog with data:", catalogue);
 				const result = await createCatalogue(catalogue);
@@ -68,13 +71,20 @@ const CreateCatalogueButton = ({
 	};
 
 	const handleButtonClick = () => {
-		if (!user) {
+		if (!userData) {
 			router.push("/auth?mode=signup");
+			return;
+		}
+		if (
+			userData.currentPlan.features.catalogues === userData.usage.catalogues
+		) {
+			setLimitsModal(true);
 			return;
 		}
 		if (!disabled) {
 			resetCatalogue();
 			setIsModalOpen(true);
+			return;
 		}
 	};
 
@@ -129,6 +139,13 @@ const CreateCatalogueButton = ({
 				loading={loading}
 				onCancel={() => setIsModalOpen(false)}
 				onConfirm={handleCreateCatalogue}
+			/>
+			<LimitsModal
+				isOpen={limitsModal}
+				onClose={() => setLimitsModal(false)}
+				currentPlan={userData?.currentPlan}
+				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
+				type="catalogue"
 			/>
 		</>
 	);

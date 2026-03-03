@@ -1,7 +1,6 @@
 "use client";
+import { useUserContext } from "@/context/UserContext";
 import { usePaddlePrices } from "@/hooks/usePaddelPrices";
-import { getUserData } from "@/server_actions/users";
-import { useUser } from "@clerk/nextjs";
 import {
 	type Environments,
 	initializePaddle,
@@ -44,7 +43,7 @@ const Pricing: React.FC = () => {
 	const [paddle, setPaddle] = useState<Paddle | undefined>(undefined);
 	const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
 	const [user, setUser] = useState<User>(null);
-	const { user: clerkUser } = useUser();
+	const { userData } = useUserContext();
 
 	const { prices } = usePaddlePrices(paddle, "US");
 
@@ -61,17 +60,6 @@ const Pricing: React.FC = () => {
 			});
 		}
 	}, []);
-
-	useEffect(() => {
-		if (!clerkUser?.id) return;
-		async function fetchUserData() {
-			const data = await getUserData(clerkUser?.id);
-			if (data) {
-				setUser(data);
-			}
-		}
-		fetchUserData();
-	}, [clerkUser?.id]);
 
 	const filteredTiers = tiers.filter(
 		(item) => item?.type === "standard" && item?.id > 0,
