@@ -14,7 +14,7 @@ import {
 	Shield,
 	Star,
 	X,
-	Zap
+	Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -91,14 +91,20 @@ export default function Subscription({
 		customCode: "Custom Code",
 	};
 
-	const expandFeatures = (features: Record<string, any>): Record<string, any> => {
+	const expandFeatures = (
+		features: Record<string, any>,
+	): Record<string, any> => {
 		const result: Record<string, any> = {};
 		for (const [key, value] of Object.entries(features)) {
 			if (key === "blocks" && typeof value === "object" && value !== null) {
 				result["divider"] = value.divider;
 				result["embedding"] = value.embedding;
 				result["customCode"] = value.customCode;
-			} else if (key === "apperance" && typeof value === "object" && value !== null) {
+			} else if (
+				key === "apperance" &&
+				typeof value === "object" &&
+				value !== null
+			) {
 				result["styles"] = value.styles;
 				result["standardThemes"] = value.standardThemes;
 			} else {
@@ -109,24 +115,31 @@ export default function Subscription({
 	};
 
 	const formatFeatureKey = (key: string) => {
-		return FEATURE_LABELS[key] ?? key
-			.split("_")
-			.map((word) => {
-				const upperWord = word.toUpperCase();
-				if (upperWord === "AI" || upperWord === "OCR") return upperWord;
-				return word.charAt(0).toUpperCase() + word.slice(1);
-			})
-			.join(" ");
+		return (
+			FEATURE_LABELS[key] ??
+			key
+				.split("_")
+				.map((word) => {
+					const upperWord = word.toUpperCase();
+					if (upperWord === "AI" || upperWord === "OCR") return upperWord;
+					return word.charAt(0).toUpperCase() + word.slice(1);
+				})
+				.join(" ")
+		);
 	};
 
 	const formatFeatureValue = (key: string, value: any): string => {
 		if (value === null || value === 0) return "Not included";
 		if (typeof value === "boolean") return value ? "Included" : "Not included";
 		if (typeof value === "number") {
-			if (key === "traffic_limit") return `${value.toLocaleString()} views/month`;
-			if (key === "catalogues") return `${value} catalogue${value !== 1 ? "s" : ""}`;
-			if (key === "ocr_ai_import") return `${value} OCR AI import${value !== 1 ? "s" : ""}`;
-			if (key === "ai_prompts") return `${value} AI generation${value !== 1 ? "s" : ""}`;
+			if (key === "traffic_limit")
+				return `${value.toLocaleString()} views/month`;
+			if (key === "catalogues")
+				return `${value} catalogue${value !== 1 ? "s" : ""}`;
+			if (key === "ocr_ai_import")
+				return `${value} OCR AI import${value !== 1 ? "s" : ""}`;
+			if (key === "ai_prompts")
+				return `${value} AI generation${value !== 1 ? "s" : ""}`;
 			return value.toString();
 		}
 		return String(value);
@@ -136,7 +149,8 @@ export default function Subscription({
 		if (value === null || value === false || value === 0) return false;
 		if (typeof value === "boolean") return value;
 		if (typeof value === "number") return value > 0;
-		if (typeof value === "string") return value.toLowerCase() !== "not included";
+		if (typeof value === "string")
+			return value.toLowerCase() !== "not included";
 		return true;
 	};
 
@@ -208,7 +222,9 @@ export default function Subscription({
 				className="overflow-hidden border-product-border"
 				style={{ boxShadow: "var(--product-shadow)" }}
 			>
-				<div className={`${getPlanColor(pricingPlan.name)} p-6 text-product-foreground`}>
+				<div
+					className={`${getPlanColor(pricingPlan.name)} p-6 text-product-foreground`}
+				>
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-3">
 							{getPlanIcon(pricingPlan.name)}
@@ -234,7 +250,9 @@ export default function Subscription({
 							<div className="flex items-center space-x-3">
 								<DollarSign className="w-5 h-5 text-product-icon" />
 								<div>
-									<p className="text-sm text-product-foreground-accent">Price</p>
+									<p className="text-sm text-product-foreground-accent">
+										Price
+									</p>
 									<p className="text-2xl font-bold text-product-foreground">
 										{!loading ? formatPrice(currentPrice) : 0}
 									</p>
@@ -259,7 +277,9 @@ export default function Subscription({
 							<div className="flex items-center space-x-3">
 								<Clock className="w-5 h-5 text-product-icon" />
 								<div>
-									<p className="text-sm text-product-foreground-accent">Started</p>
+									<p className="text-sm text-product-foreground-accent">
+										Started
+									</p>
 									<p className="font-semibold text-product-foreground">
 										{formatDate(subscriptionStartDate || defaultDate)}
 									</p>
@@ -269,7 +289,9 @@ export default function Subscription({
 							<div className="flex items-center space-x-3">
 								<CheckCircle className="w-5 h-5 text-product-icon" />
 								<div>
-									<p className="text-sm text-product-foreground-accent">Last Updated</p>
+									<p className="text-sm text-product-foreground-accent">
+										Last Updated
+									</p>
 									<p className="font-semibold text-product-foreground">
 										{formatDate(subscriptionUpdatedDate || defaultDate)}
 									</p>
@@ -286,7 +308,8 @@ export default function Subscription({
 									Manage your subscription
 								</h3>
 								<p className="text-product-foreground-accent text-sm mt-1">
-									Update billing details, check transactions or cancel subscription.
+									Update billing details, check transactions or cancel
+									subscription.
 								</p>
 							</div>
 							<Button
@@ -327,10 +350,11 @@ export default function Subscription({
 								const included = isFeatureIncluded(value);
 								return (
 									<div
-										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${included
-											? "bg-product-background border border-product-primary"
-											: "bg-product-background border border-product-border"
-											}`}
+										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+											included
+												? "bg-product-background border border-product-primary"
+												: "bg-product-background border border-product-border"
+										}`}
 										key={key}
 									>
 										{included ? (
@@ -343,10 +367,11 @@ export default function Subscription({
 												{formatFeatureKey(key)}
 											</p>
 											<p
-												className={`text-sm ${included
-													? "text-product-primary-foreground"
-													: "text-product-foreground-accent"
-													}`}
+												className={`text-sm ${
+													included
+														? "text-product-primary-foreground"
+														: "text-product-foreground-accent"
+												}`}
 											>
 												{formatFeatureValue(key, value)}
 											</p>

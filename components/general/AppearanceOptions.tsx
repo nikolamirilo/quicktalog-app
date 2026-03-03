@@ -185,7 +185,6 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 									backgroundColor: themes[activeIndex]
 										? `var(--catalogue-primary, #3b82f6)`
 										: "#3b82f6",
-
 								}}
 							></div>
 

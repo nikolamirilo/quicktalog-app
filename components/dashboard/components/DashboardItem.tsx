@@ -135,10 +135,11 @@ const DashboardItem = ({
 			{["error", "in preparation"].includes(catalogue.status) && (
 				<div
 					className={`mt-3 flex items-start gap-2 rounded-lg border p-3 text-sm leading-relaxed
-      ${catalogue.status === "error"
-							? "border-red-200 bg-red-50 text-red-700"
-							: "border-blue-200 bg-blue-50 text-blue-700"
-						}`}
+      ${
+				catalogue.status === "error"
+					? "border-red-200 bg-red-50 text-red-700"
+					: "border-blue-200 bg-blue-50 text-blue-700"
+			}`}
 				>
 					<div className="flex-shrink-0 mt-0.5">
 						{catalogue.status === "error" ? (
