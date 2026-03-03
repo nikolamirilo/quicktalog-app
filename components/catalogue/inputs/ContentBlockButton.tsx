@@ -43,10 +43,10 @@ const ContentBlockButton = ({
 
 				<div className="relative z-10 flex flex-col items-center gap-1">
 					<span className="text-xl font-medium text-foreground transition-colors duration-200 group-hover:text-primary">
-						Add Content Block
+						Add Section
 					</span>
 					<span className="text-sm text-muted-foreground opacity-0 -translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-						Click to choose a block type
+						Click to choose a section type
 					</span>
 				</div>
 			</button>

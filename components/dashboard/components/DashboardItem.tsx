@@ -2,6 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Edit } from "lucide-react";
 import Link from "next/link";
 import { FiFileText } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -93,7 +94,7 @@ const DashboardItem = ({
 					minute: "2-digit",
 				})}
 			</div>
-			{["active", "inactive", "draft"].includes(catalogue.status) && (
+			{["active", "inactive"].includes(catalogue.status) && (
 				<div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
 					<Button className="w-full">
 						<Link
@@ -118,14 +119,26 @@ const DashboardItem = ({
 					</Button>
 				</div>
 			)}
+			{["draft"].includes(catalogue.status) && (
+				<div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
+					<Button className="w-full">
+						<Link
+							className="flex flex-row items-center justify-center gap-1"
+							href={`/admin/${catalogue.name}/builder`}
+						>
+							<Edit className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
+							<span className="ml-1">Continue Editing</span>
+						</Link>
+					</Button>
+				</div>
+			)}
 			{["error", "in preparation"].includes(catalogue.status) && (
 				<div
 					className={`mt-3 flex items-start gap-2 rounded-lg border p-3 text-sm leading-relaxed
-      ${
-				catalogue.status === "error"
-					? "border-red-200 bg-red-50 text-red-700"
-					: "border-blue-200 bg-blue-50 text-blue-700"
-			}`}
+      ${catalogue.status === "error"
+							? "border-red-200 bg-red-50 text-red-700"
+							: "border-blue-200 bg-blue-50 text-blue-700"
+						}`}
 				>
 					<div className="flex-shrink-0 mt-0.5">
 						{catalogue.status === "error" ? (

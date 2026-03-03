@@ -1,9 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { useMainContext } from "@/context/MainContext";
 import { themes } from "@quicktalog/common";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useMainContext } from "@/context/MainContext";
 
 const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	const context = useMainContext();
@@ -180,12 +180,12 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 						<div className="flex items-center gap-3">
 							{/* Theme Color Circle */}
 							<div
-								className="w-6 h-6 rounded-full border-2 flex-shrink-0"
+								className="w-6 h-6 rounded-full flex-shrink-0"
 								style={{
 									backgroundColor: themes[activeIndex]
-										? `var(--primary, #3b82f6)`
+										? `var(--catalogue-primary, #3b82f6)`
 										: "#3b82f6",
-									borderColor: "var(--catalogue-foreground)",
+
 								}}
 							></div>
 

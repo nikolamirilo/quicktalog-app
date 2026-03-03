@@ -1,8 +1,7 @@
 {
 	"id": "demo-catalogue-id",
 	"name": "plato",
-	"heading": "Plato Restoran",
-	"description": "Restoran PLATO nalazi se na platou Filozofskog fakulteta, u srcu Beograda. Kuhinja je internacionalna sa sofisticiranim i neobičnim ukusima. Naš meni se sastoji od pažljivo odabranih sastojaka. Kompletno zadovoljstvo je kreirano uz domaća i kvalitetna vina. PLATO restoran je mesto gde se neobični ukusi spajaju i pretvaraju u savršene obroke.",
+	"heading": "Welcome to Quicktalog Demo!",
 	"createdBy": "550e8400-e29b-41d4-a716-446655440000",
 	"status": "active",
 	"language": "en",
@@ -256,54 +255,6 @@
 					"price": 5.49,
 					"image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd1apvtuZ1VbyBXWvTcbaJjfwqA-4YsEPXDw&s",
 					"isFree": false,
-					"discount": {
-						"isOnDiscount": false,
-						"discountPercentage": 0,
-						"discountedPrice": 0
-					}
-				}
-			]
-		},
-		{
-			"id": "block-5",
-			"type": "container",
-			"order": 5,
-			"name": "Drinks",
-			"layout": "variant_3",
-			"items": [
-				{
-					"order": 0,
-					"name": "Fresh Orange Juice",
-					"description": "Freshly squeezed orange juice, packed with vitamins and natural sweetness.",
-					"price": 3.99,
-					"image": "",
-					"isFree": false,
-					"discount": {
-						"isOnDiscount": false,
-						"discountPercentage": 0,
-						"discountedPrice": 0
-					}
-				},
-				{
-					"order": 1,
-					"name": "Espresso",
-					"description": "A strong and aromatic shot of premium Italian espresso.",
-					"price": 2.49,
-					"image": "",
-					"isFree": false,
-					"discount": {
-						"isOnDiscount": false,
-						"discountPercentage": 0,
-						"discountedPrice": 0
-					}
-				},
-				{
-					"order": 2,
-					"name": "Tap Water",
-					"description": "Complimentary tap water served with your meal.",
-					"price": 0,
-					"image": "",
-					"isFree": true,
 					"discount": {
 						"isOnDiscount": false,
 						"discountPercentage": 0,

@@ -102,7 +102,7 @@ const Catalogue = ({
 			setIsAddContentOpen(true);
 		}
 	};
-	if (!userData) return null;
+	if (!userData && type === "edit") return null;
 	return (
 		<>
 			{type === "edit" && (
