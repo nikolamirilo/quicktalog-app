@@ -3,7 +3,8 @@ import AppearanceOptions from "@/components/general/AppearanceOptions";
 import LimitsModal from "@/components/modals/LimitsModal";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes, tiers } from "@quicktalog/common";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { htmlToText } from "@/helpers/client";
 import HtmlContent from "../../general/HtmlContent";
 import Overlay from "../../general/Overlay";
 import BuilderSidebar from "../inputs/BuilderSidebar";
@@ -65,7 +66,8 @@ const Catalogue = ({
 	type?: "edit" | "view" | "demo";
 	userData?: UserData;
 }) => {
-	const isCustom = type !== "demo";
+	const isCustom =
+		type !== "demo" && userData?.currentPlan?.features?.branding === true;
 	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
 	const [editingBlock, setEditingBlock] = useState<{
 		block: ContentBlock;
@@ -94,6 +96,36 @@ const Catalogue = ({
 	const customLogo = item.logo || defaultLogo;
 
 	const logoSrc = isCustom ? customLogo : defaultLogo;
+
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+
+		let plainHeading = "";
+		try {
+			plainHeading = htmlToText(item.heading || "");
+		} catch (e) {}
+
+		const titleText = item.metadata?.title || item.name || plainHeading;
+		if (titleText) {
+			document.title = `${titleText} | Quicktalog`;
+		}
+
+		const iconUrl = item.metadata?.icon || "/opengraph-image.png";
+		const updateOrCreateIcon = (rel: string) => {
+			let link: HTMLLinkElement | null = document.querySelector(
+				`link[rel~='${rel}']`,
+			);
+			if (!link) {
+				link = document.createElement("link");
+				link.rel = rel;
+				document.head.appendChild(link);
+			}
+			link.href = iconUrl;
+		};
+
+		updateOrCreateIcon("icon");
+		updateOrCreateIcon("apple-touch-icon");
+	}, [item.metadata?.title, item.metadata?.icon, item.name, item.heading]);
 
 	const handleEditBlock = (index: number) => {
 		const block = item.content[index];

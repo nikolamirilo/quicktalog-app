@@ -246,7 +246,7 @@ const AddContentModal = ({
 						<div className="p-6 pb-4 flex justify-between items-start">
 							<div>
 								<AlertDialogTitle className="text-xl text-product-foreground">
-									{editingBlock ? "Edit content" : "Select content type"}
+									{editingBlock ? "Edit section" : "Select section type"}
 								</AlertDialogTitle>
 								<p className="text-sm text-gray-500 mt-1"></p>
 							</div>

@@ -351,12 +351,36 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 									<div className="space-y-2">
 										<Label>Overlay Icon</Label>
 										<Input
-											onChange={(e) =>
-												handleOverlayChange("icon", e.target.value)
-											}
+											onChange={(e) => {
+												const value = e.target.value;
+												const emojiRegex =
+													/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})*$/u;
+												if (value === "" || emojiRegex.test(value)) {
+													// Count emoji characters (not string length, since emojis can be multi-byte)
+													const emojiCount = [...value].filter((char) =>
+														/\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(
+															char,
+														),
+													).length;
+													if (emojiCount <= 3) {
+														handleOverlayChange("icon", value);
+													}
+												}
+											}}
 											placeholder="e.g. 🎁"
 											value={currentOverlay.icon || ""}
 										/>
+										<p className="text-xs text-muted-foreground">
+											Emojis only ·{" "}
+											{
+												[...(currentOverlay.icon || "")].filter((c) =>
+													/\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(
+														c,
+													),
+												).length
+											}
+											/3
+										</p>
 									</div>
 								)}
 							</div>

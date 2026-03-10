@@ -11,9 +11,11 @@ import { Switch } from "@/components/ui/switch";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { extractDomain } from "@/helpers/client";
 import { Partner, PricingPlan } from "@quicktalog/common";
-import { Info, Lock, Plus, Trash2 } from "lucide-react";
+import { Info, Lock, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import LimitsOverlay from "./LimitsOverlay";
+
+const MAX_SOCIALS = 5;
 
 const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
@@ -25,6 +27,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 		description: "",
 	});
 	const [isAddingPartner, setIsAddingPartner] = useState(false);
+	const [editingPartnerIndex, setEditingPartnerIndex] = useState<number | null>(
+		null,
+	);
+	const [editingPartner, setEditingPartner] = useState<Partner | null>(null);
 
 	if (!catalogue || !updateCatalogue) return null;
 
@@ -60,7 +66,8 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	const addSocial = () => {
-		if (!newSocialUrl.trim()) return;
+		if (!newSocialUrl.trim() || !newSocialUrl.includes(".")) return;
+		if ((catalogue.contact.socials || []).length >= MAX_SOCIALS) return;
 		const updatedSocials = [...(catalogue.contact.socials || []), newSocialUrl];
 		updateCatalogue({
 			contact: {
@@ -82,6 +89,17 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 		});
 	};
 
+	const updateSocial = (index: number, newUrl: string) => {
+		const updatedSocials = [...(catalogue.contact.socials || [])];
+		updatedSocials[index] = newUrl;
+		updateCatalogue({
+			contact: {
+				...catalogue.contact,
+				socials: updatedSocials,
+			},
+		});
+	};
+
 	const addPartner = () => {
 		if (!newPartner.name.trim()) return;
 		const updatedPartners = [...(catalogue.partners || []), newPartner];
@@ -90,6 +108,22 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 		});
 		setNewPartner({ name: "", url: "", description: "" });
 		setIsAddingPartner(false);
+	};
+
+	const startEditingPartner = (index: number) => {
+		setEditingPartnerIndex(index);
+		setEditingPartner(catalogue.partners![index]);
+	};
+
+	const savePartner = () => {
+		if (!editingPartner || !editingPartner.name.trim()) return;
+		const updatedPartners = [...(catalogue.partners || [])];
+		updatedPartners[editingPartnerIndex!] = editingPartner;
+		updateCatalogue({
+			partners: updatedPartners,
+		});
+		setEditingPartnerIndex(null);
+		setEditingPartner(null);
 	};
 
 	const removePartner = (index: number) => {
@@ -352,18 +386,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 						<div className="space-y-4">
 							{catalogue.contact?.socials?.map((url, index) => (
-								<div key={index} className="flex gap-2">
+								<div key={index} className="flex gap-2 items-center">
 									<img
-										alt={`Social Icon go`}
-										className="w-8 h-8 rounded-full"
+										alt={`Social Icon`}
+										className="w-8 h-8 rounded-full flex-shrink-0"
 										height={32}
 										src={`https://img.logo.dev/${extractDomain(url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
 										width={32}
 									/>
-									<Input value={url} disabled />
+									<Input
+										value={url}
+										onChange={(e) => updateSocial(index, e.target.value)}
+										placeholder="https://"
+									/>
 									<Button
 										variant="ghost"
 										size="icon"
+										className="flex-shrink-0"
 										onClick={() => removeSocial(index)}
 									>
 										<Trash2 className="h-4 w-4 text-destructive" />
@@ -371,19 +410,30 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								</div>
 							))}
 
-							<div className="space-y-2">
-								<Input
-									placeholder="e.g. www.instagram.com/quicktalog"
-									value={newSocialUrl}
-									onChange={(e) => setNewSocialUrl(e.target.value)}
-								/>
-								<Button
-									onClick={addSocial}
-									className="w-full bg-product-primary text-product-foreground"
-								>
-									<Plus className="h-4 w-4 mr-2" /> Add Social Media
-								</Button>
-							</div>
+							{(!catalogue.contact?.socials ||
+								catalogue.contact.socials.length < MAX_SOCIALS) && (
+								<div className="space-y-2">
+									<Input
+										placeholder="e.g. www.instagram.com/quicktalog"
+										value={newSocialUrl}
+										onChange={(e) => setNewSocialUrl(e.target.value)}
+									/>
+									<Button
+										onClick={addSocial}
+										disabled={
+											!newSocialUrl.trim() || !newSocialUrl.includes(".")
+										}
+										className="w-full bg-product-primary text-product-foreground"
+									>
+										<Plus className="h-4 w-4 mr-2" /> Add Social Media
+									</Button>
+								</div>
+							)}
+							{catalogue.contact?.socials?.length === MAX_SOCIALS && (
+								<p className="text-sm text-muted-foreground text-center">
+									Maximum of {MAX_SOCIALS} social links reached.
+								</p>
+							)}
 						</div>
 					</div>
 
@@ -417,21 +467,82 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 						{catalogue.footer?.showPartners && (
 							<div className="space-y-4">
 								{catalogue.partners?.map((partner, index) => (
-									<div key={index} className="p-3 rounded-lg relative">
-										<PartnerBadge partner={partner} />
-										<Button
-											variant="ghost"
-											size="icon"
-											className="absolute top-3 right-3"
-											onClick={() => removePartner(index)}
-										>
-											<Trash2 className="h-4 w-4 text-destructive" />
-										</Button>
+									<div key={index} className="flex gap-2 items-center">
+										{editingPartnerIndex === index ? (
+											<div className="flex-1 space-y-3 p-4 rounded-lg bg-catalogue-card-background shadow-md">
+												<Input
+													placeholder="Partner Name"
+													value={editingPartner?.name || ""}
+													onChange={(e) =>
+														setEditingPartner((prev) =>
+															prev ? { ...prev, name: e.target.value } : null,
+														)
+													}
+												/>
+												<Input
+													placeholder="Partner URL"
+													value={editingPartner?.url || ""}
+													onChange={(e) =>
+														setEditingPartner((prev) =>
+															prev ? { ...prev, url: e.target.value } : null,
+														)
+													}
+												/>
+												<Input
+													placeholder="Partner Description"
+													value={editingPartner?.description || ""}
+													onChange={(e) =>
+														setEditingPartner((prev) =>
+															prev
+																? { ...prev, description: e.target.value }
+																: null,
+														)
+													}
+												/>
+												<div className="flex gap-2">
+													<Button
+														onClick={savePartner}
+														disabled={!editingPartner?.name.trim()}
+														className="flex-1 bg-product-primary text-product-foreground"
+													>
+														Save
+													</Button>
+													<Button
+														variant="ghost"
+														onClick={() => setEditingPartnerIndex(null)}
+													>
+														Cancel
+													</Button>
+												</div>
+											</div>
+										) : (
+											<>
+												<div className="flex-1 min-w-0">
+													<PartnerBadge partner={partner} />
+												</div>
+												<div className="flex flex-col gap-1 flex-shrink-0">
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={() => startEditingPartner(index)}
+													>
+														<Pencil className="h-4 w-4" />
+													</Button>
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={() => removePartner(index)}
+													>
+														<Trash2 className="h-4 w-4 text-destructive" />
+													</Button>
+												</div>
+											</>
+										)}
 									</div>
 								))}
 
 								{isAddingPartner ? (
-									<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background border-gray-300 border">
+									<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background">
 										<Input
 											placeholder="Partner Name"
 											value={newPartner.name}
@@ -465,6 +576,7 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										<div className="flex gap-2">
 											<Button
 												onClick={addPartner}
+												disabled={!newPartner.name.trim()}
 												className="flex-1 bg-product-primary text-product-foreground"
 											>
 												Confirm

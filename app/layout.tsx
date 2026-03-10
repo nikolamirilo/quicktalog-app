@@ -12,6 +12,8 @@ import {
 } from "@/fonts";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+// import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "./api/items/uploadthing/core";
@@ -32,6 +34,8 @@ export default function RootLayout({
 			<head>
 				<ClarityScript />
 				<GoogleTagManager gtmId={process.env.GTM_ID} />
+				<SpeedInsights />
+				{/* <Analytics /> */}
 			</head>
 			<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
 			<body className="product">

@@ -46,8 +46,17 @@ const ActionButtons = ({
 		}
 	};
 
+	const isHeadingEmpty =
+		!catalogue.heading ||
+		catalogue.heading
+			.replace(/<[^>]*>/g, "")
+			.replace(/&nbsp;/g, " ")
+			.trim().length === 0;
+
 	const isPublishDisabled =
-		catalogue.content.length === 0 || catalogue.name.length === 0;
+		catalogue.content.length === 0 ||
+		catalogue.name.length === 0 ||
+		isHeadingEmpty;
 
 	const handlePreview = async () => {
 		const savedCatalogue = await handleSave();

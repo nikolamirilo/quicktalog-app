@@ -16,11 +16,9 @@ export default function PartnerBadge({
 
 	return (
 		<SmartLink
-			className="group flex items-center gap-3 px-4 py-3 rounded-xl border border-catalogue-card-border bg-catalogue-card-background hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+			className="group flex items-center gap-3 px-4 py-3 border font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary rounded-lg cursor-pointer"
 			href={partner.url}
 		>
-			{/* Logo */}
-			{/* Logo */}
 			<div className="w-9 p-1 h-9 flex-shrink-0 rounded-full overflow-hidden">
 				{imageError ? (
 					<div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
@@ -40,17 +38,17 @@ export default function PartnerBadge({
 
 			{/* Text */}
 			<div className="flex-1 min-w-0">
-				<p className="text-sm font-semibold text-catalogue-card-heading truncate leading-tight">
+				<p className="font-semibold truncate leading-tight transition-colors group-hover:text-primary">
 					{partner.name}
 				</p>
-				<p className="text-xs text-catalogue-card-heading/60 truncate mt-0.5">
+				<p className="opacity-70 truncate mt-0.5 transition-colors group-hover:text-primary/70">
 					{partner.description}
 				</p>
 			</div>
 
 			{/* Arrow */}
 			<svg
-				className="w-4 h-4 text-catalogue-card-heading/30 group-hover:text-primary/50 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0"
+				className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth={2}
