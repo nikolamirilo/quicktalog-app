@@ -412,23 +412,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 							{(!catalogue.contact?.socials ||
 								catalogue.contact.socials.length < MAX_SOCIALS) && (
-									<div className="space-y-2">
-										<Input
-											placeholder="e.g. www.instagram.com/quicktalog"
-											value={newSocialUrl}
-											onChange={(e) => setNewSocialUrl(e.target.value)}
-										/>
-										<Button
-											onClick={addSocial}
-											disabled={
-												!newSocialUrl.trim() || !newSocialUrl.includes(".")
-											}
-											className="w-full bg-product-primary text-product-foreground"
-										>
-											<Plus className="h-4 w-4 mr-2" /> Add Social Media
-										</Button>
-									</div>
-								)}
+								<div className="space-y-2">
+									<Input
+										placeholder="e.g. www.instagram.com/quicktalog"
+										value={newSocialUrl}
+										onChange={(e) => setNewSocialUrl(e.target.value)}
+									/>
+									<Button
+										onClick={addSocial}
+										disabled={
+											!newSocialUrl.trim() || !newSocialUrl.includes(".")
+										}
+										className="w-full bg-product-primary text-product-foreground"
+									>
+										<Plus className="h-4 w-4 mr-2" /> Add Social Media
+									</Button>
+								</div>
+							)}
 							{catalogue.contact?.socials?.length === MAX_SOCIALS && (
 								<p className="text-sm text-muted-foreground text-center">
 									Maximum of {MAX_SOCIALS} social links reached.
