@@ -387,13 +387,13 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 						<div className="space-y-4">
 							{catalogue.contact?.socials?.map((url, index) => (
 								<div key={index} className="flex gap-2 items-center">
-									<img
-										alt={`Social Icon`}
-										className="w-8 h-8 rounded-full flex-shrink-0"
-										height={32}
-										src={`https://img.logo.dev/${extractDomain(url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
-										width={32}
-									/>
+									<div className="p-2 rounded-full flex items-center justify-center flex-shrink-0 bg-catalogue-card-background text-catalogue-card-heading border border-gray-400 overflow-hidden">
+										<img
+											alt={`Social Icon`}
+											className="w-5 h-5 rounded-sm object-cover"
+											src={`https://img.logo.dev/${extractDomain(url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
+										/>
+									</div>
 									<Input
 										value={url}
 										onChange={(e) => updateSocial(index, e.target.value)}
@@ -412,23 +412,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 							{(!catalogue.contact?.socials ||
 								catalogue.contact.socials.length < MAX_SOCIALS) && (
-								<div className="space-y-2">
-									<Input
-										placeholder="e.g. www.instagram.com/quicktalog"
-										value={newSocialUrl}
-										onChange={(e) => setNewSocialUrl(e.target.value)}
-									/>
-									<Button
-										onClick={addSocial}
-										disabled={
-											!newSocialUrl.trim() || !newSocialUrl.includes(".")
-										}
-										className="w-full bg-product-primary text-product-foreground"
-									>
-										<Plus className="h-4 w-4 mr-2" /> Add Social Media
-									</Button>
-								</div>
-							)}
+									<div className="space-y-2">
+										<Input
+											placeholder="e.g. www.instagram.com/quicktalog"
+											value={newSocialUrl}
+											onChange={(e) => setNewSocialUrl(e.target.value)}
+										/>
+										<Button
+											onClick={addSocial}
+											disabled={
+												!newSocialUrl.trim() || !newSocialUrl.includes(".")
+											}
+											className="w-full bg-product-primary text-product-foreground"
+										>
+											<Plus className="h-4 w-4 mr-2" /> Add Social Media
+										</Button>
+									</div>
+								)}
 							{catalogue.contact?.socials?.length === MAX_SOCIALS && (
 								<p className="text-sm text-muted-foreground text-center">
 									Maximum of {MAX_SOCIALS} social links reached.

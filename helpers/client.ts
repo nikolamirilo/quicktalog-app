@@ -322,7 +322,11 @@ export const validateStepHelper = (
 
 export function extractDomain(url: string): string | null {
 	try {
-		const parsedUrl = new URL(url);
+		let cleanUrl = url.trim();
+		if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+			cleanUrl = `https://${cleanUrl}`;
+		}
+		const parsedUrl = new URL(cleanUrl);
 		return parsedUrl.hostname;
 	} catch {
 		return null; // invalid URL
