@@ -31,7 +31,7 @@ const HeadingInput = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const lastValidHtml = useRef("");
-	
+
 	// Parse headingSize from HTML if stored (e.g., data-size attribute)
 	useEffect(() => {
 		if (catalogue?.heading) {
@@ -76,7 +76,7 @@ const HeadingInput = () => {
 			// Prevents typing beyond 3 visual rows (which are restricted by line-clamp-3)
 			if (editorRef.current.scrollHeight > editorRef.current.clientHeight + 4) {
 				editorRef.current.innerHTML = lastValidHtml.current;
-				
+
 				// Move cursor to the end safely
 				const selection = window.getSelection();
 				const range = document.createRange();
@@ -86,9 +86,9 @@ const HeadingInput = () => {
 				selection?.addRange(range);
 				return;
 			}
-			
+
 			lastValidHtml.current = editorRef.current.innerHTML;
-			
+
 			const html = editorRef.current.innerHTML;
 			// Generate complete HTML with h1 tag and size class
 			const sizeClass = HEADING_SIZE_CLASSES[headingSize];

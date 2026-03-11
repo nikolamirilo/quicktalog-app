@@ -103,7 +103,7 @@ const Catalogue = ({
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(item.heading || "");
-		} catch (e) { }
+		} catch (e) {}
 
 		const titleText = item.metadata?.title || item.name || plainHeading;
 		if (titleText) {
@@ -212,11 +212,17 @@ const Catalogue = ({
 
 									// Polyfill older HTML strings that miss the padding fix for descenders
 									if (isHtml && !headingHtml.includes("pb-1 md:pb-2")) {
-										headingHtml = headingHtml.replace('class="', 'class="pb-1 md:pb-2 ');
+										headingHtml = headingHtml.replace(
+											'class="',
+											'class="pb-1 md:pb-2 ',
+										);
 									}
 									// Polyfill older HTML strings that miss the max-width fix
 									if (isHtml && !headingHtml.includes("max-w-[94%]")) {
-										headingHtml = headingHtml.replace('class="', 'class="max-w-[94%] md:max-w-[60%] lg:max-w-[50%] xl:[max-w-[40%]] mx-auto ');
+										headingHtml = headingHtml.replace(
+											'class="',
+											'class="max-w-[94%] md:max-w-[60%] lg:max-w-[50%] xl:[max-w-[40%]] mx-auto ',
+										);
 									}
 
 									return <HtmlContent className="" html={headingHtml} />;

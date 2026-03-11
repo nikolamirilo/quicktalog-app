@@ -51,12 +51,16 @@ const CatalogueNameInput = ({
 			</Label>
 			<div className="relative">
 				<Input
-					className={`bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary pr-10 ${!disabled && errors?.name
+					className={`bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary pr-10 ${
+						!disabled && errors?.name
 							? "border-red-500 focus:border-red-500"
-							: catalogue.name?.trim() && !nameExists && touched?.name && !disabled
+							: catalogue.name?.trim() &&
+									!nameExists &&
+									touched?.name &&
+									!disabled
 								? "border-green-500 focus:border-green-500"
 								: ""
-						}`}
+					}`}
 					disabled={disabled}
 					id="catalogName"
 					onChange={disabled ? undefined : handleNameChange}

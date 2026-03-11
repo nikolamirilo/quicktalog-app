@@ -233,7 +233,8 @@ export default function TemplatesInput({
 						<AlertDialogAction
 							onClick={async () => {
 								const res = await updateCatalogueAction(catalogue);
-								if (res.success && pendingTemplate) executeSelect(pendingTemplate);
+								if (res.success && pendingTemplate)
+									executeSelect(pendingTemplate);
 							}}
 							className="bg-red-600 hover:bg-red-700 text-white hover:text-white"
 						>

@@ -333,28 +333,52 @@ export function htmlToText(html: string): string {
 	if (!html) return "";
 
 	const blockTags = new Set([
-		"p", "div", "br", "hr", "section", "article", "header", "footer",
-		"aside", "li", "ul", "ol", "table", "tr", "td", "th",
-		"h1", "h2", "h3", "h4", "h5", "h6",
+		"p",
+		"div",
+		"br",
+		"hr",
+		"section",
+		"article",
+		"header",
+		"footer",
+		"aside",
+		"li",
+		"ul",
+		"ol",
+		"table",
+		"tr",
+		"td",
+		"th",
+		"h1",
+		"h2",
+		"h3",
+		"h4",
+		"h5",
+		"h6",
 	]);
 
-	return html
-		// Replace block-level closing/self-closing tags with newlines
-		.replace(/<\/(p|div|section|article|header|footer|aside|li|ul|ol|table|tr|td|th|h[1-6])>/gi, "\n")
-		.replace(/<(br|hr)\s*\/?>/gi, "\n")
-		// Strip all remaining tags
-		.replace(/<[^>]+>/g, "")
-		// Decode common HTML entities
-		.replace(/&nbsp;/g, " ")
-		.replace(/&amp;/g, "&")
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&quot;/g, '"')
-		.replace(/&#39;/g, "'")
-		// Normalize whitespace
-		.replace(/[ \t]+/g, " ")
-		.replace(/\n{3,}/g, "\n\n")
-		.trim();
+	return (
+		html
+			// Replace block-level closing/self-closing tags with newlines
+			.replace(
+				/<\/(p|div|section|article|header|footer|aside|li|ul|ol|table|tr|td|th|h[1-6])>/gi,
+				"\n",
+			)
+			.replace(/<(br|hr)\s*\/?>/gi, "\n")
+			// Strip all remaining tags
+			.replace(/<[^>]+>/g, "")
+			// Decode common HTML entities
+			.replace(/&nbsp;/g, " ")
+			.replace(/&amp;/g, "&")
+			.replace(/&lt;/g, "<")
+			.replace(/&gt;/g, ">")
+			.replace(/&quot;/g, '"')
+			.replace(/&#39;/g, "'")
+			// Normalize whitespace
+			.replace(/[ \t]+/g, " ")
+			.replace(/\n{3,}/g, "\n\n")
+			.trim()
+	);
 }
 
 export function snakeToTitleCase(str: string) {
