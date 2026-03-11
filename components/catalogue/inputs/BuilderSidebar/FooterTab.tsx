@@ -543,8 +543,9 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									</div>
 								))}
 
-								{(!catalogue.partners || catalogue.partners.length < MAX_PARTNERS) && (
-									isAddingPartner ? (
+								{(!catalogue.partners ||
+									catalogue.partners.length < MAX_PARTNERS) &&
+									(isAddingPartner ? (
 										<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background">
 											<Input
 												placeholder="Partner Name"
@@ -599,8 +600,7 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										>
 											<Plus className="h-4 w-4 mr-2" /> Add Partner
 										</Button>
-									)
-								)}
+									))}
 								{catalogue.partners?.length === MAX_PARTNERS && (
 									<p className="text-sm text-muted-foreground text-center pt-2">
 										Maximum of {MAX_PARTNERS} partners reached.
