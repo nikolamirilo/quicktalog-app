@@ -39,18 +39,21 @@ export const useCatalogueName = ({
 			setTouched((prev: any) => ({ ...prev, name: true }));
 		}
 
-		const isValid = /^[a-zA-Z0-9\s]*$/.test(newName);
+		const isValidFormat = /^[a-zA-Z0-9\s]*$/.test(newName);
+		const isJustSpaces = newName.length > 0 && newName.trim().length === 0;
 
-		if (!isValid && setErrors) {
+		if ((!isValidFormat || isJustSpaces) && setErrors) {
 			setErrors((prev: any) => ({
 				...prev,
-				name: "Name must only contain letters, numbers, and spaces (no special characters).",
+				name: isJustSpaces
+					? "Name cannot be just spaces."
+					: "Name must only contain letters, numbers, and spaces (no special characters).",
 			}));
 			return;
 		}
 
 		// Clear any existing name errors when user types valid input
-		if (isValid && setErrors) {
+		if (isValidFormat && !isJustSpaces && setErrors) {
 			setErrors((prev: any) => {
 				const newErrors = { ...prev };
 				// Clear all name-related errors

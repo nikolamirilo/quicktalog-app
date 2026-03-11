@@ -18,6 +18,7 @@ import {
 } from "@/constants/catalogueTemplates";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/helpers/client";
+import { updateCatalogue as updateCatalogueAction } from "@/server_actions/catalogue";
 import { ContentBlock } from "@quicktalog/common";
 import { Layout, Plus, Zap } from "lucide-react";
 import { useState } from "react";
@@ -230,12 +231,13 @@ export default function TemplatesInput({
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
-							onClick={() => {
-								if (pendingTemplate) executeSelect(pendingTemplate);
+							onClick={async () => {
+								const res = await updateCatalogueAction(catalogue);
+								if (res.success && pendingTemplate) executeSelect(pendingTemplate);
 							}}
 							className="bg-red-600 hover:bg-red-700 text-white hover:text-white"
 						>
-							Continue
+							Save & Continue
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

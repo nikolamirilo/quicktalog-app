@@ -1,10 +1,10 @@
 "use client";
 import AppearanceOptions from "@/components/general/AppearanceOptions";
 import LimitsModal from "@/components/modals/LimitsModal";
+import { htmlToText } from "@/helpers/client";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes, tiers } from "@quicktalog/common";
 import { useEffect, useState } from "react";
-import { htmlToText } from "@/helpers/client";
 import HtmlContent from "../../general/HtmlContent";
 import Overlay from "../../general/Overlay";
 import BuilderSidebar from "../inputs/BuilderSidebar";
@@ -103,7 +103,7 @@ const Catalogue = ({
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(item.heading || "");
-		} catch (e) {}
+		} catch (e) { }
 
 		const titleText = item.metadata?.title || item.name || plainHeading;
 		if (titleText) {
@@ -206,9 +206,19 @@ const Catalogue = ({
 									if (!item.heading) return null;
 									// If heading is plain text (no HTML h1 tag), wrap with default large size
 									const isHtml = item.heading.includes("<h1");
-									const headingHtml = isHtml
+									let headingHtml = isHtml
 										? item.heading
-										: `<h1 class="text-3xl sm:text-5xl font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center" data-size="large">${item.heading}</h1>`;
+										: `<h1 class="text-3xl sm:text-5xl font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="large">${item.heading}</h1>`;
+
+									// Polyfill older HTML strings that miss the padding fix for descenders
+									if (isHtml && !headingHtml.includes("pb-1 md:pb-2")) {
+										headingHtml = headingHtml.replace('class="', 'class="pb-1 md:pb-2 ');
+									}
+									// Polyfill older HTML strings that miss the max-width fix
+									if (isHtml && !headingHtml.includes("max-w-[94%]")) {
+										headingHtml = headingHtml.replace('class="', 'class="max-w-[94%] md:max-w-[60%] lg:max-w-[50%] xl:[max-w-[40%]] mx-auto ');
+									}
+
 									return <HtmlContent className="" html={headingHtml} />;
 								})()
 							)}

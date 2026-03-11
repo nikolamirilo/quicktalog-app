@@ -242,3 +242,4 @@ export const contactTypes = [
 
 export const DEFAULT_LOGO = "/logo.svg";
 export const DARK_LOGO = "/logo-light.svg";
+export const FAVICON = "/favicon.ico";

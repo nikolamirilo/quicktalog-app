@@ -1,5 +1,6 @@
 import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
+import { FAVICON } from "@/constants";
 import { generateCatalogueMetadata } from "@/constants/metadata";
 import { htmlToText } from "@/helpers/client";
 import { Catalogue as CatalogueType } from "@quicktalog/common";
@@ -80,13 +81,13 @@ export async function generateMetadata({
 		const title = data.metadata.title || data.name || htmlToText(data.heading);
 		const description = data.metadata?.description || htmlToText(data.heading);
 		const opengraphImage = data.metadata.icon || "/opengraph-image.png";
-		const twitterImage = data.metadata.icon || "/twitter-image.png";
+		const icon = data.metadata.icon || FAVICON;
 		return generateCatalogueMetadata(
 			title,
 			description,
 			name,
+			icon,
 			opengraphImage,
-			twitterImage,
 		);
 	} catch (error) {
 		console.warn("generateMetadata error:", error);

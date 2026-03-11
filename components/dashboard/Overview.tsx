@@ -64,6 +64,7 @@ const Overview = ({
 			await deleteItem(itemToDelete);
 			await refreshAll();
 			resetCatalogue();
+			router.refresh();
 			setItemToDelete(null);
 			setIsModalOpen(false);
 		}
@@ -102,6 +103,7 @@ const Overview = ({
 		try {
 			await duplicateItem(id, name);
 			await refreshAll();
+			router.refresh();
 		} catch (error) {
 			console.error("Error duplicating item:", error);
 			alert("Failed to duplicate item.");
@@ -129,6 +131,7 @@ const Overview = ({
 			const success = await deleteMultipleItems(selectedIds);
 			if (success) {
 				await refreshAll();
+				router.refresh();
 				setIsDeleteMultipleModalOpen(false);
 			} else {
 				alert("Failed to delete some catalogues. Please try again.");

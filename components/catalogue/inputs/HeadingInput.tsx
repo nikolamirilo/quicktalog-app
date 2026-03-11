@@ -30,6 +30,8 @@ const HeadingInput = () => {
 	const [isSelectOpen, setIsSelectOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement>(null);
 
+	const lastValidHtml = useRef("");
+	
 	// Parse headingSize from HTML if stored (e.g., data-size attribute)
 	useEffect(() => {
 		if (catalogue?.heading) {
@@ -55,7 +57,9 @@ const HeadingInput = () => {
 				content = innerMatch[1];
 			}
 			// If content is plain text (no HTML), use it directly
-			editorRef.current.innerHTML = content || "";
+			const parsed = content || "";
+			editorRef.current.innerHTML = parsed;
+			lastValidHtml.current = parsed;
 		}
 	}, [catalogue?.heading]);
 
@@ -69,10 +73,26 @@ const HeadingInput = () => {
 
 	const handleInput = useCallback(() => {
 		if (editorRef.current) {
+			// Prevents typing beyond 3 visual rows (which are restricted by line-clamp-3)
+			if (editorRef.current.scrollHeight > editorRef.current.clientHeight + 4) {
+				editorRef.current.innerHTML = lastValidHtml.current;
+				
+				// Move cursor to the end safely
+				const selection = window.getSelection();
+				const range = document.createRange();
+				range.selectNodeContents(editorRef.current);
+				range.collapse(false);
+				selection?.removeAllRanges();
+				selection?.addRange(range);
+				return;
+			}
+			
+			lastValidHtml.current = editorRef.current.innerHTML;
+			
 			const html = editorRef.current.innerHTML;
 			// Generate complete HTML with h1 tag and size class
 			const sizeClass = HEADING_SIZE_CLASSES[headingSize];
-			const wrappedHtml = `<h1 class="${sizeClass} font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words" data-size="${headingSize}">${html}</h1>`;
+			const wrappedHtml = `<h1 class="${sizeClass} font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${headingSize}">${html}</h1>`;
 			updateCatalogue({ heading: wrappedHtml });
 		}
 	}, [updateCatalogue, headingSize]);
@@ -102,7 +122,7 @@ const HeadingInput = () => {
 				const html = editorRef.current.innerHTML;
 				// Generate complete HTML with h1 tag and size class
 				const sizeClass = HEADING_SIZE_CLASSES[size];
-				const wrappedHtml = `<h1 class="${sizeClass} font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words" data-size="${size}">${html}</h1>`;
+				const wrappedHtml = `<h1 class="${sizeClass} font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${size}">${html}</h1>`;
 				updateCatalogue({ heading: wrappedHtml });
 			}
 		},
@@ -227,7 +247,7 @@ const HeadingInput = () => {
 
 			{/* Editable Heading */}
 			<div
-				className={`text-center ${HEADING_SIZE_CLASSES[headingSize]} text-heading font-heading font-semibold border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg px-4 sm:px-6 py-2 sm:w-[90%] md:w-auto bg-transparent md:min-w-[300px] focus:border-primary outline-none w-full line-clamp-3 break-words transition-all empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/40`}
+				className={`text-center ${HEADING_SIZE_CLASSES[headingSize]} text-heading font-heading font-semibold border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg px-4 sm:px-6 py-2 sm:w-[90%] md:w-auto bg-transparent md:min-w-[300px] focus:border-primary outline-none w-full max-w-[94%] md:max-w-[80%] mx-auto line-clamp-3 break-words transition-all empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/40`}
 				contentEditable
 				data-placeholder="+ Add Heading"
 				onInput={handleInput}

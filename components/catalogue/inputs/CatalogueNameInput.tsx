@@ -47,17 +47,16 @@ const CatalogueNameInput = ({
 				className="text-sm font-medium text-product-foreground"
 				htmlFor="catalogName"
 			>
-				CatalogueName<span className="text-red-500 ml-1">*</span>
+				Catalogue Name<span className="text-red-500 ml-1">*</span>
 			</Label>
 			<div className="relative">
 				<Input
-					className={`bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary pr-10 ${
-						!disabled && errors?.name
+					className={`bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary pr-10 ${!disabled && errors?.name
 							? "border-red-500 focus:border-red-500"
-							: catalogue.name && !nameExists && touched?.name && !disabled
+							: catalogue.name?.trim() && !nameExists && touched?.name && !disabled
 								? "border-green-500 focus:border-green-500"
 								: ""
-					}`}
+						}`}
 					disabled={disabled}
 					id="catalogName"
 					onChange={disabled ? undefined : handleNameChange}
@@ -65,7 +64,7 @@ const CatalogueNameInput = ({
 					type="text"
 					value={catalogue.name}
 				/>
-				{!disabled && catalogue.name && touched?.name && (
+				{!disabled && catalogue.name?.trim() && touched?.name && (
 					<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
 						{errors?.name || nameExists ? (
 							<AlertCircle className="h-4 w-4 text-red-500" />
@@ -76,7 +75,7 @@ const CatalogueNameInput = ({
 				)}
 			</div>
 			{!disabled &&
-				catalogue.name &&
+				catalogue.name?.trim() &&
 				!errors?.name &&
 				touched?.name &&
 				!nameExists && (
