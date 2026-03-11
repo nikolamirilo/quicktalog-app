@@ -16,6 +16,7 @@ import { useState } from "react";
 import LimitsOverlay from "./LimitsOverlay";
 
 const MAX_SOCIALS = 5;
+const MAX_PARTNERS = 3;
 
 const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
@@ -102,6 +103,7 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 	const addPartner = () => {
 		if (!newPartner.name.trim()) return;
+		if ((catalogue.partners || []).length >= MAX_PARTNERS) return;
 		const updatedPartners = [...(catalogue.partners || []), newPartner];
 		updateCatalogue({
 			partners: updatedPartners,
@@ -541,61 +543,68 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									</div>
 								))}
 
-								{isAddingPartner ? (
-									<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background">
-										<Input
-											placeholder="Partner Name"
-											value={newPartner.name}
-											onChange={(e) =>
-												setNewPartner((prev) => ({
-													...prev,
-													name: e.target.value,
-												}))
-											}
-										/>
-										<Input
-											placeholder="Partner URL"
-											value={newPartner.url}
-											onChange={(e) =>
-												setNewPartner((prev) => ({
-													...prev,
-													url: e.target.value,
-												}))
-											}
-										/>
-										<Input
-											placeholder="Partner Description"
-											value={newPartner.description}
-											onChange={(e) =>
-												setNewPartner((prev) => ({
-													...prev,
-													description: e.target.value,
-												}))
-											}
-										/>
-										<div className="flex gap-2">
-											<Button
-												onClick={addPartner}
-												disabled={!newPartner.name.trim()}
-												className="flex-1 bg-product-primary text-product-foreground"
-											>
-												Confirm
-											</Button>
-											<Button
-												variant="ghost"
-												onClick={() => setIsAddingPartner(false)}
-											>
-												Cancel
-											</Button>
+								{(!catalogue.partners || catalogue.partners.length < MAX_PARTNERS) && (
+									isAddingPartner ? (
+										<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background">
+											<Input
+												placeholder="Partner Name"
+												value={newPartner.name}
+												onChange={(e) =>
+													setNewPartner((prev) => ({
+														...prev,
+														name: e.target.value,
+													}))
+												}
+											/>
+											<Input
+												placeholder="Partner URL"
+												value={newPartner.url}
+												onChange={(e) =>
+													setNewPartner((prev) => ({
+														...prev,
+														url: e.target.value,
+													}))
+												}
+											/>
+											<Input
+												placeholder="Partner Description"
+												value={newPartner.description}
+												onChange={(e) =>
+													setNewPartner((prev) => ({
+														...prev,
+														description: e.target.value,
+													}))
+												}
+											/>
+											<div className="flex gap-2">
+												<Button
+													onClick={addPartner}
+													disabled={!newPartner.name.trim()}
+													className="flex-1 bg-product-primary text-product-foreground"
+												>
+													Confirm
+												</Button>
+												<Button
+													variant="ghost"
+													onClick={() => setIsAddingPartner(false)}
+												>
+													Cancel
+												</Button>
+											</div>
 										</div>
-									</div>
-								) : (
-									<Button
-										onClick={() => setIsAddingPartner(true)}
-										className="w-full bg-product-primary text-product-foreground"
-									>
-										<Plus className="h-4 w-4 mr-2" /> Add Partner
-									</Button>
+									) : (
+										<Button
+											onClick={() => setIsAddingPartner(true)}
+											className="w-full bg-product-primary text-product-foreground"
+										>
+											<Plus className="h-4 w-4 mr-2" /> Add Partner
+										</Button>
+									)
+								)}
+								{catalogue.partners?.length === MAX_PARTNERS && (
+									<p className="text-sm text-muted-foreground text-center pt-2">
+										Maximum of {MAX_PARTNERS} partners reached.
+									</p>
 								)}
 							</div>
 						)}

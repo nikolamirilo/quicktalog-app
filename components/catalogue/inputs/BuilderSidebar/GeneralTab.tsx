@@ -195,7 +195,7 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="meta-icon">Icon</Label>
+							<Label htmlFor="meta-icon">Browser Tab Icon</Label>
 							<ImageDropzone
 								type="icon"
 								className="w-full aspect-video bg-transparent"

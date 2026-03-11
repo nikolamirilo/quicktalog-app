@@ -1,8 +1,8 @@
 "use client";
+import ConsentModal from "@/components/modals/ConsentModal";
 import { SignIn, SignUp } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import ConsentModal from "@/components/modals/ConsentModal";
 
 export default function Auth() {
 	const searchParams = useSearchParams();
