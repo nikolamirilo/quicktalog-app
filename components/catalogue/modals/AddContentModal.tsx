@@ -84,19 +84,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-									spacing: (editingBlock as any).spacing,
-									border: (editingBlock as any).border,
-								}
+								spacing: (editingBlock as any).spacing,
+								border: (editingBlock as any).border,
+							}
 							: {
-									spacing: 2,
-									border: {
-										isEnabled: true,
-										style: "solid",
-										thickness: 1,
-										color: "#000000",
-										opacity: 100,
-									},
+								spacing: 2,
+								border: {
+									isEnabled: true,
+									style: "solid",
+									thickness: 1,
+									color: "#000000",
+									opacity: 100,
 								},
+							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -241,7 +241,7 @@ const AddContentModal = ({
 	return (
 		<>
 			<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-				<AlertDialogContent className="z-[1100] w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-fit md:h-[600px] lg:h-[650px] font-body text-product-foreground">
+				<AlertDialogContent className="w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-fit md:h-[600px] lg:h-[650px] font-body text-product-foreground">
 					<div className="w-full md:w-1/4 bg-gray-200/50 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col">
 						<div className="p-6 pb-4 flex justify-between items-start">
 							<div>
