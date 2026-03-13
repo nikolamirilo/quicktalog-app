@@ -77,7 +77,7 @@ export default withUt(
 					body: ["var(--catalogue-font-body)"],
 				},
 				fontWeight: {
-					heading: "var(--catalogue-weight-heading)",
+					"heading-weight": "var(--catalogue-weight-heading)",
 					body: "var(--catalogue-weight-body)",
 				},
 				letterSpacing: {

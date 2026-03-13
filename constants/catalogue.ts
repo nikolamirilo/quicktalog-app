@@ -37,24 +37,34 @@ export const defaultCatalogueData = {
 		},
 	},
 	contact: {
-		phone: "+31378163",
-		email: "office@quicktalog.com",
+		phone: "",
+		email: "",
 		socials: [],
 	},
 	header: {
+		type: "default",
+		logoSize:{
+			width: 160,
+			height: 160,
+		},
 		cta: {
 			isEnabled: true,
-			label: "Create new catalogue",
-			url: "/",
+			label: "",
+			url: "",
 		},
 		emailCta: true,
 		phoneCta: true,
 	},
 	footer: {
+		type: "default",
+		logoSize:{
+			width: 160,
+			height: 160,
+		},
 		cta: {
 			isEnabled: true,
-			label: "Create new catalogue",
-			url: "/",
+			label: "",
+			url: "",
 		},
 		newsletter: false,
 		showPartners: false,

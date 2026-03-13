@@ -7,6 +7,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { extractDomain } from "@/helpers/client";
@@ -43,6 +44,18 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 					...catalogue.footer,
 					cta: {
 						...catalogue.footer.cta,
+						[key]: value,
+					},
+				},
+			});
+		} else if (field.startsWith("footer.logoSize.")) {
+			const key = field.split(".")[2];
+			const currentSize = catalogue.footer?.logoSize || { width: 120, height: 40 };
+			updateCatalogue({
+				footer: {
+					...catalogue.footer,
+					logoSize: {
+						...currentSize,
 						[key]: value,
 					},
 				},
@@ -144,6 +157,42 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 			<div
 				className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 			>
+				{/* Logo Section */}
+				<div className="space-y-4">
+					<div className="flex items-center gap-2">
+						<h3 className="text-lg font-bold">Logo Configuration</h3>
+						<Popover>
+							<PopoverTrigger type="button">
+								<Info className="h-4 w-4 text-muted-foreground" />
+							</PopoverTrigger>
+							<PopoverContent
+								side="top"
+								className="z-[2000] w-[200px] p-3 text-sm"
+							>
+								<p>Configure the size of the logo in your footer.</p>
+							</PopoverContent>
+						</Popover>
+					</div>
+
+					<div className="space-y-4">
+						<div className="space-y-3">
+							<div className="flex justify-between items-center">
+								<Label className="text-base">Size</Label>
+								<span className="text-sm text-muted-foreground">{catalogue.footer?.logoSize?.width || 160}px</span>
+							</div>
+							<Slider
+								min={20}
+								max={400}
+								step={2}
+								value={[catalogue.footer?.logoSize?.width || 160]}
+								onValueChange={(val) => handleChange("footer.logoSize.width", val[0])}
+							/>
+						</div>
+					</div>
+				</div>
+
+				<div className="w-full h-[1px] bg-border" />
+
 				{/* Interaction Section */}
 				<div className="space-y-4">
 					<div className="flex items-center gap-2">
@@ -414,23 +463,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 							{(!catalogue.contact?.socials ||
 								catalogue.contact.socials.length < MAX_SOCIALS) && (
-								<div className="space-y-2">
-									<Input
-										placeholder="e.g. www.instagram.com/quicktalog"
-										value={newSocialUrl}
-										onChange={(e) => setNewSocialUrl(e.target.value)}
-									/>
-									<Button
-										onClick={addSocial}
-										disabled={
-											!newSocialUrl.trim() || !newSocialUrl.includes(".")
-										}
-										className="w-full bg-product-primary text-product-foreground"
-									>
-										<Plus className="h-4 w-4 mr-2" /> Add Social Media
-									</Button>
-								</div>
-							)}
+									<div className="space-y-2">
+										<Input
+											placeholder="e.g. www.instagram.com/quicktalog"
+											value={newSocialUrl}
+											onChange={(e) => setNewSocialUrl(e.target.value)}
+										/>
+										<Button
+											onClick={addSocial}
+											disabled={
+												!newSocialUrl.trim() || !newSocialUrl.includes(".")
+											}
+											className="w-full bg-product-primary text-product-foreground"
+										>
+											<Plus className="h-4 w-4 mr-2" /> Add Social Media
+										</Button>
+									</div>
+								)}
 							{catalogue.contact?.socials?.length === MAX_SOCIALS && (
 								<p className="text-sm text-muted-foreground text-center">
 									Maximum of {MAX_SOCIALS} social links reached.

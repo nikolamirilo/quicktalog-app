@@ -156,11 +156,14 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						>
 							<img
 								alt={`${companyName} logo`}
-								className="w-auto max-h-[7vh] object-cover max-w-[150px] lg:max-w-[200px] rounded-sm"
+								className="rounded-sm object-contain object-left"
+								style={{
+									width: activeData?.header?.logoSize?.width ? `${activeData.header.logoSize.width}px` : (type === "default" ? "120px" : "100px"),
+									height: "auto",
+									maxWidth: "100%",
+								}}
 								fetchPriority="high"
-								height={40}
 								src={logo ?? "/logo.svg"}
-								width={type === "default" ? 120 : 100}
 							/>
 						</Link>
 					</div>

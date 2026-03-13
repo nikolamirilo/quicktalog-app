@@ -31,14 +31,14 @@ export default function InitCatalogueModal({
 	onCancel,
 	loading = false,
 }: InitCatalogueModalProps) {
-	const { catalogue, updateCatalogue, resetCatalogue } = useCatalogueContext();
+	const { catalogue, resetCatalogue } = useCatalogueContext();
 
 	// Generate URL based on catalog name
 	const generatedUrl = catalogue.name
 		? `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue.name
-				.toLowerCase()
-				.replace(/\s+/g, "-")
-				.replace(/[^a-z0-9-]/g, "")}`
+			.toLowerCase()
+			.replace(/\s+/g, "-")
+			.replace(/[^a-z0-9-]/g, "")}`
 		: `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/`;
 
 	const [hasNameError, setHasNameError] = useState(false);

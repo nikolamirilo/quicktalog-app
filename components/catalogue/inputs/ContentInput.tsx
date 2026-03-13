@@ -18,13 +18,17 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 		<div>
 			<div className="flex flex-col space-y-4 gap-4 ">
 				<div className="flex flex-col justify-center gap-4 md:w-8/12">
-					<Label
-						className="text-product-foreground font-medium font-body"
-						htmlFor={`category-name-input`}
-					>
-						{type === "category" ? "Category" : "Container"} Name
-						<span className="text-red-500 ml-1">*</span>
-					</Label>
+					<div className="flex flex-col justify-between gap-2">
+						<Label
+							className="text-product-foreground font-medium font-body"
+							htmlFor={`category-name-input`}
+						>
+							{type === "category" ? "Category" : "Container"} Name
+							<span className="text-red-500 ml-1">*</span>
+						</Label>
+						{type === "container" && <span className="text-xs text-gray-500">Used to identify this container when moving items. Not visible to end users.</span>}
+
+					</div>
 					<Input
 						id={`${type}-name-input`}
 						onChange={(e) => onChange({ ...value, name: e.target.value })}
@@ -63,10 +67,9 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 				<div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
 					{layouts.map((layoutOption) => (
 						<div
-							className={`relative cursor-pointer rounded-xl border border-gray-200 p-2 ${
-								value.layout === layoutOption.key &&
+							className={`relative cursor-pointer rounded-xl border border-gray-200 p-2 ${value.layout === layoutOption.key &&
 								"border-product-primary border-2"
-							}`}
+								}`}
 							key={layoutOption.key}
 							onClick={() =>
 								onChange({ ...value, layout: layoutOption.key as any })

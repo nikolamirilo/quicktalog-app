@@ -66,8 +66,6 @@ const Catalogue = ({
 	type?: "edit" | "view" | "demo";
 	userData?: UserData;
 }) => {
-	const isCustom =
-		type !== "demo" && userData?.currentPlan?.features?.branding === true;
 	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
 	const [editingBlock, setEditingBlock] = useState<{
 		block: ContentBlock;
@@ -94,8 +92,7 @@ const Catalogue = ({
 
 	const defaultLogo = isDarkTheme ? "/logo-light.svg" : "/logo.svg";
 	const customLogo = item.logo || defaultLogo;
-
-	const logoSrc = isCustom ? customLogo : defaultLogo;
+	const logoSrc = item.header.type === "custom" ? customLogo : defaultLogo;
 
 	useEffect(() => {
 		if (typeof window === "undefined") return;
@@ -103,7 +100,7 @@ const Catalogue = ({
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(item.heading || "");
-		} catch (e) {}
+		} catch (e) { }
 
 		const titleText = item.metadata?.title || item.name || plainHeading;
 		if (titleText) {
@@ -183,7 +180,7 @@ const Catalogue = ({
 				<CatalogueHeader
 					data={item}
 					logo={logoSrc}
-					type={isCustom ? "custom" : "default"}
+					type={item.header.type}
 				/>
 
 				<main
@@ -197,38 +194,36 @@ const Catalogue = ({
 						aria-labelledby={item.heading}
 						className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0 w-full"
 					>
-						<div className="max-w-[95%] sm:max-w-5xl mx-auto">
-							{type === "edit" ? (
-								<HeadingInput />
-							) : (
-								(() => {
-									// Only render if heading has content
-									if (!item.heading) return null;
-									// If heading is plain text (no HTML h1 tag), wrap with default large size
-									const isHtml = item.heading.includes("<h1");
-									let headingHtml = isHtml
-										? item.heading
-										: `<h1 class="text-3xl sm:text-5xl font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="large">${item.heading}</h1>`;
+						{type === "edit" ? (
+							<HeadingInput />
+						) : (
+							(() => {
+								// Only render if heading has content
+								if (!item.heading) return null;
+								// If heading is plain text (no HTML h1 tag), wrap with default large size
+								const isHtml = item.heading.includes("<h1");
+								let headingHtml = isHtml
+									? item.heading
+									: `<h1 class="text-3xl sm:text-5xl font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="large">${item.heading}</h1>`;
 
-									// Polyfill older HTML strings that miss the padding fix for descenders
-									if (isHtml && !headingHtml.includes("pb-1 md:pb-2")) {
-										headingHtml = headingHtml.replace(
-											'class="',
-											'class="pb-1 md:pb-2 ',
-										);
-									}
-									// Polyfill older HTML strings that miss the max-width fix
-									if (isHtml && !headingHtml.includes("max-w-[94%]")) {
-										headingHtml = headingHtml.replace(
-											'class="',
-											'class="max-w-[94%] md:max-w-[60%] lg:max-w-[50%] xl:[max-w-[40%]] mx-auto ',
-										);
-									}
+								// Polyfill older HTML strings that miss the padding fix for descenders
+								if (isHtml && !headingHtml.includes("pb-1 md:pb-2")) {
+									headingHtml = headingHtml.replace(
+										'class="',
+										'class="pb-1 md:pb-2 ',
+									);
+								}
+								// Polyfill older HTML strings that miss the max-width fix
+								if (isHtml && !headingHtml.includes("max-w-[94%]")) {
+									headingHtml = headingHtml.replace(
+										'class="',
+										'class="max-w-[94%] md:max-w-[60%] lg:max-w-[50%] xl:[max-w-[40%]] mx-auto ',
+									);
+								}
 
-									return <HtmlContent className="" html={headingHtml} />;
-								})()
-							)}
-						</div>
+								return <HtmlContent className="" html={headingHtml} />;
+							})()
+						)}
 						{type === "demo" && (
 							<div className="flex flex-col justify-center items-center w-full mt-6">
 								<AppearanceOptions />
@@ -271,7 +266,7 @@ const Catalogue = ({
 				<CatalogueFooter
 					data={item}
 					logo={logoSrc}
-					type={isCustom ? "custom" : "default"}
+					type={item.footer.type}
 				/>
 
 				{userData && (

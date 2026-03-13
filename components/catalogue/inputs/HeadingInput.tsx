@@ -28,6 +28,7 @@ const HeadingInput = () => {
 	const [isItalic, setIsItalic] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);
 	const [isSelectOpen, setIsSelectOpen] = useState(false);
+	const [isEmpty, setIsEmpty] = useState(true);
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const lastValidHtml = useRef("");
@@ -60,15 +61,33 @@ const HeadingInput = () => {
 			const parsed = content || "";
 			editorRef.current.innerHTML = parsed;
 			lastValidHtml.current = parsed;
+			setIsEmpty(!parsed || parsed === "<br>");
 		}
 	}, [catalogue?.heading]);
 
+	// updateSelection: only reflect actual bold/italic from typed content,
+	// NOT inherited CSS font-weight (font-semibold on the container).
 	const updateSelection = useCallback(() => {
 		const selection = window.getSelection();
-		if (selection && selection.rangeCount > 0) {
-			setIsBold(document.queryCommandState("bold"));
-			setIsItalic(document.queryCommandState("italic"));
-		}
+		if (!selection || selection.rangeCount === 0) return;
+
+		// queryCommandState checks computed style at cursor — but font-semibold
+		// on the parent makes it always return true for "bold".
+		// Instead, check if the closest <b> or <strong> ancestor exists,
+		// or if inline font-weight:bold is explicitly set on a span.
+		const range = selection.getRangeAt(0);
+		const node = range.startContainer;
+		const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as HTMLElement);
+
+		const hasBoldAncestor = !!el?.closest("b, strong") ||
+			(el as HTMLElement)?.style?.fontWeight === "bold" ||
+			(el as HTMLElement)?.style?.fontWeight === "700";
+
+		const hasItalicAncestor = !!el?.closest("i, em") ||
+			(el as HTMLElement)?.style?.fontStyle === "italic";
+
+		setIsBold(hasBoldAncestor);
+		setIsItalic(hasItalicAncestor);
 	}, []);
 
 	const handleInput = useCallback(() => {
@@ -88,11 +107,14 @@ const HeadingInput = () => {
 			}
 
 			lastValidHtml.current = editorRef.current.innerHTML;
-
 			const html = editorRef.current.innerHTML;
+
+			// Track empty state for placeholder
+			setIsEmpty(!html || html === "<br>" || html === "");
+
 			// Generate complete HTML with h1 tag and size class
 			const sizeClass = HEADING_SIZE_CLASSES[headingSize];
-			const wrappedHtml = `<h1 class="${sizeClass} font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${headingSize}">${html}</h1>`;
+			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${headingSize}">${html}</h1>`;
 			updateCatalogue({ heading: wrappedHtml });
 		}
 	}, [updateCatalogue, headingSize]);
@@ -122,7 +144,7 @@ const HeadingInput = () => {
 				const html = editorRef.current.innerHTML;
 				// Generate complete HTML with h1 tag and size class
 				const sizeClass = HEADING_SIZE_CLASSES[size];
-				const wrappedHtml = `<h1 class="${sizeClass} font-heading font-semibold text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${size}">${html}</h1>`;
+				const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${size}">${html}</h1>`;
 				updateCatalogue({ heading: wrappedHtml });
 			}
 		},
@@ -147,7 +169,6 @@ const HeadingInput = () => {
 		[],
 	);
 
-	console.log(catalogue.heading);
 	const handleBlur = useCallback((e: React.FocusEvent) => {
 		const relatedTarget = e.relatedTarget as HTMLElement | null;
 		if (containerRef.current && !containerRef.current.contains(relatedTarget)) {
@@ -160,7 +181,17 @@ const HeadingInput = () => {
 				return;
 			}
 			setIsFocused(false);
+			// Reset bold/italic state when leaving
+			setIsBold(false);
+			setIsItalic(false);
 		}
+	}, []);
+
+	const handleFocus = useCallback(() => {
+		setIsFocused(true);
+		// Reset bold/italic — let updateSelection reflect actual cursor state
+		setIsBold(false);
+		setIsItalic(false);
 	}, []);
 
 	const showToolbar = isFocused || isSelectOpen;
@@ -169,18 +200,17 @@ const HeadingInput = () => {
 		<div
 			className="flex flex-col items-center w-full mb-4 px-0"
 			ref={containerRef}
-			onFocus={() => setIsFocused(true)}
+			onFocus={handleFocus}
 			onBlur={handleBlur}
 		>
 			{/* Formatting Toolbar */}
 			<div
-				className={`flex flex-wrap w-full items-center justify-center gap-1 sm:gap-0 mb-2 px-2 py-1 bg-transparent transition-opacity duration-200 ${showToolbar ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+				className={`flex md:gap-2 flex-wrap w-full items-center justify-center gap-1 mb-2 px-2 py-1 bg-transparent transition-opacity duration-200 ${showToolbar ? "opacity-100" : "opacity-0 pointer-events-none"}`}
 			>
 				{/* Bold Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isBold ? "text-primary bg-primary/10" : "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold ? "text-[var(--catalogue-primary)] bg-white/90" : "text-foreground/70"
+						}`}
 					onClick={toggleBold}
 					onMouseDown={(e) => e.preventDefault()}
 					title="Bold"
@@ -192,9 +222,8 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isItalic ? "text-primary bg-primary/10" : "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic ? "text-[var(--catalogue-primary)] bg-white/90" : "text-foreground/70"
+						}`}
 					onClick={toggleItalic}
 					onMouseDown={(e) => e.preventDefault()}
 					title="Italic"
@@ -247,7 +276,20 @@ const HeadingInput = () => {
 
 			{/* Editable Heading */}
 			<div
-				className={`text-center ${HEADING_SIZE_CLASSES[headingSize]} text-heading font-heading font-semibold border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg px-4 sm:px-6 py-2 sm:w-[90%] md:w-auto bg-transparent md:min-w-[300px] focus:border-primary outline-none w-full max-w-[94%] md:max-w-[80%] mx-auto line-clamp-3 break-words transition-all empty:before:content-[attr(data-placeholder)] empty:before:text-foreground/40`}
+				className={`
+					text-center ${HEADING_SIZE_CLASSES[headingSize]}
+					text-heading font-heading font-normal
+					border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg
+					px-4 sm:px-6 py-2
+					bg-transparent focus:border-primary outline-none
+					w-auto
+					max-w-[94%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%]
+					min-w-[80%] sm:min-w-[70%] md:min-w-[50%] lg:min-w-[40%] xl:min-w-[30%]
+					mx-auto
+					line-clamp-3 break-words transition-all
+					relative
+					${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none" : ""}
+				`}
 				contentEditable
 				data-placeholder="+ Add Heading"
 				onInput={handleInput}

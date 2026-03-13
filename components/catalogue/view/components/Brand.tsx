@@ -25,10 +25,13 @@ export const Brand = ({
 					>
 						<img
 							alt={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} logo`}
-							className="w-auto max-h-[7vh] rounded-sm object-contain max-w-[150px] lg:max-w-[200px] h-48"
-							height={40}
+							className="rounded-sm object-contain object-left"
+							style={{
+								width: activeData?.footer?.logoSize?.width ? `${activeData.footer.logoSize.width}px` : (type === "default" ? "120px" : "100px"),
+								height: "auto",
+								maxWidth: "100%",
+							}}
 							src={logo ?? "/logo.svg"}
-							width={type === "default" ? 120 : 100}
 						/>
 					</SmartLink>
 

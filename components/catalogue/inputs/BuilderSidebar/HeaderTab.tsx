@@ -5,6 +5,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { PricingPlan } from "@quicktalog/common";
@@ -29,6 +30,18 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 					},
 				},
 			});
+		} else if (field.startsWith("header.logoSize.")) {
+			const key = field.split(".")[2];
+			const currentSize = catalogue.header?.logoSize || { width: 120, height: 40 };
+			updateCatalogue({
+				header: {
+					...catalogue.header,
+					logoSize: {
+						...currentSize,
+						[key]: value,
+					},
+				},
+			});
 		} else if (field.startsWith("header.")) {
 			const key = field.split(".")[1];
 			updateCatalogue({
@@ -48,6 +61,42 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 			<div
 				className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 			>
+				{/* Logo Section */}
+				<div className="space-y-4">
+					<div className="flex items-center gap-2">
+						<h3 className="text-lg font-bold">Logo Configuration</h3>
+						<Popover>
+							<PopoverTrigger type="button">
+								<Info className="h-4 w-4 text-muted-foreground" />
+							</PopoverTrigger>
+							<PopoverContent
+								side="top"
+								className="z-[2000] w-[200px] p-3 text-sm"
+							>
+								<p>Configure the size of the logo in your header.</p>
+							</PopoverContent>
+						</Popover>
+					</div>
+
+					<div className="space-y-4">
+						<div className="space-y-3">
+							<div className="flex justify-between items-center">
+								<Label className="text-base">Size</Label>
+								<span className="text-sm text-muted-foreground">{catalogue.header?.logoSize?.width || 160}px</span>
+							</div>
+							<Slider
+								min={20}
+								max={300}
+								step={2}
+								value={[catalogue.header?.logoSize?.width || 160]}
+								onValueChange={(val) => handleChange("header.logoSize.width", val[0])}
+							/>
+						</div>
+					</div>
+				</div>
+
+				<div className="w-full h-[1px] bg-border" />
+
 				{/* Interaction Section */}
 				<div className="space-y-4">
 					<div className="flex items-center gap-2">
