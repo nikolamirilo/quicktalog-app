@@ -43,17 +43,15 @@ const FloatingActionMenu = ({
 				/>
 			)}
 			<div
-				className={`absolute bottom-16 right-0 flex flex-col-reverse gap-3 transition-all duration-300 ${
-					isOpen
+				className={`absolute bottom-16 right-0 flex flex-col-reverse gap-3 transition-all duration-300 ${isOpen
 						? "opacity-100 translate-y-0"
 						: "opacity-0 translate-y-4 pointer-events-none"
-				}`}
+					}`}
 			>
 				{/* Create Catalogue */}
 				<div
-					className={`transform transition-all duration-300 ${
-						isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-					}`}
+					className={`transform transition-all duration-300 ${isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+						}`}
 					style={{ transitionDelay: isOpen ? "0ms" : "0ms" }}
 				>
 					<CreateCatalogueButton
@@ -66,9 +64,8 @@ const FloatingActionMenu = ({
 
 				{/* Generate with AI */}
 				<div
-					className={`transform transition-all duration-300 ${
-						isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-					}`}
+					className={`transform transition-all duration-300 ${isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+						}`}
 					style={{ transitionDelay: isOpen ? "50ms" : "0ms" }}
 				>
 					<Button
@@ -84,9 +81,8 @@ const FloatingActionMenu = ({
 
 				{/* Scan & Import */}
 				<div
-					className={`transform transition-all duration-300 ${
-						isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-					}`}
+					className={`transform transition-all duration-300 ${isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
+						}`}
 					style={{ transitionDelay: isOpen ? "100ms" : "0ms" }}
 				>
 					<Button
@@ -103,9 +99,8 @@ const FloatingActionMenu = ({
 
 			<button
 				aria-label={isOpen ? "Close menu" : "Open create menu"}
-				className={`w-14 h-14 bg-product-primary hover:product-primary/20 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center ${
-					isOpen ? "rotate-45" : "rotate-0"
-				}`}
+				className={`w-14 h-14 bg-product-primary hover:product-primary/20 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center ${isOpen ? "rotate-45" : "rotate-0"
+					}`}
 				onClick={() => setIsOpen(!isOpen)}
 			>
 				{isOpen ? (

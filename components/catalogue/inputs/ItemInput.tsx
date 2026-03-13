@@ -173,7 +173,7 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 					<Label htmlFor="item-price">Item Price ({currency})</Label>
 					<div className="flex gap-2">
 						<Input
-							className="flex-1 min-w-0"
+							className="flex-1 min-w-0 h-10"
 							disabled={value.isFree}
 							id="item-price"
 							onBlur={handlePriceBlur}
