@@ -32,7 +32,10 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 			});
 		} else if (field.startsWith("header.logoSize.")) {
 			const key = field.split(".")[2];
-			const currentSize = catalogue.header?.logoSize || { width: 120, height: 40 };
+			const currentSize = catalogue.header?.logoSize || {
+				width: 120,
+				height: 40,
+			};
 			updateCatalogue({
 				header: {
 					...catalogue.header,
@@ -82,14 +85,18 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 						<div className="space-y-3">
 							<div className="flex justify-between items-center">
 								<Label className="text-base">Size</Label>
-								<span className="text-sm text-muted-foreground">{catalogue.header?.logoSize?.width || 160}px</span>
+								<span className="text-sm text-muted-foreground">
+									{catalogue.header?.logoSize?.width || 160}px
+								</span>
 							</div>
 							<Slider
 								min={20}
 								max={300}
 								step={2}
 								value={[catalogue.header?.logoSize?.width || 160]}
-								onValueChange={(val) => handleChange("header.logoSize.width", val[0])}
+								onValueChange={(val) =>
+									handleChange("header.logoSize.width", val[0])
+								}
 							/>
 						</div>
 					</div>

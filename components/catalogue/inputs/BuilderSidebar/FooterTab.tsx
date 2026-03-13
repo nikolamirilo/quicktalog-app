@@ -50,7 +50,10 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 			});
 		} else if (field.startsWith("footer.logoSize.")) {
 			const key = field.split(".")[2];
-			const currentSize = catalogue.footer?.logoSize || { width: 120, height: 40 };
+			const currentSize = catalogue.footer?.logoSize || {
+				width: 120,
+				height: 40,
+			};
 			updateCatalogue({
 				footer: {
 					...catalogue.footer,
@@ -178,14 +181,18 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 						<div className="space-y-3">
 							<div className="flex justify-between items-center">
 								<Label className="text-base">Size</Label>
-								<span className="text-sm text-muted-foreground">{catalogue.footer?.logoSize?.width || 160}px</span>
+								<span className="text-sm text-muted-foreground">
+									{catalogue.footer?.logoSize?.width || 160}px
+								</span>
 							</div>
 							<Slider
 								min={20}
 								max={400}
 								step={2}
 								value={[catalogue.footer?.logoSize?.width || 160]}
-								onValueChange={(val) => handleChange("footer.logoSize.width", val[0])}
+								onValueChange={(val) =>
+									handleChange("footer.logoSize.width", val[0])
+								}
 							/>
 						</div>
 					</div>
@@ -463,23 +470,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 							{(!catalogue.contact?.socials ||
 								catalogue.contact.socials.length < MAX_SOCIALS) && (
-									<div className="space-y-2">
-										<Input
-											placeholder="e.g. www.instagram.com/quicktalog"
-											value={newSocialUrl}
-											onChange={(e) => setNewSocialUrl(e.target.value)}
-										/>
-										<Button
-											onClick={addSocial}
-											disabled={
-												!newSocialUrl.trim() || !newSocialUrl.includes(".")
-											}
-											className="w-full bg-product-primary text-product-foreground"
-										>
-											<Plus className="h-4 w-4 mr-2" /> Add Social Media
-										</Button>
-									</div>
-								)}
+								<div className="space-y-2">
+									<Input
+										placeholder="e.g. www.instagram.com/quicktalog"
+										value={newSocialUrl}
+										onChange={(e) => setNewSocialUrl(e.target.value)}
+									/>
+									<Button
+										onClick={addSocial}
+										disabled={
+											!newSocialUrl.trim() || !newSocialUrl.includes(".")
+										}
+										className="w-full bg-product-primary text-product-foreground"
+									>
+										<Plus className="h-4 w-4 mr-2" /> Add Social Media
+									</Button>
+								</div>
+							)}
 							{catalogue.contact?.socials?.length === MAX_SOCIALS && (
 								<p className="text-sm text-muted-foreground text-center">
 									Maximum of {MAX_SOCIALS} social links reached.

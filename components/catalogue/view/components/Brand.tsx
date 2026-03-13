@@ -27,7 +27,11 @@ export const Brand = ({
 							alt={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} logo`}
 							className="rounded-sm object-contain object-left"
 							style={{
-								width: activeData?.footer?.logoSize?.width ? `${activeData.footer.logoSize.width}px` : (type === "default" ? "120px" : "100px"),
+								width: activeData?.footer?.logoSize?.width
+									? `${activeData.footer.logoSize.width}px`
+									: type === "default"
+										? "120px"
+										: "100px",
 								height: "auto",
 								maxWidth: "100%",
 							}}

@@ -93,7 +93,10 @@ export async function duplicateItem(id: string, name: string) {
 	}
 }
 
-export async function createCatalogue(catalogueData: Catalogue, branding: boolean = false) {
+export async function createCatalogue(
+	catalogueData: Catalogue,
+	branding: boolean = false,
+) {
 	try {
 		const slug = generateUniqueSlug(catalogueData.name);
 
@@ -107,7 +110,7 @@ export async function createCatalogue(catalogueData: Catalogue, branding: boolea
 				success: false,
 				error: "A catalogue with this name already exists",
 			};
-		}	
+		}
 
 		const type = branding === true ? "custom" : "default";
 		const { createdAt, updatedAt, ...rest } = catalogueData;

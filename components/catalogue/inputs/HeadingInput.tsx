@@ -77,13 +77,18 @@ const HeadingInput = () => {
 		// or if inline font-weight:bold is explicitly set on a span.
 		const range = selection.getRangeAt(0);
 		const node = range.startContainer;
-		const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as HTMLElement);
+		const el =
+			node.nodeType === Node.TEXT_NODE
+				? node.parentElement
+				: (node as HTMLElement);
 
-		const hasBoldAncestor = !!el?.closest("b, strong") ||
+		const hasBoldAncestor =
+			!!el?.closest("b, strong") ||
 			(el as HTMLElement)?.style?.fontWeight === "bold" ||
 			(el as HTMLElement)?.style?.fontWeight === "700";
 
-		const hasItalicAncestor = !!el?.closest("i, em") ||
+		const hasItalicAncestor =
+			!!el?.closest("i, em") ||
 			(el as HTMLElement)?.style?.fontStyle === "italic";
 
 		setIsBold(hasBoldAncestor);
@@ -209,8 +214,11 @@ const HeadingInput = () => {
 			>
 				{/* Bold Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold ? "text-[var(--catalogue-primary)] bg-white/90" : "text-foreground/70"
-						}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isBold
+							? "text-[var(--catalogue-primary)] bg-white/90"
+							: "text-foreground/70"
+					}`}
 					onClick={toggleBold}
 					onMouseDown={(e) => e.preventDefault()}
 					title="Bold"
@@ -222,8 +230,11 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic ? "text-[var(--catalogue-primary)] bg-white/90" : "text-foreground/70"
-						}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isItalic
+							? "text-[var(--catalogue-primary)] bg-white/90"
+							: "text-foreground/70"
+					}`}
 					onClick={toggleItalic}
 					onMouseDown={(e) => e.preventDefault()}
 					title="Italic"

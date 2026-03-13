@@ -100,7 +100,7 @@ const Catalogue = ({
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(item.heading || "");
-		} catch (e) { }
+		} catch (e) {}
 
 		const titleText = item.metadata?.title || item.name || plainHeading;
 		if (titleText) {
@@ -177,11 +177,7 @@ const Catalogue = ({
 					<Overlay emoji={item.appearance.overlay.icon} />
 				)}
 
-				<CatalogueHeader
-					data={item}
-					logo={logoSrc}
-					type={item.header.type}
-				/>
+				<CatalogueHeader data={item} logo={logoSrc} type={item.header.type} />
 
 				<main
 					aria-label="Service catalogue content"
@@ -263,11 +259,7 @@ const Catalogue = ({
 					</section>
 				</main>
 
-				<CatalogueFooter
-					data={item}
-					logo={logoSrc}
-					type={item.footer.type}
-				/>
+				<CatalogueFooter data={item} logo={logoSrc} type={item.footer.type} />
 
 				{userData && (
 					<AddContentModal

@@ -43,7 +43,7 @@ export const defaultCatalogueData = {
 	},
 	header: {
 		type: "default",
-		logoSize:{
+		logoSize: {
 			width: 160,
 			height: 160,
 		},
@@ -57,7 +57,7 @@ export const defaultCatalogueData = {
 	},
 	footer: {
 		type: "default",
-		logoSize:{
+		logoSize: {
 			width: 160,
 			height: 160,
 		},

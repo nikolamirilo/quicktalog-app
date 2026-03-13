@@ -241,7 +241,7 @@ const AddContentModal = ({
 	return (
 		<>
 			<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-				<AlertDialogContent className="w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-[90vh] md:h-[600px] lg:h-[650px] font-body text-product-foreground">
+				<AlertDialogContent className="z-[1100] w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-fit md:h-[600px] lg:h-[650px] font-body text-product-foreground">
 					<div className="w-full md:w-1/4 bg-gray-200/50 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col">
 						<div className="p-6 pb-4 flex justify-between items-start">
 							<div>
@@ -266,11 +266,11 @@ const AddContentModal = ({
 					</div>
 
 					{/* Right Content - 3/4 width */}
-					<div className="flex-1 flex flex-col min-w-0 px-4 ">
+					<div className="flex-1 flex flex-col min-w-0 p-4 md:p-6">
 						{/* Header */}
-						<div className="py-2 border-gray-100 flex justify-between items-start">
+						<div className="pt-0 pb-4 border-gray-100 flex justify-between items-start">
 							<div>
-								<h3 className="text-lg font-semibold text-product-foreground capitalize">
+								<h3 className="text-xl text-product-foreground font-semibold capitalize">
 									{selectedOption.split("_").join(" ")}
 								</h3>
 								<p className="text-sm text-gray-700 mt-1">
@@ -303,7 +303,7 @@ const AddContentModal = ({
 							</Button>
 						</div>
 						<div className="mx-auto w-full border-t border-gray-300/70" />
-						<div className="flex-1 overflow-y-auto mt-4 px-1 pb-8 flex flex-col">
+						<div className="flex-1 overflow-y-auto mt-4 pb-8 flex flex-col">
 							<div className="max-w-2xl w-full">
 								{locked ? (
 									<UpgradePlanCTA

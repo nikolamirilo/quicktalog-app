@@ -11,7 +11,7 @@ const LimitsOverlay = ({
 }: {
 	size?: "sm" | "default" | "lg";
 }) => {
-	const { catalogue } = useCatalogueContext()
+	const { catalogue } = useCatalogueContext();
 	const paragraphSize =
 		size === "sm" ? "text-sm" : size === "default" ? "text-base" : "text-lg";
 	const headingSize =
@@ -20,17 +20,17 @@ const LimitsOverlay = ({
 		size === "sm" ? "w-8 h-8" : size === "default" ? "w-10 h-10" : "w-12 h-12";
 	const gapSize =
 		size === "sm" ? "gap-2" : size === "default" ? "gap-3" : "gap-4";
-	const router = useRouter()
+	const router = useRouter();
 	async function handleUpgrade() {
-		const promise = updateCatalogue(catalogue)
+		const promise = updateCatalogue(catalogue);
 		toast.promise(promise, {
 			loading: "Saving changes...",
 			success: "Changes saved successfully",
 			error: (err) => "Error occured" + err,
 			finally: () => {
-				router.push("/pricing")
-			}
-		})
+				router.push("/pricing");
+			},
+		});
 	}
 	return (
 		<div
@@ -45,8 +45,9 @@ const LimitsOverlay = ({
 			>
 				Upgrade your plan to unlock this feature.
 			</p>
-			<Button size={size} onClick={handleUpgrade}>Upgrade Now</Button>
-
+			<Button size={size} onClick={handleUpgrade}>
+				Upgrade Now
+			</Button>
 		</div>
 	);
 };

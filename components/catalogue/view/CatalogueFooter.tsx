@@ -123,7 +123,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 				</div>
 
 				<div className="border-t py-6 border-catalogue-navigation-border">
-					<div className={`flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-catalogue-navigation-text ${data.footer.newsletter ? "md:justify-between" : "md:justify-center"}`}>
+					<div
+						className={`flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-catalogue-navigation-text ${data.footer.newsletter ? "md:justify-between" : "md:justify-center"}`}
+					>
 						<span>
 							© {new Date().getFullYear()}{" "}
 							{type === "default"

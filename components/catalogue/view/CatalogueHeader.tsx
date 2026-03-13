@@ -158,7 +158,11 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 								alt={`${companyName} logo`}
 								className="rounded-sm object-contain object-left"
 								style={{
-									width: activeData?.header?.logoSize?.width ? `${activeData.header.logoSize.width}px` : (type === "default" ? "120px" : "100px"),
+									width: activeData?.header?.logoSize?.width
+										? `${activeData.header.logoSize.width}px`
+										: type === "default"
+											? "120px"
+											: "100px",
 									height: "auto",
 									maxWidth: "100%",
 								}}

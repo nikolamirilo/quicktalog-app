@@ -42,7 +42,10 @@ const CreateCatalogueButton = ({
 		if (userData) {
 			try {
 				console.log("Creating catalog with data:", catalogue);
-				const result = await createCatalogue(catalogue, userData?.currentPlan?.features?.branding);
+				const result = await createCatalogue(
+					catalogue,
+					userData?.currentPlan?.features?.branding,
+				);
 
 				if (result.success) {
 					console.log("Catalogue created successfully!", result.data);
