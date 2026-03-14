@@ -1,7 +1,11 @@
 "use client";
-import { defaultCatalogueData } from "@/constants/catalogue";
 import { useUser } from "@clerk/nextjs";
-import { Catalogue, ContentBlock, Item } from "@quicktalog/common";
+import {
+	Catalogue,
+	ContentBlock,
+	defaultCatalogueData,
+	Item,
+} from "@quicktalog/common";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface CatalogueContextType {
@@ -49,7 +53,7 @@ export const CatalogueContextProvider = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const [catalogue, setCatalogue] = useState<Catalogue>(defaultCatalogueData);
+	const [catalogue, setCatalogue] = useState<Omit<Catalogue, "id">>(defaultCatalogueData);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { user } = useUser();
 
@@ -283,7 +287,7 @@ export const CatalogueContextProvider = ({
 	return (
 		<CatalogueContext.Provider
 			value={{
-				catalogue,
+				catalogue: catalogue as Catalogue,
 				resetCatalogue,
 				updateCatalogue,
 				updateAppearance,

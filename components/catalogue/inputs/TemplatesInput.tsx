@@ -11,7 +11,6 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { defaultCatalogueData } from "@/constants/catalogue";
 import {
 	placeholderTemplate,
 	standardTemplate,
@@ -19,7 +18,7 @@ import {
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/helpers/client";
 import { updateCatalogue as updateCatalogueAction } from "@/server_actions/catalogue";
-import { ContentBlock } from "@quicktalog/common";
+import { ContentBlock, defaultCatalogueData } from "@quicktalog/common";
 import { Layout, Plus, Zap } from "lucide-react";
 import { useState } from "react";
 

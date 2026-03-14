@@ -12,11 +12,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { BUSINESS_TYPES } from "@/constants/catalogue";
 import { LANGUAGE_OPTIONS } from "@/constants/ocr";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
 import type { GeneralInformationInputProps } from "@/types/components";
-import { generateUniqueSlug } from "@quicktalog/common";
+import { BUSINESS_TYPES, generateUniqueSlug } from "@quicktalog/common";
 import { AlertCircle, CheckCircle, FileText, Link2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { FiInfo } from "react-icons/fi";

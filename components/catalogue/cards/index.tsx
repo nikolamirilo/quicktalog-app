@@ -1,7 +1,6 @@
 "use client";
 import ItemDetailModal from "@/components/catalogue/modals/ItemDetailModal";
-import { DEFAULT_IMAGE } from "@/constants/catalogue";
-import { Item } from "@quicktalog/common";
+import { DEFAULT_IMAGE, Item } from "@quicktalog/common";
 import { useMemo, useState } from "react";
 import CarouselCard from "./CarouselCard";
 import SideImageCard from "./SideImageCard";

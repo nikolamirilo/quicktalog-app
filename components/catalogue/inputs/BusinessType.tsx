@@ -6,8 +6,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { BUSINESS_TYPES } from "@/constants/catalogue";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { BUSINESS_TYPES } from "@quicktalog/common";
 
 const BusinessType = ({ disabled = false }: { disabled?: boolean }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext();

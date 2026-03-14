@@ -1,10 +1,10 @@
 "use server";
-import { defaultCatalogueData } from "@/constants/catalogue";
 import { revalidateData } from "@/helpers/server";
 import { drizzleClient } from "@/utils/drizzle";
 import { redis } from "@/utils/redis";
 import {
 	Catalogue,
+	defaultCatalogueData,
 	generateUniqueSlug,
 	schema,
 	Status,

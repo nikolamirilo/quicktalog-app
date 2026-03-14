@@ -1,4 +1,4 @@
-import { DEFAULT_IMAGE } from "./catalogue";
+import { DEFAULT_IMAGE } from "@quicktalog/common";
 
 export const standardTemplate = [
 	{

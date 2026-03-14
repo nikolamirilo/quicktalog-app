@@ -22,10 +22,9 @@ export default function OCRBuilder({
 }) {
 	const [formData, setFormData] = useState({
 		name: "",
-		theme: "theme-advent-1",
+		theme: "theme-monochrome",
 		heading: "",
 		currency: "",
-		description: "",
 		language: "eng",
 		businessType: "restaurant",
 	});
