@@ -53,7 +53,8 @@ export const CatalogueContextProvider = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const [catalogue, setCatalogue] = useState<Omit<Catalogue, "id">>(defaultCatalogueData);
+	const [catalogue, setCatalogue] =
+		useState<Omit<Catalogue, "id">>(defaultCatalogueData);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { user } = useUser();
 

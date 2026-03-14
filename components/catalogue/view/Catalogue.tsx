@@ -100,7 +100,7 @@ const Catalogue = ({
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(item.heading || "");
-		} catch (e) { }
+		} catch (e) {}
 
 		const titleText = item.metadata?.title || item.name || plainHeading;
 		if (titleText) {
