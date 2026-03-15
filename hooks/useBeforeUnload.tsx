@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 import InformModal from "@/components/modals/InformModal";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export const NavigationGuard = ({
 	isDirty,
@@ -126,13 +126,13 @@ export const NavigationGuard = ({
 
 	return (
 		<InformModal
+			cancelText="Stay"
+			confirmText="Leave"
 			isOpen={isModalOpen}
 			message="You have unsaved changes. Are you sure you want to leave?"
 			onCancel={handleCancel}
 			onConfirm={handleConfirm}
 			title="Unsaved Changes"
-			confirmText="Leave"
-			cancelText="Stay"
 		/>
 	);
 };

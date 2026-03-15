@@ -1,6 +1,4 @@
 "use client";
-import CurrencySelect from "@/components/catalogue/inputs/CurrencySelect";
-import DescriptionEditor from "@/components/general/DescriptionEditor";
 import InformModal from "@/components/modals/InformModal";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { CURRENCIES } from "@/constants";
 import { LANGUAGE_OPTIONS } from "@/constants/ocr";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
 import type { GeneralInformationInputProps } from "@/types/components";
@@ -34,9 +33,6 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 	const [currentField, setCurrentField] = useState("");
 	const [previewUrl, setPreviewUrl] = useState("");
 
-	const handleCurrencyChange = (value: string) => {
-		setFormData((prev: any) => ({ ...prev, currency: value }));
-	};
 	const { handleNameChange, nameExists } = useCatalogueName({
 		initialName: "name",
 		type: "create",
@@ -118,16 +114,15 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 						</div>
 						<div className="relative">
 							<Input
-								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
-									type === "create" && errors?.name
-										? "border-red-500 focus:border-red-500"
-										: formData.name &&
-												!nameExists &&
-												touched?.name &&
-												type === "create"
-											? "border-green-500 focus:border-green-500"
-											: ""
-								}`}
+								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${type === "create" && errors?.name
+									? "border-red-500 focus:border-red-500"
+									: formData.name &&
+										!nameExists &&
+										touched?.name &&
+										type === "create"
+										? "border-green-500 focus:border-green-500"
+										: ""
+									}`}
 								disabled={type === "edit" ? true : false}
 								id="name"
 								name="name"
@@ -229,7 +224,33 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 
 				{/* Row 3: Currency & Business Type */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<CurrencySelect disabled={type === "edit" ? true : false} />
+					<div className="space-y-2">
+						<Label
+							className="text-sm font-medium text-product-foreground"
+							htmlFor="currency"
+						>
+							Currency
+						</Label>
+						<Select
+							disabled={type === "edit" ? true : false}
+							onValueChange={(value) => setFormData({ ...formData, currency: value })}
+							value={formData.currency}
+						>
+							<SelectTrigger
+								className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
+								id="currency"
+							>
+								<SelectValue placeholder="Select currency" />
+							</SelectTrigger>
+							<SelectContent>
+								{CURRENCIES.map((curr) => (
+									<SelectItem key={curr.value} value={curr.value}>
+										{curr.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
 
 					<div className="flex flex-col gap-3">
 						<Label
@@ -260,40 +281,25 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 						)}
 					</div>
 				</div>
-
-				{/* Row 4: Description */}
-				<div className="flex flex-col gap-3">
-					<Label
-						className="text-product-foreground font-medium font-body"
-						htmlFor="description"
-					>
-						Catalogue Description
-					</Label>
-					<DescriptionEditor
-						className="flex-1 border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
-						name="description"
-						onChange={handleInputChange}
-						placeholder="Add a catchy intro for your catalogue"
-						value={formData.description}
-					/>
-				</div>
 			</div>
 
-			{type === "create" && formData.name != "" ? (
-				<div className="mt-2 p-3 bg-gray-100 border border-gray-200 rounded-lg">
-					<div className="flex items-start gap-2">
-						<Link2 className="text-product-primary" size={25} />
-						<div className="flex-1 min-w-0">
-							<p className="text-sm text-product-foreground font-medium mb-1">
-								Your catalogue URL will be:
-							</p>
-							<p className="text-sm text-product-primary font-mono break-all">
-								{previewUrl}
-							</p>
+			{
+				type === "create" && formData.name != "" ? (
+					<div className="mt-2 p-3 bg-gray-100 border border-gray-200 rounded-lg">
+						<div className="flex items-start gap-2">
+							<Link2 className="text-product-primary" size={25} />
+							<div className="flex-1 min-w-0">
+								<p className="text-sm text-product-foreground font-medium mb-1">
+									Your catalogue URL will be:
+								</p>
+								<p className="text-sm text-product-primary font-mono break-all">
+									{previewUrl}
+								</p>
+							</div>
 						</div>
 					</div>
-				</div>
-			) : null}
+				) : null
+			}
 			<InformModal
 				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
@@ -303,7 +309,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 					.replace(/-/g, " ")
 					.replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
 			/>
-		</Card>
+		</Card >
 	);
 };
 

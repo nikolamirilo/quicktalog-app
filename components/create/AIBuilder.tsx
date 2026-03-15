@@ -29,9 +29,9 @@ export default function AIBuilder({
 		name: "",
 		theme: "theme-monochrome",
 		heading: "",
-		currency: "",
+		currency: "EUR",
 		language: "eng",
-		businessType: "restaurant",
+		business_type: "restaurant",
 	});
 	const [shouldGenerateImages, setShouldGenerateImages] =
 		useState<boolean>(false);
@@ -62,8 +62,8 @@ export default function AIBuilder({
 		if (!formData.currency.trim()) newErrors.currency = "Currency is required";
 		if (!formData.theme.trim()) newErrors.theme = "Theme is required";
 		if (!formData.language.trim()) newErrors.language = "Language is required";
-		if (!formData.businessType.trim())
-			newErrors.businessType = "Business Type is required";
+		if (!formData.business_type.trim())
+			newErrors.business_type = "Business Type is required";
 		if (!prompt.trim()) newErrors.prompt = "Prompt is required";
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0 && !hasErrors;
@@ -71,7 +71,10 @@ export default function AIBuilder({
 
 	const handleSubmit = async (e: React.MouseEvent) => {
 		e.preventDefault();
-		if (!validate()) return;
+		if (!validate()) {
+			console.log("Validation failed", errors);
+			return;
+		}
 
 		if (!user || !user.id) {
 			console.log("Issue with fetching user data");

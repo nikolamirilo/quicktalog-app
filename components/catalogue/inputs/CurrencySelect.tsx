@@ -25,7 +25,7 @@ const CurrencySelect = ({ disabled = false }: { disabled?: boolean }) => {
 				value={catalogue.currency}
 			>
 				<SelectTrigger
-					className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
+					className="border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
 					id="currency"
 				>
 					<SelectValue placeholder="Select currency" />

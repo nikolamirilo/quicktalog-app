@@ -18,7 +18,6 @@ interface InformModalProps {
 	confirmText?: string;
 	cancelText?: string;
 	loading?: boolean;
-	type?: "default" | "consent";
 	image?: string;
 	imageAlt?: string;
 	icon?: React.ReactElement;
@@ -33,7 +32,6 @@ export default function InformModal({
 	confirmText = "Confirm",
 	cancelText = "Cancel",
 	loading = false,
-	type = "default",
 	image,
 	imageAlt = "Screenshot",
 	icon,

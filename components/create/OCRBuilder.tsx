@@ -24,9 +24,9 @@ export default function OCRBuilder({
 		name: "",
 		theme: "theme-monochrome",
 		heading: "",
-		currency: "",
+		currency: "EUR",
 		language: "eng",
-		businessType: "restaurant",
+		business_type: "restaurant",
 	});
 	const [extractedText, setExtractedText] = useState("");
 	const { user } = useUser();
@@ -66,8 +66,8 @@ export default function OCRBuilder({
 		if (!formData.language.trim()) {
 			newErrors.language = "Language is required";
 		}
-		if (!formData.businessType.trim()) {
-			newErrors.businessType = "Business Type is required";
+		if (!formData.business_type.trim()) {
+			newErrors.business_type = "Business Type is required";
 		}
 
 		setErrors(newErrors);

@@ -100,7 +100,7 @@ const Catalogue = ({
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(item.heading || "");
-		} catch (e) {}
+		} catch (e) { }
 
 		const titleText = item.metadata?.title || item.name || plainHeading;
 		if (titleText) {
@@ -194,13 +194,11 @@ const Catalogue = ({
 							<HeadingInput />
 						) : (
 							(() => {
-								// Only render if heading has content
 								if (!item.heading) return null;
-								// If heading is plain text (no HTML h1 tag), wrap with default large size
 								const isHtml = item.heading.includes("<h1");
 								let headingHtml = isHtml
 									? item.heading
-									: `<h1 class="text-3xl sm:text-5xl font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="large">${item.heading}</h1>`;
+									: `<h1 class="text-3xl sm:text-5xl font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] min-w-[60%] mx-auto" data-size="large">${item.heading}</h1>`;
 
 								// Polyfill older HTML strings that miss the padding fix for descenders
 								if (isHtml && !headingHtml.includes("pb-1 md:pb-2")) {
@@ -276,9 +274,9 @@ const Catalogue = ({
 				)}
 
 				<LimitsModal
+					currentPlan={userData?.currentPlan}
 					isOpen={showLimitsModal}
 					onClose={() => setShowLimitsModal(false)}
-					currentPlan={userData?.currentPlan}
 					requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
 					type="categories"
 				/>

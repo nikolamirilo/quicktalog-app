@@ -15,11 +15,11 @@ const AlertDialogOverlay = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
 	<AlertDialogPrimitive.Overlay
-		ref={ref}
 		className={cn(
 			"fixed inset-0 z-[105] bg-black/40  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 notranslate",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	/>
@@ -33,11 +33,11 @@ const AlertDialogContent = React.forwardRef<
 	<AlertDialogPortal>
 		<AlertDialogOverlay />
 		<AlertDialogPrimitive.Content
-			ref={ref}
 			className={cn(
 				"!z-[1100] fixed left-[50%] top-[45%] md:top-[50%] bg-product-background grid w-full max-w-lg translate-x-[-50%] translate-y-[-45%] md:translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg notranslate mx-auto",
 				className,
 			)}
+			ref={ref}
 			translate="no"
 			{...props}
 		>
@@ -60,7 +60,7 @@ const AlertDialogHeader = ({
 		translate="no"
 		{...props}
 	>
-		<span translate="no" className="notranslate">
+		<span className="notranslate" translate="no">
 			{children}
 		</span>
 	</div>
@@ -90,12 +90,12 @@ const AlertDialogTitle = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
 >(({ className, children, ...props }, ref) => (
 	<AlertDialogPrimitive.Title
-		ref={ref}
 		className={cn("text-lg font-semibold notranslate", className)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
-		<span translate="no" className="notranslate">
+		<span className="notranslate" translate="no">
 			{children}
 		</span>
 	</AlertDialogPrimitive.Title>
@@ -107,12 +107,12 @@ const AlertDialogDescription = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, children, ...props }, ref) => (
 	<AlertDialogPrimitive.Description
-		ref={ref}
 		className={cn("text-sm text-muted-foreground notranslate", className)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
-		<span translate="no" className="notranslate">
+		<span className="notranslate" translate="no">
 			{children}
 		</span>
 	</AlertDialogPrimitive.Description>
@@ -125,8 +125,8 @@ const AlertDialogAction = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, children, ...props }, ref) => (
 	<AlertDialogPrimitive.Action
-		ref={ref}
 		className={cn(buttonVariants(), "notranslate", className)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
@@ -140,12 +140,12 @@ const AlertDialogCancel = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
 >(({ className, children, ...props }, ref) => (
 	<AlertDialogPrimitive.Cancel
-		ref={ref}
 		className={cn(
 			buttonVariants({ variant: "outline" }),
 			"mt-2 sm:mt-0 notranslate",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
@@ -165,5 +165,6 @@ export {
 	AlertDialogOverlay,
 	AlertDialogPortal,
 	AlertDialogTitle,
-	AlertDialogTrigger,
+	AlertDialogTrigger
 };
+
