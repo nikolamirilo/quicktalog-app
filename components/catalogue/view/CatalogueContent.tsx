@@ -365,6 +365,7 @@ const CatalogueContent = ({
 			})}
 
 			<ItemModal
+				checkItemLimits={checkItemLimits}
 				currency={currency}
 				initialItem={activeEditingItem ? activeEditingItem.item : undefined}
 				isOpen={isItemModalOpen}
@@ -376,13 +377,12 @@ const CatalogueContent = ({
 					setActiveBlockLayout(null);
 				}}
 				onSave={handleSaveItem}
-				checkItemLimits={checkItemLimits}
 				onShowLimits={() => setShowLimitsModal(true)}
 			/>
 			<LimitsModal
+				currentPlan={userData?.currentPlan}
 				isOpen={showLimitsModal}
 				onClose={() => setShowLimitsModal(false)}
-				currentPlan={userData?.currentPlan}
 				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
 				type="items"
 			/>

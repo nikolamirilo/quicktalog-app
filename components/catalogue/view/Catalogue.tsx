@@ -1,61 +1,25 @@
 "use client";
 import AppearanceOptions from "@/components/general/AppearanceOptions";
 import LimitsModal from "@/components/modals/LimitsModal";
+import {
+	contentFontSizeMap,
+	fontFamilyMap,
+	shadowMap,
+	titleFontSizeMap,
+} from "@/constants/builder";
 import { htmlToText } from "@/helpers/client";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes, tiers } from "@quicktalog/common";
 import { useEffect, useState } from "react";
-import HtmlContent from "../../general/HtmlContent";
 import Overlay from "../../general/Overlay";
 import BuilderSidebar from "../inputs/BuilderSidebar";
 import ContentBlockButton from "../inputs/ContentBlockButton";
-import HeadingInput from "../inputs/HeadingInput";
 import AddContentModal from "../modals/AddContentModal";
 import SelectTemplateModal from "../modals/SelectTemplateModal";
 import CatalogueContent from "./CatalogueContent";
 import CatalogueFooter from "./CatalogueFooter";
 import CatalogueHeader from "./CatalogueHeader";
-
-// Map font family keys to CSS variable values
-export const fontFamilyMap: Record<string, string> = {
-	inter: "var(--font-inter)",
-	arial: "Arial, sans-serif",
-	lora: "var(--font-lora-regular)",
-	playfair: "var(--font-playfair-display)",
-	nunito: "var(--font-nunito)",
-	crimson: "var(--font-crimson-text)",
-	poppins: "var(--font-poppins)",
-};
-
-// Map font size keys to responsive CSS clamp values
-export const contentFontSizeMap: Record<string, string> = {
-	small: "clamp(0.75rem, 0.7rem + 0.15vw, 0.875rem)",
-	medium: "clamp(0.875rem, 0.8rem + 0.25vw, 1rem)",
-	large: "clamp(1rem, 0.9rem + 0.5vw, 1.125rem)",
-};
-
-// Map font size keys to responsive CSS clamp values for titles
-export const titleFontSizeMap: Record<string, string> = {
-	small: "clamp(1rem, 0.9rem + 0.25vw, 1.125rem)",
-	medium: "clamp(1.125rem, 1rem + 0.5vw, 1.25rem)",
-	large: "clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem)",
-};
-
-// Map shadow keys to CSS values
-export const shadowMap: Record<string, string> = {
-	none: "none",
-	low: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-	medium: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-	high: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
-};
-
-// Map animation keys to duration values
-const animationMap: Record<string, string> = {
-	none: "0s",
-	minimal: "0.15s",
-	medium: "0.3s",
-	full: "0.5s",
-};
+import Heading from "./components/Heading";
 
 const Catalogue = ({
 	item,
@@ -78,15 +42,12 @@ const Catalogue = ({
 			theme.key === item.appearance.theme.name && theme.type === "dark",
 	);
 
-	// Get the font family CSS value from the map
 	const fontFamily =
 		fontFamilyMap[item.appearance.style.fontFamily] || fontFamilyMap.inter;
 
-	// Get other style values
 	const contentFontSizeKey = item.appearance.style.contentFontSize || "medium";
 	const contentFontSize = contentFontSizeMap[contentFontSizeKey];
 	const titleFontSize = titleFontSizeMap[contentFontSizeKey];
-	// Default to 12 if undefined
 	const borderRadius = `${item.appearance.style.borderRadius ?? 12}px`;
 	const boxShadow = shadowMap[item.appearance.style.shadow || "low"];
 
@@ -100,7 +61,9 @@ const Catalogue = ({
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(item.heading || "");
-		} catch (e) { }
+		} catch (e) {
+			console.log("Error occured: ", e);
+		}
 
 		const titleText = item.metadata?.title || item.name || plainHeading;
 		if (titleText) {
@@ -190,34 +153,7 @@ const Catalogue = ({
 						aria-labelledby={item.heading}
 						className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0 w-full"
 					>
-						{type === "edit" ? (
-							<HeadingInput />
-						) : (
-							(() => {
-								if (!item.heading) return null;
-								const isHtml = item.heading.includes("<h1");
-								let headingHtml = isHtml
-									? item.heading
-									: `<h1 class="text-3xl sm:text-5xl font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] min-w-[60%] mx-auto" data-size="large">${item.heading}</h1>`;
-
-								// Polyfill older HTML strings that miss the padding fix for descenders
-								if (isHtml && !headingHtml.includes("pb-1 md:pb-2")) {
-									headingHtml = headingHtml.replace(
-										'class="',
-										'class="pb-1 md:pb-2 ',
-									);
-								}
-								// Polyfill older HTML strings that miss the max-width fix
-								if (isHtml && !headingHtml.includes("max-w-[94%]")) {
-									headingHtml = headingHtml.replace(
-										'class="',
-										'class="max-w-[94%] md:max-w-[60%] lg:max-w-[50%] xl:[max-w-[40%]] mx-auto ',
-									);
-								}
-
-								return <HtmlContent className="" html={headingHtml} />;
-							})()
-						)}
+						<Heading item={item} type={type} />
 						{type === "demo" && (
 							<div className="flex flex-col justify-center items-center w-full mt-6">
 								<AppearanceOptions />

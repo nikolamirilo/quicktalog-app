@@ -192,6 +192,15 @@ const HeadingInput = () => {
 		}
 	}, []);
 
+	// Handle touch events for iOS
+	const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+		// Prevent default to avoid issues with contentEditable on iOS
+		e.preventDefault();
+		if (editorRef.current) {
+			editorRef.current.focus();
+		}
+	}, []);
+
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
 		// Reset bold/italic — let updateSelection reflect actual cursor state
@@ -204,9 +213,9 @@ const HeadingInput = () => {
 	return (
 		<div
 			className="flex flex-col items-center w-full mb-4 px-0"
-			ref={containerRef}
-			onFocus={handleFocus}
 			onBlur={handleBlur}
+			onFocus={handleFocus}
+			ref={containerRef}
 		>
 			{/* Formatting Toolbar */}
 			<div
@@ -221,9 +230,9 @@ const HeadingInput = () => {
 					}`}
 					onClick={toggleBold}
 					onMouseDown={(e) => e.preventDefault()}
+					tabIndex={-1}
 					title="Bold"
 					type="button"
-					tabIndex={-1}
 				>
 					<HiMiniBold className="w-5 h-5" />
 				</button>
@@ -237,9 +246,9 @@ const HeadingInput = () => {
 					}`}
 					onClick={toggleItalic}
 					onMouseDown={(e) => e.preventDefault()}
+					tabIndex={-1}
 					title="Italic"
 					type="button"
-					tabIndex={-1}
 				>
 					<FiItalic className="w-5 h-5" />
 				</button>
@@ -249,9 +258,9 @@ const HeadingInput = () => {
 
 				{/* Font Size Dropdown */}
 				<Select
+					onOpenChange={setIsSelectOpen}
 					onValueChange={handleSizeChange}
 					value={headingSize}
-					onOpenChange={setIsSelectOpen}
 				>
 					<SelectTrigger className="min-w-[110px] sm:min-w-[130px] w-fit h-8 text-xs sm:text-sm border-0 bg-transparent text-foreground/70 hover:text-primary hover:bg-primary/10 cursor-pointer focus:ring-0 focus:ring-offset-0 transition-all duration-200">
 						<SelectValue />
@@ -299,16 +308,25 @@ const HeadingInput = () => {
 					mx-auto
 					line-clamp-3 break-words transition-all
 					relative
+					-webkit-user-select: text
+					user-select: text
 					${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none" : ""}
 				`}
 				contentEditable
 				data-placeholder="+ Add Heading"
+				enterKeyHint="done"
+				inputMode="text"
+				onClick={handleFocus}
 				onInput={handleInput}
 				onKeyDown={handleKeyDown}
 				onKeyUp={updateSelection}
 				onMouseUp={updateSelection}
 				onSelect={updateSelection}
+				onTouchEnd={handleTouchEnd}
+				// iOS Safari fixes
 				ref={editorRef}
+				style={{ WebkitUserSelect: "text", userSelect: "text" }}
+				// Prevent keyboard from appearing on touch but allow focus
 				suppressContentEditableWarning
 			/>
 		</div>

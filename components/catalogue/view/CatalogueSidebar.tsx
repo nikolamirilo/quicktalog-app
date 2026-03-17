@@ -44,16 +44,16 @@ const CatalogueSidebar: React.FC<CatalogueSidebarProps> = ({
 	inlineStyles,
 }) => {
 	return (
-		<Sheet open={isOpen} onOpenChange={onOpenChange}>
+		<Sheet onOpenChange={onOpenChange} open={isOpen}>
 			<SheetTrigger asChild>
 				<Menu className="w-8 h-8" />
 			</SheetTrigger>
 
 			<SheetContent
-				side="right"
-				style={inlineStyles}
 				className={`z-[100] w-[300px] sm:w-[400px] !bg-none !bg-catalogue-navigation-background !text-catalogue-navigation-text !border-catalogue-card-border p-6 flex flex-col gap-6 ${themeClass}`}
 				closeClassName="!right-6 !top-6 !text-catalogue-navigation-text hover:!text-catalogue-navigation-text/80 outline-none border-none focus:outline-none focus:ring-0 focus:ring-offset-0 [&>svg]:w-6 [&>svg]:h-6"
+				side="right"
+				style={inlineStyles}
 			>
 				<SheetTitle className="sr-only">Mobile Menu</SheetTitle>
 				<div className="flex flex-col gap-4 mt-8">
@@ -82,9 +82,9 @@ const CatalogueSidebar: React.FC<CatalogueSidebarProps> = ({
 						<Button
 							asChild
 							className="w-full font-heading hover:!bg-primary/10 hover:!text-primary tracking-heading transition-all duration-200 hover:scale-105 border !text-foreground !border-primary footer-cta-button !bg-catalogue-card-background"
+							onClick={() => onOpenChange(false)}
 							size="lg"
 							variant="outline"
-							onClick={() => onOpenChange(false)}
 						>
 							<SmartLink
 								aria-label={ctaProps.ariaLabel}

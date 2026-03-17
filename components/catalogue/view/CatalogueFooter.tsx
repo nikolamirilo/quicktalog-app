@@ -94,14 +94,14 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 				<div className="py-12 sm:py-16">
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
 						<Brand
-							type={type}
 							activeData={activeData}
-							logo={logo}
 							effectiveSocials={effectiveSocials}
+							logo={logo}
+							type={type}
 						/>
 
 						{(type === "default" || activeData?.contact?.email) && (
-							<Contact type={type} activeData={activeData} />
+							<Contact activeData={activeData} type={type} />
 						)}
 
 						<div className="space-y-6">
@@ -133,16 +133,16 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 								: activeData?.legal?.legalName || "Your Company"}
 							. All rights reserved.
 						</span>
-						<LegalLinks type={type} activeData={activeData} />
+						<LegalLinks activeData={activeData} type={type} />
 
 						{type === "custom" && activeData?.footer.newsletter && (
 							<Newsletter
 								handleNewsletterSubmit={handleNewsletterSubmit}
+								isSubmitting={isSubmitting}
 								newsletterEmail={newsletterEmail}
 								setNewsletterEmail={setNewsletterEmail}
-								isSubmitting={isSubmitting}
-								submitSuccess={submitSuccess}
 								submitError={submitError}
+								submitSuccess={submitSuccess}
 							/>
 						)}
 

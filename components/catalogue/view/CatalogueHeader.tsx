@@ -1,17 +1,17 @@
 "use client";
 import SmartLink from "@/components/general/SmartLink";
 import { Button } from "@/components/ui/button";
-import { useCatalogueContext } from "@/context/CatalogueContext";
-import { CatalogueHeaderProps } from "@/types/components";
-import Link from "next/link";
-import React, { useState } from "react";
-import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
 import {
 	contentFontSizeMap,
 	fontFamilyMap,
 	shadowMap,
 	titleFontSizeMap,
-} from "./Catalogue";
+} from "@/constants/builder";
+import { useCatalogueContext } from "@/context/CatalogueContext";
+import { CatalogueHeaderProps } from "@/types/components";
+import Link from "next/link";
+import React, { useState } from "react";
+import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
 import CatalogueSidebar from "./CatalogueSidebar";
 
 const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
@@ -157,6 +157,8 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 							<img
 								alt={`${companyName} logo`}
 								className="rounded-sm object-contain object-left"
+								fetchPriority="high"
+								src={logo ?? "/logo.svg"}
 								style={{
 									width: activeData?.header?.logoSize?.width
 										? `${activeData.header.logoSize.width}px`
@@ -166,8 +168,6 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 									height: "auto",
 									maxWidth: "100%",
 								}}
-								fetchPriority="high"
-								src={logo ?? "/logo.svg"}
 							/>
 						</Link>
 					</div>
@@ -220,12 +220,12 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					{/* Mobile Navigation (Hamburger) */}
 					<div className="md:hidden flex items-center">
 						<CatalogueSidebar
-							isOpen={isMobileMenuOpen}
-							onOpenChange={setIsMobileMenuOpen}
 							contactLinks={contactLinks}
 							ctaProps={ctaProps}
-							themeClass={themeClass}
 							inlineStyles={inlineStyles}
+							isOpen={isMobileMenuOpen}
+							onOpenChange={setIsMobileMenuOpen}
+							themeClass={themeClass}
 						/>
 					</div>
 				</div>

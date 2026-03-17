@@ -114,15 +114,16 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 						</div>
 						<div className="relative">
 							<Input
-								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${type === "create" && errors?.name
-									? "border-red-500 focus:border-red-500"
-									: formData.name &&
-										!nameExists &&
-										touched?.name &&
-										type === "create"
-										? "border-green-500 focus:border-green-500"
-										: ""
-									}`}
+								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
+									type === "create" && errors?.name
+										? "border-red-500 focus:border-red-500"
+										: formData.name &&
+												!nameExists &&
+												touched?.name &&
+												type === "create"
+											? "border-green-500 focus:border-green-500"
+											: ""
+								}`}
 								disabled={type === "edit" ? true : false}
 								id="name"
 								name="name"
@@ -233,7 +234,9 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 						</Label>
 						<Select
 							disabled={type === "edit" ? true : false}
-							onValueChange={(value) => setFormData({ ...formData, currency: value })}
+							onValueChange={(value) =>
+								setFormData({ ...formData, currency: value })
+							}
 							value={formData.currency}
 						>
 							<SelectTrigger
@@ -283,23 +286,21 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 				</div>
 			</div>
 
-			{
-				type === "create" && formData.name != "" ? (
-					<div className="mt-2 p-3 bg-gray-100 border border-gray-200 rounded-lg">
-						<div className="flex items-start gap-2">
-							<Link2 className="text-product-primary" size={25} />
-							<div className="flex-1 min-w-0">
-								<p className="text-sm text-product-foreground font-medium mb-1">
-									Your catalogue URL will be:
-								</p>
-								<p className="text-sm text-product-primary font-mono break-all">
-									{previewUrl}
-								</p>
-							</div>
+			{type === "create" && formData.name != "" ? (
+				<div className="mt-2 p-3 bg-gray-100 border border-gray-200 rounded-lg">
+					<div className="flex items-start gap-2">
+						<Link2 className="text-product-primary" size={25} />
+						<div className="flex-1 min-w-0">
+							<p className="text-sm text-product-foreground font-medium mb-1">
+								Your catalogue URL will be:
+							</p>
+							<p className="text-sm text-product-primary font-mono break-all">
+								{previewUrl}
+							</p>
 						</div>
 					</div>
-				) : null
-			}
+				</div>
+			) : null}
 			<InformModal
 				confirmText="Got it!"
 				isOpen={isInfoModalOpen}
@@ -309,7 +310,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 					.replace(/-/g, " ")
 					.replace(/\b\w/g, (l) => l.toUpperCase())} Explained`}
 			/>
-		</Card >
+		</Card>
 	);
 };
 

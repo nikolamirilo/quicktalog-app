@@ -1,5 +1,9 @@
 "use server";
-import { revalidateData } from "@/helpers/server";
+import {
+	revalidateAfterCatalogueChange,
+	revalidateAllCatalogues,
+	revalidateData,
+} from "@/helpers/server";
 import { drizzleClient } from "@/utils/drizzle";
 import { redis } from "@/utils/redis";
 import {
@@ -17,7 +21,7 @@ export async function deleteItem(name: string): Promise<boolean> {
 	try {
 		await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));
 		await redis.del(name);
-		await revalidateData();
+		await revalidateAfterCatalogueChange(name);
 		return true;
 	} catch (err) {
 		console.error("Unexpected error while deleting service catalogue:", err);
@@ -28,7 +32,7 @@ export async function deleteItem(name: string): Promise<boolean> {
 export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 	try {
 		await drizzleClient.delete(catalogues).where(inArray(catalogues.id, ids));
-		await revalidateData();
+		await revalidateAllCatalogues();
 		return true;
 	} catch (err) {
 		console.error("Unexpected error while deleting catalogues:", err);

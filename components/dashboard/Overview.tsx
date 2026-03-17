@@ -61,10 +61,14 @@ const Overview = ({
 
 	async function confirmDelete() {
 		if (itemToDelete) {
-			await deleteItem(itemToDelete);
-			await refreshAll();
-			resetCatalogue();
-			router.refresh();
+			const success = await deleteItem(itemToDelete);
+			if (success) {
+				await refreshAll();
+				resetCatalogue();
+				router.refresh();
+			} else {
+				alert("Failed to delete catalogue. Please try again.");
+			}
 			setItemToDelete(null);
 			setIsModalOpen(false);
 		}

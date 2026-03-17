@@ -106,15 +106,20 @@ export default function TemplatesInput({
 
 					return (
 						<div
-							key={template.id}
-							onClick={() => setSelectedId(template.id)}
 							className={cn(
-								"group relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2",
+								"group relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2 touch-manipulation",
 								isSelected
 									? "border-product-primary bg-product-primary/5 shadow-product-shadow ring-1 ring-product-primary"
 									: "border-product-border bg-product-background hover:border-product-primary/50 hover:shadow-lg hover:scale-[1.01]",
 								isScratch && !isSelected && "border-dashed border-gray-300",
 							)}
+							key={template.id}
+							onClick={() => setSelectedId(template.id)}
+							onTouchEnd={(e) => {
+								// Prevent ghost click on iOS
+								e.preventDefault();
+								setSelectedId(template.id);
+							}}
 						>
 							{template.badge && (
 								<span className="bg-product-primary text-catalogue-button-text text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm absolute top-2 right-2 sm:top-3 sm:right-3 z-20">
@@ -143,9 +148,9 @@ export default function TemplatesInput({
 									) : (
 										<div className="relative w-10/12 h-full flex items-center justify-center">
 											<img
-												src={template?.image}
 												alt={template.title}
 												className="object-contain"
+												src={template?.image}
 											/>
 										</div>
 									)}
@@ -159,7 +164,7 @@ export default function TemplatesInput({
 									{template.details.length > 0 && (
 										<div className="flex items-center justify-center gap-3 text-xs text-gray-500 font-semibold">
 											{template.details.map((detail, index) => (
-												<div key={index} className="flex items-center gap-1">
+												<div className="flex items-center gap-1" key={index}>
 													{index > 0 && (
 														<span className="w-1 h-1 rounded-full bg-gray-300 mr-2" />
 													)}
@@ -181,9 +186,9 @@ export default function TemplatesInput({
 									) : (
 										<div className="relative w-full flex items-center justify-center">
 											<img
-												src={template?.image}
 												alt={template.title}
 												className="object-contain"
+												src={template?.image}
 											/>
 										</div>
 									)}
@@ -198,7 +203,7 @@ export default function TemplatesInput({
 									{template.details.length > 0 && (
 										<div className="flex flex-wrap items-center justify-start gap-2 text-[10px] sm:text-xs text-gray-500 font-semibold w-full">
 											{template.details.map((detail, index) => (
-												<div key={index} className="flex items-center gap-1">
+												<div className="flex items-center gap-1" key={index}>
 													{index > 0 && (
 														<span className="w-1 h-1 rounded-full bg-gray-300 mr-1 sm:mr-2" />
 													)}
@@ -214,11 +219,11 @@ export default function TemplatesInput({
 				})}
 			</div>
 
-			<Button onClick={handleSelect} size="lg" className="mx-auto md:mx-0 my-4">
+			<Button className="mx-auto md:mx-0 my-4" onClick={handleSelect} size="lg">
 				Select Template
 			</Button>
 
-			<AlertDialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+			<AlertDialog onOpenChange={setShowConfirmModal} open={showConfirmModal}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>Change Template?</AlertDialogTitle>
@@ -230,12 +235,12 @@ export default function TemplatesInput({
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
+							className="bg-red-600 hover:bg-red-700 text-white hover:text-white"
 							onClick={async () => {
 								const res = await updateCatalogueAction(catalogue);
 								if (res.success && pendingTemplate)
 									executeSelect(pendingTemplate);
 							}}
-							className="bg-red-600 hover:bg-red-700 text-white hover:text-white"
 						>
 							Save & Continue
 						</AlertDialogAction>

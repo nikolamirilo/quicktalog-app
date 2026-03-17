@@ -44,10 +44,7 @@ const SelectTemplateModal = ({
 	};
 
 	useEffect(() => {
-		// Only check auto-open if not externally controlled
 		if (externalIsOpen === undefined && !hasAutoOpened.current) {
-			// We need to wait for catalogue to be properly loaded from the DB before deciding.
-			// defaultCatalogueData doesn't have an ID. Wait until it gets populated.
 			if (!catalogue.id) return;
 
 			if (catalogue.content && catalogue.content.length === 0) {
@@ -64,8 +61,8 @@ const SelectTemplateModal = ({
 	return (
 		<Dialog onOpenChange={(open) => !open && handleClose()} open={isOpen}>
 			<DialogContent
-				showClose={false}
 				className="fixed w-[95vw] h-fit sm:h-fit left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] rounded-3xl sm:max-w-[95vw] sm:max-h-[95vh] md:max-w-5xl p-0 overflow-hidden bg-white border-none shadow-2xl flex flex-col"
+				showClose={false}
 			>
 				{/* Dismiss button - show if externally controlled or if we want to allow dismissal */}
 				{(externalIsOpen !== undefined || internalIsOpen) && (
@@ -88,7 +85,7 @@ const SelectTemplateModal = ({
 					</DialogHeader>
 				</div>
 
-				<div className="flex-1 overflow-y-auto pb-2 sm:pb-4">
+				<div className="flex-1 overflow-y-auto pb-2 sm:pb-4 -webkit-overflow-touch: touch">
 					<TemplatesInput onComplete={handleComplete} />
 				</div>
 			</DialogContent>
