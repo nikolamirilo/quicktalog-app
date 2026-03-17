@@ -21,6 +21,8 @@ export type TabKey =
 	| "footer"
 	| "appearance";
 
+export type HeadingSize = "extraLarge" | "large" | "medium" | "small";
+
 export interface ImageDropzoneProps {
 	type?: "default" | "logo" | "qr-editor" | "icon";
 	setIsUploading: React.Dispatch<boolean>;

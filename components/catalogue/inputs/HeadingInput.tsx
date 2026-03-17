@@ -6,19 +6,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { headingSizeMap } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { HeadingSize } from "@/types/components";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiItalic } from "react-icons/fi";
 import { HiMiniBold } from "react-icons/hi2";
-
-type HeadingSize = "extraLarge" | "large" | "medium" | "small";
-
-const HEADING_SIZE_CLASSES: Record<HeadingSize, string> = {
-	extraLarge: "text-4xl md:text-5xl lg:text-6xl",
-	large: "text-3xl md:text-4xl lg:text-5xl",
-	medium: "text-2xl md:text-3xl lg:text-4xl",
-	small: "text-xl md:text-2xl lg:text-3xl",
-};
 
 const HeadingInput = () => {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
@@ -32,8 +25,6 @@ const HeadingInput = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	const lastValidHtml = useRef("");
-
-	// Parse headingSize from HTML if stored (e.g., data-size attribute)
 	useEffect(() => {
 		if (catalogue?.heading) {
 			const match = catalogue.heading.match(/data-size="([^"]+)"/);
@@ -46,35 +37,24 @@ const HeadingInput = () => {
 		}
 	}, []);
 
-	// Initialize editor content
 	const isInitialized = useRef(false);
 	useEffect(() => {
 		if (editorRef.current && catalogue?.heading && !isInitialized.current) {
 			isInitialized.current = true;
-			// Strip the wrapper h1 if present to get inner content
 			let content = catalogue.heading;
 			const innerMatch = content.match(/<h1[^>]*>([\s\S]*)<\/h1>/);
 			if (innerMatch) {
 				content = innerMatch[1];
 			}
-			// If content is plain text (no HTML), use it directly
 			const parsed = content || "";
 			editorRef.current.innerHTML = parsed;
 			lastValidHtml.current = parsed;
 			setIsEmpty(!parsed || parsed === "<br>");
 		}
 	}, [catalogue?.heading]);
-
-	// updateSelection: only reflect actual bold/italic from typed content,
-	// NOT inherited CSS font-weight (font-semibold on the container).
 	const updateSelection = useCallback(() => {
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount === 0) return;
-
-		// queryCommandState checks computed style at cursor — but font-semibold
-		// on the parent makes it always return true for "bold".
-		// Instead, check if the closest <b> or <strong> ancestor exists,
-		// or if inline font-weight:bold is explicitly set on a span.
 		const range = selection.getRangeAt(0);
 		const node = range.startContainer;
 		const el =
@@ -97,11 +77,9 @@ const HeadingInput = () => {
 
 	const handleInput = useCallback(() => {
 		if (editorRef.current) {
-			// Prevents typing beyond 3 visual rows (which are restricted by line-clamp-3)
 			if (editorRef.current.scrollHeight > editorRef.current.clientHeight + 4) {
 				editorRef.current.innerHTML = lastValidHtml.current;
 
-				// Move cursor to the end safely
 				const selection = window.getSelection();
 				const range = document.createRange();
 				range.selectNodeContents(editorRef.current);
@@ -114,11 +92,9 @@ const HeadingInput = () => {
 			lastValidHtml.current = editorRef.current.innerHTML;
 			const html = editorRef.current.innerHTML;
 
-			// Track empty state for placeholder
 			setIsEmpty(!html || html === "<br>" || html === "");
 
-			// Generate complete HTML with h1 tag and size class
-			const sizeClass = HEADING_SIZE_CLASSES[headingSize];
+			const sizeClass = headingSizeMap[headingSize];
 			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${headingSize}">${html}</h1>`;
 			updateCatalogue({ heading: wrappedHtml });
 		}
@@ -147,8 +123,7 @@ const HeadingInput = () => {
 			setHeadingSize(size);
 			if (editorRef.current) {
 				const html = editorRef.current.innerHTML;
-				// Generate complete HTML with h1 tag and size class
-				const sizeClass = HEADING_SIZE_CLASSES[size];
+				const sizeClass = headingSizeMap[size];
 				const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${size}">${html}</h1>`;
 				updateCatalogue({ heading: wrappedHtml });
 			}
@@ -160,11 +135,9 @@ const HeadingInput = () => {
 		(e: React.KeyboardEvent<HTMLDivElement>) => {
 			if (e.key === "Enter") {
 				if (editorRef.current) {
-					// Count both <br> and block elements that browsers use for new lines
 					const html = editorRef.current.innerHTML;
 					const newlines = (html.match(/<br>|<\/p>|<\/div>/gi) || []).length;
 
-					// Limit to 3 rows (2 newlines)
 					if (newlines >= 2) {
 						e.preventDefault();
 					}
@@ -186,15 +159,12 @@ const HeadingInput = () => {
 				return;
 			}
 			setIsFocused(false);
-			// Reset bold/italic state when leaving
 			setIsBold(false);
 			setIsItalic(false);
 		}
 	}, []);
 
-	// Handle touch events for iOS
 	const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-		// Prevent default to avoid issues with contentEditable on iOS
 		e.preventDefault();
 		if (editorRef.current) {
 			editorRef.current.focus();
@@ -203,7 +173,6 @@ const HeadingInput = () => {
 
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
-		// Reset bold/italic — let updateSelection reflect actual cursor state
 		setIsBold(false);
 		setIsItalic(false);
 	}, []);
@@ -297,7 +266,7 @@ const HeadingInput = () => {
 			{/* Editable Heading */}
 			<div
 				className={`
-					text-center ${HEADING_SIZE_CLASSES[headingSize]}
+					text-center ${headingSizeMap[headingSize]}
 					text-heading font-heading font-normal
 					border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg
 					px-4 sm:px-6 py-2
@@ -310,7 +279,7 @@ const HeadingInput = () => {
 					relative
 					-webkit-user-select: text
 					user-select: text
-					${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none" : ""}
+					${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none before:text-gray-400" : ""}
 				`}
 				contentEditable
 				data-placeholder="+ Add Heading"

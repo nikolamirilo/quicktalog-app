@@ -60,7 +60,7 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 		<div
 			className={`relative w-full ${!hasBranding ? "h-[calc(100vh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}
 		>
-			{!hasBranding && <LimitsOverlay size="lg" />}
+			{!hasBranding && <LimitsOverlay size="lg" type="branding" />}
 			<div
 				className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 			>
@@ -73,8 +73,8 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
 							<PopoverContent
-								side="top"
 								className="z-[2000] w-[200px] p-3 text-sm"
+								side="top"
 							>
 								<p>Configure the size of the logo in your header.</p>
 							</PopoverContent>
@@ -90,13 +90,13 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 								</span>
 							</div>
 							<Slider
-								min={20}
 								max={300}
-								step={2}
-								value={[catalogue.header?.logoSize?.width || 160]}
+								min={20}
 								onValueChange={(val) =>
 									handleChange("header.logoSize.width", val[0])
 								}
+								step={2}
+								value={[catalogue.header?.logoSize?.width || 160]}
 							/>
 						</div>
 					</div>
@@ -113,8 +113,8 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
 							<PopoverContent
-								side="top"
 								className="z-[2000] w-[200px] p-3 text-sm"
+								side="top"
 							>
 								<p>Manage the call-to-action button in your header.</p>
 							</PopoverContent>
@@ -124,28 +124,28 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 					<div className="space-y-4">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-2">
-								<Label htmlFor="header-cta-enabled" className="text-base">
+								<Label className="text-base" htmlFor="header-cta-enabled">
 									Header Action Link
 								</Label>
 								<Popover>
-									<PopoverTrigger type="button" className="inline-flex">
+									<PopoverTrigger className="inline-flex" type="button">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
 									<PopoverContent
-										side="top"
 										className="z-[2000] w-[200px] p-3 text-sm"
+										side="top"
 									>
 										<p>Enable a call-to-action button in the header.</p>
 									</PopoverContent>
 								</Popover>
 							</div>
 							<Switch
-								id="header-cta-enabled"
 								checked={catalogue.header?.cta?.isEnabled || false}
+								className="data-[state=checked]:bg-product-primary"
+								id="header-cta-enabled"
 								onCheckedChange={(checked) =>
 									handleChange("header.cta.isEnabled", checked)
 								}
-								className="data-[state=checked]:bg-product-primary"
 							/>
 						</div>
 
@@ -153,20 +153,20 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 							<>
 								<div className="space-y-2">
 									<Input
-										placeholder="Label (e.g. Contact Us)"
-										value={catalogue.header?.cta?.label || ""}
 										onChange={(e) =>
 											handleChange("header.cta.label", e.target.value)
 										}
+										placeholder="Label (e.g. Contact Us)"
+										value={catalogue.header?.cta?.label || ""}
 									/>
 								</div>
 								<div className="space-y-2">
 									<Input
-										placeholder="URL (e.g. https://mywebsite.com/contact)"
-										value={catalogue.header?.cta?.url || ""}
 										onChange={(e) =>
 											handleChange("header.cta.url", e.target.value)
 										}
+										placeholder="URL (e.g. https://mywebsite.com/contact)"
+										value={catalogue.header?.cta?.url || ""}
 									/>
 								</div>
 							</>
@@ -185,8 +185,8 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
 							<PopoverContent
-								side="top"
 								className="z-[2000] w-[200px] p-3 text-sm"
+								side="top"
 							>
 								<p>Toggle display of contact icons in your header.</p>
 							</PopoverContent>
@@ -196,24 +196,24 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 					<div className="space-y-4">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-2">
-								<Label htmlFor="header-phone-icon" className="text-base">
+								<Label className="text-base" htmlFor="header-phone-icon">
 									Phone Number Icon
 								</Label>
 								<Popover>
-									<PopoverTrigger type="button" className="inline-flex">
+									<PopoverTrigger className="inline-flex" type="button">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
 									<PopoverContent
-										side="top"
 										className="z-[2000] w-[200px] p-3 text-sm"
+										side="top"
 									>
 										<p>Show a phone icon in the header.</p>
 									</PopoverContent>
 								</Popover>
 							</div>
 							<Switch
-								id="header-phone-icon"
 								checked={catalogue.header?.phoneCta || false}
+								id="header-phone-icon"
 								onCheckedChange={(checked) =>
 									handleChange("header.phoneCta", checked)
 								}
@@ -222,24 +222,24 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-2">
-								<Label htmlFor="header-email-icon" className="text-base">
+								<Label className="text-base" htmlFor="header-email-icon">
 									Email Icon
 								</Label>
 								<Popover>
-									<PopoverTrigger type="button" className="inline-flex">
+									<PopoverTrigger className="inline-flex" type="button">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
 									<PopoverContent
-										side="top"
 										className="z-[2000] w-[200px] p-3 text-sm"
+										side="top"
 									>
 										<p>Show an email icon in the header.</p>
 									</PopoverContent>
 								</Popover>
 							</div>
 							<Switch
-								id="header-email-icon"
 								checked={catalogue.header?.emailCta || false}
+								id="header-email-icon"
 								onCheckedChange={(checked) =>
 									handleChange("header.emailCta", checked)
 								}

@@ -156,7 +156,7 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 		<div
 			className={`relative w-full ${!hasBranding ? "h-[calc(100vh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}
 		>
-			{!hasBranding && <LimitsOverlay size="lg" />}
+			{!hasBranding && <LimitsOverlay size="lg" type="branding" />}
 			<div
 				className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 			>
@@ -169,8 +169,8 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
 							<PopoverContent
-								side="top"
 								className="z-[2000] w-[200px] p-3 text-sm"
+								side="top"
 							>
 								<p>Configure the size of the logo in your footer.</p>
 							</PopoverContent>
@@ -186,13 +186,13 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								</span>
 							</div>
 							<Slider
-								min={20}
 								max={400}
-								step={2}
-								value={[catalogue.footer?.logoSize?.width || 160]}
+								min={20}
 								onValueChange={(val) =>
 									handleChange("footer.logoSize.width", val[0])
 								}
+								step={2}
+								value={[catalogue.footer?.logoSize?.width || 160]}
 							/>
 						</div>
 					</div>
@@ -209,8 +209,8 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Info className="h-4 w-4 text-muted-foreground" />
 							</PopoverTrigger>
 							<PopoverContent
-								side="top"
 								className="z-[2000] w-[200px] p-3 text-sm"
+								side="top"
 							>
 								<p>Setup calls to action and newsletter signup.</p>
 							</PopoverContent>
@@ -220,24 +220,24 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 					<div className="space-y-4">
 						<div className="flex items-center justify-between">
 							<div className="flex items-center gap-2">
-								<Label htmlFor="footer-cta-enabled" className="text-base">
+								<Label className="text-base" htmlFor="footer-cta-enabled">
 									Footer Action Link
 								</Label>
 								<Popover>
-									<PopoverTrigger type="button" className="inline-flex">
+									<PopoverTrigger className="inline-flex" type="button">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
 									<PopoverContent
-										side="top"
 										className="z-[2000] w-[200px] p-3 text-sm"
+										side="top"
 									>
 										<p>Enable a call-to-action button in the footer.</p>
 									</PopoverContent>
 								</Popover>
 							</div>
 							<Switch
-								id="footer-cta-enabled"
 								checked={catalogue.footer?.cta?.isEnabled || false}
+								id="footer-cta-enabled"
 								onCheckedChange={(checked) =>
 									handleChange("footer.cta.isEnabled", checked)
 								}
@@ -248,20 +248,20 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 							<>
 								<div className="space-y-2">
 									<Input
-										placeholder="Label (e.g. Contact Us)"
-										value={catalogue.footer?.cta?.label || ""}
 										onChange={(e) =>
 											handleChange("footer.cta.label", e.target.value)
 										}
+										placeholder="Label (e.g. Contact Us)"
+										value={catalogue.footer?.cta?.label || ""}
 									/>
 								</div>
 								<div className="space-y-2">
 									<Input
-										placeholder="URL (e.g. https://mywebsite.com/contact)"
-										value={catalogue.footer?.cta?.url || ""}
 										onChange={(e) =>
 											handleChange("footer.cta.url", e.target.value)
 										}
+										placeholder="URL (e.g. https://mywebsite.com/contact)"
+										value={catalogue.footer?.cta?.url || ""}
 									/>
 								</div>
 							</>
@@ -279,24 +279,24 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								className={`flex items-center justify-between ${!plan?.features?.newsletter ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 							>
 								<div className="flex items-center gap-2">
-									<Label htmlFor="footer-newsletter" className="text-base">
+									<Label className="text-base" htmlFor="footer-newsletter">
 										Newsletter
 									</Label>
 									<Popover>
-										<PopoverTrigger type="button" className="inline-flex">
+										<PopoverTrigger className="inline-flex" type="button">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
 										<PopoverContent
-											side="top"
 											className="z-[2000] w-[200px] p-3 text-sm"
+											side="top"
 										>
 											<p>Enable newsletter subscription form in the footer.</p>
 										</PopoverContent>
 									</Popover>
 								</div>
 								<Switch
-									id="footer-newsletter"
 									checked={catalogue.footer?.newsletter || false}
+									id="footer-newsletter"
 									onCheckedChange={(checked) =>
 										handleChange("footer.newsletter", checked)
 									}
@@ -316,8 +316,8 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									<Info className="h-4 w-4 text-muted-foreground" />
 								</PopoverTrigger>
 								<PopoverContent
-									side="top"
 									className="z-[2000] w-[200px] p-3 text-sm"
+									side="top"
 								>
 									<p>Company details and legal links.</p>
 								</PopoverContent>
@@ -329,23 +329,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Label className="flex items-center gap-2">
 									Legal Business Name
 									<Popover>
-										<PopoverTrigger type="button" className="inline-flex">
+										<PopoverTrigger className="inline-flex" type="button">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
 										<PopoverContent
-											side="top"
 											className="z-[2000] w-[200px] p-3 text-sm"
+											side="top"
 										>
 											<p>Your officially registered business name.</p>
 										</PopoverContent>
 									</Popover>
 								</Label>
 								<Input
-									placeholder="e.g. Quicktalog Inc."
-									value={catalogue.legal?.legalName || ""}
 									onChange={(e) =>
 										handleChange("legal.legalName", e.target.value)
 									}
+									placeholder="e.g. Quicktalog Inc."
+									value={catalogue.legal?.legalName || ""}
 								/>
 							</div>
 
@@ -353,23 +353,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Label className="flex items-center gap-2">
 									Business Address
 									<Popover>
-										<PopoverTrigger type="button" className="inline-flex">
+										<PopoverTrigger className="inline-flex" type="button">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
 										<PopoverContent
-											side="top"
 											className="z-[2000] w-[200px] p-3 text-sm"
+											side="top"
 										>
 											<p>Your physical business address.</p>
 										</PopoverContent>
 									</Popover>
 								</Label>
 								<Input
-									placeholder="e.g. 123 Main St, San Francisco, CA"
-									value={catalogue.legal?.address || ""}
 									onChange={(e) =>
 										handleChange("legal.address", e.target.value)
 									}
+									placeholder="e.g. 123 Main St, San Francisco, CA"
+									value={catalogue.legal?.address || ""}
 								/>
 							</div>
 
@@ -377,23 +377,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Label className="flex items-center gap-2">
 									Terms & Conditions Link
 									<Popover>
-										<PopoverTrigger type="button" className="inline-flex">
+										<PopoverTrigger className="inline-flex" type="button">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
 										<PopoverContent
-											side="top"
 											className="z-[2000] w-[200px] p-3 text-sm"
+											side="top"
 										>
 											<p>Link to your terms and conditions page.</p>
 										</PopoverContent>
 									</Popover>
 								</Label>
 								<Input
-									placeholder="e.g. https://mywebsite.com/terms"
-									value={catalogue.legal?.termsAndConditions || ""}
 									onChange={(e) =>
 										handleChange("legal.termsAndConditions", e.target.value)
 									}
+									placeholder="e.g. https://mywebsite.com/terms"
+									value={catalogue.legal?.termsAndConditions || ""}
 								/>
 							</div>
 
@@ -401,23 +401,23 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								<Label className="flex items-center gap-2">
 									Privacy Policy Link
 									<Popover>
-										<PopoverTrigger type="button" className="inline-flex">
+										<PopoverTrigger className="inline-flex" type="button">
 											<Info className="h-4 w-4 text-muted-foreground" />
 										</PopoverTrigger>
 										<PopoverContent
-											side="top"
 											className="z-[2000] w-[200px] p-3 text-sm"
+											side="top"
 										>
 											<p>Link to your privacy policy page.</p>
 										</PopoverContent>
 									</Popover>
 								</Label>
 								<Input
-									placeholder="e.g. https://mywebsite.com/privacy"
-									value={catalogue.legal?.privacyPolicy || ""}
 									onChange={(e) =>
 										handleChange("legal.privacyPolicy", e.target.value)
 									}
+									placeholder="e.g. https://mywebsite.com/privacy"
+									value={catalogue.legal?.privacyPolicy || ""}
 								/>
 							</div>
 						</div>
@@ -434,8 +434,8 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									<Info className="h-4 w-4 text-muted-foreground" />
 								</PopoverTrigger>
 								<PopoverContent
-									side="top"
 									className="z-[2000] w-[200px] p-3 text-sm"
+									side="top"
 								>
 									<p>Add links to your social media profiles.</p>
 								</PopoverContent>
@@ -444,7 +444,7 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 						<div className="space-y-4">
 							{catalogue.contact?.socials?.map((url, index) => (
-								<div key={index} className="flex gap-2 items-center">
+								<div className="flex gap-2 items-center" key={index}>
 									<div className="p-2 rounded-full flex items-center justify-center flex-shrink-0 bg-catalogue-card-background text-catalogue-card-heading border border-gray-400 overflow-hidden">
 										<img
 											alt={`Social Icon`}
@@ -453,15 +453,15 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										/>
 									</div>
 									<Input
-										value={url}
 										onChange={(e) => updateSocial(index, e.target.value)}
 										placeholder="https://"
+										value={url}
 									/>
 									<Button
-										variant="ghost"
-										size="icon"
 										className="flex-shrink-0"
 										onClick={() => removeSocial(index)}
+										size="icon"
+										variant="ghost"
 									>
 										<Trash2 className="h-4 w-4 text-destructive" />
 									</Button>
@@ -472,16 +472,16 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 								catalogue.contact.socials.length < MAX_SOCIALS) && (
 								<div className="space-y-2">
 									<Input
+										onChange={(e) => setNewSocialUrl(e.target.value)}
 										placeholder="e.g. www.instagram.com/quicktalog"
 										value={newSocialUrl}
-										onChange={(e) => setNewSocialUrl(e.target.value)}
 									/>
 									<Button
-										onClick={addSocial}
+										className="w-full bg-product-primary text-product-foreground"
 										disabled={
 											!newSocialUrl.trim() || !newSocialUrl.includes(".")
 										}
-										className="w-full bg-product-primary text-product-foreground"
+										onClick={addSocial}
 									>
 										<Plus className="h-4 w-4 mr-2" /> Add Social Media
 									</Button>
@@ -503,12 +503,12 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 							<div className="flex items-center gap-2">
 								<h3 className="text-lg font-bold">Partners</h3>
 								<Popover>
-									<PopoverTrigger type="button" className="inline-flex mt-1">
+									<PopoverTrigger className="inline-flex mt-1" type="button">
 										<Info className="h-4 w-4 text-muted-foreground" />
 									</PopoverTrigger>
 									<PopoverContent
-										side="top"
 										className="z-[2000] w-[200px] p-3 text-sm"
+										side="top"
 									>
 										<p>Show trusted partners in the footer.</p>
 									</PopoverContent>
@@ -525,30 +525,28 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 						{catalogue.footer?.showPartners && (
 							<div className="space-y-4">
 								{catalogue.partners?.map((partner, index) => (
-									<div key={index} className="flex gap-2 items-center">
+									<div className="flex gap-2 items-center" key={index}>
 										{editingPartnerIndex === index ? (
 											<div className="flex-1 space-y-3 p-4 rounded-lg bg-catalogue-card-background shadow-md">
 												<Input
-													placeholder="Partner Name"
-													value={editingPartner?.name || ""}
 													onChange={(e) =>
 														setEditingPartner((prev) =>
 															prev ? { ...prev, name: e.target.value } : null,
 														)
 													}
+													placeholder="Partner Name"
+													value={editingPartner?.name || ""}
 												/>
 												<Input
-													placeholder="Partner URL"
-													value={editingPartner?.url || ""}
 													onChange={(e) =>
 														setEditingPartner((prev) =>
 															prev ? { ...prev, url: e.target.value } : null,
 														)
 													}
+													placeholder="Partner URL"
+													value={editingPartner?.url || ""}
 												/>
 												<Input
-													placeholder="Partner Description"
-													value={editingPartner?.description || ""}
 													onChange={(e) =>
 														setEditingPartner((prev) =>
 															prev
@@ -556,18 +554,20 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 																: null,
 														)
 													}
+													placeholder="Partner Description"
+													value={editingPartner?.description || ""}
 												/>
 												<div className="flex gap-2">
 													<Button
-														onClick={savePartner}
-														disabled={!editingPartner?.name.trim()}
 														className="flex-1 bg-product-primary text-product-foreground"
+														disabled={!editingPartner?.name.trim()}
+														onClick={savePartner}
 													>
 														Save
 													</Button>
 													<Button
-														variant="ghost"
 														onClick={() => setEditingPartnerIndex(null)}
+														variant="ghost"
 													>
 														Cancel
 													</Button>
@@ -580,16 +580,16 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 												</div>
 												<div className="flex flex-col gap-1 flex-shrink-0">
 													<Button
-														variant="ghost"
-														size="icon"
 														onClick={() => startEditingPartner(index)}
+														size="icon"
+														variant="ghost"
 													>
 														<Pencil className="h-4 w-4" />
 													</Button>
 													<Button
-														variant="ghost"
-														size="icon"
 														onClick={() => removePartner(index)}
+														size="icon"
+														variant="ghost"
 													>
 														<Trash2 className="h-4 w-4 text-destructive" />
 													</Button>
@@ -604,46 +604,46 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 									(isAddingPartner ? (
 										<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background">
 											<Input
-												placeholder="Partner Name"
-												value={newPartner.name}
 												onChange={(e) =>
 													setNewPartner((prev) => ({
 														...prev,
 														name: e.target.value,
 													}))
 												}
+												placeholder="Partner Name"
+												value={newPartner.name}
 											/>
 											<Input
-												placeholder="Partner URL"
-												value={newPartner.url}
 												onChange={(e) =>
 													setNewPartner((prev) => ({
 														...prev,
 														url: e.target.value,
 													}))
 												}
+												placeholder="Partner URL"
+												value={newPartner.url}
 											/>
 											<Input
-												placeholder="Partner Description"
-												value={newPartner.description}
 												onChange={(e) =>
 													setNewPartner((prev) => ({
 														...prev,
 														description: e.target.value,
 													}))
 												}
+												placeholder="Partner Description"
+												value={newPartner.description}
 											/>
 											<div className="flex gap-2">
 												<Button
-													onClick={addPartner}
-													disabled={!newPartner.name.trim()}
 													className="flex-1 bg-product-primary text-product-foreground"
+													disabled={!newPartner.name.trim()}
+													onClick={addPartner}
 												>
 													Confirm
 												</Button>
 												<Button
-													variant="ghost"
 													onClick={() => setIsAddingPartner(false)}
+													variant="ghost"
 												>
 													Cancel
 												</Button>
@@ -651,8 +651,8 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 										</div>
 									) : (
 										<Button
-											onClick={() => setIsAddingPartner(true)}
 											className="w-full bg-product-primary text-product-foreground"
+											onClick={() => setIsAddingPartner(true)}
 										>
 											<Plus className="h-4 w-4 mr-2" /> Add Partner
 										</Button>

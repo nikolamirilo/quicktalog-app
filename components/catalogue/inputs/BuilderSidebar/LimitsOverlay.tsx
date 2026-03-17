@@ -8,8 +8,10 @@ import { toast } from "sonner";
 
 const LimitsOverlay = ({
 	size = "default",
+	type = "other",
 }: {
 	size?: "sm" | "default" | "lg";
+	type?: "branding" | "other";
 }) => {
 	const { catalogue } = useCatalogueContext();
 	const paragraphSize =
@@ -41,11 +43,13 @@ const LimitsOverlay = ({
 				Upgrade Required
 			</h3>
 			<p
-				className={`text-muted-foreground text-center max-w-[250px] ${paragraphSize}`}
+				className={`text-muted-foreground text-center w-full max-w-[400px] ${paragraphSize}`}
 			>
-				Upgrade your plan to unlock this feature.
+				{type === "branding"
+					? "Make your catalog truly yours Add your logo, brand details, and customize the header and footer. Upgrade your plan to unlock this feature."
+					: "Upgrade your plan to unlock this feature."}
 			</p>
-			<Button size={size} onClick={handleUpgrade}>
+			<Button onClick={handleUpgrade} size={size}>
 				Upgrade Now
 			</Button>
 		</div>

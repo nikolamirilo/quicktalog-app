@@ -47,7 +47,7 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	return (
-		<div className="space-y-4 p-2">
+		<div className="space-y-4 p-2 relative">
 			{/* Logo Section */}
 			<div className="space-y-2">
 				<div className="flex items-center gap-2">
@@ -57,8 +57,8 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 							<Info className="h-4 w-4 text-muted-foreground" />
 						</PopoverTrigger>
 						<PopoverContent
-							side="top"
 							className="z-[2000] w-[200px] p-3 text-sm"
+							side="top"
 						>
 							<p>Basic settings for your catalogue.</p>
 						</PopoverContent>
@@ -68,7 +68,7 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 				<LanguageInput />
 				<CurrencySelect />
 				{/* <BusinessType /> */}
-				<div className="relative w-full">
+				<div className="w-full relative">
 					{!hasBranding && <LimitsOverlay size="sm" />}
 					<div
 						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
@@ -78,12 +78,12 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 						</div>
 
 						<ImageDropzone
-							type="icon"
 							className="w-full aspect-video bg-transparent"
 							image={catalogue.logo}
 							onUploadComplete={(url) => handleChange("logo", url)}
 							removeImage={() => handleChange("logo", "")}
 							setIsUploading={setIsUploading}
+							type="icon"
 						/>
 					</div>
 				</div>
@@ -98,49 +98,56 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 							<Info className="h-4 w-4 text-muted-foreground" />
 						</PopoverTrigger>
 						<PopoverContent
-							side="top"
 							className="z-[2000] w-[200px] p-3 text-sm"
+							side="top"
 						>
 							<p>Contact details displayed to your customers.</p>
 						</PopoverContent>
 					</Popover>
 				</div>
 
-				<div className="space-y-4">
-					<div className="space-y-2">
-						<div className="flex items-center gap-2">
-							<Label htmlFor="contact-phone">Phone Number</Label>
+				<div className="space-y-4 relative">
+					{!hasBranding && <LimitsOverlay size="sm" />}
+					<div
+						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
+					>
+						<div className="space-y-2">
+							<div className="flex items-center gap-2">
+								<Label htmlFor="contact-phone">Phone Number</Label>
+							</div>
+							<Input
+								id="contact-phone"
+								onChange={(e) => handleChange("contact.phone", e.target.value)}
+								placeholder="e.g. +1 123 456 7890"
+								value={catalogue.contact?.phone || ""}
+							/>
 						</div>
-						<Input
-							id="contact-phone"
-							placeholder="e.g. +1 123 456 7890"
-							value={catalogue.contact?.phone || ""}
-							onChange={(e) => handleChange("contact.phone", e.target.value)}
-						/>
-					</div>
 
-					<div className="space-y-2">
-						<div className="flex items-center gap-2">
-							<Label htmlFor="contact-email">Email</Label>
+						<div className="space-y-2">
+							<div className="flex items-center gap-2">
+								<Label htmlFor="contact-email">Email</Label>
+							</div>
+							<Input
+								id="contact-email"
+								onChange={(e) => handleChange("contact.email", e.target.value)}
+								placeholder="e.g. example@gmail.com"
+								value={catalogue.contact?.email || ""}
+							/>
 						</div>
-						<Input
-							id="contact-email"
-							placeholder="e.g. example@gmail.com"
-							value={catalogue.contact?.email || ""}
-							onChange={(e) => handleChange("contact.email", e.target.value)}
-						/>
-					</div>
 
-					<div className="space-y-2">
-						<div className="flex items-center gap-2">
-							<Label htmlFor="contact-website">Website</Label>
+						<div className="space-y-2">
+							<div className="flex items-center gap-2">
+								<Label htmlFor="contact-website">Website</Label>
+							</div>
+							<Input
+								id="contact-website"
+								onChange={(e) =>
+									handleChange("contact.website", e.target.value)
+								}
+								placeholder="e.g. https://www.example.com"
+								value={catalogue.contact?.website || ""}
+							/>
 						</div>
-						<Input
-							id="contact-website"
-							placeholder="e.g. https://www.example.com"
-							value={catalogue.contact?.website || ""}
-							onChange={(e) => handleChange("contact.website", e.target.value)}
-						/>
 					</div>
 				</div>
 			</div>
@@ -154,8 +161,8 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 							<Info className="h-4 w-4 text-muted-foreground" />
 						</PopoverTrigger>
 						<PopoverContent
-							side="top"
 							className="z-[2000] w-[200px] p-3 text-sm"
+							side="top"
 						>
 							<p>
 								Metadata enhances your catalogue's appearance when shared on
@@ -167,7 +174,7 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 				</div>
 
 				<div className="relative w-full">
-					{!hasBranding && <LimitsOverlay />}
+					{!hasBranding && <LimitsOverlay size="sm" />}
 					<div
 						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 					>
@@ -175,34 +182,34 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 							<Label htmlFor="meta-title">Title</Label>
 							<Input
 								id="meta-title"
+								onChange={(e) => handleChange("metadata.title", e.target.value)}
 								placeholder="e.g. My Awesome Catalogue"
 								value={catalogue.metadata?.title || ""}
-								onChange={(e) => handleChange("metadata.title", e.target.value)}
 							/>
 						</div>
 
 						<div className="space-y-2">
 							<Label htmlFor="meta-description">Description</Label>
 							<Textarea
+								className="resize-none min-h-[100px]"
 								id="meta-description"
-								placeholder="e.g. Best items in town..."
-								value={catalogue.metadata?.description || ""}
 								onChange={(e) =>
 									handleChange("metadata.description", e.target.value)
 								}
-								className="resize-none min-h-[100px]"
+								placeholder="e.g. Best items in town..."
+								value={catalogue.metadata?.description || ""}
 							/>
 						</div>
 
 						<div className="space-y-2">
 							<Label htmlFor="meta-icon">Browser Tab Icon</Label>
 							<ImageDropzone
-								type="icon"
 								className="w-full aspect-video bg-transparent"
 								image={catalogue.metadata?.icon || ""}
 								onUploadComplete={(url) => handleChange("metadata.icon", url)}
 								removeImage={() => handleChange("metadata.icon", "")}
 								setIsUploading={setIsUploading}
+								type="icon"
 							/>
 						</div>
 					</div>
