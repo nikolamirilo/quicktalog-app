@@ -9,6 +9,7 @@ import {
 import { headingSizeMap } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { HeadingSize } from "@/types/components";
+import { themes } from "@quicktalog/common";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiItalic } from "react-icons/fi";
 import { HiMiniBold } from "react-icons/hi2";
@@ -23,6 +24,7 @@ const HeadingInput = () => {
 	const [isSelectOpen, setIsSelectOpen] = useState(false);
 	const [isEmpty, setIsEmpty] = useState(true);
 	const containerRef = useRef<HTMLDivElement>(null);
+	const [placeholderColor, setPlaceholderColor] = useState("#E5E7EB");
 
 	const lastValidHtml = useRef("");
 	useEffect(() => {
@@ -36,6 +38,8 @@ const HeadingInput = () => {
 			}
 		}
 	}, []);
+
+
 
 	const isInitialized = useRef(false);
 	useEffect(() => {
@@ -164,12 +168,7 @@ const HeadingInput = () => {
 		}
 	}, []);
 
-	const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-		e.preventDefault();
-		if (editorRef.current) {
-			editorRef.current.focus();
-		}
-	}, []);
+
 
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
@@ -178,6 +177,11 @@ const HeadingInput = () => {
 	}, []);
 
 	const showToolbar = isFocused || isSelectOpen;
+
+	useEffect(() => {
+		const currentTheme = themes.find((t) => t.key === catalogue?.appearance.theme.name);
+		setPlaceholderColor(currentTheme?.type === "dark" ? "#E5E7EB" : "#D1D5DC");
+	}, [catalogue?.appearance.theme.name]);
 
 	return (
 		<div
@@ -192,11 +196,10 @@ const HeadingInput = () => {
 			>
 				{/* Bold Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isBold
-							? "text-[var(--catalogue-primary)] bg-white/90"
-							: "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold
+						? "text-[var(--catalogue-primary)] bg-white/90"
+						: "text-foreground/70"
+						}`}
 					onClick={toggleBold}
 					onMouseDown={(e) => e.preventDefault()}
 					tabIndex={-1}
@@ -208,11 +211,10 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isItalic
-							? "text-[var(--catalogue-primary)] bg-white/90"
-							: "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic
+						? "text-[var(--catalogue-primary)] bg-white/90"
+						: "text-foreground/70"
+						}`}
 					onClick={toggleItalic}
 					onMouseDown={(e) => e.preventDefault()}
 					tabIndex={-1}
@@ -271,15 +273,13 @@ const HeadingInput = () => {
 					border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg
 					px-4 sm:px-6 py-2
 					bg-transparent focus:border-primary outline-none
-					w-auto
+					w-fit
 					max-w-[94%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%]
 					min-w-[80%] sm:min-w-[70%] md:min-w-[50%] lg:min-w-[40%] xl:min-w-[30%]
 					mx-auto
-					line-clamp-3 break-words transition-all
+					break-words transition-all
 					relative
-					-webkit-user-select: text
-					user-select: text
-					${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none before:text-gray-400" : ""}
+					${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none before:absolute before:left-1/2 before:-translate-x-1/2 before:text-[var(--placeholder-color)] before:whitespace-nowrap" : ""}
 				`}
 				contentEditable
 				data-placeholder="+ Add Heading"
@@ -291,11 +291,8 @@ const HeadingInput = () => {
 				onKeyUp={updateSelection}
 				onMouseUp={updateSelection}
 				onSelect={updateSelection}
-				onTouchEnd={handleTouchEnd}
-				// iOS Safari fixes
 				ref={editorRef}
-				style={{ WebkitUserSelect: "text", userSelect: "text" }}
-				// Prevent keyboard from appearing on touch but allow focus
+				style={{ WebkitUserSelect: "text", userSelect: "text", "--placeholder-color": placeholderColor } as React.CSSProperties}
 				suppressContentEditableWarning
 			/>
 		</div>
