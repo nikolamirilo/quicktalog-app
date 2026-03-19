@@ -9,12 +9,12 @@ const UserProfile = ({ user }: { user: User }) => {
 				<div className="relative flex-shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32">
 					<img
 						alt="Profile"
-						className="rounded-full ring-4 ring-product-primary/30 shadow-lg w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 object-cover"
+						className="rounded-full ring-4 ring-product-primary shadow-lg w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 xl:w-32 xl:h-32 object-cover"
 						height={128}
 						src={user.image}
 						width={128}
 					/>
-					<div className="absolute -bottom-1 -right-1 sm:-bottom-1 sm:-right-0 w-4 h-4 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-green-500 rounded-full border-2 border-product-background"></div>
+					{/* <div className="absolute -bottom-1 -right-1 sm:-bottom-1 sm:-right-0 w-4 h-4 sm:w-6 sm:h-6 md:w-7 md:h-7 bg-green-500 rounded-full border-2 border-product-background"></div> */}
 				</div>
 				<div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
 					<div className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-product-foreground mb-1 font-heading">

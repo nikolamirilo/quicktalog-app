@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { useUserContext } from "@/context/UserContext";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,6 +39,7 @@ const IconText: React.FC<{ icon: React.ElementType; text: string }> = ({
 );
 
 const Hero: React.FC = () => {
+	const { userData } = useUserContext();
 	const { user } = useUser();
 	const router = useRouter();
 	return (

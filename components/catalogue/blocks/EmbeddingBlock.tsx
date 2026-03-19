@@ -116,20 +116,24 @@ const EmbeddingBlockComponent = ({
 				// Apply 100% width for all embed types
 				iframe.style.width = "100%";
 
-				// Set height based on embed type
+				// Set height based on embed type - use auto where possible
 				if (embedType === "media" || embedType === "social") {
 					// Video and social media embeds - maintain aspect ratio
 					iframe.style.aspectRatio = "16/9";
 					iframe.style.height = "100%";
+					iframe.style.minHeight = "300px";
 				} else if (embedType === "maps") {
-					// Maps typically need specific heights
-					iframe.style.height = "60vh";
+					// Maps - use auto height with min
+					iframe.style.height = "auto";
+					iframe.style.minHeight = "400px";
 				} else if (embedType === "booking") {
-					// Booking widgets often have fixed heights
-					iframe.style.height = "70vh";
+					// Booking widgets - use auto height with min
+					iframe.style.height = "auto";
+					iframe.style.minHeight = "500px";
 				} else {
-					// Default - set min-height
-					iframe.style.minHeight = "60vh";
+					// Default - set min-height but allow auto
+					iframe.style.height = "auto";
+					iframe.style.minHeight = "400px";
 				}
 			});
 
@@ -144,7 +148,7 @@ const EmbeddingBlockComponent = ({
 				blockquote.style.maxWidth = "100%";
 
 				if (embedType === "social" || embedType === "media") {
-					blockquote.style.minHeight = "40vh";
+					blockquote.style.minHeight = "300px";
 				}
 			});
 
@@ -155,6 +159,7 @@ const EmbeddingBlockComponent = ({
 			embedElements?.forEach((el) => {
 				(el as HTMLElement).style.width = "100%";
 				(el as HTMLElement).style.maxWidth = "100%";
+				(el as HTMLElement).style.height = "auto";
 			});
 		};
 
@@ -255,11 +260,7 @@ const EmbeddingBlockComponent = ({
 			)}
 			{block.code ? (
 				<div className="w-full rounded-lg overflow-hidden bg-transparent">
-					<div
-						className="bg-transparent w-full h-auto"
-						ref={contentRef}
-						style={{ minHeight: "60vh" }}
-					>
+					<div className="bg-transparent w-full h-auto" ref={contentRef}>
 						<HtmlContent
 							className="bg-transparent w-full h-auto"
 							html={block.code}

@@ -135,6 +135,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	const contactLinks = getContactLinks();
 	const ctaProps = getCTAProps();
 	const companyName = type === "default" ? "Quicktalog" : "Company";
+	const hasSidebarContent = contactLinks.length > 0 || ctaProps !== null;
 
 	return (
 		<header
@@ -156,9 +157,9 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						>
 							<img
 								alt={`${companyName} logo`}
-								className="rounded-sm object-contain object-left"
+								className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
 								fetchPriority="high"
-								src={logo ?? "/logo.svg"}
+								src={logo}
 								style={{
 									width: activeData?.header?.logoSize?.width
 										? `${activeData.header.logoSize.width}px`
@@ -218,16 +219,18 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					</nav>
 
 					{/* Mobile Navigation (Hamburger) */}
-					<div className="md:hidden flex items-center">
-						<CatalogueSidebar
-							contactLinks={contactLinks}
-							ctaProps={ctaProps}
-							inlineStyles={inlineStyles}
-							isOpen={isMobileMenuOpen}
-							onOpenChange={setIsMobileMenuOpen}
-							themeClass={themeClass}
-						/>
-					</div>
+					{hasSidebarContent && (
+						<div className="md:hidden flex items-center">
+							<CatalogueSidebar
+								contactLinks={contactLinks}
+								ctaProps={ctaProps}
+								inlineStyles={inlineStyles}
+								isOpen={isMobileMenuOpen}
+								onOpenChange={setIsMobileMenuOpen}
+								themeClass={themeClass}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</header>

@@ -52,7 +52,7 @@ const Catalogue = ({
 	const boxShadow = shadowMap[item.appearance.style.shadow || "low"];
 
 	const defaultLogo = isDarkTheme ? "/logo-light.svg" : "/logo.svg";
-	const customLogo = item.logo || defaultLogo;
+	const customLogo = item.logo;
 	const logoSrc = item.header.type === "custom" ? customLogo : defaultLogo;
 
 	useEffect(() => {

@@ -96,40 +96,40 @@ const DashboardItem = ({
 			</div>
 			{["active", "inactive"].includes(catalogue.status) && (
 				<div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
-					<Button className="w-full">
-						<Link
-							className="flex flex-row items-center justify-center gap-1"
-							href={`/catalogues/${catalogue.name}`}
-						>
+					<Link
+						className="flex flex-row items-center justify-center gap-1"
+						href={`/catalogues/${catalogue.name}`}
+					>
+						<Button className="w-full">
 							<LuSquareMenu className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
 							<span className="ml-1">View Catalogue</span>
-						</Link>
-					</Button>
-					<Button className="w-ful" variant="outline">
-						<Link
-							className="flex flex-row items-center justify-center gap-1"
-							href={`/admin/${catalogue.name}/analytics`}
-						>
+						</Button>
+					</Link>
+					<Link
+						className="flex flex-row items-center justify-center gap-1 w-full"
+						href={`/admin/${catalogue.name}/analytics`}
+					>
+						<Button className="w-full" variant="outline">
 							<TbBrandGoogleAnalytics
 								className="sm:w-3 sm:h-3 md:w-4 md:h-4"
 								size={12}
 							/>
 							<span className="ml-1">Analytics</span>
-						</Link>
-					</Button>
+						</Button>
+					</Link>
 				</div>
 			)}
 			{["draft"].includes(catalogue.status) && (
 				<div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
-					<Button className="w-full">
-						<Link
-							className="flex flex-row items-center justify-center gap-1"
-							href={`/admin/${catalogue.name}/builder`}
-						>
+					<Link
+						className="flex flex-row items-center justify-center gap-1"
+						href={`/admin/${catalogue.name}/builder`}
+					>
+						<Button className="w-full">
 							<Edit className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
 							<span className="ml-1">Continue Editing</span>
-						</Link>
-					</Button>
+						</Button>
+					</Link>
 				</div>
 			)}
 			{["error", "in preparation"].includes(catalogue.status) && (

@@ -1,6 +1,6 @@
-import { footerDetails } from "@/constants/details";
 import SmartLink from "@/components/general/SmartLink";
 import SocialIcon from "@/components/general/SocialIcon";
+import { footerDetails } from "@/constants/details";
 
 export const Brand = ({
 	type,
@@ -25,7 +25,8 @@ export const Brand = ({
 					>
 						<img
 							alt={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} logo`}
-							className="rounded-sm object-contain object-left"
+							className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
+							src={logo ?? "/logo.svg"}
 							style={{
 								width: activeData?.footer?.logoSize?.width
 									? `${activeData.footer.logoSize.width}px`
@@ -35,7 +36,6 @@ export const Brand = ({
 								height: "auto",
 								maxWidth: "100%",
 							}}
-							src={logo ?? "/logo.svg"}
 						/>
 					</SmartLink>
 

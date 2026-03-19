@@ -78,9 +78,7 @@ const CreateCatalogueButton = ({
 			router.push("/auth?mode=signup");
 			return;
 		}
-		if (
-			userData.currentPlan.features.catalogues === userData.usage.catalogues
-		) {
+		if (userData.usage.catalogues >= userData.currentPlan.features.catalogues) {
 			setLimitsModal(true);
 			return;
 		}
@@ -96,31 +94,29 @@ const CreateCatalogueButton = ({
 			<TooltipProvider>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<span className="w-9/12 sm:w-fit">
-							{type === "dashboard" ? (
-								<Button
-									className={`w-full ${className}`}
-									disabled={disabled}
-									onClick={handleButtonClick}
-								>
-									<IoCreateOutline
-										className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-										size={18}
-									/>{" "}
-									Create Catalogue
-								</Button>
-							) : (
-								<Button
-									aria-label="Create your digital catalog"
-									className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
-									disabled={disabled}
-									onClick={handleButtonClick}
-									variant="cta"
-								>
-									Start Creating Now
-								</Button>
-							)}
-						</span>
+						{type === "dashboard" ? (
+							<Button
+								className={`w-full ${className}`}
+								disabled={disabled}
+								onClick={handleButtonClick}
+							>
+								<IoCreateOutline
+									className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+									size={18}
+								/>{" "}
+								Create Catalogue
+							</Button>
+						) : (
+							<Button
+								aria-label="Create your digital catalog"
+								className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
+								disabled={disabled}
+								onClick={handleButtonClick}
+								variant="cta"
+							>
+								Start Creating Now
+							</Button>
+						)}
 					</TooltipTrigger>
 					{showUpgradeTooltip && disabled && (
 						<TooltipContent className="max-w-[240px] border-none shadow-lg">
@@ -144,9 +140,9 @@ const CreateCatalogueButton = ({
 				onConfirm={handleCreateCatalogue}
 			/>
 			<LimitsModal
+				currentPlan={userData?.currentPlan}
 				isOpen={limitsModal}
 				onClose={() => setLimitsModal(false)}
-				currentPlan={userData?.currentPlan}
 				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
 				type="catalogue"
 			/>

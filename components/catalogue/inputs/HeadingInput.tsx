@@ -24,7 +24,7 @@ const HeadingInput = () => {
 	const [isSelectOpen, setIsSelectOpen] = useState(false);
 	const [isEmpty, setIsEmpty] = useState(true);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [placeholderColor, setPlaceholderColor] = useState("#E5E7EB");
+	const [placeholderColor, setPlaceholderColor] = useState("#4A5565");
 
 	const lastValidHtml = useRef("");
 	useEffect(() => {
@@ -239,7 +239,7 @@ const HeadingInput = () => {
 		const currentTheme = themes.find(
 			(t) => t.key === catalogue?.appearance.theme.name,
 		);
-		setPlaceholderColor(currentTheme?.type === "dark" ? "#E5E7EB" : "#D1D5DC");
+		setPlaceholderColor(currentTheme?.type === "dark" ? "#E5E7EB" : "#4A5565");
 	}, [catalogue?.appearance.theme.name]);
 
 	return (

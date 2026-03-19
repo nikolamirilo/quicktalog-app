@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { statusOrder } from "@/constants/sort";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { revalidateData } from "@/helpers/server";
 import {
 	deleteItem,
 	deleteMultipleItems,
@@ -65,6 +66,7 @@ const Overview = ({
 			if (success) {
 				await refreshAll();
 				resetCatalogue();
+				revalidateData();
 				router.refresh();
 			} else {
 				alert("Failed to delete catalogue. Please try again.");
@@ -176,16 +178,20 @@ const Overview = ({
 					Catalogues
 				</h2>
 				<div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
-					<CreateCatalogueButton
-						disabled={
-							usage.catalogues >= matchedTier.features.catalogues ||
-							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
-						}
-						showUpgradeTooltip={
-							usage.catalogues >= matchedTier.features.catalogues ||
-							usage.traffic.pageview_count >= matchedTier.features.traffic_limit
-						}
-					/>
+					<span className="w-9/12 sm:w-fit">
+						<CreateCatalogueButton
+							disabled={
+								usage.catalogues >= matchedTier.features.catalogues ||
+								usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit
+							}
+							showUpgradeTooltip={
+								usage.catalogues >= matchedTier.features.catalogues ||
+								usage.traffic.pageview_count >=
+									matchedTier.features.traffic_limit
+							}
+						/>
+					</span>
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
