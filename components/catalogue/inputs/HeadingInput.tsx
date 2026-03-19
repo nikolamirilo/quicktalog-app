@@ -200,7 +200,7 @@ const HeadingInput = () => {
 							: "text-foreground/70"
 					}`}
 					onClick={toggleBold}
-					onMouseDown={(e) => e.preventDefault()}
+					onPointerDown={(e) => e.preventDefault()}
 					tabIndex={-1}
 					title="Bold"
 					type="button"
@@ -216,7 +216,7 @@ const HeadingInput = () => {
 							: "text-foreground/70"
 					}`}
 					onClick={toggleItalic}
-					onMouseDown={(e) => e.preventDefault()}
+					onPointerDown={(e) => e.preventDefault()}
 					tabIndex={-1}
 					title="Italic"
 					type="button"
