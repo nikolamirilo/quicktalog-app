@@ -77,17 +77,78 @@ const HeadingInput = () => {
 		setIsItalic(hasItalicAncestor);
 	}, []);
 
+	const saveSelection = useCallback(() => {
+		const selection = window.getSelection();
+		if (!selection || selection.rangeCount === 0) return null;
+
+		const range = selection.getRangeAt(0);
+		if (!editorRef.current?.contains(range.commonAncestorContainer))
+			return null;
+
+		// Save start and end positions
+		const preCaretRange = range.cloneRange();
+		preCaretRange.selectNodeContents(editorRef.current);
+		preCaretRange.setEnd(range.startContainer, range.startOffset);
+		const start = preCaretRange.toString().length;
+		const end = start + range.toString().length;
+
+		return { start, end };
+	}, []);
+
+	const restoreSelection = useCallback(
+		(pos: { start: number; end: number } | null) => {
+			if (!pos || !editorRef.current) return;
+
+			const selection = window.getSelection();
+			if (!selection) return;
+
+			const range = document.createRange();
+			let charIndex = 0;
+			let foundStart = false;
+
+			const treeWalker = document.createTreeWalker(
+				editorRef.current,
+				NodeFilter.SHOW_TEXT,
+				null,
+			);
+
+			let node: Node | null;
+			while ((node = treeWalker.nextNode())) {
+				const nextCharIndex = charIndex + (node.textContent?.length || 0);
+
+				if (!foundStart && pos.start <= nextCharIndex) {
+					range.setStart(node, pos.start - charIndex);
+					foundStart = true;
+				}
+
+				if (foundStart && pos.end <= nextCharIndex) {
+					range.setEnd(node, pos.end - charIndex);
+					break;
+				}
+
+				charIndex = nextCharIndex;
+			}
+
+			if (foundStart) {
+				range.collapse(false);
+				selection.removeAllRanges();
+				selection.addRange(range);
+			}
+		},
+		[],
+	);
+
 	const handleInput = useCallback(() => {
 		if (editorRef.current) {
-			if (editorRef.current.scrollHeight > editorRef.current.clientHeight + 4) {
-				editorRef.current.innerHTML = lastValidHtml.current;
+			// Save cursor position BEFORE any changes
+			const savedPos = saveSelection();
 
-				const selection = window.getSelection();
-				const range = document.createRange();
-				range.selectNodeContents(editorRef.current);
-				range.collapse(false);
-				selection?.removeAllRanges();
-				selection?.addRange(range);
+			if (
+				editorRef.current.scrollHeight >
+				editorRef.current.clientHeight + 10
+			) {
+				editorRef.current.innerHTML = lastValidHtml.current;
+				restoreSelection(savedPos);
 				return;
 			}
 
@@ -100,7 +161,7 @@ const HeadingInput = () => {
 			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${headingSize}">${html}</h1>`;
 			updateCatalogue({ heading: wrappedHtml });
 		}
-	}, [updateCatalogue, headingSize]);
+	}, [updateCatalogue, headingSize, saveSelection, restoreSelection]);
 
 	const execCommand = useCallback(
 		(command: string) => {
@@ -236,12 +297,12 @@ const HeadingInput = () => {
 				>
 					<SelectTrigger
 						className="min-w-[110px] sm:min-w-[130px] w-fit h-8 text-xs sm:text-sm border-0 bg-transparent text-foreground/70 hover:text-primary hover:bg-primary/10 cursor-pointer focus:ring-0 focus:ring-offset-0 transition-all duration-200"
+						onClick={() => setIsSelectOpen((prev) => !prev)}
 						onPointerDown={(e) => {
 							// On iOS, prevent the default pointer behavior which causes
 							// blur to fire on the container before the Select can open
 							e.preventDefault();
 						}}
-						onClick={() => setIsSelectOpen((prev) => !prev)}
 					>
 						<SelectValue />
 					</SelectTrigger>
