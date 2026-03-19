@@ -39,8 +39,6 @@ const HeadingInput = () => {
 		}
 	}, []);
 
-
-
 	const isInitialized = useRef(false);
 	useEffect(() => {
 		if (editorRef.current && catalogue?.heading && !isInitialized.current) {
@@ -168,8 +166,6 @@ const HeadingInput = () => {
 		}
 	}, []);
 
-
-
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
 		setIsBold(false);
@@ -179,7 +175,9 @@ const HeadingInput = () => {
 	const showToolbar = isFocused || isSelectOpen;
 
 	useEffect(() => {
-		const currentTheme = themes.find((t) => t.key === catalogue?.appearance.theme.name);
+		const currentTheme = themes.find(
+			(t) => t.key === catalogue?.appearance.theme.name,
+		);
 		setPlaceholderColor(currentTheme?.type === "dark" ? "#E5E7EB" : "#D1D5DC");
 	}, [catalogue?.appearance.theme.name]);
 
@@ -196,10 +194,11 @@ const HeadingInput = () => {
 			>
 				{/* Bold Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold
-						? "text-[var(--catalogue-primary)] bg-white/90"
-						: "text-foreground/70"
-						}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isBold
+							? "text-[var(--catalogue-primary)] bg-white/90"
+							: "text-foreground/70"
+					}`}
 					onClick={toggleBold}
 					onMouseDown={(e) => e.preventDefault()}
 					tabIndex={-1}
@@ -211,10 +210,11 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic
-						? "text-[var(--catalogue-primary)] bg-white/90"
-						: "text-foreground/70"
-						}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isItalic
+							? "text-[var(--catalogue-primary)] bg-white/90"
+							: "text-foreground/70"
+					}`}
 					onClick={toggleItalic}
 					onMouseDown={(e) => e.preventDefault()}
 					tabIndex={-1}
@@ -231,12 +231,21 @@ const HeadingInput = () => {
 				<Select
 					onOpenChange={setIsSelectOpen}
 					onValueChange={handleSizeChange}
+					open={isSelectOpen}
 					value={headingSize}
 				>
-					<SelectTrigger className="min-w-[110px] sm:min-w-[130px] w-fit h-8 text-xs sm:text-sm border-0 bg-transparent text-foreground/70 hover:text-primary hover:bg-primary/10 cursor-pointer focus:ring-0 focus:ring-offset-0 transition-all duration-200">
+					<SelectTrigger
+						className="min-w-[110px] sm:min-w-[130px] w-fit h-8 text-xs sm:text-sm border-0 bg-transparent text-foreground/70 hover:text-primary hover:bg-primary/10 cursor-pointer focus:ring-0 focus:ring-offset-0 transition-all duration-200"
+						onPointerDown={(e) => {
+							// On iOS, prevent the default pointer behavior which causes
+							// blur to fire on the container before the Select can open
+							e.preventDefault();
+						}}
+						onClick={() => setIsSelectOpen((prev) => !prev)}
+					>
 						<SelectValue />
 					</SelectTrigger>
-					<SelectContent className="bg-white border-none">
+					<SelectContent className="bg-white border-none" position="popper">
 						<SelectItem
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
 							value="extraLarge"
@@ -292,7 +301,13 @@ const HeadingInput = () => {
 				onMouseUp={updateSelection}
 				onSelect={updateSelection}
 				ref={editorRef}
-				style={{ WebkitUserSelect: "text", userSelect: "text", "--placeholder-color": placeholderColor } as React.CSSProperties}
+				style={
+					{
+						WebkitUserSelect: "text",
+						userSelect: "text",
+						"--placeholder-color": placeholderColor,
+					} as React.CSSProperties
+				}
 				suppressContentEditableWarning
 			/>
 		</div>
