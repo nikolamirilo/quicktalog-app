@@ -171,7 +171,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 							onValueChange={handleLanguageChange}
 							value={formData.language}
 						>
-							<SelectTrigger className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base">
+							<SelectTrigger className="bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base">
 								<SelectValue placeholder="Select language" />
 							</SelectTrigger>
 							<SelectContent>
@@ -225,9 +225,9 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 
 				{/* Row 3: Currency & Business Type */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div className="space-y-2">
+					<div className="flex flex-col gap-3">
 						<Label
-							className="text-sm font-medium text-product-foreground"
+							className="text-product-foreground font-medium font-body"
 							htmlFor="currency"
 						>
 							Currency
@@ -240,7 +240,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 							value={formData.currency}
 						>
 							<SelectTrigger
-								className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
+								className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary text-sm sm:text-base"
 								id="currency"
 							>
 								<SelectValue placeholder="Select currency" />
@@ -266,7 +266,7 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 							onValueChange={handleBusinessTypeChange}
 							value={formData.businessType}
 						>
-							<SelectTrigger className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base">
+							<SelectTrigger className="bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base">
 								<SelectValue placeholder="Select type" />
 							</SelectTrigger>
 							<SelectContent>

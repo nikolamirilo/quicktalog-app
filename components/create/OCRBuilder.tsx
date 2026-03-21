@@ -101,16 +101,18 @@ export default function OCRBuilder({
 		try {
 			const slug = generateUniqueSlug(formData.name);
 			const data = { ...formData, name: slug };
+			const payload = {
+				input_text: text,
+				formData: data,
+				shouldGenerateImages,
+				userId: user?.id,
+			};
+			console.log("OCR Payload:", payload);
 
-			fetch(`${api_url}/api/ocr`, {
+			await fetch(`${api_url}/api/ocr`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					input_text: text,
-					formData: data,
-					shouldGenerateImages: shouldGenerateImages,
-					userId: user.id,
-				}),
+				body: JSON.stringify(payload),
 			});
 			setTimeout(() => {
 				setShowInfoModal(true);
