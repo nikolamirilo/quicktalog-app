@@ -70,7 +70,9 @@ const ItemModal = ({
 	};
 
 	const isFormValid =
-		item.name.trim().length > 0 && (item.isFree || item.price >= 0) && !isUploadingImage;
+		item.name.trim().length > 0 &&
+		(item.isFree || item.price >= 0) &&
+		!isUploadingImage;
 
 	return (
 		<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>

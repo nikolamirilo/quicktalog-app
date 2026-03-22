@@ -72,10 +72,11 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 					{layouts.map((layoutOption) => (
 						<div
 							key={layoutOption.key}
-							className={`relative cursor-pointer rounded-xl border p-1.5 transition-colors ${value.layout === layoutOption.key
-								? "border-product-primary border-2"
-								: "border-gray-200 hover:border-gray-300"
-								}`}
+							className={`relative cursor-pointer rounded-xl border p-1.5 transition-colors ${
+								value.layout === layoutOption.key
+									? "border-product-primary border-2"
+									: "border-gray-200 hover:border-gray-300"
+							}`}
 							onClick={() =>
 								onChange({ ...value, layout: layoutOption.key as any })
 							}

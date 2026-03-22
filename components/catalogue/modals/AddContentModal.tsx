@@ -84,19 +84,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-								spacing: (editingBlock as any).spacing,
-								border: (editingBlock as any).border,
-							}
+									spacing: (editingBlock as any).spacing,
+									border: (editingBlock as any).border,
+								}
 							: {
-								spacing: 2,
-								border: {
-									isEnabled: true,
-									style: "solid",
-									thickness: 1,
-									color: "#000000",
-									opacity: 100,
+									spacing: 2,
+									border: {
+										isEnabled: true,
+										style: "solid",
+										thickness: 1,
+										color: "#000000",
+										opacity: 100,
+									},
 								},
-							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -305,15 +305,11 @@ const AddContentModal = ({
 						<div className="mx-auto w-full border-t border-gray-300/70" />
 						<div className="flex-1 overflow-y-auto mt-4 pb-8 flex flex-col relative">
 							<div className="max-w-2xl w-full">
-								{locked && (
-									<LimitsOverlay size="sm" />
-								)}
+								{locked && <LimitsOverlay size="sm" />}
 								<>
 									{selectedOption === "category" && (
 										<ContentInput
-											onChange={(val) =>
-												setBlockData({ ...blockData, ...val })
-											}
+											onChange={(val) => setBlockData({ ...blockData, ...val })}
 											type="category"
 											value={blockData}
 										/>
@@ -321,9 +317,7 @@ const AddContentModal = ({
 
 									{selectedOption === "container" && (
 										<ContentInput
-											onChange={(val) =>
-												setBlockData({ ...blockData, ...val })
-											}
+											onChange={(val) => setBlockData({ ...blockData, ...val })}
 											type="container"
 											value={blockData}
 										/>
@@ -331,18 +325,14 @@ const AddContentModal = ({
 
 									{selectedOption === "embedding" && (
 										<EmbeddingInput
-											onChange={(val) =>
-												setBlockData({ ...blockData, ...val })
-											}
+											onChange={(val) => setBlockData({ ...blockData, ...val })}
 											value={blockData}
 										/>
 									)}
 
 									{selectedOption === "custom_code" && (
 										<CustomCodeInput
-											onChange={(val) =>
-												setBlockData({ ...blockData, ...val })
-											}
+											onChange={(val) => setBlockData({ ...blockData, ...val })}
 											value={blockData}
 											userData={userData}
 										/>
