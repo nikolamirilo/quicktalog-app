@@ -210,6 +210,14 @@ const HeadingInput = () => {
 		[],
 	);
 
+	const handlePaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		const text = e.clipboardData?.getData("text/plain");
+		if (text) {
+			document.execCommand("insertText", false, text);
+		}
+	}, []);
+
 	const handleBlur = useCallback((e: React.FocusEvent) => {
 		const relatedTarget = e.relatedTarget as HTMLElement | null;
 		if (containerRef.current && !containerRef.current.contains(relatedTarget)) {
@@ -360,6 +368,7 @@ const HeadingInput = () => {
 				onKeyDown={handleKeyDown}
 				onKeyUp={updateSelection}
 				onMouseUp={updateSelection}
+				onPaste={handlePaste}
 				onSelect={updateSelection}
 				ref={editorRef}
 				style={

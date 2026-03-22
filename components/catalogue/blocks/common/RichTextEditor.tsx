@@ -93,6 +93,14 @@ export default function RichTextEditor({
 		handleInput();
 	};
 
+	const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		const text = e.clipboardData?.getData("text/plain");
+		if (text) {
+			document.execCommand("insertText", false, text);
+		}
+	};
+
 	const handleInput = () => {
 		if (editorRef.current) {
 			onChange(editorRef.current.innerHTML);
@@ -253,6 +261,7 @@ export default function RichTextEditor({
 				onBlur={() => setIsFocused(false)}
 				onFocus={() => setIsFocused(true)}
 				onInput={handleInput}
+				onPaste={handlePaste}
 				ref={editorRef}
 				style={{ resize: "vertical", overflow: "auto" }}
 			/>

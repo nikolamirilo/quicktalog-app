@@ -163,7 +163,7 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 				{/* Logo Section */}
 				<div className="space-y-4">
 					<div className="flex items-center gap-2">
-						<h3 className="text-lg font-bold">Logo Configuration</h3>
+						<h3 className="text-lg font-bold">Footer Logo Size</h3>
 						<Popover>
 							<PopoverTrigger type="button">
 								<Info className="h-4 w-4 text-muted-foreground" />
@@ -179,8 +179,7 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 
 					<div className="space-y-4">
 						<div className="space-y-3">
-							<div className="flex justify-between items-center">
-								<Label className="text-base">Size</Label>
+							<div className="flex justify-end items-center">
 								<span className="text-sm text-muted-foreground">
 									{catalogue.footer?.logoSize?.width || 160}px
 								</span>
