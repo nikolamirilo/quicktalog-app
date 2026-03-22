@@ -46,7 +46,7 @@ const LimitsOverlay = ({
 				className={`text-muted-foreground text-center w-full max-w-[400px] ${paragraphSize}`}
 			>
 				{type === "branding"
-					? "Make your catalog truly yours Add your logo, brand details, and customize the header and footer. Upgrade your plan to unlock this feature."
+					? <>Make your catalog truly yours. Add your logo and brand details, and customize the header and footer. <br />Upgrade your plan to unlock this feature.</>
 					: "Upgrade your plan to unlock this feature."}
 			</p>
 			<Button onClick={handleUpgrade} size={size}>

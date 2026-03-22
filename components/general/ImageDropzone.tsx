@@ -1,6 +1,7 @@
 "use client";
 import { loadImage, processImage } from "@/helpers/imageProccessing";
 import { ImageDropzoneProps } from "@/types/components";
+import { Skeleton } from "@/components/ui/skeleton";
 import { UploadDropzone } from "@/utils/uploadthing";
 import React, { useCallback } from "react";
 import { FiUploadCloud } from "react-icons/fi";
@@ -65,6 +66,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 
 	const handleUploadComplete = useCallback(
 		(res: any[]) => {
+			setIsUploading?.(false);
 			try {
 				if (res && res.length > 0 && res[0]?.url) {
 					onUploadComplete(res[0].url);
@@ -87,6 +89,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 
 	const handleUploadError = useCallback(
 		(error: Error) => {
+			setIsUploading?.(false);
 			console.error("Upload error:", error);
 			if (onError) {
 				onError(error);
@@ -137,8 +140,9 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 									);
 								if (isUploading)
 									return (
-										<div className="absolute inset-0 flex items-center justify-center">
-											<span className="animate-spin rounded-full h-14 w-14 border-b-2 border-product-primary"></span>
+										<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center">
+											<Skeleton className="absolute inset-0 w-full h-full" />
+											<span className="animate-spin rounded-full h-14 w-14 border-b-2 border-product-primary z-10"></span>
 										</div>
 									);
 								return (

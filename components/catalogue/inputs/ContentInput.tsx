@@ -25,18 +25,19 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 					{type === "category" ? "Category" : "Container"} Name
 					<span className="text-red-500 ml-1">*</span>
 				</Label>
-				{type === "container" && (
-					<span className="text-xs text-gray-500 -mt-0.5">
-						Used to identify this container when moving items. Not visible to
-						end users.
-					</span>
-				)}
+
 				<Input
 					id={`${type}-name-input`}
 					onChange={(e) => onChange({ ...value, name: e.target.value })}
 					placeholder={`Enter ${type} name`}
 					value={value.name}
 				/>
+				{type === "container" && (
+					<span className="text-xs text-gray-500 -mt-0.5">
+						Used to identify this container when moving items. Not visible to
+						end users.
+					</span>
+				)}
 			</div>
 
 			{/* Auto-expand toggle */}
@@ -71,11 +72,10 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 					{layouts.map((layoutOption) => (
 						<div
 							key={layoutOption.key}
-							className={`relative cursor-pointer rounded-xl border p-1.5 transition-colors ${
-								value.layout === layoutOption.key
-									? "border-product-primary border-2"
-									: "border-gray-200 hover:border-gray-300"
-							}`}
+							className={`relative cursor-pointer rounded-xl border p-1.5 transition-colors ${value.layout === layoutOption.key
+								? "border-product-primary border-2"
+								: "border-gray-200 hover:border-gray-300"
+								}`}
 							onClick={() =>
 								onChange({ ...value, layout: layoutOption.key as any })
 							}

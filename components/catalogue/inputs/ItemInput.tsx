@@ -19,6 +19,7 @@ interface ItemInputProps {
 	onChange: (value: Item) => void;
 	currency: string;
 	layout?: ContentLayout | null;
+	onUploadingChange?: (isUploading: boolean) => void;
 }
 
 const DENOMINATORS = [
@@ -31,7 +32,13 @@ const DENOMINATORS = [
 	{ value: "portion", label: "portion" },
 ];
 
-const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
+const ItemInput = ({
+	value,
+	onChange,
+	currency,
+	layout,
+	onUploadingChange,
+}: ItemInputProps) => {
 	const [imageTab, setImageTab] = useState<"upload" | "url">("upload");
 	const [isUploading, setIsUploading] = useState(false);
 	const [priceString, setPriceString] = useState(
@@ -42,6 +49,10 @@ const ItemInput = ({ value, onChange, currency, layout }: ItemInputProps) => {
 			? value.discount?.discountedPrice.toString()
 			: "",
 	);
+
+	useEffect(() => {
+		onUploadingChange?.(isUploading);
+	}, [isUploading, onUploadingChange]);
 
 	useEffect(() => {
 		const currentNum = parseFloat(priceString) || 0;

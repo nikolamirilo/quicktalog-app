@@ -44,6 +44,7 @@ const ItemModal = ({
 }: ItemModalProps) => {
 	const { setIsSidebarOpen } = useCatalogueContext() || {};
 	const [item, setItem] = useState<Item>(initialItem || createDefaultItem());
+	const [isUploadingImage, setIsUploadingImage] = useState(false);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -69,7 +70,7 @@ const ItemModal = ({
 	};
 
 	const isFormValid =
-		item.name.trim().length > 0 && (item.isFree || item.price >= 0);
+		item.name.trim().length > 0 && (item.isFree || item.price >= 0) && !isUploadingImage;
 
 	return (
 		<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
@@ -92,6 +93,7 @@ const ItemModal = ({
 						currency={currency}
 						layout={layout}
 						onChange={setItem}
+						onUploadingChange={setIsUploadingImage}
 						value={item}
 					/>
 				</div>

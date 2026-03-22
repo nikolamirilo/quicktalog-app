@@ -1,5 +1,4 @@
 "use client";
-import UpgradePlanCTA from "@/components/general/UpgradePlanCTA";
 import LimitsModal from "@/components/modals/LimitsModal";
 import {
 	AlertDialog,
@@ -14,6 +13,7 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ContentOptionsSelector } from "../blocks/common/ContentOptionsSelector";
 import RichTextEditor from "../blocks/common/RichTextEditor";
+import LimitsOverlay from "../inputs/BuilderSidebar/LimitsOverlay";
 import ContentInput from "../inputs/ContentInput";
 import CustomCodeInput from "../inputs/CustomCodeInput";
 import DividerInput from "../inputs/DividerInput";
@@ -84,19 +84,19 @@ const AddContentModal = ({
 					divider:
 						editingBlock.type === "divider"
 							? {
-									spacing: (editingBlock as any).spacing,
-									border: (editingBlock as any).border,
-								}
+								spacing: (editingBlock as any).spacing,
+								border: (editingBlock as any).border,
+							}
 							: {
-									spacing: 2,
-									border: {
-										isEnabled: true,
-										style: "solid",
-										thickness: 1,
-										color: "#000000",
-										opacity: 100,
-									},
+								spacing: 2,
+								border: {
+									isEnabled: true,
+									style: "solid",
+									thickness: 1,
+									color: "#000000",
+									opacity: 100,
 								},
+							},
 					isExpanded: (editingBlock as any).isExpanded ?? true,
 				});
 			} else {
@@ -303,93 +303,78 @@ const AddContentModal = ({
 							</Button>
 						</div>
 						<div className="mx-auto w-full border-t border-gray-300/70" />
-						<div className="flex-1 overflow-y-auto mt-4 pb-8 flex flex-col">
+						<div className="flex-1 overflow-y-auto mt-4 pb-8 flex flex-col relative">
 							<div className="max-w-2xl w-full">
-								{locked ? (
-									<UpgradePlanCTA
-										ctaLabel="Upgrade"
-										href="/pricing"
-										size="small"
-										subtitle={
-											selectedOption === "divider"
-												? "Upgrade your plan to unlock Divider blocks for better content separation."
-												: selectedOption === "embedding"
-													? "Embed capabilities like maps and videos are available in higher tiers."
-													: selectedOption === "custom_code"
-														? "Custom HTML integration requires the Growth plan or higher."
-														: "Upgrade your plan to access this feature."
-										}
-										title="Upgrade your plan"
-									/>
-								) : (
-									<>
-										{selectedOption === "category" && (
-											<ContentInput
-												onChange={(val) =>
-													setBlockData({ ...blockData, ...val })
-												}
-												type="category"
-												value={blockData}
-											/>
-										)}
-
-										{selectedOption === "container" && (
-											<ContentInput
-												onChange={(val) =>
-													setBlockData({ ...blockData, ...val })
-												}
-												type="container"
-												value={blockData}
-											/>
-										)}
-
-										{selectedOption === "embedding" && (
-											<EmbeddingInput
-												onChange={(val) =>
-													setBlockData({ ...blockData, ...val })
-												}
-												value={blockData}
-											/>
-										)}
-
-										{selectedOption === "custom_code" && (
-											<CustomCodeInput
-												onChange={(val) =>
-													setBlockData({ ...blockData, ...val })
-												}
-												value={blockData}
-												userData={userData}
-											/>
-										)}
-
-										{selectedOption === "text" && (
-											<div>
-												<label className="block text-sm font-medium mb-2 text-gray-700">
-													Content
-												</label>
-												<RichTextEditor
-													className="px-0.5"
-													content={blockData.content || "<p></p>"}
-													onChange={(val) =>
-														setBlockData({ ...blockData, content: val })
-													}
-												/>
-											</div>
-										)}
-
-										{selectedOption === "divider" && (
-											<DividerInput
-												value={blockData.divider as any}
-												onChange={(val) =>
-													setBlockData({
-														...blockData,
-														divider: { ...blockData.divider, ...val } as any,
-													})
-												}
-											/>
-										)}
-									</>
+								{locked && (
+									<LimitsOverlay size="sm" />
 								)}
+								<>
+									{selectedOption === "category" && (
+										<ContentInput
+											onChange={(val) =>
+												setBlockData({ ...blockData, ...val })
+											}
+											type="category"
+											value={blockData}
+										/>
+									)}
+
+									{selectedOption === "container" && (
+										<ContentInput
+											onChange={(val) =>
+												setBlockData({ ...blockData, ...val })
+											}
+											type="container"
+											value={blockData}
+										/>
+									)}
+
+									{selectedOption === "embedding" && (
+										<EmbeddingInput
+											onChange={(val) =>
+												setBlockData({ ...blockData, ...val })
+											}
+											value={blockData}
+										/>
+									)}
+
+									{selectedOption === "custom_code" && (
+										<CustomCodeInput
+											onChange={(val) =>
+												setBlockData({ ...blockData, ...val })
+											}
+											value={blockData}
+											userData={userData}
+										/>
+									)}
+
+									{selectedOption === "text" && (
+										<div>
+											<label className="block text-sm font-medium mb-2 text-gray-700">
+												Content
+											</label>
+											<RichTextEditor
+												className="px-0.5"
+												content={blockData.content || "<p></p>"}
+												onChange={(val) =>
+													setBlockData({ ...blockData, content: val })
+												}
+											/>
+										</div>
+									)}
+
+									{selectedOption === "divider" && (
+										<DividerInput
+											value={blockData.divider as any}
+											onChange={(val) =>
+												setBlockData({
+													...blockData,
+													divider: { ...blockData.divider, ...val } as any,
+												})
+											}
+										/>
+									)}
+								</>
 							</div>
 						</div>
 
