@@ -14,15 +14,13 @@ const Heading = ({
 	const isHtml = item.heading.includes("<h1");
 	let headingHtml = isHtml
 		? item.heading
-		: `<h1 class="text-3xl sm:text-5xl font-heading text-heading drop-shadow-sm mb-4 text-center break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="large">${item.heading}</h1>`;
+		: `<h1 class="text-3xl sm:text-5xl font-heading text-heading drop-shadow-sm mb-4 text-center whitespace-nowrap break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="large">${item.heading}</h1>`;
+	// Backward compat: patch old headings missing required classes
 	if (isHtml && !headingHtml.includes("pb-1 md:pb-2")) {
 		headingHtml = headingHtml.replace('class="', 'class="pb-1 md:pb-2 ');
 	}
 	if (isHtml && headingHtml.includes("line-clamp-")) {
 		headingHtml = headingHtml.replace(/line-clamp-\d+/g, "");
-	}
-	if (isHtml && headingHtml.includes("break-words")) {
-		headingHtml = headingHtml.replace(/break-words/g, "break-word");
 	}
 	if (isHtml && !headingHtml.includes("whitespace-")) {
 		headingHtml = headingHtml.replace('class="', 'class="whitespace-nowrap ');

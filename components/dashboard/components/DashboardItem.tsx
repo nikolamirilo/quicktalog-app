@@ -2,13 +2,16 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Edit } from "lucide-react";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { publishCatalogue } from "@/server_actions/catalogue";
+import { Edit, Rocket } from "lucide-react";
 import Link from "next/link";
 import { FiFileText } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { LuSquareMenu } from "react-icons/lu";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { toast } from "sonner";
 import ItemDropdownMenu from "./ItemDropdownMenu";
 
 const DashboardItem = ({
@@ -25,6 +28,36 @@ const DashboardItem = ({
 	statusColors,
 	sourceConfig,
 }) => {
+	const { refreshAll } = useDashboardData("overview");
+	const handlePublish = async () => {
+		const promise = publishCatalogue(catalogue);
+		if (catalogue.status === "draft") {
+			toast.promise(promise, {
+				loading: "Publishing...",
+				success: async (success) => {
+					if (!success) throw new Error("Failed to update status");
+					await refreshAll();
+					return "Catalogue published successfully";
+				},
+				error: "Failed to publish catalogue",
+			});
+		} else {
+			toast.promise(promise, {
+				loading: "Updating...",
+				success: (success) => {
+					if (!success) throw new Error("Failed to update status");
+					return "Catalogue updated successfully";
+				},
+				action: {
+					label: "View",
+					onClick: () => {
+						window.open(`/catalogues/${catalogue.name}`, "_blank");
+					},
+				},
+				error: "Failed to update catalogue",
+			});
+		}
+	};
 	return (
 		<Card
 			className="p-2 md:p-5 flex flex-col gap-2 sm:gap-3 lg:gap-4 relative bg-product-background border border-product-border shadow-product-shadow hover:shadow-product-shadow-hover hover:scale-[1.02] transition-all duration-200 animate-fade-in"
@@ -95,7 +128,7 @@ const DashboardItem = ({
 				})}
 			</div>
 			{["active", "inactive"].includes(catalogue.status) && (
-				<div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
+				<div className="flex h-full flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
 					<Link
 						className="flex flex-row items-center justify-center gap-1"
 						href={`/catalogues/${catalogue.name}`}
@@ -119,8 +152,8 @@ const DashboardItem = ({
 					</Link>
 				</div>
 			)}
-			{["draft"].includes(catalogue.status) && (
-				<div className="flex flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
+			{catalogue.status === "draft" && (
+				<div className="flex flex-col gap-2 sm:gap-3 h-full justify-start mt-auto pt-2 sm:pt-3 md:pt-4">
 					<Link
 						className="flex flex-row items-center justify-center gap-1"
 						href={`/admin/${catalogue.name}/builder`}
@@ -130,11 +163,22 @@ const DashboardItem = ({
 							<span className="ml-1">Continue Editing</span>
 						</Button>
 					</Link>
+					<Button
+						className="w-full flex flex-row items-center justify-center gap-1"
+						disabled={
+							catalogue.heading.length === 0 || catalogue.content.length === 0
+						}
+						onClick={handlePublish}
+						variant="outline"
+					>
+						<Rocket className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
+						<span className="ml-1">Publish Catalogue</span>
+					</Button>
 				</div>
 			)}
 			{["error", "in preparation"].includes(catalogue.status) && (
 				<div
-					className={`mt-3 flex items-start gap-2 rounded-lg border p-3 text-sm leading-relaxed
+					className={`mt-3 flex h-full items-start gap-2 rounded-lg border p-3 text-sm leading-relaxed
       ${
 				catalogue.status === "error"
 					? "border-red-200 bg-red-50 text-red-700"

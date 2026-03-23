@@ -155,21 +155,23 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 									: `${catalogue.contact.website ? catalogue.contact.website : "/"}`
 							}
 						>
-							<img
-								alt={`${companyName} logo`}
-								className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
-								fetchPriority="high"
-								src={logo}
-								style={{
-									width: activeData?.header?.logoSize?.width
-										? `${activeData.header.logoSize.width}px`
-										: type === "default"
-											? "120px"
-											: "100px",
-									height: "auto",
-									maxWidth: "100%",
-								}}
-							/>
+							{logo && (
+								<img
+									alt={`${companyName} logo`}
+									className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
+									fetchPriority="high"
+									src={logo}
+									style={{
+										width: activeData?.header?.logoSize?.width
+											? `${activeData.header.logoSize.width}px`
+											: type === "default"
+												? "120px"
+												: "100px",
+										height: "auto",
+										maxWidth: "100%",
+									}}
+								/>
+							)}
 						</Link>
 					</div>
 

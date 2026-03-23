@@ -14,6 +14,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FiItalic } from "react-icons/fi";
 import { HiMiniBold } from "react-icons/hi2";
 
+const HEADING_CHAR_LIMIT = 100;
+
 const HeadingInput = () => {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
 	const editorRef = useRef<HTMLDivElement>(null);
@@ -25,24 +27,22 @@ const HeadingInput = () => {
 	const [isEmpty, setIsEmpty] = useState(true);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [placeholderColor, setPlaceholderColor] = useState("#4A5565");
+	const [charCount, setCharCount] = useState(0);
 
 	const lastValidHtml = useRef("");
-	useEffect(() => {
-		if (catalogue?.heading) {
-			const match = catalogue.heading.match(/data-size="([^"]+)"/);
-			if (match) {
-				const size = match[1] as HeadingSize;
-				if (["extraLarge", "large", "medium", "small"].includes(size)) {
-					setHeadingSize(size);
-				}
-			}
-		}
-	}, []);
-
 	const isInitialized = useRef(false);
 	useEffect(() => {
 		if (editorRef.current && catalogue?.heading && !isInitialized.current) {
 			isInitialized.current = true;
+
+			const sizeMatch = catalogue.heading.match(/data-size="([^"]+)"/);
+			if (sizeMatch) {
+				const size = sizeMatch[1] as HeadingSize;
+				if (["extraLarge", "large", "medium", "small"].includes(size)) {
+					setHeadingSize(size);
+				}
+			}
+
 			let content = catalogue.heading;
 			const innerMatch = content.match(/<h1[^>]*>([\s\S]*)<\/h1>/);
 			if (innerMatch) {
@@ -52,6 +52,7 @@ const HeadingInput = () => {
 			editorRef.current.innerHTML = parsed;
 			lastValidHtml.current = parsed;
 			setIsEmpty(!parsed || parsed === "<br>");
+			setCharCount(editorRef.current.textContent?.length || 0);
 		}
 	}, [catalogue?.heading]);
 	const updateSelection = useCallback(() => {
@@ -138,10 +139,33 @@ const HeadingInput = () => {
 		[],
 	);
 
+	const handleBeforeInput = useCallback(
+		(e: React.FormEvent<HTMLDivElement>) => {
+			if (!editorRef.current) return;
+			const ev = e.nativeEvent as InputEvent;
+			const inputType = ev.inputType || "";
+
+			// Allow deletions and formatting
+			if (inputType.startsWith("delete") || inputType.startsWith("format"))
+				return;
+
+			const currentLen = editorRef.current.textContent?.length || 0;
+			const selection = window.getSelection();
+			const selectedLen = selection?.toString().length || 0;
+			const available = HEADING_CHAR_LIMIT - (currentLen - selectedLen);
+
+			const insertLen = ev.data?.length ?? 1;
+			if (available < insertLen) {
+				e.preventDefault();
+			}
+		},
+		[],
+	);
+
 	const handleInput = useCallback(() => {
 		if (editorRef.current) {
-			// Save cursor position BEFORE any changes
 			const savedPos = saveSelection();
+			const textLen = editorRef.current.textContent?.length || 0;
 
 			if (
 				editorRef.current.scrollHeight >
@@ -156,9 +180,10 @@ const HeadingInput = () => {
 			const html = editorRef.current.innerHTML;
 
 			setIsEmpty(!html || html === "<br>" || html === "");
+			setCharCount(textLen);
 
 			const sizeClass = headingSizeMap[headingSize];
-			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${headingSize}">${html}</h1>`;
+			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center whitespace-nowrap break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${headingSize}">${html}</h1>`;
 			updateCatalogue({ heading: wrappedHtml });
 		}
 	}, [updateCatalogue, headingSize, saveSelection, restoreSelection]);
@@ -187,7 +212,7 @@ const HeadingInput = () => {
 			if (editorRef.current) {
 				const html = editorRef.current.innerHTML;
 				const sizeClass = headingSizeMap[size];
-				const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center line-clamp-3 break-words pb-1 md:pb-2 max-w-[94%] md:max-w-[80%] mx-auto" data-size="${size}">${html}</h1>`;
+				const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center whitespace-nowrap break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${size}">${html}</h1>`;
 				updateCatalogue({ heading: wrappedHtml });
 			}
 		},
@@ -212,8 +237,14 @@ const HeadingInput = () => {
 
 	const handlePaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
 		e.preventDefault();
-		const text = e.clipboardData?.getData("text/plain");
-		if (text) {
+		let text = e.clipboardData?.getData("text/plain");
+		if (text && editorRef.current) {
+			const currentLen = editorRef.current.textContent?.length || 0;
+			const selection = window.getSelection();
+			const selectedLen = selection?.toString().length || 0;
+			const remaining = HEADING_CHAR_LIMIT - (currentLen - selectedLen);
+			if (remaining <= 0) return;
+			text = text.slice(0, remaining);
 			document.execCommand("insertText", false, text);
 		}
 	}, []);
@@ -363,6 +394,7 @@ const HeadingInput = () => {
 				data-placeholder="+ Add Heading"
 				enterKeyHint="done"
 				inputMode="text"
+				onBeforeInput={handleBeforeInput}
 				onClick={handleFocus}
 				onInput={handleInput}
 				onKeyDown={handleKeyDown}
@@ -380,6 +412,13 @@ const HeadingInput = () => {
 				}
 				suppressContentEditableWarning
 			/>
+			{isFocused && (
+				<span
+					className={`text-xs mt-1 transition-colors ${charCount >= HEADING_CHAR_LIMIT ? "text-red-500" : "text-foreground/40"}`}
+				>
+					{charCount}/{HEADING_CHAR_LIMIT}
+				</span>
+			)}
 		</div>
 	);
 };
