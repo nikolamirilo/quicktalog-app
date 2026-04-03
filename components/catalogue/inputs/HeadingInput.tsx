@@ -55,6 +55,7 @@ const HeadingInput = () => {
 			setCharCount(editorRef.current.textContent?.length || 0);
 		}
 	}, [catalogue?.heading]);
+
 	const updateSelection = useCallback(() => {
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount === 0) return;
@@ -183,7 +184,7 @@ const HeadingInput = () => {
 			setCharCount(textLen);
 
 			const sizeClass = headingSizeMap[headingSize];
-			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center whitespace-nowrap break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${headingSize}">${html}</h1>`;
+			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${headingSize}">${html}</h1>`;
 			updateCatalogue({ heading: wrappedHtml });
 		}
 	}, [updateCatalogue, headingSize, saveSelection, restoreSelection]);
@@ -212,7 +213,7 @@ const HeadingInput = () => {
 			if (editorRef.current) {
 				const html = editorRef.current.innerHTML;
 				const sizeClass = headingSizeMap[size];
-				const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center whitespace-nowrap break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${size}">${html}</h1>`;
+				const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${size}">${html}</h1>`;
 				updateCatalogue({ heading: wrappedHtml });
 			}
 		},
@@ -267,6 +268,7 @@ const HeadingInput = () => {
 	}, []);
 
 	const handleFocus = useCallback(() => {
+		isInitialized.current = true;
 		setIsFocused(true);
 		setIsBold(false);
 		setIsItalic(false);
@@ -290,15 +292,14 @@ const HeadingInput = () => {
 		>
 			{/* Formatting Toolbar */}
 			<div
-				className={`flex md:gap-2 flex-wrap w-full items-center justify-center gap-1 mb-2 px-2 py-1 bg-transparent transition-opacity duration-200 ${showToolbar ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+				className={`flex md:gap-2 flex-wrap w-full items-center justify-center gap-1 px-2 bg-transparent transition-all duration-200 ${showToolbar ? "opacity-100 mb-2 py-1" : "opacity-0 pointer-events-none mb-0 py-0 h-0 overflow-hidden"}`}
 			>
 				{/* Bold Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isBold
-							? "text-[var(--catalogue-primary)] bg-white/90"
-							: "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold
+						? "text-[var(--catalogue-primary)] bg-white/90"
+						: "text-foreground/70"
+						}`}
 					onClick={toggleBold}
 					onPointerDown={(e) => e.preventDefault()}
 					tabIndex={-1}
@@ -310,11 +311,10 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
-						isItalic
-							? "text-[var(--catalogue-primary)] bg-white/90"
-							: "text-foreground/70"
-					}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic
+						? "text-[var(--catalogue-primary)] bg-white/90"
+						: "text-foreground/70"
+						}`}
 					onClick={toggleItalic}
 					onPointerDown={(e) => e.preventDefault()}
 					tabIndex={-1}
@@ -348,15 +348,9 @@ const HeadingInput = () => {
 					<SelectContent className="bg-white border-none" position="popper">
 						<SelectItem
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
-							value="extraLarge"
+							value="small"
 						>
-							Extra Large
-						</SelectItem>
-						<SelectItem
-							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
-							value="large"
-						>
-							Large
+							Small
 						</SelectItem>
 						<SelectItem
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
@@ -366,9 +360,15 @@ const HeadingInput = () => {
 						</SelectItem>
 						<SelectItem
 							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
-							value="small"
+							value="large"
 						>
-							Small
+							Large
+						</SelectItem>
+						<SelectItem
+							className="hover:bg-primary/10 cursor-pointer focus:bg-primary/10 focus:text-primary"
+							value="extraLarge"
+						>
+							Extra Large
 						</SelectItem>
 					</SelectContent>
 				</Select>

@@ -28,7 +28,7 @@ const PromptExamples: React.FC<PromptExamplesProps> = ({
 						variant="ghost"
 					>
 						<div className="flex flex-row justify-start items-center w-full h-full gap-3">
-							<div className="w-8 h-8 rounded-full bg-product-primary-accent/10 flex items-center justify-center group-hover:bg-product-primary-accent/20 transition-colors">
+							<div className="w-8 h-8 rounded-full bg-product-primary-accent/10 flex items-center justify-center group-/20 transition-colors">
 								<span className="text-product-primary">{example.icon}</span>
 							</div>
 							<div className="flex-1">

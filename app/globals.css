@@ -25,6 +25,11 @@ body {
 	width: 8px;
 }
 
+/* Prevent layout shift when Radix UI removes the scrollbar */
+html {
+	scrollbar-gutter: stable;
+}
+
 ::-webkit-scrollbar-track {
 	background: var(--product-background);
 	border-radius: 0rem;

@@ -45,19 +45,19 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 					<Label>Vertical Spacing ({spacing}rem)</Label>
 				</div>
 				<Slider
-					value={[spacing]}
-					min={0}
 					max={10}
-					step={0.5}
+					min={0}
 					onValueChange={([val]) => onChange({ spacing: val })}
+					step={0.5}
+					value={[spacing]}
 				/>
 			</div>
 
 			<div className="space-y-4 pt-4 border-t border-gray-100">
 				<div className="flex items-center space-x-2">
 					<Checkbox
-						id="enable-border"
 						checked={border.isEnabled}
+						id="enable-border"
 						onCheckedChange={(checked) =>
 							handleBorderChange({ isEnabled: checked as boolean })
 						}
@@ -72,10 +72,10 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 							<div className="space-y-2">
 								<Label>Style</Label>
 								<Select
-									value={border.style}
 									onValueChange={(val: any) =>
 										handleBorderChange({ style: val })
 									}
+									value={border.style}
 								>
 									<SelectTrigger>
 										<SelectValue />
@@ -92,13 +92,13 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 								<Label>Thickness ({border.thickness}px)</Label>
 								<Slider
 									className="pt-4"
-									value={[border.thickness || 1]}
-									min={1}
 									max={10}
-									step={1}
+									min={1}
 									onValueChange={([val]) =>
 										handleBorderChange({ thickness: val })
 									}
+									step={1}
+									value={[border.thickness || 1]}
 								/>
 							</div>
 						</div>
@@ -109,12 +109,12 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 								<Label>Color</Label>
 								<div className="flex gap-2 items-center">
 									<Input
-										type="color"
-										value={border.color}
+										className="w-12 h-10 p-1 cursor-pointer"
 										onChange={(e) =>
 											handleBorderChange({ color: e.target.value })
 										}
-										className="w-12 h-10 p-1 cursor-pointer"
+										type="color"
+										value={border.color}
 									/>
 									<span className="text-sm text-gray-500 uppercase">
 										{border.color}
@@ -126,13 +126,13 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 								<Label>Opacity ({border.opacity}%)</Label>
 								<Slider
 									className="pt-4"
-									value={[border.opacity ?? 100]}
-									min={0}
 									max={100}
-									step={10}
+									min={0}
 									onValueChange={([val]) =>
 										handleBorderChange({ opacity: val })
 									}
+									step={10}
+									value={[border.opacity ?? 100]}
 								/>
 							</div>
 						</div>

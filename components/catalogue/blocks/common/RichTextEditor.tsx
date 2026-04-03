@@ -44,7 +44,7 @@ export default function RichTextEditor({
 
 	const editorRef = useRef<HTMLDivElement>(null);
 	const [isFocused, setIsFocused] = useState(false);
-	const [fontSize, setFontSize] = useState("default");
+	const [fontSize, setFontSize] = useState("4");
 
 	useEffect(() => {
 		if (editorRef.current && editorRef.current.innerHTML !== content) {
@@ -59,7 +59,7 @@ export default function RichTextEditor({
 				if (size) {
 					setFontSize(size.toString());
 				} else {
-					setFontSize("default");
+					setFontSize("4");
 				}
 			} catch {
 				// ignore
@@ -233,24 +233,18 @@ export default function RichTextEditor({
 
 					<select
 						className={`px-2 py-1 border ${borderColor} rounded text-sm ${editorBg} ${selectHover} cursor-pointer ${textColor}`}
-						value={fontSize}
 						onChange={(e) => {
 							const value = e.target.value;
-							if (value !== "default") {
-								execCommand("fontSize", value);
-								setFontSize(value);
-							}
+							execCommand("fontSize", value);
+							setFontSize(value);
 						}}
 						onMouseDown={handleSelectMouseDown}
+						value={fontSize}
 					>
-						<option value="default">Font Size</option>
-						<option value="1">Very Small</option>
-						<option value="2">Small</option>
-						<option value="3">Normal</option>
-						<option value="4">Medium</option>
-						<option value="5">Large</option>
-						<option value="6">Very Large</option>
-						<option value="7">Huge</option>
+						<option value="4">Small</option>
+						<option value="5">Medium</option>
+						<option value="6">Large</option>
+						<option value="7">Extra Large</option>
 					</select>
 				</div>
 			)}

@@ -486,7 +486,7 @@ const LimitsModal = ({
 							{content.currentLimit === content.nextLimit ? (
 								<AlertDialogFooter className="sm:justify-center pt-2">
 									<Link
-										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
+										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center "
 										href="/contact"
 									>
 										<span className="relative z-10 flex items-center justify-center space-x-2">
@@ -498,7 +498,7 @@ const LimitsModal = ({
 							) : (
 								<AlertDialogFooter className="sm:justify-center pt-2">
 									<Link
-										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center hover:bg-product-primary-accent"
+										className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center "
 										href="/pricing"
 									>
 										<span className="relative z-10 flex items-center justify-center space-x-2">

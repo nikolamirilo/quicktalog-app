@@ -164,11 +164,10 @@ const Footer: React.FC = () => {
 								/>
 							</div>
 							<Button
-								className={`w-full transition-colors duration-200 font-semibold ${
-									submitSuccess
+								className={`w-full transition-colors duration-200 font-semibold ${submitSuccess
 										? "bg-green-500 text-white hover:bg-green-600"
-										: "bg-product-primary text-product-foreground hover:bg-product-primary-accent"
-								}`}
+										: "bg-product-primary text-product-foreground "
+									}`}
 								disabled={isSubmitting || submitSuccess}
 								type="submit"
 							>

@@ -142,7 +142,7 @@ export default function ConsentModal({
 						Cancel
 					</Button>
 					<Button
-						className="bg-product-primary text-product-foreground hover:bg-product-primary-accent border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+						className="bg-product-primary text-product-foreground  border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
 						disabled={!allConsentsAccepted}
 						onClick={handleConfirm}
 					>
