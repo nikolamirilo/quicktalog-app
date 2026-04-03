@@ -1,7 +1,7 @@
 "use client";
+import { Skeleton } from "@/components/ui/skeleton";
 import { loadImage, processImage } from "@/helpers/imageProcessing";
 import { ImageDropzoneProps } from "@/types/shared";
-import { Skeleton } from "@/components/ui/skeleton";
 import { UploadDropzone } from "@/utils/uploadthing";
 import React, { useCallback } from "react";
 import { FiUploadCloud } from "react-icons/fi";
@@ -15,7 +15,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 	onUploadComplete,
 	onError,
 	maxDim = 1024,
-	targetSizeKB = 400,
+	targetSizeKB = 1200,
 	className = "",
 	disabled = false,
 }) => {

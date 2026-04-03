@@ -8,8 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { ContentLayout, Item } from "@quicktalog/common";
-import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Check, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface ItemModalProps {
 	isOpen: boolean;
@@ -45,11 +45,14 @@ const ItemModal = ({
 	const { setIsSidebarOpen } = useCatalogueContext() || {};
 	const [item, setItem] = useState<Item>(initialItem || createDefaultItem());
 	const [isUploadingImage, setIsUploadingImage] = useState(false);
+	const [showAdded, setShowAdded] = useState(false);
+	const addedTimer = useRef<NodeJS.Timeout | null>(null);
 
 	useEffect(() => {
 		if (isOpen) {
 			setIsSidebarOpen?.(false);
 			setItem(initialItem || createDefaultItem());
+			setShowAdded(false);
 		}
 	}, [isOpen, initialItem]);
 
@@ -64,6 +67,9 @@ const ItemModal = ({
 		onSave(item, addAnother);
 		if (addAnother) {
 			setItem(createDefaultItem());
+			setShowAdded(true);
+			if (addedTimer.current) clearTimeout(addedTimer.current);
+			addedTimer.current = setTimeout(() => setShowAdded(false), 2000);
 		} else {
 			onClose();
 		}
@@ -76,7 +82,7 @@ const ItemModal = ({
 
 	return (
 		<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-			<AlertDialogContent className="w-[95vw] md:max-w-2xl p-0 overflow-hidden bg-white rounded-2xl border-none shadow-2xl gap-0 max-h-[90vh] flex flex-col">
+			<AlertDialogContent className="w-[95vw] md:max-w-2xl p-0 overflow-hidden bg-white rounded-2xl border-none shadow-2xl gap-0 max-h-[90dvh] flex flex-col">
 				{/* Header */}
 				<AlertDialogTitle className="p-4 sm:p-6 pb-4 relative border-b border-gray-100 flex-shrink-0">
 					<button
@@ -91,6 +97,12 @@ const ItemModal = ({
 				</AlertDialogTitle>
 
 				<div className="flex-1 overflow-y-auto p-4 sm:p-6">
+					{showAdded && (
+						<div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-green-50 text-green-700 text-sm font-medium animate-in fade-in slide-in-from-top-2 duration-200">
+							<Check className="w-4 h-4 flex-shrink-0" />
+							Item added
+						</div>
+					)}
 					<ItemInput
 						currency={currency}
 						layout={layout}

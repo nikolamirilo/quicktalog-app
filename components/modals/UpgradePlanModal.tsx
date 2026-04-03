@@ -85,7 +85,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 	return (
 		<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-			<div className="bg-product-background rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full mx-auto overflow-hidden max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+			<div className="bg-product-background rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full mx-auto overflow-hidden max-h-[95dvh] sm:max-h-[90dvh] overflow-y-auto">
 				{/* Header */}
 				<div className="relative p-4 sm:p-6 bg-gradient-to-br from-product-background-hero to-product-background border-b border-product-border">
 					<button

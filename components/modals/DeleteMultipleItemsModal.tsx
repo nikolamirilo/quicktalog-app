@@ -64,7 +64,7 @@ const DeleteMultipleItemsModal = ({
 	return (
 		<Dialog open={isOpen}>
 			<DialogContent
-				className="max-w-4xl max-h-[80vh] overflow-hidden bg-product-background border border-product-border"
+				className="max-w-4xl max-h-[80dvh] overflow-hidden bg-product-background border border-product-border"
 				showClose={false}
 			>
 				<DialogHeader className="pb-4">

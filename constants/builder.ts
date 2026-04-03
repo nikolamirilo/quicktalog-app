@@ -3,11 +3,23 @@ import { HeadingSize } from "@/types/shared";
 export const fontFamilyMap: Record<string, string> = {
 	inter: "var(--font-inter)",
 	arial: "Arial, sans-serif",
+	roboto: "var(--font-roboto)",
+	"open-sans": "var(--font-open-sans)",
+	montserrat: "var(--font-montserrat)",
+	lato: "var(--font-lato)",
+	poppins: "var(--font-poppins)",
+	nunito: "var(--font-nunito)",
+	raleway: "var(--font-raleway)",
+	oswald: "var(--font-oswald)",
 	lora: "var(--font-lora-regular)",
 	playfair: "var(--font-playfair-display)",
-	nunito: "var(--font-nunito)",
+	merriweather: "var(--font-merriweather)",
+	"roboto-slab": "var(--font-roboto-slab)",
 	crimson: "var(--font-crimson-text)",
-	poppins: "var(--font-poppins)",
+	"source-sans": "var(--font-source-sans)",
+	"work-sans": "var(--font-work-sans)",
+	"dm-sans": "var(--font-dm-sans)",
+	"josefin-sans": "var(--font-josefin-sans)",
 };
 
 export const contentFontSizeMap: Record<string, string> = {

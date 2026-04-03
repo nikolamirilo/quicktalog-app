@@ -69,7 +69,7 @@ export default function InitCatalogueModal({
 			}}
 			open={isOpen}
 		>
-			<AlertDialogContent className="font-lora text-product-foreground w-[95vw] max-w-lg mx-auto p-4 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl max-h-[90vh] overflow-y-auto">
+			<AlertDialogContent className="font-lora text-product-foreground w-[95vw] max-w-lg mx-auto p-4 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl max-h-[90dvh] overflow-y-auto">
 				<AlertDialogHeader className="space-y-1 sm:space-y-3 relative">
 					{onCancel && (
 						<button

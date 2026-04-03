@@ -2,11 +2,11 @@
 
 import { UserData } from "@quicktalog/common";
 import RichTextEditor from "../../blocks/common/RichTextEditor";
-import LimitsOverlay from "../../inputs/BuilderSidebar/LimitsOverlay";
 import ContentInput from "../../inputs/ContentInput";
 import CustomCodeInput from "../../inputs/CustomCodeInput";
 import DividerInput from "../../inputs/DividerInput";
 import EmbeddingInput from "../../inputs/EmbeddingInput";
+import LimitsOverlay from "../../inputs/sidebar/LimitsOverlay";
 
 type ContentOption =
 	| "container"
@@ -82,8 +82,8 @@ const BlockConfigForm = ({
 					{selectedOption === "custom_code" && (
 						<CustomCodeInput
 							onChange={(val) => setBlockData({ ...blockData, ...val })}
-							value={blockData}
 							userData={userData}
+							value={blockData}
 						/>
 					)}
 
@@ -102,13 +102,13 @@ const BlockConfigForm = ({
 
 					{selectedOption === "divider" && (
 						<DividerInput
-							value={blockData.divider as any}
 							onChange={(val) =>
 								setBlockData({
 									...blockData,
 									divider: { ...blockData.divider, ...val } as any,
 								})
 							}
+							value={blockData.divider as any}
 						/>
 					)}
 				</>

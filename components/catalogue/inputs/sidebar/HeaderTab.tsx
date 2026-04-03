@@ -58,7 +58,7 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 
 	return (
 		<div
-			className={`relative w-full ${!hasBranding ? "h-[calc(100vh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}
+			className={`relative w-full ${!hasBranding ? "h-[calc(100dvh-250px)] sm:h-[calc(100dvh-200px)] overflow-hidden" : "h-full"}`}
 		>
 			{!hasBranding && <LimitsOverlay size="lg" type="branding" />}
 			<div

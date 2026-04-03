@@ -192,8 +192,9 @@ const ActionButtons = ({
 							onClick={onClick}
 							disabled={disabled}
 							className={`
-                        flex flex-1 flex-col items-center justify-center gap-0.5 py-3
+                        flex flex-1 flex-col items-center justify-center gap-0.5 py-3.5
                         active:scale-95 transition-all duration-200
+                        disabled:opacity-40 disabled:pointer-events-none
                     `}
 						>
 							<Icon className="w-6 h-6" />

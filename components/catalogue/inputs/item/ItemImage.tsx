@@ -1,7 +1,7 @@
 import ImageDropzone from "@/components/general/ImageDropzone";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Item, ContentLayout } from "@quicktalog/common";
+import { ContentLayout, Item } from "@quicktalog/common";
 import { useEffect, useState } from "react";
 
 export interface ItemImageProps {

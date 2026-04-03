@@ -61,7 +61,7 @@ const SelectTemplateModal = ({
 	return (
 		<Dialog onOpenChange={(open) => !open && handleClose()} open={isOpen}>
 			<DialogContent
-				className="fixed w-[95vw] max-h-[85vh] sm:max-h-[90vh] left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] rounded-3xl sm:max-w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-white border-none shadow-2xl flex flex-col [-webkit-overflow-scrolling:touch]"
+				className="fixed w-[95vw] max-h-[85dvh] sm:max-h-[90dvh] left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] rounded-3xl sm:max-w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-white border-none shadow-2xl flex flex-col [-webkit-overflow-scrolling:touch]"
 				showClose={false}
 			>
 				{/* Dismiss button - show if externally controlled or if we want to allow dismissal */}

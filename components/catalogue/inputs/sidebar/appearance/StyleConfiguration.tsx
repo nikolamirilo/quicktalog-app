@@ -11,28 +11,68 @@ import {
 import { Slider } from "@/components/ui/slider";
 import {
 	crimsonText,
+	dmSans,
 	inter,
+	josefinSans,
+	lato,
 	loraRegular,
+	merriweather,
+	montserrat,
 	nunito,
+	openSans,
+	oswald,
 	playfairDisplay,
 	poppins,
+	raleway,
+	roboto,
+	robotoSlab,
+	sourceSans3,
+	workSans,
 } from "@/fonts";
 
 const FONT_OPTIONS = [
 	{ label: "Inter", value: "inter", className: inter.className },
 	{ label: "Arial", value: "arial", className: "font-sans" },
-	{ label: "Lora", value: "lora", className: loraRegular.className },
+	{ label: "Roboto", value: "roboto", className: roboto.className },
+	{ label: "Open Sans", value: "open-sans", className: openSans.className },
+	{ label: "Montserrat", value: "montserrat", className: montserrat.className },
+	{ label: "Lato", value: "lato", className: lato.className },
+	{ label: "Poppins", value: "poppins", className: poppins.className },
 	{ label: "Nunito", value: "nunito", className: nunito.className },
+	{ label: "Raleway", value: "raleway", className: raleway.className },
+	{ label: "Oswald", value: "oswald", className: oswald.className },
+	{ label: "Lora", value: "lora", className: loraRegular.className },
 	{
 		label: "Playfair Display",
 		value: "playfair",
 		className: playfairDisplay.className,
 	},
-	{ label: "Poppins", value: "poppins", className: poppins.className },
+	{
+		label: "Merriweather",
+		value: "merriweather",
+		className: merriweather.className,
+	},
+	{
+		label: "Roboto Slab",
+		value: "roboto-slab",
+		className: robotoSlab.className,
+	},
 	{
 		label: "Crimson Text",
 		value: "crimson",
 		className: crimsonText.className,
+	},
+	{
+		label: "Source Sans 3",
+		value: "source-sans",
+		className: sourceSans3.className,
+	},
+	{ label: "Work Sans", value: "work-sans", className: workSans.className },
+	{ label: "DM Sans", value: "dm-sans", className: dmSans.className },
+	{
+		label: "Josefin Sans",
+		value: "josefin-sans",
+		className: josefinSans.className,
 	},
 ];
 

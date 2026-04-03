@@ -83,6 +83,7 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 							onUploadComplete={(url) => handleChange("logo", url)}
 							removeImage={() => handleChange("logo", "")}
 							setIsUploading={setIsUploading}
+							targetSizeKB={400}
 							type="icon"
 						/>
 					</div>
