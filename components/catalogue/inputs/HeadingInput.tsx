@@ -296,10 +296,11 @@ const HeadingInput = () => {
 			>
 				{/* Bold Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isBold
-						? "text-[var(--catalogue-primary)] bg-white/90"
-						: "text-foreground/70"
-						}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl font-bold transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isBold
+							? "text-[var(--catalogue-primary)] bg-white/90"
+							: "text-foreground/70"
+					}`}
 					onClick={toggleBold}
 					onPointerDown={(e) => e.preventDefault()}
 					tabIndex={-1}
@@ -311,10 +312,11 @@ const HeadingInput = () => {
 
 				{/* Italic Button */}
 				<button
-					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${isItalic
-						? "text-[var(--catalogue-primary)] bg-white/90"
-						: "text-foreground/70"
-						}`}
+					className={`px-2 sm:px-3 py-1 text-base sm:!text-xl italic transition-all duration-200 rounded hover:text-primary hover:bg-primary/10 cursor-pointer ${
+						isItalic
+							? "text-[var(--catalogue-primary)] bg-white/90"
+							: "text-foreground/70"
+					}`}
 					onClick={toggleItalic}
 					onPointerDown={(e) => e.preventDefault()}
 					tabIndex={-1}

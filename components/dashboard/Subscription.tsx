@@ -350,10 +350,11 @@ export default function Subscription({
 								const included = isFeatureIncluded(value);
 								return (
 									<div
-										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${included
+										className={`flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+											included
 												? "bg-product-background border border-product-primary"
 												: "bg-product-background border border-product-border"
-											}`}
+										}`}
 										key={key}
 									>
 										{included ? (
@@ -366,10 +367,11 @@ export default function Subscription({
 												{formatFeatureKey(key)}
 											</p>
 											<p
-												className={`text-sm ${included
+												className={`text-sm ${
+													included
 														? "text-product-primary-foreground"
 														: "text-product-foreground-accent"
-													}`}
+												}`}
 											>
 												{formatFeatureValue(key, value)}
 											</p>

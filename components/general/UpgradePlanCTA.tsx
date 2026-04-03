@@ -21,13 +21,15 @@ const UpgradePlanCTA = ({
 
 	return (
 		<div
-			className={`flex flex-col sm:flex-row items-center mb-6 justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl shadow-lg ${isSmall ? "p-4" : "p-6"
-				}`}
+			className={`flex flex-col sm:flex-row items-center mb-6 justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl shadow-lg ${
+				isSmall ? "p-4" : "p-6"
+			}`}
 		>
 			<div className="text-center sm:text-left">
 				<h2
-					className={`${isSmall ? "text-lg" : "text-xl"
-						} font-bold text-product-foreground flex items-center gap-2`}
+					className={`${
+						isSmall ? "text-lg" : "text-xl"
+					} font-bold text-product-foreground flex items-center gap-2`}
 				>
 					<Star
 						className={`${isSmall ? "w-4 h-4" : "w-5 h-5"} text-product-primary`}
@@ -35,8 +37,9 @@ const UpgradePlanCTA = ({
 					{title}
 				</h2>
 				<p
-					className={`text-product-foreground-accent ${isSmall ? "text-xs" : "text-sm"
-						} mt-1`}
+					className={`text-product-foreground-accent ${
+						isSmall ? "text-xs" : "text-sm"
+					} mt-1`}
 				>
 					{subtitle}
 				</p>
@@ -44,8 +47,9 @@ const UpgradePlanCTA = ({
 			{type === "default" && (
 				<Link href={href}>
 					<Button
-						className={`w-fit ${isSmall ? "min-w-32" : "min-w-56"
-							} bg-product-primary  shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}
+						className={`w-fit ${
+							isSmall ? "min-w-32" : "min-w-56"
+						} bg-product-primary  shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}
 						size={isSmall ? "sm" : "default"}
 						variant="default"
 					>
