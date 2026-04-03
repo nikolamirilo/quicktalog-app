@@ -1,4 +1,4 @@
-import Section from "@/components/home/Section";
+import SectionWrapper from "@/components/home/SectionWrapper";
 import Showcases from "@/components/home/Showcases/Showcases";
 import Footer from "@/components/navigation/Footer";
 import { SectionSkeleton } from "@/components/navigation/Loader";
@@ -32,7 +32,7 @@ const page = () => {
 		<>
 			<div className="py-16 md:py-20 2xl:py-24 flex w-full flex-col justify-center items-center">
 				<Navbar />
-				<Section
+				<SectionWrapper
 					id="showcases"
 					title="Explore Real Catalogue Examples"
 					description="Discover how businesses across industries are using Quicktalog to create stunning digital catalogs. From fashion boutiques to electronics stores, see the possibilities for your own catalog."
@@ -40,7 +40,7 @@ const page = () => {
 					<Suspense fallback={<SectionSkeleton height="h-96" />}>
 						<Showcases data={result} />
 					</Suspense>
-				</Section>
+				</SectionWrapper>
 			</div>
 			<Footer />
 		</>

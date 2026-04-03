@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { newsletterSignup } from "@/server_actions/newsletter";
-import { CatalogueFooterProps } from "@/types/components";
+import { CatalogueFooterProps } from "@/types/shared";
 import React, { useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import SmartLink from "../../general/SmartLink";

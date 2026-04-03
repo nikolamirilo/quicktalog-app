@@ -8,7 +8,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { FaFingerprint } from "react-icons/fa";
 import { HiBars3, HiOutlineXMark } from "react-icons/hi2";
-import Container from "./Container";
+import ContentContainer from "./ContentContainer";
 
 const Header: React.FC = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +19,7 @@ const Header: React.FC = () => {
 
 	return (
 		<header className="bg-transparent fixed top-0 left-0 right-0 md:absolute z-50 mx-auto w-full">
-			<Container className="!px-0">
+			<ContentContainer className="!px-0">
 				<nav className="shadow-md md:shadow-none bg-product-background md:bg-transparent mx-auto flex justify-between items-center py-2 px-5 md:py-10">
 					{/* Logo */}
 					<Link href="/" className="flex items-center gap-2">
@@ -66,7 +66,7 @@ const Header: React.FC = () => {
 						</button>
 					</div>
 				</nav>
-			</Container>
+			</ContentContainer>
 
 			{/* Mobile Catalogue with Transition */}
 			<Transition

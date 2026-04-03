@@ -14,6 +14,10 @@ const SmartLink: React.FC<SmartLinkProps> = ({
 	className,
 	ariaLabel,
 }) => {
+	if (!href || href === "https:" || href === "http:") {
+		return <span className={className}>{children}</span>;
+	}
+
 	const isExternal =
 		/^https?:\/\//.test(href) ||
 		/^www\./.test(href) ||

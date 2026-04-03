@@ -1,4 +1,4 @@
-import ClarityScript from "@/components/general/ClarityScript";
+import ClarityScript from "@/components/scripts/ClarityScript";
 import { PageWrapperClient } from "@/components/wrappers/PageWrapperClient";
 import { generatePageMetadata } from "@/constants/metadata";
 import {

@@ -1,10 +1,9 @@
 // app/terms-and-conditions/page.tsx
 
-import { Metadata } from "next";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
-import { getPageSchema } from "@/constants/schemas";
+import { Metadata } from "next";
 
 export const metadata: Metadata = generatePageMetadata("terms");
 

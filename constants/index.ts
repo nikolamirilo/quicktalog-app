@@ -1,5 +1,5 @@
 import { getCurrencySymbol } from "@/helpers/client";
-import { ILinkItem } from "@/types/components";
+import { ILinkItem } from "@/types/shared";
 import { CookiePreferences, Currency } from "@quicktalog/common";
 
 export const defaultCookiePreferences: CookiePreferences = {

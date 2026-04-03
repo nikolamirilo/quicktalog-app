@@ -1,6 +1,6 @@
 "use client";
-import { loadImage, processImage } from "@/helpers/imageProccessing";
-import { ImageDropzoneProps } from "@/types/components";
+import { loadImage, processImage } from "@/helpers/imageProcessing";
+import { ImageDropzoneProps } from "@/types/shared";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UploadDropzone } from "@/utils/uploadthing";
 import React, { useCallback } from "react";

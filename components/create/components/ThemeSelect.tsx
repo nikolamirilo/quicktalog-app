@@ -1,6 +1,6 @@
 "use client";
 import { Label } from "@/components/ui/label";
-import { ThemeSelectProps } from "@/types/components";
+import { ThemeSelectProps } from "@/types/shared";
 import { themes } from "@quicktalog/common";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

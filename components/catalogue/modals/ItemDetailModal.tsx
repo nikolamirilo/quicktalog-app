@@ -7,7 +7,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
-import { DisplayItem } from "@/types/components";
+import { DisplayItem } from "@/types/shared";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ZoomIn } from "lucide-react";
 import { useState } from "react";

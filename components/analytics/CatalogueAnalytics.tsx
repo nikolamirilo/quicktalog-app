@@ -1,5 +1,5 @@
 "use client";
-import type { CatalogueAnalyticsProps } from "@/types/components";
+import type { CatalogueAnalyticsProps } from "@/types/shared";
 import { FiBarChart, FiCalendar, FiTrendingUp, FiUsers } from "react-icons/fi";
 import LineChart from "../charts/LineChart";
 import {

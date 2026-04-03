@@ -1,4 +1,4 @@
-import { ILinkItem, ISocials, ITestimonial } from "@/types/components";
+import { ILinkItem, ISocials, ITestimonial } from "@/types/shared";
 
 export const siteDetails = {
 	siteName: "Quicktalog",
@@ -70,7 +70,7 @@ export const footerDetails: {
 	},
 };
 
-import { IFAQ } from "@/types/components";
+import { IFAQ } from "@/types/shared";
 
 export const faqs: IFAQ[] = [
 	{

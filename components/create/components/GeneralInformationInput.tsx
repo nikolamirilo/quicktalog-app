@@ -1,23 +1,13 @@
 "use client";
 import InformModal from "@/components/modals/InformModal";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { CURRENCIES } from "@/constants";
-import { LANGUAGE_OPTIONS } from "@/constants/ocr";
-import { useCatalogueName } from "@/hooks/useCatalogueName";
-import type { GeneralInformationInputProps } from "@/types/components";
-import { BUSINESS_TYPES, generateUniqueSlug } from "@quicktalog/common";
-import { AlertCircle, CheckCircle, FileText, Link2 } from "lucide-react";
+import type { GeneralInformationInputProps } from "@/types/shared";
+import { generateUniqueSlug } from "@quicktalog/common";
+import { FileText, Link2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { FiInfo } from "react-icons/fi";
+import BasicInfoFields from "./general/BasicInfoFields";
+import CategorySetup from "./general/CategorySetup";
 
 const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 	formData,
@@ -32,14 +22,6 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 	const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 	const [currentField, setCurrentField] = useState("");
 	const [previewUrl, setPreviewUrl] = useState("");
-
-	const { handleNameChange, nameExists } = useCatalogueName({
-		initialName: "name",
-		type: "create",
-		setFormData,
-		setErrors,
-		setTouched,
-	});
 
 	useEffect(() => {
 		const baseURL = process.env.NEXT_PUBLIC_BASE_URL!;
@@ -64,14 +46,6 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 		setIsInfoModalOpen(true);
 	};
 
-	const handleLanguageChange = (value: string) => {
-		setFormData((prev: any) => ({ ...prev, language: value }));
-	};
-
-	const handleBusinessTypeChange = (value: string) => {
-		setFormData((prev: any) => ({ ...prev, businessType: value }));
-	};
-
 	console.log(formData);
 
 	return (
@@ -94,196 +68,26 @@ const GeneralInformationInput: React.FC<GeneralInformationInputProps> = ({
 			</div>
 
 			<div className="space-y-6">
-				{/* Row 1: Name & Language */}
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div className="flex flex-col gap-3">
-						<div className="flex items-center gap-3">
-							<Label
-								className="text-product-foreground font-medium font-body"
-								htmlFor="name"
-							>
-								Catalogue Name<span className="text-red-500 ml-1">*</span>
-							</Label>
-							<button
-								className="hover:text-product-primary transition-colors duration-200 z-10"
-								onClick={() => handleInfoClick("catalog-name")}
-								type="button"
-							>
-								<FiInfo size={16} />
-							</button>
-						</div>
-						<div className="relative">
-							<Input
-								className={`border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base pr-10 ${
-									type === "create" && errors?.name
-										? "border-red-500 focus:border-red-500"
-										: formData.name &&
-												!nameExists &&
-												touched?.name &&
-												type === "create"
-											? "border-green-500 focus:border-green-500"
-											: ""
-								}`}
-								disabled={type === "edit" ? true : false}
-								id="name"
-								name="name"
-								onChange={handleNameChange}
-								placeholder="e.g. Burger House"
-								required
-								type="text"
-								value={formData.name}
-							/>
-							{formData.name && touched?.name && type === "create" && (
-								<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-									{errors?.name ? (
-										<AlertCircle className="h-4 w-4 text-red-500" />
-									) : (
-										<CheckCircle className="h-4 w-4 text-green-500" />
-									)}
-								</div>
-							)}
-						</div>
-						{formData.name &&
-							!errors?.name &&
-							touched?.name &&
-							type === "create" && (
-								<div className="text-green-600 text-sm mt-2 p-2 bg-green-50 border border-green-200 rounded-lg font-body flex items-center gap-2">
-									<CheckCircle className="h-4 w-4" />
-									Great! This name is available.
-								</div>
-							)}
-						{type === "create" && touched?.name && errors?.name && (
-							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body flex items-center gap-2">
-								<AlertCircle className="h-4 w-4" />
-								{errors.name}
-							</div>
-						)}
-					</div>
-
-					<div className="flex flex-col gap-3">
-						<Label
-							className="text-product-foreground font-medium font-body"
-							htmlFor="language"
-						>
-							Language<span className="text-red-500 ml-1">*</span>
-						</Label>
-						<Select
-							onValueChange={handleLanguageChange}
-							value={formData.language}
-						>
-							<SelectTrigger className="bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base">
-								<SelectValue placeholder="Select language" />
-							</SelectTrigger>
-							<SelectContent>
-								{LANGUAGE_OPTIONS.map((lang) => (
-									<SelectItem key={lang.code} value={lang.code}>
-										{lang.name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-						{touched?.language && errors?.language && (
-							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-								{errors.language}
-							</div>
-						)}
-					</div>
-				</div>
-
-				{/* Row 2: Heading */}
-				<div className="flex flex-col gap-3">
-					<div className="flex items-center gap-2">
-						<Label
-							className="text-product-foreground font-medium font-body"
-							htmlFor="heading"
-						>
-							Catalogue Heading<span className="text-red-500 ml-1">*</span>
-						</Label>
-						<button
-							className="hover:text-product-primary transition-colors duration-200 z-10"
-							onClick={() => handleInfoClick("catalog-heading")}
-							type="button"
-						>
-							<FiInfo size={16} />
-						</button>
-					</div>
-					<Input
-						className="border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base"
-						id="heading"
-						name="heading"
-						onChange={handleInputChange}
-						placeholder="e.g. Our Delicious Menu"
-						type="text"
-						value={formData.heading || ""}
-					/>
-					{touched?.heading && errors?.heading && (
-						<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-							{errors.heading}
-						</div>
-					)}
-				</div>
+				<BasicInfoFields
+					errors={errors}
+					formData={formData}
+					handleInputChange={handleInputChange}
+					onInfoClick={handleInfoClick}
+					setErrors={setErrors}
+					setFormData={setFormData}
+					setTouched={setTouched}
+					touched={touched}
+					type={type}
+				/>
 
 				{/* Row 3: Currency & Business Type */}
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div className="flex flex-col gap-3">
-						<Label
-							className="text-product-foreground font-medium font-body"
-							htmlFor="currency"
-						>
-							Currency
-						</Label>
-						<Select
-							disabled={type === "edit" ? true : false}
-							onValueChange={(value) =>
-								setFormData({ ...formData, currency: value })
-							}
-							value={formData.currency}
-						>
-							<SelectTrigger
-								className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary text-sm sm:text-base"
-								id="currency"
-							>
-								<SelectValue placeholder="Select currency" />
-							</SelectTrigger>
-							<SelectContent>
-								{CURRENCIES.map((curr) => (
-									<SelectItem key={curr.value} value={curr.value}>
-										{curr.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-
-					<div className="flex flex-col gap-3">
-						<Label
-							className="text-product-foreground font-medium font-body"
-							htmlFor="businessType"
-						>
-							Business Type<span className="text-red-500 ml-1">*</span>
-						</Label>
-						<Select
-							onValueChange={handleBusinessTypeChange}
-							value={formData.businessType}
-						>
-							<SelectTrigger className="bg-product-background border-product-border focus:border-product-primary focus:ring-product-primary/20 text-sm sm:text-base">
-								<SelectValue placeholder="Select type" />
-							</SelectTrigger>
-							<SelectContent>
-								{BUSINESS_TYPES.map((type) => (
-									<SelectItem key={type.value} value={type.value}>
-										{type.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-						{touched?.businessType && errors?.businessType && (
-							<div className="text-red-500 text-sm mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body">
-								{errors.businessType}
-							</div>
-						)}
-					</div>
-				</div>
+				<CategorySetup
+					errors={errors}
+					formData={formData}
+					setFormData={setFormData}
+					touched={touched}
+					type={type}
+				/>
 			</div>
 
 			{type === "create" && formData.name != "" ? (

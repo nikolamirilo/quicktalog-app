@@ -2,7 +2,7 @@
 import LimitsModal from "@/components/modals/LimitsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useMainContext } from "@/context/MainContext";
-import { CatalogueContentProps } from "@/types/components";
+import { CatalogueContentProps } from "@/types/shared";
 import { ContentLayout, Item, tiers, UserData } from "@quicktalog/common";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";

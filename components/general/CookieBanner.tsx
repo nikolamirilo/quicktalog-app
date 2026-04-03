@@ -15,7 +15,7 @@ import { CookiePreferences } from "@quicktalog/common";
 import { Cookie, ExternalLink, Settings } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import CookiePreferencesModal from "./CookiePreferencesModal";
+import CookiePreferencesModal from "../modals/CookiePreferencesModal";
 
 const CookieBanner = () => {
 	const { user, isSignedIn } = useUser();

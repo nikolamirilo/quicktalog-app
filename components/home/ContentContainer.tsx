@@ -4,7 +4,7 @@ interface Props {
 	className?: string;
 }
 
-const Container: React.FC<React.PropsWithChildren<Props>> = ({
+const ContentContainer: React.FC<React.PropsWithChildren<Props>> = ({
 	children,
 	className,
 }: React.PropsWithChildren<Props>) => {
@@ -17,4 +17,4 @@ const Container: React.FC<React.PropsWithChildren<Props>> = ({
 	);
 };
 
-export default Container;
+export default ContentContainer;

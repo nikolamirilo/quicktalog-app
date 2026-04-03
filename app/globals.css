@@ -132,6 +132,13 @@ a.selected:after {
 	}
 }
 
+@layer components {
+	.card-catalogue {
+		border-radius: var(--border-radius);
+		box-shadow: var(--box-shadow);
+	}
+}
+
 /* Move Hubspot chat widget up on mobile to not interfere with app bar */
 @media (max-width: 768px) {
 	#hubspot-messages-iframe-container {

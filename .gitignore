@@ -12,6 +12,7 @@
 !.yarn/releases
 !.yarn/versions
 .eslintcache
+.claude
 
 # testing
 /coverage

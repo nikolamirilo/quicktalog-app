@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { TabKey } from "@/types/components";
+import { TabKey } from "@/types/shared";
 import { UserData } from "@quicktalog/common";
 import ActionButtons from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";

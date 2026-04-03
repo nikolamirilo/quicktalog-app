@@ -1,7 +1,7 @@
 // components/Settings.tsx
 "use client";
 
-import CookiePreferencesModal from "@/components/general/CookiePreferencesModal";
+import CookiePreferencesModal from "@/components/modals/CookiePreferencesModal";
 import { Button } from "@/components/ui/button";
 import { SignOutButton, UserProfile } from "@clerk/nextjs";
 import { useState } from "react";

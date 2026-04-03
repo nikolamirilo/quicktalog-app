@@ -1,4 +1,4 @@
-import { IBenefit, IStats } from "@/types/components";
+import { IBenefit, IStats } from "@/types/shared";
 import { JSX } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import {

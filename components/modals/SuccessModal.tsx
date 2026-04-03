@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { handleDownloadHTML, handleDownloadPng } from "@/helpers/client";
-import { SuccessModalProps } from "@/types/components";
+import { SuccessModalProps } from "@/types/shared";
 import {
 	Check,
 	Code,

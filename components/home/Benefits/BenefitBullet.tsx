@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { IBenefitBullet } from "@/types/components";
+import { IBenefitBullet } from "@/types/shared";
 import { motion } from "framer-motion";
 import { childVariants } from "./BenefitSection";
 

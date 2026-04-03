@@ -1,13 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/helpers/client";
-import { usePaddlePrices } from "@/hooks/usePaddelPrices";
+import { usePaddlePrices } from "@/hooks/usePaddlePrices";
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
 import { PricingPlan } from "@quicktalog/common";
 import { X } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { BsFillCheckCircleFill } from "react-icons/bs";
+import PlanComparison from "./upgrade/PlanComparison";
+import PlanSelector from "./upgrade/PlanSelector";
 
 interface UpgradePlanModalProps {
 	isOpen: boolean;
@@ -68,48 +67,6 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 	const cycleLabel = billingCycle === "yearly" ? "/year" : "/month";
 
-	const getRelevantFeatures = (plan: PricingPlan) => {
-		const features = [];
-
-		if (limitType === "categories" || limitType === "items") {
-			features.push({
-				text:
-					plan.name === "Premium"
-						? "Unlimited categories & items"
-						: `Up to ${plan.features.blocks_per_catalogue} categories & ${plan.features.items_per_catalogue} items`,
-				type: "items",
-			});
-		}
-
-		features.push(
-			{
-				text: `${plan.features.catalogues} ${plan.features.catalogues > 1 ? "catalogues" : "catalogue"}`,
-				type: "catalogues",
-			},
-			{ text: `${plan.features.analytics} analytics`, type: "analytics" },
-			{
-				text: `${plan.features.traffic_limit.toLocaleString()} traffic limit`,
-				type: "traffic-limit",
-			},
-		);
-
-		if (plan.features.ai_prompts > 0) {
-			features.push({
-				text: `${plan.features.ai_prompts} AI generations`,
-				type: "ai",
-			});
-		}
-
-		if (plan.features.ocr_ai_import > 0) {
-			features.push({
-				text: `${plan.features.ocr_ai_import} OCR imports`,
-				type: "ocr",
-			});
-		}
-
-		return features;
-	};
-
 	const handleUpgrade = () => {
 		if (paddle) {
 			const priceId =
@@ -152,147 +109,21 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 
 				{/* Content */}
 				<div className="p-4 sm:p-6">
-					{/* Billing Cycle Toggle */}
-					<div className="flex items-center justify-center mb-4 sm:mb-6">
-						<div className="relative inline-flex w-full max-w-[260px] bg-product-background border border-product-border rounded-full p-1 shadow-sm">
-							<span
-								aria-hidden="true"
-								className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${
-									billingCycle === "yearly"
-										? "translate-x-full"
-										: "translate-x-0"
-								}`}
-							/>
-							<button
-								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
-									billingCycle === "monthly"
-										? "text-product-foreground font-bold"
-										: "text-product-foreground/60 font-medium"
-								}`}
-								onClick={() => setBillingCycle("monthly")}
-								type="button"
-							>
-								Monthly
-							</button>
-							<button
-								className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors font-lora ${
-									billingCycle === "yearly"
-										? "text-product-foreground font-bold"
-										: "text-product-foreground/60 font-medium"
-								}`}
-								onClick={() => setBillingCycle("yearly")}
-								type="button"
-							>
-								Yearly
-							</button>
-						</div>
-					</div>
+					<PlanSelector
+						billingCycle={billingCycle}
+						onBillingCycleChange={setBillingCycle}
+					/>
 
-					{/* Plans Comparison */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-						{/* Current Plan */}
-						<div className="rounded-xl border-2 border-product-border bg-product-background p-4 sm:p-6">
-							<div className="mb-3 sm:mb-4">
-								<div className="flex items-center gap-2 mb-2 flex-wrap">
-									<h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-product-primary font-lora">
-										{currentPlan.name}
-									</h3>
-									<span className="px-2.5 py-1 bg-product-background border border-product-border text-product-foreground-accent text-xs font-medium rounded-md whitespace-nowrap">
-										Current plan
-									</span>
-								</div>
-								<p className="text-xs sm:text-sm text-product-foreground-accent font-lora leading-relaxed">
-									{currentPlan.description}
-								</p>
-							</div>
-
-							<div className="mb-4 sm:mb-6">
-								<span className="text-2xl sm:text-3xl md:text-4xl font-bold text-product-foreground font-lora">
-									{displayCurrentPrice}
-								</span>
-								<span className="text-xs sm:text-sm text-product-foreground-accent ml-2 font-lora">
-									{cycleLabel}
-								</span>
-							</div>
-
-							<div className="space-y-2 sm:space-y-3">
-								{getRelevantFeatures(currentPlan).map((feature, index) => (
-									<div
-										className="flex items-start"
-										key={`plan-feature-${index}`}
-									>
-										<div className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 bg-product-border/30 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
-											<BsFillCheckCircleFill className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-product-foreground-accent" />
-										</div>
-										<span className="text-xs sm:text-sm text-product-foreground-accent leading-relaxed font-lora">
-											{feature.text}
-										</span>
-									</div>
-								))}
-							</div>
-						</div>
-
-						{/* Required Plan */}
-						<div className="rounded-xl border-2 border-product-primary bg-gradient-to-br from-product-primary/5 to-transparent p-4 sm:p-6 relative">
-							<div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-								<div className="bg-product-primary text-product-secondary px-3 sm:px-4 py-1 rounded-full text-xs font-semibold shadow-lg font-lora">
-									Recommended
-								</div>
-							</div>
-
-							<div className="mb-3 sm:mb-4">
-								<h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-product-primary font-lora mb-2">
-									{requiredPlan.name}
-								</h3>
-								<p className="text-xs sm:text-sm text-product-foreground-accent font-lora leading-relaxed">
-									{requiredPlan.description}
-								</p>
-							</div>
-
-							<div className="mb-4 sm:mb-6">
-								<span className="text-2xl sm:text-3xl md:text-4xl font-bold text-product-foreground font-lora">
-									{displayRequiredPrice}
-								</span>
-								<span className="text-xs sm:text-sm text-product-foreground-accent ml-2 font-lora">
-									{cycleLabel}
-								</span>
-							</div>
-
-							<div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
-								{getRelevantFeatures(requiredPlan).map((feature, index) => (
-									<div
-										className="flex items-start"
-										key={`plan-feature-${index}`}
-									>
-										<div className="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 bg-product-primary/20 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
-											<BsFillCheckCircleFill className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-product-primary" />
-										</div>
-										<span className="text-xs sm:text-sm text-product-foreground leading-relaxed font-lora font-medium">
-											{feature.text}
-										</span>
-									</div>
-								))}
-							</div>
-
-							{/* See all features link inside card */}
-							<Link
-								className="text-xs sm:text-sm text-product-primary hover:underline font-lora flex items-center gap-1 mb-3 sm:mb-4"
-								href="/pricing"
-							>
-								See all features →
-							</Link>
-
-							{/* Upgrade button inside card */}
-							<Button
-								className="w-full text-sm sm:text-base py-2 sm:py-3 font-lora"
-								disabled={!paddle}
-								onClick={handleUpgrade}
-								variant="cta"
-							>
-								Upgrade to {requiredPlan.name}
-							</Button>
-						</div>
-					</div>
+					<PlanComparison
+						canUpgrade={!!paddle}
+						currentPlan={currentPlan}
+						cycleLabel={cycleLabel}
+						displayCurrentPrice={displayCurrentPrice}
+						displayRequiredPrice={displayRequiredPrice}
+						limitType={limitType}
+						onUpgrade={handleUpgrade}
+						requiredPlan={requiredPlan}
+					/>
 				</div>
 			</div>
 		</div>

@@ -12,12 +12,8 @@ import { ContentBlock, tiers, UserData } from "@quicktalog/common";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ContentOptionsSelector } from "../blocks/common/ContentOptionsSelector";
-import RichTextEditor from "../blocks/common/RichTextEditor";
-import LimitsOverlay from "../inputs/BuilderSidebar/LimitsOverlay";
-import ContentInput from "../inputs/ContentInput";
-import CustomCodeInput from "../inputs/CustomCodeInput";
-import DividerInput from "../inputs/DividerInput";
-import EmbeddingInput from "../inputs/EmbeddingInput";
+import BlockConfigForm from "./content/BlockConfigForm";
+import BlockConfigHeader from "./content/BlockConfigHeader";
 
 interface AddContentModalProps {
 	isOpen: boolean;
@@ -36,6 +32,26 @@ type ContentOption =
 	| "custom_code"
 	| "divider";
 
+const DEFAULT_BLOCK_DATA = {
+	name: "",
+	layout: "variant_1",
+	src: "",
+	items: [] as any[],
+	code: "",
+	content: "",
+	divider: {
+		spacing: 2,
+		border: {
+			isEnabled: true,
+			style: "solid",
+			thickness: 1,
+			color: "#000000",
+			opacity: 100,
+		},
+	},
+	isExpanded: true,
+};
+
 const AddContentModal = ({
 	isOpen,
 	onClose,
@@ -49,25 +65,7 @@ const AddContentModal = ({
 	const [selectedOption, setSelectedOption] =
 		useState<ContentOption>("container");
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
-	const [blockData, setBlockData] = useState({
-		name: "",
-		layout: "variant_1",
-		src: "",
-		items: [],
-		code: "",
-		content: "",
-		divider: {
-			spacing: 2,
-			border: {
-				isEnabled: true,
-				style: "solid",
-				thickness: 1,
-				color: "#000000",
-				opacity: 100,
-			},
-		},
-		isExpanded: true,
-	});
+	const [blockData, setBlockData] = useState({ ...DEFAULT_BLOCK_DATA });
 
 	useEffect(() => {
 		if (isOpen) {
@@ -101,25 +99,7 @@ const AddContentModal = ({
 				});
 			} else {
 				setSelectedOption("container");
-				setBlockData({
-					name: "",
-					layout: "variant_1",
-					src: "",
-					items: [],
-					code: "",
-					content: "",
-					divider: {
-						spacing: 2,
-						border: {
-							isEnabled: true,
-							style: "solid",
-							thickness: 1,
-							color: "#000000",
-							opacity: 100,
-						},
-					},
-					isExpanded: true,
-				});
+				setBlockData({ ...DEFAULT_BLOCK_DATA });
 			}
 		}
 	}, [isOpen, editingBlock]);
@@ -140,7 +120,6 @@ const AddContentModal = ({
 	};
 
 	const checkLimits = () => {
-		// Check blocks limit
 		const blocksLimit = userData?.currentPlan?.features?.blocks_per_catalogue;
 
 		if (selectedOption === "text") return null;
@@ -154,7 +133,7 @@ const AddContentModal = ({
 				(block: any) => block.type !== "text",
 			).length;
 			if (nonTextBlocksCount >= blocksLimit) {
-				return "items"; // Utilizing 'items' type for LimitsModal as generic 'limit reached', or we might need a 'blocks' type if added
+				return "items";
 			}
 		}
 		return null;
@@ -267,106 +246,18 @@ const AddContentModal = ({
 
 					{/* Right Content - 3/4 width */}
 					<div className="flex-1 flex flex-col min-w-0 p-4 md:p-6">
-						{/* Header */}
-						<div className="pt-0 pb-4 border-gray-100 flex justify-between items-start">
-							<div>
-								<h3 className="text-xl text-product-foreground font-semibold capitalize">
-									{selectedOption.split("_").join(" ")}
-								</h3>
-								<p className="text-sm text-gray-700 mt-1">
-									{selectedOption === "container" &&
-										"A layout block that holds multiple items in a single structured section."}
-
-									{selectedOption === "category" &&
-										"A collapsible section used to group related items under one heading."}
-
-									{selectedOption === "embedding" &&
-										"Embed external content such as maps, videos, or third-party widgets."}
-
-									{selectedOption === "custom_code" &&
-										"Insert custom HTML to add advanced or custom functionality."}
-
-									{selectedOption === "text" &&
-										"Add rich text content with headings, lists, links, and formatting."}
-
-									{selectedOption === "divider" &&
-										"Add a visual separator with customizable spacing and border styles."}
-								</p>
-							</div>
-							<Button
-								className="hidden md:inline-flex text-gray-400 hover:text-product-primary rounded-full hover:bg-gray-100"
-								onClick={onClose}
-								size="icon"
-								variant="ghost"
-							>
-								<X className="w-5 h-5" />
-							</Button>
-						</div>
+						<BlockConfigHeader
+							selectedOption={selectedOption}
+							onClose={onClose}
+						/>
 						<div className="mx-auto w-full border-t border-gray-300/70" />
-						<div className="flex-1 overflow-y-auto mt-4 pb-8 flex flex-col relative">
-							<div className="max-w-2xl w-full">
-								{locked && <LimitsOverlay size="sm" />}
-								<>
-									{selectedOption === "category" && (
-										<ContentInput
-											onChange={(val) => setBlockData({ ...blockData, ...val })}
-											type="category"
-											value={blockData}
-										/>
-									)}
-
-									{selectedOption === "container" && (
-										<ContentInput
-											onChange={(val) => setBlockData({ ...blockData, ...val })}
-											type="container"
-											value={blockData}
-										/>
-									)}
-
-									{selectedOption === "embedding" && (
-										<EmbeddingInput
-											onChange={(val) => setBlockData({ ...blockData, ...val })}
-											value={blockData}
-										/>
-									)}
-
-									{selectedOption === "custom_code" && (
-										<CustomCodeInput
-											onChange={(val) => setBlockData({ ...blockData, ...val })}
-											value={blockData}
-											userData={userData}
-										/>
-									)}
-
-									{selectedOption === "text" && (
-										<div>
-											<label className="block text-sm font-medium mb-2 text-gray-700">
-												Content
-											</label>
-											<RichTextEditor
-												className="px-0.5"
-												content={blockData.content || "<p></p>"}
-												onChange={(val) =>
-													setBlockData({ ...blockData, content: val })
-												}
-											/>
-										</div>
-									)}
-
-									{selectedOption === "divider" && (
-										<DividerInput
-											value={blockData.divider as any}
-											onChange={(val) =>
-												setBlockData({
-													...blockData,
-													divider: { ...blockData.divider, ...val } as any,
-												})
-											}
-										/>
-									)}
-								</>
-							</div>
-						</div>
+						<BlockConfigForm
+							selectedOption={selectedOption}
+							blockData={blockData}
+							setBlockData={setBlockData}
+							locked={locked}
+							userData={userData}
+						/>
 
 						{/* Footer Actions */}
 						<div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-white">

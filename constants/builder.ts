@@ -1,4 +1,4 @@
-import { HeadingSize } from "@/types/components";
+import { HeadingSize } from "@/types/shared";
 
 export const fontFamilyMap: Record<string, string> = {
 	inter: "var(--font-inter)",

@@ -1,6 +1,6 @@
 "use client";
 import { useUserContext } from "@/context/UserContext";
-import { usePaddlePrices } from "@/hooks/usePaddelPrices";
+import { usePaddlePrices } from "@/hooks/usePaddlePrices";
 import {
 	type Environments,
 	initializePaddle,

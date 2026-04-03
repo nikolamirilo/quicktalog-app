@@ -7,7 +7,7 @@ interface Props {
 	description: string;
 }
 
-const Section: React.FC<React.PropsWithChildren<Props>> = ({
+const SectionWrapper: React.FC<React.PropsWithChildren<Props>> = ({
 	id,
 	title,
 	description,
@@ -29,4 +29,4 @@ const Section: React.FC<React.PropsWithChildren<Props>> = ({
 	);
 };
 
-export default Section;
+export default SectionWrapper;

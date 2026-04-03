@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { examplePrompts } from "@/constants/ui";
-import type { PromptExamplesProps } from "@/types/components";
+import type { PromptExamplesProps } from "@/types/shared";
 import { RiLightbulbLine } from "react-icons/ri";
 
 const PromptExamples: React.FC<PromptExamplesProps> = ({

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Pricing from "@/components/home/Pricing/Pricing";
-import Section from "@/components/home/Section";
+import SectionWrapper from "@/components/home/SectionWrapper";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
@@ -19,13 +19,13 @@ const page = () => {
 			/>
 			<Navbar />
 			<div className="mx-auto h-fit flex flex-col items-center justify-center py-24 max-w-[1400px]">
-				<Section
+				<SectionWrapper
 					description="Choose the plan that's right for you. No hidden fees, no surprises. Start for free and upgrade as you grow."
 					id="pricing"
 					title="Simple, Transparent Pricing"
 				>
 					<Pricing />
-				</Section>
+				</SectionWrapper>
 			</div>
 			<Footer />
 		</div>

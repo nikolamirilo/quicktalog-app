@@ -3,7 +3,7 @@
 import JoinOurCommunity from "@/components/general/JoinOurCommunity";
 import Loader from "@/components/navigation/Loader";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { DashboardProps } from "@/types/components";
+import { DashboardProps } from "@/types/shared";
 import { lazy, Suspense, useState } from "react";
 import Overview from "./Overview";
 

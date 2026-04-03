@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-import type { DonutChartProps } from "@/types/components";
+import type { DonutChartProps } from "@/types/shared";
 
 export default function DonutChart({
 	data = [],

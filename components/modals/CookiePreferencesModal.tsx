@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CookiePreferencesModalProps } from "@/types/components";
+import { CookiePreferencesModalProps } from "@/types/shared";
 import {
 	loadPreferences,
 	savePreferences,

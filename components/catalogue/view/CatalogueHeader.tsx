@@ -8,7 +8,7 @@ import {
 	titleFontSizeMap,
 } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { CatalogueHeaderProps } from "@/types/components";
+import { CatalogueHeaderProps } from "@/types/shared";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
