@@ -162,11 +162,8 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 									fetchPriority="high"
 									src={logo}
 									style={{
-										width: activeData?.header?.logoSize?.width
-											? `${activeData.header.logoSize.width}px`
-											: type === "default"
-												? "120px"
-												: "100px",
+										width: type === "default" ? "160px" : activeData?.header?.logoSize?.width
+											? `${activeData.header.logoSize.width}px` : "100px",
 										height: "auto",
 										maxWidth: "100%",
 									}}

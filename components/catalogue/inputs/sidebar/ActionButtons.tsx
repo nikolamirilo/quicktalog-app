@@ -3,11 +3,15 @@ import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateMod
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { useUserContext } from "@/context/UserContext";
+import { revalidateData } from "@/helpers/server";
+import { useDashboardData } from "@/hooks/useDashboardData";
 import {
 	publishCatalogue,
 	updateCatalogue as updateCatalogueAction,
 } from "@/server_actions/catalogue";
 import { Eye, LayoutTemplate, Rocket, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { RxUpdate } from "react-icons/rx";
 import { toast } from "sonner";
@@ -19,11 +23,15 @@ const ActionButtons = ({
 	isOpen: boolean;
 	setIsOpen: (value: boolean) => void;
 }) => {
+
 	const { catalogue, updateCatalogue: updateContextCatalogue } =
 		useCatalogueContext();
+	const { refreshAll } =
+		useDashboardData("overview");
+	const { refreshUserData } = useUserContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
 	const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState(false);
-
+	const router = useRouter();
 	React.useEffect(() => {
 		console.log("ActionButtons catalogue state:", catalogue);
 	}, [catalogue]);
@@ -82,11 +90,15 @@ const ActionButtons = ({
 		if (catalogue.status === "draft") {
 			toast.promise(promise, {
 				loading: "Publishing...",
-				success: (success) => {
+				success: async (success) => {
 					setIsOpen(false);
 					if (!success) throw new Error("Failed to update status");
 					updateContextCatalogue({ status: "active" });
 					setIsSuccessModalOpen(true);
+					await refreshAll();
+					await revalidateData();
+					await refreshUserData();
+					router.refresh();
 					return "Catalogue published successfully";
 				},
 				error: "Failed to publish catalogue",
@@ -156,11 +168,10 @@ const ActionButtons = ({
                         flex-1
                         ${isOpen ? "md:px-3" : "md:flex-none justify-center md:w-9 md:px-0 flex flex-col h-fit py-2 gap-0"}
                         px-1.5 sm:px-2
-                        ${
-													primary
-														? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
-														: "hover:bg-product-primary/10 hover:border-product-primary/20"
-												}
+                        ${primary
+									? "bg-product-primary hover:bg-product-primary/90 text-product-foreground"
+									: "hover:bg-product-primary/10 hover:border-product-primary/20"
+								}
                         hover:scale-105 active:scale-95 transition-all duration-300
                     `}
 							disabled={disabled}
@@ -188,14 +199,14 @@ const ActionButtons = ({
 				{QUICK_ACTIONS.map(
 					({ key, icon: Icon, label, primary, onClick, disabled }) => (
 						<button
-							key={key}
-							onClick={onClick}
-							disabled={disabled}
 							className={`
                         flex flex-1 flex-col items-center justify-center gap-0.5 py-3.5
                         active:scale-95 transition-all duration-200
                         disabled:opacity-40 disabled:pointer-events-none
                     `}
+							disabled={disabled}
+							key={key}
+							onClick={onClick}
 						>
 							<Icon className="w-6 h-6" />
 							<span className="text-[10px] font-medium">{label}</span>

@@ -13,7 +13,7 @@ import { OverviewProps } from "@/types/shared";
 import { Status, tiers } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiTool, FiCpu, FiFileText } from "react-icons/fi";
+import { FiCpu, FiFileText, FiTool } from "react-icons/fi";
 import { LuSquareMenu } from "react-icons/lu";
 import { TbFileAnalytics } from "react-icons/tb";
 import InformModal from "../modals/InformModal";
@@ -49,6 +49,8 @@ const Overview = ({
 		setItemToDelete(name);
 		setIsModalOpen(true);
 	}
+
+
 
 	async function confirmDelete() {
 		if (itemToDelete) {
@@ -101,6 +103,7 @@ const Overview = ({
 		try {
 			await duplicateItem(id, name);
 			await refreshAll();
+			resetCatalogue();
 			await revalidateData();
 			await refreshUserData();
 			router.refresh();
@@ -116,6 +119,9 @@ const Overview = ({
 		try {
 			await updateItemStatus(id, status);
 			await refreshAll();
+			await revalidateData();
+			await refreshUserData();
+			router.refresh();
 		} catch (error) {
 			console.error("Error updating item status:", error);
 			alert("Failed to update status.");
