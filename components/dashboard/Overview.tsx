@@ -50,8 +50,6 @@ const Overview = ({
 		setIsModalOpen(true);
 	}
 
-
-
 	async function confirmDelete() {
 		if (itemToDelete) {
 			const success = await deleteItem(itemToDelete);

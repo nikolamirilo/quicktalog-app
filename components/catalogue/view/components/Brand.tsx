@@ -28,8 +28,12 @@ export const Brand = ({
 							className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
 							src={logo ?? "/logo.svg"}
 							style={{
-								width: type === "default" ? "160px" : activeData?.footer?.logoSize?.width
-									? `${activeData.footer.logoSize.width}px` : "100px",
+								width:
+									type === "default"
+										? "160px"
+										: activeData?.footer?.logoSize?.width
+											? `${activeData.footer.logoSize.width}px`
+											: "100px",
 								height: "auto",
 								maxWidth: "100%",
 							}}
