@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
+import { revalidateData } from "@/helpers/server";
 import { createCatalogue } from "@/server_actions/catalogue";
 import { tiers } from "@quicktalog/common";
 import Link from "next/link";
@@ -36,7 +37,7 @@ const CreateCatalogueButton = ({
 	const [limitsModal, setLimitsModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const { catalogue, resetCatalogue } = useCatalogueContext();
-	const { userData } = useUserContext();
+	const { userData, refreshUserData } = useUserContext();
 	const handleCreateCatalogue = async () => {
 		setLoading(true);
 		if (userData) {
@@ -53,6 +54,11 @@ const CreateCatalogueButton = ({
 						`Catalogue "${result.data.name}" created successfully!`,
 					);
 					setIsModalOpen(false);
+
+					resetCatalogue();
+					await revalidateData();
+					await refreshUserData();
+					router.refresh();
 
 					// Navigate to the builder page with the catalogue name
 					setTimeout(() => {

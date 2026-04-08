@@ -2,6 +2,7 @@
 import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Card, CardContent } from "@/components/ui/card";
+import { useUserContext } from "@/context/UserContext";
 import { revalidateData } from "@/helpers/server";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug, UserData } from "@quicktalog/common";
@@ -30,6 +31,7 @@ export default function OCRBuilder({
 	});
 	const [extractedText, setExtractedText] = useState("");
 	const { user } = useUser();
+	const { refreshUserData } = useUserContext();
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -123,6 +125,7 @@ export default function OCRBuilder({
 			alert("An error occurred while submitting. Please try again.");
 		} finally {
 			await revalidateData();
+			await refreshUserData();
 		}
 	};
 

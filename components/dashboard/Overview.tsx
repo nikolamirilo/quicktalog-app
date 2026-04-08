@@ -138,6 +138,7 @@ const Overview = ({
 			const success = await deleteMultipleItems(selectedIds);
 			if (success) {
 				await refreshAll();
+				resetCatalogue();
 				await revalidateData();
 				await refreshUserData();
 				router.refresh();

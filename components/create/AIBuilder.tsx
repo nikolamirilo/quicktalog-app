@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useUserContext } from "@/context/UserContext";
 import { revalidateData } from "@/helpers/server";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug, UserData } from "@quicktalog/common";
@@ -37,6 +38,7 @@ export default function AIBuilder({
 		useState<boolean>(false);
 	const [prompt, setPrompt] = useState("");
 	const { user } = useUser();
+	const { refreshUserData } = useUserContext();
 	const [errors, setErrors] = useState<{ [key: string]: string }>({});
 	const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -105,6 +107,7 @@ export default function AIBuilder({
 				}),
 			});
 			await revalidateData();
+			await refreshUserData();
 			setTimeout(() => {
 				setShowInfoModal(true);
 				setIsSubmitting(false);
