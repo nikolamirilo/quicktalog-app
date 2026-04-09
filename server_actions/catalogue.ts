@@ -1,9 +1,5 @@
 "use server";
-import {
-	revalidateAfterCatalogueChange,
-	revalidateAllCatalogues,
-	revalidateData,
-} from "@/helpers/server";
+import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
 import { drizzleClient } from "@/utils/drizzle";
 import { redis } from "@/utils/redis";
 import {
@@ -21,7 +17,8 @@ export async function deleteItem(name: string): Promise<boolean> {
 	try {
 		await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));
 		await redis.del(name);
-		await revalidateAfterCatalogueChange(name);
+		revalidateCatalogue(name);
+		revalidateDashboard();
 		return true;
 	} catch (err) {
 		console.error("Unexpected error while deleting service catalogue:", err);
@@ -32,7 +29,8 @@ export async function deleteItem(name: string): Promise<boolean> {
 export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 	try {
 		await drizzleClient.delete(catalogues).where(inArray(catalogues.id, ids));
-		await revalidateAllCatalogues();
+		revalidateCatalogue();
+		revalidateDashboard();
 		return true;
 	} catch (err) {
 		console.error("Unexpected error while deleting catalogues:", err);
@@ -50,7 +48,7 @@ export async function updateItemStatus(
 			.set({ status })
 			.where(eq(catalogues.id, id));
 
-		await revalidateData();
+		revalidateDashboard();
 		return true;
 	} catch (err) {
 		console.error("Unexpected error while updating status:", err);
@@ -89,7 +87,8 @@ export async function duplicateItem(id: string, name: string) {
 			.returning();
 
 		if (!newData) return null;
-		await revalidateData();
+		revalidateCatalogue(tryName);
+		revalidateDashboard();
 		return newData;
 	} catch (err) {
 		console.error("Unexpected error while duplicating service catalogue:", err);
@@ -133,14 +132,14 @@ export async function createCatalogue(
 		console.log(res);
 
 		if (!data) {
-			// This path presumably won't happen if insert throws, but good to have
 			return {
 				success: false,
 				error: "Failed to insert catalogue",
 			};
 		}
 
-		await revalidateData();
+		revalidateCatalogue(slug);
+		revalidateDashboard();
 		return {
 			success: true,
 			data,
@@ -169,7 +168,7 @@ export async function updateCatalogue(catalogueData: Catalogue) {
 			};
 		}
 
-		await revalidateData();
+		revalidateCatalogue(catalogueData.name);
 		return {
 			success: true,
 			data: catalogueData,
@@ -226,9 +225,8 @@ export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 		await drizzleClient
 			.update(catalogues)
 			.set({
-				// Update all fields that might have changed + status
 				...rest,
-				status: "active" as Status, // Ensure status type compatibility
+				status: "active" as Status,
 				updatedAt: new Date().toISOString(),
 			})
 			.where(eq(catalogues.name, catalogueData.name));
@@ -241,7 +239,8 @@ export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 			console.error("Failed to update redis during publish");
 			return false;
 		}
-		await revalidateData();
+		revalidateCatalogue(catalogueData.name);
+		revalidateDashboard();
 		return true;
 	} catch (err) {
 		console.error("Unexpected error while updating status in v2:", err);

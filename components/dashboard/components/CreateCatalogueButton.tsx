@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
-import { revalidateData } from "@/helpers/server";
 import { createCatalogue } from "@/server_actions/catalogue";
 import { tiers } from "@quicktalog/common";
 import Link from "next/link";
@@ -56,7 +55,6 @@ const CreateCatalogueButton = ({
 					setIsModalOpen(false);
 
 					resetCatalogue();
-					await revalidateData();
 					await refreshUserData();
 					router.refresh();
 

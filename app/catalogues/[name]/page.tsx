@@ -104,7 +104,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 		const { name } = await params;
 
 		if (!name) {
-			throw new Error("Service catalogue name is required");
+			throw new Error("Catalogue name is required");
 		}
 
 		const res = await fetch(
@@ -142,7 +142,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 			return <LimitsModal isOpen={true} type="notFound" />;
 		}
 	} catch (error) {
-		console.warn("Service catalogue page error:", error);
+		console.warn("Catalogue page error:", error);
 		return <LimitsModal isOpen={true} type="notFound" />;
 	}
 };

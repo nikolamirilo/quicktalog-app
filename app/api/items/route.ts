@@ -1,4 +1,4 @@
-import { revalidateData } from "@/helpers/server";
+import { revalidateCatalogue } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
 import { generateUniqueSlug } from "@quicktalog/common";
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 				headers: { "Content-Type": "application/json" },
 			});
 		}
-		await revalidateData();
+		revalidateCatalogue(slug);
 		return new Response(
 			JSON.stringify({ catalogueUrl: `/catalogues/${name}`, slug: name }),
 			{
@@ -99,7 +99,7 @@ export async function PATCH(request: Request) {
 			});
 		}
 
-		await revalidateData();
+		revalidateCatalogue(name);
 
 		return new Response(
 			JSON.stringify({ catalogueUrl: `/catalogues/${name}`, slug: name }),

@@ -4,7 +4,6 @@ import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
-import { revalidateData } from "@/helpers/server";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import {
 	publishCatalogue,
@@ -94,7 +93,6 @@ const ActionButtons = ({
 					updateContextCatalogue({ status: "active" });
 					setIsSuccessModalOpen(true);
 					await refreshAll();
-					await revalidateData();
 					await refreshUserData();
 					router.refresh();
 					return "Catalogue published successfully";
@@ -195,23 +193,21 @@ const ActionButtons = ({
 
 			{/* ── Mobile fixed bottom tab bar ── */}
 			<div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center bg-background/95 px-2 pb-[env(safe-area-inset-bottom)]">
-				{QUICK_ACTIONS.map(
-					({ key, icon: Icon, label, primary, onClick, disabled }) => (
-						<button
-							className={`
+				{QUICK_ACTIONS.map(({ key, icon: Icon, label, onClick, disabled }) => (
+					<button
+						className={`
                         flex flex-1 flex-col items-center justify-center gap-0.5 py-3.5
                         active:scale-95 transition-all duration-200
                         disabled:opacity-40 disabled:pointer-events-none
                     `}
-							disabled={disabled}
-							key={key}
-							onClick={onClick}
-						>
-							<Icon className="w-6 h-6" />
-							<span className="text-[10px] font-medium">{label}</span>
-						</button>
-					),
-				)}
+						disabled={disabled}
+						key={key}
+						onClick={onClick}
+					>
+						<Icon className="w-6 h-6" />
+						<span className="text-[10px] font-medium">{label}</span>
+					</button>
+				))}
 			</div>
 
 			{/* Spacer so page content isn't hidden behind mobile bar */}

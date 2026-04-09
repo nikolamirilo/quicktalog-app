@@ -19,7 +19,7 @@ const PreviewPage = async ({
 		const { name } = await params;
 
 		if (!name) {
-			throw new Error("Service catalogue name is required");
+			throw new Error("Catalogue name is required");
 		}
 
 		console.log("Fetching preview for:", name);
@@ -40,7 +40,7 @@ const PreviewPage = async ({
 		// For preview, we don't strictly check status, or we allow draft
 		return <Catalogue item={item} type="view" />;
 	} catch (error) {
-		console.warn("Service catalogue preview error:", error);
+		console.warn("Catalogue preview error:", error);
 		return <LimitsModal isOpen={true} type="notFound" />;
 	}
 };

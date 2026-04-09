@@ -250,7 +250,7 @@ export const validateStepHelper = (
 			const value = formData[field];
 			if (typeof value === "string" && !value.trim()) {
 				const fieldLabels: { [key: string]: string } = {
-					name: "Service catalogue name",
+					name: "Catalogue name",
 					title: "Catalogue Heading",
 					currency: "Currency",
 				};

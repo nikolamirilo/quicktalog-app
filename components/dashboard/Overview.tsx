@@ -2,7 +2,6 @@
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
-import { revalidateData } from "@/helpers/server";
 import {
 	deleteItem,
 	deleteMultipleItems,
@@ -56,7 +55,6 @@ const Overview = ({
 			if (success) {
 				await refreshAll();
 				resetCatalogue();
-				await revalidateData();
 				await refreshUserData();
 				router.refresh();
 			} else {
@@ -102,7 +100,6 @@ const Overview = ({
 			await duplicateItem(id, name);
 			await refreshAll();
 			resetCatalogue();
-			await revalidateData();
 			await refreshUserData();
 			router.refresh();
 		} catch (error) {
@@ -117,7 +114,6 @@ const Overview = ({
 		try {
 			await updateItemStatus(id, status);
 			await refreshAll();
-			await revalidateData();
 			await refreshUserData();
 			router.refresh();
 		} catch (error) {
@@ -139,7 +135,6 @@ const Overview = ({
 			if (success) {
 				await refreshAll();
 				resetCatalogue();
-				await revalidateData();
 				await refreshUserData();
 				router.refresh();
 				setIsDeleteMultipleModalOpen(false);

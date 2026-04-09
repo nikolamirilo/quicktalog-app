@@ -40,7 +40,7 @@ const childVariants = {
 
 const CTA: React.FC = () => {
 	return (
-		<section id="cta" className="mt-10 mb-5 lg:my-20">
+		<section className="mt-10 mb-5 lg:my-20" id="cta">
 			<div className="relative h-full w-full z-10 mx-auto py-12 sm:py-20">
 				<div className="h-full w-full">
 					<div className="rounded-3xl opacity-95 absolute inset-0 -z-10 h-full w-full bg-[#050a02] bg-[linear-gradient(to_right,#12170f_1px,transparent_1px),linear-gradient(to_bottom,#12170f_1px,transparent_1px)] bg-[size:6rem_4rem]">
@@ -49,10 +49,10 @@ const CTA: React.FC = () => {
 
 					<motion.div
 						className="h-full flex flex-col items-center justify-center text-white text-center px-5"
-						variants={containerVariants}
 						initial="offscreen"
-						whileInView="onscreen"
+						variants={containerVariants}
 						viewport={{ once: true }}
+						whileInView="onscreen"
 					>
 						<motion.h2
 							className="text-2xl sm:text-3xl md:text-5xl md:leading-tight font-semibold mb-4 max-w-3xl"
@@ -106,15 +106,15 @@ const CTA: React.FC = () => {
 							variants={childVariants}
 						>
 							<Link href="/auth?mode=signup">
-								<Button variant="cta" className="text-lg px-8 py-4 h-14">
+								<Button className="text-lg px-8 py-4 h-14" variant="cta">
 									Create Your Catalogue Now
 									<FiArrowRight className="w-5 h-5 ml-2" />
 								</Button>
 							</Link>
 							<Link href="/demo">
 								<Button
-									variant="outline"
 									className="text-lg px-8 py-4 h-14 border-2 border-white text-white hover:bg-product-background hover:text-black"
+									variant="outline"
 								>
 									Try the Demo
 								</Button>

@@ -3,7 +3,6 @@ import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { useUserContext } from "@/context/UserContext";
-import { revalidateData } from "@/helpers/server";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug, UserData } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
@@ -124,7 +123,6 @@ export default function OCRBuilder({
 			console.error("Error submitting OCR data:", error);
 			alert("An error occurred while submitting. Please try again.");
 		} finally {
-			await revalidateData();
 			await refreshUserData();
 		}
 	};

@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useUserContext } from "@/context/UserContext";
-import { revalidateData } from "@/helpers/server";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug, UserData } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
@@ -106,7 +105,6 @@ export default function AIBuilder({
 					userId: user.id,
 				}),
 			});
-			await revalidateData();
 			await refreshUserData();
 			setTimeout(() => {
 				setShowInfoModal(true);

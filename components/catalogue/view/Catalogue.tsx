@@ -143,7 +143,7 @@ const Catalogue = ({
 				<CatalogueHeader data={item} logo={logoSrc} type={item.header.type} />
 
 				<main
-					aria-label="Service catalogue content"
+					aria-label="Catalogue content"
 					className="flex-1 flex flex-col min-h-0 relative"
 				>
 					{item.appearance.overlay.isEnabled && (
