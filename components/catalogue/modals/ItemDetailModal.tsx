@@ -35,7 +35,7 @@ export default function ItemDetailModal({
 		<>
 			<Dialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
 				<DialogContent
-					className={`text-catalogue-card-text max-w-sm w-[90vw] sm:max-w-md sm:w-full p-0 bg-catalogue-card-background border border-catalogue-card-border shadow-lg rounded-2xl overflow-hidden fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90dvh] flex flex-col ${theme || ""}`}
+					className={`text-catalogue-card-text max-w-sm w-[98vw] sm:w-full sm:max-w-md p-0 bg-catalogue-card-background border border-catalogue-card-border shadow-lg overflow-hidden fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90dvh] flex flex-col ${theme || ""}`}
 				>
 					{/* Image Section - Only show for variants that have images */}
 					{item.image && variant !== "variant_3" && (

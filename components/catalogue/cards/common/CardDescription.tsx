@@ -15,7 +15,7 @@ const CardDescription = ({
 		<p
 			aria-describedby={`item-title-${slugId}`}
 			className={cn(
-				"text-catalogue-card-description font-body leading-snug",
+				"text-catalogue-card-description font-body !leading-[1.15] sm:!leading-snug",
 				className,
 			)}
 			style={{ fontSize: "var(--content-font-size)" }}

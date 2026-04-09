@@ -196,7 +196,7 @@ const ActionButtons = ({
 				{QUICK_ACTIONS.map(({ key, icon: Icon, label, onClick, disabled }) => (
 					<button
 						className={`
-                        flex flex-1 flex-col items-center justify-center gap-0.5 py-3.5
+                        flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5
                         active:scale-95 transition-all duration-200
                         disabled:opacity-40 disabled:pointer-events-none
                     `}
@@ -204,8 +204,8 @@ const ActionButtons = ({
 						key={key}
 						onClick={onClick}
 					>
-						<Icon className="w-6 h-6" />
-						<span className="text-[10px] font-medium">{label}</span>
+						<Icon className="w-5 h-5" />
+						<span className="text-[11px] font-medium">{label}</span>
 					</button>
 				))}
 			</div>

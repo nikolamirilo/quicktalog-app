@@ -140,7 +140,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	return (
 		<header
 			aria-label={`${companyName} header navigation`}
-			className="border-b shadow-lg z-50 !bg-catalogue-navigation-background flex flex-row justify-between items-center !text-catalogue-navigation-text !border-catalogue-card-border font-body min-h-[7vh]"
+			className="border-b shadow-lg z-50 !bg-catalogue-navigation-background flex flex-row justify-between items-center !text-catalogue-navigation-text !border-catalogue-card-border font-body min-h-[48px] sm:min-h-[56px]"
 			role="banner"
 		>
 			<div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">

@@ -106,11 +106,11 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 				{/* Mobile Toggle Button (Centered, overlapping top edge) */}
 				<button
 					onClick={() => setIsOpen(!isOpen)}
-					className="md:hidden absolute -top-7 left-1/2 -translate-x-1/2 w-[3.5rem] h-[3.5rem] flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[200]"
+					className="md:hidden absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[200]"
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title="Toggle Sidebar"
 				>
-					{isOpen ? <LuChevronsDown size={32} /> : <LuChevronsUp size={32} />}
+					{isOpen ? <LuChevronsDown size={24} /> : <LuChevronsUp size={24} />}
 				</button>
 
 				<Button

@@ -28,7 +28,7 @@ const LimitsModal = ({
 
 	return (
 		<AlertDialog open={isOpen}>
-			<AlertDialogContent className="w-[95vw] max-w-md xl:max-w-lg mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow rounded-lg overflow-hidden">
+			<AlertDialogContent className="w-[98vw] sm:w-[95vw] max-w-md xl:max-w-lg mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow overflow-hidden max-h-[90dvh] flex flex-col">
 				<LimitsModalHeader
 					content={content}
 					IconComponent={IconComponent}
@@ -36,7 +36,7 @@ const LimitsModal = ({
 					onClose={onClose}
 				/>
 
-				<div className="p-6 sm:p-8 space-y-6">
+				<div className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 flex-1 overflow-y-auto">
 					{isNotFound ? (
 						<NotFoundContent />
 					) : (

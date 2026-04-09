@@ -44,7 +44,7 @@ const EditableHeading = ({
 				bg-transparent focus:border-primary outline-none
 				w-fit
 				max-w-[94%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%]
-				min-w-[80%] sm:min-w-[70%] md:min-w-[50%] lg:min-w-[40%] xl:min-w-[30%]
+				min-w-[60%] sm:min-w-[50%] md:min-w-[50%] lg:min-w-[40%] xl:min-w-[30%]
 				mx-auto
 				break-words transition-all
 				relative

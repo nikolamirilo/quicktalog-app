@@ -82,7 +82,7 @@ const ItemModal = ({
 
 	return (
 		<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-			<AlertDialogContent className="w-[95vw] md:max-w-2xl p-0 overflow-hidden bg-white rounded-2xl border-none shadow-2xl gap-0 max-h-[90dvh] flex flex-col">
+			<AlertDialogContent className="w-[98vw] sm:w-[95vw] md:max-w-2xl p-0 overflow-hidden bg-white border-none shadow-2xl gap-0 max-h-[90dvh] flex flex-col">
 				{/* Header */}
 				<AlertDialogTitle className="p-4 sm:p-6 pb-4 relative border-b border-gray-100 flex-shrink-0">
 					<button
@@ -112,7 +112,7 @@ const ItemModal = ({
 					/>
 				</div>
 
-				<div className="p-4 sm:p-6 pt-4 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 border-t border-gray-100 flex-shrink-0 bg-white">
+				<div className="p-3 sm:p-6 pt-3 sm:pt-4 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 border-t border-gray-100 flex-shrink-0 bg-white">
 					<Button
 						className="w-full sm:w-auto"
 						onClick={onClose}

@@ -39,7 +39,7 @@ const LimitsModalHeader = ({
 	onClose,
 }: LimitsModalHeaderProps) => {
 	return (
-		<AlertDialogHeader className="relative p-6 sm:p-8 text-center bg-product-background-hero space-y-0">
+		<AlertDialogHeader className="relative p-4 sm:p-6 md:p-8 text-center bg-product-background-hero space-y-0 flex-shrink-0">
 			{onClose ? (
 				<button
 					aria-label="Close"
@@ -59,11 +59,11 @@ const LimitsModalHeader = ({
 			)}
 
 			<div className="flex justify-center mb-2">
-				<div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-product-primary shadow-lg">
+				<div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-product-primary shadow-lg">
 					{isNotFound ? (
-						<IoSearch className="w-6 h-6 sm:w-8 sm:h-8 text-product-secondary" />
+						<IoSearch className="w-5 h-5 sm:w-6 sm:h-6 text-product-secondary" />
 					) : (
-						<IconComponent className="w-6 h-6 sm:w-8 sm:h-8 text-product-secondary" />
+						<IconComponent className="w-5 h-5 sm:w-6 sm:h-6 text-product-secondary" />
 					)}
 				</div>
 			</div>

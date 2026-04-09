@@ -220,7 +220,7 @@ const AddContentModal = ({
 	return (
 		<>
 			<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-				<AlertDialogContent className="w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background rounded-2xl border-none shadow-2xl flex flex-col md:flex-row h-fit md:h-[600px] lg:h-[650px] font-body text-product-foreground">
+				<AlertDialogContent className="w-[98vw] sm:w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background border-none shadow-2xl flex flex-col md:flex-row h-fit max-h-[90dvh] md:h-[600px] lg:h-[650px] font-body text-product-foreground">
 					<div className="w-full md:w-1/4 bg-gray-200/50 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col">
 						<div className="p-6 pb-4 flex justify-between items-start">
 							<div>
@@ -245,7 +245,7 @@ const AddContentModal = ({
 					</div>
 
 					{/* Right Content - 3/4 width */}
-					<div className="flex-1 flex flex-col min-w-0 p-4 md:p-6">
+					<div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-y-auto p-4 md:p-6">
 						<BlockConfigHeader
 							selectedOption={selectedOption}
 							onClose={onClose}
@@ -260,7 +260,7 @@ const AddContentModal = ({
 						/>
 
 						{/* Footer Actions */}
-						<div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-white">
+						<div className="p-3 sm:p-6 border-t border-gray-100 flex justify-end gap-3 bg-white flex-shrink-0">
 							<Button
 								className="hover:text-product-primary hover:border-product-primary"
 								onClick={onClose}

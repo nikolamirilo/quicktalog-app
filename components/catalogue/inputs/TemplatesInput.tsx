@@ -93,7 +93,7 @@ export default function TemplatesInput({
 	};
 
 	return (
-		<div className="w-[90%] md:w-[85%] mx-auto flex flex-col items-end gap-2 sm:gap-4 md:gap-6">
+		<div className="w-[90%] md:w-[85%] mx-auto flex flex-col items-end gap-2 sm:gap-4 md:gap-6 pb-16 sm:pb-0">
 			<div
 				className={cn(
 					"grid gap-2 w-full",
@@ -107,7 +107,7 @@ export default function TemplatesInput({
 					return (
 						<div
 							className={cn(
-								"group relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2 touch-manipulation",
+								"group relative p-3 sm:p-4 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2 touch-manipulation",
 								isSelected
 									? "border-product-primary bg-product-primary/5 shadow-product-shadow ring-1 ring-product-primary"
 									: "border-product-border bg-product-background hover:border-product-primary/50 hover:shadow-lg hover:scale-[1.01]",
@@ -177,8 +177,8 @@ export default function TemplatesInput({
 							</div>
 
 							{/* Mobile Layout */}
-							<div className="flex md:hidden flex-row gap-4 sm:gap-6 items-center w-full h-full">
-								<div className="w-[35%] flex-shrink-0 flex items-center justify-center h-full">
+							<div className="flex md:hidden flex-row gap-3 sm:gap-6 items-center w-full h-full">
+								<div className="w-[28%] sm:w-[35%] flex-shrink-0 flex items-center justify-center h-full">
 									{isScratch ? (
 										<div className="flex flex-col items-center justify-center text-gray-400 group-hover:text-product-primary transition-colors">
 											<Plus className="w-12 h-12 sm:w-16 sm:h-16" />
@@ -219,9 +219,15 @@ export default function TemplatesInput({
 				})}
 			</div>
 
-			<Button className="mx-auto md:mx-0 my-4" onClick={handleSelect} size="lg">
-				Select Template
-			</Button>
+			<div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto bg-white sm:bg-transparent border-t sm:border-t-0 border-gray-100 p-3 sm:p-0 z-50 sm:z-auto">
+				<Button
+					className="w-full sm:w-auto mx-auto md:mx-0 sm:my-4"
+					onClick={handleSelect}
+					size="lg"
+				>
+					Select Template
+				</Button>
+			</div>
 
 			<AlertDialog onOpenChange={setShowConfirmModal} open={showConfirmModal}>
 				<AlertDialogContent>

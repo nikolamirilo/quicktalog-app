@@ -31,7 +31,7 @@ const PlanComparison = ({
 			<div className="space-y-4">
 				{/* Limit Comparison */}
 				<div className="w-full max-w-3xl">
-					<div className="border-2 border-product-primary flex items-center justify-between p-4 rounded-xl bg-product-background-hover">
+					<div className="border-2 border-product-primary flex items-center justify-between p-3 sm:p-4 rounded-xl bg-product-background-hover">
 						{/* Current Plan */}
 						<div className="flex-1 min-w-0">
 							<div className="text-xs text-product-foreground-accent mb-2">
@@ -78,7 +78,7 @@ const PlanComparison = ({
 				</div>
 
 				{!isStandardPlanLimitReached ? (
-					<div className="p-4 rounded-xl bg-product-background-hover border-2 border-product-primary">
+					<div className="p-3 sm:p-4 rounded-xl bg-product-background-hover border-2 border-product-primary">
 						<div className="space-y-3">
 							<div className="flex items-start space-x-3">
 								<div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0">
@@ -170,7 +170,7 @@ const PlanComparison = ({
 						</div>
 					</div>
 				) : (
-					<div className="p-4 rounded-xl bg-product-background-hover border-2 border-product-primary">
+					<div className="p-3 sm:p-4 rounded-xl bg-product-background-hover border-2 border-product-primary">
 						<div className="flex items-start space-x-3">
 							<div className="w-8 h-8 rounded-lg bg-product-primary flex items-center justify-center flex-shrink-0 mt-1">
 								<BiCustomize className="w-4 h-4 text-product-secondary" />
@@ -192,7 +192,7 @@ const PlanComparison = ({
 			{content.currentLimit === content.nextLimit ? (
 				<AlertDialogFooter className="sm:justify-center pt-2">
 					<Link
-						className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center "
+						className="w-full group relative py-2.5 sm:py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center "
 						href="/contact"
 					>
 						<span className="relative z-10 flex items-center justify-center space-x-2">
@@ -204,7 +204,7 @@ const PlanComparison = ({
 			) : (
 				<AlertDialogFooter className="sm:justify-center pt-2">
 					<Link
-						className="w-full group relative py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center "
+						className="w-full group relative py-2.5 sm:py-3 px-6 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-3 focus:ring-product-primary/30 bg-product-primary text-product-secondary text-center "
 						href="/pricing"
 					>
 						<span className="relative z-10 flex items-center justify-center space-x-2">
