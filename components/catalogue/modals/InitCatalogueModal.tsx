@@ -91,7 +91,7 @@ export default function InitCatalogueModal({
 
 				<div className="space-y-3 py-2 sm:py-4">
 					{/* Catalogue Name and Language Row */}
-					<div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 sm:gap-4">
+					<div className="grid grid-cols-2 gap-2 sm:gap-4">
 						<CatalogueNameInput
 							disabled={loading}
 							onErrorChange={setHasNameError}
@@ -100,7 +100,7 @@ export default function InitCatalogueModal({
 					</div>
 
 					{/* Currency and Business Type Row */}
-					<div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-2 sm:gap-4">
+					<div className="grid grid-cols-2 gap-2 sm:gap-4">
 						<CurrencySelect disabled={loading} />
 						<BusinessType disabled={loading} />
 					</div>
