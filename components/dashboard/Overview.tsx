@@ -110,9 +110,13 @@ const Overview = ({
 		}
 	}
 
-	async function handleUpdateItemStatus(id: string, status: Status) {
+	async function handleUpdateItemStatus(
+		id: string,
+		status: Status,
+		name?: string,
+	) {
 		try {
-			await updateItemStatus(id, status);
+			await updateItemStatus(id, status, name);
 			await refreshAll();
 			await refreshUserData();
 			router.refresh();

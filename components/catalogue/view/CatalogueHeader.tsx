@@ -146,14 +146,10 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 			<div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
 				<div className="flex items-center justify-between py-2 sm:py-4 w-full">
 					<div className="flex items-center">
-						<Link
-							aria-label={`Go to ${companyName} homepage`}
+						<SmartLink
+							ariaLabel={`Go to ${companyName} homepage`}
 							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
-							href={
-								type === "default"
-									? `/`
-									: `${catalogue.contact.website ? catalogue.contact.website : "/"}`
-							}
+							href={type === "default" ? "/" : catalogue.contact.website || "/"}
 						>
 							{logo && (
 								<img
@@ -173,7 +169,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 									}}
 								/>
 							)}
-						</Link>
+						</SmartLink>
 					</div>
 
 					{/* Desktop Navigation */}

@@ -127,7 +127,7 @@ const DashboardItem = ({
 					minute: "2-digit",
 				})}
 			</div>
-			{["active", "inactive"].includes(catalogue.status) && (
+			{["active"].includes(catalogue.status) && (
 				<div className="flex h-full flex-col gap-2 sm:gap-3 mt-auto pt-2 sm:pt-3 md:pt-4">
 					<Link
 						className="flex flex-row items-center justify-center gap-1"
@@ -152,7 +152,7 @@ const DashboardItem = ({
 					</Link>
 				</div>
 			)}
-			{catalogue.status === "draft" && (
+			{["inactive", "draft"].includes(catalogue.status) && (
 				<div className="flex flex-col gap-2 sm:gap-3 h-full justify-start mt-auto pt-2 sm:pt-3 md:pt-4">
 					<Link
 						className="flex flex-row items-center justify-center gap-1"

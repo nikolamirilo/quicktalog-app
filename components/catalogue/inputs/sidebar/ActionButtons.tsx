@@ -84,7 +84,7 @@ const ActionButtons = ({
 			return;
 		}
 		const promise = publishCatalogue(catalogue);
-		if (catalogue.status === "draft") {
+		if (catalogue.status !== "active") {
 			toast.promise(promise, {
 				loading: "Publishing...",
 				success: async (success) => {
@@ -146,8 +146,8 @@ const ActionButtons = ({
 		},
 		{
 			key: "publish",
-			icon: catalogue?.status === "active" ? RxUpdate : Rocket,
-			label: catalogue?.status === "active" ? "Update" : "Publish",
+			icon: catalogue?.status !== "active" ? Rocket : RxUpdate,
+			label: catalogue?.status !== "active" ? "Publish" : "Update",
 			primary: true,
 			onClick: handlePublish,
 			disabled: isPublishDisabled,

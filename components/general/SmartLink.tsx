@@ -8,31 +8,39 @@ type SmartLinkProps = {
 	ariaLabel?: string;
 };
 
+const KNOWN_TLDS =
+	/\.(com|org|net|io|co|dev|app|me|info|biz|us|uk|de|fr|rs|hr|ba|eu|shop|store|tech|ai|xyz|online|site|website)$/i;
+
+function isExternalUrl(raw: string): boolean {
+	if (/^https?:\/\//i.test(raw)) return true;
+	if (/^www\./i.test(raw)) return true;
+	// Bare domain: must contain a dot, no slashes before it, and end with a known TLD
+	const domain = raw.split("/")[0];
+	if (domain.includes(".") && KNOWN_TLDS.test(domain)) return true;
+	return false;
+}
+
+function normalizeHref(raw: string): string {
+	if (/^https?:\/\//i.test(raw)) return raw;
+	return `https://${raw}`;
+}
+
 const SmartLink: React.FC<SmartLinkProps> = ({
 	href,
 	children,
 	className,
 	ariaLabel,
 }) => {
-	if (!href || href === "https:" || href === "http:") {
+	const trimmed = href?.trim();
+
+	if (!trimmed || trimmed === "https:" || trimmed === "http:") {
 		return <span className={className}>{children}</span>;
 	}
 
-	const isExternal =
-		/^https?:\/\//.test(href) ||
-		/^www\./.test(href) ||
-		(/^[^\/]+\.[^\/]+/.test(href) && !href.startsWith("/"));
-
-	const finalHref = isExternal
-		? href.startsWith("http")
-			? href
-			: `https://${href}`
-		: href;
-
-	if (isExternal) {
+	if (isExternalUrl(trimmed)) {
 		return (
 			<a
-				href={finalHref}
+				href={normalizeHref(trimmed)}
 				target="_blank"
 				rel="noopener noreferrer"
 				className={className}
@@ -44,7 +52,7 @@ const SmartLink: React.FC<SmartLinkProps> = ({
 	}
 
 	return (
-		<Link href={finalHref} className={className} aria-label={ariaLabel}>
+		<Link aria-label={ariaLabel} className={className} href={trimmed}>
 			{children}
 		</Link>
 	);

@@ -7,6 +7,7 @@ import {
 	shadowMap,
 	titleFontSizeMap,
 } from "@/constants/builder";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 import { htmlToText } from "@/helpers/client";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes, tiers } from "@quicktalog/common";
@@ -30,6 +31,9 @@ const Catalogue = ({
 	type?: "edit" | "view" | "demo";
 	userData?: UserData;
 }) => {
+	const { catalogue } = useCatalogueContext() || {};
+	const activeData = catalogue?.name ? catalogue : item;
+
 	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
 	const [editingBlock, setEditingBlock] = useState<{
 		block: ContentBlock;
@@ -55,22 +59,35 @@ const Catalogue = ({
 	const customLogo = item.logo;
 	const logoSrc = item.header.type === "custom" ? customLogo : defaultLogo;
 
+	// Set font CSS variables on document root so portals (modals) inherit them
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+		const root = document.documentElement;
+		root.style.setProperty("--catalogue-font-heading", fontFamily);
+		root.style.setProperty("--catalogue-font-body", fontFamily);
+		return () => {
+			root.style.removeProperty("--catalogue-font-heading");
+			root.style.removeProperty("--catalogue-font-body");
+		};
+	}, [fontFamily]);
+
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 
 		let plainHeading = "";
 		try {
-			plainHeading = htmlToText(item.heading || "");
+			plainHeading = htmlToText(activeData.heading || "");
 		} catch (e) {
 			console.log("Error occured: ", e);
 		}
 
-		const titleText = item.metadata?.title || item.name || plainHeading;
+		const titleText =
+			activeData.metadata?.title || activeData.name || plainHeading;
 		if (titleText) {
 			document.title = `${titleText} | Quicktalog`;
 		}
 
-		const iconUrl = item.metadata?.icon || "/opengraph-image.png";
+		const iconUrl = activeData.metadata?.icon || "/opengraph-image.png";
 		const updateOrCreateIcon = (rel: string) => {
 			let link: HTMLLinkElement | null = document.querySelector(
 				`link[rel~='${rel}']`,
@@ -85,7 +102,12 @@ const Catalogue = ({
 
 		updateOrCreateIcon("icon");
 		updateOrCreateIcon("apple-touch-icon");
-	}, [item.metadata?.title, item.metadata?.icon, item.name, item.heading]);
+	}, [
+		activeData.metadata?.title,
+		activeData.metadata?.icon,
+		activeData.name,
+		activeData.heading,
+	]);
 
 	const handleEditBlock = (index: number) => {
 		const block = item.content[index];
@@ -140,11 +162,13 @@ const Catalogue = ({
 					<Overlay emoji={item.appearance.overlay.icon} />
 				)}
 
-				<CatalogueHeader data={item} logo={logoSrc} type={item.header.type} />
+				{type !== "demo" && (
+					<CatalogueHeader data={item} logo={logoSrc} type={item.header.type} />
+				)}
 
 				<main
 					aria-label="Catalogue content"
-					className="flex-1 flex flex-col min-h-0 relative"
+					className={`flex-1 flex flex-col min-h-0 relative ${type === "demo" && "pt-16"}`}
 				>
 					{item.appearance.overlay.isEnabled && (
 						<Overlay emoji={item.appearance.overlay.icon} />

@@ -75,8 +75,8 @@ const ItemDropdownMenu = ({
 	const atCatalogueLimit = usage.catalogues >= matchedTier.features.catalogues;
 	const isActive = catalogue.status === "active";
 
-	const { handleNameChange } = useCatalogueName({
-		initialName: "name",
+	const { handleNameChange, refetchNames } = useCatalogueName({
+		initialName: formData.name,
 		type: "create",
 		setFormData,
 		setErrors,
@@ -102,7 +102,11 @@ const ItemDropdownMenu = ({
 					: "Activate",
 			disabled: isDuplicating || disabled || (atTrafficLimit && !isActive),
 			onClick: () =>
-				handleUpdateItemStatus(catalogue.id, isActive ? "inactive" : "active"),
+				handleUpdateItemStatus(
+					catalogue.id,
+					isActive ? "inactive" : "active",
+					catalogue.name,
+				),
 			className: ITEM_BASE_CLASS,
 		},
 		{
@@ -149,7 +153,13 @@ const ItemDropdownMenu = ({
 			icon: <FiCopy size={18} />,
 			label: isDuplicating ? "Loading..." : "Duplicate",
 			disabled: atCatalogueLimit || disabled || isDuplicating,
-			onClick: () => setIsDuplicateModalOpen(true),
+			onClick: () => {
+				setFormData({ name: "" });
+				setErrors({});
+				setTouched({});
+				refetchNames();
+				setIsDuplicateModalOpen(true);
+			},
 			className: ITEM_BASE_CLASS,
 		},
 		{

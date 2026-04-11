@@ -12,6 +12,7 @@ interface UseCatalogueNameReturn {
 	handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	nameExists: boolean;
 	names: string[];
+	refetchNames: () => void;
 }
 
 const normalize = (str: string) =>
@@ -78,42 +79,42 @@ export const useCatalogueName = ({
 			}
 		}
 	};
+	const fetchNames = async () => {
+		try {
+			const res = await fetch("/api/items?type=name", {
+				method: "GET",
+				cache: "no-store",
+			});
+			const data = await res.json();
+			setNames(data);
+
+			// Check if initial name already exists
+			if (initialName && data.length > 0) {
+				const exists = data.some(
+					(n) => normalize(n.name) === normalize(initialName),
+				);
+				if (exists && setErrors) {
+					setErrors((prev: any) => ({
+						...prev,
+						name: "This name is already in use. Please choose a different name.",
+					}));
+				}
+			}
+		} catch (error) {
+			console.error("Failed to fetch names:", error);
+			setNames([]);
+		}
+	};
+
 	useEffect(() => {
 		if (type !== "create") return;
-
-		async function getAllNames() {
-			try {
-				const res = await fetch("/api/items?type=name", {
-					method: "GET",
-					cache: "no-store",
-				});
-				const data = await res.json();
-				setNames(data);
-
-				// Check if initial name already exists
-				if (initialName && data.length > 0) {
-					const exists = data.some(
-						(n) => normalize(n.name) === normalize(initialName),
-					);
-					if (exists && setErrors) {
-						setErrors((prev: any) => ({
-							...prev,
-							name: "This name is already in use. Please choose a different name.",
-						}));
-					}
-				}
-			} catch (error) {
-				console.error("Failed to fetch names:", error);
-				setNames([]);
-			}
-		}
-
-		getAllNames();
-	}, [type, initialName, setErrors]);
+		fetchNames();
+	}, [type]);
 
 	return {
 		handleNameChange,
 		nameExists,
 		names,
+		refetchNames: fetchNames,
 	};
 };

@@ -41,12 +41,23 @@ export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 export async function updateItemStatus(
 	id: string,
 	status: Status,
+	name?: string,
 ): Promise<boolean> {
 	try {
 		await drizzleClient
 			.update(catalogues)
 			.set({ status })
 			.where(eq(catalogues.id, id));
+
+		if (name) {
+			const cached = await redis.get(name);
+			if (cached) {
+				const data = typeof cached === "string" ? JSON.parse(cached) : cached;
+				data.status = status;
+				await redis.set(name, JSON.stringify(data));
+			}
+			revalidateCatalogue(name);
+		}
 
 		revalidateDashboard();
 		return true;

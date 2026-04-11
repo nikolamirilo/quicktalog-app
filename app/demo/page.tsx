@@ -1,6 +1,7 @@
 "use client";
 import Catalogue from "@/components/catalogue/view/Catalogue";
 import GetStartedCTA from "@/components/general/GetStartedCTA";
+import { Navbar } from "@/components/navigation";
 import { useMainContext } from "@/context/MainContext";
 import data from "../../showcase.json";
 const page: React.FC = () => {
@@ -33,6 +34,7 @@ const page: React.FC = () => {
 				className={`min-h-screen text-text bg-background font-lora ${theme ? theme : "theme-luxury"}`}
 			>
 				<main>
+					<Navbar />
 					<Catalogue item={demoData as any} type="demo" />
 					<GetStartedCTA />
 				</main>

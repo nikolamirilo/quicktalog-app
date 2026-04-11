@@ -96,21 +96,21 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 					<Tabs className="w-full" defaultValue="share">
 						<TabsList className="grid w-full grid-cols-3 h-auto p-0 bg-transparent gap-2">
 							<TabsTrigger
-								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
+								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg rounded-b-none font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
 								value="share"
 							>
 								<LinkIcon className="w-4 h-4" />
 								Share
 							</TabsTrigger>
 							<TabsTrigger
-								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
+								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg rounded-b-none font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
 								value="qr"
 							>
 								<QrCode className="w-4 h-4" />
 								QR Code
 							</TabsTrigger>
 							<TabsTrigger
-								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
+								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg rounded-b-none font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
 								value="embed"
 							>
 								<Code className="w-4 h-4" />
@@ -118,7 +118,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 							</TabsTrigger>
 						</TabsList>
 
-						<div className="border border-gray-200 rounded-lg rounded-t-none bg-white shadow-product-shadow p-5">
+						<div className="border border-gray-200 rounded-b-lg bg-white shadow-product-shadow p-5">
 							<TabsContent className="space-y-4 mt-0" value="share">
 								<div className="flex flex-col gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
 									<div className="space-y-3">

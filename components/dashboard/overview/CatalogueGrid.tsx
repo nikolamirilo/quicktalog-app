@@ -8,7 +8,7 @@ export interface CatalogueGridProps {
 	duplicatingId: string | null;
 	handleDeleteItem: (name: string) => void;
 	handleDuplicateCatalogue: (id: string, name: string) => void;
-	handleUpdateItemStatus: (id: string, status: Status) => void;
+	handleUpdateItemStatus: (id: string, status: Status, name?: string) => void;
 	isLinkCopied: boolean;
 	isModalOpen: boolean;
 	matchedTier: any;
