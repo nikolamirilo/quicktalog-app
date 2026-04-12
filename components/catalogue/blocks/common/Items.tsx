@@ -103,7 +103,7 @@ const Items = ({
 											<div className="h-12 w-12 rounded-full bg-[var(--catalogue-card-background)] border border-[var(--catalogue-card-border)] flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--catalogue-primary)] transition-colors">
 												<Plus className="w-6 h-6 text-[var(--catalogue-text)]/70 group-hover:text-[var(--catalogue-primary)] transition-colors" />
 											</div>
-											<span className="text-xl font-medium text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
+											<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
 												Add New Item
 											</span>
 										</button>
@@ -152,7 +152,7 @@ const Items = ({
 										<div className="h-12 w-12 rounded-full bg-[var(--catalogue-card-background)] border border-[var(--catalogue-card-border)] flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--catalogue-primary)] transition-colors">
 											<Plus className="w-6 h-6 text-[var(--catalogue-text)]/70 group-hover:text-[var(--catalogue-primary)] transition-colors" />
 										</div>
-										<span className="text-xl font-medium text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
+										<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
 											Add New Item
 										</span>
 									</button>

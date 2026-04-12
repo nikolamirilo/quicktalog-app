@@ -7,7 +7,7 @@ const ContentBlockButton = ({
 		<div className="max-w-6xl mx-auto px-4 block">
 			<button
 				className="
-					mt-4 w-full group
+					mt-4 w-full group font-lora
 					border-2 border-dashed border-border
 					bg-background rounded-xl
 					flex flex-col items-center justify-center gap-3

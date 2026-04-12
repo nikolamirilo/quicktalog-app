@@ -59,18 +59,6 @@ const Catalogue = ({
 	const customLogo = item.logo;
 	const logoSrc = item.header.type === "custom" ? customLogo : defaultLogo;
 
-	// Set font CSS variables on document root so portals (modals) inherit them
-	useEffect(() => {
-		if (typeof window === "undefined") return;
-		const root = document.documentElement;
-		root.style.setProperty("--catalogue-font-heading", fontFamily);
-		root.style.setProperty("--catalogue-font-body", fontFamily);
-		return () => {
-			root.style.removeProperty("--catalogue-font-heading");
-			root.style.removeProperty("--catalogue-font-body");
-		};
-	}, [fontFamily]);
-
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 

@@ -81,7 +81,7 @@ export default function InitCatalogueModal({
 							<X className="h-4 w-4 sm:h-5 sm:w-5" />
 						</button>
 					)}
-					<AlertDialogTitle className="text-lg sm:text-xl font-bold text-product-foreground font-heading mb-1 sm:mb-3">
+					<AlertDialogTitle className="text-lg sm:text-xl font-bold text-product-foreground mb-1 sm:mb-3">
 						Create a Catalog
 					</AlertDialogTitle>
 					<AlertDialogDescription className="text-product-foreground-accent text-sm sm:text-base leading-snug sm:leading-relaxed">

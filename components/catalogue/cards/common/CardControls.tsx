@@ -54,7 +54,11 @@ const CardControls = ({
 		);
 
 	return (
-		<div className="absolute top-2  right-2 flex gap-1 z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+		<div
+			className="absolute top-2  right-2 flex gap-1 z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+			onClick={(e) => e.stopPropagation()}
+			onPointerDown={(e) => e.stopPropagation()}
+		>
 			{onMoveUp && (
 				<button
 					className={`p-2 bg-white rounded-full shadow-md transition-colors ${

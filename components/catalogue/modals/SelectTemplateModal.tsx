@@ -76,7 +76,7 @@ const SelectTemplateModal = ({
 
 				<div className="p-2 sm:p-4 md:p-6 pb-2 sm:pb-0 text-center flex-shrink-0 pt-10 sm:pt-6">
 					<DialogHeader className="mb-1 sm:mb-2">
-						<DialogTitle className="text-xl sm:text-2xl md:text-3xl font-heading font-bold text-center w-full">
+						<DialogTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-center w-full">
 							Choose a Template
 						</DialogTitle>
 						<DialogDescription className="text-center w-full text-xs sm:text-sm md:text-base">

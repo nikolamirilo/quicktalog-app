@@ -63,7 +63,7 @@ export function ContentOptionsSelector({
 								isActive
 									? "!bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm font-semibold hover:scale-[1.03] hover:transform"
 									: ""
-							} flex items-center justify-center font-body flex-shrink-0 whitespace-nowrap min-w-[70px] h-9 px-3`}
+							} flex items-center justify-center flex-shrink-0 whitespace-nowrap min-w-[70px] h-9 px-3`}
 							key={key}
 							onClick={() => onSelect(key)}
 							variant="nav"

@@ -19,7 +19,7 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 			{/* Name field */}
 			<div className="flex flex-col gap-1.5 max-w-md">
 				<Label
-					className="text-product-foreground font-medium font-body"
+					className="text-product-foreground font-medium"
 					htmlFor={`${type}-name-input`}
 				>
 					{type === "category" ? "Category" : "Container"} Name
@@ -62,7 +62,7 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 			{/* Layout selection */}
 			<div className="flex flex-col gap-3">
 				<Label
-					className="text-product-foreground font-medium font-body"
+					className="text-product-foreground font-medium"
 					htmlFor="category-layout-input"
 				>
 					Select Layout
@@ -86,7 +86,7 @@ const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 								className="w-full aspect-square sm:aspect-[3/4] object-contain rounded-lg"
 								src={layoutOption.image}
 							/>
-							<p className="text-center text-[10px] sm:text-xs mt-1 font-medium text-product-foreground font-body truncate">
+							<p className="text-center text-[10px] sm:text-xs mt-1 font-medium text-product-foreground truncate">
 								{layoutOption.label}
 							</p>
 						</div>

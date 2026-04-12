@@ -83,12 +83,12 @@ const CatalogueNameInput = ({
 				!errors?.name &&
 				touched?.name &&
 				!nameExists && (
-					<div className="text-green-600 text-xs mt-2 p-2 bg-green-50 border border-green-200 rounded-lg font-body flex items-center gap-2">
+					<div className="text-green-600 text-xs mt-2 p-2 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
 						Great! This name is available.
 					</div>
 				)}
 			{!disabled && touched?.name && (errors?.name || nameExists) && (
-				<div className="text-red-500 text-xs mt-2 p-2 bg-red-50 border border-red-200 rounded-lg font-body flex items-center gap-2">
+				<div className="text-red-500 text-xs mt-2 p-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
 					{errors?.name ||
 						"This name is already in use. Please choose a different name."}
 				</div>

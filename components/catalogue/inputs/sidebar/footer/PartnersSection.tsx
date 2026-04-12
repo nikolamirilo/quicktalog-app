@@ -100,7 +100,7 @@ const PartnersSection = ({
 					{catalogue.partners?.map((partner, index) => (
 						<div className="flex gap-2 items-center" key={index}>
 							{editingPartnerIndex === index ? (
-								<div className="flex-1 space-y-3 p-4 rounded-lg bg-catalogue-card-background shadow-md">
+								<div className="flex-1 space-y-3">
 									<Input
 										onChange={(e) =>
 											setEditingPartner((prev) =>
@@ -172,7 +172,7 @@ const PartnersSection = ({
 
 					{(!catalogue.partners || catalogue.partners.length < MAX_PARTNERS) &&
 						(isAddingPartner ? (
-							<div className="space-y-3 p-4 rounded-lg bg-catalogue-card-background">
+							<div className="space-y-3">
 								<Input
 									onChange={(e) =>
 										setNewPartner((prev) => ({

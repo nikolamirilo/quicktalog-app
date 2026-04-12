@@ -131,7 +131,7 @@ export default function TemplatesInput({
 							<div className="hidden md:flex flex-col gap-4 w-full h-full items-center justify-center">
 								{/* Header */}
 								<div className="flex justify-between items-start z-10 w-full pt-4">
-									<h3 className="font-heading font-bold text-lg text-product-foreground w-full text-center">
+									<h3 className="font-bold text-lg text-product-foreground w-full text-center">
 										{isScratch ? "" : template.title}
 									</h3>
 								</div>
@@ -141,7 +141,7 @@ export default function TemplatesInput({
 									{isScratch ? (
 										<div className="flex flex-col items-center justify-center gap-1 text-gray-400 group-hover:text-product-primary transition-colors h-full">
 											<Plus className="w-16 h-16" />
-											<span className="font-heading font-bold text-lg text-gray-700 group-hover:text-product-foreground transition-colors">
+											<span className="font-bold text-lg text-gray-700 group-hover:text-product-foreground transition-colors">
 												{template.title}
 											</span>
 										</div>
@@ -194,7 +194,7 @@ export default function TemplatesInput({
 									)}
 								</div>
 								<div className="w-[65%] flex flex-col justify-center text-left py-2">
-									<h3 className="font-heading font-bold text-sm sm:text-base text-product-foreground w-full mb-1 pr-16 sm:pr-20">
+									<h3 className="font-bold text-sm sm:text-base text-product-foreground w-full mb-1 pr-16 sm:pr-20">
 										{template.title}
 									</h3>
 									<p className="text-xs sm:text-sm text-product-foreground-accent font-medium leading-snug mb-2 pr-2">

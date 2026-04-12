@@ -87,7 +87,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	return (
 		<footer
 			aria-label={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} footer`}
-			className="border-t mt-auto font-body font-weight-body bg-catalogue-navigation-background text-catalogue-navigation-text border-catalogue-navigation-border"
+			className="border-t mt-auto font-body pb-24 sm:pb-0 font-weight-body bg-catalogue-navigation-background text-catalogue-navigation-text border-catalogue-navigation-border"
 			role="contentinfo"
 		>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

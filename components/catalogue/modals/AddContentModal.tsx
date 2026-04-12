@@ -220,7 +220,7 @@ const AddContentModal = ({
 	return (
 		<>
 			<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-				<AlertDialogContent className="w-[98vw] sm:w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background border-none shadow-2xl flex flex-col md:flex-row h-fit max-h-[90dvh] md:h-[600px] lg:h-[650px] font-body text-product-foreground">
+				<AlertDialogContent className="w-[98vw] sm:w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background border-none shadow-2xl flex flex-col md:flex-row max-h-[90dvh] md:h-[600px] lg:h-[650px] text-product-foreground [-webkit-overflow-scrolling:touch]">
 					<div className="w-full md:w-1/4 bg-gray-200/50 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col">
 						<div className="p-6 pb-4 flex justify-between items-start">
 							<div>

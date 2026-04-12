@@ -17,7 +17,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange }) => {
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
 				<Label
-					className="text-product-foreground font-medium font-body"
+					className="text-product-foreground font-medium"
 					htmlFor="custom-code-input"
 				>
 					HTML Code
