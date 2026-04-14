@@ -62,6 +62,13 @@ const Catalogue = ({
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 
+		const originalTitle = document.title;
+		const originalIcon =
+			document.querySelector<HTMLLinkElement>("link[rel~='icon']")?.href || "";
+		const originalAppleIcon =
+			document.querySelector<HTMLLinkElement>("link[rel~='apple-touch-icon']")
+				?.href || "";
+
 		let plainHeading = "";
 		try {
 			plainHeading = htmlToText(activeData.heading || "");
@@ -90,12 +97,35 @@ const Catalogue = ({
 
 		updateOrCreateIcon("icon");
 		updateOrCreateIcon("apple-touch-icon");
+
+		return () => {
+			document.title = originalTitle;
+			const iconLink =
+				document.querySelector<HTMLLinkElement>("link[rel~='icon']");
+			const appleIconLink = document.querySelector<HTMLLinkElement>(
+				"link[rel~='apple-touch-icon']",
+			);
+			if (iconLink) iconLink.href = originalIcon;
+			if (appleIconLink) appleIconLink.href = originalAppleIcon;
+		};
 	}, [
 		activeData.metadata?.title,
 		activeData.metadata?.icon,
 		activeData.name,
 		activeData.heading,
 	]);
+
+	// Set font CSS variables on documentElement so portaled components
+	// (e.g. ItemDetailModal rendered via DialogPortal) can inherit them
+	useEffect(() => {
+		const root = document.documentElement;
+		root.style.setProperty("--catalogue-font-heading", fontFamily);
+		root.style.setProperty("--catalogue-font-body", fontFamily);
+		return () => {
+			root.style.removeProperty("--catalogue-font-heading");
+			root.style.removeProperty("--catalogue-font-body");
+		};
+	}, [fontFamily]);
 
 	const handleEditBlock = (index: number) => {
 		const block = item.content[index];

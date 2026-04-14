@@ -149,7 +149,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						<SmartLink
 							ariaLabel={`Go to ${companyName} homepage`}
 							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
-							href={type === "default" ? "/" : catalogue.contact.website || "/"}
+							href={activeData?.contact?.website || "/"}
 						>
 							{logo && (
 								<img

@@ -81,7 +81,7 @@ export async function generateMetadata({
 		const title = data.metadata.title || data.name || htmlToText(data.heading);
 		const description = data.metadata?.description || htmlToText(data.heading);
 		const opengraphImage = data.logo || "/opengraph-image.png";
-		const icon = data.metadata.icon || FAVICON;
+		const icon = data.metadata.icon || data.logo || FAVICON;
 		return generateCatalogueMetadata(
 			title,
 			description,

@@ -142,12 +142,12 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 									return (
 										<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center">
 											<Skeleton className="absolute inset-0 w-full h-full" />
-											<span className="animate-spin rounded-full h-14 w-14 border-b-2 border-product-primary z-10"></span>
+											<span className="animate-spin rounded-full h-14 w-14 border-4 border-muted-foreground/20 border-t-primary z-10"></span>
 										</div>
 									);
 								return (
 									<div className="absolute inset-0 flex items-center justify-center">
-										<span className="animate-spin rounded-full h-14 w-14 border-b-4 border-product-primary"></span>
+										<span className="animate-spin rounded-full h-14 w-14 border-4 border-muted-foreground/20 border-t-primary"></span>
 									</div>
 								);
 							},
