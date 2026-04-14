@@ -64,18 +64,20 @@ const ActionButtons = ({
 		isHeadingEmpty;
 
 	const handlePreview = async () => {
+		// Open window synchronously so Safari doesn't block it as a popup
+		const previewWindow = window.open("about:blank", "_blank");
 		const savedCatalogue = await handleSave();
-		if (!savedCatalogue) return;
-		const catalogueName = savedCatalogue.name;
-		if (!catalogueName) {
-			toast.error("Catalogue has no name/slug");
+		if (!savedCatalogue || !savedCatalogue.name) {
+			previewWindow?.close();
+			if (savedCatalogue && !savedCatalogue.name) {
+				toast.error("Catalogue has no name/slug");
+			}
 			return;
 		}
-		window.open(
-			`/catalogues/${catalogueName}/preview`,
-			"_blank",
-			"noopener,noreferrer",
-		);
+		if (previewWindow) {
+			previewWindow.opener = null;
+			previewWindow.location.href = `/catalogues/${savedCatalogue.name}/preview`;
+		}
 	};
 
 	const handlePublish = async () => {
