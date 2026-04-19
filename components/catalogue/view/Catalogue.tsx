@@ -11,6 +11,8 @@ import { useCatalogueContext } from "@/context/CatalogueContext";
 import { htmlToText } from "@/helpers/client";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes, tiers } from "@quicktalog/common";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import Overlay from "../../general/Overlay";
 import ContentBlockButton from "../inputs/ContentBlockButton";
@@ -140,6 +142,13 @@ const Catalogue = ({
 			{type === "edit" && (
 				<>
 					<BuilderSidebar userData={userData} />
+					<Link
+						className="hidden fixed lg:flex bottom-20 left-4 md:bottom-6 md:left-6 z-[49] items-center gap-2 bg-white/90 backdrop-blur-sm text-gray-700 border border-gray-200 shadow-lg rounded-full pl-3 pr-4 py-2.5 text-sm font-medium hover:bg-white hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
+						href="/admin/dashboard"
+					>
+						<ArrowLeft className="w-4 h-4 shrink-0" />
+						<span>Dashboard</span>
+					</Link>
 					<style
 						dangerouslySetInnerHTML={{
 							__html: `
@@ -193,7 +202,7 @@ const Catalogue = ({
 					)}
 					<section
 						aria-labelledby={item.heading}
-						className="flex flex-col justify-start items-center text-center px-4 pt-8 sm:pt-12 md:pt-16 flex-shrink-0 w-full"
+						className="flex flex-col justify-start items-center text-center px-4 md:pt-16 flex-shrink-0 w-full"
 					>
 						<Heading item={item} type={type} />
 						{type === "demo" && (
@@ -203,7 +212,7 @@ const Catalogue = ({
 						)}
 					</section>
 					<section
-						aria-label="Services and items"
+						aria-label="Catalogue content"
 						className="flex-1 w-full max-w-7xl mx-auto lg:px-8 pb-8 min-h-[60vh]"
 					>
 						{item && (

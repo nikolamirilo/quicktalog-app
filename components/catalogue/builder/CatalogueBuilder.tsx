@@ -11,10 +11,11 @@ const Builder = ({
 	item: CatalogueType;
 	userData: UserData;
 }) => {
-	const { updateCatalogue, catalogue } = useCatalogueContext();
+	const { updateCatalogue, resetCatalogue, catalogue } = useCatalogueContext();
 	useEffect(() => {
 		updateCatalogue(item);
-	}, []);
+		return () => resetCatalogue();
+	}, [item.id]);
 	return <Catalogue item={catalogue} type="edit" userData={userData} />;
 };
 

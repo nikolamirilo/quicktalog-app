@@ -35,9 +35,8 @@ const HeadingInput = () => {
 
 	return (
 		<div
-			className="flex flex-col items-center w-full mb-4 px-0"
+			className="flex flex-col mt-8 lg:mt-4 mb-4 items-center w-full px-0"
 			onBlur={handleBlur}
-			onFocus={handleFocus}
 			ref={containerRef}
 		>
 			<FormattingToolbar

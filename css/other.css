@@ -85,3 +85,7 @@
 	font-size: clamp(1.875rem, 4vw + 0.75rem, 2.25rem);
 	line-height: 2.5rem;
 }
+
+.rich-text-content h1 {
+	margin: 0;
+}

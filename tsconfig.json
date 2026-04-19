@@ -31,7 +31,8 @@
 		"utils/client.tsx",
 		"constants/form.ts",
 		"utils/generateSchema.ts",
-		"../quicktalog-packages/drizzle.config copy.ts"
+		"../quicktalog-packages/drizzle.config copy.ts",
+		".next/dev/types/**/*.ts"
 	],
 	"exclude": ["node_modules"]
 }

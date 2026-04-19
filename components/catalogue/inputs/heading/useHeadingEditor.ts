@@ -12,7 +12,7 @@ export { HEADING_CHAR_LIMIT };
 export function useHeadingEditor() {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
 	const editorRef = useRef<HTMLDivElement>(null);
-	const [headingSize, setHeadingSize] = useState<HeadingSize>("medium");
+	const [headingSize, setHeadingSize] = useState<HeadingSize>("large");
 	const [isBold, setIsBold] = useState(false);
 	const [isItalic, setIsItalic] = useState(false);
 	const [isFocused, setIsFocused] = useState(false);

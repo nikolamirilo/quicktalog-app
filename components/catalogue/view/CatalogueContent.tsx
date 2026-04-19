@@ -206,10 +206,7 @@ const CatalogueContent = ({
 	}
 
 	return (
-		<main
-			aria-label="Categories and items"
-			className="max-w-6xl mx-auto py-5 px-4"
-		>
+		<main aria-label="Categories and items" className="max-w-6xl mx-auto px-4">
 			{data.map((block, index) => {
 				const isExpanded = expandedSections[`${block.id}-${block.order}`];
 

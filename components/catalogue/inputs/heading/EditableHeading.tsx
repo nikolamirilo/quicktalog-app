@@ -10,6 +10,7 @@ export interface EditableHeadingProps {
 	isFocused: boolean;
 	placeholderColor: string;
 	onBeforeInput: (e: React.FormEvent<HTMLDivElement>) => void;
+	onFocus?: () => void;
 	onInput: () => void;
 	onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => void;
 	onKeyUp: () => void;
@@ -26,6 +27,7 @@ const EditableHeading = ({
 	isFocused,
 	placeholderColor,
 	onBeforeInput,
+	onFocus,
 	onInput,
 	onKeyDown,
 	onKeyUp,
@@ -56,6 +58,7 @@ const EditableHeading = ({
 			inputMode="text"
 			onBeforeInput={onBeforeInput}
 			onClick={onClickFocus}
+			onFocus={onFocus}
 			onInput={onInput}
 			onKeyDown={onKeyDown}
 			onKeyUp={onKeyUp}
