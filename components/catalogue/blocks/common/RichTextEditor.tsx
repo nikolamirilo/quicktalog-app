@@ -257,7 +257,11 @@ export default function RichTextEditor({
 				onInput={handleInput}
 				onPaste={handlePaste}
 				ref={editorRef}
-				style={{ resize: "vertical", overflow: "auto" }}
+				style={{
+					resize: "vertical",
+					overflow: "auto",
+					fontFamily: isCatalogue ? "var(--catalogue-font-body)" : undefined,
+				}}
 			/>
 		</div>
 	);
