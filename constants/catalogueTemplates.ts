@@ -5,15 +5,15 @@ export const standardTemplate = [
 		type: "category",
 		order: 1,
 		id: crypto.randomUUID(),
-		name: "Breakfast",
+		name: "Featured Collection",
 		layout: "variant_1",
 		items: [
 			{
 				order: 0,
 				id: crypto.randomUUID(),
-				name: "Pancakes",
+				name: "Signature Selection",
 				description:
-					"Fluffy pancakes served with a generous drizzle of rich maple syrup, topped with fresh strawberries and a dollop of whipped cream for the perfect sweet start to your day.",
+					"A flagship item designed to represent the core value of the catalogue, featuring a well-rounded description that showcases how prominent offerings appear within the layout.",
 				price: 5.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -26,9 +26,9 @@ export const standardTemplate = [
 			{
 				order: 1,
 				id: crypto.randomUUID(),
-				name: "Omelette",
+				name: "Classic Choice",
 				description:
-					"A fluffy three-egg omelette packed with your choice of fillings, including sautéed mushrooms, fresh spinach, diced tomatoes, and melted cheese, served with a side of crispy hash browns.",
+					"A dependable, widely appreciated option that illustrates how standard items render alongside richer content, useful for demonstrating balance and consistency across the catalogue.",
 				price: 7.49,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -41,9 +41,9 @@ export const standardTemplate = [
 			{
 				order: 2,
 				id: crypto.randomUUID(),
-				name: "French Toast",
+				name: "Specialty Pick",
 				description:
-					"Thick slices of bread soaked in a creamy custard, griddled to golden perfection, and served with a sprinkle of powdered sugar and fresh berries for a delightful morning treat.",
+					"A distinctive example item intended to highlight variety within the catalogue, showing how more specialised offerings can be presented with detail and clarity.",
 				price: 6.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -56,9 +56,9 @@ export const standardTemplate = [
 			{
 				order: 3,
 				id: crypto.randomUUID(),
-				name: "Greek Yogurt with Honey and Berries",
+				name: "Premium Highlight",
 				description:
-					"Creamy Greek yogurt topped with fresh mixed berries and a drizzle of natural honey.",
+					"A top-tier placeholder representing elevated offerings, useful for illustrating how higher-value items sit within the overall collection.",
 				price: 10.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -74,15 +74,15 @@ export const standardTemplate = [
 		type: "category",
 		order: 2,
 		id: crypto.randomUUID(),
-		name: "Lunch",
+		name: "Main Offerings",
 		layout: "variant_2",
 		items: [
 			{
 				order: 0,
 				id: crypto.randomUUID(),
-				name: "Caesar Salad",
+				name: "Standard Package",
 				description:
-					"Crisp romaine lettuce tossed in our house-made Caesar dressing, topped with crunchy croutons and shaved Parmesan cheese, offering a classic taste that never goes out of style.",
+					"A general-purpose offering designed to demonstrate how mid-range items appear in a different layout variant, balancing descriptive length with visual presentation.",
 				price: 8.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -95,9 +95,9 @@ export const standardTemplate = [
 			{
 				order: 1,
 				id: crypto.randomUUID(),
-				name: "Grilled Chicken Sandwich",
+				name: "Popular Bundle",
 				description:
-					"Juicy grilled chicken breast topped with fresh lettuce, ripe tomato, and a creamy garlic aioli, served on a toasted bun for a mouthwatering lunch experience.",
+					"A commonly selected example item, useful for showing how frequently chosen offerings can be highlighted within a category without industry-specific assumptions.",
 				price: 9.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -110,9 +110,9 @@ export const standardTemplate = [
 			{
 				order: 2,
 				id: crypto.randomUUID(),
-				name: "Cheeseburger",
+				name: "Complete Set",
 				description:
-					"A hearty beef patty grilled to perfection, topped with melted cheddar cheese, crisp lettuce, tomato, and our signature sauce, served on a toasted sesame seed bun with fries.",
+					"A comprehensive placeholder representing bundled or combined offerings, illustrating how layered items display within the catalogue structure.",
 				price: 10.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -128,15 +128,15 @@ export const standardTemplate = [
 		type: "category",
 		order: 3,
 		id: crypto.randomUUID(),
-		name: "Snacks",
+		name: "Limited Additions",
 		layout: "variant_4",
 		items: [
 			{
 				order: 0,
 				id: crypto.randomUUID(),
-				name: "Nachos",
+				name: "Seasonal Option",
 				description:
-					"Crispy tortilla chips generously topped with melted cheese, jalapeños, and a dollop of sour cream, served with fresh salsa on the side for dipping.",
+					"A rotating placeholder intended to demonstrate time-limited or occasion-based items, shown in a compact layout variant suitable for shorter selections.",
 				price: 6.49,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -149,9 +149,9 @@ export const standardTemplate = [
 			{
 				order: 1,
 				id: crypto.randomUUID(),
-				name: "Spring Rolls",
+				name: "Exclusive Item",
 				description:
-					"Crispy and light spring rolls filled with a colorful mix of fresh vegetables and served with a sweet chili dipping sauce for a delightful crunch.",
+					"A restricted-availability example used to illustrate how special or limited offerings can be presented within a smaller category group.",
 				price: 5.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -167,15 +167,15 @@ export const standardTemplate = [
 		type: "category",
 		order: 4,
 		id: crypto.randomUUID(),
-		name: "Desserts",
+		name: "Premium Range",
 		layout: "variant_1",
 		items: [
 			{
 				order: 0,
 				id: crypto.randomUUID(),
-				name: "Chocolate Cake",
+				name: "Signature Premium",
 				description:
-					"Decadent layers of rich chocolate cake filled with creamy chocolate ganache, topped with chocolate frosting and chocolate shavings.",
+					"A refined placeholder representing elevated offerings, designed to show how flagship premium items appear in a richer layout configuration.",
 				price: 4.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -188,9 +188,9 @@ export const standardTemplate = [
 			{
 				order: 1,
 				id: crypto.randomUUID(),
-				name: "Cheesecake",
+				name: "Deluxe Option",
 				description:
-					"Creamy cheesecake on a buttery graham cracker crust, drizzled with your choice of strawberry or caramel sauce for added sweetness.",
+					"An upgraded example item used to demonstrate how higher-tier selections can be showcased with detail and clear positioning.",
 				price: 5.49,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -203,9 +203,9 @@ export const standardTemplate = [
 			{
 				order: 2,
 				id: crypto.randomUUID(),
-				name: "Tiramisu",
+				name: "Exclusive Edition",
 				description:
-					"A delightful Italian dessert made with layers of coffee-soaked ladyfingers and creamy mascarpone cheese, dusted with cocoa powder.",
+					"A specialised placeholder illustrating limited or curated offerings, suitable for presenting items with elevated perceived value.",
 				price: 5.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -218,9 +218,9 @@ export const standardTemplate = [
 			{
 				order: 3,
 				id: crypto.randomUUID(),
-				name: "Brownie Sundae",
+				name: "Luxury Pick",
 				description:
-					"Rich chocolate brownie topped with a scoop of vanilla ice cream, drizzled with chocolate sauce, and garnished with nuts and whipped cream.",
+					"A high-tier example item representing the upper end of the range, useful for demonstrating how prestige offerings fit into the broader catalogue.",
 				price: 5.49,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -236,15 +236,15 @@ export const standardTemplate = [
 		type: "container",
 		order: 5,
 		id: crypto.randomUUID(),
-		name: "Drinks",
+		name: "Complementary Extras",
 		layout: "variant_3",
 		items: [
 			{
 				order: 0,
 				id: crypto.randomUUID(),
-				name: "Fresh Orange Juice",
+				name: "Essential Add-On",
 				description:
-					"Freshly squeezed orange juice, packed with vitamins and natural sweetness.",
+					"A neutral placeholder representing supporting items that pair with primary selections.",
 				price: 3.99,
 				image: DEFAULT_IMAGE,
 				isFree: false,
@@ -257,8 +257,8 @@ export const standardTemplate = [
 			{
 				order: 1,
 				id: crypto.randomUUID(),
-				name: "Espresso",
-				description: "A strong and aromatic shot of premium Italian espresso.",
+				name: "Optional Upgrade",
+				description: "A small supplementary example used to showcase minor add-on items.",
 				price: 2.49,
 				image: DEFAULT_IMAGE,
 				isFree: false,
