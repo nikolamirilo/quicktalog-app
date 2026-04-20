@@ -44,7 +44,7 @@ export default function RichTextEditor({
 
 	const editorRef = useRef<HTMLDivElement>(null);
 	const [isFocused, setIsFocused] = useState(false);
-	const [fontSize, setFontSize] = useState("4");
+	const [fontSize, setFontSize] = useState("5");
 
 	useEffect(() => {
 		if (editorRef.current && editorRef.current.innerHTML !== content) {
@@ -59,7 +59,7 @@ export default function RichTextEditor({
 				if (size) {
 					setFontSize(size.toString());
 				} else {
-					setFontSize("4");
+					setFontSize("5");
 				}
 			} catch {
 				// ignore
@@ -250,7 +250,7 @@ export default function RichTextEditor({
 			)}
 
 			<div
-				className={`min-h-[200px] rich-text-content p-4 border ${borderColor} rounded focus:outline-none focus:ring-1 focus:ring-product-primary focus:border-transparent ${editorBg} ${textColor}`}
+				className={`min-h-[200px] max-h-[300px] rich-text-content p-4 border ${borderColor} rounded focus:outline-none focus:ring-1 focus:ring-product-primary focus:border-transparent ${editorBg} ${textColor}`}
 				contentEditable={editable}
 				onBlur={() => setIsFocused(false)}
 				onFocus={() => setIsFocused(true)}

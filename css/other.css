@@ -90,6 +90,16 @@
 	margin: 0;
 }
 
+.rich-text-content {
+	font-size: clamp(
+		1.25rem,
+		2.5vw +
+		0.75rem,
+		1.5rem
+	); /* matches font[size="5"] Medium */
+	line-height: 2rem;
+}
+
 .rich-text-content,
 .rich-text-content * {
 	font-family: inherit !important;

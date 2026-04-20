@@ -258,7 +258,8 @@ export const standardTemplate = [
 				order: 1,
 				id: crypto.randomUUID(),
 				name: "Optional Upgrade",
-				description: "A small supplementary example used to showcase minor add-on items.",
+				description:
+					"A small supplementary example used to showcase minor add-on items.",
 				price: 2.49,
 				image: DEFAULT_IMAGE,
 				isFree: false,
