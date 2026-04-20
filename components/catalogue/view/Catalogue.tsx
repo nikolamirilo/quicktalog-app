@@ -204,7 +204,9 @@ const Catalogue = ({
 						aria-labelledby={item.heading}
 						className="flex flex-col justify-start items-center text-center px-4 md:pt-16 flex-shrink-0 w-full"
 					>
-						<Heading item={item} type={type} />
+						<div className="mb-4 w-full">
+							<Heading item={item} type={type} />
+						</div>
 						{type === "demo" && (
 							<div className="flex flex-col justify-center items-center w-full mt-6">
 								<AppearanceOptions />
