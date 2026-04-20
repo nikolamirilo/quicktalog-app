@@ -94,7 +94,7 @@ const BlockConfigForm = ({
 							</label>
 							<div style={{ fontFamily: "var(--catalogue-font-body)" }}>
 								<RichTextEditor
-									className="px-0.5"
+									className="px-0.5 font-body"
 									content={blockData.content || "<p></p>"}
 									onChange={(val) =>
 										setBlockData({ ...blockData, content: val })

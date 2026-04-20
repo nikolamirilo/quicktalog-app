@@ -89,3 +89,8 @@
 .rich-text-content h1 {
 	margin: 0;
 }
+
+.rich-text-content,
+.rich-text-content * {
+	font-family: inherit !important;
+}

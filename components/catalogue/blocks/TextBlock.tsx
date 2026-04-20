@@ -54,6 +54,7 @@ const TextBlockComponent = ({
 			/>
 			{isEditing ? (
 				<RichTextEditor
+					className="font-body"
 					content={block.content}
 					onChange={(html) =>
 						onUpdateBlock && onUpdateBlock({ ...block, content: html })

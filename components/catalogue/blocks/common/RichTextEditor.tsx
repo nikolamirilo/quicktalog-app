@@ -260,7 +260,6 @@ export default function RichTextEditor({
 				style={{
 					resize: "vertical",
 					overflow: "auto",
-					fontFamily: isCatalogue ? "var(--catalogue-font-body)" : undefined,
 				}}
 			/>
 		</div>
