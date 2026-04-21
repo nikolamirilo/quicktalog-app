@@ -19,7 +19,7 @@ const Demo = () => {
 					<iframe
 						allowFullScreen
 						height="100%"
-						src="https://app.usehexus.com/embed/254bfe62-3496-414e-93e8-5447b8fa54a9?hide_hotspot=true"
+						src="https://app.usehexus.com/embed/254bfe62-3496-414e-93e8-5447b8fa54a9"
 						style={{ position: "absolute", top: 0, left: 0, border: 0 }}
 						title="Hexus Flow"
 						width="100%"
