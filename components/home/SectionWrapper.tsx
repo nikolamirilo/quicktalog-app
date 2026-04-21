@@ -14,7 +14,7 @@ const SectionWrapper: React.FC<React.PropsWithChildren<Props>> = ({
 	children,
 }: React.PropsWithChildren<Props>) => {
 	return (
-		<section id={id} className="py-10 lg:py-20 lg:px-0 bg-product-background">
+		<section className="py-10 lg:py-20 lg:px-0 bg-product-background" id={id}>
 			<div className="px-4">
 				<SectionTitle>
 					<h2 className="text-center mb-4">{title}</h2>

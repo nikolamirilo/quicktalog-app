@@ -37,9 +37,16 @@ const page: React.FC = async () => {
 			<Navbar />
 			<Hero />
 			<ContentContainer>
-				<Suspense fallback={<SectionSkeleton height="h-48" />}>
-					<Demo />
-				</Suspense>
+
+				<SectionWrapper
+					description="Explore our interactive demo and see how Quicktalog turns your product catalog into a dynamic, mobile-friendly experience that boosts sales and customer engagement."
+					id="demo"
+					title="See it in Action"
+				>
+					<Suspense fallback={<SectionSkeleton height="h-64" />}>
+						<Demo />
+					</Suspense>
+				</SectionWrapper>
 
 				<Suspense fallback={<SectionSkeleton height="h-48" />}>
 					<Benefits />
