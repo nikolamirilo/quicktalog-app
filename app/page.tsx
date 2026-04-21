@@ -40,7 +40,7 @@ const page: React.FC = async () => {
 				<SectionWrapper
 					description="Explore our interactive demo and see how Quicktalog turns your product catalog into a dynamic, mobile-friendly experience that boosts sales and customer engagement."
 					id="demo"
-					title="See it in Action"
+					title="Discover It in Action"
 				>
 					<Suspense fallback={<SectionSkeleton height="h-64" />}>
 						<Demo />

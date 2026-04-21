@@ -1,46 +1,36 @@
-"use client";
-import Catalogue from "@/components/catalogue/view/Catalogue";
 import GetStartedCTA from "@/components/general/GetStartedCTA";
+import SectionWrapper from "@/components/home/SectionWrapper";
 import { Navbar } from "@/components/navigation";
-import { useMainContext } from "@/context/MainContext";
-import data from "../../showcase.json";
-const page: React.FC = () => {
-	const { theme, layout } = useMainContext();
 
-	// Updated check for 'content' instead of 'services'
-	if (!data.content || !Array.isArray(data.content)) {
-		throw new Error("Invalid content data structure");
-	}
-
-	// Apply selected layout and theme to demo data
-	const demoData = {
-		...data,
-		appearance: {
-			...data.appearance,
-			theme: {
-				...data.appearance.theme,
-				name: theme || data.appearance.theme.name || "theme-luxury",
-			},
-		},
-		content: data.content.map((block: any) => ({
-			...block,
-			layout: layout || block.layout || "variant_1",
-		})),
-	};
-
+const Page = () => {
 	return (
-		<>
-			<div
-				className={`min-h-screen text-text bg-background font-lora ${theme ? theme : "theme-luxury"}`}
-			>
-				<main>
-					<Navbar />
-					<Catalogue item={demoData as any} type="demo" />
-					<GetStartedCTA />
-				</main>
-			</div>
-		</>
+		<div className="min-h-screen text-text bg-background font-lora">
+			<Navbar />
+			<main className="mt-16">
+				<SectionWrapper
+					description="Walk through the product at your own pace. Click around, explore the flow, and see how it fits what you are building."
+					id="demo"
+					title="Discover It in Action"
+				>
+					<div className="px-4 sm:px-6 lg:px-8 pb-20 sm:pb-12">
+						<div className="max-w-6xl mx-auto">
+							<div className="rounded-2xl sm:rounded-3xl overflow-hidden">
+								<iframe
+									allowFullScreen
+									className="block w-full aspect-video border-0"
+									loading="lazy"
+									src="https://app.usehexus.com/embed/254bfe62-3496-414e-93e8-5447b8fa54a9"
+									title="Quicktalog interactive demo"
+								/>
+							</div>
+						</div>
+					</div>
+				</SectionWrapper>
+
+				<GetStartedCTA />
+			</main>
+		</div>
 	);
 };
 
-export default page;
+export default Page;

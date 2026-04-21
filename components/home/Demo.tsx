@@ -1,60 +1,45 @@
 "use client";
-import { useState } from "react";
-import { FiPlay } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { FiArrowRight } from "react-icons/fi";
 
 const Demo = () => {
-	const [playing, setPlaying] = useState(false);
+	const router = useRouter();
 
 	return (
-		<div className="relative max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
-			{/* iframe always in DOM inside a hidden wrapper — browser still preloads it */}
-			<div className={playing ? "" : "hidden"}>
-				<div
-					style={{
-						position: "relative",
-						paddingBottom: "calc(53.35%)",
-						height: 0,
-					}}
-				>
-					<iframe
-						allowFullScreen
-						height="100%"
-						src="https://app.usehexus.com/embed/254bfe62-3496-414e-93e8-5447b8fa54a9"
-						style={{ position: "absolute", top: 0, left: 0, border: 0 }}
-						title="Hexus Flow"
-						width="100%"
-					/>
-				</div>
-			</div>
-
-			{/* thumbnail overlay — unmounted once playing so iframe takes over */}
-			{!playing && (
-				<button
-					aria-label="Play demo video"
-					className="group relative block w-full cursor-pointer focus:outline-none"
-					onClick={() => setPlaying(true)}
-				>
+		<div className="group relative max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
+			<button
+				aria-label="Play demo video"
+				className="relative block w-full text-left cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-product-primary/50"
+				onClick={() => router.push("/demo")}
+			>
+				{/* Image with slow zoom on hover */}
+				<div className="overflow-hidden">
 					<img
 						alt="Quicktalog product preview"
-						className="w-full object-cover"
+						className="w-full object-cover will-change-transform transition-transform duration-[1800ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.03]"
 						src="/images/quicktalog-banner.png"
 					/>
+				</div>
 
-					<div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300" />
+				{/* Gradient overlay, darker at the bottom for readability */}
+				<div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
-					<div className="absolute inset-0 flex items-center justify-center">
-						<div className="flex h-20 w-20 items-center justify-center rounded-full bg-product-primary shadow-xl group-hover:scale-110 transition-transform duration-300">
-							<FiPlay className="h-8 w-8 translate-x-0.5 text-white" />
+				{/* Bottom row: headline on the left, CTA on the right */}
+				<div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+					<div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+						<div className="max-w-md">
+							<p className="text-white/70 text-xs font-medium uppercase tracking-[0.15em] mb-2">
+								Interactive Demo
+							</p>
+						</div>
+
+						<div className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-product-primary text-black font-bold shadow-lg shadow-product-primary/20 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-product-primary/40 group-hover:-translate-y-1 shrink-0">
+							<span>Try it out</span>
+							<FiArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
 						</div>
 					</div>
-
-					<div className="absolute bottom-6 left-0 right-0 flex justify-center">
-						<span className="rounded-full bg-black/50 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
-							Watch the demo
-						</span>
-					</div>
-				</button>
-			)}
+				</div>
+			</button>
 		</div>
 	);
 };
