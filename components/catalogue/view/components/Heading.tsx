@@ -25,7 +25,7 @@ const Heading = ({
 
 	return (
 		<div className="flex flex-col items-center w-full px-0 mt-8 lg:mt-4">
-			<div className="w-fit max-w-[94%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%] min-w-[80%] sm:min-w-[70%] md:min-w-[50%] lg:min-w-[40%] xl:min-w-[30%] mx-auto">
+			<div className="w-full max-w-[94%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%] mx-auto">
 				<HtmlContent className="" html={headingHtml} />
 			</div>
 		</div>

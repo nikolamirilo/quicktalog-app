@@ -95,10 +95,17 @@ export default function RichTextEditor({
 
 	const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
 		e.preventDefault();
-		const text = e.clipboardData?.getData("text/plain");
-		if (text) {
-			document.execCommand("insertText", false, text);
+		const html = e.clipboardData?.getData("text/html");
+		let text: string;
+		if (html) {
+			const temp = document.createElement("div");
+			temp.innerHTML = html;
+			text = temp.innerText || temp.textContent || "";
+		} else {
+			text = e.clipboardData?.getData("text/plain") || "";
 		}
+		if (!text) return;
+		document.execCommand("insertText", false, text);
 	};
 
 	const handleInput = () => {

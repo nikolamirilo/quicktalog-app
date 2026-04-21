@@ -1,6 +1,5 @@
-import { Metadata } from "next";
-import { lazy, Suspense } from "react";
 import ContentContainer from "@/components/home/ContentContainer";
+import Demo from "@/components/home/Demo";
 import Hero from "@/components/home/Hero";
 import SectionWrapper from "@/components/home/SectionWrapper";
 import {
@@ -10,6 +9,8 @@ import {
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
+import { Metadata } from "next";
+import { lazy, Suspense } from "react";
 
 export const metadata: Metadata = generatePageMetadata("home");
 
@@ -36,6 +37,10 @@ const page: React.FC = async () => {
 			<Navbar />
 			<Hero />
 			<ContentContainer>
+				<Suspense fallback={<SectionSkeleton height="h-48" />}>
+					<Demo />
+				</Suspense>
+
 				<Suspense fallback={<SectionSkeleton height="h-48" />}>
 					<Benefits />
 				</Suspense>
