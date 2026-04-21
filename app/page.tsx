@@ -37,7 +37,6 @@ const page: React.FC = async () => {
 			<Navbar />
 			<Hero />
 			<ContentContainer>
-
 				<SectionWrapper
 					description="Explore our interactive demo and see how Quicktalog turns your product catalog into a dynamic, mobile-friendly experience that boosts sales and customer engagement."
 					id="demo"
