@@ -16,7 +16,7 @@ const Demo = () => {
 				<div className="overflow-hidden">
 					<img
 						alt="Quicktalog product preview"
-						className="w-full object-cover will-change-transform transition-transform duration-[1800ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.03]"
+						className="w-full object-cover will-change-transform transition-transform [transition-duration:1800ms] [transition-timing-function:cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.03]"
 						src="/images/quicktalog-banner.png"
 					/>
 				</div>
