@@ -11,7 +11,7 @@ const Page = () => {
 	return (
 		<div className="min-h-[90vh] text-text bg-background font-lora">
 			<Navbar />
-			<main className="mt-24">
+			<main className="mt-32">
 				<SectionWrapper
 					description="Walk through the product at your own pace. Click around, explore the flow, and see how it fits what you are building."
 					id="demo"
