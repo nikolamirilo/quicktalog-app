@@ -9,7 +9,7 @@ const Page = () => {
 	const [isLoaded, setIsLoaded] = useState(false);
 
 	return (
-		<div className="min-h-screen text-text bg-background font-lora">
+		<div className="min-h-[90vh] text-text bg-background font-lora">
 			<Navbar />
 			<main className="mt-16">
 				<SectionWrapper
