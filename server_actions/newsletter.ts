@@ -1,8 +1,14 @@
 "use server";
 import { drizzleClient } from "@/utils/drizzle";
 import { schema } from "@quicktalog/common";
+import { eq } from "drizzle-orm";
 
 const { newsletter, productNewsletter } = schema;
+
+export type ProductNewsletterResult =
+	| { status: "success" }
+	| { status: "already_subscribed" }
+	| { status: "error" };
 
 export async function newsletterSignup(
 	email: string,
@@ -26,16 +32,27 @@ export async function newsletterSignup(
 	}
 }
 
-export async function productNewsletterSignup(email: string) {
+export async function productNewsletterSignup(
+	email: string,
+): Promise<ProductNewsletterResult> {
 	try {
-		await drizzleClient.insert(productNewsletter).values({ email });
+		const existing = await drizzleClient
+			.select({ id: productNewsletter.id })
+			.from(productNewsletter)
+			.where(eq(productNewsletter.email, email))
+			.limit(1);
 
-		return true;
+		if (existing.length > 0) {
+			return { status: "already_subscribed" };
+		}
+
+		await drizzleClient.insert(productNewsletter).values({ email });
+		return { status: "success" };
 	} catch (err) {
 		console.error(
-			"Unexpected error while inserting record in newsletter table:",
+			"Unexpected error while inserting record in product newsletter table:",
 			err,
 		);
-		return false;
+		return { status: "error" };
 	}
 }
