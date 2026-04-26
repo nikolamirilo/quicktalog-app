@@ -1,7 +1,7 @@
 "use server";
 import { drizzleClient } from "@/utils/drizzle";
 import { schema } from "@quicktalog/common";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const { newsletter, productNewsletter } = schema;
 
@@ -10,25 +10,45 @@ export type ProductNewsletterResult =
 	| { status: "already_subscribed" }
 	| { status: "error" };
 
+export type NewsletterSignupResult =
+	| { status: "success" }
+	| { status: "already_subscribed" }
+	| { status: "error" };
+
 export async function newsletterSignup(
 	email: string,
 	catalogueId: string,
 	ownerId: string,
-) {
+): Promise<NewsletterSignupResult> {
 	try {
+		const existing = await drizzleClient
+			.select({ id: newsletter.id })
+			.from(newsletter)
+			.where(
+				and(
+					eq(newsletter.email, email),
+					eq(newsletter.catalogueId, catalogueId),
+				),
+			)
+			.limit(1);
+
+		if (existing.length > 0) {
+			return { status: "already_subscribed" };
+		}
+
 		await drizzleClient.insert(newsletter).values({
 			email,
-			catalogueId: catalogueId, // Mapping camelCase args to schema columns if needed or just passing
-			ownerId: ownerId,
+			catalogueId,
+			ownerId,
 		});
 
-		return true;
+		return { status: "success" };
 	} catch (err) {
 		console.error(
 			"Unexpected error while inserting record in newsletter table:",
 			err,
 		);
-		return false;
+		return { status: "error" };
 	}
 }
 

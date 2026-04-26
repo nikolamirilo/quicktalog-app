@@ -105,8 +105,8 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 			>
 				{/* Mobile Toggle Button (Centered, overlapping top edge) */}
 				<button
-					onClick={() => setIsOpen(!isOpen)}
 					className="md:hidden absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[200]"
+					onClick={() => setIsOpen(!isOpen)}
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title="Toggle Sidebar"
 				>
@@ -114,10 +114,10 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 				</button>
 
 				<Button
+					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95 transition-transform duration-200"
 					onClick={() => setIsOpen(!isOpen)}
 					size={isOpen ? "sm" : "icon"}
 					variant="grayed"
-					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95 transition-transform duration-200"
 				>
 					{/* Desktop Icons */}
 					<div className="hidden md:block">
@@ -163,13 +163,13 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 								<TabsTrigger
 									className={tabTriggerClass}
 									key={key}
-									value={key}
 									style={{
 										animation: `fadeInScale 0.3s ease-out ${0.1 + index * 0.05}s both`,
 									}}
+									value={key}
 								>
-									<Icon className="w-4 h-4 mr-1.5" />
-									<span className="text-xs">{label}</span>
+									<Icon className="w-3 h-3 md:w-4 md:h-4 mr-[3px] md:mr-1.5" />
+									<span className="text-[0.65rem] md:text-xs">{label}</span>
 								</TabsTrigger>
 							))}
 						</TabsList>

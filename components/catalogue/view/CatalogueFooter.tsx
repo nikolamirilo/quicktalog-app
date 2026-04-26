@@ -26,6 +26,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState("");
 	const [submitSuccess, setSubmitSuccess] = useState(false);
+	const [alreadySubscribed, setAlreadySubscribed] = useState(false);
 
 	const handleNewsletterSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -33,23 +34,28 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 		setIsSubmitting(true);
 		setSubmitError("");
 		setSubmitSuccess(false);
+		setAlreadySubscribed(false);
 
 		try {
-			await newsletterSignup(
+			const result = await newsletterSignup(
 				newsletterEmail,
 				activeData?.id,
-				activeData?.source,
+				activeData?.createdBy ?? (activeData as any)?.created_by,
 			);
-			setNewsletterEmail("");
-			setSubmitSuccess(true);
-			setTimeout(() => setSubmitSuccess(false), 3000);
+
+			if (result.status === "already_subscribed") {
+				setAlreadySubscribed(true);
+				setTimeout(() => setAlreadySubscribed(false), 4000);
+			} else if (result.status === "success") {
+				setNewsletterEmail("");
+				setSubmitSuccess(true);
+				setTimeout(() => setSubmitSuccess(false), 3000);
+			} else {
+				setSubmitError("Failed to subscribe. Please try again.");
+			}
 		} catch (error: any) {
 			console.error("Newsletter signup failed:", error);
-			const message =
-				error?.message ||
-				error?.response?.activeData?.message ||
-				"Failed to subscribe. Please try again.";
-			setSubmitError(message);
+			setSubmitError("Failed to subscribe. Please try again.");
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -139,6 +145,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 
 						{type === "custom" && activeData?.footer.newsletter && (
 							<Newsletter
+								alreadySubscribed={alreadySubscribed}
 								handleNewsletterSubmit={handleNewsletterSubmit}
 								isSubmitting={isSubmitting}
 								newsletterEmail={newsletterEmail}

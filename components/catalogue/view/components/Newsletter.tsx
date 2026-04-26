@@ -8,6 +8,7 @@ const Newsletter = ({
 	isSubmitting,
 	submitSuccess,
 	submitError,
+	alreadySubscribed,
 }: {
 	handleNewsletterSubmit: (e: React.FormEvent) => void;
 	newsletterEmail: string;
@@ -15,6 +16,7 @@ const Newsletter = ({
 	isSubmitting: boolean;
 	submitSuccess: boolean;
 	submitError: string;
+	alreadySubscribed: boolean;
 }) => {
 	return (
 		<div className="flex flex-col h-full">
@@ -33,7 +35,7 @@ const Newsletter = ({
 							aria-describedby="newsletter-description"
 							aria-invalid={submitError ? "true" : "false"}
 							className="w-48 text-sm rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 bg-catalogue-card-background text-catalogue-card-text border border-catalogue-card-border"
-							disabled={isSubmitting || submitSuccess}
+							disabled={isSubmitting || submitSuccess || alreadySubscribed}
 							id="newsletter-email"
 							onChange={(e) => setNewsletterEmail(e.target.value)}
 							placeholder="your@email.com"
@@ -47,9 +49,11 @@ const Newsletter = ({
 						className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
 							submitSuccess
 								? "bg-green-500 text-white border-green-500 hover:bg-green-600"
-								: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
+								: alreadySubscribed
+									? "bg-blue-500 text-white border-blue-500 hover:bg-blue-600"
+									: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
 						}`}
-						disabled={isSubmitting || submitSuccess}
+						disabled={isSubmitting || submitSuccess || alreadySubscribed}
 						size="default"
 						type="submit"
 						variant="outline"
@@ -60,6 +64,11 @@ const Newsletter = ({
 							<div className="flex items-center gap-2">
 								<FiCheck className="w-4 h-4" />
 								<span>Subscribed</span>
+							</div>
+						) : alreadySubscribed ? (
+							<div className="flex items-center gap-2">
+								<FiCheck className="w-4 h-4" />
+								<span>Already subscribed</span>
 							</div>
 						) : (
 							<span>Subscribe</span>

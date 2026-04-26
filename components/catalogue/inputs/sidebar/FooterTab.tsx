@@ -1,5 +1,8 @@
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { PricingPlan } from "@quicktalog/common";
+import { FaRegCircleQuestion } from "react-icons/fa6";
 import BusinessInfoSection from "./footer/BusinessInfoSection";
 import InteractionSection from "./footer/InteractionSection";
 import LogoSizeSection from "./footer/LogoSizeSection";
@@ -10,6 +13,7 @@ import LimitsOverlay from "./LimitsOverlay";
 const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
 	const hasBranding = plan?.features?.branding;
+	const isCustom = catalogue.footer.type !== "default";
 
 	if (!catalogue || !updateCatalogue) return null;
 
@@ -67,37 +71,58 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 			<div
 				className={`space-y-4 p-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 			>
-				<LogoSizeSection catalogue={catalogue} handleChange={handleChange} />
+				<div className="flex items-center justify-between">
+					<Label
+						className="text-lg font-semibold flex gap-2 justify-center items-center"
+						htmlFor="footer-type"
+					>
+						<FaRegCircleQuestion size={22} />
+						Customize Footer
+					</Label>
+					<Switch
+						checked={isCustom}
+						id="footer-type"
+						onCheckedChange={(checked) => {
+							handleChange("footer.type", checked ? "custom" : "default");
+						}}
+					/>
+				</div>
 
-				<div className="w-full h-[1px] bg-border" />
+				<div
+					className={`space-y-4 ${!isCustom ? "opacity-50 pointer-events-none select-none" : ""}`}
+				>
+					<LogoSizeSection catalogue={catalogue} handleChange={handleChange} />
 
-				<InteractionSection
-					catalogue={catalogue}
-					handleChange={handleChange}
-					plan={plan}
-				/>
+					<div className="w-full h-[1px] bg-border" />
 
-				<div className="w-full h-[1px] bg-border" />
+					<InteractionSection
+						catalogue={catalogue}
+						handleChange={handleChange}
+						plan={plan}
+					/>
 
-				<BusinessInfoSection
-					catalogue={catalogue}
-					handleChange={handleChange}
-				/>
+					<div className="w-full h-[1px] bg-border" />
 
-				<div className="w-full h-[1px] bg-border" />
+					<BusinessInfoSection
+						catalogue={catalogue}
+						handleChange={handleChange}
+					/>
 
-				<SocialLinksSection
-					catalogue={catalogue}
-					updateCatalogue={updateCatalogue}
-				/>
+					<div className="w-full h-[1px] bg-border" />
 
-				<div className="w-full h-[1px] bg-border" />
+					<SocialLinksSection
+						catalogue={catalogue}
+						updateCatalogue={updateCatalogue}
+					/>
 
-				<PartnersSection
-					catalogue={catalogue}
-					handleChange={handleChange}
-					updateCatalogue={updateCatalogue}
-				/>
+					<div className="w-full h-[1px] bg-border" />
+
+					<PartnersSection
+						catalogue={catalogue}
+						handleChange={handleChange}
+						updateCatalogue={updateCatalogue}
+					/>
+				</div>
 			</div>
 		</div>
 	);

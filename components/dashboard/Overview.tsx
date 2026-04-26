@@ -14,11 +14,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCpu, FiFileText, FiTool } from "react-icons/fi";
 import { LuSquareMenu } from "react-icons/lu";
+import { MdOutlineEmail } from "react-icons/md";
 import { TbFileAnalytics } from "react-icons/tb";
 import InformModal from "../modals/InformModal";
 import OverallAnalytics from "./components/OverallAnalytics";
 import UserProfile from "./components/UserProfile";
 import CatalogueGrid from "./overview/CatalogueGrid";
+import NewsletterTable from "./overview/NewsletterTable";
 import QuickActions from "./overview/QuickActions";
 
 const Overview = ({
@@ -28,6 +30,7 @@ const Overview = ({
 	refreshAll,
 	planId,
 	usage,
+	newsletterSubscribers,
 }: OverviewProps) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
@@ -200,6 +203,15 @@ const Overview = ({
 					statusColors={statusColors}
 					usage={usage}
 				/>
+			</section>
+
+			{/* Newsletter Subscribers */}
+			<section className="mb-4 sm:mb-6 animate-fade-in">
+				<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
+					<MdOutlineEmail className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" />
+					Newsletter Subscribers
+				</h2>
+				<NewsletterTable subscribers={newsletterSubscribers} />
 			</section>
 
 			<InformModal

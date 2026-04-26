@@ -31,8 +31,13 @@ export default function Dashboard({
 	const [activeTab, setActiveTab] = useState("overview");
 
 	// Fetch data only when needed based on active tab
-	const { analytics, catalogues, loadingStates, refreshAll } =
-		useDashboardData(activeTab);
+	const {
+		analytics,
+		catalogues,
+		newsletterSubscribers,
+		loadingStates,
+		refreshAll,
+	} = useDashboardData(activeTab);
 
 	function getSidebarButtonClass(isActive: boolean) {
 		return isActive
@@ -82,6 +87,7 @@ export default function Dashboard({
 										<JoinOurCommunity />
 										<Overview
 											catalogues={catalogues || []}
+											newsletterSubscribers={newsletterSubscribers || []}
 											overallAnalytics={{
 												...analytics,
 												totalServiceCatalogues: catalogues?.length || 0,

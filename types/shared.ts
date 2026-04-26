@@ -206,6 +206,14 @@ export type DashboardProps = {
 	pricingPlan: PricingPlan;
 };
 
+export type NewsletterSubscriber = {
+	id: string;
+	email: string;
+	catalogueName: string | null;
+	catalogueId: string;
+	createdAt: string;
+};
+
 export type OverviewProps = {
 	catalogues: Catalogue[];
 	overallAnalytics: OverallAnalytics;
@@ -213,6 +221,7 @@ export type OverviewProps = {
 	refreshAll: any;
 	usage: Usage;
 	planId: number;
+	newsletterSubscribers: NewsletterSubscriber[];
 };
 
 export type CardProps = {
