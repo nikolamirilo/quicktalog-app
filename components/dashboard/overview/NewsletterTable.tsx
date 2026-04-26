@@ -62,48 +62,50 @@ export default function NewsletterTable({ subscribers }: NewsletterTableProps) {
 				</button>
 			</div>
 
-			<Table>
-				<TableHeader>
-					<TableRow className="bg-product-primary border-product-border">
-						<TableHead className="font-semibold text-product-foreground text-xs sm:text-sm uppercase tracking-wide px-4 sm:px-6">
-							Email
-						</TableHead>
-						<TableHead className="font-semibold text-product-foreground text-xs sm:text-sm uppercase tracking-wide px-4 sm:px-6">
-							Catalogue
-						</TableHead>
-						<TableHead className="font-semibold text-product-foreground text-xs sm:text-sm uppercase tracking-wide px-4 sm:px-6">
-							Date
-						</TableHead>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{subscribers.map((subscriber) => (
-						<TableRow
-							className="border-product-border hover:bg-product-background-hover/50 transition-colors duration-150"
-							key={subscriber.id}
-						>
-							<TableCell className="text-product-foreground text-sm font-medium px-4 sm:px-6 py-3">
-								{subscriber.email}
-							</TableCell>
-							<TableCell className="text-product-foreground-accent text-sm px-4 sm:px-6 py-3">
-								{subscriber.catalogueName ? (
-									<Link
-										className="text-blue-700 underline"
-										href={`/catalogues/${subscriber.catalogueName}`}
-									>
-										{subscriber.catalogueName}
-									</Link>
-								) : (
-									"—"
-								)}
-							</TableCell>
-							<TableCell className="text-product-foreground-accent text-sm px-4 sm:px-6 py-3">
-								{new Date(subscriber.createdAt).toLocaleDateString()}
-							</TableCell>
+			<div className="table-scroll">
+				<Table>
+					<TableHeader>
+						<TableRow className="bg-product-primary border-product-border">
+							<TableHead className="font-semibold text-product-foreground text-xs sm:text-sm uppercase tracking-wide px-4 sm:px-6">
+								Email
+							</TableHead>
+							<TableHead className="font-semibold text-product-foreground text-xs sm:text-sm uppercase tracking-wide px-4 sm:px-6">
+								Catalogue
+							</TableHead>
+							<TableHead className="font-semibold text-product-foreground text-xs sm:text-sm uppercase tracking-wide px-4 sm:px-6">
+								Date
+							</TableHead>
 						</TableRow>
-					))}
-				</TableBody>
-			</Table>
+					</TableHeader>
+					<TableBody>
+						{subscribers.map((subscriber) => (
+							<TableRow
+								className="border-product-border hover:bg-product-background-hover/50 transition-colors duration-150"
+								key={subscriber.id}
+							>
+								<TableCell className="text-product-foreground text-sm font-medium px-4 sm:px-6 py-3">
+									{subscriber.email}
+								</TableCell>
+								<TableCell className="text-product-foreground-accent text-sm px-4 sm:px-6 py-3">
+									{subscriber.catalogueName ? (
+										<Link
+											className="text-blue-700 underline"
+											href={`/catalogues/${subscriber.catalogueName}`}
+										>
+											{subscriber.catalogueName}
+										</Link>
+									) : (
+										"—"
+									)}
+								</TableCell>
+								<TableCell className="text-product-foreground-accent text-sm px-4 sm:px-6 py-3">
+									{new Date(subscriber.createdAt).toLocaleDateString()}
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</div>
 		</Card>
 	);
 }
