@@ -11,6 +11,13 @@ export function formatPrice(price) {
 	return price.split(".")[0];
 }
 
+export function kebabToTitle(str) {
+	return str
+		.split("-")
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+		.join(" ");
+}
+
 const now = new Date();
 export const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 export const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);

@@ -2,7 +2,7 @@ import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { FAVICON } from "@/constants";
 import { generateCatalogueMetadata } from "@/constants/metadata";
-import { htmlToText } from "@/helpers/client";
+import { htmlToText, kebabToTitle } from "@/helpers/client";
 import { Catalogue as CatalogueType } from "@quicktalog/common";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -78,7 +78,10 @@ export async function generateMetadata({
 					"The service catalogue you're looking for doesn't exist or has been removed.",
 			};
 		}
-		const title = data.metadata.title || data.name || htmlToText(data.heading);
+		const title =
+			data.metadata.title ||
+			kebabToTitle(data.name) ||
+			htmlToText(data.heading);
 		const description = data.metadata?.description || htmlToText(data.heading);
 		const opengraphImage = data.logo || "/opengraph-image.png";
 		const icon = data.metadata.icon || data.logo || FAVICON;
