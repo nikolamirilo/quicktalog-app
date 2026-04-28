@@ -8,7 +8,7 @@ import {
 	titleFontSizeMap,
 } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { htmlToText } from "@/helpers/client";
+import { htmlToText, kebabToTitle } from "@/helpers/client";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes, tiers } from "@quicktalog/common";
 import { ArrowLeft } from "lucide-react";
@@ -79,7 +79,9 @@ const Catalogue = ({
 		}
 
 		const titleText =
-			activeData.metadata?.title || activeData.name || plainHeading;
+			activeData.metadata?.title ||
+			kebabToTitle(activeData.name) ||
+			plainHeading;
 		if (titleText) {
 			document.title = `${titleText} | Quicktalog`;
 		}

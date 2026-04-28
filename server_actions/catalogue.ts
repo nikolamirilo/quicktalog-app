@@ -9,12 +9,22 @@ import {
 	schema,
 	Status,
 } from "@quicktalog/common";
+import { currentUser } from "@clerk/nextjs/server";
 import { eq, inArray } from "drizzle-orm";
 
 const catalogues = schema.catalogues;
 
 export async function deleteItem(name: string): Promise<boolean> {
 	try {
+		const user = await currentUser();
+		if (!user?.id) return false;
+
+		const existing = await drizzleClient.query.catalogues.findFirst({
+			where: eq(catalogues.name, name),
+			columns: { createdBy: true },
+		});
+		if (!existing || existing.createdBy !== user.id) return false;
+
 		await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));
 		await redis.del(name);
 		revalidateCatalogue(name);
@@ -28,6 +38,19 @@ export async function deleteItem(name: string): Promise<boolean> {
 
 export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 	try {
+		const user = await currentUser();
+		if (!user?.id) return false;
+
+		const existing = await drizzleClient.query.catalogues.findMany({
+			where: inArray(catalogues.id, ids),
+			columns: { createdBy: true },
+		});
+		if (
+			existing.length !== ids.length ||
+			existing.some((c) => c.createdBy !== user.id)
+		)
+			return false;
+
 		await drizzleClient.delete(catalogues).where(inArray(catalogues.id, ids));
 		revalidateCatalogue();
 		revalidateDashboard();
@@ -44,6 +67,15 @@ export async function updateItemStatus(
 	name?: string,
 ): Promise<boolean> {
 	try {
+		const user = await currentUser();
+		if (!user?.id) return false;
+
+		const existing = await drizzleClient.query.catalogues.findFirst({
+			where: eq(catalogues.id, id),
+			columns: { createdBy: true },
+		});
+		if (!existing || existing.createdBy !== user.id) return false;
+
 		await drizzleClient
 			.update(catalogues)
 			.set({ status })
@@ -69,11 +101,15 @@ export async function updateItemStatus(
 
 export async function duplicateItem(id: string, name: string) {
 	try {
+		const user = await currentUser();
+		if (!user?.id) return null;
+
 		const data = await drizzleClient.query.catalogues.findFirst({
 			where: eq(catalogues.id, id),
 		});
 
 		if (!data) return null;
+		if (data.createdBy !== user.id) return null;
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { id: _oldId, ...rest } = data;
 
@@ -112,6 +148,9 @@ export async function createCatalogue(
 	branding: boolean = false,
 ) {
 	try {
+		const user = await currentUser();
+		if (!user?.id) return { success: false, error: "Unauthorized" };
+
 		const slug = generateUniqueSlug(catalogueData.name);
 
 		const existingCatalogue = await drizzleClient.query.catalogues.findFirst({
@@ -134,6 +173,7 @@ export async function createCatalogue(
 			.values({
 				...rest,
 				name: slug,
+				createdBy: user.id,
 				header: { ...rest.header, type: type },
 				footer: { ...rest.footer, type: type },
 			})
@@ -166,6 +206,17 @@ export async function createCatalogue(
 
 export async function updateCatalogue(catalogueData: Catalogue) {
 	try {
+		const user = await currentUser();
+		if (!user?.id) return { success: false, error: "Unauthorized" };
+
+		const existing = await drizzleClient.query.catalogues.findFirst({
+			where: eq(catalogues.name, catalogueData.name),
+			columns: { createdBy: true },
+		});
+		if (!existing || existing.createdBy !== user.id) {
+			return { success: false, error: "Unauthorized" };
+		}
+
 		const res = await redis.set(
 			catalogueData.name,
 			JSON.stringify(catalogueData),
@@ -229,6 +280,15 @@ export async function getCatalogueByName(name: string) {
 
 export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 	try {
+		const user = await currentUser();
+		if (!user?.id) return false;
+
+		const existing = await drizzleClient.query.catalogues.findFirst({
+			where: eq(catalogues.name, data.name),
+			columns: { createdBy: true },
+		});
+		if (!existing || existing.createdBy !== user.id) return false;
+
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { createdAt, updatedAt, ...rest } = data;
 		const catalogueData = { ...rest, status: "active" };
