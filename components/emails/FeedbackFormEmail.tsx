@@ -259,7 +259,7 @@ const getRatingButtonStyle = (rating: number) => {
 // Styles using your product color system
 const main = {
 	fontFamily: '"Inter", "Segoe UI", "Roboto", sans-serif',
-	backgroundColor: "#f3f3f5", // hero-product-background
+	backgroundColor: "#f3f3f5", // product-background-hero
 	margin: "0",
 	padding: "0",
 };
@@ -303,7 +303,7 @@ const messageText = {
 
 const ratingSection = {
 	padding: "30px 0",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	margin: "20px 0",
 	textAlign: "center" as const,
@@ -376,7 +376,7 @@ const feedbackButton = {
 	fontSize: "16px",
 	fontWeight: "600",
 	display: "inline-block",
-	boxShadow: "0 4px 10px rgba(229, 194, 48, 0.15)", // product-hover-shadow
+	boxShadow: "0 4px 10px rgba(229, 194, 48, 0.15)", // product-shadow-hover
 };
 
 const whySection = {
@@ -400,7 +400,7 @@ const benefitItem = {
 	alignItems: "flex-start",
 	marginBottom: "20px",
 	padding: "20px",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	border: "1px solid #eaeaea", // product-border
 };
@@ -431,7 +431,7 @@ const benefitDescription = {
 
 const privacySection = {
 	padding: "20px",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	margin: "20px 0",
 	textAlign: "center" as const,

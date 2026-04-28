@@ -1,30 +1,40 @@
 "use client";
-import Link from "next/link";
-import React, { useState } from "react";
-import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
-import { productNewsletterSignup } from "@/actions/newsletter";
 import { Button } from "@/components/ui/button";
 import { footerDetails, siteDetails } from "@/constants/details";
 import { getPlatformIconByName } from "@/constants/ui";
+import { productNewsletterSignup } from "@/server_actions/newsletter";
+import Link from "next/link";
+import React, { useState } from "react";
+import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
 
 const Footer: React.FC = () => {
 	const [newsletterEmail, setNewsletterEmail] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState("");
-	const [submitSuccess, setSubmitSuccess] = useState(false);
+	const [submitStatus, setSubmitStatus] = useState<
+		"idle" | "success" | "already_subscribed"
+	>("idle");
 
 	const handleNewsletterSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 
 		setIsSubmitting(true);
 		setSubmitError("");
-		setSubmitSuccess(false);
+		setSubmitStatus("idle");
 
 		try {
-			await productNewsletterSignup(newsletterEmail);
-			setNewsletterEmail("");
-			setSubmitSuccess(true);
-			setTimeout(() => setSubmitSuccess(false), 3000);
+			const result = await productNewsletterSignup(newsletterEmail);
+
+			if (result.status === "success") {
+				setNewsletterEmail("");
+				setSubmitStatus("success");
+				setTimeout(() => setSubmitStatus("idle"), 3000);
+			} else if (result.status === "already_subscribed") {
+				setSubmitStatus("already_subscribed");
+				setTimeout(() => setSubmitStatus("idle"), 3000);
+			} else {
+				setSubmitError("Failed to subscribe. Please try again.");
+			}
 		} catch (error: any) {
 			const message =
 				error?.message || "Failed to subscribe. Please try again.";
@@ -35,7 +45,7 @@ const Footer: React.FC = () => {
 	};
 
 	return (
-		<footer className="bg-hero-product-background text-product-foreground py-16 border-t border-product-border">
+		<footer className="bg-product-background-hero text-product-foreground py-16 border-t border-product-border">
 			<div className="max-w-7xl w-full mx-auto px-6">
 				{/* Main footer content */}
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
@@ -155,7 +165,7 @@ const Footer: React.FC = () => {
 							<div className="relative">
 								<input
 									className="w-full px-4 py-3 bg-product-background border border-product-border rounded-lg text-product-foreground placeholder-product-foreground-accent focus:outline-none focus:ring-2 focus:ring-product-primary/50 focus:border-product-primary transition-colors duration-200"
-									disabled={isSubmitting || submitSuccess}
+									disabled={isSubmitting || submitStatus !== "idle"}
 									onChange={(e) => setNewsletterEmail(e.target.value)}
 									placeholder="Enter your email"
 									required
@@ -165,24 +175,39 @@ const Footer: React.FC = () => {
 							</div>
 							<Button
 								className={`w-full transition-colors duration-200 font-semibold ${
-									submitSuccess
+									submitStatus === "success"
 										? "bg-green-500 text-white hover:bg-green-600"
-										: "bg-product-primary text-product-foreground hover:bg-product-primary-accent"
+										: submitStatus === "already_subscribed"
+											? "bg-blue-500 text-white hover:bg-blue-600"
+											: "bg-product-primary text-product-foreground "
 								}`}
-								disabled={isSubmitting || submitSuccess}
+								disabled={isSubmitting || submitStatus !== "idle"}
 								type="submit"
 							>
 								{isSubmitting ? (
 									"Subscribing..."
-								) : submitSuccess ? (
+								) : submitStatus === "success" ? (
 									<div className="flex items-center justify-center gap-2">
 										<FiCheck className="w-4 h-4" />
 										Subscribed
+									</div>
+								) : submitStatus === "already_subscribed" ? (
+									<div className="flex items-center justify-center gap-2">
+										<FiCheck className="w-4 h-4" />
+										Already subscribed
 									</div>
 								) : (
 									"Subscribe"
 								)}
 							</Button>
+							{submitStatus === "already_subscribed" && (
+								<p
+									aria-live="polite"
+									className="text-product-foreground-accent text-xs"
+								>
+									This email is already on our list.
+								</p>
+							)}
 							{submitError && (
 								<p
 									aria-live="polite"

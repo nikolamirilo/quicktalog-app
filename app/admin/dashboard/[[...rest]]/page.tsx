@@ -1,12 +1,12 @@
-import { UserData } from "@quicktalog/common";
-import Link from "next/link";
-import { getUserData } from "@/actions/users";
-import Dashboard from "@/components/admin/dashboard/Dashboard";
-import FloatingActionMenu from "@/components/admin/dashboard/FloatingActionMenu";
+import FloatingActionMenu from "@/components/dashboard/components/FloatingActionMenu";
+import Dashboard from "@/components/dashboard/Dashboard";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { Button } from "@/components/ui/button";
-import type { AreLimitesReached } from "@/types";
+import { getUserData } from "@/server_actions/users";
+import type { AreLimitesReached } from "@quicktalog/common";
+import { UserData } from "@quicktalog/common";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +46,7 @@ export default async function page() {
 		<div className="product font-lora min-h-screen">
 			<Navbar />
 			<Dashboard pricingPlan={currentPlan} usage={usage} user={user} />
+
 			<FloatingActionMenu
 				areLimitsReached={areLimitesReached}
 				planId={currentPlan.id}

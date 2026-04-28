@@ -14,7 +14,6 @@ import {
 } from "@react-email/components";
 import {
 	container,
-	contentSection,
 	contentText,
 	ctaButton,
 	ctaSection,
@@ -26,12 +25,6 @@ import {
 	footerSeparator,
 	footerText,
 	header,
-	instructionContent,
-	instructionDescription,
-	instructionItem,
-	instructionList,
-	instructionNumber,
-	instructionTitle,
 	logo,
 	main,
 	sectionTitle,
@@ -62,7 +55,7 @@ export const CancellationEmail = ({ name }: { name: string }) => (
 							<Img
 								alt="Quicktalog Logo"
 								height="40"
-								src="https://www.quicktalog.app/images/logo.png"
+								src="https://www.quicktalog.app/logo.svg"
 								style={logo}
 								width="120"
 							/>

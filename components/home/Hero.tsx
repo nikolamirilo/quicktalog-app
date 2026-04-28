@@ -1,7 +1,6 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React from "react";
 import {
 	FiArrowDown,
@@ -11,7 +10,7 @@ import {
 	FiPlay,
 	FiSmartphone,
 } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
+import CreateCatalogueButton from "../dashboard/components/CreateCatalogueButton";
 
 // Static data for reusability
 const valuePropositions = [
@@ -37,8 +36,6 @@ const IconText: React.FC<{ icon: React.ElementType; text: string }> = ({
 );
 
 const Hero: React.FC = () => {
-	const { user } = useUser();
-	const router = useRouter();
 	return (
 		<section
 			className="relative flex min-h-[80vh] items-center justify-center px-4 pt-32 md:pt-40"
@@ -46,14 +43,14 @@ const Hero: React.FC = () => {
 			role="banner"
 		>
 			{/* Background Grid */}
-			<div className="absolute inset-0 -z-10 bg-hero-product-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]" />
+			<div className="absolute inset-0 -z-10 bg-product-background-hero bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]" />
 
 			{/* Bottom Gradient */}
 			<div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-b from-transparent via-[rgba(233,238,255,0.5)] to-[rgba(202,208,230,0.5)] backdrop-blur-[2px]" />
 
 			<div className="mx-auto max-w-4xl text-center">
 				<h1 className="mx-auto max-w-lg text-4xl font-bold text-product-foreground md:max-w-3xl md:text-6xl md:leading-tight">
-					Create a Stunning Digital Catalog in Minutes
+					Create a Stunning Digital Catalogue in Minutes
 				</h1>
 				<p className="mx-auto mt-4 max-w-2xl text-lg text-product-foreground-accent md:text-xl">
 					The best free online catalog maker for businesses. Turn your services,
@@ -70,20 +67,7 @@ const Hero: React.FC = () => {
 
 				{/* CTA Buttons */}
 				<div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-					<Button
-						aria-label="Create your digital catalog"
-						className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
-						onClick={() => {
-							if (user) {
-								router.push("/admin/create");
-							} else {
-								router.push("/auth?mode=signup");
-							}
-						}}
-						variant="cta"
-					>
-						Start Creating Now
-					</Button>
+					<CreateCatalogueButton type="home" />
 					<Link href="/demo">
 						<Button
 							aria-label="Try the catalog demo"

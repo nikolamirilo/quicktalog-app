@@ -33,7 +33,7 @@ export const NewCatalogueEmail = ({
 }: NewCatalogueEmailProps) => {
 	// Generate QR code URL automatically
 	const catalogueUrl = `${process.env.NEXT_PUBLIC_BASE_URL!}/catalogues/${catalogueSlug}`;
-	const analyticsUrl = `${process.env.NEXT_PUBLIC_BASE_URL!}/admin/items/${catalogueSlug}/analytics`;
+	const analyticsUrl = `${process.env.NEXT_PUBLIC_BASE_URL!}/admin/${catalogueSlug}/analytics`;
 	const qrCodeUrl = generateQRCodeUrl(catalogueUrl);
 
 	return (
@@ -57,7 +57,7 @@ export const NewCatalogueEmail = ({
 								<Img
 									alt="Quicktalog Logo"
 									height="40"
-									src="https://www.quicktalog.app/images/logo.png"
+									src="https://www.quicktalog.app/logo.svg"
 									style={logo}
 									width="120"
 								/>
@@ -78,7 +78,7 @@ export const NewCatalogueEmail = ({
 
 					{/* Catalogue Link Section */}
 					<Section style={linkSection}>
-						<Text style={sectionTitle}>Your Catalog is Live</Text>
+						<Text style={sectionTitle}>Your Catalogue is Live</Text>
 						<Text style={contentText}>
 							Share this link with your customers to let them browse your
 							catalog:
@@ -241,7 +241,7 @@ export const NewCatalogueEmail = ({
 // Styles using your product color system
 const main = {
 	fontFamily: '"Inter", "Segoe UI", "Roboto", sans-serif',
-	backgroundColor: "#f3f3f5", // hero-product-background
+	backgroundColor: "#f3f3f5", // product-background-hero
 	margin: "0",
 	padding: "0",
 };
@@ -268,7 +268,7 @@ const logo = {
 const successSection = {
 	padding: "30px 0",
 	textAlign: "center" as const,
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	margin: "20px 0",
 };
@@ -307,7 +307,7 @@ const contentText = {
 };
 
 const linkContainer = {
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	border: "1px solid #eaeaea", // product-border
 	borderRadius: "8px",
 	padding: "16px",
@@ -337,7 +337,7 @@ const primaryButton = {
 	fontSize: "16px",
 	fontWeight: "600",
 	display: "inline-block",
-	boxShadow: "0 4px 10px rgba(229, 194, 48, 0.15)", // product-hover-shadow
+	boxShadow: "0 4px 10px rgba(229, 194, 48, 0.15)", // product-shadow-hover
 };
 
 const secondaryButton = {
@@ -354,7 +354,7 @@ const secondaryButton = {
 
 const qrSection = {
 	padding: "30px 0",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	margin: "20px 0",
 	textAlign: "center" as const,
@@ -414,7 +414,7 @@ const codeNote = {
 
 const analyticsSection = {
 	padding: "30px 0",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	margin: "20px 0",
 	textAlign: "center" as const,
@@ -433,7 +433,7 @@ const tipItem = {
 	alignItems: "flex-start",
 	marginBottom: "20px",
 	padding: "20px",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	border: "1px solid #eaeaea", // product-border
 };

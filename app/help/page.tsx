@@ -1,5 +1,5 @@
 import FAQ from "@/components/home/FAQ";
-import Section from "@/components/home/Section";
+import SectionWrapper from "@/components/home/SectionWrapper";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
@@ -19,13 +19,13 @@ const page = () => {
 			/>
 			<Navbar />
 			<div className="mx-auto h-fit flex flex-col items-center justify-center py-24 max-w-[1400px]">
-				<Section
+				<SectionWrapper
 					id="help"
 					title="Help Center & FAQs"
 					description="Find answers to common questions, step-by-step guides, and resources to get the most out of Quicktalog."
 				>
 					<FAQ />
-				</Section>
+				</SectionWrapper>
 			</div>
 			<Footer />
 		</div>

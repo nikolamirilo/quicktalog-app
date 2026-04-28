@@ -42,9 +42,9 @@ const nextConfig: NextConfig = {
 	experimental: {
 		optimizePackageImports: ["react-icons"],
 	},
-	eslint: {
-		ignoreDuringBuilds: true,
-	},
+	// turbopack: {
+	// 	root: process.cwd(),
+	// },
 	async rewrites() {
 		return [
 			{

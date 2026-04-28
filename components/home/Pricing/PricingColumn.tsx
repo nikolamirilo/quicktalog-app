@@ -1,4 +1,7 @@
 "use client";
+import InformModal from "@/components/modals/InformModal";
+import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/helpers/client";
 import type { Paddle } from "@paddle/paddle-js";
 import { PricingPlan, tiers, User } from "@quicktalog/common";
 import clsx from "clsx";
@@ -6,9 +9,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { FiInfo } from "react-icons/fi";
-import InformModal from "@/components/modals/InformModal";
-import { Button } from "@/components/ui/button";
-import { formatPrice } from "@/helpers/client";
 
 interface PricingColumnProps {
 	tier: PricingPlan;
@@ -44,10 +44,10 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			},
 			{
 				text:
-					features.categories_per_catalogue === "unlimited"
-						? "Unlimited categories & items"
-						: `Up to ${features.categories_per_catalogue} categories & ${features.items_per_catalogue} items per catalogue`,
-				type: "categories_and_items",
+					features.blocks_per_catalogue === "unlimited"
+						? "Unlimited blocks & items"
+						: `Up to ${features.blocks_per_catalogue} blocks & ${features.items_per_catalogue} items per catalogue`,
+				type: "blocks_and_items",
 			},
 			features.branding === true
 				? {
@@ -98,13 +98,13 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			"ocr-ai-import":
 				"AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
 			"ai-catalogue-generation":
-				"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into categories for your catalog.",
+				"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into blocks for your catalog.",
 			newsletter:
 				"Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
 			"custom-features":
 				"Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
-			categories_and_items:
-				"The total number of categories and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
+			blocks_and_items:
+				"The total number of blocks and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
 			custom_branding:
 				"Control over the visual branding of your catalogues, including logo upload, legal information, partners and contact information represent your business in the best possible way.",
 		};
@@ -121,7 +121,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 	const handleButtonClick = () => {
 		if (user) {
 			const matchedTier = filteredTiers.find((tier) =>
-				Object.values(tier.priceId).includes(user.plan_id),
+				Object.values(tier.priceId).includes(user.planId),
 			);
 			if (tier.name === matchedTier.name) {
 				alert("You currently have this plan");
@@ -145,9 +145,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				className={clsx(
 					"group relative w-full bg-product-background text-product-foreground rounded-xl border border-product-border transition-all duration-300 ease-out",
 					{
-						"shadow-[var(--product-shadow)] hover:shadow-[var(--product-hover-shadow)]":
+						"shadow-[var(--product-shadow)] hover:shadow-[var(--product-shadow-hover)]":
 							!highlight,
-						"shadow-[var(--product-hover-shadow)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)]":
+						"shadow-[var(--product-shadow-hover)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)]":
 							highlight,
 						"hover:scale-[1.01]": true,
 					},
@@ -156,7 +156,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				onMouseLeave={() => setIsHovered(false)}
 				style={{
 					boxShadow: highlight
-						? "var(--product-hover-shadow)"
+						? "var(--product-shadow-hover)"
 						: "var(--product-shadow)",
 				}}
 			>
@@ -173,7 +173,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 						<h3
 							className={clsx(
 								"text-lg font-bold mb-2 text-product-primary transition-colors duration-300 font-lora",
-								{ "text-product-primary-accent": highlight && isHovered },
+								{
+									"text-product-primary-accent": highlight && isHovered,
+								},
 							)}
 						>
 							{tier.name}
@@ -259,9 +261,9 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			className={clsx(
 				"group relative w-full max-w-sm mx-auto bg-product-background text-product-foreground rounded-2xl border border-product-border lg:max-w-full transition-all duration-300 ease-out h-full flex flex-col",
 				{
-					"shadow-[var(--product-shadow)] hover:shadow-[var(--product-hover-shadow)]":
+					"shadow-[var(--product-shadow)] hover:shadow-[var(--product-shadow-hover)]":
 						!highlight,
-					"shadow-[var(--product-hover-shadow)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.18)]":
+					"shadow-[var(--product-shadow-hover)] hover:shadow-[0_16px_50px_rgba(0,0,0,0.18)]":
 						highlight,
 					"hover:scale-[1.02] hover:-translate-y-1": true,
 				},
@@ -270,7 +272,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			onMouseLeave={() => setIsHovered(false)}
 			style={{
 				boxShadow: highlight
-					? "var(--product-hover-shadow)"
+					? "var(--product-shadow-hover)"
 					: "var(--product-shadow)",
 			}}
 		>

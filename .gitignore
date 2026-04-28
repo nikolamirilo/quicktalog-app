@@ -12,6 +12,7 @@
 !.yarn/releases
 !.yarn/versions
 .eslintcache
+.claude
 
 # testing
 /coverage
@@ -48,3 +49,4 @@ next-env.d.ts
 .env*.local
 
 .env.local
+/prisma/generated

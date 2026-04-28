@@ -56,7 +56,7 @@ export const WelcomeEmail = ({ name }: { name: string }) => (
 			/>
 		</Head>
 		<Preview>
-			Welcome to Quicktalog - Your Digital Catalog Journey Starts Here!
+			Welcome to Quicktalog - Your Digital Catalogue Journey Starts Here!
 		</Preview>
 
 		<Body style={main}>
@@ -68,7 +68,7 @@ export const WelcomeEmail = ({ name }: { name: string }) => (
 							<Img
 								alt="Quicktalog Logo"
 								height="40"
-								src={`https://www.quicktalog.app/images/logo.png`}
+								src={`https://www.quicktalog.app/logo.svg`}
 								style={logo}
 								width="120"
 							/>

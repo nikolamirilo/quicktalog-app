@@ -12,6 +12,7 @@ interface UseCatalogueNameReturn {
 	handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	nameExists: boolean;
 	names: string[];
+	refetchNames: () => void;
 }
 
 const normalize = (str: string) =>
@@ -39,24 +40,25 @@ export const useCatalogueName = ({
 			setTouched((prev: any) => ({ ...prev, name: true }));
 		}
 
-		const isValid = /^[a-zA-Z0-9\s]*$/.test(newName);
+		const isValidFormat = /^[a-zA-Z0-9\s]*$/.test(newName);
+		const isJustSpaces = newName.length > 0 && newName.trim().length === 0;
 
-		if (!isValid && setErrors) {
+		if ((!isValidFormat || isJustSpaces) && setErrors) {
 			setErrors((prev: any) => ({
 				...prev,
-				name: "Name must only contain letters, numbers, and spaces (no special characters).",
+				name: isJustSpaces
+					? "Name cannot be just spaces."
+					: "Name must only contain letters, numbers, and spaces (no special characters).",
 			}));
 			return;
-		} else if (isValid && setErrors) {
-			// Clear format error if user fixes it
+		}
+
+		// Clear any existing name errors when user types valid input
+		if (isValidFormat && !isJustSpaces && setErrors) {
 			setErrors((prev: any) => {
 				const newErrors = { ...prev };
-				if (
-					newErrors.name ===
-					"Name must only contain letters, numbers, and spaces (no special characters)."
-				) {
-					delete newErrors.name;
-				}
+				// Clear all name-related errors
+				delete newErrors.name;
 				return newErrors;
 			});
 		}
@@ -73,70 +75,46 @@ export const useCatalogueName = ({
 						...prev,
 						name: "This name is already in use. Please choose a different name.",
 					}));
-				} else if (!exists && setErrors) {
-					// Clear duplicate error
-					setErrors((prev: any) => {
-						const newErrors = { ...prev };
-						if (
-							newErrors.name ===
-							"This name is already in use. Please choose a different name."
-						) {
-							delete newErrors.name;
-						}
-						return newErrors;
-					});
 				}
-			} else if (!newName.trim() && setErrors) {
-				// Clear duplicate error if empty
-				setErrors((prev: any) => {
-					const newErrors = { ...prev };
-					if (
-						newErrors.name ===
-						"This name is already in use. Please choose a different name."
-					) {
-						delete newErrors.name;
-					}
-					return newErrors;
-				});
 			}
 		}
 	};
+	const fetchNames = async () => {
+		try {
+			const res = await fetch("/api/items?type=name", {
+				method: "GET",
+				cache: "no-store",
+			});
+			const data = await res.json();
+			setNames(data);
+
+			// Check if initial name already exists
+			if (initialName && data.length > 0) {
+				const exists = data.some(
+					(n) => normalize(n.name) === normalize(initialName),
+				);
+				if (exists && setErrors) {
+					setErrors((prev: any) => ({
+						...prev,
+						name: "This name is already in use. Please choose a different name.",
+					}));
+				}
+			}
+		} catch (error) {
+			console.error("Failed to fetch names:", error);
+			setNames([]);
+		}
+	};
+
 	useEffect(() => {
 		if (type !== "create") return;
-
-		async function getAllNames() {
-			try {
-				const res = await fetch("/api/items?type=name", {
-					method: "GET",
-					cache: "no-store",
-				});
-				const data = await res.json();
-				setNames(data);
-
-				// Check if initial name already exists
-				if (initialName && data.length > 0) {
-					const exists = data.some(
-						(n) => normalize(n.name) === normalize(initialName),
-					);
-					if (exists && setErrors) {
-						setErrors((prev: any) => ({
-							...prev,
-							name: "This name is already in use. Please choose a different name.",
-						}));
-					}
-				}
-			} catch (error) {
-				console.error("Failed to fetch names:", error);
-				setNames([]);
-			}
-		}
-
-		getAllNames();
-	}, [type, initialName, setErrors]);
+		fetchNames();
+	}, [type]);
 
 	return {
 		handleNameChange,
 		nameExists,
 		names,
+		refetchNames: fetchNames,
 	};
 };

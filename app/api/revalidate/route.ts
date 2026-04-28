@@ -1,10 +1,11 @@
-import { revalidateData, revalidatePageData } from "@/helpers/server";
+import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
 	try {
-		await revalidateData();
+		revalidateCatalogue();
+		revalidateDashboard();
 		return new Response(
 			JSON.stringify({ message: "Data revalidated successuflly" }),
 			{

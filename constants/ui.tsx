@@ -1,3 +1,4 @@
+import { IBenefit, IStats } from "@/types/shared";
 import { JSX } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import {
@@ -39,7 +40,6 @@ import {
 	RiStore2Line,
 } from "react-icons/ri";
 import { TbFileAnalytics } from "react-icons/tb";
-import { IBenefit, IStats } from "@/types/components";
 
 export const stats: IStats[] = [
 	{
@@ -126,7 +126,7 @@ export const benefits: IBenefit[] = [
 			"Your catalog is often the first impression a customer has of your business. Make it a great one with a beautiful, mobile-friendly design that builds trust and drives sales.",
 		bullets: [
 			{
-				title: "Professional Catalog Templates",
+				title: "Professional Catalogue Templates",
 				description:
 					"Choose from a variety of professionally designed catalog templates that look great on any device.",
 				icon: <FiEdit3 size={26} />,

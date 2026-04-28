@@ -1,5 +1,5 @@
-import { sendWelcomeEmail } from "@/actions/email";
 import { defaultCookiePreferences } from "@/constants";
+import { sendWelcomeEmail } from "@/server_actions/email";
 import { createClient } from "@/utils/supabase/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest } from "next/server";

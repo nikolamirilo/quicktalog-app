@@ -1,10 +1,10 @@
+import type { OverallAnalytics } from "@quicktalog/common";
 import { Catalogue } from "@quicktalog/common";
 import useSWR from "swr";
-import type { OverallAnalytics } from "@/types";
+import type { NewsletterSubscriber } from "@/types/shared";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-// Individual hooks with SWR for better caching and revalidation
 export function useAnalytics(shouldFetch: boolean) {
 	const { data, error, isLoading, mutate } = useSWR(
 		shouldFetch ? "/api/dashboard/analytics" : null,
@@ -44,21 +44,44 @@ export function useCatalogues(shouldFetch: boolean) {
 	};
 }
 
-// Combined hook for dashboard
+export function useNewsletter(shouldFetch: boolean) {
+	const { data, error, isLoading, mutate } = useSWR(
+		shouldFetch ? "/api/dashboard/newsletter" : null,
+		fetcher,
+		{
+			revalidateOnFocus: false,
+			revalidateOnReconnect: false,
+			dedupingInterval: 60000,
+		},
+	);
+
+	return {
+		newsletterSubscribers: (data || []) as NewsletterSubscriber[],
+		loading: isLoading,
+		error,
+		refresh: mutate,
+	};
+}
+
 export function useDashboardData(activeTab: string) {
 	const shouldFetchOverviewData = activeTab === "overview";
 
 	const analyticsData = useAnalytics(shouldFetchOverviewData);
 	const cataloguesData = useCatalogues(shouldFetchOverviewData);
+	const newsletterData = useNewsletter(shouldFetchOverviewData);
 
-	// Manual refresh function that refreshes both
 	const refreshAll = async () => {
-		await Promise.all([analyticsData.refresh(), cataloguesData.refresh()]);
+		await Promise.all([
+			analyticsData.refresh(),
+			cataloguesData.refresh(),
+			newsletterData.refresh(),
+		]);
 	};
 
 	return {
 		analytics: analyticsData.analytics,
 		catalogues: cataloguesData.catalogues,
+		newsletterSubscribers: newsletterData.newsletterSubscribers,
 		loadingStates: {
 			analytics: analyticsData.loading,
 			catalogues: cataloguesData.loading,
@@ -70,5 +93,6 @@ export function useDashboardData(activeTab: string) {
 		refreshAll,
 		refreshAnalytics: analyticsData.refresh,
 		refreshCatalogues: cataloguesData.refresh,
+		refreshNewsletter: newsletterData.refresh,
 	};
 }

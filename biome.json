@@ -21,7 +21,8 @@
 			},
 			"correctness": {
 				"noUnusedFunctionParameters": "warn",
-				"noUnusedVariables": "warn"
+				"noUnusedVariables": "warn",
+				"noUnusedImports": "warn"
 			},
 			"complexity": {
 				"noUselessContinue": "error"
@@ -37,7 +38,7 @@
 		"enabled": true,
 		"actions": {
 			"source": {
-				"organizeImports": "on",
+				"organizeImports": "off",
 				"useSortedProperties": "on",
 				"useSortedAttributes": "on"
 			}

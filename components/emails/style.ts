@@ -1,7 +1,7 @@
 // Styles using your product color system
 export const main = {
 	fontFamily: '"Inter", "Segoe UI", "Roboto", sans-serif',
-	backgroundColor: "#f3f3f5", // hero-product-background
+	backgroundColor: "#f3f3f5", // product-background-hero
 	margin: "0",
 	padding: "0",
 };
@@ -72,7 +72,7 @@ export const instructionItem = {
 	alignItems: "flex-start",
 	marginBottom: "20px",
 	padding: "20px",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	border: "1px solid #eaeaea", // product-border
 };
@@ -122,7 +122,7 @@ export const ctaButton = {
 	fontSize: "16px",
 	fontWeight: "600",
 	display: "inline-block",
-	boxShadow: "0 4px 10px rgba(229, 194, 48, 0.15)", // product-hover-shadow
+	boxShadow: "0 4px 10px rgba(229, 194, 48, 0.15)", // product-shadow-hover
 };
 
 export const supportSection = {
@@ -136,7 +136,7 @@ export const contactInfo = {
 export const contactItem = {
 	marginBottom: "16px",
 	padding: "16px",
-	backgroundColor: "#fff9e5", // product-hover-background
+	backgroundColor: "#fff9e5", // product-background-hover
 	borderRadius: "8px",
 	border: "1px solid #eaeaea", // product-border
 };

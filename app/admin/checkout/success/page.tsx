@@ -3,8 +3,8 @@ import Link from "next/link";
 
 const page = () => {
 	return (
-		<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-product-background to-hero-product-background">
-			<div className="w-full max-w-2xl py-8 sm:py-12 px-4 sm:px-6 mx-4 text-center transition-all transform bg-product-background border border-product-border shadow-md rounded-3xl hover:shadow-product-hover-shadow">
+		<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-product-background to-product-background-hero">
+			<div className="w-full max-w-2xl py-8 sm:py-12 px-4 sm:px-6 mx-4 text-center transition-all transform bg-product-background border border-product-border shadow-md rounded-3xl hover:shadow-product-shadow-hover">
 				<div className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6 sm:mb-8 bg-green-100 rounded-full border border-green-200">
 					<svg
 						className="w-8 h-8 sm:w-12 sm:h-12 text-green-600"
@@ -13,10 +13,10 @@ const page = () => {
 						viewBox="0 0 24 24"
 					>
 						<path
+							d="M5 13l4 4L19 7"
 							strokeLinecap="round"
 							strokeLinejoin="round"
 							strokeWidth="2"
-							d="M5 13l4 4L19 7"
 						></path>
 					</svg>
 				</div>
@@ -34,8 +34,8 @@ const page = () => {
 						Have questions? Contact us at:
 					</p>
 					<a
-						href="mailto:quicktalog@outlook.com"
 						className="inline-block mt-2 text-lg sm:text-xl font-medium text-product-primary hover:text-product-primary-accent transition-colors duration-200"
+						href="mailto:quicktalog@outlook.com"
 					>
 						quicktalog@outlook.com
 					</a>

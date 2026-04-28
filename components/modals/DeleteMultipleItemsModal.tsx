@@ -1,7 +1,4 @@
 "use client";
-import { Catalogue } from "@quicktalog/common";
-import { useState } from "react";
-import { FiAlertTriangle, FiTrash2 } from "react-icons/fi";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +11,9 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { Catalogue } from "@quicktalog/common";
+import { useState } from "react";
+import { FiAlertTriangle, FiTrash2 } from "react-icons/fi";
 
 interface DeleteMultipleItemsModalProps {
 	isOpen: boolean;
@@ -64,7 +64,7 @@ const DeleteMultipleItemsModal = ({
 	return (
 		<Dialog open={isOpen}>
 			<DialogContent
-				className="max-w-4xl max-h-[80vh] overflow-hidden bg-product-background border border-product-border"
+				className="max-w-4xl max-h-[80dvh] overflow-hidden bg-product-background border border-product-border"
 				showClose={false}
 			>
 				<DialogHeader className="pb-4">
@@ -89,7 +89,7 @@ const DeleteMultipleItemsModal = ({
 							className={`p-4 flex items-center gap-4 w-[45%] transition-all duration-200 ${
 								selectedIds.includes(catalogue.id)
 									? "border-red-500 bg-red-50/50"
-									: "border-product-border bg-product-background hover:shadow-product-hover-shadow"
+									: "border-product-border bg-product-background hover:shadow-product-shadow-hover"
 							}`}
 							key={catalogue.id}
 						>
@@ -120,7 +120,7 @@ const DeleteMultipleItemsModal = ({
 								<div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs text-product-foreground-accent">
 									<span>
 										Updated:{" "}
-										{new Date(catalogue.updated_at).toLocaleString("en-US", {
+										{new Date(catalogue.updatedAt).toLocaleString("en-US", {
 											year: "numeric",
 											month: "short",
 											day: "numeric",
@@ -128,7 +128,7 @@ const DeleteMultipleItemsModal = ({
 									</span>
 									<span>
 										Created:{" "}
-										{new Date(catalogue.created_at).toLocaleString("en-US", {
+										{new Date(catalogue.createdAt).toLocaleString("en-US", {
 											year: "numeric",
 											month: "short",
 											day: "numeric",

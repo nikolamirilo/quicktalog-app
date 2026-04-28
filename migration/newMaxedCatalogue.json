@@ -1,0 +1,363 @@
+{
+	"idx": 0,
+	"id": "69d0d213-a2bd-4287-954d-d676fce2bf66",
+	"name": "new-catalogue",
+	"logo": "https://utfs.io/f/pIIoTGxw4myjNGUrrEHyaTEQVYnBDjUe5pl4Afk2MbKwo9t8",
+	"heading": "<h1 class=\"text-3xl md:text-4xl lg:text-5xl font-heading text-heading drop-shadow-sm mb-4 text-center break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto\" data-size=\"large\"><b>Todays </b>Menu</h1>",
+	"status": "active",
+	"source": "builder",
+	"language": "eng",
+	"currency": "EUR",
+	"business_type": "cafe",
+	"tags": [],
+	"content": [
+		{
+			"id": "d2e7ce7b-ca84-46a6-bc99-8eb7a838bc1a",
+			"type": "text",
+			"order": 0,
+			"content": "<div style=\"text-align: center;\"><span style=\"font-family: var(--font-inter); font-size: 1.125rem;\">At Spartan, we make food that matters! We’re not just a fast food chain – we’re about flavors that win you over and standards that set the bar high. We started small, but now we have over 60 locations where tradition meets modernity. And yes, we’re champions at rotisserie meat – every dish has that wow factor that makes you come back for more. Spartan isn’t just a name – it’s a team of people who love great food. Come join us for a legendary meal!</span></div><div style=\"text-align: center;\"><span style=\"font-family: var(--font-inter); font-size: 1.125rem;\"><br></span></div><p></p>"
+		},
+		{
+			"id": "2fd528fa-5b77-4400-8b60-1c8c2d9d7742",
+			"name": "Breakfast",
+			"type": "category",
+			"items": [
+				{
+					"id": "ec9cae36-b50a-46fb-90b0-e9587ca119b5",
+					"name": "Pancakes",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 0,
+					"price": 5.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Fluffy pancakes served with a generous drizzle of rich maple syrup, topped with fresh strawberries and a dollop of whipped cream for the perfect sweet start to your day."
+				},
+				{
+					"id": "960579be-6dc5-4b5c-865a-c4871bd5b308",
+					"name": "Omelette",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 1,
+					"price": 7.49,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "A fluffy three-egg omelette packed with your choice of fillings, including sautéed mushrooms, fresh spinach, diced tomatoes, and melted cheese, served with a side of crispy hash browns."
+				},
+				{
+					"id": "85e2cf75-88f1-42a7-9067-27fd71de12f5",
+					"name": "French Toast",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 2,
+					"price": 6.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Thick slices of bread soaked in a creamy custard, griddled to golden perfection, and served with a sprinkle of powdered sugar and fresh berries for a delightful morning treat."
+				},
+				{
+					"id": "1bbbbf9c-b8eb-4367-bbcc-2026f4e5d7fa",
+					"name": "Greek Yogurt with Honey and Berries",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 3,
+					"price": 10.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Creamy Greek yogurt topped with fresh mixed berries and a drizzle of natural honey."
+				}
+			],
+			"order": 1,
+			"layout": "variant_1"
+		},
+		{
+			"id": "8763ba74-c914-4857-b7a3-bafa747c5868",
+			"name": "Lunch",
+			"type": "category",
+			"items": [
+				{
+					"id": "424c4e10-661b-47c5-9ce9-9735714b21fe",
+					"name": "Caesar Salad",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 0,
+					"price": 8.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Crisp romaine lettuce tossed in our house-made Caesar dressing, topped with crunchy croutons and shaved Parmesan cheese, offering a classic taste that never goes out of style."
+				},
+				{
+					"id": "f5c15b8f-7761-4244-ba5e-37c79a6b78c4",
+					"name": "Grilled Chicken Sandwich",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 1,
+					"price": 9.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Juicy grilled chicken breast topped with fresh lettuce, ripe tomato, and a creamy garlic aioli, served on a toasted bun for a mouthwatering lunch experience."
+				},
+				{
+					"id": "b2cb46e2-34c8-4226-928b-30a263fe3365",
+					"name": "Cheeseburger",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 2,
+					"price": 10.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "A hearty beef patty grilled to perfection, topped with melted cheddar cheese, crisp lettuce, tomato, and our signature sauce, served on a toasted sesame seed bun with fries."
+				}
+			],
+			"order": 2,
+			"layout": "variant_2"
+		},
+		{
+			"id": "4cbff2b1-2d1f-4497-aebf-fb22c90d4f96",
+			"name": "Snacks",
+			"type": "category",
+			"items": [
+				{
+					"id": "f6a1a076-b097-46bf-a4f0-b7f8fb54269e",
+					"name": "Nachos",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 0,
+					"price": 6.49,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Crispy tortilla chips generously topped with melted cheese, jalapeños, and a dollop of sour cream, served with fresh salsa on the side for dipping."
+				},
+				{
+					"id": "2919e4f5-7c7a-4a6d-a71f-5905029018ec",
+					"name": "Spring Rolls",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 1,
+					"price": 5.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Crispy and light spring rolls filled with a colorful mix of fresh vegetables and served with a sweet chili dipping sauce for a delightful crunch."
+				}
+			],
+			"order": 3,
+			"layout": "variant_4"
+		},
+		{
+			"id": "6d70928b-5878-42e6-8091-25e8c041203b",
+			"name": "Desserts",
+			"type": "category",
+			"items": [
+				{
+					"id": "2fa49b1a-570e-4656-9172-d97cfbeee33f",
+					"name": "Chocolate Cake",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 0,
+					"price": 4.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Decadent layers of rich chocolate cake filled with creamy chocolate ganache, topped with chocolate frosting and chocolate shavings."
+				},
+				{
+					"id": "653f454a-dd2d-46d6-9f92-3b1617a50736",
+					"name": "Cheesecake",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 1,
+					"price": 5.49,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Creamy cheesecake on a buttery graham cracker crust, drizzled with your choice of strawberry or caramel sauce for added sweetness."
+				},
+				{
+					"id": "1cb972fa-13fb-43ca-a10d-f75ee622a170",
+					"name": "Tiramisu",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 2,
+					"price": 5.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "A delightful Italian dessert made with layers of coffee-soaked ladyfingers and creamy mascarpone cheese, dusted with cocoa powder."
+				},
+				{
+					"id": "d9e2fd37-7cd9-47fe-9d30-af34154dbc2a",
+					"name": "Brownie Sundae",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 3,
+					"price": 5.49,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Rich chocolate brownie topped with a scoop of vanilla ice cream, drizzled with chocolate sauce, and garnished with nuts and whipped cream."
+				}
+			],
+			"order": 4,
+			"layout": "variant_1"
+		},
+		{
+			"id": "497791a0-a066-4c54-9b66-4b8ae5611695",
+			"name": "Drinks",
+			"type": "container",
+			"items": [
+				{
+					"id": "41768e2b-03ea-4235-a004-5a74e3d20245",
+					"name": "Fresh Orange Juice",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 0,
+					"price": 3.99,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "Freshly squeezed orange juice, packed with vitamins and natural sweetness."
+				},
+				{
+					"id": "49af8663-0cc4-4653-bf8b-a151fdbde96b",
+					"name": "Espresso",
+					"image": "https://vgrutvaw2q.ufs.sh/f/X7AUkOrs4vhbBxZSgiECZj8HKxV2bkXdTwltoU3hRaDYAm9q",
+					"order": 1,
+					"price": 2.49,
+					"isFree": false,
+					"discount": {
+						"isOnDiscount": false,
+						"discountedPrice": 0,
+						"discountPercentage": 0
+					},
+					"description": "A strong and aromatic shot of premium Italian espresso."
+				}
+			],
+			"order": 5,
+			"layout": "variant_3"
+		}
+	],
+	"legal": {
+		"address": "Belgrade, Serbia",
+		"legalName": "Test doo",
+		"privacyPolicy": "policy.com",
+		"termsAndConditions": "terms.com"
+	},
+	"appearance": {
+		"style": {
+			"shadow": "low",
+			"fontFamily": "inter",
+			"borderRadius": 12,
+			"contentFontSize": "medium"
+		},
+		"theme": {
+			"name": "theme-monochrome",
+			"type": "standard"
+		},
+		"overlay": {
+			"icon": "",
+			"isEnabled": false
+		}
+	},
+	"contact": {
+		"email": "nikolamirilo@gmail.com",
+		"phone": "+126879126891289",
+		"socials": [
+			"instagram.com/test",
+			"youtube.com/test",
+			"tiktok.com/test",
+			"facebook.com/test",
+			"google.com/test"
+		],
+		"website": "https://quicktalog.atlassian.net"
+	},
+	"header": {
+		"cta": {
+			"url": "test.com",
+			"label": "Click me",
+			"isEnabled": true
+		},
+		"type": "custom",
+		"emailCta": true,
+		"logoSize": {
+			"width": 66,
+			"height": 100
+		},
+		"phoneCta": true
+	},
+	"footer": {
+		"cta": {
+			"url": "test2.com",
+			"label": "Test2",
+			"isEnabled": true
+		},
+		"type": "custom",
+		"logoSize": {
+			"width": 100,
+			"height": 100
+		},
+		"newsletter": true,
+		"showPartners": true
+	},
+	"partners": [
+		{
+			"url": "https://wolt.com",
+			"name": "Wolt",
+			"description": "Gold Partner"
+		},
+		{
+			"url": "https://glovo.com",
+			"name": "Glovo",
+			"description": "Silver patrtner"
+		},
+		{
+			"url": "misterd.com",
+			"name": "Mister D",
+			"description": "Bronze partner"
+		}
+	],
+	"created_at": "2026-04-13T09:04:54.831304+00:00",
+	"updated_at": "2026-04-13T09:09:12.308+00:00",
+	"created_by": "user_31vwAwT3fmjpERqhigzt88U79Cv",
+	"metadata": {
+		"icon": "https://utfs.io/f/pIIoTGxw4myjO0HjCG8p8SX5TF0aGo3yrH6bgWDOqsKMfulA",
+		"title": "My Csatalogue",
+		"description": "Fluffy pancakes served with a generous drizzle of rich maple syrup, topped with fresh strawberries and a dollop of whipped cream for the perfect sweet"
+	}
+}

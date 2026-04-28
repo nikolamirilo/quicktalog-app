@@ -18,7 +18,6 @@ interface InformModalProps {
 	confirmText?: string;
 	cancelText?: string;
 	loading?: boolean;
-	type?: "default" | "consent";
 	image?: string;
 	imageAlt?: string;
 	icon?: React.ReactElement;
@@ -33,7 +32,6 @@ export default function InformModal({
 	confirmText = "Confirm",
 	cancelText = "Cancel",
 	loading = false,
-	type = "default",
 	image,
 	imageAlt = "Screenshot",
 	icon,
@@ -45,7 +43,7 @@ export default function InformModal({
 			}}
 			open={isOpen}
 		>
-			<AlertDialogContent className="text-product-foreground w-[95vw] max-w-lg mx-auto p-6 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl">
+			<AlertDialogContent className="font-lora text-product-foreground w-[95vw] max-w-lg mx-auto p-6 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl">
 				<AlertDialogHeader className="space-y-3">
 					<AlertDialogTitle className="text-xl font-bold text-product-foreground font-heading mb-3">
 						<div className="flex flex-row items-center justify-start gap-2">
@@ -75,7 +73,7 @@ export default function InformModal({
 						</AlertDialogCancel>
 					)}
 					<AlertDialogAction
-						className="bg-product-primary text-product-foreground hover:bg-product-primary-accent border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold"
+						className="bg-product-primary text-product-foreground border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold"
 						disabled={loading}
 						onClick={onConfirm}
 					>

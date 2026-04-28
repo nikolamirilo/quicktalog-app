@@ -1,0 +1,24 @@
+import { cn } from "@/helpers/client";
+
+interface CardTitleProps {
+	name: string;
+	slugId: string;
+	className?: string;
+}
+
+const CardTitle = ({ name, slugId, className }: CardTitleProps) => {
+	return (
+		<h3
+			className={cn(
+				"font-heading tracking-heading text-catalogue-card-heading leading-tight truncate",
+				className,
+			)}
+			id={`item-title-${slugId}`}
+			style={{ fontSize: "var(--title-font-size)" }}
+		>
+			{name}
+		</h3>
+	);
+};
+
+export default CardTitle;

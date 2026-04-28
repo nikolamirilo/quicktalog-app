@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 // Site-wide metadata
 export const siteMetadata = {
-	title: "Quicktalog - Free Online Catalog Maker",
+	title: "Quicktalog - Free Online Catalogue Maker",
 	description:
 		"Create stunning digital catalogs in minutes with our free online catalog maker. Perfect for restaurants, salons, gyms, retail & more. No code required, mobile-friendly, QR code sharing.",
 	keywords: KEYWORDS,
@@ -41,13 +41,13 @@ export const pageMetadata = {
 		url: "https://www.quicktalog.app/pricing",
 	},
 	contact: {
-		title: "Contact Us - Get Help with Your Digital Catalog | Quicktalog",
+		title: "Contact Us - Get Help with Your Digital Catalogue| Quicktalog",
 		description:
 			"Need help creating your digital catalog? Contact our support team for assistance with setup, customization, and getting the most out of Quicktalog.",
 		url: "https://www.quicktalog.app/contact",
 	},
 	demo: {
-		title: "Try the Demo - Test Our Catalog Maker | Quicktalog",
+		title: "Try the Demo - Test Our CatalogueMaker | Quicktalog",
 		description:
 			"Try our free online catalog maker in the demo. Create a sample catalog and see how easy it is to build professional digital catalogs.",
 		url: "https://www.quicktalog.app/demo",
@@ -95,7 +95,6 @@ export function generatePageMetadata(
 	page: keyof typeof pageMetadata,
 ): Metadata {
 	const pageData = pageMetadata[page];
-
 	return {
 		title: pageData.title,
 		description: pageData.description,
@@ -129,16 +128,22 @@ export function generateCatalogueMetadata(
 	itemTitle: string,
 	itemSubtitle: string,
 	name: string,
+	icon: string,
+	opengraphImage: string,
 ): Metadata {
 	const title = `${itemTitle} | Quicktalog`;
 	const description =
 		itemSubtitle ||
-		`Explore ${itemTitle}'s services and offerings in this interactive digital catalogue.`;
+		`Explore ${name}'s services and offerings in this interactive digital catalogue.`;
 	return {
 		title,
 		description,
 		generator: "Quicktalog",
 		applicationName: "Quicktalog",
+		icons: {
+			icon: icon,
+			apple: icon,
+		},
 		keywords: [...KEYWORDS, itemTitle],
 		authors: [{ name: "Quicktalog" }],
 		creator: "Quicktalog",
@@ -152,13 +157,13 @@ export function generateCatalogueMetadata(
 			description,
 			url: `https://www.quicktalog.app/catalogues/${name}`,
 			type: "website",
-			images: ["/opengraph-image.png"],
+			images: [opengraphImage],
 		},
 		twitter: {
 			card: "summary_large_image",
 			title,
 			description,
-			images: ["/twitter-image.png"],
+			images: [opengraphImage],
 			creator: "Quicktalog",
 			site: `https://www.quicktalog.app/catalogues/${name}`,
 		},

@@ -12,7 +12,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 		const baseClasses =
 			"text-product-foreground backdrop-blur-sm rounded-2xl shadow-product-shadow border border-product-border";
 		const defaultBackground =
-			"bg-gradient-to-br from-product-background to-hero-product-background";
+			"bg-gradient-to-br from-product-background to-product-background-hero";
 		const formBackground = "bg-product-background";
 
 		return (

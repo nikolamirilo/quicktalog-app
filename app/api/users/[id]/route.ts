@@ -1,127 +1,140 @@
-import { tiers, UserData } from "@quicktalog/common";
-import { NextRequest, NextResponse } from "next/server";
 import { endOfMonth, startOfMonth } from "@/helpers/client";
-import { createClient } from "@/utils/supabase/server";
+import { drizzleClient } from "@/utils/drizzle";
+import { schema, tiers } from "@quicktalog/common";
+import { and, count, eq, gte, lt } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+
+const { analytics, catalogues, ocr, prompts, users } = schema;
 
 export async function GET(
 	request: NextRequest,
 	{ params }: { params: Promise<{ id: string }> },
 ) {
 	try {
-		const supabase = await createClient();
 		const { id } = await params;
 
 		// Fetch user data
-		const { data: user, error: userError } = await supabase
-			.from("users")
-			.select("*")
-			.eq("id", id)
-			.single();
+		const user = await drizzleClient.query.users.findFirst({
+			where: eq(users.id, id),
+		});
 
-		if (userError) {
-			console.error(
-				"Database Error: Failed to fetch user from Supabase.",
-				userError,
-			);
-			return NextResponse.json(
-				{ error: "Failed to retrieve user data" },
-				{ status: 500 },
-			);
-		}
 		if (!user) {
 			console.warn(`User data not found for Clerk ID: ${id}.`);
 			return NextResponse.json({ error: "User not found" }, { status: 404 });
 		}
 
+		const planId = user.planId;
 		const pricingPlan = tiers.find((tier) =>
-			Object.values(tier.priceId).includes(user.plan_id),
+			planId ? Object.values(tier.priceId).includes(planId) : false,
 		);
+
+		if (!pricingPlan) {
+			console.warn(`Pricing plan not found for Plan ID: ${planId}.`);
+			return NextResponse.json(
+				{ error: "Pricing plan not found" },
+				{ status: 500 },
+			);
+		}
+
 		const nextPlan =
 			tiers
 				.filter((item) => item.type === "standard")
 				.find(
 					(item) =>
 						item.features.items_per_catalogue >
-						pricingPlan.features.items_per_catalogue,
+							pricingPlan.features.items_per_catalogue && item.id > 1,
 				) || pricingPlan;
 
 		const billingPeriod = Object.entries(pricingPlan.priceId).find(
-			([_, id]) => id === user.plan_id,
+			([_, id]) => id === planId,
 		)?.[0] as "month" | "year";
 
-		// Fetch usage data
-		const { data: cataloguesUsage, error: cataloguesUsageError } =
-			await supabase.from("catalogues").select("count").eq("created_by", id);
+		try {
+			// Fetch usage data parallel
+			const [cataloguesUsage, trafficUsage, ocrUsage, promptsUsage] =
+				await Promise.all([
+					// Catalogues count
+					drizzleClient
+						.select({ count: count() })
+						.from(catalogues)
+						.where(eq(catalogues.createdBy, id)),
 
-		const { data: trafficUsage, error: trafficUsageError } = await supabase
-			.from("analytics")
-			.select("pageview_count, unique_visitors")
-			.eq("user_id", id)
-			.gte("date", startOfMonth.toISOString())
-			.lt("date", endOfMonth.toISOString());
+					// Traffic analytics
+					drizzleClient
+						.select({
+							pageviewCount: analytics.pageviewCount,
+							uniqueVisitors: analytics.uniqueVisitors,
+						})
+						.from(analytics)
+						.where(
+							and(
+								eq(analytics.userId, id),
+								gte(analytics.date, startOfMonth.toISOString()),
+								lt(analytics.date, endOfMonth.toISOString()),
+							),
+						),
 
-		const { data: ocrUsage, error: ocrError } = await supabase
-			.from("ocr")
-			.select("count")
-			.eq("user_id", id)
-			.gte("datetime", startOfMonth.toISOString())
-			.lt("datetime", endOfMonth.toISOString())
-			.single();
+					// OCR count
+					drizzleClient
+						.select({ count: count() })
+						.from(ocr)
+						.where(
+							and(
+								eq(ocr.userId, id),
+								gte(ocr.datetime, startOfMonth.toISOString()),
+								lt(ocr.datetime, endOfMonth.toISOString()),
+							),
+						),
 
-		const { data: promptsUsage, error: promptsError } = await supabase
-			.from("prompts")
-			.select("count")
-			.eq("user_id", id)
-			.gte("datetime", startOfMonth.toISOString())
-			.lt("datetime", endOfMonth.toISOString())
-			.single();
+					// Prompts count
+					drizzleClient
+						.select({ count: count() })
+						.from(prompts)
+						.where(
+							and(
+								eq(prompts.userId, id),
+								gte(prompts.datetime, startOfMonth.toISOString()),
+								lt(prompts.datetime, endOfMonth.toISOString()),
+							),
+						),
+				]);
 
-		// Check for any usage query errors
-		if (cataloguesUsageError || trafficUsageError || ocrError || promptsError) {
-			console.error("Usage fetch errors:", {
-				cataloguesUsageError,
-				trafficUsageError,
-				ocrError,
-				promptsError,
-			});
+			const traffic = trafficUsage.reduce(
+				(acc, curr) => ({
+					pageview_count: acc.pageview_count + (curr.pageviewCount || 0),
+					unique_visitors: acc.unique_visitors + (curr.uniqueVisitors || 0),
+				}),
+				{ pageview_count: 0, unique_visitors: 0 },
+			);
+
+			const { cookiePreferences, ...adjustedUser } = user;
+
+			const userData = {
+				...adjustedUser,
+				currentPlan: {
+					...pricingPlan,
+					billing_period: billingPeriod || "year",
+				},
+				nextPlan: nextPlan || tiers[1],
+				usage: {
+					traffic,
+					ocr: ocrUsage[0]?.count ?? 0,
+					prompts: promptsUsage[0]?.count ?? 0,
+					catalogues: cataloguesUsage[0]?.count ?? 0,
+				},
+			};
+
+			return NextResponse.json(userData, { status: 200 });
+		} catch (error) {
+			console.error("Usage fetch errors:", error);
 			return NextResponse.json(
 				{
 					error: "Failed to fetch usage data",
-					details: {
-						cataloguesUsageError: cataloguesUsageError?.message,
-						trafficUsageError: trafficUsageError?.message,
-						ocrError: ocrError?.message,
-						promptsError: promptsError?.message,
-					},
+					details: error instanceof Error ? error.message : "Unknown error",
 				},
 				{ status: 500 },
 			);
 		}
-
-		// Aggregate traffic usage
-		const traffic = trafficUsage?.reduce(
-			(acc, curr) => ({
-				pageview_count: acc.pageview_count + (curr.pageview_count || 0),
-				unique_visitors: acc.unique_visitors + (curr.unique_visitors || 0),
-			}),
-			{ pageview_count: 0, unique_visitors: 0 },
-		) || { pageview_count: 0, unique_visitors: 0 };
-
-		const { cookie_preferences, created_at, customer_id, ...adjustedUser } =
-			user;
-		const userData: UserData = {
-			...adjustedUser,
-			currentPlan: { ...pricingPlan, billing_period: billingPeriod || "year" },
-			nextPlan: nextPlan || tiers[1],
-			usage: {
-				traffic,
-				ocr: ocrUsage?.count ?? 0,
-				prompts: promptsUsage?.count ?? 0,
-				catalogues: cataloguesUsage?.[0]?.count ?? 0,
-			},
-		};
-
-		return NextResponse.json(userData, { status: 200 });
 	} catch (error) {
 		console.error(
 			"Unexpected error in API route:",

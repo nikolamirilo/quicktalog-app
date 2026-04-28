@@ -1,4 +1,4 @@
-import { ITestimonial } from "@/types/components";
+import { ILinkItem, ISocials, ITestimonial } from "@/types/shared";
 
 export const siteDetails = {
 	siteName: "Quicktalog",
@@ -10,11 +10,9 @@ export const siteDetails = {
 	},
 	language: "en-us",
 	locale: "en-US",
-	siteLogo: `${process.env.BASE_PATH || ""}/images/logo.svg`, // or use a string for the logo e.g. "TechStartup"
-	googleAnalyticsId: "", // e.g. G-XXXXXXX,
+	siteLogo: `${process.env.BASE_PATH || ""}/images/logo.svg`,
+	googleAnalyticsId: "",
 };
-
-import { ILinkItem, ISocials } from "@/types/components";
 
 export const footerDetails: {
 	subheading: string;
@@ -72,7 +70,7 @@ export const footerDetails: {
 	},
 };
 
-import { IFAQ } from "@/types/components";
+import { IFAQ } from "@/types/shared";
 
 export const faqs: IFAQ[] = [
 	{

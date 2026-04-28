@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-
 import { FaRegCirclePlay } from "react-icons/fa6";
 import { FiHome, FiMail, FiX } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -33,16 +32,12 @@ export const NavLink = ({
 }: NavLinkProps) => {
 	const pathname = usePathname();
 	const isActive = pathname === href;
-	// All non-active buttons get yellow hover background and black text
-	const hoverClasses = !isActive
-		? "hover:bg-yellow-200 hover:text-black hover:font-bold hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] hover:border-navbar-button-hover-border"
-		: "";
 
 	return (
 		<Link href={href}>
 			<Button
+				className={`${isActive ? "font-bold !bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm hover:scale-[1.03] hover:transform" : "font-medium"} ${className}`}
 				variant="nav"
-				className={`${isActive ? "font-bold !bg-product-hover-background !text-navbar-button-active !border !border-product-primary shadow-sm hover:scale-[1.03] hover:transform" : "font-medium"} ${className}`}
 			>
 				{Icon && <Icon className="w-4 h-4" />}
 				{children}
@@ -65,14 +60,14 @@ export const MobileNavLink = ({
 			<button
 				className={`w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 ${
 					isActive
-						? "bg-product-hover-background text-product-primary border border-product-primary shadow-sm font-semibold"
-						: "hover:bg-navbar-button-hover-bg hover:text-navbar-button-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-navbar-button-hover-border hover:font-bold"
+						? "bg-product-background-hover text-product-primary border border-product-primary shadow-sm font-semibold"
+						: "hover:bg-product-nav-hover-bg hover:text-product-nav-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-product-nav-hover-border hover:font-bold"
 				}`}
 			>
 				{Icon && (
 					<Icon
-						size={18}
 						className={`${isActive ? "text-product-primary" : "text-gray-600"} sm:w-5 sm:h-5`}
+						size={18}
 					/>
 				)}
 				<span
@@ -93,13 +88,13 @@ const Navbar = () => {
 			<div className="flex items-center gap-2 sm:gap-3">
 				<Link href="/">
 					<img
-						src="/logo.svg"
 						alt="Quicktalog Logo"
-						width={160}
-						height={160}
 						className="h-[7vh] w-auto rounded-full"
-						style={{ width: "auto", height: "7vh" }}
 						fetchPriority="high"
+						height={160}
+						src="/logo.svg"
+						style={{ width: "auto", height: "7vh" }}
+						width={160}
 					/>
 				</Link>
 			</div>
@@ -122,10 +117,10 @@ const Navbar = () => {
 			<div className="lg:hidden flex items-center">
 				<button
 					aria-label="Open menu"
-					onClick={() => setMobileOpen((v) => !v)}
 					className="p-2"
+					onClick={() => setMobileOpen((v) => !v)}
 				>
-					<GiHamburgerMenu size={22} className="text-product-foreground" />
+					<GiHamburgerMenu className="text-product-foreground" size={22} />
 				</button>
 			</div>
 
@@ -151,10 +146,10 @@ const Navbar = () => {
 					</span>
 					<button
 						aria-label="Close menu"
-						onClick={() => setMobileOpen(false)}
 						className="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-colors"
+						onClick={() => setMobileOpen(false)}
 					>
-						<FiX size={20} className="text-product-foreground" />
+						<FiX className="text-product-foreground" size={20} />
 					</button>
 				</div>
 

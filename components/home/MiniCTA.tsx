@@ -1,9 +1,9 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { BsFillCheckCircleFill } from "react-icons/bs";
 import { FiArrowRight } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
 
 const MiniCTA: React.FC = () => {
 	return (
@@ -50,7 +50,7 @@ const MiniCTA: React.FC = () => {
 				<div className="flex-shrink-0 w-full sm:w-auto">
 					<Button
 						asChild
-						className="w-full sm:w-auto bg-product-primary hover:bg-product-primary-accent text-product-secondary px-6 py-3 rounded-lg font-bold transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md"
+						className="w-full sm:w-auto bg-product-primary  text-product-secondary px-6 py-3 rounded-lg font-bold transition-all duration-200 hover:scale-105 shadow-sm hover:shadow-md"
 					>
 						<Link
 							className="flex items-center  justify-center gap-2"

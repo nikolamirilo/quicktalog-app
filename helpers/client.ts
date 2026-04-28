@@ -1,7 +1,6 @@
-import { Catalogue, CatalogueFormData, PricingPlan } from "@quicktalog/common";
+import { PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ContactItem, FooterData, HeaderData } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -16,14 +15,6 @@ const now = new Date();
 export const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 export const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-export const getContactValue = (
-	contact: ContactItem[] | undefined,
-	type: string,
-): string | undefined => {
-	if (!contact || !Array.isArray(contact)) return undefined;
-	return contact.find((c) => c.type === type)?.value;
-};
-
 export function disableConsoleInProduction() {
 	if (typeof window === "undefined") return;
 
@@ -33,8 +24,6 @@ export function disableConsoleInProduction() {
 		console.debug = () => {};
 		console.info = () => {};
 		console.warn = () => {};
-		// Optionally preserve console.error for critical errors
-		// console.error = () => {};
 	}
 }
 
@@ -86,32 +75,6 @@ export function cleanValue(value: any) {
 
 	return value;
 }
-export const buildHeaderData = (item: Catalogue): HeaderData => ({
-	email: getContactValue(item.contact, "email") || "",
-	phone: getContactValue(item.contact, "phone") || "",
-	ctaNavbar: item.configuration?.ctaNavbar,
-});
-
-export const buildFooterData = (item: Catalogue): FooterData => ({
-	name: item.name || "",
-	partners: item.partners,
-	email: getContactValue(item.contact, "email"),
-	phone: getContactValue(item.contact, "phone"),
-	socialLinks: {
-		instagram: getContactValue(item.contact, "instagram"),
-		facebook: getContactValue(item.contact, "facebook"),
-		twitter: getContactValue(item.contact, "twitter"),
-		website: getContactValue(item.contact, "website"),
-		tiktok: getContactValue(item.contact, "tiktok"),
-	},
-	ctaFooter: item.configuration?.ctaFooter,
-	newsletter: item.configuration?.newsletter,
-	legal: item.legal,
-	catalogue: {
-		id: item.id,
-		owner_id: item.created_by,
-	},
-});
 
 export function getCurrencySymbol(code: string, locale = "en-US") {
 	return (0)
@@ -196,7 +159,7 @@ export const handleDownloadPDF = async (
 	}
 };
 
-export const handleDownloadPng = (catalogueSlug: string) => {
+export const handleDownloadPng = async (catalogueSlug: string) => {
 	const svg = document.querySelector("#qr-code svg");
 	if (!svg) {
 		console.error("QR SVG not found!");
@@ -260,7 +223,7 @@ interface Step1Validation {
 
 interface StepValidationOptions {
 	step: number;
-	formData: CatalogueFormData;
+	formData: any;
 	requiredFields?: {
 		step1?: Array<keyof Step1Validation>;
 	};
@@ -287,7 +250,7 @@ export const validateStepHelper = (
 			const value = formData[field];
 			if (typeof value === "string" && !value.trim()) {
 				const fieldLabels: { [key: string]: string } = {
-					name: "Service catalogue name",
+					name: "Catalogue name",
 					title: "Catalogue Heading",
 					currency: "Currency",
 				};
@@ -356,3 +319,75 @@ export const validateStepHelper = (
 		step3Error,
 	};
 };
+
+export function extractDomain(url: string): string | null {
+	try {
+		let cleanUrl = url.trim();
+		if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+			cleanUrl = `https://${cleanUrl}`;
+		}
+		const parsedUrl = new URL(cleanUrl);
+		return parsedUrl.hostname;
+	} catch {
+		return null; // invalid URL
+	}
+}
+
+export function htmlToText(html: string): string {
+	if (!html) return "";
+
+	const blockTags = new Set([
+		"p",
+		"div",
+		"br",
+		"hr",
+		"section",
+		"article",
+		"header",
+		"footer",
+		"aside",
+		"li",
+		"ul",
+		"ol",
+		"table",
+		"tr",
+		"td",
+		"th",
+		"h1",
+		"h2",
+		"h3",
+		"h4",
+		"h5",
+		"h6",
+	]);
+
+	return (
+		html
+			// Replace block-level closing/self-closing tags with newlines
+			.replace(
+				/<\/(p|div|section|article|header|footer|aside|li|ul|ol|table|tr|td|th|h[1-6])>/gi,
+				"\n",
+			)
+			.replace(/<(br|hr)\s*\/?>/gi, "\n")
+			// Strip all remaining tags
+			.replace(/<[^>]+>/g, "")
+			// Decode common HTML entities
+			.replace(/&nbsp;/g, " ")
+			.replace(/&amp;/g, "&")
+			.replace(/&lt;/g, "<")
+			.replace(/&gt;/g, ">")
+			.replace(/&quot;/g, '"')
+			.replace(/&#39;/g, "'")
+			// Normalize whitespace
+			.replace(/[ \t]+/g, " ")
+			.replace(/\n{3,}/g, "\n\n")
+			.trim()
+	);
+}
+
+export function snakeToTitleCase(str: string) {
+	return str
+		.split("_")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");
+}

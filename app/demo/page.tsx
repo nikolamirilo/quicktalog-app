@@ -1,133 +1,87 @@
-// @ts-nocheck
 "use client";
-import AppearanceOptions from "@/components/common/AppearanceOptions";
-import Overlay from "@/components/common/Overlay";
-import Footer from "@/components/navigation/Footer";
-import Navbar from "@/components/navigation/Navbar";
-import CatalogueContent from "@/components/sections/CatalogueContent";
-import { useMainContext } from "@/context/MainContext";
-import data from "../../showcase.json";
 
-const page: React.FC = () => {
-	const { theme } = useMainContext();
+import GetStartedCTA from "@/components/general/GetStartedCTA";
+import SectionWrapper from "@/components/home/SectionWrapper";
+import { Navbar } from "@/components/navigation";
+import { useState } from "react";
 
-	try {
-		if (!data) {
-			throw new Error("Catalogue data is not available");
-		}
+const Page = () => {
+	const [isLoaded, setIsLoaded] = useState(false);
 
-		if (!data.services || typeof data.services !== "object") {
-			throw new Error("Invalid services data structure");
-		}
-
-		return (
-			<>
-				<Navbar />
-				<div
-					className={`min-h-screen text-text bg-background font-lora ${theme ? theme : "theme-luxury"}`}
+	return (
+		<div className="min-h-[90vh] text-text bg-background font-lora">
+			<Navbar />
+			<main className="mt-24">
+				<SectionWrapper
+					description="Walk through the product at your own pace. Click around, explore the flow, and see how it fits what you are building."
+					id="demo"
+					title="Discover It in Action"
 				>
-					<main>
-						<section className="w-full pt-36 px-4 text-center flex flex-col items-center bg-transparent">
-							<h1 className="text-4xl sm:text-5xl md:text-6xl text-heading  max-w-[800px] font-lora font-semibold mb-4">
-								Welcome to Quicktalog Demo!
-							</h1>
-
-							<p className="text-lg sm:text-xl text-heading max-w-2xl font-lora leading-relaxed mb-6">
-								Customize the look and feel by switching between different
-								layouts and visual themes. Whether you prefer bold and modern or
-								soft and elegant, explore how our Catalogue adapts to match your
-								brand's unique vibe.
-							</p>
-						</section>
-
-						<div className="flex flex-col justify-center items-center w-full mt-6">
-							<AppearanceOptions />
-						</div>
-						<Overlay
-							emoji={
-								theme === "theme-advent-1"
-									? "❄️"
-									: theme === "theme-advent-2"
-										? "🎁"
-										: ""
-							}
-						/>
-
-						{data && (
-							<CatalogueContent
-								currency={data.currency}
-								data={data.services}
-								theme={theme}
-								type="demo"
-							/>
-						)}
-
-						{/* Fixed Bottom Create Catalogue CTA */}
-						<div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-product-background border-t border-product-border">
-							<div className="max-w-4xl mx-auto">
-								<div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-									<div className="text-center sm:text-left">
-										<p className="text-sm text-product-foreground font-medium">
-											Ready to create your own catalogue?
-										</p>
+					<div className="px-4 sm:px-6 lg:px-8 pb-20 sm:pb-12">
+						<div className="max-w-6xl mx-auto">
+							<div className="rounded-2xl sm:rounded-3xl overflow-hidden relative aspect-video">
+								{/* Skeleton — always in DOM, fades out once iframe is ready */}
+								<style>{`@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
+								<div
+									className="absolute inset-0 z-10 pointer-events-none flex flex-col overflow-hidden bg-gray-100"
+									style={{
+										opacity: isLoaded ? 0 : 1,
+										transition: "opacity 500ms",
+									}}
+								>
+									{/* Browser-chrome toolbar */}
+									<div className="flex shrink-0 items-center gap-2 border-b border-gray-200 bg-white/70 px-4 py-3">
+										<div className="flex gap-1.5">
+											<div className="h-3 w-3 animate-pulse rounded-full bg-gray-300" />
+											<div className="h-3 w-3 animate-pulse rounded-full bg-gray-300" />
+											<div className="h-3 w-3 animate-pulse rounded-full bg-gray-300" />
+										</div>
+										<div className="mx-3 h-5 flex-1 animate-pulse rounded-full bg-gray-200" />
+										<div className="h-5 w-16 animate-pulse rounded bg-gray-200" />
 									</div>
-									<div className="flex gap-2">
-										<a
-											className="bg-product-primary text-product-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary-accent transition-colors duration-200 shadow-product-shadow"
-											href="/auth?mode=signup"
-										>
-											Get Started
-										</a>
-										<a
-											className="text-product-secondary border border-product-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary hover:text-product-foreground transition-all duration-200"
-											href="/pricing"
-										>
-											Pricing
-										</a>
+
+									{/* Main shimmer area */}
+									<div className="relative flex-1 overflow-hidden">
+										<div
+											className="absolute inset-0"
+											style={{
+												background:
+													"linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%)",
+												backgroundSize: "200% 100%",
+												animation: "shimmer 1.8s ease-in-out infinite",
+											}}
+										/>
+										{/* Centered spinner */}
+										<div className="absolute inset-0 flex items-center justify-center">
+											<div className="h-14 w-14 animate-spin rounded-full border-4 border-gray-300 border-t-gray-500" />
+										</div>
+									</div>
+
+									{/* Demo-player footer */}
+									<div className="flex shrink-0 items-center gap-3 border-t border-gray-200 bg-white/70 px-4 py-3">
+										<div className="h-7 w-7 animate-pulse rounded-full bg-gray-200" />
+										<div className="h-1.5 flex-1 animate-pulse rounded-full bg-gray-200" />
+										<div className="h-5 w-10 animate-pulse rounded bg-gray-200" />
 									</div>
 								</div>
+
+								<iframe
+									allowFullScreen
+									className="absolute inset-0 w-full h-full border-0 transition-opacity duration-500"
+									onLoad={() => setTimeout(() => setIsLoaded(true), 800)}
+									src="https://app.usehexus.com/embed/254bfe62-3496-414e-93e8-5447b8fa54a9"
+									style={{ opacity: isLoaded ? 1 : 0 }}
+									title="Quicktalog interactive demo"
+								/>
 							</div>
 						</div>
+					</div>
+				</SectionWrapper>
 
-						<Footer />
-					</main>
-				</div>
-			</>
-		);
-	} catch (error) {
-		console.error("Demo page error:", error);
-
-		return (
-			<>
-				<Navbar />
-				<div className="min-h-screen text-text bg-background font-lora theme-luxury">
-					<main>
-						<section className="w-full bg-background pt-36 px-4 text-center flex flex-col items-center">
-							<div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-2xl">
-								<h1 className="text-2xl font-bold text-red-800 mb-4">
-									Demo Error
-								</h1>
-								<p className="text-red-700 mb-4">
-									{error instanceof Error
-										? error.message
-										: "An unexpected error occurred while loading the demo."}
-								</p>
-								<div className="text-sm text-red-600">
-									<p>Please check:</p>
-									<ul className="list-disc list-inside mt-2">
-										<li>Catalogue data file is valid</li>
-										<li>Services data structure is correct</li>
-										<li>Try refreshing the page</li>
-									</ul>
-								</div>
-							</div>
-						</section>
-						<Footer />
-					</main>
-				</div>
-			</>
-		);
-	}
+				<GetStartedCTA />
+			</main>
+		</div>
+	);
 };
 
-export default page;
+export default Page;

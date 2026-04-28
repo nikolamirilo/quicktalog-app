@@ -1,7 +1,5 @@
 "use client";
 
-import { generateUniqueSlug } from "@quicktalog/common";
-import { AlertCircle, CheckCircle, Link2 } from "lucide-react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -13,6 +11,8 @@ import {
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
+import { generateUniqueSlug } from "@quicktalog/common";
+import { AlertCircle, CheckCircle, Link2 } from "lucide-react";
 
 interface InputModalProps {
 	isOpen: boolean;
@@ -149,7 +149,7 @@ export default function InputModal({
 						</AlertDialogCancel>
 					)}
 					<AlertDialogAction
-						className="bg-product-primary text-product-foreground hover:bg-product-primary-accent border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+						className="bg-product-primary text-product-foreground  border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
 						disabled={loading || !isValid}
 						onClick={handleConfirm}
 					>

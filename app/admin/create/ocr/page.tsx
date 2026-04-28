@@ -1,9 +1,9 @@
-import { UserData } from "@quicktalog/common";
-import { getUserData } from "@/actions/users";
-import OCRBuilder from "@/components/admin/create/OCRBuilder";
+import OCRBuilder from "@/components/create/OCRBuilder";
 import LimitsModal from "@/components/modals/LimitsModal";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
+import { getUserData } from "@/server_actions/users";
+import { tiers, UserData } from "@quicktalog/common";
 
 export const dynamic = "force-dynamic";
 export default async function page() {
@@ -17,7 +17,7 @@ export default async function page() {
 		return (
 			<div className="product font-lora min-h-screen">
 				<Navbar />
-				<div className="w-full min-h-screen px-2 md:px-8 pt-24 pb-12 bg-gradient-to-br from-product-background to-hero-product-background animate-fade-in">
+				<div className="w-full min-h-screen px-2 md:px-8 pt-24 pb-12 bg-gradient-to-br from-product-background to-product-background-hero animate-fade-in">
 					<div className="container mx-auto flex flex-col px-4 gap-8">
 						<OCRBuilder
 							api_url={process.env.BACKEND_BASE_URL!}
@@ -33,7 +33,11 @@ export default async function page() {
 			<LimitsModal
 				currentPlan={userData.currentPlan}
 				isOpen={true}
-				requiredPlan={userData.nextPlan}
+				requiredPlan={
+					userData.nextPlan.features.ocr_ai_import === 0
+						? tiers.find((item) => item.features.ocr_ai_import > 0)
+						: userData.nextPlan
+				}
 				type="ocr"
 			/>
 		);

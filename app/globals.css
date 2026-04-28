@@ -5,21 +5,30 @@
 @layer theme, base, clerk, components, utilities;
 
 *,
-button:hover {
+button,
+button:hover,
+button:focus {
 	-webkit-tap-highlight-color: transparent !important;
 }
 
 html,
 body {
 	min-height: 100vh;
+	min-height: 100dvh;
 	padding: 0;
 	margin: 0;
 	overflow-x: hidden;
+	font-family: var(--font-lora-regular);
 	@apply scroll-smooth;
 }
 
 ::-webkit-scrollbar {
 	width: 8px;
+}
+
+/* Prevent layout shift when Radix UI removes the scrollbar */
+html {
+	scrollbar-gutter: stable;
 }
 
 ::-webkit-scrollbar-track {
@@ -44,6 +53,16 @@ body {
 .mobile-tab-scroll::-webkit-scrollbar-thumb {
 	background: var(--product-primary);
 	border-radius: 1px;
+}
+
+.table-scroll > div::-webkit-scrollbar {
+	height: 4px !important;
+	width: 0 !important;
+}
+
+.table-scroll > div::-webkit-scrollbar-thumb {
+	background: var(--product-primary);
+	border-radius: 1rem;
 }
 
 .dashboard-sidebar {
@@ -86,19 +105,19 @@ a.selected:after {
 
 @layer base {
 	:root {
-		--background: 0 0% 100%;
-		--foreground: 0 0% 3.9%;
+		--catalogue-background: 0 0% 100%;
+		--catalogue-foreground: 0 0% 3.9%;
 		--card: 0 0% 100%;
 		--card-foreground: 0 0% 3.9%;
 		--popover: 0 0% 100%;
 		--popover-foreground: 0 0% 3.9%;
-		--primary: 0 0% 9%;
-		--primary-foreground: 0 0% 98%;
-		--secondary: 0 0% 96.1%;
-		--secondary-foreground: 0 0% 9%;
+		--catalogue-primary: 0 0% 9%;
+		--catalogue-primary-foreground: 0 0% 98%;
+		--catalogue-secondary: 0 0% 96.1%;
+		--catalogue-secondary-foreground: 0 0% 9%;
 		--muted: 0 0% 96.1%;
 		--muted-foreground: 0 0% 45.1%;
-		--accent: 0 0% 96.1%;
+		--catalogue-accent: 0 0% 96.1%;
 		--accent-foreground: 0 0% 9%;
 		--destructive: 0 84.2% 60.2%;
 		--destructive-foreground: 0 0% 98%;
@@ -121,5 +140,22 @@ a.selected:after {
 
 	body {
 		@apply bg-product-background text-product-foreground;
+	}
+}
+
+@layer components {
+	.card-catalogue {
+		border-radius: var(--border-radius);
+		box-shadow: var(--box-shadow);
+	}
+}
+
+/* Move Hubspot chat widget up on mobile to not interfere with app bar */
+@media (max-width: 768px) {
+	#hubspot-messages-iframe-container {
+		position: absolute;
+		top: 60px;
+		right: 20px;
+		display: hidden !important;
 	}
 }

@@ -18,15 +18,15 @@ const SelectTrigger = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Trigger
-		ref={ref}
 		className={cn(
-			"flex h-10 w-full items-center justify-between rounded-md border text-product-foreground border-product-border px-3 py-2 text-sm shadow-product-shadow transition-[var(--navbar-button-transition)] hover:bg-product-hover-background hover:shadow-[var(--product-hover-shadow)]  focus:ring-[var(--navbar-button-focus-ring)] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+			"flex h-10 !bg-transparent w-full items-center justify-between rounded-md border text-product-foreground border-product-border px-3 py-2 text-sm shadow-product-shadow transition-[var(--product-nav-transition)] hover:bg-product-background-hover hover:shadow-[var(--product-shadow-hover)]  focus:ring-[var(--product-nav-focus-ring)] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
-		<span translate="no" className="notranslate">
+		<span className="notranslate" translate="no">
 			{children}
 		</span>
 		<SelectPrimitive.Icon asChild>
@@ -46,11 +46,11 @@ const SelectScrollUpButton = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
 >(({ className, ...props }, ref) => (
 	<SelectPrimitive.ScrollUpButton
-		ref={ref}
 		className={cn(
 			"flex cursor-default items-center justify-center py-1 text-product-foreground",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
@@ -64,11 +64,11 @@ const SelectScrollDownButton = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
 >(({ className, ...props }, ref) => (
 	<SelectPrimitive.ScrollDownButton
-		ref={ref}
 		className={cn(
 			"flex cursor-default items-center justify-center py-1 text-product-foreground",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
@@ -84,15 +84,17 @@ const SelectContent = React.forwardRef<
 >(({ className, children, position = "popper", ...props }, ref) => (
 	<SelectPrimitive.Portal>
 		<SelectPrimitive.Content
-			ref={ref}
 			className={cn(
-				"relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-product-background text-product-foreground border-product-border shadow-[var(--product-shadow)] transition-[var(--navbar-button-transition)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin] notranslate",
+				"relative z-[2000] max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border text-product-foreground border-product-border shadow-[var(--product-shadow)] transition-[var(--product-nav-transition)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin] notranslate bg-white",
 				position === "popper" &&
 					"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
+				// iOS Safari fixes
+				"[-webkit-overflow-scrolling:touch]",
 				className,
 			)}
-			translate="no"
 			position={position}
+			ref={ref}
+			translate="no"
 			{...props}
 		>
 			<SelectScrollUpButton />
@@ -117,15 +119,15 @@ const SelectLabel = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Label
-		ref={ref}
 		className={cn(
 			"px-2 py-1.5 text-sm font-semibold text-product-foreground",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
-		<span translate="no" className="notranslate">
+		<span className="notranslate" translate="no">
 			{children}
 		</span>
 	</SelectPrimitive.Label>
@@ -137,11 +139,11 @@ const SelectItem = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Item
-		ref={ref}
 		className={cn(
-			"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none bg-product-background text-product-foreground hover:bg-product-hover-background hover:text-product-foreground-accent focus:bg-product-primary focus:text-product-background transition-[var(--navbar-button-transition)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50 notranslate",
+			"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none bg-product-background text-product-foreground hover:bg-product-background-hover hover:text-product-foreground-accent focus:bg-product-primary focus:text-product-background transition-[var(--product-nav-transition)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50 notranslate",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
@@ -151,7 +153,7 @@ const SelectItem = React.forwardRef<
 			</SelectPrimitive.ItemIndicator>
 		</span>
 		<SelectPrimitive.ItemText>
-			<span translate="no" className="notranslate">
+			<span className="notranslate" translate="no">
 				{children}
 			</span>
 		</SelectPrimitive.ItemText>
@@ -164,8 +166,8 @@ const SelectSeparator = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
 	<SelectPrimitive.Separator
-		ref={ref}
 		className={cn("-mx-1 my-1 h-px bg-product-border", className)}
+		ref={ref}
 		translate="no"
 		{...props}
 	/>

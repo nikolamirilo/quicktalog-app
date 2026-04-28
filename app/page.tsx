@@ -1,8 +1,7 @@
-import { Metadata } from "next";
-import { lazy, Suspense } from "react";
-import Container from "@/components/home/Container";
+import ContentContainer from "@/components/home/ContentContainer";
+import Demo from "@/components/home/Demo";
 import Hero from "@/components/home/Hero";
-import Section from "@/components/home/Section";
+import SectionWrapper from "@/components/home/SectionWrapper";
 import {
 	LoadingSpinner,
 	SectionSkeleton,
@@ -10,6 +9,8 @@ import {
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
+import { Metadata } from "next";
+import { lazy, Suspense } from "react";
 
 export const metadata: Metadata = generatePageMetadata("home");
 
@@ -35,12 +36,22 @@ const page: React.FC = async () => {
 			/>
 			<Navbar />
 			<Hero />
-			<Container>
+			<ContentContainer>
+				<SectionWrapper
+					description="Explore our interactive demo and see how Quicktalog turns your product catalog into a dynamic, mobile-friendly experience that boosts sales and customer engagement."
+					id="demo"
+					title="Discover It in Action"
+				>
+					<Suspense fallback={<SectionSkeleton height="h-64" />}>
+						<Demo />
+					</Suspense>
+				</SectionWrapper>
+
 				<Suspense fallback={<SectionSkeleton height="h-48" />}>
 					<Benefits />
 				</Suspense>
 
-				<Section
+				<SectionWrapper
 					description="Replace printed catalogs with an interactive, mobile-friendly online catalog you can update in real time."
 					id="problems"
 					title="Stop Losing Customers to Outdated Catalogs"
@@ -48,9 +59,9 @@ const page: React.FC = async () => {
 					<Suspense fallback={<SectionSkeleton height="h-64" />}>
 						<ProblemSection />
 					</Suspense>
-				</Section>
+				</SectionWrapper>
 
-				<Section
+				<SectionWrapper
 					description="Create a professional digital catalog with our free online catalog maker in a few simple steps-or let AI generate it for you. No design or code required."
 					id="how-it-works"
 					title="Go Live in Minutes"
@@ -58,13 +69,13 @@ const page: React.FC = async () => {
 					<Suspense fallback={<SectionSkeleton height="h-72" />}>
 						<HowItWorks />
 					</Suspense>
-				</Section>
+				</SectionWrapper>
 
 				<Suspense fallback={<SectionSkeleton height="h-56" />}>
 					<AIShortcut />
 				</Suspense>
 
-				<Section
+				<SectionWrapper
 					description="Start with our free online catalog maker and upgrade as you grow. No hidden fees. Access professional catalog templates, AI generation, OCR import, and analytics on higher tiers."
 					id="pricing"
 					title="Simple, Transparent Pricing"
@@ -72,13 +83,13 @@ const page: React.FC = async () => {
 					<Suspense fallback={<SectionSkeleton height="h-96" />}>
 						<Pricing />
 					</Suspense>
-				</Section>
+				</SectionWrapper>
 
 				<Suspense fallback={<SectionSkeleton height="h-32" />}>
 					<CTA />
 				</Suspense>
 
-				<Section
+				<SectionWrapper
 					description="Learn how digital catalogs differ from websites, how updates work, and how AI/OCR help you launch faster."
 					id="faq"
 					title="Got Questions? We've Got Answers"
@@ -86,8 +97,8 @@ const page: React.FC = async () => {
 					<Suspense fallback={<SectionSkeleton height="h-80" />}>
 						<FAQ />
 					</Suspense>
-				</Section>
-			</Container>
+				</SectionWrapper>
+			</ContentContainer>
 
 			<Suspense fallback={<LoadingSpinner />}>
 				<Footer />

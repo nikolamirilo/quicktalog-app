@@ -91,7 +91,7 @@ const HowItWorks: React.FC = () => {
 			description:
 				"Create an account and provide more information about your business.",
 			icon: <FiUpload className="w-8 h-8" />,
-			image: "/images/card1-business.svg",
+			image: "/images/card1.svg",
 		},
 		{
 			step: "2",
@@ -99,14 +99,14 @@ const HowItWorks: React.FC = () => {
 			description:
 				"Create categories and add services or products with pricing to build your professional price list.",
 			icon: <MdOutlineLocalOffer className="w-8 h-8" />,
-			image: "/images/card3.svg",
+			image: "/images/card2.svg",
 		},
 		{
 			step: "3",
 			title: "Publish & share",
 			description: "Go live and share your catalogue with the world!",
 			icon: <FiShare2 className="w-8 h-8" />,
-			image: "/images/card5.svg",
+			image: "/images/card3.svg",
 		},
 	];
 

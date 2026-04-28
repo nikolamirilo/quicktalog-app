@@ -1,47 +1,26 @@
-import { generateUniqueSlug } from "@quicktalog/common";
-import { revalidateData } from "@/helpers/server";
+import { revalidateCatalogue } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
+import { generateUniqueSlug } from "@quicktalog/common";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
 	try {
 		const supabase = await createClient();
-		const {
-			name,
-			created_by,
-			services,
-			theme,
-			logo,
-			title,
-			currency,
-			legal,
-			contact,
-			partners,
-			subtitle,
-			configuration,
-			status,
-		} = await request.json();
+		const data = await request.json();
 
-		const slug = generateUniqueSlug(name);
+		const slug = generateUniqueSlug(data.name);
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { createdAt, updatedAt, id, ...rest } = data;
 
 		const { error } = await supabase
 			.from("catalogues")
 			.insert([
 				{
-					name: slug || name,
-					created_by,
-					services,
-					theme,
-					logo,
-					title,
-					currency,
-					legal,
-					contact,
-					partners,
-					subtitle,
-					status: status || "active",
-					configuration,
+					...rest,
+					name: slug || data.name,
+					status: data.status || "active",
 				},
 			])
 			.select();
@@ -53,7 +32,7 @@ export async function POST(request: Request) {
 				headers: { "Content-Type": "application/json" },
 			});
 		}
-		await revalidateData();
+		revalidateCatalogue(slug);
 		return new Response(
 			JSON.stringify({ catalogueUrl: `/catalogues/${name}`, slug: name }),
 			{
@@ -100,7 +79,7 @@ export async function PATCH(request: Request) {
 				partners,
 				configuration,
 				status: status || "active",
-				updated_at: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
 			})
 			.eq("name", name)
 			.select();
@@ -120,7 +99,7 @@ export async function PATCH(request: Request) {
 			});
 		}
 
-		await revalidateData();
+		revalidateCatalogue(name);
 
 		return new Response(
 			JSON.stringify({ catalogueUrl: `/catalogues/${name}`, slug: name }),
