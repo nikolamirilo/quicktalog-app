@@ -9,11 +9,11 @@ Follow these steps to add a new content block type (e.g., `DividerBlock`, `Video
 2.  Add the new type to the `ContentBlock` union type.
 
 ## 2. UI Components
-**Create in:** `components/catalogue/blocks/[BlockName].tsx`
-**Create in:** `components/catalogue/inputs/[BlockName]Input.tsx`
+**Create in:** `components/catalogue/sections/[SectionName].tsx`
+**Create in:** `components/catalogue/inputs/[SectionName]Input.tsx`
 
-1.  Create the **Renderer Component** (`[BlockName].tsx`) to display the block in the catalogue. Handle both "view" and "edit" modes.
-2.  Create the **Input Component** (`[BlockName]Input.tsx`) for the configuration form in the "Add Content" modal.
+1.  Create the **Renderer Component** (`[SectionName].tsx`) to display the block in the catalogue. Handle both "view" and "edit" modes.
+2.  Create the **Input Component** (`[SectionName]Input.tsx`) for the configuration form in the "Add Content" modal.
 
 ## 3. Modal Integration
 **Update in:** `components/catalogue/modals/AddContentModal.tsx`
@@ -25,7 +25,7 @@ Follow these steps to add a new content block type (e.g., `DividerBlock`, `Video
 5.  Add description text for the new block type in the modal header.
 
 ## 4. Selection UI
-**Update in:** `components/catalogue/blocks/common/ContentOptionsSelector.tsx`
+**Update in:** `components/catalogue/sections/common/ContentOptionsSelector.tsx`
 
 1.  Import a suitable icon from `lucide-react`.
 2.  Add the new option key to the `OptionKey` type.

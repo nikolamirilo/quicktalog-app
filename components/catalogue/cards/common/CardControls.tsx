@@ -42,10 +42,10 @@ const CardControls = ({
 	itemIndex,
 }: CardControlsProps) => {
 	const catalogueContext = useCatalogueContext();
-	const blocks = catalogueContext?.catalogue?.content || [];
+	const sections = catalogueContext?.catalogue?.content || [];
 	const moveItemToBlock = catalogueContext?.moveItemToBlock;
 
-	const availableBlocks = blocks
+	const availableSections = sections
 		.map((block, index) => ({ block, index }))
 		.filter(
 			({ block, index }) =>
@@ -133,7 +133,7 @@ const CardControls = ({
 							Delete
 						</span>
 					</DropdownMenuItem>
-					{availableBlocks.length > 0 &&
+					{availableSections.length > 0 &&
 						blockIndex !== undefined &&
 						itemIndex !== undefined &&
 						moveItemToBlock && (
@@ -148,10 +148,10 @@ const CardControls = ({
 									</DropdownMenuSubTrigger>
 									<DropdownMenuPortal>
 										<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg min-w-[200px]">
-											{availableBlocks.map(({ block, index }) => (
+											{availableSections.map(({ block, index }) => (
 												<DropdownMenuItem
-													key={block.id}
 													className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
+													key={block.id}
 													onClick={(e) => {
 														e.stopPropagation();
 														moveItemToBlock(blockIndex, itemIndex, index);

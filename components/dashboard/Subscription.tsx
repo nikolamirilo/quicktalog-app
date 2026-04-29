@@ -1,11 +1,11 @@
 import { usePaddlePrices } from "@/hooks/usePaddlePrices";
 import type { SubscriptionProps } from "@/types/shared";
 import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiCalendar } from "react-icons/fi";
 import BillingHistory from "./subscription/BillingHistory";
 import PlanDetails from "./subscription/PlanDetails";
-import { useRouter } from "next/navigation";
 
 export default function Subscription({
 	pricingPlan,
@@ -37,7 +37,7 @@ export default function Subscription({
 	): Record<string, any> => {
 		const result: Record<string, any> = {};
 		for (const [key, value] of Object.entries(features)) {
-			if (key === "blocks" && typeof value === "object" && value !== null) {
+			if (key === "sections" && typeof value === "object" && value !== null) {
 				result["divider"] = value.divider;
 				result["embedding"] = value.embedding;
 				result["customCode"] = value.customCode;

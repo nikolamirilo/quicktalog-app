@@ -12,10 +12,10 @@ const Demo = () => {
 				onClick={() => router.push("/demo")}
 			>
 				{/* Image with slow zoom on hover */}
-				<div className="overflow-hidden aspect-[4/3] sm:aspect-video">
+				<div className="overflow-hidden">
 					<img
 						alt="Quicktalog product preview"
-						className="w-full h-full object-cover will-change-transform transition-transform [transition-duration:1800ms] [transition-timing-function:cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.03]"
+						className="w-full h-auto will-change-transform transition-transform [transition-duration:1800ms] [transition-timing-function:cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.01]"
 						src="/images/quicktalog-banner.png"
 					/>
 				</div>

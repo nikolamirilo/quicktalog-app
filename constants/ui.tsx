@@ -276,7 +276,7 @@ export const editSteps = [
 	},
 	{
 		value: 2,
-		label: "Categories",
+		label: "Sections",
 		icon: <FiLayers size={18} />,
 	},
 	{

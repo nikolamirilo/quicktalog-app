@@ -13,7 +13,7 @@ interface UpgradePlanModalProps {
 	onClose: () => void;
 	currentPlan: PricingPlan;
 	requiredPlan: PricingPlan;
-	limitType: "items" | "categories";
+	limitType: "items" | "sections";
 	userEmail?: string;
 }
 
@@ -102,7 +102,7 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 						The {currentPlan.name} plan only comes with{" "}
 						{limitType === "items"
 							? currentPlan.features.items_per_catalogue
-							: currentPlan.features.blocks_per_catalogue}{" "}
+							: currentPlan.features.sections_per_catalogue}{" "}
 						{limitType} per catalogue.
 					</p>
 				</div>

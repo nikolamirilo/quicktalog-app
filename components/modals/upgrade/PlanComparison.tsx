@@ -15,23 +15,23 @@ interface PlanComparissonProps {
 	displayCurrentPrice: string;
 	displayRequiredPrice: string;
 	cycleLabel: string;
-	limitType: "items" | "categories";
+	limitType: "items" | "sections";
 	canUpgrade: boolean;
 	onUpgrade: () => void;
 }
 
 function getRelevantFeatures(
 	plan: PricingPlan,
-	limitType: "items" | "categories",
+	limitType: "items" | "sections",
 ): PlanFeature[] {
 	const features: PlanFeature[] = [];
 
-	if (limitType === "categories" || limitType === "items") {
+	if (limitType === "sections" || limitType === "items") {
 		features.push({
 			text:
 				plan.name === "Premium"
 					? "Unlimited categories & items"
-					: `Up to ${plan.features.blocks_per_catalogue} categories & ${plan.features.items_per_catalogue} items`,
+					: `Up to ${plan.features.sections_per_catalogue} categories & ${plan.features.items_per_catalogue} items`,
 			type: "items",
 		});
 	}

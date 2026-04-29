@@ -1,12 +1,12 @@
 "use client";
 
 import { UserData } from "@quicktalog/common";
-import RichTextEditor from "../../blocks/common/RichTextEditor";
 import ContentInput from "../../inputs/ContentInput";
 import CustomCodeInput from "../../inputs/CustomCodeInput";
 import DividerInput from "../../inputs/DividerInput";
 import EmbeddingInput from "../../inputs/EmbeddingInput";
 import LimitsOverlay from "../../inputs/sidebar/LimitsOverlay";
+import RichTextEditor from "../../sections/common/RichTextEditor";
 
 type ContentOption =
 	| "container"

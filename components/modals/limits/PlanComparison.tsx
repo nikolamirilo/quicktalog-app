@@ -1,8 +1,8 @@
+import { AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { PricingPlan } from "@quicktalog/common";
 import { ArrowRight, Layers, Sparkles, TrendingUp, Zap } from "lucide-react";
 import Link from "next/link";
 import { BiCustomize } from "react-icons/bi";
-import { AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { LimitContentData, formatLimit } from "./limitContent";
 
 interface PlanComparisonProps {
@@ -103,9 +103,11 @@ const PlanComparison = ({
 											: "catalogue"}{" "}
 										with{" "}
 										<strong>
-											{formatLimit(requiredPlan.features.blocks_per_catalogue)}
+											{formatLimit(
+												requiredPlan.features.sections_per_catalogue,
+											)}
 										</strong>{" "}
-										categories and{" "}
+										sections and{" "}
 										<strong>
 											{formatLimit(requiredPlan.features.items_per_catalogue)}
 										</strong>{" "}
