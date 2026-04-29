@@ -3,7 +3,7 @@ import InformModal from "@/components/modals/InformModal";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/helpers/client";
 import type { Paddle } from "@paddle/paddle-js";
-import { PricingPlan, tiers, User } from "@quicktalog/common";
+import { PricingPlan, tiers, UserData } from "@quicktalog/common";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,7 +17,7 @@ interface PricingColumnProps {
 	billingCycle: "monthly" | "yearly";
 	paddle: Paddle;
 	priceId: string;
-	user: User;
+	user: UserData | null;
 	mode?: "column" | "row";
 }
 
@@ -119,24 +119,27 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 	const filteredTiers = tiers.filter((item) => item?.type === "standard");
 
 	const handleButtonClick = () => {
-		if (user) {
-			const matchedTier = filteredTiers.find((tier) =>
-				Object.values(tier.priceId).includes(user.planId),
-			);
-			if (tier.name === matchedTier.name) {
-				alert("You currently have this plan");
-			} else {
-				paddle.Checkout.open({
-					items: [{ priceId: priceId, quantity: 1 }],
-					customer: user?.email ? { email: user.email } : undefined,
-					settings: {
-						successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/checkout/success`,
-					},
-				});
-			}
-		} else {
+		if (!user) {
 			router.push("/auth");
+			return;
 		}
+
+		const matchedTier = filteredTiers.find((t: PricingPlan) =>
+			user.planId ? Object.values(t.priceId).includes(user.planId) : false,
+		);
+
+		if (matchedTier && matchedTier.name === tier.name) {
+			alert("You currently have this plan");
+			return;
+		}
+
+		paddle.Checkout.open({
+			items: [{ priceId: priceId, quantity: 1 }],
+			customer: user.email ? { email: user.email } : undefined,
+			settings: {
+				successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/checkout/success`,
+			},
+		});
 	};
 
 	if (mode === "row") {
