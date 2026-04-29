@@ -1,0 +1,24 @@
+name: Discord Deployment Notification
+on:
+  deployment_status:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        run: |
+          STATE="${{ github.event.deployment_status.state }}"
+          URL="${{ github.event.deployment_status.target_url }}"
+          ENV="${{ github.event.deployment.environment }}"
+          SHA="${{ github.event.deployment.sha }}"
+          REPO="${{ github.repository }}"
+
+          if [ "$STATE" = "success" ]; then COLOR=3066993
+          elif [ "$STATE" = "failure" ]; then COLOR=15158332
+          else COLOR=15844367
+          fi
+
+          curl -H "Content-Type: application/json" -X POST \
+            -d "{\"embeds\":[{\"title\":\"Vercel Deployment: $STATE\",\"description\":\"**Repo:** $REPO\\n**Env:** $ENV\\n**Commit:** \`${SHA:0:7}\`\\n[View deployment]($URL)\",\"color\":$COLOR}]}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
