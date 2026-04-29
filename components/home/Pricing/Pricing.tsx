@@ -6,7 +6,6 @@ import {
 	initializePaddle,
 	type Paddle,
 } from "@paddle/paddle-js";
-import type { User } from "@quicktalog/common";
 import { tiers } from "@quicktalog/common";
 import { motion, type Variants } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -42,7 +41,6 @@ type BillingCycle = "monthly" | "yearly";
 const Pricing: React.FC = () => {
 	const [paddle, setPaddle] = useState<Paddle | undefined>(undefined);
 	const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
-	const [user, setUser] = useState<User>(null);
 	const { userData } = useUserContext();
 
 	const { prices } = usePaddlePrices(paddle, "US");
@@ -121,7 +119,7 @@ const Pricing: React.FC = () => {
 							: tiers[0].priceId.year
 					}
 					tier={tiers[0]}
-					user={user}
+					user={userData}
 				/>
 			</div>
 			{/* Pricing grid */}
@@ -154,7 +152,7 @@ const Pricing: React.FC = () => {
 									: tier.priceId.year
 							}
 							tier={tier}
-							user={user}
+							user={userData}
 						/>
 					</motion.div>
 				))}

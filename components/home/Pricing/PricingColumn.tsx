@@ -3,7 +3,7 @@ import InformModal from "@/components/modals/InformModal";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/helpers/client";
 import type { Paddle } from "@paddle/paddle-js";
-import { PricingPlan, tiers, User } from "@quicktalog/common";
+import { PricingPlan, tiers, UserData } from "@quicktalog/common";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,7 +17,7 @@ interface PricingColumnProps {
 	billingCycle: "monthly" | "yearly";
 	paddle: Paddle;
 	priceId: string;
-	user: User;
+	user: UserData | null;
 	mode?: "column" | "row";
 }
 
