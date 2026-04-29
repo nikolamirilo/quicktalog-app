@@ -119,24 +119,27 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 	const filteredTiers = tiers.filter((item) => item?.type === "standard");
 
 	const handleButtonClick = () => {
-		if (user) {
-			const matchedTier = filteredTiers.find((tier) =>
-				Object.values(tier.priceId).includes(user.planId),
-			);
-			if (tier.name === matchedTier.name) {
-				alert("You currently have this plan");
-			} else {
-				paddle.Checkout.open({
-					items: [{ priceId: priceId, quantity: 1 }],
-					customer: user?.email ? { email: user.email } : undefined,
-					settings: {
-						successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/checkout/success`,
-					},
-				});
-			}
-		} else {
+		if (!user) {
 			router.push("/auth");
+			return;
 		}
+
+		const matchedTier = filteredTiers.find((t: PricingPlan) =>
+			user.planId ? Object.values(t.priceId).includes(user.planId) : false,
+		);
+
+		if (matchedTier && matchedTier.name === tier.name) {
+			alert("You currently have this plan");
+			return;
+		}
+
+		paddle.Checkout.open({
+			items: [{ priceId: priceId, quantity: 1 }],
+			customer: user.email ? { email: user.email } : undefined,
+			settings: {
+				successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/checkout/success`,
+			},
+		});
 	};
 
 	if (mode === "row") {
