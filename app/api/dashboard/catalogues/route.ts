@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { drizzleClient } from "@/utils/drizzle";
 import { currentUser } from "@clerk/nextjs/server";
 import { schema } from "@quicktalog/common";
@@ -20,6 +21,7 @@ export async function GET() {
 
 		return NextResponse.json(data || []);
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error("Failed to fetch catalogues:", error);
 		return NextResponse.json(
 			{ error: "Failed to fetch catalogues" },

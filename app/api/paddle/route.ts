@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest } from "next/server";
 import { getPaddleInstance } from "@/utils/paddle/get-paddle-instance";
 import { ProcessWebhook } from "@/utils/paddle/process-webhook";
@@ -30,7 +31,8 @@ export async function POST(request: NextRequest) {
 		}
 		return Response.json({ status: 200, eventName });
 	} catch (e) {
-		console.log(e);
+		Sentry.captureException(e);
+		console.error("Paddle webhook processing failed:", e);
 		return Response.json({ error: "Internal server error" }, { status: 500 });
 	}
 }

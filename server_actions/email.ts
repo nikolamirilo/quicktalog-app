@@ -1,5 +1,6 @@
 //@ts-nocheck
 "use server";
+import * as Sentry from "@sentry/nextjs";
 import {
 	InformationEmail,
 	NewCatalogueEmail,
@@ -29,7 +30,8 @@ export async function sendContactEmail(contactData: ContactData) {
 			return true;
 		}
 	} catch (error: any) {
-		console.log(error);
+		Sentry.captureException(error);
+		console.error("Failed to send contact email:", error);
 		return false;
 	}
 }
@@ -55,7 +57,8 @@ export async function sendNewCatalogueEmail(
 			return true;
 		}
 	} catch (error: any) {
-		console.log(error);
+		Sentry.captureException(error);
+		console.error("Failed to send new catalogue email:", error);
 		return false;
 	}
 }
@@ -77,7 +80,8 @@ export async function sendWelcomeEmail(
 			return true;
 		}
 	} catch (error: any) {
-		console.log(error);
+		Sentry.captureException(error);
+		console.error("Failed to send welcome email:", error);
 		return false;
 	}
 }
@@ -98,7 +102,8 @@ export async function sendSubscriptionCancelationEmail(
 			return true;
 		}
 	} catch (error: any) {
-		console.log(error);
+		Sentry.captureException(error);
+		console.error("Failed to send cancellation email:", error);
 		return false;
 	}
 }

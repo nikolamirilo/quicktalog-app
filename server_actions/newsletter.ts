@@ -1,4 +1,5 @@
 "use server";
+import * as Sentry from "@sentry/nextjs";
 import { drizzleClient } from "@/utils/drizzle";
 import { schema } from "@quicktalog/common";
 import { and, eq } from "drizzle-orm";
@@ -44,6 +45,7 @@ export async function newsletterSignup(
 
 		return { status: "success" };
 	} catch (err) {
+		Sentry.captureException(err);
 		console.error(
 			"Unexpected error while inserting record in newsletter table:",
 			err,
@@ -69,6 +71,7 @@ export async function productNewsletterSignup(
 		await drizzleClient.insert(productNewsletter).values({ email });
 		return { status: "success" };
 	} catch (err) {
+		Sentry.captureException(err);
 		console.error(
 			"Unexpected error while inserting record in product newsletter table:",
 			err,

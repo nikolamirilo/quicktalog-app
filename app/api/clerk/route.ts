@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { defaultCookiePreferences } from "@/constants";
 import { sendWelcomeEmail } from "@/server_actions/email";
 import { createClient } from "@/utils/supabase/server";
@@ -213,6 +214,7 @@ async function sendWelcomeEmailSafely(
 		console.log("Welcome email sent successfully to:", email);
 	} catch (error) {
 		// Don't throw - welcome email failure shouldn't break the webhook
+		Sentry.captureException(error);
 		console.error("Failed to send welcome email:", {
 			error: error instanceof Error ? error.message : String(error),
 			email,
@@ -279,6 +281,7 @@ export async function POST(req: NextRequest) {
 					// Don't await - run in background
 					sendWelcomeEmailSafely(userData.email, userData.name).catch(
 						(error) => {
+							Sentry.captureException(error);
 							console.error("Background welcome email failed:", error);
 						},
 					);
@@ -316,6 +319,7 @@ export async function POST(req: NextRequest) {
 		const errorMessage =
 			error instanceof Error ? error.message : "Unknown error";
 
+		Sentry.captureException(error);
 		console.error("Webhook processing failed:", {
 			error: errorMessage,
 			eventType: event?.type,

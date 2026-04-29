@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { sendSubscriptionCancelationEmail } from "@/server_actions/email";
 import { cancelSubscription } from "@/server_actions/paddle";
 import { createClient } from "@/utils/supabase/server";
@@ -41,6 +42,7 @@ export class ProcessWebhook {
 					console.log(`Unhandled event type: ${eventData.eventType}`);
 			}
 		} catch (err) {
+			Sentry.captureException(err);
 			console.error("Webhook processing error:", err);
 		}
 	}
@@ -70,6 +72,7 @@ export class ProcessWebhook {
 			.upsert(subscription, { onConflict: "subscription_id" });
 
 		if (subError) {
+			Sentry.captureException(subError);
 			console.error("Failed to upsert subscription:", subError);
 			return;
 		}
@@ -87,6 +90,7 @@ export class ProcessWebhook {
 					.eq("subscription_status", "active");
 
 			if (customerSubscriptionsError) {
+				Sentry.captureException(customerSubscriptionsError);
 				console.error(
 					"Error fetching customer subscriptions:",
 					customerSubscriptionsError,
@@ -110,7 +114,10 @@ export class ProcessWebhook {
 				.from("users")
 				.update({ plan_id: subscription.price_id })
 				.eq("customer_id", subscription.customer_id);
-			if (userError) console.error("Failed to update user plan:", userError);
+			if (userError) {
+				Sentry.captureException(userError);
+				console.error("Failed to update user plan:", userError);
+			}
 		}
 
 		if (eventData.eventType === EventName.SubscriptionCanceled) {
@@ -122,6 +129,7 @@ export class ProcessWebhook {
 					.eq("subscription_status", "active");
 
 			if (customerSubscriptionsError) {
+				Sentry.captureException(customerSubscriptionsError);
 				console.error(
 					"Error fetching customer subscriptions:",
 					customerSubscriptionsError,
@@ -137,6 +145,7 @@ export class ProcessWebhook {
 					.single();
 
 				if (fetchError) {
+					Sentry.captureException(fetchError);
 					console.error("Failed to fetch user:", fetchError);
 					return;
 				}
@@ -154,6 +163,7 @@ export class ProcessWebhook {
 					.eq("customer_id", subscription.customer_id);
 
 				if (updateError) {
+					Sentry.captureException(updateError);
 					console.error("Failed to update user plan:", updateError);
 					return;
 				}
@@ -178,6 +188,7 @@ export class ProcessWebhook {
 				.eq("email", eventData.data.email);
 
 			if (error) {
+				Sentry.captureException(error);
 				console.error("Failed to update user with customer_id:", error);
 			}
 		} else {
@@ -190,7 +201,10 @@ export class ProcessWebhook {
 				{ onConflict: "customer_id" },
 			);
 
-			if (error) console.error("Failed to upsert customer:", error);
+			if (error) {
+				Sentry.captureException(error);
+				console.error("Failed to upsert customer:", error);
+			}
 		}
 	}
 }

@@ -48,6 +48,7 @@
 		"@radix-ui/react-toggle-group": "^1.1.10",
 		"@radix-ui/react-tooltip": "^1.2.7",
 		"@react-email/components": "^0.1.1",
+		"@sentry/nextjs": "^10.51.0",
 		"@supabase/ssr": "^0.5.2",
 		"@supabase/supabase-js": "^2.47.10",
 		"@uploadthing/react": "^7.3.3",
