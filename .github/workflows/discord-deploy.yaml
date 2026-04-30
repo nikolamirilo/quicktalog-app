@@ -4,16 +4,28 @@ on:
 
 jobs:
   notify:
+    if: github.event.deployment_status.state != 'inactive'
     runs-on: ubuntu-latest
     steps:
-      - name: Send Discord notification
+      - name: Restore Discord message ID
+        uses: actions/cache@v4
+        with:
+          path: discord-msg-id.txt
+          key: discord-msg-${{ github.event.deployment.id }}
+
+      - name: Send or update Discord notification
         run: |
           STATE="${{ github.event.deployment_status.state }}"
           URL="${{ github.event.deployment_status.target_url }}"
           ENV="${{ github.event.deployment.environment }}"
+          ENV="${ENV/Preview/Test}"
           SHA="${{ github.event.deployment.sha }}"
           REPO="${{ github.repository }}"
           REF="${{ github.event.deployment.ref }}"
+          ACTOR="${{ github.actor }}"
+          TIMESTAMP="${{ github.event.deployment_status.created_at }}"
+          WEBHOOK_URL="${{ secrets.DISCORD_WEBHOOK_URL }}"
+
           if [[ "$REF" =~ ^[0-9a-f]{40}$ ]]; then
             BRANCH=$(curl -s \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -23,19 +35,40 @@ jobs:
           else
             BRANCH="$REF"
           fi
-          ACTOR="${{ github.actor }}"
-          TIMESTAMP="${{ github.event.deployment_status.created_at }}"
+
           COMMIT_MSG=$(curl -s \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$REPO/commits/$SHA" \
             | jq -r '.commit.message | split("\n")[0]')
 
-          if [ "$STATE" = "success" ]; then COLOR=3066993
-          elif [ "$STATE" = "failure" ]; then COLOR=15158332
-          else COLOR=15844367
+          if [ "$ENV" = "Production" ]; then
+            DEPLOY_URL="https://www.quicktalog.app/"
+          else
+            DEPLOY_URL="https://test.quicktalog.app/"
           fi
 
-          curl -H "Content-Type: application/json" -X POST \
-            -d "{\"embeds\":[{\"title\":\"Vercel Deployment: $STATE\",\"description\":\"**Repo:** $REPO\\n**Branch:** $BRANCH\\n**Env:** $ENV\\n**Commit:** \`${SHA:0:7}\`\\n**Message:** $COMMIT_MSG\\n**Deployer:** $ACTOR\\n[View deployment]($URL)\",\"color\":$COLOR,\"timestamp\":\"$TIMESTAMP\"}]}" \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
+          if [ "$STATE" = "success" ]; then
+            COLOR=3066993
+            TITLE="Vercel Deployment: Success ✅"
+            DESC="**Repo:** $REPO\n**Branch:** $BRANCH\n**Env:** $ENV\n**Commit:** \`${SHA:0:7}\`\n**Message:** $COMMIT_MSG\n**Deployer:** $ACTOR\n[View deployment]($DEPLOY_URL)"
+          elif [ "$STATE" = "failure" ] || [ "$STATE" = "error" ]; then
+            COLOR=15158332
+            TITLE="Vercel Deployment: Failed ❌"
+            DESC="**Repo:** $REPO\n**Branch:** $BRANCH\n**Env:** $ENV\n**Commit:** \`${SHA:0:7}\`\n**Message:** $COMMIT_MSG\n**Deployer:** $ACTOR"
+          else
+            COLOR=3447003
+            TITLE="Vercel Deployment: In Progress ⏳"
+            DESC="**Repo:** $REPO\n**Branch:** $BRANCH\n**Env:** $ENV\n**Commit:** \`${SHA:0:7}\`\n**Message:** $COMMIT_MSG\n**Deployer:** $ACTOR"
+          fi
+
+          PAYLOAD="{\"embeds\":[{\"title\":\"$TITLE\",\"description\":\"$DESC\",\"color\":$COLOR,\"timestamp\":\"$TIMESTAMP\"}]}"
+
+          if [ -f discord-msg-id.txt ] && MSG_ID=$(cat discord-msg-id.txt) && [ -n "$MSG_ID" ] && [ "$MSG_ID" != "null" ]; then
+            curl -s -H "Content-Type: application/json" -X PATCH \
+              -d "$PAYLOAD" "${WEBHOOK_URL}/messages/${MSG_ID}"
+          else
+            RESPONSE=$(curl -s -H "Content-Type: application/json" -X POST \
+              -d "$PAYLOAD" "${WEBHOOK_URL}?wait=true")
+            echo "$RESPONSE" | jq -r '.id' > discord-msg-id.txt
+          fi
