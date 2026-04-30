@@ -13,6 +13,14 @@ jobs:
           ENV="${{ github.event.deployment.environment }}"
           SHA="${{ github.event.deployment.sha }}"
           REPO="${{ github.repository }}"
+          BRANCH="${{ github.event.deployment.ref }}"
+          ACTOR="${{ github.actor }}"
+          TIMESTAMP="${{ github.event.deployment_status.created_at }}"
+          COMMIT_MSG=$(curl -s \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/commits/$SHA" \
+            | jq -r '.commit.message | split("\n")[0]')
 
           if [ "$STATE" = "success" ]; then COLOR=3066993
           elif [ "$STATE" = "failure" ]; then COLOR=15158332
@@ -20,5 +28,5 @@ jobs:
           fi
 
           curl -H "Content-Type: application/json" -X POST \
-            -d "{\"embeds\":[{\"title\":\"Vercel Deployment: $STATE\",\"description\":\"**Repo:** $REPO\\n**Env:** $ENV\\n**Commit:** \`${SHA:0:7}\`\\n[View deployment]($URL)\",\"color\":$COLOR}]}" \
+            -d "{\"embeds\":[{\"title\":\"Vercel Deployment: $STATE\",\"description\":\"**Repo:** $REPO\\n**Branch:** $BRANCH\\n**Env:** $ENV\\n**Commit:** \`${SHA:0:7}\`\\n**Message:** $COMMIT_MSG\\n**Deployer:** $ACTOR\\n[View deployment]($URL)\",\"color\":$COLOR,\"timestamp\":\"$TIMESTAMP\"}]}" \
             ${{ secrets.DISCORD_WEBHOOK_URL }}
