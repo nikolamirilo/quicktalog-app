@@ -40,11 +40,11 @@ export function ContentOptionsSelector({
 
 		switch (key) {
 			case "divider":
-				return planFeatures.blocks?.divider === false;
+				return planFeatures.sections?.divider === false;
 			case "embedding":
-				return planFeatures.blocks?.embedding === false;
+				return planFeatures.sections?.embedding === false;
 			case "custom_code":
-				return planFeatures.blocks?.customCode === false;
+				return planFeatures.sections?.customCode === false;
 			default:
 				return false;
 		}
@@ -65,9 +65,9 @@ export function ContentOptionsSelector({
 									: ""
 							} flex items-center justify-center flex-shrink-0 whitespace-nowrap min-w-[70px] h-9 px-3`}
 							key={key}
+							locked={locked}
 							onClick={() => onSelect(key)}
 							variant="nav"
-							locked={locked}
 						>
 							<Icon
 								className={`w-4 h-4 mr-2 ${
@@ -94,9 +94,9 @@ export function ContentOptionsSelector({
 									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
 							}`}
 							key={key}
+							locked={locked}
 							onClick={() => onSelect(key)}
 							variant={isActive ? "default" : "ghost"}
-							locked={locked}
 						>
 							<Icon
 								className={`w-6 h-6 ${

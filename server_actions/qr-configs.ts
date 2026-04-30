@@ -1,4 +1,5 @@
 "use server";
+import * as Sentry from "@sentry/nextjs";
 import { schema } from "@quicktalog/common";
 import { eq } from "drizzle-orm";
 import type { Options } from "qr-code-styling";
@@ -34,6 +35,7 @@ export async function upsertQrConfig(
 
 		return { success: true };
 	} catch (err) {
+		Sentry.captureException(err);
 		console.error("Unexpected error while saving QR config:", err);
 		return {
 			success: false,
@@ -58,6 +60,7 @@ export async function getQrConfig(
 
 		return { success: true, config: data.config as Options };
 	} catch (err) {
+		Sentry.captureException(err);
 		console.error("Unexpected error while fetching QR config:", err);
 		return {
 			success: false,

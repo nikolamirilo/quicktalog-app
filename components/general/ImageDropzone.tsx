@@ -1,4 +1,5 @@
 "use client";
+import * as Sentry from "@sentry/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { loadImage, processImage } from "@/helpers/imageProcessing";
 import { ImageDropzoneProps } from "@/types/shared";
@@ -44,6 +45,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 
 				return [processedFile];
 			} catch (error) {
+				Sentry.captureException(error);
 				console.error("Image processing error:", error);
 
 				if (onError) {
@@ -74,6 +76,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					throw new Error("No URL received from upload service");
 				}
 			} catch (error) {
+				Sentry.captureException(error);
 				console.error("Upload completion error:", error);
 				if (onError) {
 					onError(
@@ -90,6 +93,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 	const handleUploadError = useCallback(
 		(error: Error) => {
 			setIsUploading?.(false);
+			Sentry.captureException(error);
 			console.error("Upload error:", error);
 			if (onError) {
 				onError(error);

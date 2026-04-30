@@ -11,7 +11,7 @@ import { snakeToTitleCase } from "@/helpers/client";
 import { ContentBlock, tiers, UserData } from "@quicktalog/common";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ContentOptionsSelector } from "../blocks/common/ContentOptionsSelector";
+import { ContentOptionsSelector } from "../sections/common/ContentOptionsSelector";
 import BlockConfigForm from "./content/BlockConfigForm";
 import BlockConfigHeader from "./content/BlockConfigHeader";
 
@@ -105,34 +105,35 @@ const AddContentModal = ({
 	}, [isOpen, editingBlock]);
 
 	const isLocked = (key: ContentOption) => {
-		if (!userData?.currentPlan?.features?.blocks) return false;
+		if (!userData?.currentPlan?.features?.sections) return false;
 
 		switch (key) {
 			case "divider":
-				return userData.currentPlan.features.blocks.divider === false;
+				return userData.currentPlan.features.sections.divider === false;
 			case "embedding":
-				return userData.currentPlan.features.blocks.embedding === false;
+				return userData.currentPlan.features.sections.embedding === false;
 			case "custom_code":
-				return userData.currentPlan.features.blocks.customCode === false;
+				return userData.currentPlan.features.sections.customCode === false;
 			default:
 				return false;
 		}
 	};
 
 	const checkLimits = () => {
-		const blocksLimit = userData?.currentPlan?.features?.blocks_per_catalogue;
+		const sectionsLimit =
+			userData?.currentPlan?.features?.sections_per_catalogue;
 
 		if (selectedOption === "text") return null;
 
 		if (
-			blocksLimit !== "unlimited" &&
-			blocksLimit !== undefined &&
+			sectionsLimit !== "unlimited" &&
+			sectionsLimit !== undefined &&
 			!editingBlock
 		) {
-			const nonTextBlocksCount = catalogue.content.filter(
+			const nonTextSectionsCount = catalogue.content.filter(
 				(block: any) => block.type !== "text",
 			).length;
-			if (nonTextBlocksCount >= blocksLimit) {
+			if (nonTextSectionsCount >= sectionsLimit) {
 				return "items";
 			}
 		}
@@ -247,15 +248,15 @@ const AddContentModal = ({
 					{/* Right Content - 3/4 width */}
 					<div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-y-auto p-4 md:p-6">
 						<BlockConfigHeader
-							selectedOption={selectedOption}
 							onClose={onClose}
+							selectedOption={selectedOption}
 						/>
 						<div className="mx-auto w-full border-t border-gray-300/70" />
 						<BlockConfigForm
-							selectedOption={selectedOption}
 							blockData={blockData}
-							setBlockData={setBlockData}
 							locked={locked}
+							selectedOption={selectedOption}
+							setBlockData={setBlockData}
 							userData={userData}
 						/>
 
@@ -282,9 +283,9 @@ const AddContentModal = ({
 			</AlertDialog>
 
 			<LimitsModal
+				currentPlan={userData?.currentPlan}
 				isOpen={showLimitsModal}
 				onClose={() => setShowLimitsModal(false)}
-				currentPlan={userData?.currentPlan}
 				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
 				type="items"
 			/>

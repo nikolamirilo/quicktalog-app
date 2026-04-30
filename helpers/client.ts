@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { PricingPlan } from "@quicktalog/common";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -139,6 +140,7 @@ export const handleDownloadHTML = (catalogueSlug: string, fullURL: string) => {
 			URL.revokeObjectURL(url);
 		}, 100);
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error("Error in handleDownloadHTML:", error);
 	}
 };
@@ -162,6 +164,7 @@ export const handleDownloadPDF = async (
 		link.click();
 		link.remove();
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error("Error downloading PDF:", error);
 	}
 };

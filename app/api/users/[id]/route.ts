@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { endOfMonth, startOfMonth } from "@/helpers/client";
 import { drizzleClient } from "@/utils/drizzle";
 import { schema, tiers } from "@quicktalog/common";
@@ -126,6 +127,7 @@ export async function GET(
 
 			return NextResponse.json(userData, { status: 200 });
 		} catch (error) {
+			Sentry.captureException(error);
 			console.error("Usage fetch errors:", error);
 			return NextResponse.json(
 				{
@@ -136,6 +138,7 @@ export async function GET(
 			);
 		}
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error(
 			"Unexpected error in API route:",
 			error instanceof Error ? error.message : error,

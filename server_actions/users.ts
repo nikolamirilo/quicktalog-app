@@ -1,4 +1,5 @@
 "use server";
+import * as Sentry from "@sentry/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 
 export async function subsribeToNewsletter(email: string) {
@@ -18,6 +19,7 @@ export async function subsribeToNewsletter(email: string) {
 			return true;
 		}
 	} catch (error: any) {
+		Sentry.captureException(error);
 		console.error("Error subscribing to newsletter:", error);
 		return false;
 	}
@@ -39,6 +41,7 @@ export async function subscribeToPlan(email: string) {
 			return true;
 		}
 	} catch (error: any) {
+		Sentry.captureException(error);
 		console.error("Error subscribing to newsletter:", error);
 		return false;
 	}
@@ -61,6 +64,7 @@ export async function getUserData(userId?: string) {
 
 		return await res.json();
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error("Error in getUserData:", error);
 		return null;
 	}

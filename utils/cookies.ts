@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { CookiePreferences } from "@quicktalog/common";
 import { COOKIE_KEY } from "@/constants";
 
@@ -100,6 +101,7 @@ export async function updateUserConsent(
 			throw new Error("Failed to update consent");
 		}
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error("Error updating user consent:", error);
 	}
 }

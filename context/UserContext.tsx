@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { getUserData } from "@/server_actions/users";
 import { useUser as useClerkUser } from "@clerk/nextjs";
 import { UserData } from "@quicktalog/common";
@@ -36,6 +37,7 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 			const data = await getUserData(clerkUser.id);
 			setUserData(data);
 		} catch (error) {
+			Sentry.captureException(error);
 			console.error("Failed to fetch user data:", error);
 			// Optionally handle error state
 		} finally {

@@ -7,13 +7,13 @@ import { ContentLayout, Item, tiers, UserData } from "@quicktalog/common";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiFileMinus } from "react-icons/fi";
-import CategoryBlockComponent from "../blocks/CategoryBlock";
-import ContainerBlockComponent from "../blocks/ContainerBlock";
-import CustomCodeBlockComponent from "../blocks/CustomCode";
-import DividerBlockComponent from "../blocks/DividerBlock";
-import EmbeddingBlockComponent from "../blocks/EmbeddingBlock";
-import TextBlockComponent from "../blocks/TextBlock";
 import ItemModal from "../modals/ItemModal";
+import CategoryBlockComponent from "../sections/CategoryBlock";
+import ContainerBlockComponent from "../sections/ContainerBlock";
+import CustomCodeBlockComponent from "../sections/CustomCode";
+import DividerBlockComponent from "../sections/DividerBlock";
+import EmbeddingBlockComponent from "../sections/EmbeddingBlock";
+import TextBlockComponent from "../sections/TextBlock";
 
 const CatalogueContent = ({
 	data,

@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
@@ -33,6 +34,8 @@ export async function GET() {
 			totalNewsletterSubscriptions,
 		});
 	} catch (error) {
+		Sentry.captureException(error);
+		console.error("Dashboard analytics fetch failed:", error);
 		return NextResponse.json(
 			{ error: "Failed to fetch analytics", details: error },
 			{ status: 500 },

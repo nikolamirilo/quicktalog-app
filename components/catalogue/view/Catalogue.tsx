@@ -234,7 +234,7 @@ const Catalogue = ({
 							<ContentBlockButton
 								setIsAddContentOpen={() => {
 									const limit =
-										userData?.currentPlan?.features?.blocks_per_catalogue;
+										userData?.currentPlan?.features?.sections_per_catalogue;
 									if (limit !== "unlimited" && limit !== undefined) {
 										if (item.content.length >= limit) {
 											setShowLimitsModal(true);
@@ -269,7 +269,7 @@ const Catalogue = ({
 					isOpen={showLimitsModal}
 					onClose={() => setShowLimitsModal(false)}
 					requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
-					type="categories"
+					type="sections"
 				/>
 				{type === "edit" && <SelectTemplateModal />}
 			</div>

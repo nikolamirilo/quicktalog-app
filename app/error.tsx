@@ -1,15 +1,21 @@
 "use client";
+import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useEffect } from "react";
 import { FiAlertTriangle, FiArrowLeft, FiHome } from "react-icons/fi";
 
-export const metadata = {
-	title: "Something Went Wrong - Quicktalog",
-	description:
-		"An unexpected error occurred. Return to our homepage to continue creating your digital catalog.",
-};
+export default function ErrorPage({
+	error,
+	reset,
+}: {
+	error: Error & { digest?: string };
+	reset: () => void;
+}) {
+	useEffect(() => {
+		Sentry.captureException(error);
+	}, [error]);
 
-export default function ErrorPage() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-product-background to-product-background-hero flex items-center justify-center p-4">
 			{/* Background Pattern */}
@@ -43,6 +49,9 @@ export default function ErrorPage() {
 
 					{/* Action Buttons */}
 					<div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+						<Button className="w-full sm:w-auto" onClick={reset} variant="cta">
+							Try Again
+						</Button>
 						<Button asChild className="w-full sm:w-auto" variant="cta">
 							<Link className="flex items-center gap-2" href="/">
 								<FiHome className="w-4 h-4" />

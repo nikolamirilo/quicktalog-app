@@ -15,7 +15,7 @@ const FEATURE_LABELS: Record<string, string> = {
 	custom_features: "Custom Features",
 	analytics: "Analytics",
 	ai_prompts: "AI Prompts",
-	blocks_per_catalogue: "Blocks per Catalogue",
+	sections_per_catalogue: "Sections per Catalogue",
 	items_per_catalogue: "Items per Catalogue",
 	styles: "Style",
 	standardThemes: "Standard Themes",

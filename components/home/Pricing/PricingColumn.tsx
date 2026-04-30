@@ -44,10 +44,10 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			},
 			{
 				text:
-					features.blocks_per_catalogue === "unlimited"
-						? "Unlimited blocks & items"
-						: `Up to ${features.blocks_per_catalogue} blocks & ${features.items_per_catalogue} items per catalogue`,
-				type: "blocks_and_items",
+					features.sections_per_catalogue === "unlimited"
+						? "Unlimited sections & items"
+						: `Up to ${features.sections_per_catalogue} sections & ${features.items_per_catalogue} items per catalogue`,
+				type: "sections_and_items",
 			},
 			features.branding === true
 				? {
@@ -98,13 +98,13 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			"ocr-ai-import":
 				"AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
 			"ai-catalogue-generation":
-				"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into blocks for your catalog.",
+				"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into sections for your catalog.",
 			newsletter:
 				"Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
 			"custom-features":
 				"Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
-			blocks_and_items:
-				"The total number of blocks and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
+			sections_and_items:
+				"The total number of sections and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
 			custom_branding:
 				"Control over the visual branding of your catalogues, including logo upload, legal information, partners and contact information represent your business in the best possible way.",
 		};

@@ -1,4 +1,5 @@
 "use client";
+import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { newsletterSignup } from "@/server_actions/newsletter";
@@ -54,6 +55,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 				setSubmitError("Failed to subscribe. Please try again.");
 			}
 		} catch (error: any) {
+			Sentry.captureException(error);
 			console.error("Newsletter signup failed:", error);
 			setSubmitError("Failed to subscribe. Please try again.");
 		} finally {

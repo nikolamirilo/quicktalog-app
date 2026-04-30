@@ -1,4 +1,5 @@
 "use client";
+import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { GeneralInformationInputProps } from "@/types/shared";
 import { getLanguageParameters, preprocessImage } from "@/utils/ocr";
@@ -105,6 +106,7 @@ const OCRImport = ({
 			await worker.terminate();
 			return text;
 		} catch (error) {
+			Sentry.captureException(error);
 			console.error("Error during OCR recognition:", error);
 			updateOCRImageData(imageData.id, {
 				confidence: 0,
@@ -187,6 +189,7 @@ const OCRImport = ({
 				await onExtractComplete(text);
 			}
 		} catch (error) {
+			Sentry.captureException(error);
 			console.error("Error during extraction:", error);
 			alert("An error occurred during processing.");
 		}

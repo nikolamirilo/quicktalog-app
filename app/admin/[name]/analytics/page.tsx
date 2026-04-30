@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import CatalogueAnalytics from "@/components/analytics/CatalogueAnalytics";
 import Navbar from "@/components/navigation/Navbar";
 
@@ -110,6 +111,7 @@ export default async function page({ params }: { params: tParams }) {
 			.sort(([a], [b]) => a.localeCompare(b))
 			.map(([date, count]) => ({ date, count: Number(count) }));
 	} catch (err) {
+		Sentry.captureException(err);
 		console.error("Analytics page error:", err);
 		error =
 			"Unable to load analytics data at this time. Please try again later.";

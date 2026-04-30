@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ export async function GET() {
 			},
 		);
 	} catch (error: any) {
+		Sentry.captureException(error);
 		console.error("Request error:", error);
 		return new Response(JSON.stringify({ error: error.message }), {
 			status: 400,

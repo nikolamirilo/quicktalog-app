@@ -87,7 +87,7 @@ export const CatalogueContextProvider = ({
 		setCatalogue((prev) => {
 			const newContent = [...prev.content];
 			newContent.splice(index, 1);
-			// Re-order remaining blocks
+			// Re-order remaining sections
 			return { ...prev, content: reorderArray(newContent) };
 		});
 	};
@@ -112,13 +112,13 @@ export const CatalogueContextProvider = ({
 				return prev;
 			}
 
-			// Swap blocks
+			// Swap sections
 			[newContent[index], newContent[targetIndex]] = [
 				newContent[targetIndex],
 				newContent[index],
 			];
 
-			// Re-order all blocks
+			// Re-order all sections
 			return { ...prev, content: reorderArray(newContent) };
 		});
 	};

@@ -1,5 +1,6 @@
 // app/api/update-consent/route.ts (for Next.js App Router; adjust path if using Pages Router)
 
+import * as Sentry from "@sentry/nextjs";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -42,6 +43,7 @@ export async function POST(req: NextRequest) {
 
 		return NextResponse.json({ success: true });
 	} catch (error) {
+		Sentry.captureException(error);
 		console.error("Error updating metadata:", error);
 		return NextResponse.json(
 			{ error: "Internal server error" },

@@ -24,7 +24,7 @@ export const getIcon = (type: LimitType) => {
 	switch (type) {
 		case "items":
 			return Layers;
-		case "categories":
+		case "sections":
 			return FolderTree;
 		case "notFound":
 			return IoSearch;
@@ -54,8 +54,8 @@ export const getLimitContent = (
 				return currentPlan.features.ocr_ai_import;
 			case "items":
 				return currentPlan.features.items_per_catalogue;
-			case "categories":
-				return currentPlan.features.blocks_per_catalogue;
+			case "sections":
+				return currentPlan.features.sections_per_catalogue;
 			case "traffic":
 				return currentPlan.features.traffic_limit;
 			default:
@@ -73,8 +73,8 @@ export const getLimitContent = (
 				return requiredPlan.features?.ocr_ai_import;
 			case "items":
 				return requiredPlan.features?.items_per_catalogue;
-			case "categories":
-				return requiredPlan.features?.blocks_per_catalogue;
+			case "sections":
+				return requiredPlan.features?.sections_per_catalogue;
 			case "traffic":
 				return requiredPlan.features?.traffic_limit;
 			default:
@@ -133,12 +133,12 @@ export const getLimitContent = (
 					"Display your entire inventory - every product deserves visibility",
 				valueProposition: "More products = More opportunities",
 			};
-		case "categories":
+		case "sections":
 			return {
-				feature: "Categories",
+				feature: "Sections",
 				icon: FolderTree,
 				description: `Better organization drives more sales. Upgrade to create ${nextLimit === "unlimited" ? "unlimited" : nextLimit} categories and help customers find exactly what they need.`,
-				upgradeText: "categories",
+				upgradeText: "sections",
 				currentLimit,
 				nextLimit,
 				benefit:

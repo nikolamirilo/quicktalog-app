@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
 import { generateUniqueSlug } from "@quicktalog/common";
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
 			.select();
 
 		if (error) {
+			Sentry.captureException(error);
 			console.error("Error inserting service catalogue:", error);
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 500,
@@ -41,6 +43,7 @@ export async function POST(request: Request) {
 			},
 		);
 	} catch (error: any) {
+		Sentry.captureException(error);
 		console.error("Request error:", error);
 		return new Response(JSON.stringify({ error: error.message }), {
 			status: 400,
@@ -85,6 +88,7 @@ export async function PATCH(request: Request) {
 			.select();
 
 		if (error) {
+			Sentry.captureException(error);
 			console.error("Error updating service catalogue:", error);
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 500,
@@ -109,6 +113,7 @@ export async function PATCH(request: Request) {
 			},
 		);
 	} catch (error: any) {
+		Sentry.captureException(error);
 		console.error("Request error:", error);
 		return new Response(JSON.stringify({ error: error.message }), {
 			status: 400,
@@ -128,6 +133,7 @@ export async function GET(request: Request) {
 			.select(type === "name" ? "name" : "*");
 
 		if (error) {
+			Sentry.captureException(error);
 			console.error("Error retreiving catalogues:", error);
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 500,
@@ -147,6 +153,7 @@ export async function GET(request: Request) {
 			headers: { "Content-Type": "application/json" },
 		});
 	} catch (error: any) {
+		Sentry.captureException(error);
 		console.error("Request error:", error);
 		return new Response(JSON.stringify({ error: error.message }), {
 			status: 400,
