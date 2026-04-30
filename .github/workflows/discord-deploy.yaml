@@ -4,7 +4,7 @@ on:
 
 jobs:
   notify:
-    if: github.event.deployment_status.state != 'inactive'
+    if: ${{ github.event.deployment_status.state != 'inactive' }}
     runs-on: ubuntu-latest
     steps:
       - name: Restore Discord message ID
@@ -50,15 +50,15 @@ jobs:
 
           if [ "$STATE" = "success" ]; then
             COLOR=3066993
-            TITLE="Vercel Deployment: Success ✅"
+            TITLE="Vercel Deployment: Success"
             DESC="**Repo:** $REPO\n**Branch:** $BRANCH\n**Env:** $ENV\n**Commit:** \`${SHA:0:7}\`\n**Message:** $COMMIT_MSG\n**Deployer:** $ACTOR\n[View deployment]($DEPLOY_URL)"
           elif [ "$STATE" = "failure" ] || [ "$STATE" = "error" ]; then
             COLOR=15158332
-            TITLE="Vercel Deployment: Failed ❌"
+            TITLE="Vercel Deployment: Failed"
             DESC="**Repo:** $REPO\n**Branch:** $BRANCH\n**Env:** $ENV\n**Commit:** \`${SHA:0:7}\`\n**Message:** $COMMIT_MSG\n**Deployer:** $ACTOR"
           else
             COLOR=3447003
-            TITLE="Vercel Deployment: In Progress ⏳"
+            TITLE="Vercel Deployment: In Progress"
             DESC="**Repo:** $REPO\n**Branch:** $BRANCH\n**Env:** $ENV\n**Commit:** \`${SHA:0:7}\`\n**Message:** $COMMIT_MSG\n**Deployer:** $ACTOR"
           fi
 
