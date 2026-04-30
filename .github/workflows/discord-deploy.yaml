@@ -13,7 +13,16 @@ jobs:
           ENV="${{ github.event.deployment.environment }}"
           SHA="${{ github.event.deployment.sha }}"
           REPO="${{ github.repository }}"
-          BRANCH="${{ github.event.deployment.ref }}"
+          REF="${{ github.event.deployment.ref }}"
+          if [[ "$REF" =~ ^[0-9a-f]{40}$ ]]; then
+            BRANCH=$(curl -s \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPO/commits/$SHA/branches-where-head" \
+              | jq -r '.[0].name // "unknown"')
+          else
+            BRANCH="$REF"
+          fi
           ACTOR="${{ github.actor }}"
           TIMESTAMP="${{ github.event.deployment_status.created_at }}"
           COMMIT_MSG=$(curl -s \
