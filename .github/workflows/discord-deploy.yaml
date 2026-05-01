@@ -1,20 +1,13 @@
 name: Discord Deployment Notification
 on:
-  deployment:
   deployment_status:
 
 jobs:
   notify:
-    if: ${{ github.event_name == 'deployment' || github.event.deployment_status.state != 'inactive' }}
+    if: ${{ github.event.deployment_status.state == 'success' || github.event.deployment_status.state == 'failure' || github.event.deployment_status.state == 'error' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Restore Discord message ID
-        uses: actions/cache@v4
-        with:
-          path: discord-msg-id.txt
-          key: discord-msg-${{ github.event.deployment.id }}
-
-      - name: Send or update Discord notification
+      - name: Send Discord notification
         env:
           WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -25,14 +18,8 @@ jobs:
           REF="${{ github.event.deployment.ref }}"
           ENV="${{ github.event.deployment.environment }}"
           ENV="${ENV/Preview/Test}"
-
-          if [ "${{ github.event_name }}" = "deployment" ]; then
-            STATE="in_progress"
-            TIMESTAMP="${{ github.event.deployment.created_at }}"
-          else
-            STATE="${{ github.event.deployment_status.state }}"
-            TIMESTAMP="${{ github.event.deployment_status.created_at }}"
-          fi
+          STATE="${{ github.event.deployment_status.state }}"
+          TIMESTAMP="${{ github.event.deployment_status.created_at }}"
 
           if [[ "$REF" =~ ^[0-9a-f]{40}$ ]]; then
             BRANCH=$(curl -s \
@@ -60,13 +47,9 @@ jobs:
             COLOR=3066993
             TITLE="Vercel Deployment: Success"
             DESC=$(printf '**Repo:** %s\n**Branch:** %s\n**Env:** %s\n**Commit:** `%s`\n**Message:** %s\n**Deployer:** %s\n[View deployment](%s)' "$REPO" "$BRANCH" "$ENV" "${SHA:0:7}" "$COMMIT_MSG" "$ACTOR" "$DEPLOY_URL")
-          elif [ "$STATE" = "failure" ] || [ "$STATE" = "error" ]; then
+          else
             COLOR=15158332
             TITLE="Vercel Deployment: Failed"
-            DESC=$(printf '**Repo:** %s\n**Branch:** %s\n**Env:** %s\n**Commit:** `%s`\n**Message:** %s\n**Deployer:** %s' "$REPO" "$BRANCH" "$ENV" "${SHA:0:7}" "$COMMIT_MSG" "$ACTOR")
-          else
-            COLOR=3447003
-            TITLE="Vercel Deployment: In Progress"
             DESC=$(printf '**Repo:** %s\n**Branch:** %s\n**Env:** %s\n**Commit:** `%s`\n**Message:** %s\n**Deployer:** %s' "$REPO" "$BRANCH" "$ENV" "${SHA:0:7}" "$COMMIT_MSG" "$ACTOR")
           fi
 
@@ -77,11 +60,5 @@ jobs:
             --arg timestamp "$TIMESTAMP" \
             '{embeds:[{title: $title, description: $description, color: $color, timestamp: $timestamp}]}')
 
-          if [ -f discord-msg-id.txt ] && MSG_ID=$(cat discord-msg-id.txt) && [ -n "$MSG_ID" ] && [ "$MSG_ID" != "null" ]; then
-            curl -s -H "Content-Type: application/json" -X PATCH \
-              -d "$PAYLOAD" "${WEBHOOK_URL}/messages/${MSG_ID}"
-          else
-            RESPONSE=$(curl -s -H "Content-Type: application/json" -X POST \
-              -d "$PAYLOAD" "${WEBHOOK_URL}?wait=true")
-            echo "$RESPONSE" | jq -r '.id' > discord-msg-id.txt
-          fi
+          curl -s -H "Content-Type: application/json" -X POST \
+            -d "$PAYLOAD" "${WEBHOOK_URL}"
