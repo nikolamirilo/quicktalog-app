@@ -59,31 +59,15 @@ jobs:
           if [ "$STATE" = "success" ]; then
             COLOR=3066993
             TITLE="Vercel Deployment: Success"
-            DESC="**Repo:** ${REPO}
-**Branch:** ${BRANCH}
-**Env:** ${ENV}
-**Commit:** \`${SHA:0:7}\`
-**Message:** ${COMMIT_MSG}
-**Deployer:** ${ACTOR}
-[View deployment](${DEPLOY_URL})"
+            DESC=$(printf '**Repo:** %s\n**Branch:** %s\n**Env:** %s\n**Commit:** `%s`\n**Message:** %s\n**Deployer:** %s\n[View deployment](%s)' "$REPO" "$BRANCH" "$ENV" "${SHA:0:7}" "$COMMIT_MSG" "$ACTOR" "$DEPLOY_URL")
           elif [ "$STATE" = "failure" ] || [ "$STATE" = "error" ]; then
             COLOR=15158332
             TITLE="Vercel Deployment: Failed"
-            DESC="**Repo:** ${REPO}
-**Branch:** ${BRANCH}
-**Env:** ${ENV}
-**Commit:** \`${SHA:0:7}\`
-**Message:** ${COMMIT_MSG}
-**Deployer:** ${ACTOR}"
+            DESC=$(printf '**Repo:** %s\n**Branch:** %s\n**Env:** %s\n**Commit:** `%s`\n**Message:** %s\n**Deployer:** %s' "$REPO" "$BRANCH" "$ENV" "${SHA:0:7}" "$COMMIT_MSG" "$ACTOR")
           else
             COLOR=3447003
             TITLE="Vercel Deployment: In Progress"
-            DESC="**Repo:** ${REPO}
-**Branch:** ${BRANCH}
-**Env:** ${ENV}
-**Commit:** \`${SHA:0:7}\`
-**Message:** ${COMMIT_MSG}
-**Deployer:** ${ACTOR}"
+            DESC=$(printf '**Repo:** %s\n**Branch:** %s\n**Env:** %s\n**Commit:** `%s`\n**Message:** %s\n**Deployer:** %s' "$REPO" "$BRANCH" "$ENV" "${SHA:0:7}" "$COMMIT_MSG" "$ACTOR")
           fi
 
           PAYLOAD=$(jq -n \
