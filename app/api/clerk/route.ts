@@ -170,6 +170,42 @@ async function handleUserUpsert(
 	}
 }
 
+async function handleUserUpdate(
+	supabase: any,
+	userData: UserData,
+): Promise<void> {
+	const { email, image, name, cookie_preferences } = userData;
+	const { error, count } = await supabase
+		.from("users")
+		.update({ email, image, name, cookie_preferences })
+		.eq("id", userData.id)
+		.select("id", { count: "exact" });
+
+	if (error) {
+		console.error("Database update error:", {
+			message: error.message,
+			details: error.details,
+			hint: error.hint,
+			code: error.code,
+			userId: userData.id,
+		});
+		throw new Error(`Database update failed: ${error.message}`);
+	}
+
+	if (!count) {
+		const { error: insertError } = await supabase.from("users").insert([
+			{
+				...userData,
+				plan_id: DEFAULT_PLAN_ID,
+				customer_id: null,
+			},
+		]);
+		if (insertError) {
+			throw new Error(`Database insert failed: ${insertError.message}`);
+		}
+	}
+}
+
 async function handleUserDeletion(
 	supabase: any,
 	userId: string,
@@ -273,18 +309,16 @@ export async function POST(req: NextRequest) {
 					return new Response("Invalid user data", { status: 400 });
 				}
 
-				// Upsert user with retry logic
-				await retryOperation(() => handleUserUpsert(supabase, userData));
-
-				// Send welcome email for new users (async, non-blocking)
 				if (event.type === "user.created") {
-					// Don't await - run in background
+					await retryOperation(() => handleUserUpsert(supabase, userData));
 					sendWelcomeEmailSafely(userData.email, userData.name).catch(
 						(error) => {
 							Sentry.captureException(error);
 							console.error("Background welcome email failed:", error);
 						},
 					);
+				} else {
+					await retryOperation(() => handleUserUpdate(supabase, userData));
 				}
 
 				const processingTime = Date.now() - startTime;

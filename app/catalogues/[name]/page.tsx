@@ -12,7 +12,7 @@ export const revalidate = 86400;
 export async function generateStaticParams() {
 	try {
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items?type=name`,
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items?type=name&status=active`,
 			{
 				method: "GET",
 				headers: { "Content-Type": "application/json" },

@@ -3,7 +3,7 @@ import { LimitType, PricingPlan, tiers } from "@quicktalog/common";
 import { getLimitContent, getIcon } from "./limits/limitContent";
 import LimitsModalHeader from "./limits/LimitsModalHeader";
 import NotFoundContent from "./limits/NotFoundContent";
-import PlanComparison from "./limits/PlanComparison";
+import PlanComparison from "./limits/LimitUpgradeComparison";
 
 interface LimitsModalProps {
 	isOpen: boolean;
@@ -24,7 +24,8 @@ const LimitsModal = ({
 	const content = getLimitContent(type, currentPlan, requiredPlan);
 	const IconComponent = getIcon(type);
 	const isStandardPlanLimitReached =
-		content.currentLimit === content.nextLimit && currentPlan.id >= 4;
+		content.currentLimit === content.nextLimit &&
+		currentPlan.id === requiredPlan?.id;
 
 	return (
 		<AlertDialog open={isOpen}>

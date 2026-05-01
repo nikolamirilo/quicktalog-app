@@ -10,7 +10,8 @@ import {
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { htmlToText, kebabToTitle } from "@/helpers/client";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
-import { themes, tiers } from "@quicktalog/common";
+import { themes } from "@quicktalog/common";
+import { getRequiredPlan } from "@/helpers/client";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -268,7 +269,11 @@ const Catalogue = ({
 					currentPlan={userData?.currentPlan}
 					isOpen={showLimitsModal}
 					onClose={() => setShowLimitsModal(false)}
-					requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
+					requiredPlan={
+						userData
+							? getRequiredPlan(userData.currentPlan, "sections")
+							: undefined
+					}
 					type="sections"
 				/>
 				{type === "edit" && <SelectTemplateModal />}

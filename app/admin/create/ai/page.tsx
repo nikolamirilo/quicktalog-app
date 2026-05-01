@@ -3,7 +3,8 @@ import LimitsModal from "@/components/modals/LimitsModal";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { getUserData } from "@/server_actions/users";
-import { tiers, UserData } from "@quicktalog/common";
+import { UserData } from "@quicktalog/common";
+import { getRequiredPlan } from "@/helpers/client";
 
 export const dynamic = "force-dynamic";
 export default async function page() {
@@ -33,11 +34,7 @@ export default async function page() {
 			<LimitsModal
 				currentPlan={userData.currentPlan}
 				isOpen={true}
-				requiredPlan={
-					userData.nextPlan.features.ai_prompts === 0
-						? tiers.find((item) => item.features.ai_prompts > 0)
-						: userData.nextPlan
-				}
+				requiredPlan={getRequiredPlan(userData.currentPlan, "ai")}
 				type="ai"
 			/>
 		);

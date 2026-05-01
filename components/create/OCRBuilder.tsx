@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useUserContext } from "@/context/UserContext";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug, UserData } from "@quicktalog/common";
+import { getRequiredPlan } from "@/helpers/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoTimerOutline } from "react-icons/io5";
@@ -88,7 +89,7 @@ export default function OCRBuilder({
 			return false;
 		}
 		if (
-			userData.usage.prompts >= userData.currentPlan.features.ai_prompts ||
+			userData.usage.ocr >= userData.currentPlan.features.ocr_ai_import ||
 			userData.usage.catalogues >= userData.currentPlan.features.catalogues
 		) {
 			setShowLimitsModal(true);
@@ -182,7 +183,7 @@ export default function OCRBuilder({
 				<LimitsModal
 					currentPlan={userData?.currentPlan}
 					isOpen={showLimitsModal}
-					requiredPlan={userData?.nextPlan}
+					requiredPlan={getRequiredPlan(userData.currentPlan, "ocr")}
 					type="ocr"
 				/>
 			)}

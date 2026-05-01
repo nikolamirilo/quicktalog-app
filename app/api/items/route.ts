@@ -1,7 +1,7 @@
-import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue } from "@/helpers/server";
 import { createClient } from "@/utils/supabase/server";
 import { generateUniqueSlug } from "@quicktalog/common";
+import * as Sentry from "@sentry/nextjs";
 
 export const dynamic = "force-dynamic";
 
@@ -125,12 +125,18 @@ export async function GET(request: Request) {
 	try {
 		const { searchParams } = new URL(request.url);
 		const type = searchParams.get("type");
+		const status = searchParams.get("status");
 		const supabase = await createClient();
 
-		// Update the service catalogue record
-		const { data, error } = await supabase
+		let query = supabase
 			.from("catalogues")
 			.select(type === "name" ? "name" : "*");
+
+		if (status) {
+			query = query.eq("status", status);
+		}
+
+		const { data, error } = await query;
 
 		if (error) {
 			Sentry.captureException(error);

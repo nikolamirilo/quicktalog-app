@@ -5,7 +5,7 @@ import { Environments, initializePaddle, Paddle } from "@paddle/paddle-js";
 import { PricingPlan } from "@quicktalog/common";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import PlanComparison from "./upgrade/PlanComparison";
+import PlanComparison from "./upgrade/PlanUpgradeCards";
 import PlanSelector from "./upgrade/PlanSelector";
 
 interface UpgradePlanModalProps {

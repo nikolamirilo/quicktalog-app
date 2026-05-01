@@ -6,7 +6,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 	let catalogues: Catalogue[] = [];
 	try {
-		const res = await fetch(`${baseUrl}/api/items`, {
+		const res = await fetch(`${baseUrl}/api/items?status=active`, {
 			method: "GET",
 			cache: "force-cache",
 		});
