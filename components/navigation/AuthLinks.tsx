@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FiGrid, FiUser, FiUserPlus } from "react-icons/fi";
 import { MobileNavLink, NavLink } from "./Navbar"; // Assuming NavLink and MobileNavLink are exported from Navbar.tsx
 
@@ -12,15 +12,9 @@ interface AuthLinksProps {
 }
 
 const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
-	const { isSignedIn, user } = useUser();
-	const [isMounted, setIsMounted] = useState(false);
+	const { isSignedIn, user, isLoaded } = useUser();
 
-	useEffect(() => {
-		setIsMounted(true);
-	}, []);
-
-	// Don't render anything until the component is mounted on the client
-	if (!isMounted) {
+	if (!isLoaded) {
 		if (isMobile) {
 			return (
 				<div className="border-t border-product-border pt-3 sm:pt-4 mt-3 sm:mt-4">
