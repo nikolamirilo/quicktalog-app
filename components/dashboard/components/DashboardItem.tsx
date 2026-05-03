@@ -2,8 +2,13 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { htmlToText } from "@/helpers/client";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { publishCatalogue } from "@/server_actions/catalogue";
+import {
+	getCatalogueByName,
+	publishCatalogue,
+} from "@/server_actions/catalogue";
+import type { Catalogue } from "@quicktalog/common";
 import { Edit, Rocket } from "lucide-react";
 import Link from "next/link";
 import { FiFileText } from "react-icons/fi";
@@ -30,7 +35,34 @@ const DashboardItem = ({
 }) => {
 	const { refreshAll } = useDashboardData("overview");
 	const handlePublish = async () => {
-		const promise = publishCatalogue(catalogue);
+		const result = await getCatalogueByName(catalogue.name);
+		if (!result.success || !result.data) {
+			toast.error("Could not retrieve catalogue data. Please try again.");
+			return;
+		}
+
+		const raw = result.data;
+		const latest = (
+			typeof raw === "string" ? JSON.parse(raw) : raw
+		) as Catalogue;
+		const heading = htmlToText(latest.heading) || "";
+		const missingFields: string[] = [];
+		if (!heading || heading.length === 0) missingFields.push("heading");
+		if (!latest.content || latest.content.length === 0)
+			missingFields.push("content");
+		if (missingFields.length > 0) {
+			toast.error(`Cannot publish: missing ${missingFields.join(" and ")}.`, {
+				action: {
+					label: "Open Builder",
+					onClick: () => {
+						window.location.href = `/admin/${catalogue.name}/builder`;
+					},
+				},
+			});
+			return;
+		}
+
+		const promise = publishCatalogue(latest);
 		if (catalogue.status === "draft") {
 			toast.promise(promise, {
 				loading: "Publishing...",
@@ -44,8 +76,9 @@ const DashboardItem = ({
 		} else {
 			toast.promise(promise, {
 				loading: "Updating...",
-				success: (success) => {
+				success: async (success) => {
 					if (!success) throw new Error("Failed to update status");
+					await refreshAll();
 					return "Catalogue updated successfully";
 				},
 				action: {
@@ -158,18 +191,15 @@ const DashboardItem = ({
 						className="flex flex-row items-center justify-center gap-1"
 						href={`/admin/${catalogue.name}/builder`}
 					>
-						<Button className="w-full">
+						<Button className="w-full" variant="outline">
 							<Edit className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
 							<span className="ml-1">Continue Editing</span>
 						</Button>
 					</Link>
 					<Button
 						className="w-full flex flex-row items-center justify-center gap-1"
-						disabled={
-							catalogue.heading.length === 0 || catalogue.content.length === 0
-						}
+						disabled={false}
 						onClick={handlePublish}
-						variant="outline"
 					>
 						<Rocket className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
 						<span className="ml-1">Publish Catalogue</span>

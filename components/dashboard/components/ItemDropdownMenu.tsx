@@ -5,11 +5,15 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuPortal,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { handleDownloadHTML } from "@/helpers/client";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
-import { Catalogue, PricingPlan, Usage } from "@quicktalog/common";
+import { Catalogue, PricingPlan, Status, Usage } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import { useState } from "react";
@@ -74,6 +78,14 @@ const ItemDropdownMenu = ({
 		usage.traffic.pageview_count >= matchedTier.features.traffic_limit;
 	const atCatalogueLimit = usage.catalogues >= matchedTier.features.catalogues;
 	const isActive = catalogue.status === "active";
+
+	const USER_STATUSES: Status[] = ["active", "inactive", "draft"];
+	const STATUS_LABELS: Partial<Record<Status, string>> = {
+		active: "Activate",
+		inactive: "Deactivate",
+		draft: "Save as Draft",
+	};
+	const availableStatuses = USER_STATUSES.filter((s) => s !== catalogue.status);
 
 	const { handleNameChange, refetchNames } = useCatalogueName({
 		initialName: formData.name,
@@ -211,19 +223,56 @@ const ItemDropdownMenu = ({
 					className="bg-product-background border border-product-border rounded-xl shadow-lg"
 				>
 					{menuItems.map(
-						({ key, icon, label, disabled: dis, onClick, className }) => (
-							<DropdownMenuItem
-								className={className}
-								disabled={dis}
-								key={key}
-								onClick={onClick}
-							>
-								<span className="flex items-center gap-2">
-									{icon}
-									{label}
-								</span>
-							</DropdownMenuItem>
-						),
+						({ key, icon, label, disabled: dis, onClick, className }) => {
+							if (key === "status") {
+								return (
+									<DropdownMenuSub key="status">
+										<DropdownMenuSubTrigger
+											className={ITEM_BASE_CLASS}
+											disabled={isDuplicating || disabled}
+										>
+											<span className="flex items-center gap-2">
+												<VscActivateBreakpoints size={18} />
+												Change Status
+											</span>
+										</DropdownMenuSubTrigger>
+										<DropdownMenuPortal>
+											<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg">
+												{availableStatuses.map((status) => (
+													<DropdownMenuItem
+														className={ITEM_BASE_CLASS}
+														disabled={status === "active" && atTrafficLimit}
+														key={status}
+														onClick={() =>
+															handleUpdateItemStatus(
+																catalogue.id,
+																status,
+																catalogue.name,
+															)
+														}
+													>
+														{STATUS_LABELS[status]}
+													</DropdownMenuItem>
+												))}
+											</DropdownMenuSubContent>
+										</DropdownMenuPortal>
+									</DropdownMenuSub>
+								);
+							}
+							return (
+								<DropdownMenuItem
+									className={className}
+									disabled={dis}
+									key={key}
+									onClick={onClick}
+								>
+									<span className="flex items-center gap-2">
+										{icon}
+										{label}
+									</span>
+								</DropdownMenuItem>
+							);
+						},
 					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
