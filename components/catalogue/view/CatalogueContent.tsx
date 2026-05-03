@@ -3,7 +3,8 @@ import LimitsModal from "@/components/modals/LimitsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useMainContext } from "@/context/MainContext";
 import { CatalogueContentProps } from "@/types/shared";
-import { ContentLayout, Item, tiers, UserData } from "@quicktalog/common";
+import { ContentLayout, Item, UserData } from "@quicktalog/common";
+import { getRequiredPlan } from "@/helpers/client";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiFileMinus } from "react-icons/fi";
@@ -380,7 +381,9 @@ const CatalogueContent = ({
 				currentPlan={userData?.currentPlan}
 				isOpen={showLimitsModal}
 				onClose={() => setShowLimitsModal(false)}
-				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
+				requiredPlan={
+					userData ? getRequiredPlan(userData.currentPlan, "items") : undefined
+				}
 				type="items"
 			/>
 		</main>

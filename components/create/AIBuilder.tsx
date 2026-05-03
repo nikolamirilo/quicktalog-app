@@ -9,6 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { useUserContext } from "@/context/UserContext";
 import { useUser } from "@clerk/nextjs";
 import { generateUniqueSlug, UserData } from "@quicktalog/common";
+import { getRequiredPlan } from "@/helpers/client";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoTimerOutline } from "react-icons/io5";
@@ -199,7 +200,7 @@ export default function AIBuilder({
 				<LimitsModal
 					currentPlan={userData?.currentPlan}
 					isOpen={showLimitsModal}
-					requiredPlan={userData?.nextPlan}
+					requiredPlan={getRequiredPlan(userData.currentPlan, "ai")}
 					type="ai"
 				/>
 			)}

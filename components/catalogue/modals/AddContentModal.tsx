@@ -8,7 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { snakeToTitleCase } from "@/helpers/client";
-import { ContentBlock, tiers, UserData } from "@quicktalog/common";
+import { ContentBlock, UserData } from "@quicktalog/common";
+import { getRequiredPlan } from "@/helpers/client";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ContentOptionsSelector } from "../sections/common/ContentOptionsSelector";
@@ -286,8 +287,8 @@ const AddContentModal = ({
 				currentPlan={userData?.currentPlan}
 				isOpen={showLimitsModal}
 				onClose={() => setShowLimitsModal(false)}
-				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
-				type="items"
+				requiredPlan={getRequiredPlan(userData.currentPlan, "sections")}
+				type="sections"
 			/>
 		</>
 	);

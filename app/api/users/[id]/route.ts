@@ -37,14 +37,14 @@ export async function GET(
 			);
 		}
 
+		const standardTiers = tiers.filter((item) => item.type === "standard");
 		const nextPlan =
-			tiers
-				.filter((item) => item.type === "standard")
-				.find(
-					(item) =>
-						item.features.items_per_catalogue >
-							pricingPlan.features.items_per_catalogue && item.id > 1,
-				) || pricingPlan;
+			standardTiers.find(
+				(item) =>
+					item.features.items_per_catalogue >
+						pricingPlan.features.items_per_catalogue &&
+					item.id > pricingPlan.id,
+			) ?? standardTiers[standardTiers.length - 1];
 
 		const billingPeriod = Object.entries(pricingPlan.priceId).find(
 			([_, id]) => id === planId,

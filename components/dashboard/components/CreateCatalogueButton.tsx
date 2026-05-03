@@ -11,7 +11,7 @@ import {
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { createCatalogue } from "@/server_actions/catalogue";
-import { tiers } from "@quicktalog/common";
+import { getRequiredPlan } from "@/helpers/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -147,7 +147,11 @@ const CreateCatalogueButton = ({
 				currentPlan={userData?.currentPlan}
 				isOpen={limitsModal}
 				onClose={() => setLimitsModal(false)}
-				requiredPlan={userData?.nextPlan || tiers[tiers.length - 1]}
+				requiredPlan={
+					userData
+						? getRequiredPlan(userData.currentPlan, "catalogue")
+						: undefined
+				}
 				type="catalogue"
 			/>
 		</>

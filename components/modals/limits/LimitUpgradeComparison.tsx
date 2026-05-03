@@ -18,12 +18,15 @@ const PlanComparison = ({
 	requiredPlan,
 	isStandardPlanLimitReached,
 }: PlanComparisonProps) => {
-	const featureLabel =
+	const singularLabel =
 		content.feature === "AI Catalogue Generation"
-			? "AI prompts"
+			? "AI prompt"
 			: content.feature === "OCR AI Import"
-				? "OCR imports"
-				: content.feature.toLowerCase();
+				? "OCR import"
+				: content.feature.toLowerCase().replace(/s$/, "");
+
+	const featureLabel = (count: number | "unlimited") =>
+		count === 1 ? singularLabel : `${singularLabel}s`;
 
 	return (
 		<>
@@ -42,7 +45,7 @@ const PlanComparison = ({
 									{formatLimit(content.currentLimit)}
 								</span>
 								<span className="text-sm text-product-foreground">
-									{featureLabel}
+									{featureLabel(content.currentLimit)}
 								</span>
 							</div>
 							<div className="text-sm text-product-foreground font-medium">
@@ -67,7 +70,11 @@ const PlanComparison = ({
 										: formatLimit(content.nextLimit)}
 								</span>
 								<span className="text-sm text-product-foreground">
-									{featureLabel}
+									{featureLabel(
+										isStandardPlanLimitReached
+											? "unlimited"
+											: content.nextLimit,
+									)}
 								</span>
 							</div>
 							<div className="text-sm text-product-foreground font-medium">
