@@ -191,7 +191,7 @@ const DashboardItem = ({
 						className="flex flex-row items-center justify-center gap-1"
 						href={`/admin/${catalogue.name}/builder`}
 					>
-						<Button className="w-full" variant="outline">
+						<Button className="w-full">
 							<Edit className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
 							<span className="ml-1">Continue Editing</span>
 						</Button>
@@ -200,6 +200,7 @@ const DashboardItem = ({
 						className="w-full flex flex-row items-center justify-center gap-1"
 						disabled={false}
 						onClick={handlePublish}
+						variant="outline"
 					>
 						<Rocket className="sm:w-3 sm:h-3 md:w-4 md:h-4" size={12} />
 						<span className="ml-1">Publish Catalogue</span>

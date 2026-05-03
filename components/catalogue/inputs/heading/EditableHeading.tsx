@@ -50,7 +50,7 @@ const EditableHeading = ({
 				mx-auto
 				break-words transition-all
 				relative
-				${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none before:absolute before:left-1/2 before:-translate-x-1/2 before:text-[var(--placeholder-color)] before:whitespace-nowrap" : ""}
+				${isEmpty && !isFocused ? "before:content-[attr(data-placeholder)] before:pointer-events-none before:absolute before:left-1/2 before:-translate-x-1/2 before:text-[color-mix(in_srgb,var(--catalogue-text)_60%,transparent)] before:whitespace-nowrap" : ""}
 			`}
 			contentEditable
 			data-placeholder="+ Add Heading"
