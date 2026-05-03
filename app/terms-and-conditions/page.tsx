@@ -246,6 +246,21 @@ export default function TermsAndConditionsPage() {
 					purposes.
 				</p>
 				<p className="mb-4">
+					If you are on a <strong>free plan</strong>, you additionally grant us
+					a non-exclusive, royalty-free license to display, reproduce, and
+					reference your catalog (including its name, appearance, and publicly
+					visible content) in our marketing materials, website, social media,
+					and other promotional channels for the purpose of showcasing the
+					Service. We will not present your catalog in a misleading way or
+					attribute it to someone else. You can opt out of this at any time by
+					upgrading to a paid plan or by contacting us at{" "}
+					<a className="underline" href="mailto:quicktalog@outlook.com">
+						quicktalog@outlook.com
+					</a>
+					.
+				</p>
+
+				<p className="mb-4">
 					You're solely responsible for Your Content. You confirm that you have
 					the rights to upload, display, and share everything you add to your
 					catalogs, and that none of it infringes the rights of any third party
