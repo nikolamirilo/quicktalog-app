@@ -40,6 +40,29 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 		// Enable sending user PII (Personally Identifiable Information)
 		// https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
 		sendDefaultPii: true,
+
+		// Browser auto-translation (Edge/Chrome) reparents text nodes into <font>
+		// wrappers, which makes React's stored DOM references stale during
+		// unmount. React 19 already recovers from this on its own, so the noisy
+		// NotFoundError it throws is not actionable.
+		beforeSend(event, hint) {
+			const err = hint?.originalException as
+				| (Error & { name?: string; stack?: string })
+				| undefined;
+			if (err) {
+				const message = err.message ?? "";
+				const stack = err.stack ?? "";
+				if (
+					err.name === "NotFoundError" &&
+					(message.includes("removeChild") ||
+						message.includes("insertBefore")) &&
+					/react-dom/.test(stack)
+				) {
+					return null;
+				}
+			}
+			return event;
+		},
 	});
 }
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
