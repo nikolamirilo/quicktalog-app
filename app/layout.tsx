@@ -46,7 +46,7 @@ export default function RootLayout({
 				<GoogleTagManager gtmId={process.env.GTM_ID} />
 			</head>
 			<NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-			<body className="product">
+			<body className="product" suppressHydrationWarning>
 				<PageWrapperClient children={children} />
 			</body>
 		</html>

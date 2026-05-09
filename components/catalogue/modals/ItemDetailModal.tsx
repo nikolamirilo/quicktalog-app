@@ -100,7 +100,8 @@ export default function ItemDetailModal({
 						{item?.image && (
 							<OptimizedImage
 								alt={item.name}
-								className="w-full h-full object-cover"
+								className="w-full h-full"
+								objectFit="contain"
 								priority
 								src={item.image}
 							/>

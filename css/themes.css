@@ -420,3 +420,62 @@
 		auto,
 		auto;
 }
+
+.theme-coffee {
+	--catalogue-background: #f5f0e8;
+	--catalogue-foreground: #2a1f14;
+	--catalogue-heading: #2a1f14;
+	--catalogue-text: #3d2e1f;
+	--catalogue-button-text: #f5f0e8;
+	--catalogue-price: #6b4c20;
+
+	--catalogue-primary: #8b6914;
+	--catalogue-secondary: #a0522d;
+	--catalogue-accent: #d4b896;
+	--catalogue-primary-foreground: #f5f0e8;
+	--catalogue-secondary-foreground: #f5f0e8;
+
+	--catalogue-card-background: #faf6ef;
+	--catalogue-card-text: #2a1f14;
+	--catalogue-card-heading: #2a1f14;
+	--catalogue-card-description: #5a3e26;
+	--catalogue-card-border: #d9cbb5;
+
+	--catalogue-section-background: #ede5d4;
+	--catalogue-section-border: #c8b89a;
+
+	--catalogue-navigation-background: #faf6ef;
+	--catalogue-navigation-text: #2a1f14;
+	--catalogue-navigation-border: #c8b89a;
+
+	--catalogue-category-shadow: 0 4px 20px rgba(139, 105, 20, 0.15);
+	--catalogue-category-accent: #8b6914;
+	--catalogue-category-gradient: linear-gradient(
+		135deg,
+		#faf6ef 0%,
+		#ede5d4 100%
+	);
+	--catalogue-category-border: #8b6914;
+
+	background-image:
+		repeating-linear-gradient(
+			45deg,
+			rgba(42, 31, 20, 0.03) 0 1px,
+			transparent 1px 16px
+		),
+		repeating-linear-gradient(
+			-45deg,
+			rgba(42, 31, 20, 0.03) 0 1px,
+			transparent 1px 16px
+		),
+		radial-gradient(
+			70% 50% at 50% 0%,
+			rgba(212, 184, 150, 0.15),
+			transparent 70%
+		), linear-gradient(180deg, #f5f0e8 0%, #ede5d4 100%);
+	background-size:
+		20px 20px,
+		20px 20px,
+		auto,
+		auto;
+}

@@ -1,27 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { MobileNavLinkProps, NavLinkProps } from "@/types/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaRegCirclePlay } from "react-icons/fa6";
 import { FiHome, FiMail, FiX } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { LuLayoutDashboard } from "react-icons/lu";
 import AuthLinks from "./AuthLinks";
-
-// TypeScript interfaces
-interface NavLinkProps {
-	href: string;
-	children: React.ReactNode;
-	icon?: React.ComponentType<{ className?: string }>;
-	className?: string;
-}
-
-interface MobileNavLinkProps {
-	href: string;
-	children: React.ReactNode;
-	icon?: React.ComponentType<{ size?: number; className?: string }>;
-	onClick: () => void;
-}
 
 // NavLink component for active state handling
 export const NavLink = ({
@@ -109,6 +96,9 @@ const Navbar = () => {
 				</NavLink>
 				<NavLink href="/demo" icon={FaRegCirclePlay}>
 					Demo
+				</NavLink>
+				<NavLink href="/showcases" icon={LuLayoutDashboard}>
+					Showcases
 				</NavLink>
 				<AuthLinks />
 			</div>

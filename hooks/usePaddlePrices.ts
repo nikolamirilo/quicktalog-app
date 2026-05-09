@@ -4,6 +4,7 @@ import {
 	PricePreviewResponse,
 } from "@paddle/paddle-js";
 import { tiers } from "@quicktalog/common";
+import * as Sentry from "@sentry/nextjs";
 import { useEffect, useState } from "react";
 
 export type PaddlePrices = Record<string, string>;
@@ -28,22 +29,36 @@ export function usePaddlePrices(
 	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
+		if (!paddle) return;
+
 		const paddlePricePreviewRequest: Partial<PricePreviewParams> = {
 			items: getLineItems(),
 			...(country !== "OTHERS" && { address: { countryCode: country } }),
 		};
 
+		let cancelled = false;
 		setLoading(true);
 
-		paddle
-			?.PricePreview(paddlePricePreviewRequest as PricePreviewParams)
-			.then((prices) => {
+		(async () => {
+			try {
+				const response = await paddle.PricePreview(
+					paddlePricePreviewRequest as PricePreviewParams,
+				);
+				if (cancelled) return;
 				setPrices((prevState) => ({
 					...prevState,
-					...getPriceAmounts(prices),
+					...getPriceAmounts(response),
 				}));
-				setLoading(false);
-			});
+			} catch (err) {
+				Sentry.captureException(err);
+			} finally {
+				if (!cancelled) setLoading(false);
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
 	}, [country, paddle]);
 	return { prices, loading };
 }

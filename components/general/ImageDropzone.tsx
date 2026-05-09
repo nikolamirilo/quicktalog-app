@@ -1,10 +1,9 @@
 "use client";
 import * as Sentry from "@sentry/nextjs";
-import { Skeleton } from "@/components/ui/skeleton";
 import { loadImage, processImage } from "@/helpers/imageProcessing";
 import { ImageDropzoneProps } from "@/types/shared";
 import { UploadDropzone } from "@/utils/uploadthing";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
 
@@ -20,11 +19,16 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 	className = "",
 	disabled = false,
 }) => {
+	const [isBusy, setIsBusy] = useState(false);
+
 	const handleBeforeUploadBegin = useCallback(
 		async (files: File[]): Promise<File[]> => {
 			if (disabled || files.length === 0) return [];
 
 			const file = files[0];
+
+			setIsBusy(true);
+			setIsUploading?.(true);
 
 			try {
 				if (!file.type.startsWith("image/")) {
@@ -60,14 +64,17 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					);
 				}
 
+				setIsBusy(false);
+				setIsUploading?.(false);
 				return [];
 			}
 		},
-		[disabled, maxDim, targetSizeKB, onError],
+		[disabled, maxDim, targetSizeKB, onError, setIsUploading],
 	);
 
 	const handleUploadComplete = useCallback(
 		(res: any[]) => {
+			setIsBusy(false);
 			setIsUploading?.(false);
 			try {
 				if (res && res.length > 0 && res[0]?.url) {
@@ -87,11 +94,12 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 				}
 			}
 		},
-		[onUploadComplete, onError],
+		[onUploadComplete, onError, setIsUploading],
 	);
 
 	const handleUploadError = useCallback(
 		(error: Error) => {
+			setIsBusy(false);
 			setIsUploading?.(false);
 			Sentry.captureException(error);
 			console.error("Upload error:", error);
@@ -99,7 +107,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 				onError(error);
 			}
 		},
-		[onError],
+		[onError, setIsUploading],
 	);
 
 	return (
@@ -144,14 +152,13 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 									);
 								if (isUploading)
 									return (
-										<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center">
-											<Skeleton className="absolute inset-0 w-full h-full" />
-											<span className="animate-spin rounded-full h-14 w-14 border-4 border-muted-foreground/20 border-t-primary z-10"></span>
+										<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center bg-product-background/90">
+											<span className="animate-spin rounded-full h-14 w-14 border-4 border-gray-300 border-t-product-primary z-10"></span>
 										</div>
 									);
 								return (
 									<div className="absolute inset-0 flex items-center justify-center">
-										<span className="animate-spin rounded-full h-14 w-14 border-4 border-muted-foreground/20 border-t-primary"></span>
+										<span className="animate-spin rounded-full h-14 w-14 border-4 border-gray-300 border-t-product-primary"></span>
 									</div>
 								);
 							},
@@ -181,6 +188,11 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 						}}
 						onUploadError={handleUploadError}
 					/>
+					{isBusy && (
+						<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center bg-product-background/90 z-50 pointer-events-auto">
+							<span className="animate-spin rounded-full h-14 w-14 border-4 border-gray-300 border-t-product-primary"></span>
+						</div>
+					)}
 				</div>
 			)}
 		</div>

@@ -4,7 +4,7 @@ import { footerDetails, siteDetails } from "@/constants/details";
 import { getPlatformIconByName } from "@/constants/ui";
 import { productNewsletterSignup } from "@/server_actions/newsletter";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiCheck, FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
 
 const Footer: React.FC = () => {
@@ -14,6 +14,11 @@ const Footer: React.FC = () => {
 	const [submitStatus, setSubmitStatus] = useState<
 		"idle" | "success" | "already_subscribed"
 	>("idle");
+	const [year, setYear] = useState<number | null>(null);
+
+	useEffect(() => {
+		setYear(new Date().getFullYear());
+	}, []);
 
 	const handleNewsletterSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -225,8 +230,8 @@ const Footer: React.FC = () => {
 				<div className="pt-8 border-t border-product-border">
 					<div className="flex flex-col md:flex-row items-center justify-between gap-4">
 						<p className="text-product-foreground-accent text-sm">
-							Copyright &copy; {new Date().getFullYear()} {siteDetails.siteName}
-							. All rights reserved.
+							Copyright &copy; {year ?? ""} {siteDetails.siteName}. All rights
+							reserved.
 						</p>
 						<div className="flex flex-row items-center gap-2 md:gap-6 text-sm text-product-foreground-accent">
 							{footerDetails.legalLinks.map((link, index) => (
