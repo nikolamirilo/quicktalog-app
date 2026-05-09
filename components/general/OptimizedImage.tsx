@@ -22,22 +22,25 @@ export const OptimizedImage = ({
 	className,
 	priority = false,
 	type = "basic",
+	objectFit = "cover",
 }: {
 	src: string;
 	alt: string;
 	className?: string;
 	priority?: boolean;
 	type?: "basic" | "next";
+	objectFit?: "cover" | "contain";
 }) => {
 	const [hasError, setHasError] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [showImage, setShowImage] = useState(false);
+	const objectFitClass = objectFit === "contain" ? "object-contain" : "object-cover";
 
 	if (hasError) {
 		return (
 			<img
 				alt={alt}
-				className={`${className} absolute inset-0 transition-all duration-500 ease-out object-cover w-full h-full opacity-100 scale-100
+				className={`${className} absolute inset-0 transition-all duration-500 ease-out ${objectFitClass} w-full h-full opacity-100 scale-100
 				`}
 				loading="eager"
 				sizes="(max-width: 768px) 40vw, 20vw"
@@ -86,7 +89,7 @@ export const OptimizedImage = ({
 				/* Regular HTML img */
 				<img
 					alt={alt}
-					className={`${className} absolute inset-0 transition-all duration-500 ease-out object-cover w-full h-full ${
+					className={`${className} absolute inset-0 transition-all duration-500 ease-out ${objectFitClass} w-full h-full ${
 						showImage ? "opacity-100 scale-100" : "opacity-0 scale-102"
 					}`}
 					decoding="async"
