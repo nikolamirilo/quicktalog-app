@@ -1,27 +1,15 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { MobileNavLinkProps, NavLinkProps } from "@/types/components";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaRegCirclePlay } from "react-icons/fa6";
 import { FiHome, FiMail, FiX } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { LuLayoutDashboard } from "react-icons/lu";
 import AuthLinks from "./AuthLinks";
 
-// TypeScript interfaces
-interface NavLinkProps {
-	href: string;
-	children: React.ReactNode;
-	icon?: React.ComponentType<{ className?: string }>;
-	className?: string;
-}
-
-interface MobileNavLinkProps {
-	href: string;
-	children: React.ReactNode;
-	icon?: React.ComponentType<{ size?: number; className?: string }>;
-	onClick: () => void;
-}
 
 // NavLink component for active state handling
 export const NavLink = ({
@@ -58,11 +46,10 @@ export const MobileNavLink = ({
 	return (
 		<Link href={href} onClick={onClick}>
 			<button
-				className={`w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 ${
-					isActive
-						? "bg-product-background-hover text-product-primary border border-product-primary shadow-sm font-semibold"
-						: "hover:bg-product-nav-hover-bg hover:text-product-nav-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-product-nav-hover-border hover:font-bold"
-				}`}
+				className={`w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 ${isActive
+					? "bg-product-background-hover text-product-primary border border-product-primary shadow-sm font-semibold"
+					: "hover:bg-product-nav-hover-bg hover:text-product-nav-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-product-nav-hover-border hover:font-bold"
+					}`}
 			>
 				{Icon && (
 					<Icon
@@ -110,6 +97,9 @@ const Navbar = () => {
 				<NavLink href="/demo" icon={FaRegCirclePlay}>
 					Demo
 				</NavLink>
+				<NavLink href="/showcases" icon={LuLayoutDashboard}>
+					Showcases
+				</NavLink>
 				<AuthLinks />
 			</div>
 
@@ -134,9 +124,8 @@ const Navbar = () => {
 
 			{/* Mobile menu */}
 			<div
-				className={`mobile-menu fixed flex flex-col top-0 right-0 h-screen w-80 bg-product-background  z-50 transform transition-transform duration-300 ease-in-out ${
-					mobileOpen ? "translate-x-0" : "translate-x-full"
-				}`}
+				className={`mobile-menu fixed flex flex-col top-0 right-0 h-screen w-80 bg-product-background  z-50 transform transition-transform duration-300 ease-in-out ${mobileOpen ? "translate-x-0" : "translate-x-full"
+					}`}
 				style={{ willChange: "transform" }}
 			>
 				{/* Mobile menu header */}
