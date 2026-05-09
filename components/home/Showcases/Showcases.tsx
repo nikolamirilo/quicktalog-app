@@ -113,10 +113,11 @@ export default function SwiperCarousel({ data }: { data: ShowcaseItem[] }) {
 					>
 						{data.map((item, index) => (
 							<button
-								className={`relative w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-200 group ${index === activeIndex
-									? "bg-product-background-hover text-product-foreground"
-									: "text-product-foreground-accent hover:text-product-foreground hover:bg-product-background-hero"
-									}`}
+								className={`relative w-full flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-200 group ${
+									index === activeIndex
+										? "bg-product-background-hover text-product-foreground"
+										: "text-product-foreground-accent hover:text-product-foreground hover:bg-product-background-hero"
+								}`}
 								key={`nav-${index}`}
 								onClick={() => handleSelect(index)}
 								type="button"
@@ -133,10 +134,11 @@ export default function SwiperCarousel({ data }: { data: ShowcaseItem[] }) {
 								</span>
 
 								<span
-									className={`text-[13px] font-medium leading-snug flex-1 min-w-0 truncate transition-colors ${index === activeIndex
-										? "text-product-foreground"
-										: "text-product-foreground-accent group-hover:text-product-foreground"
-										}`}
+									className={`text-[13px] font-medium leading-snug flex-1 min-w-0 truncate transition-colors ${
+										index === activeIndex
+											? "text-product-foreground"
+											: "text-product-foreground-accent group-hover:text-product-foreground"
+									}`}
 								>
 									{item.title}
 								</span>
@@ -261,10 +263,11 @@ export default function SwiperCarousel({ data }: { data: ShowcaseItem[] }) {
 							<button
 								aria-label={`Go to catalogue ${index + 1}`}
 								aria-selected={isActive}
-								className={`h-1.5 rounded-full transition-all duration-300 ${isActive
-									? "w-6 bg-product-primary"
-									: "w-1.5 bg-product-border hover:bg-product-foreground-accent/40"
-									}`}
+								className={`h-1.5 rounded-full transition-all duration-300 ${
+									isActive
+										? "w-6 bg-product-primary"
+										: "w-1.5 bg-product-border hover:bg-product-foreground-accent/40"
+								}`}
 								key={`dot-${index}`}
 								onClick={() => handleSelect(index)}
 								role="tab"

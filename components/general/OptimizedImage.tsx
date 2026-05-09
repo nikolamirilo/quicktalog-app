@@ -34,7 +34,8 @@ export const OptimizedImage = ({
 	const [hasError, setHasError] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [showImage, setShowImage] = useState(false);
-	const objectFitClass = objectFit === "contain" ? "object-contain" : "object-cover";
+	const objectFitClass =
+		objectFit === "contain" ? "object-contain" : "object-cover";
 
 	if (hasError) {
 		return (

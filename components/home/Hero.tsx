@@ -7,7 +7,7 @@ import {
 	FiClock,
 	FiDollarSign,
 	FiPlay,
-	FiSmartphone
+	FiSmartphone,
 } from "react-icons/fi";
 import CreateCatalogueButton from "../dashboard/components/CreateCatalogueButton";
 
@@ -60,9 +60,9 @@ const Hero: React.FC = () => {
 						Create a Stunning Digital Catalogue in Minutes
 					</h1>
 					<p className="mt-4 text-lg text-product-foreground-accent md:text-xl">
-						The best free online catalog maker for businesses. Turn your services,
-						menus, or products into an interactive, mobile-friendly digital
-						catalog or price list. No code or design skills required.
+						The best free online catalog maker for businesses. Turn your
+						services, menus, or products into an interactive, mobile-friendly
+						digital catalog or price list. No code or design skills required.
 					</p>
 
 					{/* Value Propositions */}
