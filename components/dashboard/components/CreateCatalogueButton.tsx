@@ -113,7 +113,7 @@ const CreateCatalogueButton = ({
 						) : (
 							<Button
 								aria-label="Create your digital catalog"
-								className="h-14 px-8 py-4 text-lg text-wrap min-w-56 w-fit"
+								className="h-[50px] px-7 py-3.5 text-base min-w-[200px] sm:h-14 sm:px-8 sm:py-4 sm:text-lg sm:min-w-56 text-wrap w-fit"
 								disabled={disabled}
 								onClick={handleButtonClick}
 								variant="cta"

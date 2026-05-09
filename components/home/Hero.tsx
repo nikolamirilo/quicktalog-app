@@ -78,7 +78,7 @@ const Hero: React.FC = () => {
 						<Link href="/demo">
 							<Button
 								aria-label="Try the catalog demo"
-								className="h-14 border-2 border-product-primary px-8 py-4 text-lg text-wrap min-w-56 w-fit"
+								className="h-[50px] px-7 py-3.5 text-base min-w-[200px] sm:h-14 sm:px-8 sm:py-4 sm:text-lg sm:min-w-56 border-2 border-product-primary text-wrap w-fit"
 								variant="outline"
 							>
 								<FiPlay className="mr-2 h-5 w-5" />
