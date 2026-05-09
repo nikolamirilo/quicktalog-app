@@ -30,8 +30,8 @@ export const footerDetails: {
 			url: "/pricing",
 		},
 		{
-		  text: "Showcases",
-		  url: "/showcases",
+			text: "Showcases",
+			url: "/showcases",
 		},
 		{
 			text: "Help Center",
