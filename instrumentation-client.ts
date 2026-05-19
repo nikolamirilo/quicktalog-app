@@ -85,10 +85,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 					return null;
 				}
 
-				if (
-					err.name === "SyntaxError" &&
-					/surveys\.js/.test(stack)
-				) {
+				if (err.name === "SyntaxError" && /surveys\.js/.test(stack)) {
 					return null;
 				}
 
