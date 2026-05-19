@@ -2,7 +2,7 @@
 import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FiAlertTriangle, FiHome } from "react-icons/fi";
 
 export default function CatalogueError({
@@ -12,6 +12,8 @@ export default function CatalogueError({
 	error: Error & { digest?: string };
 	reset: () => void;
 }) {
+	const translatorResetCount = useRef(0);
+
 	useEffect(() => {
 		const message = error?.message ?? "";
 		const stack = error?.stack ?? "";
@@ -20,10 +22,13 @@ export default function CatalogueError({
 			(message.includes("removeChild") || message.includes("insertBefore")) &&
 			/react-dom/.test(stack);
 
-		if (isTranslatorReconciliation) {
-			// Browser auto-translation reparents text nodes into <font> wrappers
-			// during the commit phase. Re-mount instead of escalating.
+		if (isTranslatorReconciliation && translatorResetCount.current < 1) {
+			translatorResetCount.current += 1;
 			reset();
+			return;
+		}
+
+		if (isTranslatorReconciliation) {
 			return;
 		}
 

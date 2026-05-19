@@ -67,6 +67,20 @@ export class ProcessWebhook {
 			customer_id: eventData.data.customerId,
 		};
 
+		const { data: linkedUser } = await supabase
+			.from("users")
+			.select("id")
+			.eq("customer_id", subscription.customer_id)
+			.maybeSingle();
+
+		if (!linkedUser) {
+			console.warn(
+				"Skipping subscription upsert: no user linked to customer_id",
+				subscription.customer_id,
+			);
+			return;
+		}
+
 		const { error: subError } = await supabase
 			.from("subscriptions")
 			.upsert(subscription, { onConflict: "subscription_id" });
@@ -142,7 +156,7 @@ export class ProcessWebhook {
 					.from("users")
 					.select("name, email")
 					.eq("customer_id", subscription.customer_id)
-					.single();
+					.maybeSingle();
 
 				if (fetchError) {
 					Sentry.captureException(fetchError);
@@ -150,7 +164,7 @@ export class ProcessWebhook {
 					return;
 				}
 				if (!user) {
-					console.error(
+					console.warn(
 						"User not found for customer_id:",
 						subscription.customer_id,
 					);

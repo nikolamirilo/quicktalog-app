@@ -6,11 +6,13 @@ import { createClient } from "@/utils/supabase/server";
 export async function GET() {
 	try {
 		const supabase = await createClient();
-		const { id } = await currentUser();
+		const user = await currentUser();
 
-		if (!id) {
+		if (!user?.id) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
+
+		const { id } = user;
 
 		const { data: analyticsData } = await supabase
 			.from("analytics")

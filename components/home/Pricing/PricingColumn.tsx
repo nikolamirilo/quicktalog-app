@@ -15,7 +15,7 @@ interface PricingColumnProps {
 	highlight?: boolean;
 	price: string;
 	billingCycle: "monthly" | "yearly";
-	paddle: Paddle;
+	paddle: Paddle | undefined;
 	priceId: string;
 	user: UserData | null;
 	mode?: "column" | "row";
@@ -130,6 +130,11 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 
 		if (matchedTier && matchedTier.name === tier.name) {
 			alert("You currently have this plan");
+			return;
+		}
+
+		if (!paddle?.Checkout) {
+			alert("Checkout is still loading. Please try again in a moment.");
 			return;
 		}
 

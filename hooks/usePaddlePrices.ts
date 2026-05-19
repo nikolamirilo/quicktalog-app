@@ -49,8 +49,11 @@ export function usePaddlePrices(
 					...prevState,
 					...getPriceAmounts(response),
 				}));
-			} catch (err) {
-				Sentry.captureException(err);
+			} catch (err: any) {
+				const isNetworkError =
+					err?.error?.type === "network_error" ||
+					err?.error?.code === "network_error";
+				if (!isNetworkError) Sentry.captureException(err);
 			} finally {
 				if (!cancelled) setLoading(false);
 			}
