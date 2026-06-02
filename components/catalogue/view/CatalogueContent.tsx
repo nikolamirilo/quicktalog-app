@@ -6,7 +6,7 @@ import { CatalogueContentProps } from "@/types/shared";
 import { ContentLayout, Item, UserData } from "@quicktalog/common";
 import { getDisplayItems } from "@/helpers/catalogueItems";
 import { getRequiredPlan } from "@/helpers/client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiFileMinus } from "react-icons/fi";
 import ItemModal from "../modals/ItemModal";
@@ -55,19 +55,25 @@ const CatalogueContent = ({
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
 	const searchParams = useSearchParams();
 	const router = useRouter();
+	const pathname = usePathname();
 	const [query, setQuery] = useState<string>(() => searchParams.get("q") ?? "");
 	const isSearching = query.trim().length > 0;
 
 	const handleQueryChange = (next: string) => {
 		setQuery(next);
-		const params = new URLSearchParams(
-			Array.from(searchParams.entries()),
-		);
+		const params = new URLSearchParams(Array.from(searchParams.entries()));
 		if (next.trim()) params.set("q", next);
 		else params.delete("q");
 		const qs = params.toString();
-		router.replace(qs ? `?${qs}` : "?", { scroll: false });
+		router.replace(qs ? `?${qs}` : pathname, { scroll: false });
 	};
+
+	useEffect(() => {
+		const urlQuery = searchParams.get("q") ?? "";
+		if (urlQuery !== query) {
+			setQuery(urlQuery);
+		}
+	}, [searchParams]);
 
 	useEffect(() => {
 		if (!data || data.length === 0) return;
@@ -225,10 +231,7 @@ const CatalogueContent = ({
 	return (
 		<main aria-label="Categories and items" className="max-w-6xl mx-auto px-4">
 			{mode === "view" && (
-				<CatalogueSearchBar
-					onChange={handleQueryChange}
-					value={query}
-				/>
+				<CatalogueSearchBar onChange={handleQueryChange} value={query} />
 			)}
 			{data.map((block, index) => {
 				const isExpanded = expandedSections[`${block.id}-${block.order}`];
