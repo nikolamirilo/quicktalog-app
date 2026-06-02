@@ -1,6 +1,6 @@
 "use client";
 import { Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Props {
 	value: string;
@@ -15,6 +15,10 @@ const CatalogueSearchBar = ({
 	placeholder = "Search items…",
 	debounceMs = 200,
 }: Props) => {
+	const onChangeRef = useRef(onChange);
+	useEffect(() => {
+		onChangeRef.current = onChange;
+	}, [onChange]);
 	const [local, setLocal] = useState(value);
 
 	useEffect(() => {
@@ -23,9 +27,9 @@ const CatalogueSearchBar = ({
 
 	useEffect(() => {
 		if (local === value) return;
-		const t = setTimeout(() => onChange(local), debounceMs);
+		const t = setTimeout(() => onChangeRef.current(local), debounceMs);
 		return () => clearTimeout(t);
-	}, [local, value, onChange, debounceMs]);
+	}, [local, value, debounceMs]);
 
 	const handleClear = () => {
 		setLocal("");
