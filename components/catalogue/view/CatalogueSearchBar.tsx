@@ -33,7 +33,7 @@ const CatalogueSearchBar = ({
 
 	const handleClear = () => {
 		setLocal("");
-		onChange("");
+		onChangeRef.current("");
 	};
 
 	return (

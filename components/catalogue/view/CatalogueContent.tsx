@@ -184,7 +184,6 @@ const CatalogueContent = ({
 
 	useEffect(() => {
 		const isExpanded = searchParams.get("expanded");
-		console.log("isExpanded from URL:", isExpanded);
 
 		if (isExpanded && data && data.length > 0) {
 			const allSectionsExpanded = data.reduce(

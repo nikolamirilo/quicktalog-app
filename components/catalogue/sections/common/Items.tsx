@@ -11,7 +11,7 @@ import {
 import { CategoryBlock, ContainerBlock } from "@quicktalog/common";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -50,20 +50,11 @@ const Items = ({
 }: Props) => {
 	const [visibleCount, setVisibleCount] = useState(INITIAL_ITEM_COUNT);
 
-	// Shrink visibleCount when the filtered list gets shorter (e.g. search narrows),
-	// and never let it exceed the available count.
-	useEffect(() => {
-		if (visibleCount > displayItems.length && displayItems.length > 0) {
-			setVisibleCount(Math.max(INITIAL_ITEM_COUNT, displayItems.length));
-		}
-	}, [displayItems.length, visibleCount]);
-
 	const totalItemsInBlock = (block.items || []).length;
 	const visible = displayItems.slice(0, visibleCount);
 	const remaining = displayItems.length - visible.length;
 
-	const handleShowMore = () =>
-		setVisibleCount((c) => c + LOAD_MORE_STEP);
+	const handleShowMore = () => setVisibleCount((c) => c + LOAD_MORE_STEP);
 
 	return (
 		<AnimatePresence initial={false}>
