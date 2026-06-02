@@ -4,8 +4,9 @@ import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useMainContext } from "@/context/MainContext";
 import { CatalogueContentProps } from "@/types/shared";
 import { ContentLayout, Item, UserData } from "@quicktalog/common";
+import { getDisplayItems } from "@/helpers/catalogueItems";
 import { getRequiredPlan } from "@/helpers/client";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiFileMinus } from "react-icons/fi";
 import ItemModal from "../modals/ItemModal";
@@ -15,6 +16,7 @@ import CustomCodeBlockComponent from "../sections/CustomCode";
 import DividerBlockComponent from "../sections/DividerBlock";
 import EmbeddingBlockComponent from "../sections/EmbeddingBlock";
 import TextBlockComponent from "../sections/TextBlock";
+import CatalogueSearchBar from "./CatalogueSearchBar";
 
 const CatalogueContent = ({
 	data,
@@ -52,6 +54,20 @@ const CatalogueContent = ({
 	const [isItemModalOpen, setIsItemModalOpen] = useState(false);
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
 	const searchParams = useSearchParams();
+	const router = useRouter();
+	const [query, setQuery] = useState<string>(() => searchParams.get("q") ?? "");
+	const isSearching = query.trim().length > 0;
+
+	const handleQueryChange = (next: string) => {
+		setQuery(next);
+		const params = new URLSearchParams(
+			Array.from(searchParams.entries()),
+		);
+		if (next.trim()) params.set("q", next);
+		else params.delete("q");
+		const qs = params.toString();
+		router.replace(qs ? `?${qs}` : "?", { scroll: false });
+	};
 
 	useEffect(() => {
 		if (!data || data.length === 0) return;
@@ -208,6 +224,12 @@ const CatalogueContent = ({
 
 	return (
 		<main aria-label="Categories and items" className="max-w-6xl mx-auto px-4">
+			{mode === "view" && (
+				<CatalogueSearchBar
+					onChange={handleQueryChange}
+					value={query}
+				/>
+			)}
 			{data.map((block, index) => {
 				const isExpanded = expandedSections[`${block.id}-${block.order}`];
 
@@ -218,6 +240,9 @@ const CatalogueContent = ({
 				};
 
 				if (block.type === "category") {
+					const categoryDisplayItems = getDisplayItems(block, query);
+					if (isSearching && categoryDisplayItems.length === 0) return null;
+					const forceExpanded = isSearching ? true : isExpanded;
 					const currentLayout =
 						type === "demo" ? (layout as ContentLayout) : block.layout;
 					return (
@@ -226,29 +251,48 @@ const CatalogueContent = ({
 							blockIndex={index}
 							currency={currency}
 							currentLayout={currentLayout}
-							isExpanded={isExpanded}
+							isExpanded={forceExpanded}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}
 							key={`${block.id}-${block.order}`}
 							mode={mode}
-							onAddItem={openAddItemModal}
+							onAddItem={isSearching ? undefined : openAddItemModal}
 							onDelete={handleDeleteClick}
-							onDeleteItem={(itemIndex) => handleDeleteItem(index, itemIndex)}
+							onDeleteItem={
+								isSearching
+									? undefined
+									: (itemIndex) => handleDeleteItem(index, itemIndex)
+							}
 							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
-							onEditItem={(itemIndex) => handleEditItem(index, itemIndex)}
+							onEditItem={
+								isSearching
+									? undefined
+									: (itemIndex) => handleEditItem(index, itemIndex)
+							}
 							onMoveDown={() => moveBlock(index, "down")}
-							onMoveItemDown={(itemIndex) => moveItem(index, itemIndex, "down")}
-							onMoveItemUp={(itemIndex) => moveItem(index, itemIndex, "up")}
+							onMoveItemDown={
+								isSearching
+									? undefined
+									: (itemIndex) => moveItem(index, itemIndex, "down")
+							}
+							onMoveItemUp={
+								isSearching
+									? undefined
+									: (itemIndex) => moveItem(index, itemIndex, "up")
+							}
 							onMoveUp={() => moveBlock(index, "up")}
 							onToggle={handleToggleSection}
 							onUpdateBlock={
 								updateBlock ? (data) => updateBlock(index, data) : undefined
 							}
+							query={query}
 							slug={block.id}
 							theme={theme}
 						/>
 					);
 				} else if (block.type === "container") {
+					const containerDisplayItems = getDisplayItems(block, query);
+					if (isSearching && containerDisplayItems.length === 0) return null;
 					const currentLayout =
 						type === "demo" ? (layout as ContentLayout) : block.layout;
 					return (
@@ -262,28 +306,41 @@ const CatalogueContent = ({
 							isLast={index === data.length - 1}
 							key={`${block.id}-${block.order}`}
 							mode={mode}
-							onAddItem={openAddItemModal}
+							onAddItem={isSearching ? undefined : openAddItemModal}
 							onDelete={handleDeleteClick}
-							onDeleteItem={(itemIndex) => handleDeleteItem(index, itemIndex)}
+							onDeleteItem={
+								isSearching
+									? undefined
+									: (itemIndex) => handleDeleteItem(index, itemIndex)
+							}
 							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
-							onEditItem={(itemIndex) => handleEditItem(index, itemIndex)}
+							onEditItem={
+								isSearching
+									? undefined
+									: (itemIndex) => handleEditItem(index, itemIndex)
+							}
 							onMoveDown={
 								moveBlock ? () => moveBlock(index, "down") : undefined
 							}
 							onMoveItemDown={
-								moveItem
-									? (itemIndex) => moveItem(index, itemIndex, "down")
-									: undefined
+								isSearching
+									? undefined
+									: moveItem
+										? (itemIndex) => moveItem(index, itemIndex, "down")
+										: undefined
 							}
 							onMoveItemUp={
-								moveItem
-									? (itemIndex) => moveItem(index, itemIndex, "up")
-									: undefined
+								isSearching
+									? undefined
+									: moveItem
+										? (itemIndex) => moveItem(index, itemIndex, "up")
+										: undefined
 							}
 							onMoveUp={moveBlock ? () => moveBlock(index, "up") : undefined}
 							onUpdateBlock={
 								updateBlock ? (data) => updateBlock(index, data) : undefined
 							}
+							query={query}
 							slug={block.id}
 							theme={theme}
 						/>
@@ -361,6 +418,21 @@ const CatalogueContent = ({
 				}
 				return null;
 			})}
+
+			{isSearching &&
+				data.every((block) => {
+					if (block.type !== "category" && block.type !== "container")
+						return true;
+					return getDisplayItems(block, query).length === 0;
+				}) && (
+					<div
+						aria-live="polite"
+						className="text-center py-12 text-[var(--catalogue-text)]/70"
+						role="status"
+					>
+						No items match "{query}".
+					</div>
+				)}
 
 			<ItemModal
 				checkItemLimits={checkItemLimits}
