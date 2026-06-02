@@ -62,7 +62,9 @@ describe("normalizeText", () => {
 
 describe("matchesQuery", () => {
 	it("matches on name (case-insensitive)", () => {
-		expect(matchesQuery(item({ name: "Margherita Pizza" }), "pizza")).toBe(true);
+		expect(matchesQuery(item({ name: "Margherita Pizza" }), "pizza")).toBe(
+			true,
+		);
 	});
 
 	it("matches on description", () => {

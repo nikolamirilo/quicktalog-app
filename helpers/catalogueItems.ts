@@ -13,7 +13,7 @@ export function normalizeText(value: string | null | undefined): string {
 	const withoutTags = String(value).replace(/<[^>]*>/g, " ");
 	return withoutTags
 		.normalize("NFD")
-		.replace(/[̀-ͯ]/g, "")
+		.replace(/[\u0300-\u036f]/g, "")
 		.toLowerCase()
 		.replace(/\s+/g, " ")
 		.trim();
