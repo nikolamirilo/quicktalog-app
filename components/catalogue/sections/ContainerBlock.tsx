@@ -1,4 +1,5 @@
 "use client";
+import { getDisplayItems } from "@/helpers/catalogueItems";
 import type { ContainerBlock } from "@quicktalog/common";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -26,6 +27,7 @@ interface ContainerBlockProps {
 	onMoveItemUp?: (itemIndex: number) => void;
 	onMoveItemDown?: (itemIndex: number) => void;
 	onUpdateBlock?: (data: Partial<ContainerBlock>) => void;
+	query?: string;
 }
 
 const ContainerBlockComponent = ({
@@ -49,8 +51,11 @@ const ContainerBlockComponent = ({
 	onMoveItemUp,
 	onMoveItemDown,
 	onUpdateBlock,
+	query,
 }: ContainerBlockProps) => {
 	const showContent = true;
+
+	const displayItems = getDisplayItems(block, query ?? "");
 
 	if (!block.items || !Array.isArray(block.items)) {
 		if (mode !== "edit") {
@@ -101,6 +106,7 @@ const ContainerBlockComponent = ({
 
 			<Items
 				block={block}
+				displayItems={displayItems}
 				blockIndex={blockIndex}
 				currency={currency}
 				currentLayout={currentLayout}

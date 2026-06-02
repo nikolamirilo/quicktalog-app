@@ -3,9 +3,15 @@ import {
 	getCurrencySymbol,
 	getGridStyle,
 } from "@/helpers/client";
+import {
+	type DisplayItem,
+	INITIAL_ITEM_COUNT,
+	LOAD_MORE_STEP,
+} from "@/helpers/catalogueItems";
 import { CategoryBlock, ContainerBlock } from "@quicktalog/common";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -13,6 +19,7 @@ import CardsSwitcher from "../../cards";
 
 interface Props {
 	block: ContainerBlock | CategoryBlock;
+	displayItems: DisplayItem[];
 	blockIndex: number;
 	currentLayout: string;
 	currency: string;
@@ -28,6 +35,7 @@ interface Props {
 
 const Items = ({
 	block,
+	displayItems,
 	blockIndex,
 	currentLayout,
 	currency,
@@ -40,6 +48,23 @@ const Items = ({
 	onMoveItemUp,
 	onMoveItemDown,
 }: Props) => {
+	const [visibleCount, setVisibleCount] = useState(INITIAL_ITEM_COUNT);
+
+	// Shrink visibleCount when the filtered list gets shorter (e.g. search narrows),
+	// and never let it exceed the available count.
+	useEffect(() => {
+		if (visibleCount > displayItems.length && displayItems.length > 0) {
+			setVisibleCount(Math.max(INITIAL_ITEM_COUNT, displayItems.length));
+		}
+	}, [displayItems.length, visibleCount]);
+
+	const totalItemsInBlock = (block.items || []).length;
+	const visible = displayItems.slice(0, visibleCount);
+	const remaining = displayItems.length - visible.length;
+
+	const handleShowMore = () =>
+		setVisibleCount((c) => c + LOAD_MORE_STEP);
+
 	return (
 		<AnimatePresence initial={false}>
 			{showContent && (
@@ -63,29 +88,37 @@ const Items = ({
 								slidesPerView="auto"
 								spaceBetween={12}
 							>
-								{(block.items || []).map((record, i) => (
+								{visible.map(({ item: record, originalIndex }) => (
 									<SwiperSlide
-										aria-label={`Item ${i + 1} of ${(block.items || []).length}`}
+										aria-label={`Item ${originalIndex + 1} of ${totalItemsInBlock}`}
 										className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto"
-										key={record.id || i}
+										key={record.id || originalIndex}
 										role="group"
 									>
 										<CardsSwitcher
 											blockIndex={blockIndex}
 											currency={getCurrencySymbol(currency)}
-											i={i}
-											isFirst={i === 0}
-											isLast={i === (block.items || []).length - 1}
+											i={originalIndex}
+											isFirst={originalIndex === 0}
+											isLast={originalIndex === totalItemsInBlock - 1}
 											mode={mode}
 											onDelete={
-												onDeleteItem ? () => onDeleteItem(i) : undefined
+												onDeleteItem
+													? () => onDeleteItem(originalIndex)
+													: undefined
 											}
-											onEdit={onEditItem ? () => onEditItem(i) : undefined}
+											onEdit={
+												onEditItem ? () => onEditItem(originalIndex) : undefined
+											}
 											onMoveDown={
-												onMoveItemDown ? () => onMoveItemDown(i) : undefined
+												onMoveItemDown
+													? () => onMoveItemDown(originalIndex)
+													: undefined
 											}
 											onMoveUp={
-												onMoveItemUp ? () => onMoveItemUp(i) : undefined
+												onMoveItemUp
+													? () => onMoveItemUp(originalIndex)
+													: undefined
 											}
 											record={record}
 											theme={theme}
@@ -114,21 +147,33 @@ const Items = ({
 					) : (
 						<div>
 							<div className={getGridStyle(currentLayout)}>
-								{(block.items || []).map((record, i) => (
+								{visible.map(({ item: record, originalIndex }) => (
 									<CardsSwitcher
-										key={record.id || i}
+										key={record.id || originalIndex}
 										blockIndex={blockIndex}
 										currency={getCurrencySymbol(currency)}
-										i={i}
-										isFirst={i === 0}
-										isLast={i === (block.items || []).length - 1}
+										i={originalIndex}
+										isFirst={originalIndex === 0}
+										isLast={originalIndex === totalItemsInBlock - 1}
 										mode={mode}
-										onDelete={onDeleteItem ? () => onDeleteItem(i) : undefined}
-										onEdit={onEditItem ? () => onEditItem(i) : undefined}
-										onMoveDown={
-											onMoveItemDown ? () => onMoveItemDown(i) : undefined
+										onDelete={
+											onDeleteItem
+												? () => onDeleteItem(originalIndex)
+												: undefined
 										}
-										onMoveUp={onMoveItemUp ? () => onMoveItemUp(i) : undefined}
+										onEdit={
+											onEditItem ? () => onEditItem(originalIndex) : undefined
+										}
+										onMoveDown={
+											onMoveItemDown
+												? () => onMoveItemDown(originalIndex)
+												: undefined
+										}
+										onMoveUp={
+											onMoveItemUp
+												? () => onMoveItemUp(originalIndex)
+												: undefined
+										}
 										record={record}
 										theme={theme}
 										variant={currentLayout}
@@ -158,6 +203,20 @@ const Items = ({
 									</button>
 								)}
 							</div>
+						</div>
+					)}
+
+					{remaining > 0 && (
+						<div className="flex justify-center mt-4">
+							<button
+								aria-label={`Show ${Math.min(remaining, LOAD_MORE_STEP)} more items in ${block.name}`}
+								className="px-5 py-2 rounded-full border border-[var(--catalogue-card-border)] bg-[var(--catalogue-card-background)] text-[var(--catalogue-text)] hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] transition-colors text-sm font-medium"
+								onClick={handleShowMore}
+								style={{ borderRadius: "var(--border-radius)" }}
+								type="button"
+							>
+								Show more ({remaining} remaining)
+							</button>
 						</div>
 					)}
 				</motion.div>

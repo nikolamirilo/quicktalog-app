@@ -1,4 +1,5 @@
 "use client";
+import { getDisplayItems } from "@/helpers/catalogueItems";
 import type { CategoryBlock } from "@quicktalog/common";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -27,6 +28,7 @@ interface CategoryBlockProps {
 	onMoveItemUp?: (itemIndex: number) => void;
 	onMoveItemDown?: (itemIndex: number) => void;
 	onUpdateBlock?: (data: Partial<CategoryBlock>) => void;
+	query?: string;
 }
 
 const CategoryBlockComponent = ({
@@ -51,6 +53,7 @@ const CategoryBlockComponent = ({
 	onMoveItemUp,
 	onMoveItemDown,
 	onUpdateBlock,
+	query,
 }: CategoryBlockProps) => {
 	if (!block) return null;
 
@@ -86,6 +89,8 @@ const CategoryBlockComponent = ({
 
 	const showContent = mode === "edit" || isExpanded;
 
+	const displayItems = getDisplayItems(block, query ?? "");
+
 	return (
 		<section
 			className="mb-5"
@@ -112,6 +117,7 @@ const CategoryBlockComponent = ({
 
 			<Items
 				block={block}
+				displayItems={displayItems}
 				blockIndex={blockIndex}
 				currency={currency}
 				currentLayout={currentLayout}
