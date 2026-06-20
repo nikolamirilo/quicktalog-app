@@ -34,6 +34,14 @@ export const footerDetails: {
 			url: "/showcases",
 		},
 		{
+			text: "Articles",
+			url: "/articles",
+		},
+		{
+			text: "Docs",
+			url: "/docs",
+		},
+		{
 			text: "Help Center",
 			url: "/help",
 		},

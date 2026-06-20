@@ -1,6 +1,8 @@
 // LD JSON Schema constants for structured data
 
 import { Catalogue } from "@quicktalog/common";
+import type { ArticleMeta } from "@/content/articles/_types";
+import type { DocMeta } from "@/content/docs/_types";
 import { faqs } from "./details";
 
 // Organization schema
@@ -228,6 +230,70 @@ export const helpPageSchema = {
 	})),
 };
 
+export const docsPageSchema = {
+	"@context": "https://schema.org",
+	"@type": "CollectionPage",
+	name: "Docs - How to Build a Digital Catalogue | Quicktalog",
+	description:
+		"A step-by-step guide to creating, customizing, and sharing your digital catalogue with Quicktalog.",
+	url: "https://www.quicktalog.app/docs",
+	mainEntity: {
+		"@type": "ItemList",
+		name: "Quicktalog docs topics",
+		description:
+			"Lessons that take you from a new account to a live catalogue you can share.",
+	},
+};
+
+export function generateDocSchema(meta: DocMeta) {
+	const url = `https://www.quicktalog.app/docs/${meta.slug}`;
+	return {
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "TechArticle",
+				headline: meta.title,
+				description: meta.description,
+				datePublished: "2026-06-20",
+				author: { "@type": "Organization", name: "Quicktalog" },
+				publisher: {
+					"@type": "Organization",
+					name: "Quicktalog",
+					logo: {
+						"@type": "ImageObject",
+						url: "https://www.quicktalog.app/logo.svg",
+					},
+				},
+				mainEntityOfPage: { "@type": "WebPage", "@id": url },
+				keywords: meta.keywords.join(", "),
+			},
+			{
+				"@type": "BreadcrumbList",
+				itemListElement: [
+					{
+						"@type": "ListItem",
+						position: 1,
+						name: "Home",
+						item: "https://www.quicktalog.app",
+					},
+					{
+						"@type": "ListItem",
+						position: 2,
+						name: "Docs",
+						item: "https://www.quicktalog.app/docs",
+					},
+					{
+						"@type": "ListItem",
+						position: 3,
+						name: meta.title,
+						item: url,
+					},
+				],
+			},
+		],
+	};
+}
+
 export const authenticationPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
@@ -246,6 +312,75 @@ export const authenticationPageSchema = {
 		},
 	],
 };
+
+export const articlesPageSchema = {
+	"@context": "https://schema.org",
+	"@type": "CollectionPage",
+	name: "Quicktalog Blog - Guides for Digital Menus & Catalogs",
+	description:
+		"Practical guides on digital menus, product catalogs, QR codes, and growing your business with Quicktalog.",
+	url: "https://www.quicktalog.app/articles",
+	mainEntity: {
+		"@type": "ItemList",
+		name: "Quicktalog articles",
+		description:
+			"Guides and use cases for digital menus and catalogs created with Quicktalog.",
+	},
+};
+
+export function generateArticleSchema(meta: ArticleMeta) {
+	const url = `https://www.quicktalog.app/articles/${meta.slug}`;
+	const image = meta.heroImage.startsWith("http")
+		? meta.heroImage
+		: `https://www.quicktalog.app${meta.heroImage}`;
+	return {
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "BlogPosting",
+				headline: meta.title,
+				description: meta.description,
+				image,
+				datePublished: meta.publishedAt,
+				dateModified: meta.updatedAt ?? meta.publishedAt,
+				author: { "@type": "Organization", name: meta.author },
+				publisher: {
+					"@type": "Organization",
+					name: "Quicktalog",
+					logo: {
+						"@type": "ImageObject",
+						url: "https://www.quicktalog.app/logo.svg",
+					},
+				},
+				mainEntityOfPage: { "@type": "WebPage", "@id": url },
+				keywords: meta.keywords.join(", "),
+			},
+			{
+				"@type": "BreadcrumbList",
+				itemListElement: [
+					{
+						"@type": "ListItem",
+						position: 1,
+						name: "Home",
+						item: "https://www.quicktalog.app",
+					},
+					{
+						"@type": "ListItem",
+						position: 2,
+						name: "Articles",
+						item: "https://www.quicktalog.app/articles",
+					},
+					{
+						"@type": "ListItem",
+						position: 3,
+						name: meta.title,
+						item: url,
+					},
+				],
+			},
+		],
+	};
+}
 
 export function generateCatalogueSchema(item: Catalogue) {
 	return {
@@ -283,7 +418,9 @@ export function getPageSchema(page: string) {
 		terms: organizationSchema,
 		refund: organizationSchema,
 		help: helpPageSchema,
+		docs: docsPageSchema,
 		auth: authenticationPageSchema,
+		articles: articlesPageSchema,
 	};
 
 	return schemas[page as keyof typeof schemas] || websiteSchema;

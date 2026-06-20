@@ -74,6 +74,7 @@ export default withUt(
 				fontFamily: {
 					lora: ["var(--font-lora-regular)"],
 					"lora-semibold": ["var(--font-lora-semibold)"],
+					playfair: ["var(--font-playfair-display)"],
 					heading: ["var(--catalogue-font-heading)"],
 					body: ["var(--catalogue-font-body)"],
 				},

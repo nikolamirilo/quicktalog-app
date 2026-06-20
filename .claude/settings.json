@@ -1,0 +1,32 @@
+{
+	"permissions": {
+		"allow": ["Bash"],
+		"deny": ["Bash(curl)", "Bash(curl *)"]
+	},
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "your-command-here",
+						"timeout": 30
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Edit|Write",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "your-command-here",
+						"timeout": 30
+					}
+				]
+			}
+		]
+	}
+}

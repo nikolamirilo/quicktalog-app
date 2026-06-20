@@ -1,3 +1,5 @@
+import type { ArticleMeta } from "@/content/articles/_types";
+import type { DocMeta } from "@/content/docs/_types";
 import { KEYWORDS } from "@/constants";
 import { Metadata } from "next";
 
@@ -82,6 +84,18 @@ export const pageMetadata = {
 			"Visit the Quicktalog Help Center to find FAQs, step-by-step guides, and support resources to make the most out of your digital catalog.",
 		url: "https://www.quicktalog.app/help",
 	},
+	docs: {
+		title: "Docs - How to Build a Digital Catalogue | Quicktalog",
+		description:
+			"A step-by-step guide to creating, customizing, and sharing your digital catalogue with Quicktalog. Learn the builder, AI generation, OCR import, QR sharing, and analytics.",
+		url: "https://www.quicktalog.app/docs",
+	},
+	articles: {
+		title: "Quicktalog Blog - Guides for Digital Menus & Catalogs",
+		description:
+			"Practical guides on digital menus, product catalogs, QR codes, and growing your business with Quicktalog.",
+		url: "https://www.quicktalog.app/articles",
+	},
 	authentication: {
 		title: "Login & Sign Up - Access Your Quicktalog Account",
 		description:
@@ -120,6 +134,39 @@ export function generatePageMetadata(
 			description: pageData.description,
 			creator: siteMetadata.creator,
 			site: pageData.url,
+		},
+	};
+}
+
+export function generateDocMetadata(meta: DocMeta): Metadata {
+	const url = `https://www.quicktalog.app/docs/${meta.slug}`;
+	const title = `${meta.title} | Quicktalog Docs`;
+	return {
+		title,
+		description: meta.description,
+		generator: "Quicktalog",
+		applicationName: "Quicktalog",
+		keywords: [...siteMetadata.keywords, ...meta.keywords],
+		authors: siteMetadata.authors,
+		creator: siteMetadata.creator,
+		publisher: siteMetadata.publisher,
+		metadataBase: siteMetadata.metadataBase,
+		alternates: {
+			canonical: url,
+		},
+		openGraph: {
+			...siteMetadata.openGraph,
+			type: "article",
+			url,
+			title,
+			description: meta.description,
+		},
+		twitter: {
+			...siteMetadata.twitter,
+			title,
+			description: meta.description,
+			creator: siteMetadata.creator,
+			site: url,
 		},
 	};
 }
@@ -166,6 +213,44 @@ export function generateCatalogueMetadata(
 			images: [opengraphImage],
 			creator: "Quicktalog",
 			site: `https://www.quicktalog.app/catalogues/${name}`,
+		},
+	};
+}
+
+export function generateArticleMetadata(meta: ArticleMeta): Metadata {
+	const url = `https://www.quicktalog.app/articles/${meta.slug}`;
+	return {
+		title: `${meta.title} | Quicktalog`,
+		description: meta.description,
+		generator: "Quicktalog",
+		applicationName: "Quicktalog",
+		keywords: [...siteMetadata.keywords, ...meta.keywords],
+		authors: [{ name: meta.author }],
+		creator: siteMetadata.creator,
+		publisher: siteMetadata.publisher,
+		metadataBase: siteMetadata.metadataBase,
+		alternates: {
+			canonical: url,
+		},
+		openGraph: {
+			type: "article",
+			locale: "en_US",
+			url,
+			siteName: "Quicktalog",
+			title: meta.title,
+			description: meta.description,
+			images: [meta.heroImage],
+			publishedTime: meta.publishedAt,
+			modifiedTime: meta.updatedAt ?? meta.publishedAt,
+			authors: [meta.author],
+		},
+		twitter: {
+			card: "summary_large_image",
+			site: "@quicktalog",
+			creator: "@quicktalog",
+			title: meta.title,
+			description: meta.description,
+			images: [meta.heroImage],
 		},
 	};
 }

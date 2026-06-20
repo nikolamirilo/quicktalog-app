@@ -1,6 +1,5 @@
 // components/admin/dashboard/Dashboard.tsx
 "use client";
-import JoinOurCommunity from "@/components/general/JoinOurCommunity";
 import Loader from "@/components/navigation/Loader";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { DashboardProps } from "@/types/shared";
@@ -84,7 +83,7 @@ export default function Dashboard({
 									</div>
 								) : (
 									<section className="animate-fade-in">
-										<JoinOurCommunity />
+										{/* <JoinOurCommunity /> */}
 										<Overview
 											catalogues={catalogues || []}
 											newsletterSubscribers={newsletterSubscribers || []}
