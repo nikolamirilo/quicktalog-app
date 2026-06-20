@@ -1,6 +1,6 @@
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles, Zap } from "lucide-react";
+import Link from "next/link";
 
 interface Props {
 	variant?: "mid" | "end";
@@ -10,63 +10,126 @@ interface Props {
 
 const defaults = {
 	mid: {
-		heading: "Want to try it on your own menu?",
-		body: "Spin up a catalog in minutes and see it live on a phone. The free plan is plenty to publish your first one.",
+		heading: "Publish your own digital menu in minutes",
+		body: "Create an interactive catalog, preview it instantly on mobile, and launch without writing a single line of code.",
 	},
 	end: {
-		heading: "Build your first catalog free",
-		body: "Turn your menu, services, or products into an interactive digital catalog in minutes. No code, and no card required.",
+		heading: "Launch your first interactive catalog today",
+		body: "Turn your menu, services, or products into a beautiful digital catalog in minutes. Free forever plan included.",
 	},
 };
 
-/**
- * Call to action block. Styled to match the home page MiniCTA: a warm amber
- * gradient banner with a border, soft shadow, and an amber button with navy
- * text. Two placements ("mid" in the body, "end" to close) with distinct copy.
- */
-export default function ArticleCTA({ variant = "mid", heading, body }: Props) {
+export default function ArticleCTA({
+	variant = "mid",
+	heading,
+	body,
+}: Props) {
 	const copy = defaults[variant];
 	const finalHeading = heading ?? copy.heading;
 	const finalBody = body ?? copy.body;
 
-	return (
-		<aside
-			className={`${
-				variant === "end" ? "mt-16" : "my-12"
-			} relative overflow-hidden rounded-xl border border-product-border bg-gradient-to-r from-white via-product-primary/25 to-product-primary/40 p-6 shadow-md sm:p-8`}
-		>
-			{/* Background gradient overlay (mirrors the home MiniCTA) */}
-			<div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-white/60 via-product-primary/15 to-product-primary/25" />
+	if (variant === "mid") {
+		return (
+			<aside className="my-14 overflow-hidden rounded-2xl border border-black/5 bg-gradient-to-br from-white to-neutral-50 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] sm:p-7">
+				<div className="flex gap-5">
+					<div className="flex-shrink-0">
+						<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-product-primary shadow-md">
+							<Zap
+								className="h-5 w-5 text-black"
+								fill="currentColor"
+							/>
+						</div>
+					</div>
 
-			<div className="relative z-10 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-				<div className="flex-1">
-					<h3 className="font-lora text-xl font-bold text-product-foreground lg:text-2xl">
-						{finalHeading}
-					</h3>
-					<p className="mt-2 max-w-xl text-product-foreground-accent">
-						{finalBody}
-					</p>
+					<div className="flex-1">
+						<h3 className="font-lora text-xl font-bold leading-tight text-black sm:text-2xl">
+							{finalHeading}
+						</h3>
+
+						<p className="mt-2 text-sm leading-relaxed text-black/60 sm:text-base">
+							{finalBody}
+						</p>
+
+						<div className="mt-5 flex flex-wrap gap-3">
+							<Button
+								asChild
+								size="sm"
+								className="bg-product-primary font-semibold text-black shadow-md transition-all duration-200 hover:scale-[1.03] hover:bg-product-primary-accent"
+							>
+								<Link
+									className="flex items-center gap-1.5"
+									href="/auth?mode=signup"
+								>
+									Create free catalog
+									<ArrowRight className="h-4 w-4" />
+								</Link>
+							</Button>
+
+							<Button
+								asChild
+								size="sm"
+								variant="ghost"
+								className="font-medium text-black/70 hover:bg-black/5 hover:text-black"
+							>
+								<Link href="/demo">See live demo</Link>
+							</Button>
+						</div>
+					</div>
 				</div>
-				<div className="flex w-full flex-shrink-0 flex-wrap gap-3 sm:w-auto">
+			</aside>
+		);
+	}
+
+	return (
+		<aside className="relative mt-20 overflow-hidden rounded-3xl border border-black/5 bg-gradient-to-br from-white via-white to-amber-50 p-10 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-12">
+			{/* Decorative background */}
+			<div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,193,7,0.18),transparent_40%)]" />
+
+			<div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:32px_32px]" />
+
+			<div className="relative z-10 max-w-2xl">
+				<div className="mb-6 inline-flex items-center gap-2 rounded-full bg-black px-4 py-2">
+					<Sparkles className="h-4 w-4 text-product-primary" />
+					<span className="text-xs font-semibold tracking-wide text-white">
+						Free forever plan available
+					</span>
+				</div>
+
+				<h3 className="font-lora text-3xl font-bold leading-tight text-black sm:text-5xl">
+					{finalHeading}
+				</h3>
+
+				<p className="mt-4 text-base leading-relaxed text-black/60 sm:text-lg">
+					{finalBody}
+				</p>
+
+				<div className="mt-8 flex flex-wrap gap-4">
 					<Button
 						asChild
-						className="bg-product-primary font-bold text-product-secondary shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md"
+						size="lg"
+						className="bg-product-primary px-7 font-bold text-black shadow-lg transition-all duration-200 hover:scale-[1.03] hover:bg-product-primary-accent"
 					>
 						<Link
-							className="flex items-center justify-center gap-2"
+							className="flex items-center gap-2"
 							href="/auth?mode=signup"
 						>
-							Start free
+							Create free catalog
 							<ArrowRight className="h-4 w-4" />
 						</Link>
 					</Button>
+
 					<Button
 						asChild
-						className="bg-white hover:bg-product-background-hover"
+						size="lg"
 						variant="outline"
+						className="border-black/10 bg-white/80 text-black/70 backdrop-blur-sm hover:bg-white hover:text-black"
 					>
-						<Link href="/demo">Try the demo</Link>
+						<Link href="/demo">See demo</Link>
 					</Button>
+				</div>
+
+				<div className="mt-6 text-sm text-black/40">
+					No credit card • Free forever plan • Setup in under 2 minutes
 				</div>
 			</div>
 		</aside>

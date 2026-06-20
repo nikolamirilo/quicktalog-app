@@ -78,7 +78,7 @@ export default function TableOfContents({
 				{headings.map((heading) => (
 					<li key={heading.id}>
 						<a
-							className={`-ml-px block border-l-2 py-1 pl-4 leading-snug transition-colors ${
+							className={`-ml-px block rounded-sm border-l-2 py-1 pl-4 leading-snug transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-product-primary ${
 								activeId === heading.id
 									? "border-product-primary font-medium text-product-foreground"
 									: "border-transparent text-product-foreground-accent hover:text-product-foreground"

@@ -17,7 +17,10 @@ body {
 	min-height: 100dvh;
 	padding: 0;
 	margin: 0;
-	overflow-x: hidden;
+	/* `clip` contains horizontal overflow WITHOUT creating a scroll container,
+	   so descendant `position: sticky` (docs sidebar + TOC) keeps working.
+	   `overflow-x: hidden` here would force overflow-y to auto and break it. */
+	overflow-x: clip;
 	font-family: var(--font-lora-regular);
 	@apply scroll-smooth;
 }

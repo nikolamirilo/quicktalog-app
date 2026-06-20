@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import ArticleCTA from "@/components/articles/ArticleCTA";
 import DocCard from "@/components/docs/DocCard";
+import DocsNav from "@/components/docs/DocsNav";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
 import { getAllDocs } from "@/helpers/docs";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = generatePageMetadata("docs");
 
@@ -22,39 +23,50 @@ export default function DocsIndexPage() {
 				type="application/ld+json"
 			/>
 			<Navbar />
-			<main className="mx-auto max-w-6xl px-4 pb-24 pt-32">
-				<header className="mb-14 text-center">
-					<span className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-product-secondary">
-						<span className="h-px w-8 bg-product-primary" />
-						Quicktalog Docs
-						<span className="h-px w-8 bg-product-primary" />
-					</span>
-					<h1 className="mx-auto mt-5 max-w-3xl font-lora text-4xl font-bold leading-[1.05] text-product-foreground sm:text-5xl md:text-6xl">
-						Learn Quicktalog, step by step
-					</h1>
-					<p className="mx-auto mt-5 max-w-2xl text-lg text-product-foreground-accent">
-						Short, practical lessons that take you from a new account to a live
-						catalogue you can share. Read them in order, or jump straight to the
-						part you are on.
-					</p>
-				</header>
+			<div className="mx-auto max-w-[98rem] px-4 pb-24 pt-32 sm:px-6 lg:px-10 xl:px-12">
+				<div className="lg:grid lg:grid-cols-[16rem_minmax(0,1fr)] lg:gap-12">
+					{/* Left: persistent docs navigation */}
+					<aside className="hidden lg:block">
+						<div className="sticky top-32 max-h-[calc(100vh-9rem)] overflow-y-auto pb-10">
+							<DocsNav />
+						</div>
+					</aside>
 
-				<DocCard eyebrow="Start here" featured meta={first.meta} />
+					{/* Center: overview + topic grid */}
+					<main className="min-w-0">
+						<header className="mb-10 border-b border-product-border pb-8">
+							<span className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-product-secondary">
+								<span className="h-px w-8 bg-product-primary" />
+								Quicktalog Docs
+							</span>
+							<h1 className="mt-5 font-lora text-3xl font-bold leading-[1.1] text-product-foreground sm:text-4xl md:text-5xl">
+								Learn Quicktalog, step by step
+							</h1>
+							<p className="mt-4 max-w-[44rem] text-lg leading-relaxed text-product-foreground-accent">
+								Short, practical lessons that take you from a new account to a
+								live catalogue you can share. Read them in order, or jump
+								straight to the part you are on.
+							</p>
+						</header>
 
-				<div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-					{rest.map((doc) => (
-						<DocCard key={doc.meta.slug} meta={doc.meta} />
-					))}
+						<DocCard eyebrow="Start here" featured meta={first.meta} />
+
+						<div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+							{rest.map((doc) => (
+								<DocCard key={doc.meta.slug} meta={doc.meta} />
+							))}
+						</div>
+
+						<div className="mt-14">
+							<ArticleCTA
+								body="Pick a starting point, drop in your items, and share a link or QR in minutes. The free plan is all you need to publish your first catalogue."
+								heading="Ready to build yours?"
+								variant="end"
+							/>
+						</div>
+					</main>
 				</div>
-
-				<div className="mt-20">
-					<ArticleCTA
-						body="Pick a starting point, drop in your items, and share a link or QR in minutes. The free plan is all you need to publish your first catalogue."
-						heading="Ready to build yours?"
-						variant="end"
-					/>
-				</div>
-			</main>
+			</div>
 			<Footer />
 		</div>
 	);
