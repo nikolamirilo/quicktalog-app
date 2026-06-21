@@ -23,7 +23,6 @@ export async function subsribeToNewsletter(email: string) {
 			return true;
 		}
 	} catch (error: any) {
-		Sentry.captureException(error);
 		console.error("Error subscribing to newsletter:", error);
 		return false;
 	}
@@ -45,7 +44,6 @@ export async function subscribeToPlan(email: string) {
 			return true;
 		}
 	} catch (error: any) {
-		Sentry.captureException(error);
 		console.error("Error subscribing to newsletter:", error);
 		return false;
 	}
@@ -77,7 +75,7 @@ export async function getUserData(userId?: string) {
 		}
 		return result.data;
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, { tags: { op: "getUserData" } });
 		console.error("Error in getUserData:", error);
 		return null;
 	}
@@ -159,7 +157,10 @@ export async function sendWelcomeEmailSafely(
 		await retryOperation(() => sendWelcomeEmail(contactData));
 		console.log("Welcome email sent successfully to:", email);
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			level: "warning",
+			tags: { op: "sendWelcomeEmail" },
+		});
 		console.error("Failed to send welcome email:", {
 			error: error instanceof Error ? error.message : String(error),
 			email,

@@ -111,7 +111,9 @@ export default async function page({ params }: { params: tParams }) {
 			.sort(([a], [b]) => a.localeCompare(b))
 			.map(([date, count]) => ({ date, count: Number(count) }));
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, {
+			tags: { area: "analytics-page" },
+		});
 		console.error("Analytics page error:", err);
 		error =
 			"Unable to load analytics data at this time. Please try again later.";

@@ -35,7 +35,10 @@ export async function upsertQrConfig(
 
 		return { success: true };
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, {
+			level: "warning",
+			tags: { op: "upsertQrConfig" },
+		});
 		console.error("Unexpected error while saving QR config:", err);
 		return {
 			success: false,
@@ -60,7 +63,6 @@ export async function getQrConfig(
 
 		return { success: true, config: data.config as Options };
 	} catch (err) {
-		Sentry.captureException(err);
 		console.error("Unexpected error while fetching QR config:", err);
 		return {
 			success: false,

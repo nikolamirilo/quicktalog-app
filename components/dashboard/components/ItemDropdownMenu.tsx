@@ -93,6 +93,9 @@ const ItemDropdownMenu = ({
 		setFormData,
 		setErrors,
 		setTouched,
+		// Dashboard renders one of these per catalogue; fetch names only when the
+		// Duplicate modal opens (refetchNames below) instead of N times on mount.
+		autoFetch: false,
 	});
 
 	const menuItems: MenuItem[] = [

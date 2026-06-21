@@ -39,6 +39,13 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					throw new Error("File is too large. Please select a smaller image");
 				}
 
+				if (file.type === "image/svg+xml") {
+					// The canvas pipeline below can't reliably decode SVG.
+					throw new Error(
+						"SVG images aren't supported here. Please upload a PNG or JPG.",
+					);
+				}
+
 				const img = await loadImage(file);
 				const processedFile = await processImage(
 					img,
@@ -49,7 +56,21 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 
 				return [processedFile];
 			} catch (error) {
-				Sentry.captureException(error);
+				const message = error instanceof Error ? error.message : "";
+				// Expected, user-facing validation/decode failures — surface them to
+				// the user (below) but don't report as Sentry exceptions.
+				const isExpectedValidationError =
+					message.startsWith("Failed to load image:") ||
+					message.includes("valid image file") ||
+					message.includes("too large") ||
+					message.includes("exceeds maximum allowed size") ||
+					message.includes("SVG images aren't supported");
+				if (!isExpectedValidationError) {
+					Sentry.captureException(error, {
+						level: "warning",
+						tags: { area: "image-upload" },
+					});
+				}
 				console.error("Image processing error:", error);
 
 				if (onError) {
@@ -83,7 +104,9 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					throw new Error("No URL received from upload service");
 				}
 			} catch (error) {
-				Sentry.captureException(error);
+				Sentry.captureException(error, {
+					tags: { area: "image-upload", phase: "complete" },
+				});
 				console.error("Upload completion error:", error);
 				if (onError) {
 					onError(
@@ -101,7 +124,6 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 		(error: Error) => {
 			setIsBusy(false);
 			setIsUploading?.(false);
-			Sentry.captureException(error);
 			console.error("Upload error:", error);
 			if (onError) {
 				onError(error);

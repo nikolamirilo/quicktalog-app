@@ -43,7 +43,10 @@ export async function POST(req: NextRequest) {
 
 		return NextResponse.json({ success: true });
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			level: "warning",
+			tags: { route: "update-consent", provider: "clerk" },
+		});
 		console.error("Error updating metadata:", error);
 		return NextResponse.json(
 			{ error: "Internal server error" },

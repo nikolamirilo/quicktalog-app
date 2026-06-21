@@ -63,7 +63,7 @@ const CardsSwitcher = ({
 		const price =
 			record.price == 0
 				? "Free"
-				: Number(record.price).toLocaleString(undefined, {
+				: Number(record.price).toLocaleString("en-US", {
 						minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
 						maximumFractionDigits: 2,
 					});

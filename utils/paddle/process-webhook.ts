@@ -42,7 +42,10 @@ export class ProcessWebhook {
 					console.log(`Unhandled event type: ${eventData.eventType}`);
 			}
 		} catch (err) {
-			Sentry.captureException(err);
+			Sentry.captureException(err, {
+				level: "fatal",
+				tags: { domain: "paddle", op: eventData.eventType },
+			});
 			console.error("Webhook processing error:", err);
 		}
 	}
@@ -86,7 +89,10 @@ export class ProcessWebhook {
 			.upsert(subscription, { onConflict: "subscription_id" });
 
 		if (subError) {
-			Sentry.captureException(subError);
+			Sentry.captureException(subError, {
+				level: "fatal",
+				tags: { domain: "paddle", op: "upsert-subscription" },
+			});
 			console.error("Failed to upsert subscription:", subError);
 			return;
 		}
@@ -104,7 +110,10 @@ export class ProcessWebhook {
 					.eq("subscription_status", "active");
 
 			if (customerSubscriptionsError) {
-				Sentry.captureException(customerSubscriptionsError);
+				Sentry.captureException(customerSubscriptionsError, {
+					level: "fatal",
+					tags: { domain: "paddle", op: "fetch-subscriptions-activate" },
+				});
 				console.error(
 					"Error fetching customer subscriptions:",
 					customerSubscriptionsError,
@@ -129,7 +138,10 @@ export class ProcessWebhook {
 				.update({ plan_id: subscription.price_id })
 				.eq("customer_id", subscription.customer_id);
 			if (userError) {
-				Sentry.captureException(userError);
+				Sentry.captureException(userError, {
+					level: "fatal",
+					tags: { domain: "paddle", op: "update-plan-activate" },
+				});
 				console.error("Failed to update user plan:", userError);
 			}
 		}
@@ -143,7 +155,10 @@ export class ProcessWebhook {
 					.eq("subscription_status", "active");
 
 			if (customerSubscriptionsError) {
-				Sentry.captureException(customerSubscriptionsError);
+				Sentry.captureException(customerSubscriptionsError, {
+					level: "fatal",
+					tags: { domain: "paddle", op: "fetch-subscriptions-cancel" },
+				});
 				console.error(
 					"Error fetching customer subscriptions:",
 					customerSubscriptionsError,
@@ -159,7 +174,10 @@ export class ProcessWebhook {
 					.maybeSingle();
 
 				if (fetchError) {
-					Sentry.captureException(fetchError);
+					Sentry.captureException(fetchError, {
+						level: "warning",
+						tags: { domain: "paddle", op: "cancel-email-lookup" },
+					});
 					console.error("Failed to fetch user:", fetchError);
 					return;
 				}
@@ -177,7 +195,10 @@ export class ProcessWebhook {
 					.eq("customer_id", subscription.customer_id);
 
 				if (updateError) {
-					Sentry.captureException(updateError);
+					Sentry.captureException(updateError, {
+						level: "fatal",
+						tags: { domain: "paddle", op: "update-plan-cancel" },
+					});
 					console.error("Failed to update user plan:", updateError);
 					return;
 				}
@@ -202,7 +223,9 @@ export class ProcessWebhook {
 				.eq("email", eventData.data.email);
 
 			if (error) {
-				Sentry.captureException(error);
+				Sentry.captureException(error, {
+					tags: { domain: "paddle", op: "link-customer" },
+				});
 				console.error("Failed to update user with customer_id:", error);
 			}
 		} else {
@@ -216,7 +239,10 @@ export class ProcessWebhook {
 			);
 
 			if (error) {
-				Sentry.captureException(error);
+				Sentry.captureException(error, {
+					level: "warning",
+					tags: { domain: "paddle", op: "upsert-customer-noemail" },
+				});
 				console.error("Failed to upsert customer:", error);
 			}
 		}

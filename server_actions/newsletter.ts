@@ -45,7 +45,10 @@ export async function newsletterSignup(
 
 		return { status: "success" };
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, {
+			level: "warning",
+			tags: { op: "newsletterSignup" },
+		});
 		console.error(
 			"Unexpected error while inserting record in newsletter table:",
 			err,
@@ -71,7 +74,10 @@ export async function productNewsletterSignup(
 		await drizzleClient.insert(productNewsletter).values({ email });
 		return { status: "success" };
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, {
+			level: "warning",
+			tags: { op: "productNewsletterSignup" },
+		});
 		console.error(
 			"Unexpected error while inserting record in product newsletter table:",
 			err,

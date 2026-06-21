@@ -17,7 +17,7 @@ export interface LimitContentData {
 export const formatLimit = (limit: number | "unlimited" | undefined) => {
 	if (limit === "unlimited") return "Unlimited";
 	if (limit === undefined) return "N/A";
-	return limit.toLocaleString();
+	return limit.toLocaleString("en-US");
 };
 
 export const getIcon = (type: LimitType) => {

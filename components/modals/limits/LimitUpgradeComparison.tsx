@@ -160,7 +160,9 @@ const PlanComparison = ({
 									<TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
 									<span className="text-product-foreground">
 										<strong>
-											{requiredPlan.features.traffic_limit.toLocaleString()}
+											{requiredPlan.features.traffic_limit.toLocaleString(
+												"en-US",
+											)}
 										</strong>{" "}
 										page views per month to reach more customers
 									</span>

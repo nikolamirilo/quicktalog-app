@@ -24,11 +24,16 @@ export default function Subscription({
 			initializePaddle({
 				token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
 				environment: process.env.NEXT_PUBLIC_PADDLE_ENV as Environments,
-			}).then((paddle) => {
-				if (paddle) {
-					setPaddle(paddle);
-				}
-			});
+			})
+				.then((paddle) => {
+					if (paddle) {
+						setPaddle(paddle);
+					}
+				})
+				.catch(() => {
+					// Paddle.js failed to load (adblock/offline/region); pricing
+					// stays unavailable rather than throwing an unhandled rejection.
+				});
 		}
 	}, []);
 

@@ -67,7 +67,10 @@ export async function POST(req: NextRequest) {
 					await retryOperation(() => upsertUser(supabase, userData));
 					sendWelcomeEmailSafely(userData.email, userData.name).catch(
 						(error) => {
-							Sentry.captureException(error);
+							Sentry.captureException(error, {
+								level: "warning",
+								tags: { route: "clerk-webhook", op: "welcome-email" },
+							});
 							console.error("Background welcome email failed:", error);
 						},
 					);
@@ -119,7 +122,6 @@ export async function POST(req: NextRequest) {
 			return new Response("User already synced", { status: 200 });
 		}
 
-		Sentry.captureException(error);
 		console.error("Webhook processing failed:", {
 			error: errorMessage,
 			eventType: event?.type,
@@ -134,6 +136,8 @@ export async function POST(req: NextRequest) {
 		) {
 			return new Response("Webhook verification failed", { status: 401 });
 		}
+
+		Sentry.captureException(error, { tags: { route: "clerk-webhook" } });
 
 		if (
 			errorMessage.includes("Database") ||

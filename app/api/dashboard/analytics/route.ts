@@ -36,10 +36,13 @@ export async function GET() {
 			totalNewsletterSubscriptions,
 		});
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			level: "warning",
+			tags: { route: "dashboard/analytics" },
+		});
 		console.error("Dashboard analytics fetch failed:", error);
 		return NextResponse.json(
-			{ error: "Failed to fetch analytics", details: error },
+			{ error: "Failed to fetch analytics" },
 			{ status: 500 },
 		);
 	}

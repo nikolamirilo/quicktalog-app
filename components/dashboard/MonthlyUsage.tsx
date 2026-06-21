@@ -105,7 +105,7 @@ const MonthlyUsage = ({
 								<div className="grid grid-cols-2 gap-4 pt-6 border-t border-product-border">
 									<div className="text-center">
 										<div className="text-2xl font-bold text-product-foreground">
-											{chart.data[0].toLocaleString()}
+											{chart.data[0].toLocaleString("en-US")}
 										</div>
 										<div className="text-sm text-product-foreground-accent">
 											Used
@@ -113,7 +113,7 @@ const MonthlyUsage = ({
 									</div>
 									<div className="text-center">
 										<div className="text-2xl font-bold text-product-foreground">
-											{chart.data[1].toLocaleString()}
+											{chart.data[1].toLocaleString("en-US")}
 										</div>
 										<div className="text-sm text-product-foreground-accent">
 											Remaining

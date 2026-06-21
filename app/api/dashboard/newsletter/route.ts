@@ -53,7 +53,9 @@ export async function GET() {
 
 		return NextResponse.json(data);
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			tags: { route: "dashboard/newsletter" },
+		});
 		console.error("Failed to fetch newsletter subscribers:", error);
 		return NextResponse.json(
 			{ error: "Failed to fetch newsletter subscribers" },

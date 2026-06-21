@@ -39,9 +39,14 @@ const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
 			initializePaddle({
 				token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
 				environment: process.env.NEXT_PUBLIC_PADDLE_ENV as Environments,
-			}).then((paddleInstance) => {
-				if (paddleInstance) setPaddle(paddleInstance);
-			});
+			})
+				.then((paddleInstance) => {
+					if (paddleInstance) setPaddle(paddleInstance);
+				})
+				.catch(() => {
+					// Paddle.js failed to load (adblock/offline/region); upgrade
+					// stays disabled (canUpgrade=!!paddle) instead of throwing.
+				});
 		}
 	}, []);
 

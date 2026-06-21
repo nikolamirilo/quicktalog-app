@@ -54,7 +54,9 @@ export async function fetchUserData(args: {
 			const seed = buildUserDataFromClerkProfile(ownerProfile);
 			await upsertUser(supabase, seed);
 		} catch (syncError) {
-			Sentry.captureException(syncError);
+			Sentry.captureException(syncError, {
+				tags: { area: "user-sync", phase: "on-demand" },
+			});
 			console.error("On-demand Clerk sync failed:", syncError);
 			return { ok: false, code: "not_found" };
 		}
@@ -165,7 +167,9 @@ export async function fetchUserData(args: {
 
 		return { ok: true, data };
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			tags: { area: "user-usage-query" },
+		});
 		console.error("Usage fetch errors:", error);
 		return {
 			ok: false,

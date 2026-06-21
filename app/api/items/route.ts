@@ -27,7 +27,9 @@ export async function POST(request: Request) {
 			.select();
 
 		if (error) {
-			Sentry.captureException(error);
+			Sentry.captureException(error, {
+				tags: { route: "items", method: "POST" },
+			});
 			console.error("Error inserting service catalogue:", error);
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 500,
@@ -36,14 +38,13 @@ export async function POST(request: Request) {
 		}
 		revalidateCatalogue(slug);
 		return new Response(
-			JSON.stringify({ catalogueUrl: `/catalogues/${name}`, slug: name }),
+			JSON.stringify({ catalogueUrl: `/catalogues/${slug}`, slug }),
 			{
 				status: 201,
 				headers: { "Content-Type": "application/json" },
 			},
 		);
 	} catch (error: any) {
-		Sentry.captureException(error);
 		console.error("Request error:", error);
 		return new Response(JSON.stringify({ error: error.message }), {
 			status: 400,
@@ -88,7 +89,9 @@ export async function PATCH(request: Request) {
 			.select();
 
 		if (error) {
-			Sentry.captureException(error);
+			Sentry.captureException(error, {
+				tags: { route: "items", method: "PATCH" },
+			});
 			console.error("Error updating service catalogue:", error);
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 500,
@@ -113,7 +116,6 @@ export async function PATCH(request: Request) {
 			},
 		);
 	} catch (error: any) {
-		Sentry.captureException(error);
 		console.error("Request error:", error);
 		return new Response(JSON.stringify({ error: error.message }), {
 			status: 400,
@@ -139,7 +141,10 @@ export async function GET(request: Request) {
 		const { data, error } = await query;
 
 		if (error) {
-			Sentry.captureException(error);
+			Sentry.captureException(error, {
+				level: "warning",
+				tags: { route: "items", method: "GET" },
+			});
 			console.error("Error retreiving catalogues:", error);
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 500,
@@ -159,7 +164,6 @@ export async function GET(request: Request) {
 			headers: { "Content-Type": "application/json" },
 		});
 	} catch (error: any) {
-		Sentry.captureException(error);
 		console.error("Request error:", error);
 		return new Response(JSON.stringify({ error: error.message }), {
 			status: 400,

@@ -42,7 +42,8 @@ const formatFeatureValue = (key: string, value: any): string => {
 	if (value === null || value === 0) return "Not included";
 	if (typeof value === "boolean") return value ? "Included" : "Not included";
 	if (typeof value === "number") {
-		if (key === "traffic_limit") return `${value.toLocaleString()} views/month`;
+		if (key === "traffic_limit")
+			return `${value.toLocaleString("en-US")} views/month`;
 		if (key === "catalogues")
 			return `${value} catalogue${value !== 1 ? "s" : ""}`;
 		if (key === "ocr_ai_import")

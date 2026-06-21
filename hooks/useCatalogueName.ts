@@ -6,6 +6,12 @@ interface UseCatalogueNameProps {
 	setFormData: (updater: (prev: any) => any) => void;
 	setErrors?: (updater: (prev: any) => any) => void;
 	setTouched?: (updater: (prev: any) => any) => void;
+	/**
+	 * Fetch the existing names on mount. Defaults to true. Set false where many
+	 * instances render at once (e.g. the dashboard dropdowns) and names are only
+	 * needed on demand via refetchNames(), to avoid an N+1 burst of requests.
+	 */
+	autoFetch?: boolean;
 }
 
 interface UseCatalogueNameReturn {
@@ -24,6 +30,7 @@ export const useCatalogueName = ({
 	setFormData,
 	setErrors,
 	setTouched,
+	autoFetch = true,
 }: UseCatalogueNameProps): UseCatalogueNameReturn => {
 	const [names, setNames] = useState<any[]>([]);
 
@@ -107,9 +114,9 @@ export const useCatalogueName = ({
 	};
 
 	useEffect(() => {
-		if (type !== "create") return;
+		if (type !== "create" || !autoFetch) return;
 		fetchNames();
-	}, [type]);
+	}, [type, autoFetch]);
 
 	return {
 		handleNameChange,

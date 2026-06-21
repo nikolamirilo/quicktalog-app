@@ -80,7 +80,7 @@ export default function ItemDetailModal({
 									</span>
 									<div className="flex items-center gap-1">
 										<span className="text-xl sm:text-2xl font-bold text-price tabular-nums">
-											{item.price.toLocaleString()} {currency}
+											{item.price.toLocaleString("en-US")} {currency}
 										</span>
 									</div>
 								</div>

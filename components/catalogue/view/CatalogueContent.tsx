@@ -68,12 +68,13 @@ const CatalogueContent = ({
 		router.replace(qs ? `?${qs}` : pathname, { scroll: false });
 	};
 
+	const urlQuery = searchParams.get("q") ?? "";
 	useEffect(() => {
-		const urlQuery = searchParams.get("q") ?? "";
-		if (urlQuery !== query) {
-			setQuery(urlQuery);
-		}
-	}, [searchParams]);
+		// Sync from the URL (back/forward) keyed on the query string itself, not
+		// the searchParams object (new identity every render). Returning `prev`
+		// unchanged makes React bail out, which prevents an update loop.
+		setQuery((prev) => (prev === urlQuery ? prev : urlQuery));
+	}, [urlQuery]);
 
 	useEffect(() => {
 		if (!data || data.length === 0) return;
@@ -181,22 +182,6 @@ const CatalogueContent = ({
 		setActiveEditingItem(null);
 		setIsItemModalOpen(true);
 	};
-
-	useEffect(() => {
-		const isExpanded = searchParams.get("expanded");
-
-		if (isExpanded && data && data.length > 0) {
-			const allSectionsExpanded = data.reduce(
-				(acc, item) => {
-					acc[`${item.id}-${item.order}`] = true;
-					return acc;
-				},
-				{} as Record<string, boolean>,
-			);
-
-			setExpandedSections(allSectionsExpanded);
-		}
-	}, [searchParams, data]);
 
 	if ((!data || !Array.isArray(data) || data.length === 0) && mode === "view") {
 		console.warn("No data, rendering null");

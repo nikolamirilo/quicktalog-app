@@ -43,7 +43,7 @@ function getRelevantFeatures(
 		},
 		{ text: `${plan.features.analytics} analytics`, type: "analytics" },
 		{
-			text: `${plan.features.traffic_limit.toLocaleString()} traffic limit`,
+			text: `${plan.features.traffic_limit.toLocaleString("en-US")} traffic limit`,
 			type: "traffic-limit",
 		},
 	);

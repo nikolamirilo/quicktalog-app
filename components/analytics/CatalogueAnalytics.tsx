@@ -46,7 +46,7 @@ const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
 									Total Views
 								</p>
 								<p className="text-3xl font-bold text-product-foreground mt-1">
-									{totalPageViews.toLocaleString()}
+									{totalPageViews.toLocaleString("en-US")}
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-product-primary/10 rounded-full flex items-center justify-center">
@@ -64,7 +64,7 @@ const CatalogueAnalytics = ({ data, rawEvents }: CatalogueAnalyticsProps) => {
 									Unique Visitors
 								</p>
 								<p className="text-3xl font-bold text-product-foreground mt-1">
-									{uniqueVisitors.toLocaleString()}
+									{uniqueVisitors.toLocaleString("en-US")}
 								</p>
 							</div>
 							<div className="w-12 h-12 bg-product-secondary/10 rounded-full flex items-center justify-center">

@@ -1,5 +1,4 @@
 "use client";
-import * as Sentry from "@sentry/nextjs";
 import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
@@ -107,7 +106,6 @@ const Overview = ({
 			await refreshUserData();
 			router.refresh();
 		} catch (error) {
-			Sentry.captureException(error);
 			console.error("Error duplicating item:", error);
 			alert("Failed to duplicate item.");
 		} finally {
@@ -126,7 +124,6 @@ const Overview = ({
 			await refreshUserData();
 			router.refresh();
 		} catch (error) {
-			Sentry.captureException(error);
 			console.error("Error updating item status:", error);
 			alert("Failed to update status.");
 		} finally {
@@ -152,7 +149,6 @@ const Overview = ({
 				alert("Failed to delete some catalogues. Please try again.");
 			}
 		} catch (error) {
-			Sentry.captureException(error);
 			console.error("Error deleting multiple catalogues:", error);
 			alert("Failed to delete catalogues. Please try again.");
 		}

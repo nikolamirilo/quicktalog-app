@@ -1,5 +1,4 @@
 //@ts-nocheck
-import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 
@@ -64,7 +63,6 @@ export async function GET(req: Request) {
 			},
 		});
 	} catch (error) {
-		Sentry.captureException(error);
 		console.error("PDF generation failed:", error);
 		return NextResponse.json(
 			{ error: "PDF generation failed" },

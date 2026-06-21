@@ -19,11 +19,22 @@ export async function POST(request: NextRequest) {
 		}
 
 		const paddle = getPaddleInstance();
-		const eventData = await paddle.webhooks.unmarshal(
-			rawRequestBody,
-			privateKey,
-			signature,
-		);
+		let eventData: Awaited<ReturnType<typeof paddle.webhooks.unmarshal>>;
+		try {
+			eventData = await paddle.webhooks.unmarshal(
+				rawRequestBody,
+				privateKey,
+				signature,
+			);
+		} catch {
+			// Signature verification failed — typically an internet probe hitting the
+			// public URL, not a server fault, so don't alert Sentry. But log a
+			// breadcrumb: a misconfigured/rotated PADDLE_NOTIFICATION_WEBHOOK_SECRET
+			// would make *every* real webhook fail here and silently stop billing
+			// sync, and this console.warn is the only signal we'd have.
+			console.warn("Paddle webhook signature verification failed");
+			return Response.json({ error: "Invalid signature" }, { status: 403 });
+		}
 		const eventName = eventData?.eventType ?? "Unknown event";
 
 		if (eventData) {
@@ -31,7 +42,10 @@ export async function POST(request: NextRequest) {
 		}
 		return Response.json({ status: 200, eventName });
 	} catch (e) {
-		Sentry.captureException(e);
+		Sentry.captureException(e, {
+			level: "fatal",
+			tags: { route: "paddle-webhook" },
+		});
 		console.error("Paddle webhook processing failed:", e);
 		return Response.json({ error: "Internal server error" }, { status: 500 });
 	}

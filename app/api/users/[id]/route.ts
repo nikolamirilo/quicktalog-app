@@ -48,7 +48,9 @@ export async function GET(
 
 		return NextResponse.json(result.data, { status: 200 });
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			tags: { route: "users/[id]" },
+		});
 		console.error(
 			"Unexpected error in API route:",
 			error instanceof Error ? error.message : error,

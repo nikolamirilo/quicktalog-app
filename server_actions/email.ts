@@ -30,7 +30,10 @@ export async function sendContactEmail(contactData: ContactData) {
 			return true;
 		}
 	} catch (error: any) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			level: "warning",
+			tags: { op: "sendContactEmail" },
+		});
 		console.error("Failed to send contact email:", error);
 		return false;
 	}
@@ -57,7 +60,10 @@ export async function sendNewCatalogueEmail(
 			return true;
 		}
 	} catch (error: any) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			level: "warning",
+			tags: { op: "sendNewCatalogueEmail" },
+		});
 		console.error("Failed to send new catalogue email:", error);
 		return false;
 	}
@@ -80,7 +86,6 @@ export async function sendWelcomeEmail(
 			return true;
 		}
 	} catch (error: any) {
-		Sentry.captureException(error);
 		console.error("Failed to send welcome email:", error);
 		return false;
 	}
@@ -102,7 +107,10 @@ export async function sendSubscriptionCancelationEmail(
 			return true;
 		}
 	} catch (error: any) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			level: "warning",
+			tags: { op: "sendSubscriptionCancelationEmail" },
+		});
 		console.error("Failed to send cancellation email:", error);
 		return false;
 	}

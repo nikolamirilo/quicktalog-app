@@ -32,7 +32,7 @@ export async function deleteItem(name: string): Promise<boolean> {
 		revalidateDashboard();
 		return true;
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { tags: { op: "deleteItem" } });
 		console.error("Unexpected error while deleting service catalogue:", err);
 		return false;
 	}
@@ -58,7 +58,7 @@ export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 		revalidateDashboard();
 		return true;
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { tags: { op: "deleteMultipleItems" } });
 		console.error("Unexpected error while deleting catalogues:", err);
 		return false;
 	}
@@ -97,7 +97,7 @@ export async function updateItemStatus(
 		revalidateDashboard();
 		return true;
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { tags: { op: "updateItemStatus" } });
 		console.error("Unexpected error while updating status:", err);
 		return false;
 	}
@@ -142,7 +142,7 @@ export async function duplicateItem(id: string, name: string) {
 		revalidateDashboard();
 		return newData;
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { tags: { op: "duplicateItem" } });
 		console.error("Unexpected error while duplicating service catalogue:", err);
 		return null;
 	}
@@ -201,7 +201,7 @@ export async function createCatalogue(
 			data,
 		};
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { tags: { op: "createCatalogue" } });
 		console.error("Unexpected error while creating catalogue:", err);
 		return {
 			success: false,
@@ -242,7 +242,7 @@ export async function updateCatalogue(catalogueData: Catalogue) {
 			data: catalogueData,
 		};
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { tags: { op: "updateCatalogue" } });
 		console.error("Unexpected error while updating catalogue:", err);
 		return {
 			success: false,
@@ -276,7 +276,10 @@ export async function getCatalogueByName(name: string) {
 			error: null,
 		};
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, {
+			level: "warning",
+			tags: { op: "getCatalogueByName" },
+		});
 		console.error("Unexpected error while fetching catalogue:", err);
 		return {
 			success: false,
@@ -322,7 +325,7 @@ export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 		revalidateDashboard();
 		return true;
 	} catch (err) {
-		Sentry.captureException(err);
+		Sentry.captureException(err, { tags: { op: "publishCatalogue" } });
 		console.error("Unexpected error while updating status in v2:", err);
 		return false;
 	}

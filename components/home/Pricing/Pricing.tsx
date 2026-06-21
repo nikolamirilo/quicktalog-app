@@ -53,9 +53,14 @@ const Pricing: React.FC = () => {
 			initializePaddle({
 				token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
 				environment: process.env.NEXT_PUBLIC_PADDLE_ENV as Environments,
-			}).then((paddle) => {
-				if (paddle) setPaddle(paddle);
-			});
+			})
+				.then((paddle) => {
+					if (paddle) setPaddle(paddle);
+				})
+				.catch(() => {
+					// Paddle.js blocked (adblock/offline/region) — leave paddle
+					// undefined; the checkout guard handles the click gracefully.
+				});
 		}
 	}, []);
 

@@ -1,5 +1,4 @@
 "use client";
-import * as Sentry from "@sentry/nextjs";
 import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Card, CardContent } from "@/components/ui/card";
@@ -122,7 +121,6 @@ export default function OCRBuilder({
 				setIsSubmitting(false);
 			}, 5000);
 		} catch (error) {
-			Sentry.captureException(error);
 			console.error("Error submitting OCR data:", error);
 			alert("An error occurred while submitting. Please try again.");
 		} finally {

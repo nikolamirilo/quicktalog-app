@@ -32,12 +32,13 @@ export async function GET(request: NextRequest) {
 		console.log(errorAnalytics);
 		return NextResponse.json({ results: data }, { status: 200 });
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			tags: { route: "subscriptions/check" },
+		});
 		console.error("Subscription check failed:", error);
 		return NextResponse.json(
 			{
 				error: "Error occurred while processing data.",
-				details: error.message,
 			},
 			{ status: 500 },
 		);

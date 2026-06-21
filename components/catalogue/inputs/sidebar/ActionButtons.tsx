@@ -1,5 +1,4 @@
 "use client";
-import * as Sentry from "@sentry/nextjs";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
@@ -47,7 +46,6 @@ const ActionButtons = ({
 			if (!res) throw new Error("Save failed");
 			return res.data;
 		} catch (err) {
-			Sentry.captureException(err);
 			console.error(err);
 			return null;
 		}

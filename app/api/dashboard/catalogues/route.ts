@@ -21,7 +21,9 @@ export async function GET() {
 
 		return NextResponse.json(data || []);
 	} catch (error) {
-		Sentry.captureException(error);
+		Sentry.captureException(error, {
+			tags: { route: "dashboard/catalogues" },
+		});
 		console.error("Failed to fetch catalogues:", error);
 		return NextResponse.json(
 			{ error: "Failed to fetch catalogues" },

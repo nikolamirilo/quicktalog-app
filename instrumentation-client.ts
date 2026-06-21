@@ -24,15 +24,15 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 		// Add optional integrations for additional features
 		integrations: [Sentry.replayIntegration()],
 
-		// Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-		tracesSampleRate: 1,
-		// Enable logs to be sent to Sentry
-		enableLogs: true,
+		// Performance traces are sampled at 10% — we only need a representative
+		// slice, not every transaction (the bulk of event volume/cost).
+		tracesSampleRate: 0.1,
+		// Logs are a separate high-volume stream, not critical errors — off.
+		enableLogs: false,
 
-		// Define how likely Replay events are sampled.
-		// This sets the sample rate to be 10%. You may want this to be 100% while
-		// in development and sample at a lower rate in production
-		replaysSessionSampleRate: 0.1,
+		// Don't record replays for every session; only attach a replay when an
+		// actual error occurs (see replaysOnErrorSampleRate below).
+		replaysSessionSampleRate: 0,
 
 		// Define how likely Replay events are sampled when an error occurs.
 		replaysOnErrorSampleRate: 1.0,
@@ -46,12 +46,31 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 			/UploadThingError: Failed to report event "upload"/,
 			"An unexpected response was received from the server.",
 			/surveys\.js/,
+			// Browser auto-translation (Chrome/Edge) reparenting DOM nodes.
+			"The node to be removed is not a child of this node",
+			"The node before which the new node is to be inserted is not a child of this node",
+			// In-app WebView / browser-extension injected globals (not our code).
+			"Java object is gone",
+			/messageHandlers/,
+			"__firefox__",
+			/window\.ethereum/,
+			"NS_ERROR_FAILURE",
+			// Clerk CDN script-load failures (transient / blockers).
+			/Failed to load Clerk/i,
+			"failed_to_load_clerk_js",
+			// Paddle price-preview transient network failures.
+			"PricePreview.failed",
 		],
 
-		// Browser auto-translation (Edge/Chrome) reparents text nodes into <font>
-		// wrappers, which makes React's stored DOM references stale during
-		// unmount. React 19 already recovers from this on its own, so the noisy
-		// NotFoundError it throws is not actionable.
+		denyUrls: [
+			// Injected in-app WebView bridge scripts (Android/iOS) load from app://.
+			/^app:\/\//,
+		],
+
+		// `beforeSend` only handles cases that `ignoreErrors`/`denyUrls` can't
+		// express — object-shape checks, stack-gated matches, and severity
+		// downgrades. Plain message/URL drops live in those lists above (they run
+		// first, so duplicating them here would be dead code).
 		beforeSend(event, hint) {
 			const err = hint?.originalException as
 				| (Error & { name?: string; stack?: string; error?: any })
@@ -59,43 +78,37 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 			if (err) {
 				const message = err.message ?? "";
 				const stack = err.stack ?? "";
-				if (
-					err.name === "NotFoundError" &&
-					(message.includes("removeChild") ||
-						message.includes("insertBefore")) &&
-					/react-dom/.test(stack)
-				) {
-					return null;
-				}
 
+				// Paddle price-preview / SDK network blips. The object-shape checks
+				// can't be matched by `ignoreErrors` (message text only).
 				if (
 					err?.error?.type === "network_error" ||
-					err?.error?.code === "network_error"
+					err?.error?.code === "network_error" ||
+					/Network error encountered when calling Paddle/.test(message)
 				) {
 					return null;
 				}
 
-				if (message.includes("Paddle.js not available")) {
-					return null;
-				}
-
-				if (
-					message.includes('UploadThingError: Failed to report event "upload"')
-				) {
-					return null;
-				}
-
+				// Third-party survey script syntax errors — gated on the *stack*
+				// (the message rarely names surveys.js), so not expressible in
+				// `ignoreErrors`.
 				if (err.name === "SyntaxError" && /surveys\.js/.test(stack)) {
 					return null;
 				}
 
+				// "Failed to fetch" on the server-action path is usually a
+				// navigation/offline abort, but it also covers real transport
+				// failures (CORS, edge 5xx, DNS). Don't drop it outright — collapse
+				// it into one info-level issue so a deploy that genuinely breaks
+				// server actions still shows as a volume spike. Mute this issue in
+				// Sentry to keep the steady-state noise out of triage.
 				if (
-					message.includes(
-						"An unexpected response was received from the server.",
-					) &&
+					message.includes("Failed to fetch") &&
 					/server-action-reducer/.test(stack)
 				) {
-					return null;
+					event.level = "info";
+					event.fingerprint = ["server-action-fetch-failed"];
+					return event;
 				}
 			}
 			return event;

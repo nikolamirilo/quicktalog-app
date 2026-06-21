@@ -56,7 +56,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 					}
 				: null,
 			{
-				text: `${features.traffic_limit.toLocaleString()} page views per month`,
+				text: `${features.traffic_limit.toLocaleString("en-US")} page views per month`,
 				type: "traffic-limit",
 			},
 			features.ai_prompts === 0

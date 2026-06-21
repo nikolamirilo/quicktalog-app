@@ -1,5 +1,4 @@
 "use client";
-import * as Sentry from "@sentry/nextjs";
 import InformModal from "@/components/modals/InformModal";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Button } from "@/components/ui/button";
@@ -113,7 +112,6 @@ export default function AIBuilder({
 				setIsSubmitting(false);
 			}, 5000);
 		} catch (error) {
-			Sentry.captureException(error);
 			console.error("Submission error:", error);
 		}
 	};
