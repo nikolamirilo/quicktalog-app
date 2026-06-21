@@ -19,11 +19,7 @@ const defaults = {
 	},
 };
 
-export default function ArticleCTA({
-	variant = "mid",
-	heading,
-	body,
-}: Props) {
+export default function ArticleCTA({ variant = "mid", heading, body }: Props) {
 	const copy = defaults[variant];
 	const finalHeading = heading ?? copy.heading;
 	const finalBody = body ?? copy.body;
@@ -34,10 +30,7 @@ export default function ArticleCTA({
 				<div className="flex gap-5">
 					<div className="flex-shrink-0">
 						<div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-product-primary shadow-md">
-							<Zap
-								className="h-5 w-5 text-black"
-								fill="currentColor"
-							/>
+							<Zap className="h-5 w-5 text-black" fill="currentColor" />
 						</div>
 					</div>
 
@@ -109,10 +102,7 @@ export default function ArticleCTA({
 						size="lg"
 						className="bg-product-primary px-7 font-bold text-black shadow-lg transition-all duration-200 hover:scale-[1.03] hover:bg-product-primary-accent"
 					>
-						<Link
-							className="flex items-center gap-2"
-							href="/auth?mode=signup"
-						>
+						<Link className="flex items-center gap-2" href="/auth?mode=signup">
 							Create free catalog
 							<ArrowRight className="h-4 w-4" />
 						</Link>
