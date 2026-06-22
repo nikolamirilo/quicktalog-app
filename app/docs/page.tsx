@@ -65,8 +65,6 @@ export default function DocsIndexPage() {
 							))}
 						</div>
 
-
-
 						<div className="mt-14">
 							<ArticleCTA
 								body="Pick a starting point, drop in your items, and share a link or QR in minutes. The free plan is all you need to publish your first catalogue."

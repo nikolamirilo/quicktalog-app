@@ -1,15 +1,15 @@
 import { HANDLED_EVENT_TYPES } from "@/constants/users";
 import {
-    buildUserData,
-    type ClerkWebhookEvent,
-    isUniqueViolation,
-    updateOrCreateUser,
-    upsertUser,
+	buildUserData,
+	type ClerkWebhookEvent,
+	isUniqueViolation,
+	updateOrCreateUser,
+	upsertUser,
 } from "@/lib/users/syncFromClerk";
 import {
-    handleUserDeletion,
-    retryOperation,
-    sendWelcomeEmailSafely,
+	handleUserDeletion,
+	retryOperation,
+	sendWelcomeEmailSafely,
 } from "@/server_actions/users";
 import { createClient } from "@/utils/supabase/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";

@@ -105,8 +105,8 @@ function Body() {
 					Accessibility is built into the catalogue structure, not added later.
 					Heading levels follow a logical order so screen readers can navigate
 					by section. All images include descriptive text that assistive
-					technology reads aloud. Interactive elements like links and buttons are
-					reachable by keyboard in a predictable tab order. Colour contrast
+					technology reads aloud. Interactive elements like links and buttons
+					are reachable by keyboard in a predictable tab order. Colour contrast
 					between text and background meets the WCAG AA standard across all
 					built-in themes.
 				</p>

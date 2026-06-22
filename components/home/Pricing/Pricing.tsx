@@ -76,24 +76,27 @@ const Pricing: React.FC = () => {
 					{/* Sliding thumb */}
 					<span
 						aria-hidden="true"
-						className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${billingCycle === "yearly" ? "translate-x-full" : "translate-x-0"
-							}`}
+						className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-product-primary transition-transform duration-300 ease-out ${
+							billingCycle === "yearly" ? "translate-x-full" : "translate-x-0"
+						}`}
 					/>
 					<button
-						className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors ${billingCycle === "monthly"
+						className={`relative z-10 flex-1 px-4 py-1.5 text-sm rounded-full transition-colors ${
+							billingCycle === "monthly"
 								? "text-product-foreground font-bold"
 								: "text-product-foreground/60 font-medium"
-							}`}
+						}`}
 						onClick={() => setBillingCycle("monthly")}
 						type="button"
 					>
 						Monthly
 					</button>
 					<button
-						className={`relative z-10 flex-1 px-4 py-1.5 text-sm  rounded-full transition-colors ${billingCycle === "yearly"
+						className={`relative z-10 flex-1 px-4 py-1.5 text-sm  rounded-full transition-colors ${
+							billingCycle === "yearly"
 								? "text-product-foreground font-bold"
 								: "text-product-foreground/60 font-medium"
-							}`}
+						}`}
 						onClick={() => setBillingCycle("yearly")}
 						type="button"
 					>
@@ -110,9 +113,9 @@ const Pricing: React.FC = () => {
 					paddle={paddle}
 					price={
 						prices[
-						billingCycle === "monthly"
-							? tiers[0].priceId.month
-							: tiers[0].priceId.year
+							billingCycle === "monthly"
+								? tiers[0].priceId.month
+								: tiers[0].priceId.year
 						]
 					}
 					priceId={
@@ -143,9 +146,9 @@ const Pricing: React.FC = () => {
 							paddle={paddle}
 							price={
 								prices[
-								billingCycle === "monthly"
-									? tier.priceId.month
-									: tier.priceId.year
+									billingCycle === "monthly"
+										? tier.priceId.month
+										: tier.priceId.year
 								]
 							}
 							priceId={
