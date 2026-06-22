@@ -11,7 +11,7 @@ export default function DocHero({
 	const Icon = meta.icon;
 
 	return (
-		<header className="mb-10 border-b border-product-border pb-8">
+		<header className="mb-10 pb-8">
 			{/* <span className="inline-flex items-center gap-2 rounded-full border border-product-border bg-product-background px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-product-secondary">
 				<Icon aria-hidden className="h-3.5 w-3.5 text-product-primary" />
 				{meta.tag}
