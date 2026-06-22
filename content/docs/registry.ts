@@ -4,6 +4,7 @@ import createACatalogue from "./create-a-catalogue";
 import customizeDesign from "./customize-design";
 import gettingStarted from "./getting-started";
 import plansAndBilling from "./plans-and-billing";
+import responsiveAndAccessible from "./responsive-and-accessible";
 import shareYourCatalogue from "./share-your-catalogue";
 import trackPerformance from "./track-performance";
 
@@ -24,4 +25,5 @@ export const docs: DocEntry[] = [
 	shareYourCatalogue,
 	trackPerformance,
 	plansAndBilling,
+	responsiveAndAccessible,
 ];

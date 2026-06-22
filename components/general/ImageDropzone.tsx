@@ -1,8 +1,8 @@
 "use client";
-import * as Sentry from "@sentry/nextjs";
 import { loadImage, processImage } from "@/helpers/imageProcessing";
 import { ImageDropzoneProps } from "@/types/shared";
 import { UploadDropzone } from "@/utils/uploadthing";
+import * as Sentry from "@sentry/nextjs";
 import React, { useCallback, useState } from "react";
 import { FiUploadCloud } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
@@ -57,7 +57,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 				return [processedFile];
 			} catch (error) {
 				const message = error instanceof Error ? error.message : "";
-				// Expected, user-facing validation/decode failures — surface them to
+				// Expected, user-facing validation/decode failures - surface them to
 				// the user (below) but don't report as Sentry exceptions.
 				const isExpectedValidationError =
 					message.startsWith("Failed to load image:") ||

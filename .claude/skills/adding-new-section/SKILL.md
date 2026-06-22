@@ -1,6 +1,6 @@
 ---
 name: adding-new-section
-description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. DividerBlock, VideoBlock) — covers the type definition, renderer + input components, AddContentModal wiring, ContentOptionsSelector option, and CatalogueContent render branch.
+description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. DividerBlock, VideoBlock) - covers the type definition, renderer + input components, AddContentModal wiring, ContentOptionsSelector option, and CatalogueContent render branch.
 ---
 
 # Adding a New Content Block
@@ -35,8 +35,8 @@ Not for: editing an existing block's fields (just update its interface + compone
 
 **Create:** `components/catalogue/sections/[SectionName].tsx` and `components/catalogue/inputs/[SectionName]Input.tsx`
 
-1. **Renderer** (`[SectionName].tsx`) — displays the block in the catalogue. Handle both "view" and "edit" modes.
-2. **Input** (`[SectionName]Input.tsx`) — the configuration form shown in the "Add Content" modal.
+1. **Renderer** (`[SectionName].tsx`) - displays the block in the catalogue. Handle both "view" and "edit" modes.
+2. **Input** (`[SectionName]Input.tsx`) - the configuration form shown in the "Add Content" modal.
 
 ## 3. Modal Integration
 

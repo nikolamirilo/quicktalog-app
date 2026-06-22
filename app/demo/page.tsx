@@ -20,7 +20,7 @@ const Page = () => {
 					<div className="px-4 sm:px-6 lg:px-8 pb-20 sm:pb-12">
 						<div className="max-w-6xl mx-auto">
 							<div className="rounded-2xl sm:rounded-3xl overflow-hidden relative aspect-video">
-								{/* Skeleton — always in DOM, fades out once iframe is ready */}
+								{/* Skeleton - always in DOM, fades out once iframe is ready */}
 								<style>{`@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
 								<div
 									className="absolute inset-0 z-10 pointer-events-none flex flex-col overflow-hidden bg-gray-100"

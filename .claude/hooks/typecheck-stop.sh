@@ -21,7 +21,7 @@ RC=$?
 [ "$RC" -eq 0 ] && exit 0
 
 {
-	echo "Type check failed (tsc --noEmit) — fix these before finishing:"
+	echo "Type check failed (tsc --noEmit) - fix these before finishing:"
 	ERRS=$(printf '%s\n' "$OUT" | grep "error TS")
 	if [ -n "$ERRS" ]; then
 		printf '%s\n' "$ERRS" | head -50

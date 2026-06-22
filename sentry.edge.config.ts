@@ -9,10 +9,10 @@ Sentry.init({
 	dsn: "https://04c218993c95f3450f8c7a08172075ff@o4511305257779200.ingest.us.sentry.io/4511305258762240",
 	enabled: process.env.NODE_ENV === "production",
 
-	// Performance traces sampled at 10% — representative slice, not every request.
+	// Performance traces sampled at 10% - representative slice, not every request.
 	tracesSampleRate: 0.1,
 
-	// Logs are a separate high-volume stream, not critical errors — off.
+	// Logs are a separate high-volume stream, not critical errors - off.
 	enableLogs: false,
 
 	// Enable sending user PII (Personally Identifiable Information)

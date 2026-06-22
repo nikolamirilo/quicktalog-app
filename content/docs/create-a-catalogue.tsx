@@ -1,5 +1,6 @@
 import { FiPlusCircle } from "react-icons/fi";
 import ArticleCTA from "@/components/articles/ArticleCTA";
+import ArticleImage from "@/components/articles/ArticleImage";
 import Callout from "@/components/articles/Callout";
 import KeyTakeaways from "@/components/articles/KeyTakeaways";
 import Prose from "@/components/articles/Prose";
@@ -23,11 +24,19 @@ const meta = {
 		"start a catalogue",
 	],
 	relatedSlugs: ["build-and-edit", "customize-design"],
+	coverImage: "/documentation/create-catalogue-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
+			<ArticleImage
+				src="/documentation/create-catalogue-cover.svg"
+				alt="Three ways to start a Quicktalog catalogue: from scratch, with AI, or by importing a photo"
+				maxWidth="640px"
+				priority
+			/>
+
 			<Prose>
 				<p>
 					The hardest part of any catalogue is the empty screen at the start.
@@ -92,6 +101,12 @@ function Body() {
 				]}
 			/>
 
+			<ArticleImage
+				src="/documentation/create-catalogue-ai-flow.svg"
+				alt="The AI catalogue generation flow from business description to finished draft in the builder"
+				maxWidth="640px"
+			/>
+
 			<Callout title="Always set your own prices" variant="warning">
 				AI guesses at prices and will get them wrong. Treat every figure in an
 				AI draft as a placeholder and replace it with your real price before you
@@ -115,6 +130,12 @@ function Body() {
 				</p>
 			</Prose>
 
+			<ArticleImage
+				src="/documentation/create-catalogue-ocr-flow.svg"
+				alt="The OCR photo import flow: upload a photo or PDF and Quicktalog reads it into a draft catalogue"
+				maxWidth="640px"
+			/>
+
 			<Prose>
 				<h2>Which route to pick</h2>
 				<p>
@@ -137,6 +158,12 @@ function Body() {
 					<li>You can get a clean, well lit image of the source.</li>
 				</ul>
 			</Prose>
+
+			<ArticleImage
+				src="/documentation/create-catalogue-decision.svg"
+				alt="Decision guide: AI generation for new catalogues, photo import for existing printed ones"
+				maxWidth="640px"
+			/>
 
 			<ArticleCTA variant="mid" />
 

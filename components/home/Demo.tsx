@@ -11,7 +11,7 @@ const Demo = () => {
 				className="block w-full text-left cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-product-primary/50 rounded-2xl sm:rounded-3xl"
 				onClick={() => router.push("/demo")}
 			>
-				{/* Image wrapper — relative on sm+ so the CTA can overlay; static on mobile so CTA sits below */}
+				{/* Image wrapper - relative on sm+ so the CTA can overlay; static on mobile so CTA sits below */}
 				<div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
 					<div className="overflow-hidden">
 						<img
@@ -21,7 +21,7 @@ const Demo = () => {
 						/>
 					</div>
 
-					{/* Gradient overlay — only on sm+ where CTA sits on the image */}
+					{/* Gradient overlay - only on sm+ where CTA sits on the image */}
 					<div className="hidden sm:block absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
 					{/* Desktop/tablet CTA: pinned bottom-right over the image */}

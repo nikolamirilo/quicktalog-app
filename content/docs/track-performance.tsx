@@ -1,4 +1,5 @@
 import { FiBarChart2 } from "react-icons/fi";
+import ArticleImage from "@/components/articles/ArticleImage";
 import Callout from "@/components/articles/Callout";
 import KeyTakeaways from "@/components/articles/KeyTakeaways";
 import Prose from "@/components/articles/Prose";
@@ -20,11 +21,18 @@ const meta = {
 		"customer engagement",
 	],
 	relatedSlugs: ["plans-and-billing", "share-your-catalogue"],
+	coverImage: "/documentation/track-performance-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
+			<ArticleImage
+				src="/documentation/track-performance-cover.svg"
+				alt="Quicktalog analytics dashboard showing catalogue views, busiest day, and a daily views chart"
+				priority
+			/>
+
 			<Prose>
 				<p>
 					Once a catalogue is live, you do not have to guess how it is doing.
@@ -58,7 +66,15 @@ function Body() {
 					and a slow slide is a nudge to share the link again or refresh what is
 					inside.
 				</p>
+			</Prose>
 
+			<ArticleImage
+				src="/documentation/track-performance-metrics.svg"
+				alt="Catalogue analytics metrics: total views, busiest day, average views per day, and a daily views line chart"
+				maxWidth="640px"
+			/>
+
+			<Prose>
 				<h2>Turn views into decisions</h2>
 				<p>
 					Analytics are only useful if they change what you do. If views jump
@@ -68,6 +84,11 @@ function Body() {
 					you update and when you promote.
 				</p>
 			</Prose>
+
+			<ArticleImage
+				src="/documentation/track-performance-decision-loop.svg"
+				alt="The analytics decision loop: read the chart, spot the pattern, update or promote, then watch it respond"
+			/>
 
 			<Callout title="Share the link to see movement" variant="tip">
 				Views follow sharing. If a catalogue looks quiet, the fix is usually

@@ -1,4 +1,5 @@
 import { FiCreditCard } from "react-icons/fi";
+import ArticleImage from "@/components/articles/ArticleImage";
 import Callout from "@/components/articles/Callout";
 import KeyTakeaways from "@/components/articles/KeyTakeaways";
 import Prose from "@/components/articles/Prose";
@@ -12,7 +13,7 @@ const meta = {
 		"Start free and upgrade only when you need more. What the free plan covers, what paid plans add, and how to manage your subscription.",
 	tag: "Account",
 	icon: FiCreditCard,
-	order: 7,
+	order: 8,
 	readingTimeMinutes: 3,
 	keywords: [
 		"Quicktalog plans",
@@ -22,11 +23,18 @@ const meta = {
 		"billing",
 	],
 	relatedSlugs: ["getting-started", "create-a-catalogue"],
+	coverImage: "/documentation/plans-billing-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
+			<ArticleImage
+				src="/documentation/plans-billing-cover.svg"
+				alt="Quicktalog plans overview showing Starter, Pro, and higher tiers with their key features"
+				priority
+			/>
+
 			<Prose>
 				<p>
 					Quicktalog is free to start and grows with you. The free plan is a
@@ -70,6 +78,12 @@ function Body() {
 				</p>
 			</Prose>
 
+			<ArticleImage
+				src="/documentation/plans-billing-comparison.svg"
+				alt="Side-by-side comparison of Quicktalog plans showing catalogues, items, view limits, and feature availability"
+				maxWidth="640px"
+			/>
+
 			<Stepper
 				steps={[
 					{
@@ -90,12 +104,24 @@ function Body() {
 				]}
 			/>
 
+			<ArticleImage
+				src="/documentation/plans-billing-hit-limit.svg"
+				alt="Quicktalog upgrade prompt showing when a plan limit is reached with options to move to the next tier"
+				maxWidth="380px"
+			/>
+
 			<Callout title="Pick the plan that fits the limit you hit" variant="note">
 				There is no need to overbuy. Stay on the free plan until something
 				specific stops you, then move up one step. It is easy to upgrade later,
 				so start small and grow into a bigger plan only when the work calls for
 				it.
 			</Callout>
+
+			<ArticleImage
+				src="/documentation/plans-billing-manage.svg"
+				alt="The billing management screen in the Quicktalog dashboard showing current plan, renewal date, and upgrade or cancel options"
+				maxWidth="640px"
+			/>
 		</>
 	);
 }

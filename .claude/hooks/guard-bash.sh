@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # PreToolUse(Bash): block commands that leak secrets or are destructive to DB/git/fs.
-# Conservative starting set — extend the patterns below as needed.
+# Conservative starting set - extend the patterns below as needed.
 # exit 2 = block, with the reason sent to stderr (shown to Claude).
 INPUT=$(cat)
 CMD=$(printf '%s' "$INPUT" | jq -r '.tool_input.command // empty')

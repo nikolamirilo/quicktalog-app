@@ -290,7 +290,7 @@ const giftShopBanner = `
   <div class="qt-gift-content">
     <span class="qt-gift-tag">🎁 Free Wrapping Today</span>
     <h3>Perfect Gifts<br>for Loved Ones</h3>
-    <p>Find something unforgettable — and we'll wrap it beautifully, on us.</p>
+    <p>Find something unforgettable - and we'll wrap it beautifully, on us.</p>
     <a href="#gifts" class="qt-btn-gift">
       <span>Explore Gifts</span>
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5h10M8.5 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>

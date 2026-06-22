@@ -1,7 +1,7 @@
-import * as Sentry from "@sentry/nextjs";
-import { NextRequest } from "next/server";
 import { getPaddleInstance } from "@/utils/paddle/get-paddle-instance";
 import { ProcessWebhook } from "@/utils/paddle/process-webhook";
+import * as Sentry from "@sentry/nextjs";
+import { NextRequest } from "next/server";
 
 const webhookProcessor = new ProcessWebhook();
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 				signature,
 			);
 		} catch {
-			// Signature verification failed — typically an internet probe hitting the
+			// Signature verification failed - typically an internet probe hitting the
 			// public URL, not a server fault, so don't alert Sentry. But log a
 			// breadcrumb: a misconfigured/rotated PADDLE_NOTIFICATION_WEBHOOK_SECRET
 			// would make *every* real webhook fail here and silently stop billing

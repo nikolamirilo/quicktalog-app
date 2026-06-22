@@ -1,6 +1,6 @@
 "use client";
-import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
+import * as Sentry from "@sentry/nextjs";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { FiAlertTriangle, FiHome } from "react-icons/fi";
@@ -45,7 +45,7 @@ export default function CatalogueError({
 					This catalogue couldn't load
 				</h1>
 				<p className="text-product-foreground-accent">
-					Please try again — if the problem continues, head back home.
+					Please try again - if the problem continues, head back home.
 				</p>
 				<div className="flex flex-col sm:flex-row gap-3 justify-center">
 					<Button onClick={reset} variant="cta">

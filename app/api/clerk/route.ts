@@ -1,15 +1,15 @@
 import { HANDLED_EVENT_TYPES } from "@/constants/users";
 import {
-	buildUserData,
-	type ClerkWebhookEvent,
-	isUniqueViolation,
-	updateOrCreateUser,
-	upsertUser,
+    buildUserData,
+    type ClerkWebhookEvent,
+    isUniqueViolation,
+    updateOrCreateUser,
+    upsertUser,
 } from "@/lib/users/syncFromClerk";
 import {
-	handleUserDeletion,
-	retryOperation,
-	sendWelcomeEmailSafely,
+    handleUserDeletion,
+    retryOperation,
+    sendWelcomeEmailSafely,
 } from "@/server_actions/users";
 import { createClient } from "@/utils/supabase/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
 			error instanceof Error ? error.message : "Unknown error";
 
 		// A unique-violation here means a concurrent webhook delivery already
-		// inserted the row — the desired end state is reached, so acknowledge 200
+		// inserted the row - the desired end state is reached, so acknowledge 200
 		// and skip the Sentry capture to stop the alert noise.
 		if (isUniqueViolation(error)) {
 			console.warn("Concurrent webhook delivery resolved by peer:", {

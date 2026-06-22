@@ -95,7 +95,7 @@ export default function NewsletterTable({ subscribers }: NewsletterTableProps) {
 											{subscriber.catalogueName}
 										</Link>
 									) : (
-										"—"
+										"-"
 									)}
 								</TableCell>
 								<TableCell className="text-product-foreground-accent text-sm px-4 sm:px-6 py-3">

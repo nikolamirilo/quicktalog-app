@@ -1,4 +1,5 @@
 import ArticleCTA from "@/components/articles/ArticleCTA";
+import ArticleImage from "@/components/articles/ArticleImage";
 import DocCard from "@/components/docs/DocCard";
 import DocsNav from "@/components/docs/DocsNav";
 import Footer from "@/components/navigation/Footer";
@@ -34,7 +35,7 @@ export default function DocsIndexPage() {
 
 					{/* Center: overview + topic grid */}
 					<main className="min-w-0">
-						<header className="mb-10 border-b border-product-border pb-8">
+						<header className="mb-10 pb-8">
 							<span className="inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-product-secondary">
 								<span className="h-px w-8 bg-product-primary" />
 								Quicktalog Docs
@@ -47,6 +48,13 @@ export default function DocsIndexPage() {
 								live catalogue you can share. Read them in order, or jump
 								straight to the part you are on.
 							</p>
+							<ArticleImage
+								alt="Six-step learning path from sign-up to a live shared catalogue"
+								maxWidth="890px"
+								priority
+								className="mr-auto"
+								src="/documentation/docs-landing-cover.svg"
+							/>
 						</header>
 
 						<DocCard eyebrow="Start here" featured meta={first.meta} />
@@ -56,6 +64,8 @@ export default function DocsIndexPage() {
 								<DocCard key={doc.meta.slug} meta={doc.meta} />
 							))}
 						</div>
+
+
 
 						<div className="mt-14">
 							<ArticleCTA

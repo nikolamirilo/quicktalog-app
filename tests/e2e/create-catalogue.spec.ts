@@ -28,7 +28,7 @@ test.describe("create catalogue", () => {
 		const dialog = page.getByRole("alertdialog");
 
 		// Open the create modal. Retry to ride out the client-side UserContext
-		// hydration window — clicking before it loads redirects to /auth.
+		// hydration window - clicking before it loads redirects to /auth.
 		await expect(async () => {
 			if (!page.url().includes("/admin/dashboard")) {
 				await page.goto("/admin/dashboard");

@@ -20,6 +20,8 @@ export interface DocMeta {
 	keywords: string[];
 	/** Manual related links (slugs). Falls back to neighbours by order. */
 	relatedSlugs?: string[];
+	/** Cover image shown on the card and at the top of the doc body. */
+	coverImage?: string;
 }
 
 export interface DocEntry {

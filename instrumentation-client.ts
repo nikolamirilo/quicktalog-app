@@ -24,10 +24,10 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 		// Add optional integrations for additional features
 		integrations: [Sentry.replayIntegration()],
 
-		// Performance traces are sampled at 10% — we only need a representative
+		// Performance traces are sampled at 10% - we only need a representative
 		// slice, not every transaction (the bulk of event volume/cost).
 		tracesSampleRate: 0.1,
-		// Logs are a separate high-volume stream, not critical errors — off.
+		// Logs are a separate high-volume stream, not critical errors - off.
 		enableLogs: false,
 
 		// Don't record replays for every session; only attach a replay when an
@@ -68,7 +68,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 		],
 
 		// `beforeSend` only handles cases that `ignoreErrors`/`denyUrls` can't
-		// express — object-shape checks, stack-gated matches, and severity
+		// express - object-shape checks, stack-gated matches, and severity
 		// downgrades. Plain message/URL drops live in those lists above (they run
 		// first, so duplicating them here would be dead code).
 		beforeSend(event, hint) {
@@ -89,7 +89,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 					return null;
 				}
 
-				// Third-party survey script syntax errors — gated on the *stack*
+				// Third-party survey script syntax errors - gated on the *stack*
 				// (the message rarely names surveys.js), so not expressible in
 				// `ignoreErrors`.
 				if (err.name === "SyntaxError" && /surveys\.js/.test(stack)) {
@@ -98,7 +98,7 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 
 				// "Failed to fetch" on the server-action path is usually a
 				// navigation/offline abort, but it also covers real transport
-				// failures (CORS, edge 5xx, DNS). Don't drop it outright — collapse
+				// failures (CORS, edge 5xx, DNS). Don't drop it outright - collapse
 				// it into one info-level issue so a deploy that genuinely breaks
 				// server actions still shows as a volume spike. Mute this issue in
 				// Sentry to keep the steady-state noise out of triage.

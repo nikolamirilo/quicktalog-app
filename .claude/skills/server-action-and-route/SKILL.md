@@ -1,6 +1,6 @@
 ---
 name: server-action-and-route
-description: Use when adding or editing a server-side mutation in Quicktalog — a server action in server_actions/*.ts or an API route handler in app/api/*/route.ts. Covers the auth + ownership check, Drizzle/Supabase data access, Redis sync, Sentry error capture, cache revalidation, and return-shape conventions.
+description: Use when adding or editing a server-side mutation in Quicktalog - a server action in server_actions/*.ts or an API route handler in app/api/*/route.ts. Covers the auth + ownership check, Drizzle/Supabase data access, Redis sync, Sentry error capture, cache revalidation, and return-shape conventions.
 ---
 
 # Server Action & API Route
@@ -18,7 +18,7 @@ Every server-side mutation in Quicktalog follows the same skeleton. Miss a step 
 | Use a **server action** (`server_actions/`) | Use an **API route** (`app/api/`) |
 |---|---|
 | Called from React components (the default) | Needs a URL: webhooks (Clerk, Paddle), external callers, `fetch` from SWR hooks |
-| Uses **Drizzle** (`drizzleClient`) — the primary ORM | Some legacy routes use **Supabase** (`createClient`) |
+| Uses **Drizzle** (`drizzleClient`) - the primary ORM | Some legacy routes use **Supabase** (`createClient`) |
 
 **Prefer a server action for new app mutations.** Reach for an API route only when something outside React must call it. Don't add a second write path for data a server action already owns (see [[data-revalidation]] §"two data layers").
 
@@ -57,7 +57,7 @@ export async function updateThing(data: SomeType): Promise<boolean> {
     // 4. SYNC the Redis cache (catalogues are cached by `name`)
     await redis.set(data.name, JSON.stringify(data));
 
-    // 5. REVALIDATE — the server action owns cache invalidation
+    // 5. REVALIDATE - the server action owns cache invalidation
     revalidateCatalogue(data.name);
     revalidateDashboard();
 
@@ -73,12 +73,12 @@ export async function updateThing(data: SomeType): Promise<boolean> {
 
 ## The 6 required steps
 
-1. **Auth** — `const user = await currentUser(); if (!user?.id) return <fail>;`
-2. **Ownership** — fetch `{ createdBy: true }` and check `existing.createdBy !== user.id` before any write. Skipping this lets any signed-in user edit anyone's data.
-3. **Mutate** — Drizzle in server actions; `createClient()` (Supabase) only in legacy routes.
-4. **Redis sync** — if the entity is cached (catalogues are keyed by `name`), update or `redis.del()` it so reads don't serve stale data.
-5. **Revalidate** — call `revalidateCatalogue(name)` and/or `revalidateDashboard()`. See [[data-revalidation]] for which to call.
-6. **Catch** — every handler wraps its body in `try/catch` with `Sentry.captureException(err)` + `console.error(...)`.
+1. **Auth** - `const user = await currentUser(); if (!user?.id) return <fail>;`
+2. **Ownership** - fetch `{ createdBy: true }` and check `existing.createdBy !== user.id` before any write. Skipping this lets any signed-in user edit anyone's data.
+3. **Mutate** - Drizzle in server actions; `createClient()` (Supabase) only in legacy routes.
+4. **Redis sync** - if the entity is cached (catalogues are keyed by `name`), update or `redis.del()` it so reads don't serve stale data.
+5. **Revalidate** - call `revalidateCatalogue(name)` and/or `revalidateDashboard()`. See [[data-revalidation]] for which to call.
+6. **Catch** - every handler wraps its body in `try/catch` with `Sentry.captureException(err)` + `console.error(...)`.
 
 ## Return-shape conventions
 
@@ -90,7 +90,7 @@ export async function updateThing(data: SomeType): Promise<boolean> {
 
 From [app/api/items/route.ts](../../../app/api/items/route.ts): export named `POST`/`PATCH`/`GET`, add `export const dynamic = "force-dynamic"` for mutating routes, return `new Response(JSON.stringify(...), { status, headers: { "Content-Type": "application/json" } })`, and `Sentry.captureException` in every catch (status 500 for DB errors, 400 for request errors, 404 for not-found).
 
-**Security note:** the existing `items/route.ts` has **no Clerk auth/ownership check** — do not copy that. New routes that mutate user data MUST do steps 1–2 (`currentUser()` + ownership) just like the server actions.
+**Security note:** the existing `items/route.ts` has **no Clerk auth/ownership check** - do not copy that. New routes that mutate user data MUST do steps 1–2 (`currentUser()` + ownership) just like the server actions.
 
 ## Common Mistakes
 

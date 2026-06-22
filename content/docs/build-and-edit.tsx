@@ -1,4 +1,5 @@
 import { FiEdit3 } from "react-icons/fi";
+import ArticleImage from "@/components/articles/ArticleImage";
 import Callout from "@/components/articles/Callout";
 import KeyTakeaways from "@/components/articles/KeyTakeaways";
 import Prose from "@/components/articles/Prose";
@@ -22,11 +23,18 @@ const meta = {
 		"add products",
 	],
 	relatedSlugs: ["customize-design", "share-your-catalogue"],
+	coverImage: "/documentation/build-edit-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
+			<ArticleImage
+				src="/documentation/build-edit-cover.svg"
+				alt="The Quicktalog builder showing a live catalogue preview alongside the settings panel"
+				priority
+			/>
+
 			<Prose>
 				<p>
 					The builder is where a draft becomes a real catalogue. It shows a live
@@ -76,6 +84,12 @@ function Body() {
 				]}
 			/>
 
+			<ArticleImage
+				src="/documentation/build-edit-item-anatomy.svg"
+				alt="Anatomy of a catalogue item: name, price, photo, and description fields in the builder"
+				maxWidth="640px"
+			/>
+
 			<Prose>
 				<h2>Group items into categories</h2>
 				<p>
@@ -84,7 +98,15 @@ function Body() {
 					Group related items together and your page stays easy to scan even as
 					it grows.
 				</p>
+			</Prose>
 
+			<ArticleImage
+				src="/documentation/build-edit-categories.svg"
+				alt="Category management in the Quicktalog builder showing grouped items under named sections"
+				maxWidth="640px"
+			/>
+
+			<Prose>
 				<h2>Add content blocks</h2>
 				<p>
 					A catalogue is more than a list. Text blocks let you add a welcome
@@ -93,7 +115,15 @@ function Body() {
 					outside content, like a booking widget or a map, and add custom code
 					for anything bespoke.
 				</p>
+			</Prose>
 
+			<ArticleImage
+				src="/documentation/build-edit-content-blocks.svg"
+				alt="Content blocks panel in the builder showing text, divider, and embed block options"
+				maxWidth="640px"
+			/>
+
+			<Prose>
 				<h2>Find your way around the tabs</h2>
 				<p>
 					The settings panel is split into four tabs so each kind of setting has
@@ -103,6 +133,11 @@ function Body() {
 					Appearance in full.
 				</p>
 			</Prose>
+
+			<ArticleImage
+				src="/documentation/build-edit-settings-tabs.svg"
+				alt="The four builder settings tabs: General, Header, Footer, and Appearance"
+			/>
 
 			<Callout title="Edit live, publish when ready" variant="note">
 				Changes in the builder are saved to your draft, not to the live page.
