@@ -6,10 +6,14 @@ import { CatalogueContentProps } from "@/types/shared";
 import { ContentLayout, Item, UserData } from "@quicktalog/common";
 import { getDisplayItems } from "@/helpers/catalogueItems";
 import { getRequiredPlan } from "@/helpers/client";
+import { useAiAssist } from "@/hooks/useAiAssist";
+import { parseItemsFromText } from "@/server_actions/ai";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiFileMinus } from "react-icons/fi";
+import { toast } from "sonner";
 import ItemModal from "../modals/ItemModal";
+import PasteListModal from "../modals/PasteListModal";
 import CategoryBlockComponent from "../sections/CategoryBlock";
 import ContainerBlockComponent from "../sections/ContainerBlock";
 import CustomCodeBlockComponent from "../sections/CustomCode";
@@ -35,8 +39,16 @@ const CatalogueContent = ({
 		moveBlock,
 		moveItem,
 		updateBlock,
+		catalogue,
 	} = useCatalogueContext() || {};
 	const { layout } = useMainContext();
+	const {
+		run: runAi,
+		showLimits: aiShowLimits,
+		setShowLimits: setAiShowLimits,
+		currentPlan: aiCurrentPlan,
+		requiredPlan: aiRequiredPlan,
+	} = useAiAssist();
 	const [expandedSections, setExpandedSections] = useState<
 		Record<string, boolean>
 	>({});
@@ -52,6 +64,11 @@ const CatalogueContent = ({
 	} | null>(null);
 
 	const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+	const [isPasteModalOpen, setIsPasteModalOpen] = useState(false);
+	const [pasteBlockIndex, setPasteBlockIndex] = useState<number | null>(null);
+	const [generatingBlocks, setGeneratingBlocks] = useState<
+		Record<number, boolean>
+	>({});
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -183,6 +200,75 @@ const CatalogueContent = ({
 		setIsItemModalOpen(true);
 	};
 
+	const openPasteModal = (index: number) => {
+		if (checkItemLimits()) {
+			setShowLimitsModal(true);
+			return;
+		}
+		setPasteBlockIndex(index);
+		setIsPasteModalOpen(true);
+	};
+
+	const setBlockGenerating = (index: number, value: boolean) => {
+		setGeneratingBlocks((prev) => {
+			if (value) return { ...prev, [index]: true };
+			const next = { ...prev };
+			delete next[index];
+			return next;
+		});
+	};
+
+	// Non-blocking: the modal closes right away, the target block shows a
+	// loading state, and the parsed items drop in when the AI returns.
+	const handlePasteSubmit = async (rawText: string) => {
+		const blockIndex = pasteBlockIndex;
+		if (blockIndex === null || !addItem || !catalogue?.name) return;
+
+		setBlockGenerating(blockIndex, true);
+		try {
+			const items = await runAi(
+				() => parseItemsFromText(catalogue.name, rawText, currency),
+				{ onError: (message) => toast.error(message) },
+			);
+			if (!items || items.length === 0) return;
+
+			let toAdd = items;
+			const limit = userData?.currentPlan?.features?.items_per_catalogue;
+			if (typeof limit === "number") {
+				let totalItems = 0;
+				data.forEach((block) => {
+					if (block.type === "category" || block.type === "container") {
+						totalItems += (block as any).items?.length ?? 0;
+					}
+				});
+				const remaining = Math.max(0, limit - totalItems);
+				if (items.length > remaining) {
+					toAdd = items.slice(0, remaining);
+					setShowLimitsModal(true);
+				}
+			}
+
+			toAdd.forEach((it) => {
+				addItem(blockIndex, {
+					id: crypto.randomUUID(),
+					order: 0,
+					name: it.name,
+					description: it.description,
+					image: "",
+					price: it.price,
+					isFree: it.isFree,
+				});
+			});
+			if (toAdd.length > 0) {
+				toast.success(
+					`Added ${toAdd.length} item${toAdd.length === 1 ? "" : "s"}`,
+				);
+			}
+		} finally {
+			setBlockGenerating(blockIndex, false);
+		}
+	};
+
 	if ((!data || !Array.isArray(data) || data.length === 0) && mode === "view") {
 		console.warn("No data, rendering null");
 		return (
@@ -240,6 +326,7 @@ const CatalogueContent = ({
 							currentLayout={currentLayout}
 							isExpanded={forceExpanded}
 							isFirst={index === 0}
+							isGeneratingItems={!!generatingBlocks[index]}
 							isLast={index === data.length - 1}
 							key={`${block.id}-${block.order}`}
 							mode={mode}
@@ -268,6 +355,7 @@ const CatalogueContent = ({
 									: (itemIndex) => moveItem(index, itemIndex, "up")
 							}
 							onMoveUp={() => moveBlock(index, "up")}
+							onPasteItems={isSearching ? undefined : openPasteModal}
 							onToggle={handleToggleSection}
 							onUpdateBlock={
 								updateBlock ? (data) => updateBlock(index, data) : undefined
@@ -290,6 +378,7 @@ const CatalogueContent = ({
 							currentLayout={currentLayout}
 							isExpanded={isExpanded}
 							isFirst={index === 0}
+							isGeneratingItems={!!generatingBlocks[index]}
 							isLast={index === data.length - 1}
 							key={`${block.id}-${block.order}`}
 							mode={mode}
@@ -324,6 +413,7 @@ const CatalogueContent = ({
 										: undefined
 							}
 							onMoveUp={moveBlock ? () => moveBlock(index, "up") : undefined}
+							onPasteItems={isSearching ? undefined : openPasteModal}
 							onUpdateBlock={
 								updateBlock ? (data) => updateBlock(index, data) : undefined
 							}
@@ -422,6 +512,11 @@ const CatalogueContent = ({
 				)}
 
 			<ItemModal
+				categoryName={
+					activeCategoryIndex !== null
+						? ((data[activeCategoryIndex] as any)?.name ?? undefined)
+						: undefined
+				}
 				checkItemLimits={checkItemLimits}
 				currency={currency}
 				initialItem={activeEditingItem ? activeEditingItem.item : undefined}
@@ -436,6 +531,14 @@ const CatalogueContent = ({
 				onSave={handleSaveItem}
 				onShowLimits={() => setShowLimitsModal(true)}
 			/>
+			<PasteListModal
+				isOpen={isPasteModalOpen}
+				onClose={() => {
+					setIsPasteModalOpen(false);
+					setPasteBlockIndex(null);
+				}}
+				onSubmit={handlePasteSubmit}
+			/>
 			<LimitsModal
 				currentPlan={userData?.currentPlan}
 				isOpen={showLimitsModal}
@@ -444,6 +547,13 @@ const CatalogueContent = ({
 					userData ? getRequiredPlan(userData.currentPlan, "items") : undefined
 				}
 				type="items"
+			/>
+			<LimitsModal
+				currentPlan={aiCurrentPlan}
+				isOpen={aiShowLimits}
+				onClose={() => setAiShowLimits(false)}
+				requiredPlan={aiRequiredPlan}
+				type="ai"
 			/>
 		</main>
 	);

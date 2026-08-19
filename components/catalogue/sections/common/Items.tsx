@@ -10,12 +10,14 @@ import {
 } from "@/helpers/catalogueItems";
 import { CategoryBlock, ContainerBlock } from "@quicktalog/common";
 import { AnimatePresence, motion } from "framer-motion";
-import { Plus } from "lucide-react";
+import { Loader2, Plus, Sparkles } from "lucide-react";
 import { useState } from "react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import CardsSwitcher from "../../cards";
+
+const SKELETON_KEYS = ["sk-1", "sk-2", "sk-3"];
 
 interface Props {
 	block: ContainerBlock | CategoryBlock;
@@ -27,6 +29,8 @@ interface Props {
 	showContent: boolean;
 	theme: string;
 	onAddItem?: (blockIndex: number) => void;
+	onPasteItems?: (blockIndex: number) => void;
+	isGeneratingItems?: boolean;
 	onDeleteItem?: (itemIndex: number) => void;
 	onEditItem?: (itemIndex: number) => void;
 	onMoveItemUp?: (itemIndex: number) => void;
@@ -43,6 +47,8 @@ const Items = ({
 	showContent,
 	theme,
 	onAddItem,
+	onPasteItems,
+	isGeneratingItems,
 	onDeleteItem,
 	onEditItem,
 	onMoveItemUp,
@@ -55,6 +61,13 @@ const Items = ({
 	const remaining = displayItems.length - visible.length;
 
 	const handleShowMore = () => setVisibleCount((c) => c + LOAD_MORE_STEP);
+
+	const gridSkeletonSize =
+		currentLayout === "variant_2"
+			? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
+			: currentLayout === "variant_3"
+				? "w-full min-h-[100px]"
+				: "w-full min-h-[110px] sm:min-h-[150px]";
 
 	return (
 		<AnimatePresence initial={false}>
@@ -117,7 +130,25 @@ const Items = ({
 										/>
 									</SwiperSlide>
 								))}
-								{mode === "edit" && onAddItem && (
+								{mode === "edit" &&
+									isGeneratingItems &&
+									SKELETON_KEYS.map((key) => (
+										<SwiperSlide
+											className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto"
+											key={key}
+										>
+											<div
+												className="h-full min-h-[300px] w-full border-2 border-dashed border-[var(--catalogue-primary)]/40 bg-[var(--catalogue-card-background)]/50 flex flex-col items-center justify-center gap-3 p-6 animate-pulse"
+												style={{ borderRadius: "var(--border-radius)" }}
+											>
+												<Loader2 className="w-6 h-6 text-[var(--catalogue-primary)] animate-spin" />
+												<span className="text-sm font-medium text-[var(--catalogue-text)]/70">
+													Generating items...
+												</span>
+											</div>
+										</SwiperSlide>
+									))}
+								{mode === "edit" && onAddItem && !isGeneratingItems && (
 									<SwiperSlide className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto">
 										<button
 											className="h-full min-h-[300px] w-full border-2 border-dashed border-[var(--catalogue-text)]/20 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 flex flex-col items-center justify-center p-6 group cursor-pointer"
@@ -133,6 +164,26 @@ const Items = ({
 										</button>
 									</SwiperSlide>
 								)}
+								{mode === "edit" && onPasteItems && !isGeneratingItems && (
+									<SwiperSlide className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto">
+										<button
+											className="h-full min-h-[300px] w-full border-2 border-dashed border-[var(--catalogue-primary)]/40 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 flex flex-col items-center justify-center p-6 group cursor-pointer"
+											onClick={() => onPasteItems(blockIndex)}
+											style={{ borderRadius: "var(--border-radius)" }}
+											type="button"
+										>
+											<div className="h-12 w-12 rounded-full bg-[var(--catalogue-card-background)] border border-[var(--catalogue-primary)]/40 flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--catalogue-primary)] transition-colors">
+												<Sparkles className="w-6 h-6 text-[var(--catalogue-primary)]" />
+											</div>
+											<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
+												Paste a list
+											</span>
+											<span className="text-xs text-[var(--catalogue-text)]/60 mt-1">
+												AI fills the items
+											</span>
+										</button>
+									</SwiperSlide>
+								)}
 							</Swiper>
 						</div>
 					) : (
@@ -140,12 +191,12 @@ const Items = ({
 							<div className={getGridStyle(currentLayout)}>
 								{visible.map(({ item: record, originalIndex }) => (
 									<CardsSwitcher
-										key={record.id || originalIndex}
 										blockIndex={blockIndex}
 										currency={getCurrencySymbol(currency)}
 										i={originalIndex}
 										isFirst={originalIndex === 0}
 										isLast={originalIndex === totalItemsInBlock - 1}
+										key={record.id || originalIndex}
 										mode={mode}
 										onDelete={
 											onDeleteItem
@@ -171,16 +222,25 @@ const Items = ({
 									/>
 								))}
 
-								{mode === "edit" && onAddItem && (
+								{mode === "edit" &&
+									isGeneratingItems &&
+									SKELETON_KEYS.map((key) => (
+										<div
+											className={`flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed border-[var(--catalogue-primary)]/40 bg-[var(--catalogue-card-background)]/50 animate-pulse ${gridSkeletonSize}`}
+											key={key}
+											style={{ borderRadius: "var(--border-radius)" }}
+										>
+											<Loader2 className="w-6 h-6 text-[var(--catalogue-primary)] animate-spin" />
+											<span className="text-sm font-medium text-[var(--catalogue-text)]/70">
+												Generating items...
+											</span>
+										</div>
+									))}
+
+								{mode === "edit" && onAddItem && !isGeneratingItems && (
 									<button
 										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-catalogue-text/20 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 cursor-pointer
-												${
-													currentLayout === "variant_2"
-														? "w-[45%] max-w-[180px] sm:max-w-[220px] md:max-w-[260px] aspect-[3/4]"
-														: currentLayout === "variant_3"
-															? "w-full min-h-[100px]"
-															: "w-full min-h-[110px] sm:min-h-[150px]"
-												}
+												${gridSkeletonSize}
 											`}
 										onClick={() => onAddItem(blockIndex)}
 										style={{ borderRadius: "var(--border-radius)" }}
@@ -190,6 +250,27 @@ const Items = ({
 										</div>
 										<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
 											Add New Item
+										</span>
+									</button>
+								)}
+
+								{mode === "edit" && onPasteItems && !isGeneratingItems && (
+									<button
+										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-[var(--catalogue-primary)]/40 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 cursor-pointer
+												${gridSkeletonSize}
+											`}
+										onClick={() => onPasteItems(blockIndex)}
+										style={{ borderRadius: "var(--border-radius)" }}
+										type="button"
+									>
+										<div className="h-12 w-12 rounded-full bg-[var(--catalogue-card-background)] border border-[var(--catalogue-primary)]/40 flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--catalogue-primary)] transition-colors">
+											<Sparkles className="w-6 h-6 text-[var(--catalogue-primary)]" />
+										</div>
+										<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
+											Paste a list
+										</span>
+										<span className="text-xs text-[var(--catalogue-text)]/60 mt-1">
+											AI fills the items
 										</span>
 									</button>
 								)}

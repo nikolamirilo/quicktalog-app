@@ -162,7 +162,9 @@ const AddContentModal = ({
 				name: blockData.name,
 				layout: blockData.layout,
 				items:
-					editingBlock?.type === "category" ? (editingBlock as any).items : [],
+					editingBlock?.type === "category"
+						? (editingBlock as any).items
+						: (blockData.items ?? []),
 				isExpanded: blockData.isExpanded,
 			};
 		} else if (selectedOption === "container") {
@@ -171,7 +173,9 @@ const AddContentModal = ({
 				name: blockData.name,
 				layout: blockData.layout,
 				items:
-					editingBlock?.type === "container" ? (editingBlock as any).items : [],
+					editingBlock?.type === "container"
+						? (editingBlock as any).items
+						: (blockData.items ?? []),
 			};
 		} else if (selectedOption === "embedding") {
 			newBlock = {
@@ -255,6 +259,7 @@ const AddContentModal = ({
 						<div className="mx-auto w-full border-t border-gray-300/70" />
 						<BlockConfigForm
 							blockData={blockData}
+							isEditing={!!editingBlock}
 							locked={locked}
 							selectedOption={selectedOption}
 							setBlockData={setBlockData}

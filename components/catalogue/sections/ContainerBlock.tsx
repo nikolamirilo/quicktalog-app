@@ -15,6 +15,8 @@ interface ContainerBlockProps {
 	mode: "edit" | "view";
 	currentLayout: "variant_1" | "variant_2" | "variant_3" | "variant_4";
 	onAddItem?: (blockIndex: number) => void;
+	onPasteItems?: (blockIndex: number) => void;
+	isGeneratingItems?: boolean;
 	blockIndex: number;
 	onDelete?: () => void;
 	onDeleteItem?: (itemIndex: number) => void;
@@ -39,6 +41,8 @@ const ContainerBlockComponent = ({
 	mode,
 	currentLayout,
 	onAddItem,
+	onPasteItems,
+	isGeneratingItems,
 	blockIndex,
 	onDelete,
 	onDeleteItem,
@@ -106,16 +110,18 @@ const ContainerBlockComponent = ({
 
 			<Items
 				block={block}
-				displayItems={displayItems}
 				blockIndex={blockIndex}
 				currency={currency}
 				currentLayout={currentLayout}
+				displayItems={displayItems}
+				isGeneratingItems={isGeneratingItems}
 				mode={mode}
 				onAddItem={onAddItem}
 				onDeleteItem={onDeleteItem}
 				onEditItem={onEditItem}
 				onMoveItemDown={onMoveItemDown}
 				onMoveItemUp={onMoveItemUp}
+				onPasteItems={onPasteItems}
 				showContent={showContent}
 				theme={theme}
 			/>

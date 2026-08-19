@@ -20,6 +20,7 @@ interface ItemModalProps {
 	layout?: ContentLayout | null;
 	checkItemLimits?: () => boolean;
 	onShowLimits?: () => void;
+	categoryName?: string;
 }
 
 const createDefaultItem = (): Item => ({
@@ -41,6 +42,7 @@ const ItemModal = ({
 	layout,
 	checkItemLimits,
 	onShowLimits,
+	categoryName,
 }: ItemModalProps) => {
 	const { setIsSidebarOpen } = useCatalogueContext() || {};
 	const [item, setItem] = useState<Item>(initialItem || createDefaultItem());
@@ -104,6 +106,7 @@ const ItemModal = ({
 						</div>
 					)}
 					<ItemInput
+						categoryName={categoryName}
 						currency={currency}
 						layout={layout}
 						onChange={setItem}
