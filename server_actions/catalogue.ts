@@ -2,7 +2,7 @@
 import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
 import { drizzleClient } from "@/utils/drizzle";
-import { redis } from "@/utils/redis";
+import { redis, syncCache } from "@/utils/redis";
 import {
 	Catalogue,
 	defaultCatalogueData,
@@ -27,7 +27,7 @@ export async function deleteItem(name: string): Promise<boolean> {
 		if (!existing || existing.createdBy !== user.id) return false;
 
 		await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));
-		await redis.del(name);
+		await syncCache(() => redis.del(name));
 		revalidateCatalogue(name);
 		revalidateDashboard();
 		return true;
@@ -85,12 +85,14 @@ export async function updateItemStatus(
 			.where(eq(catalogues.id, id));
 
 		if (name) {
-			const cached = await redis.get(name);
-			if (cached) {
-				const data = typeof cached === "string" ? JSON.parse(cached) : cached;
-				data.status = status;
-				await redis.set(name, JSON.stringify(data));
-			}
+			await syncCache(async () => {
+				const cached = await redis.get(name);
+				if (cached) {
+					const data = typeof cached === "string" ? JSON.parse(cached) : cached;
+					data.status = status;
+					await redis.set(name, JSON.stringify(data));
+				}
+			});
 			revalidateCatalogue(name);
 		}
 

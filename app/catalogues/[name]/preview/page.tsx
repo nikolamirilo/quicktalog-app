@@ -1,6 +1,7 @@
 import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { redis } from "@/utils/redis";
+import * as Sentry from "@sentry/nextjs";
 import { Catalogue as CatalogueType } from "@quicktalog/common";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +41,9 @@ const PreviewPage = async ({
 		// For preview, we don't strictly check status, or we allow draft
 		return <Catalogue item={item} type="view" />;
 	} catch (error) {
+		// A Redis failure here is indistinguishable from "not found" for the
+		// visitor, so make sure it still reaches Sentry instead of only stderr.
+		Sentry.captureException(error, { tags: { op: "cataloguePreview" } });
 		console.warn("Catalogue preview error:", error);
 		return <LimitsModal isOpen={true} type="notFound" />;
 	}
