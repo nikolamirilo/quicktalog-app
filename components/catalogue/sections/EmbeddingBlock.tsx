@@ -244,6 +244,7 @@ const EmbeddingBlockComponent = ({
 
 	return (
 		<section
+			aria-label={block.name || undefined}
 			className="mb-5 group relative"
 			id={`${slug}-${block.order}`}
 			ref={containerRef}

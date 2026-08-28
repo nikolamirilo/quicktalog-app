@@ -1,16 +1,37 @@
 "use server";
 import { fetchUserData } from "@/lib/users/fetchUserData";
-import type { AiActionResult, GeneratedItem } from "@/types/ai";
+import {
+	buildEditorSystemPrompt,
+	catalogueEditResponseSchema,
+	resolveOperationImages,
+	toClientOperations,
+} from "@/lib/ai/catalogueEditor";
+import type {
+	AiActionResult,
+	AiSectionAccess,
+	CatalogueChatHistoryMessage,
+	CatalogueChatTurn,
+	GeneratedItem,
+} from "@/types/ai";
 import { drizzleClient } from "@/utils/drizzle";
-import { generateJSON, generateText } from "@/utils/deepseek";
+import {
+	DeepseekResponseError,
+	generateChatJSON,
+	generateJSON,
+	generateText,
+} from "@/utils/deepseek";
 import { currentUser } from "@clerk/nextjs/server";
-import { schema } from "@quicktalog/common";
+import { type Catalogue, schema } from "@quicktalog/common";
 import * as Sentry from "@sentry/nextjs";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 const catalogues = schema.catalogues;
 const prompts = schema.prompts;
+
+/** How much of the conversation travels back to the model on each turn. */
+const CHAT_HISTORY_LIMIT = 8;
+const CHAT_MESSAGE_LIMIT = 2000;
 
 const generatedItemSchema = z.object({
 	name: z.string().trim().min(1).max(120),
@@ -35,7 +56,7 @@ function toGeneratedItems(
 }
 
 type AuthResult =
-	| { ok: true; userId: string }
+	| { ok: true; userId: string; sectionAccess?: AiSectionAccess }
 	| {
 			ok: false;
 			error: string;
@@ -81,7 +102,14 @@ async function authorize(catalogueName: string): Promise<AuthResult> {
 		}
 	}
 
-	return { ok: true, userId: user.id };
+	return {
+		ok: true,
+		userId: user.id,
+		// Lets the chat prompt advertise only the section types this plan unlocks.
+		sectionAccess: userData.ok
+			? userData.data?.currentPlan?.features?.sections
+			: undefined,
+	};
 }
 
 /**
@@ -258,6 +286,129 @@ export async function generateCategoryItems(
 		return { success: true, data: toGeneratedItems(result.data.items) };
 	} catch (error) {
 		Sentry.captureException(error, { tags: { op: "generateCategoryItems" } });
+		return {
+			success: false,
+			error: "Generation failed. Try again.",
+			code: "ai_error",
+		};
+	}
+}
+
+/**
+ * #4 — Conversational catalogue editing. Turns one chat message into a batch of
+ * edit operations against the catalogue the user currently has open.
+ *
+ * The catalogue is taken from the client so unsaved builder changes are part of
+ * the context, but ownership is always re-checked against the database by
+ * `authorize`, which also enforces the monthly `ai_prompts` allowance. Every
+ * successful turn is metered, questions included.
+ */
+export async function chatEditCatalogue(
+	catalogueName: string,
+	params: {
+		message: string;
+		catalogue: Catalogue;
+		history?: CatalogueChatHistoryMessage[];
+	},
+): Promise<AiActionResult<CatalogueChatTurn>> {
+	try {
+		const message = params.message?.trim();
+		if (!message) {
+			return {
+				success: false,
+				error: "Type a message first.",
+				code: "ai_error",
+			};
+		}
+		if (!params.catalogue) {
+			return {
+				success: false,
+				error: "Catalogue is still loading. Try again.",
+				code: "not_found",
+			};
+		}
+
+		const auth = await authorize(catalogueName);
+		if (auth.ok === false) {
+			return { success: false, error: auth.error, code: auth.code };
+		}
+
+		const history = (params.history ?? [])
+			.slice(-CHAT_HISTORY_LIMIT)
+			.map((entry) => ({
+				role: entry.role,
+				content: entry.content.slice(0, CHAT_MESSAGE_LIMIT),
+			}));
+
+		const parsed = await generateChatJSON<unknown>(
+			[
+				{
+					role: "system",
+					content: buildEditorSystemPrompt(
+						params.catalogue,
+						auth.sectionAccess,
+					),
+				},
+				...history,
+				{ role: "user", content: message.slice(0, CHAT_MESSAGE_LIMIT) },
+			],
+			{ temperature: 0.3 },
+		);
+
+		const result = catalogueEditResponseSchema.safeParse(parsed);
+		if (!result.success) {
+			// Without this the rejection is invisible in Sentry and the user just
+			// sees a generic message, which is impossible to act on or debug.
+			Sentry.captureException(
+				new Error("chatEditCatalogue: model response failed validation"),
+				{
+					tags: { op: "chatEditCatalogue" },
+					extra: {
+						issues: result.error.issues.slice(0, 10).map((issue) => ({
+							path: issue.path.join("."),
+							code: issue.code,
+							message: issue.message,
+						})),
+					},
+				},
+			);
+			const tooBig = result.error.issues.some(
+				(issue) => issue.code === "too_big",
+			);
+			return {
+				success: false,
+				error: tooBig
+					? "That came out too big to add in one go. Ask for a simpler version, or build it up over a few smaller messages."
+					: "The AI returned something unexpected. Try rephrasing.",
+				code: "ai_error",
+			};
+		}
+
+		// Photo lookups happen here, after validation: the model only ever names a
+		// search term, never a URL it could have invented.
+		const operations = await resolveOperationImages(
+			toClientOperations(params.catalogue, result.data.operations),
+		);
+		const reply =
+			result.data.reply ||
+			(operations.length > 0
+				? "Done — here is what I changed."
+				: "I could not work out what to change. Could you rephrase?");
+
+		await meter(auth.userId, catalogueName);
+		return { success: true, data: { reply, operations } };
+	} catch (error) {
+		Sentry.captureException(error, { tags: { op: "chatEditCatalogue" } });
+		if (error instanceof DeepseekResponseError) {
+			return {
+				success: false,
+				error:
+					error.reason === "truncated"
+						? "That was too much to change in one go. Try asking for fewer changes at a time."
+						: "The AI's reply was cut short or malformed, usually because it was writing a lot of code. Ask for a simpler version.",
+				code: "ai_error",
+			};
+		}
 		return {
 			success: false,
 			error: "Generation failed. Try again.",

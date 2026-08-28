@@ -9,6 +9,7 @@ import {
 	Share2,
 } from "lucide-react";
 import { useState } from "react";
+import BlockNameInput from "./BlockNameInput";
 
 interface EmbeddingInputProps {
 	value: Partial<EmbeddingBlock>;
@@ -58,6 +59,12 @@ const EmbeddingInput = ({ value, onChange }: EmbeddingInputProps) => {
 
 	return (
 		<div className="space-y-6">
+			<BlockNameInput
+				onChange={(name) => onChange({ ...value, name })}
+				type="embedding"
+				value={value.name || ""}
+			/>
+
 			<div>
 				<Label className="text-sm font-medium text-product-foreground mb-3 block">
 					What would you like to embed?
@@ -68,14 +75,14 @@ const EmbeddingInput = ({ value, onChange }: EmbeddingInputProps) => {
 						const isActive = activePreset.id === preset.id;
 						return (
 							<button
-								key={preset.id}
-								onClick={() => setActivePreset(preset)}
-								type="button"
 								className={`flex items-center gap-2 px-3 py-2 text-sm border rounded-full transition-all ${
 									isActive
 										? "border-product-primary bg-product-primary/5 text-product-primary shadow-sm font-medium"
 										: "border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-800"
 								}`}
+								key={preset.id}
+								onClick={() => setActivePreset(preset)}
+								type="button"
 							>
 								<Icon className="w-4 h-4" />
 								<span>{preset.label}</span>

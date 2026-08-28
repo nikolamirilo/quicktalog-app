@@ -176,10 +176,10 @@ const Items = ({
 												<Sparkles className="w-6 h-6 text-[var(--catalogue-primary)]" />
 											</div>
 											<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
-												Paste a list
+												Generate Items
 											</span>
 											<span className="text-xs text-[var(--catalogue-text)]/60 mt-1">
-												AI fills the items
+												Insert prompt or list of items and generate it
 											</span>
 										</button>
 									</SwiperSlide>
@@ -267,10 +267,10 @@ const Items = ({
 											<Sparkles className="w-6 h-6 text-[var(--catalogue-primary)]" />
 										</div>
 										<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
-											Paste a list
+											Generate Items
 										</span>
 										<span className="text-xs text-[var(--catalogue-text)]/60 mt-1">
-											AI fills the items
+											Insert prompt or list of items and generate it
 										</span>
 									</button>
 								)}

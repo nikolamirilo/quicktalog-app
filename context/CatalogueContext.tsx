@@ -1,4 +1,10 @@
 "use client";
+import {
+	applyCatalogueOperations,
+	type OperationLimits,
+	type OperationOutcome,
+} from "@/helpers/catalogueOperations";
+import type { CatalogueOperation } from "@/types/ai";
 import { useUser } from "@clerk/nextjs";
 import {
 	Catalogue,
@@ -6,7 +12,7 @@ import {
 	defaultCatalogueData,
 	Item,
 } from "@quicktalog/common";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 interface CatalogueContextType {
 	catalogue: Catalogue;
@@ -37,6 +43,11 @@ interface CatalogueContextType {
 		itemIndex: number,
 		toBlockIndex: number,
 	) => void;
+	// AI chat actions
+	applyOperations: (
+		operations: CatalogueOperation[],
+		limits?: OperationLimits,
+	) => OperationOutcome;
 }
 const CatalogueContext = createContext<CatalogueContextType | null>(null);
 
@@ -57,6 +68,11 @@ export const CatalogueContextProvider = ({
 		useState<Omit<Catalogue, "id">>(defaultCatalogueData);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { user } = useUser();
+
+	// Mirrors the latest committed catalogue so `applyOperations` can compute and
+	// return its outcome synchronously instead of only inside a state updater.
+	const catalogueRef = useRef(catalogue);
+	catalogueRef.current = catalogue;
 
 	const resetCatalogue = () => {
 		setCatalogue(defaultCatalogueData);
@@ -270,6 +286,27 @@ export const CatalogueContextProvider = ({
 		}
 	}, [user, catalogue.createdBy]);
 
+	/**
+	 * Applies a batch of AI chat edits in one commit and reports what landed.
+	 * Operations are id-addressed, so the whole batch is resolved against a
+	 * single snapshot rather than through the index-based actions above.
+	 */
+	const applyOperations = (
+		operations: CatalogueOperation[],
+		limits?: OperationLimits,
+	): OperationOutcome => {
+		const outcome = applyCatalogueOperations(
+			catalogueRef.current as Catalogue,
+			operations,
+			limits,
+		);
+		if (outcome.applied.length > 0) {
+			catalogueRef.current = outcome.catalogue;
+			setCatalogue(outcome.catalogue);
+		}
+		return outcome;
+	};
+
 	const updateAppearance = (
 		partial: Partial<Catalogue["appearance"]["style"]>,
 	) => {
@@ -303,6 +340,7 @@ export const CatalogueContextProvider = ({
 				removeItem,
 				moveItem,
 				moveItemToBlock,
+				applyOperations,
 			}}
 		>
 			{children}

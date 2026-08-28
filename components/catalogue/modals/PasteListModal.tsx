@@ -42,11 +42,11 @@ const PasteListModal = ({ isOpen, onClose, onSubmit }: PasteListModalProps) => {
 						<X className="w-5 h-5 text-gray-400" />
 					</button>
 					<div className="text-xl sm:text-2xl font-bold text-gray-900">
-						Paste a list
+						Generate Items
 					</div>
 					<p className="text-sm text-gray-500 mt-1 font-normal">
-						Paste your items, one per line. AI turns them into items with names,
-						prices, and descriptions. The block fills in while you keep working.
+						Write prompt or paste your items list. AI will generate items for
+						you.
 					</p>
 				</AlertDialogTitle>
 
@@ -54,9 +54,7 @@ const PasteListModal = ({ isOpen, onClose, onSubmit }: PasteListModalProps) => {
 					<Textarea
 						className="resize-none min-h-[200px] font-mono text-sm"
 						onChange={(e) => setText(e.target.value)}
-						placeholder={
-							"Espresso 2.50\nFlat White 3.80, double shot, oat milk optional\nCroissant 3 - butter, baked fresh"
-						}
+						placeholder="Wirte instructions"
 						value={text}
 					/>
 				</div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { UserData } from "@quicktalog/common";
+import BlockNameInput from "../../inputs/BlockNameInput";
 import ContentInput from "../../inputs/ContentInput";
 import CustomCodeInput from "../../inputs/CustomCodeInput";
 import DividerInput from "../../inputs/DividerInput";
@@ -92,32 +93,46 @@ const BlockConfigForm = ({
 					)}
 
 					{selectedOption === "text" && (
-						<div>
-							<label className="block text-sm font-medium mb-2 text-gray-700">
-								Content
-							</label>
-							<div style={{ fontFamily: "var(--catalogue-font-body)" }}>
-								<RichTextEditor
-									className="px-0.5 font-body"
-									content={blockData.content || "<p></p>"}
-									onChange={(val) =>
-										setBlockData({ ...blockData, content: val })
-									}
-								/>
+						<div className="flex flex-col gap-6">
+							<BlockNameInput
+								onChange={(name) => setBlockData({ ...blockData, name })}
+								type="text"
+								value={blockData.name || ""}
+							/>
+							<div>
+								<label className="block text-sm font-medium mb-2 text-gray-700">
+									Content
+								</label>
+								<div style={{ fontFamily: "var(--catalogue-font-body)" }}>
+									<RichTextEditor
+										className="px-0.5 font-body"
+										content={blockData.content || "<p></p>"}
+										onChange={(val) =>
+											setBlockData({ ...blockData, content: val })
+										}
+									/>
+								</div>
 							</div>
 						</div>
 					)}
 
 					{selectedOption === "divider" && (
-						<DividerInput
-							onChange={(val) =>
-								setBlockData({
-									...blockData,
-									divider: { ...blockData.divider, ...val } as any,
-								})
-							}
-							value={blockData.divider as any}
-						/>
+						<div className="flex flex-col gap-6">
+							<BlockNameInput
+								onChange={(name) => setBlockData({ ...blockData, name })}
+								type="divider"
+								value={blockData.name || ""}
+							/>
+							<DividerInput
+								onChange={(val) =>
+									setBlockData({
+										...blockData,
+										divider: { ...blockData.divider, ...val } as any,
+									})
+								}
+								value={blockData.divider as any}
+							/>
+						</div>
 					)}
 				</>
 			</div>

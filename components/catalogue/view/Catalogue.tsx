@@ -16,6 +16,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Overlay from "../../general/Overlay";
+import CatalogueChat from "../chat/CatalogueChat";
 import ContentBlockButton from "../inputs/ContentBlockButton";
 import BuilderSidebar from "../inputs/sidebar";
 import AddContentModal from "../modals/AddContentModal";
@@ -145,8 +146,9 @@ const Catalogue = ({
 			{type === "edit" && (
 				<>
 					<BuilderSidebar userData={userData} />
+					<CatalogueChat userData={userData} />
 					<Link
-						className="hidden fixed lg:flex bottom-20 left-4 md:bottom-6 md:left-6 z-[49] items-center gap-2 bg-white/90 backdrop-blur-sm text-gray-700 border border-gray-200 shadow-lg rounded-full pl-3 pr-4 py-2.5 text-sm font-medium hover:bg-white hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
+						className="hidden fixed lg:flex bottom-36 left-4 lg:bottom-20 lg:left-6 z-[49] items-center gap-2 bg-white/90 backdrop-blur-sm text-gray-700 border border-gray-200 shadow-lg rounded-full pl-3 pr-4 py-2.5 text-sm font-medium hover:bg-white hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
 						href="/admin/dashboard"
 					>
 						<ArrowLeft className="w-4 h-4 shrink-0" />

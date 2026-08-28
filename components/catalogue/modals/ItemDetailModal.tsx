@@ -39,7 +39,7 @@ export default function ItemDetailModal({
 				>
 					{/* Image Section - Only show for variants that have images */}
 					{item.image && variant !== "variant_3" && (
-						<div className="relative w-full h-80 bg-catalogue-card-background/10 flex-shrink-0 overflow-hidden">
+						<div className="relative w-full h-80 max-h-[40dvh] bg-catalogue-card-background/10 flex-shrink-0 overflow-hidden">
 							<OptimizedImage
 								alt={item.name}
 								className="w-full h-full object-cover"
@@ -47,11 +47,11 @@ export default function ItemDetailModal({
 								src={item.image}
 							/>
 							{/* Gradient overlay for better text readability */}
-							<div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+							<div className="absolute inset-0 z-10 bg-gradient-to-t from-black/20 to-transparent" />
 							{/* Zoom button */}
 							<button
 								aria-label="Zoom image"
-								className="absolute bottom-2 right-2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors duration-200 backdrop-blur-sm"
+								className="absolute bottom-2 right-2 z-20 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-colors duration-200 backdrop-blur-sm"
 								onClick={() => setIsImageZoomed(true)}
 								type="button"
 							>
@@ -61,7 +61,7 @@ export default function ItemDetailModal({
 					)}
 
 					{/* Content Section */}
-					<div className="flex-1 overflow-y-auto">
+					<div className="flex-1 min-h-0 overflow-y-auto">
 						<div className="p-4 sm:p-6">
 							<DialogHeader className="space-y-4 text-left mb-6">
 								<DialogTitle className="text-xl sm:text-2xl font-bold text-catalogue-card-heading font-heading leading-tight">

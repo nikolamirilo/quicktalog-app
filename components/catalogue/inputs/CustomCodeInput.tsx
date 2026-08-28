@@ -1,11 +1,13 @@
 "use client";
 import { UserData } from "@quicktalog/common";
 import { useState } from "react";
+import BlockNameInput from "./BlockNameInput";
 import CodeEditor from "./custom-code/CodeEditor";
 import CodePreview from "./custom-code/CodePreview";
 
 interface CustomCodeInputProps {
 	value: {
+		name?: string;
 		code?: string;
 	};
 	onChange: (value: any) => void;
@@ -40,6 +42,12 @@ const CustomCodeInput = ({
 
 	return (
 		<div className="space-y-6">
+			<BlockNameInput
+				onChange={(name) => onChange({ ...value, name })}
+				type="custom_code"
+				value={value.name || ""}
+			/>
+
 			{/* Code Editor Section */}
 			<CodeEditor
 				code={value.code || ""}

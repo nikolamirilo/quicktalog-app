@@ -32,7 +32,7 @@ const TextBlockComponent = ({
 
 	if (mode === "view") {
 		return (
-			<section className="mb-5">
+			<section aria-label={block.name || undefined} className="mb-5">
 				<HtmlContent className="" html={block.content} />
 			</section>
 		);
@@ -40,6 +40,7 @@ const TextBlockComponent = ({
 
 	return (
 		<section
+			aria-label={block.name || undefined}
 			className={`mb-5 group relative min-h-[50px] rounded-lg border-2 border-transparent hover:border-dashed p-2 transition-all ${isEditing ? "border-dashed border-catalogue-card-border bg-catalogue-background/50" : "hover:border-catalogue-card-border"}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>

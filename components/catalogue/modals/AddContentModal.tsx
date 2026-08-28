@@ -180,21 +180,25 @@ const AddContentModal = ({
 		} else if (selectedOption === "embedding") {
 			newBlock = {
 				...newBlock,
+				name: blockData.name || undefined,
 				code: blockData.code,
 			};
 		} else if (selectedOption === "custom_code") {
 			newBlock = {
 				...newBlock,
+				name: blockData.name || undefined,
 				code: blockData.code,
 			};
 		} else if (selectedOption === "text") {
 			newBlock = {
 				...newBlock,
+				name: blockData.name || undefined,
 				content: blockData.content || "<p>New text block</p>",
 			};
 		} else if (selectedOption === "divider") {
 			newBlock = {
 				...newBlock,
+				name: blockData.name || undefined,
 				spacing: blockData.divider.spacing,
 				border: blockData.divider.border,
 			};

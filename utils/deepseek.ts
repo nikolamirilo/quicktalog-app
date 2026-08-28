@@ -53,3 +53,48 @@ export async function generateJSON<T = unknown>(
 	const raw = completion.choices[0]?.message?.content ?? "{}";
 	return JSON.parse(raw) as T;
 }
+
+/**
+ * Raised when the model came back but its reply is unusable, so callers can
+ * tell the user something more useful than "generation failed".
+ */
+export class DeepseekResponseError extends Error {
+	constructor(readonly reason: "truncated" | "invalid_json") {
+		super(`DeepSeek returned a ${reason} response`);
+		this.name = "DeepseekResponseError";
+	}
+}
+
+export interface DeepseekMessage {
+	role: "system" | "user" | "assistant";
+	content: string;
+}
+
+/**
+ * Multi-turn JSON completion. Same JSON mode as `generateJSON`, but the caller
+ * supplies the whole message list so prior turns stay in context.
+ */
+export async function generateChatJSON<T = unknown>(
+	messages: DeepseekMessage[],
+	options: GenerateOptions = {},
+): Promise<T> {
+	const completion = await openai.chat.completions.create({
+		model: MODEL,
+		messages,
+		temperature: options.temperature ?? 0.3,
+		response_format: { type: "json_object" },
+	});
+
+	const choice = completion.choices[0];
+	// A long batch of edits can run past the output limit, which leaves the JSON
+	// half-written. Report that instead of failing on the parse.
+	if (choice?.finish_reason === "length") {
+		throw new DeepseekResponseError("truncated");
+	}
+
+	try {
+		return JSON.parse(choice?.message?.content ?? "{}") as T;
+	} catch {
+		throw new DeepseekResponseError("invalid_json");
+	}
+}

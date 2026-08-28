@@ -51,6 +51,7 @@ const DividerBlockComponent = ({
 
 	return (
 		<section
+			aria-label={block.name || undefined}
 			className={`group relative rounded-lg border-2 border-transparent hover:border-dashed hover:border-gray-300 transition-all ${isEditing ? "border-dashed border-gray-300 bg-gray-50/50 p-4" : "p-2"}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
@@ -67,10 +68,10 @@ const DividerBlockComponent = ({
 			{isEditing ? (
 				<div className="space-y-4">
 					<DividerInput
-						value={block}
 						onChange={(updates) =>
 							onUpdateBlock && onUpdateBlock({ ...block, ...updates })
 						}
+						value={block}
 					/>
 				</div>
 			) : (
