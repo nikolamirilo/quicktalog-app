@@ -50,7 +50,7 @@ const CustomCodeBlockComponent = ({
 	// The block's markup is mounted by hand rather than with
 	// `dangerouslySetInnerHTML`. React re-applies that prop on later renders even
 	// when the HTML is unchanged, which tears out the live DOM a widget has been
-	// drawing into and restores the original <script> tags — and a script parsed
+	// drawing into and restores the original <script> tags - and a script parsed
 	// from innerHTML is flagged "already started", so it can never run again. The
 	// result is a widget that renders once and then goes blank. Owning the
 	// subtree here keeps React out of it entirely.
@@ -65,7 +65,7 @@ const CustomCodeBlockComponent = ({
 		// effects cannot interleave.
 		for (const oldScript of Array.from(host.querySelectorAll("script"))) {
 			// Only executable scripts need re-creating. A data block such as
-			// <script type="application/json"> is content, not code — replacing it
+			// <script type="application/json"> is content, not code - replacing it
 			// would break the very script that reads it back.
 			if (!isExecutableScript(oldScript)) continue;
 

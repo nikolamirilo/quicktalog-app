@@ -813,7 +813,7 @@ The sections below give each article its search intent, keywords, full outline, 
 
 **Features shown.** AI generation, OCR import, the builder, publishing, templates.
 
-**Internal links.** To article 1 (restaurant) and article 4 (QR). CTA to `/admin/create/ai` route and `/demo`.
+**Internal links.** To article 1 (restaurant) and article 4 (QR). CTA to `/demo`.
 
 **Images.** Hero: `public/images/ai.svg` on a branded background, or Unsplash "laptop dashboard desk". In-body: `public/builder/content.svg` and `public/images/step2.svg` to show the flow. This article leans on existing vector art and needs little or no stock.
 

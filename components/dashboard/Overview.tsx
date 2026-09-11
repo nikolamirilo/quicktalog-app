@@ -187,7 +187,7 @@ const Overview = ({
 					Catalogues
 				</h2>
 
-				<QuickActions matchedTier={matchedTier} planId={planId} usage={usage} />
+				<QuickActions matchedTier={matchedTier} usage={usage} />
 
 				<CatalogueGrid
 					catalogues={catalogues}

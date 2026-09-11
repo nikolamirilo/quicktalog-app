@@ -43,7 +43,6 @@ interface BlockConfigFormProps {
 	setBlockData: (data: BlockData) => void;
 	locked: boolean;
 	userData: UserData;
-	isEditing?: boolean;
 }
 
 const BlockConfigForm = ({
@@ -52,7 +51,6 @@ const BlockConfigForm = ({
 	setBlockData,
 	locked,
 	userData,
-	isEditing,
 }: BlockConfigFormProps) => {
 	return (
 		<div className="flex-1 min-h-0 mt-4 pb-8 flex flex-col relative">
@@ -61,7 +59,6 @@ const BlockConfigForm = ({
 				<>
 					{selectedOption === "category" && (
 						<ContentInput
-							canGenerate={!isEditing}
 							onChange={(val) => setBlockData({ ...blockData, ...val })}
 							type="category"
 							value={blockData}
@@ -70,7 +67,6 @@ const BlockConfigForm = ({
 
 					{selectedOption === "container" && (
 						<ContentInput
-							canGenerate={!isEditing}
 							onChange={(val) => setBlockData({ ...blockData, ...val })}
 							type="container"
 							value={blockData}

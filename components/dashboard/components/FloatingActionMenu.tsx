@@ -1,8 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { AreLimitesReached } from "@quicktalog/common";
-import { Plus, Scan, Sparkles, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import CreateCatalogueButton from "./CreateCatalogueButton";
@@ -16,7 +14,6 @@ const FloatingActionMenu = ({
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const menuRef = useRef(null);
-	const router = useRouter();
 
 	useEffect(() => {
 		const handleClickOutside = (event) => {
@@ -28,11 +25,6 @@ const FloatingActionMenu = ({
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
-
-	const handleOptionClick = (option) => {
-		router.push(option);
-		setIsOpen(false);
-	};
 
 	return (
 		<div className="fixed bottom-6 right-6 z-50" ref={menuRef}>
@@ -62,42 +54,6 @@ const FloatingActionMenu = ({
 						showUpgradeTooltip={true}
 						type="dashboard"
 					/>
-				</div>
-
-				{/* Generate with AI */}
-				<div
-					className={`transform transition-all duration-300 ${
-						isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-					}`}
-					style={{ transitionDelay: isOpen ? "50ms" : "0ms" }}
-				>
-					<Button
-						className="min-w-[11rem] w-fit flex items-center gap-3 px-4 py-3 rounded-full shadow-lg z-10 hover:shadow-xl transform transition-all duration-200 whitespace-nowrap text-sm font-medium bg-white hover:bg-gray-50 text-gray-700 border border-gray-200"
-						disabled={planId < 1 || areLimitsReached["prompts"]}
-						onClick={() => handleOptionClick("/admin/create/ai")}
-						variant="outline"
-					>
-						<Sparkles size={18} />
-						<span className="inline">Generate with AI</span>
-					</Button>
-				</div>
-
-				{/* Scan & Import */}
-				<div
-					className={`transform transition-all duration-300 ${
-						isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-					}`}
-					style={{ transitionDelay: isOpen ? "100ms" : "0ms" }}
-				>
-					<Button
-						className="min-w-[11rem] w-fit flex items-center gap-3 px-4 py-3 rounded-full shadow-lg z-10 hover:shadow-xl transform transition-all duration-200 whitespace-nowrap text-sm font-medium bg-white hover:bg-gray-50 text-gray-700 border border-gray-200"
-						disabled={planId < 2 || areLimitsReached["ocr"]}
-						onClick={() => handleOptionClick("/admin/create/ocr")}
-						variant="outline"
-					>
-						<Scan size={18} />
-						<span className="inline">Scan & Import</span>
-					</Button>
 				</div>
 			</div>
 

@@ -7,13 +7,6 @@ export interface AiActionResult<T> {
 	code?: "unauthorized" | "not_found" | "limit" | "ai_error";
 }
 
-export interface GeneratedItem {
-	name: string;
-	description: string;
-	price: number;
-	isFree: boolean;
-}
-
 /** Section types the chat assistant is allowed to create. */
 export type AiSectionType =
 	| "category"
@@ -31,17 +24,16 @@ export interface AiSectionAccess {
 }
 
 export interface AiItemInput {
+	/**
+	 * Minted by the agent so the server's working copy and the browser's draft
+	 * agree on ids; the applier falls back to a fresh uuid when it is absent.
+	 */
+	id?: string;
 	name: string;
 	description?: string;
 	price?: number;
 	isFree?: boolean;
 	denominator?: string;
-	/**
-	 * Photo search term the model chose. The server resolves it to a real URL in
-	 * `image` and strips this field before the operation reaches the client, so
-	 * the model never has to invent an image URL.
-	 */
-	imageQuery?: string;
 	image?: string;
 }
 
@@ -73,6 +65,8 @@ export interface AiAppearanceFields {
 export type CatalogueOperation =
 	| {
 			op: "add_section";
+			/** See `AiItemInput.id`. */
+			id?: string;
 			sectionType: AiSectionType;
 			name?: string;
 			layout?: ContentLayout;
@@ -104,7 +98,6 @@ export type CatalogueOperation =
 			price?: number;
 			isFree?: boolean;
 			denominator?: string;
-			imageQuery?: string;
 			image?: string;
 	  }
 	| { op: "delete_item"; sectionId: string; itemId: string }
@@ -118,21 +111,26 @@ export type CatalogueOperation =
 	| { op: "update_catalogue"; fields: AiCatalogueFields }
 	| { op: "update_appearance"; fields: AiAppearanceFields };
 
-/** One assistant turn: what it said plus the edits it wants applied. */
-export interface CatalogueChatTurn {
-	reply: string;
-	operations: CatalogueOperation[];
-}
-
-export interface CatalogueChatHistoryMessage {
-	role: "user" | "assistant";
-	content: string;
-}
-
-export interface CatalogueChatMessage extends CatalogueChatHistoryMessage {
-	id: string;
-	/** Human-readable summary of the edits this turn applied. */
-	changes?: string[];
-	/** Edits that were dropped (bad reference, plan limit reached). */
-	skipped?: string[];
-}
+/**
+ * What every agent tool returns. A failure is not an exception: the model reads
+ * `error` on its next step and corrects itself within the same turn, which is
+ * why a bad section index no longer disappears silently.
+ */
+export type AgentToolResult =
+	| {
+			ok: true;
+			/** Replayed against the builder draft when the tool part resolves. */
+			operation: CatalogueOperation;
+			summary: string;
+			/** Photo searches that came back empty, so the model can say so. */
+			imageMisses?: string[];
+	  }
+	| {
+			ok: false;
+			error: string;
+			/**
+			 * The edit was refused by the caller's plan rather than by a bad
+			 * reference, so the client knows to offer an upgrade.
+			 */
+			limitReached?: boolean;
+	  };

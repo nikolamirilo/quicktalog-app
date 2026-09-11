@@ -13,9 +13,9 @@ interface BlockNameInputProps {
  * Optional name for block types that render no heading of their own (text,
  * divider, embedding, custom code).
  *
- * It is never drawn on the page. It becomes the section's accessible name — a
+ * It is never drawn on the page. It becomes the section's accessible name - a
  * `<section>` without one is not exposed as a landmark at all, so naming a
- * block is what lets screen-reader users navigate to it — and it identifies the
+ * block is what lets screen-reader users navigate to it - and it identifies the
  * block in the builder and to the AI assistant.
  */
 const BlockNameInput = ({ type, value, onChange }: BlockNameInputProps) => (

@@ -263,7 +263,6 @@ const AddContentModal = ({
 						<div className="mx-auto w-full border-t border-gray-300/70" />
 						<BlockConfigForm
 							blockData={blockData}
-							isEditing={!!editingBlock}
 							locked={locked}
 							selectedOption={selectedOption}
 							setBlockData={setBlockData}

@@ -16,6 +16,8 @@
 		"prepare": "husky"
 	},
 	"dependencies": {
+		"@ai-sdk/deepseek": "^3.0.42",
+		"@ai-sdk/react": "^4.0.100",
 		"@clerk/nextjs": "^6.23.0",
 		"@headlessui/react": "^2.2.4",
 		"@material-tailwind/react": "^2.1.10",
@@ -58,6 +60,7 @@
 		"@supabase/supabase-js": "^2.47.10",
 		"@uploadthing/react": "^7.3.3",
 		"@upstash/redis": "^1.37.0",
+		"ai": "^7.0.97",
 		"apexcharts": "^4.3.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",

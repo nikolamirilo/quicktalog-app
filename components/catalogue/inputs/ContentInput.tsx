@@ -1,15 +1,8 @@
 "use client";
-import LimitsModal from "@/components/modals/LimitsModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { useCatalogueContext } from "@/context/CatalogueContext";
-import { useAiAssist } from "@/hooks/useAiAssist";
-import { generateCategoryItems } from "@/server_actions/ai";
 import { layouts } from "@quicktalog/common";
-import { Loader2, Sparkles } from "lucide-react";
-import { useState } from "react";
 
 interface ContentInputProps {
 	value: {
@@ -20,55 +13,9 @@ interface ContentInputProps {
 	};
 	onChange: (value: any) => void;
 	type: "category" | "container";
-	canGenerate?: boolean;
 }
 
-const ContentInput = ({
-	value,
-	onChange,
-	type,
-	canGenerate = true,
-}: ContentInputProps) => {
-	const { catalogue } = useCatalogueContext() || {};
-	const [brief, setBrief] = useState("");
-	const {
-		run,
-		loading,
-		error,
-		showLimits,
-		setShowLimits,
-		currentPlan,
-		requiredPlan,
-	} = useAiAssist();
-
-	const generatedCount = value.items?.length ?? 0;
-	const canRun = Boolean(catalogue?.name && value.name.trim() && !loading);
-
-	const handleGenerate = async () => {
-		if (!catalogue?.name) return;
-		const items = await run(() =>
-			generateCategoryItems(catalogue.name, {
-				name: value.name,
-				description: brief,
-				businessType: catalogue.businessType,
-				language: catalogue.language,
-				currency: catalogue.currency,
-			}),
-		);
-		if (items && items.length > 0) {
-			const fullItems = items.map((it, i) => ({
-				id: crypto.randomUUID(),
-				order: i,
-				name: it.name,
-				description: it.description,
-				image: "",
-				price: it.price,
-				isFree: it.isFree,
-			}));
-			onChange({ ...value, items: fullItems });
-		}
-	};
-
+const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
 	return (
 		<div className="flex flex-col gap-6 w-full">
 			{/* Name field */}
@@ -148,14 +95,6 @@ const ContentInput = ({
 					))}
 				</div>
 			</div>
-
-			<LimitsModal
-				currentPlan={currentPlan}
-				isOpen={showLimits}
-				onClose={() => setShowLimits(false)}
-				requiredPlan={requiredPlan}
-				type="ai"
-			/>
 		</div>
 	);
 };

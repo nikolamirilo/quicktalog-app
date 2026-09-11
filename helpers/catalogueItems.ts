@@ -1,7 +1,14 @@
-import type { CategoryBlock, ContainerBlock, Item } from "@quicktalog/common";
+import type {
+	CategoryBlock,
+	ContainerBlock,
+	ContentBlock,
+	Item,
+} from "@quicktalog/common";
 
 export const INITIAL_ITEM_COUNT = 20;
 export const LOAD_MORE_STEP = 20;
+/** Below this many items a catalogue is short enough to scan without search. */
+export const SEARCH_MIN_ITEMS = 20;
 
 export interface DisplayItem {
 	item: Item;
@@ -39,4 +46,12 @@ export function getDisplayItems(
 		}
 	}
 	return result;
+}
+
+export function getTotalItemCount(blocks: ContentBlock[] | undefined): number {
+	if (!Array.isArray(blocks)) return 0;
+	return blocks.reduce((total, block) => {
+		if (block.type !== "category" && block.type !== "container") return total;
+		return total + (block.items?.length ?? 0);
+	}, 0);
 }

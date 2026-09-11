@@ -20,7 +20,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	data,
 	logo,
 }) => {
-	const { catalogue } = useCatalogueContext();
+	// Not in the builder on the public catalogue view - there is no provider
+	// there, so the context is null and `data` is the only source.
+	const { catalogue } = useCatalogueContext() || {};
 	const activeData = catalogue?.name ? catalogue : data;
 	const [newsletterEmail, setNewsletterEmail] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);

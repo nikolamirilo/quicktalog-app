@@ -37,9 +37,9 @@ const CatalogueSearchBar = ({
 	};
 
 	return (
-		<div className="w-full max-w-6xl mx-auto px-4 mb-4">
+		<div className="flex justify-end mb-3">
 			<div
-				className="relative flex items-center bg-[var(--catalogue-card-background)] border border-[var(--catalogue-card-border)] focus-within:border-[var(--catalogue-primary)] transition-colors"
+				className="relative flex items-center h-9 w-full sm:w-72 bg-[var(--catalogue-card-background)] border border-[var(--catalogue-card-border)] focus-within:border-[var(--catalogue-primary)] transition-colors"
 				style={{ borderRadius: "var(--border-radius)" }}
 			>
 				<Search
@@ -48,8 +48,11 @@ const CatalogueSearchBar = ({
 				/>
 				<input
 					aria-label="Search catalogue items"
-					className="w-full bg-transparent pl-10 pr-10 py-2.5 text-sm text-[var(--catalogue-text)] placeholder:text-[var(--catalogue-text)]/50 outline-none"
+					className="w-full h-9 bg-transparent pl-9 pr-9 text-sm text-[var(--catalogue-text)] placeholder:text-[var(--catalogue-text)]/50 outline-none"
 					onChange={(e) => setLocal(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Escape") handleClear();
+					}}
 					placeholder={placeholder}
 					type="search"
 					value={local}
@@ -57,11 +60,11 @@ const CatalogueSearchBar = ({
 				{local && (
 					<button
 						aria-label="Clear search"
-						className="absolute right-2 p-1 text-[var(--catalogue-text)]/60 hover:text-[var(--catalogue-text)]"
+						className="absolute right-1 p-1.5 text-[var(--catalogue-text)]/60 hover:text-[var(--catalogue-text)] transition-colors"
 						onClick={handleClear}
 						type="button"
 					>
-						<X className="w-4 h-4" />
+						<X aria-hidden="true" className="w-4 h-4" />
 					</button>
 				)}
 			</div>

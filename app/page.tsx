@@ -17,7 +17,6 @@ export const metadata: Metadata = generatePageMetadata("home");
 const Benefits = lazy(() => import("@/components/home/Benefits/Benefits"));
 const ProblemSection = lazy(() => import("@/components/home/ProblemSection"));
 const HowItWorks = lazy(() => import("@/components/home/HowItWorks"));
-const AIShortcut = lazy(() => import("@/components/home/AIShortcut"));
 const Pricing = lazy(() => import("@/components/home/Pricing/Pricing"));
 const CTA = lazy(() => import("@/components/home/CTA"));
 const FAQ = lazy(() => import("@/components/home/FAQ"));
@@ -70,10 +69,6 @@ const page: React.FC = async () => {
 						<HowItWorks />
 					</Suspense>
 				</SectionWrapper>
-
-				<Suspense fallback={<SectionSkeleton height="h-56" />}>
-					<AIShortcut />
-				</Suspense>
 
 				<SectionWrapper
 					description="Start with our free online catalog maker and upgrade as you grow. No hidden fees. Access professional catalog templates, AI generation, OCR import, and analytics on higher tiers."

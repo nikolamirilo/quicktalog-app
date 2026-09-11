@@ -16,7 +16,7 @@ export interface OperationLimits {
 	sections?: number | "unlimited";
 	/** `items_per_catalogue` from the current plan. */
 	items?: number | "unlimited";
-	/** `features.sections` from the current plan — which block types are unlocked. */
+	/** `features.sections` from the current plan - which block types are unlocked. */
 	sectionTypes?: AiSectionAccess;
 }
 
@@ -66,7 +66,7 @@ const countItems = (content: ContentBlock[]): number =>
 		0,
 	);
 
-/** Text blocks are free — they don't count against `sections_per_catalogue`. */
+/** Text blocks are free - they don't count against `sections_per_catalogue`. */
 const countSections = (content: ContentBlock[]): number =>
 	content.filter((block) => block.type !== "text").length;
 
@@ -79,7 +79,7 @@ const remaining = (
 		: Number.POSITIVE_INFINITY;
 
 const toItem = (input: AiItemInput, order: number): Item => ({
-	id: crypto.randomUUID(),
+	id: input.id ?? crypto.randomUUID(),
 	order,
 	name: input.name,
 	description: input.description ?? "",
@@ -94,7 +94,7 @@ const buildSection = (
 	order: number,
 	items: Item[],
 ): ContentBlock => {
-	const base = { id: crypto.randomUUID(), order };
+	const base = { id: op.id ?? crypto.randomUUID(), order };
 	switch (op.sectionType) {
 		case "category":
 			return {
@@ -200,7 +200,7 @@ export function applyCatalogueOperations(
 					remaining(limits.sections, countSections(next.content)) < 1
 				) {
 					limitReached = true;
-					skipped.push("Section limit reached — new section not added.");
+					skipped.push("Section limit reached - new section not added.");
 					break;
 				}
 
@@ -312,7 +312,7 @@ export function applyCatalogueOperations(
 				if (accepted.length < operation.items.length) limitReached = true;
 				if (accepted.length === 0) {
 					skipped.push(
-						`Item limit reached — nothing added to ${label(block)}.`,
+						`Item limit reached - nothing added to ${label(block)}.`,
 					);
 					break;
 				}

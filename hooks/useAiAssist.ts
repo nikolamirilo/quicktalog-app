@@ -6,8 +6,8 @@ import type { PricingPlan } from "@quicktalog/common";
 import { useState } from "react";
 
 /**
- * Shared plumbing for block-level AI assists (paste-a-list, generate-category,
- * item description). Runs the client-side `ai_prompts` gate before calling a
+ * Shared plumbing for block-level AI assists (currently the item description
+ * writer). Runs the client-side `ai_prompts` gate before calling a
  * server action, surfaces loading/error state, opens the AI LimitsModal when
  * the quota is spent, and refreshes usage after a successful metered call.
  *
