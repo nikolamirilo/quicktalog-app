@@ -3,7 +3,7 @@ import {
 	MIN_EFFECTIVE_DIMENSION,
 	OPTIMAL_DPI,
 } from "@/constants/ocr";
-import { OEM, PSM } from "tesseract.js";
+import { createWorker, OEM, PSM } from "tesseract.js";
 
 export const preprocessImage = (imageFile: File): Promise<Blob | null> => {
 	return new Promise((resolve) => {
@@ -202,4 +202,63 @@ export const getLanguageParameters = (languageCode: string) => {
 	};
 
 	return languageParams[languageCode] || baseParams;
+};
+
+/** Tesseract ships no Serbian Latin model; Croatian uses the same alphabet. */
+const LANGUAGE_ALIASES: Record<string, string> = { srp_latn: "hrv" };
+
+export const resolveOcrLanguage = (language?: string): string => {
+	const code = language || "eng";
+	return LANGUAGE_ALIASES[code] ?? code;
+};
+
+export interface OcrScan {
+	text: string;
+	/** Tesseract's own 0-100 estimate of how much of that text it trusts. */
+	confidence: number;
+}
+
+/**
+ * Reads a batch of images, reporting each one as it lands so the caller can
+ * show progress.
+ *
+ * One worker serves the whole batch: spinning one up per image re-fetches the
+ * language data and costs about a second each time, which is the difference
+ * between a ten-image scan feeling instant and feeling broken. A single image
+ * that fails is reported as `null` and the rest of the batch still runs.
+ */
+export const recognizeImages = async (
+	images: ReadonlyArray<{ id: string; file: File }>,
+	language: string | undefined,
+	onResult: (id: string, scan: OcrScan | null) => void,
+): Promise<void> => {
+	if (images.length === 0) return;
+
+	const code = resolveOcrLanguage(language);
+	const worker = await createWorker(code, OEM.LSTM_ONLY);
+
+	try {
+		await worker.setParameters(getLanguageParameters(code));
+
+		for (const { id, file } of images) {
+			try {
+				const preprocessed = await preprocessImage(file);
+				if (!preprocessed) {
+					onResult(id, null);
+					continue;
+				}
+
+				const prepared = new File([preprocessed], "processed-image.png", {
+					type: "image/png",
+				});
+				const { data } = await worker.recognize(prepared);
+				onResult(id, { text: data.text, confidence: data.confidence });
+			} catch (error) {
+				console.error("OCR recognition failed:", error);
+				onResult(id, null);
+			}
+		}
+	} finally {
+		await worker.terminate();
+	}
 };

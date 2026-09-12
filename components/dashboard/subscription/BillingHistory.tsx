@@ -19,6 +19,7 @@ const FEATURE_LABELS: Record<string, string> = {
 	items_per_catalogue: "Items per Catalogue",
 	styles: "Style",
 	standardThemes: "Standard Themes",
+	customThemes: "Custom Themes",
 	divider: "Content Divider",
 	embedding: "External Content",
 	customCode: "Custom Code",

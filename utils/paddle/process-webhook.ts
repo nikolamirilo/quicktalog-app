@@ -229,22 +229,16 @@ export class ProcessWebhook {
 				console.error("Failed to update user with customer_id:", error);
 			}
 		} else {
-			// Optional: ensure customers are tracked even if no email present
-			const { error } = await supabase.from("customers").upsert(
-				{
-					customer_id: eventData.data.id,
-					createdAt: new Date().toISOString(),
-				},
-				{ onConflict: "customer_id" },
+			// Without an email there is nothing to match the Paddle customer to a
+			// user row, so record it for follow-up instead of writing to the DB.
+			Sentry.captureMessage("Paddle customer event without an email", {
+				level: "warning",
+				tags: { domain: "paddle", op: "link-customer-noemail" },
+				extra: { customerId: eventData.data.id },
+			});
+			console.warn(
+				`Paddle customer ${eventData.data.id} has no email; skipping user link.`,
 			);
-
-			if (error) {
-				Sentry.captureException(error, {
-					level: "warning",
-					tags: { domain: "paddle", op: "upsert-customer-noemail" },
-				});
-				console.error("Failed to upsert customer:", error);
-			}
 		}
 	}
 }

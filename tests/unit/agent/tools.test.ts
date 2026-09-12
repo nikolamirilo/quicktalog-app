@@ -1,9 +1,13 @@
 import { CatalogueSession } from "@/agent/session";
 import { buildTools } from "@/agent/tools";
+import { UNTRUSTED_OPEN } from "@/agent/web";
 import type { AgentToolResult } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
 import { defaultCatalogueData } from "@quicktalog/common";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));
+vi.mock("node:dns/promises", () => ({ lookup }));
 
 vi.mock("@quicktalog/common", async () => {
 	const actual =
@@ -14,6 +18,29 @@ vi.mock("@quicktalog/common", async () => {
 });
 
 const catalogue = { ...defaultCatalogueData, name: "cafe" } as Catalogue;
+
+/** Enough text to clear the "almost nothing was extracted" floor. */
+const PAGE = "Espresso 2.50. A short black coffee. ".repeat(10);
+
+/** Answers Firecrawl with a page, so no test touches the network. */
+const mockScrape = () => {
+	lookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);
+	vi.stubEnv("FIRECRAWL_API_KEY", "fc-test");
+	return vi.spyOn(globalThis, "fetch").mockResolvedValue(
+		new Response(
+			JSON.stringify({
+				success: true,
+				data: { markdown: PAGE, metadata: { title: "Menu" } },
+			}),
+			{ status: 200 },
+		),
+	);
+};
+
+afterEach(() => {
+	vi.unstubAllEnvs();
+	vi.restoreAllMocks();
+});
 
 const run = (
 	tools: ReturnType<typeof buildTools>,
@@ -82,13 +109,15 @@ describe("skill gate through the real tools", () => {
 		const tools = buildTools(session);
 		await run(tools, "addSection", { sectionType: "category", name: "Drinks" });
 
-		for (const name of ["loadSkill", "readSection"] as const) {
+		mockScrape();
+
+		for (const name of ["loadSkill", "readSection", "fetchUrl"] as const) {
 			const input =
 				name === "loadSkill"
 					? { name: "responsive-design" }
-					: {
-							section: 0,
-						};
+					: name === "fetchUrl"
+						? { url: "https://cafe.test/menu" }
+						: { section: 0 };
 			const output = (await run(tools, name, input)) as Record<string, unknown>;
 
 			expect(output.ok).not.toBe(true);
@@ -102,5 +131,62 @@ describe("skill gate through the real tools", () => {
 		expect(
 			await run(tools, "updateSection", { section: 7, name: "x" }),
 		).toEqual({ ok: false, error: expect.stringContaining("no section [7]") });
+	});
+});
+
+describe("fetchUrl", () => {
+	it("returns the page fenced off, and a line for the user", async () => {
+		mockScrape();
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		const result = (await run(tools, "fetchUrl", {
+			url: "https://cafe.test/menu",
+		})) as unknown as Record<string, string>;
+
+		expect(result.summary).toBe("Read cafe.test - Menu");
+		expect(result.content).toContain(UNTRUSTED_OPEN);
+		expect(result.content).toContain("Espresso 2.50");
+	});
+
+	it("spends nothing on the same page twice", async () => {
+		const fetchMock = mockScrape();
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		await run(tools, "fetchUrl", { url: "https://cafe.test/menu" });
+		await run(tools, "fetchUrl", { url: "https://cafe.test/menu" });
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	// The whole point of the guard: a page cannot talk the agent into writing
+	// markup onto a published catalogue, even once the skill has been read.
+	it("closes code sections for the rest of a conversation that read a page", async () => {
+		mockScrape();
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "loadSkill", { name: "responsive-design" });
+
+		expect(await run(tools, "addSection", WIDGET)).toMatchObject({ ok: true });
+
+		await run(tools, "fetchUrl", { url: "https://cafe.test/menu" });
+
+		expect(await run(tools, "addSection", WIDGET)).toEqual({
+			ok: false,
+			error: expect.stringContaining("read a web page"),
+		});
+		// The ordinary path is untouched.
+		expect(
+			await run(tools, "addSection", { sectionType: "category", name: "Tea" }),
+		).toMatchObject({ ok: true });
+	});
+
+	it("refuses an address that points back at our own network", async () => {
+		const fetchMock = mockScrape();
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		expect(
+			await run(tools, "fetchUrl", { url: "http://169.254.169.254/" }),
+		).toMatchObject({ ok: false });
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

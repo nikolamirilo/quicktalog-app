@@ -3,6 +3,7 @@ import type { CatalogueAgentUIMessage } from "@/agent";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { getRequiredPlan } from "@/helpers/client";
+import { useChatImageOcr } from "@/hooks/useChatImageOcr";
 import type { AgentToolResult } from "@/types/ai";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, isToolUIPart } from "ai";
@@ -26,12 +27,18 @@ function parseErrorCode(error: Error): string | undefined {
  * than all at once at the end. Operations are id-addressed, so edits the user
  * makes by hand mid-turn are not clobbered.
  *
+ * Attached images are scanned in the browser and ride along as a second text
+ * part of the user's turn, so the agent works from the words on the photo.
+ *
  * Nothing is persisted: the user still saves or publishes with the normal
  * builder actions.
  */
 export function useCatalogueChat() {
 	const context = useCatalogueContext();
 	const { userData, refreshUserData } = useUserContext();
+	// The catalogue's language is the one Tesseract is asked to read in; it is
+	// already a Tesseract code, chosen when the catalogue was created.
+	const attachments = useChatImageOcr(context?.catalogue?.language);
 	const [showAiLimits, setShowAiLimits] = useState(false);
 	const [contentLimitHit, setContentLimitHit] = useState(false);
 
@@ -105,14 +112,25 @@ export function useCatalogueChat() {
 
 	const send = (input: string) => {
 		const text = input.trim();
-		if (!text || loading || !context?.catalogue?.name) return;
+		if (!text || loading || attachments.scanning) return;
+		if (!context?.catalogue?.name) return;
 		if (isOverLimit()) {
 			setShowAiLimits(true);
 			return;
 		}
 
+		// A second text part rather than one concatenated string: the bubble can
+		// then collapse the scan on its own instead of picking it back apart.
+		const scanned = attachments.context;
 		void sendMessage(
-			{ text },
+			{
+				parts: scanned
+					? [
+							{ type: "text", text },
+							{ type: "text", text: scanned },
+						]
+					: [{ type: "text", text }],
+			},
 			{
 				body: {
 					catalogueName: context.catalogue.name,
@@ -120,6 +138,9 @@ export function useCatalogueChat() {
 				},
 			},
 		);
+		// The scan is in the history now; keeping the thumbnails would send it
+		// again on the next turn.
+		attachments.clear();
 	};
 
 	const reset = () => {
@@ -127,12 +148,14 @@ export function useCatalogueChat() {
 		setMessages([]);
 		clearError();
 		appliedCalls.current.clear();
+		attachments.clear();
 	};
 
 	return {
 		messages,
 		send,
 		reset,
+		attachments,
 		loading,
 		error,
 		showAiLimits,

@@ -1,3 +1,4 @@
+import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
 import { buildInstructions } from "@/agent/instructions";
 import { CatalogueSession } from "@/agent/session";
 import type { AiSectionAccess } from "@/types/ai";
@@ -30,6 +31,13 @@ describe("buildInstructions", () => {
 			expect(rendered).toContain("Content rules:");
 			expect(rendered).toContain("Photos:");
 		}
+	});
+
+	// The rules are useless if they describe a marker the client never sends,
+	// so both sides read the constant rather than repeating the string.
+	it("names the scanned-text marker the client actually appends", () => {
+		expect(prompt()).toContain(SCANNED_TEXT_MARKER);
+		expect(prompt()).toContain("Text scanned from uploaded images:");
 	});
 
 	// Six rules on writing markup are dead weight for a plan that cannot create

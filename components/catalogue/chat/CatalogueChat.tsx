@@ -1,9 +1,13 @@
 "use client";
 import type { CatalogueAgentUIMessage } from "@/agent";
+import ChatImageAttachments, {
+	ChatAttachButton,
+} from "@/components/catalogue/chat/ChatImageAttachments";
 import ChatMessageBubble from "@/components/catalogue/chat/ChatMessageBubble";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { getRequiredPlan } from "@/helpers/client";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
+import { usePastedImages } from "@/hooks/usePastedImages";
 import type { UserData } from "@quicktalog/common";
 import { isToolUIPart } from "ai";
 import {
@@ -67,10 +71,12 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 	const [draft, setDraft] = useState("");
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
+	const panelRef = useRef<HTMLDivElement>(null);
 	const {
 		messages,
 		send,
 		reset,
+		attachments,
 		loading,
 		error,
 		showAiLimits,
@@ -86,7 +92,14 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 			top: scrollRef.current.scrollHeight,
 			behavior: "smooth",
 		});
-	}, [messages, loading]);
+	}, [messages, loading, attachments.images]);
+
+	// Pasting a screenshot is the fastest way to get a printed menu in here, so
+	// it goes through the same scan as the picker. Ignored mid-turn, matching
+	// the attach button.
+	usePastedImages(panelRef, (files) => {
+		if (!loading) attachments.attach(files);
+	});
 
 	// Grow with the text. Reset to auto first so it shrinks again on delete;
 	// `max-h` on the element caps it and hands over to scrolling.
@@ -97,8 +110,11 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 		field.style.height = `${field.scrollHeight}px`;
 	}, [draft]);
 
+	const canSubmit = (text: string) =>
+		Boolean(text.trim()) && !loading && !attachments.scanning;
+
 	const submit = (text: string) => {
-		if (!text.trim() || loading) return;
+		if (!canSubmit(text)) return;
 		setDraft("");
 		send(text);
 	};
@@ -135,7 +151,10 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 			)}
 
 			{isOpen && (
-				<div className="fixed inset-x-3 bottom-20 z-[60] flex h-[70dvh] animate-in flex-col overflow-hidden rounded-3xl border border-product-border bg-white font-lora text-product-foreground shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] duration-300 fade-in slide-in-from-bottom-4 md:inset-x-auto md:bottom-6 md:left-6 md:h-[600px] md:w-[420px]">
+				<div
+					className="fixed inset-x-3 bottom-20 z-[60] flex h-[70dvh] animate-in flex-col overflow-hidden rounded-3xl border border-product-border bg-white font-lora text-product-foreground shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] duration-300 fade-in slide-in-from-bottom-4 md:inset-x-auto md:bottom-6 md:left-6 md:h-[600px] md:w-[420px]"
+					ref={panelRef}
+				>
 					<header className="relative flex shrink-0 items-center justify-between gap-3 border-b border-product-border bg-gradient-to-r from-product-background-hover to-white px-4 py-3.5">
 						<div className="flex min-w-0 items-center gap-3">
 							<span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-product-primary shadow-sm">
@@ -187,7 +206,8 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 									<p className="text-[13px] leading-relaxed text-product-foreground-accent">
 										Describe it in your own words - add or remove sections and
 										items, rewrite text, adjust prices or restyle the whole
-										catalogue.
+										catalogue. Attach or paste photos of a printed menu or price
+										list and it will read them for you.
 									</p>
 								</div>
 								<div className="space-y-2">
@@ -234,7 +254,17 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 					</div>
 
 					<div className="shrink-0 border-t border-product-border bg-white px-3 pb-3 pt-3">
+						<ChatImageAttachments
+							disabled={loading}
+							images={attachments.images}
+							notice={attachments.notice}
+							onRemove={attachments.remove}
+						/>
 						<div className="flex items-end gap-2 rounded-2xl border border-product-border bg-white p-1.5 shadow-sm transition-all duration-200 focus-within:border-product-primary focus-within:shadow-[0_0_0_3px_rgba(211,175,55,0.2)]">
+							<ChatAttachButton
+								disabled={loading}
+								onAttach={attachments.attach}
+							/>
 							<textarea
 								className="max-h-32 min-w-0 flex-1 resize-none overflow-y-auto border-0 bg-transparent px-2.5 py-2 text-sm leading-relaxed text-product-foreground outline-none ring-0 placeholder:text-gray-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
 								disabled={loading}
@@ -248,7 +278,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 							<button
 								aria-label="Send message"
 								className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-product-primary text-product-foreground shadow-sm transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:hover:scale-100"
-								disabled={loading || !draft.trim()}
+								disabled={!canSubmit(draft)}
 								onClick={() => void submit(draft)}
 								type="button"
 							>

@@ -19,6 +19,8 @@ import type {
 
 const MAX_SNAPSHOT_SECTIONS = 40;
 const MAX_SNAPSHOT_ITEMS = 40;
+/** Each one is a Firecrawl credit and a chunk of context; the loop has 16 steps. */
+const MAX_FETCHES_PER_TURN = 3;
 
 type ItemBlock = CategoryBlock | ContainerBlock;
 
@@ -44,6 +46,8 @@ export class CatalogueSession {
 	readonly operations: CatalogueOperation[] = [];
 	readonly applied: string[] = [];
 	private readonly loadedSkills: Set<string>;
+	private fetches = 0;
+	private readWeb = false;
 
 	constructor(
 		catalogue: Catalogue,
@@ -76,6 +80,48 @@ export class CatalogueSession {
 
 		this.loadedSkills.add(skill.name);
 		return { skill: skill.name, content: skill.content };
+	}
+
+	/** Null when another page may be read. Counts attempts, so retries cost too. */
+	allowWebFetch(): AgentToolResult | null {
+		if (this.fetches >= MAX_FETCHES_PER_TURN) {
+			return {
+				ok: false,
+				error: `You have already read ${MAX_FETCHES_PER_TURN} pages in this conversation, which is the limit. Work with what you have, or ask the user for the detail you are missing.`,
+			};
+		}
+		this.fetches += 1;
+		return null;
+	}
+
+	/** Called once a page's text is actually in context, not merely requested. */
+	markWebContent(): void {
+		this.readWeb = true;
+	}
+
+	/**
+	 * Null when the call may proceed.
+	 *
+	 * A fetched page is attacker-controlled text sitting in a loop that can
+	 * write `custom_code` and `embedding` sections, and those go out as raw
+	 * markup on a published catalogue. Rather than trust the model to resist a
+	 * page telling it to paste a script, code sections are simply off the table
+	 * for the rest of a conversation that has read one.
+	 */
+	requireNoWebCode(call: SkillGateCall): AgentToolResult | null {
+		if (!this.readWeb) return null;
+
+		const writesCode =
+			typeof call.input.code === "string" ||
+			call.input.sectionType === "custom_code" ||
+			call.input.sectionType === "embedding";
+		if (!writesCode) return null;
+
+		return {
+			ok: false,
+			error:
+				"Code and embed sections cannot be written in a conversation that has read a web page, because markup from a page must never reach a published catalogue. Add what you found as a text or category section instead, and tell the user why.",
+		};
 	}
 
 	/** Null when the call may proceed. */

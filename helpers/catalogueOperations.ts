@@ -484,7 +484,11 @@ export function applyCatalogueOperations(
 				const theme = { ...next.appearance.theme };
 
 				if (fields.theme !== undefined) {
+					// The assistant only ever picks from the fixed theme list, so
+					// selecting one always reverts a custom palette, if any.
 					theme.name = fields.theme;
+					theme.type = "standard";
+					theme.colors = undefined;
 					changed.push("theme");
 				}
 				if (fields.fontFamily !== undefined) {

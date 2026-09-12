@@ -4,6 +4,10 @@ export const OPTIMAL_DPI = 300;
 export const MIN_TEXT_HEIGHT = 20;
 export const MAX_IMAGE_DIMENSION = 2000;
 export const MIN_EFFECTIVE_DIMENSION = 1000;
+/** How many images the AI assistant will scan in a single chat turn. */
+export const MAX_CHAT_OCR_IMAGES = 10;
+/** Below this, Tesseract returns noise rather than text, so the scan is dropped. */
+export const MIN_OCR_CONFIDENCE = 60;
 export const LANGUAGE_OPTIONS: LanguageOption[] = [
 	{ code: "eng", name: "English", flag: "🇬🇧" },
 	{ code: "spa", name: "Spanish", flag: "🇪🇸" },

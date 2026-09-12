@@ -1,6 +1,7 @@
 "use server";
 import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
+import { sanitizeCustomThemeColors } from "@/helpers/theme";
 import { drizzleClient } from "@/utils/drizzle";
 import { redis, syncCache } from "@/utils/redis";
 import {
@@ -14,6 +15,28 @@ import { currentUser } from "@clerk/nextjs/server";
 import { eq, inArray } from "drizzle-orm";
 
 const catalogues = schema.catalogues;
+
+/**
+ * Re-validates `appearance.theme.colors` before it's persisted, so a crafted
+ * payload can't push arbitrary strings into Postgres/Redis. The render-time
+ * allowlist in `serializeThemeCss` already guards against unsafe CSS, but
+ * without this the bad value would silently survive as stored data.
+ */
+function sanitizeAppearance(catalogueData: Catalogue): Catalogue {
+	if (catalogueData.appearance?.theme?.type !== "custom") return catalogueData;
+	return {
+		...catalogueData,
+		appearance: {
+			...catalogueData.appearance,
+			theme: {
+				...catalogueData.appearance.theme,
+				colors: sanitizeCustomThemeColors(
+					catalogueData.appearance.theme.colors,
+				),
+			},
+		},
+	};
+}
 
 export async function deleteItem(name: string): Promise<boolean> {
 	try {
@@ -172,6 +195,8 @@ export async function createCatalogue(
 			};
 		}
 
+		catalogueData = sanitizeAppearance(catalogueData);
+
 		const type = branding === true ? "custom" : "default";
 		const { createdAt, updatedAt, ...rest } = catalogueData;
 
@@ -224,6 +249,8 @@ export async function updateCatalogue(catalogueData: Catalogue) {
 		if (!existing || existing.createdBy !== user.id) {
 			return { success: false, error: "Unauthorized" };
 		}
+
+		catalogueData = sanitizeAppearance(catalogueData);
 
 		const res = await redis.set(
 			catalogueData.name,
@@ -301,6 +328,8 @@ export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 			columns: { createdBy: true },
 		});
 		if (!existing || existing.createdBy !== user.id) return false;
+
+		data = sanitizeAppearance(data);
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { createdAt, updatedAt, ...rest } = data;

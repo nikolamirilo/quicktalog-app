@@ -53,6 +53,7 @@ export default function Subscription({
 			) {
 				result["styles"] = value.styles;
 				result["standardThemes"] = value.standardThemes;
+				result["customThemes"] = value.customThemes;
 			} else {
 				result[key] = value;
 			}

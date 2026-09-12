@@ -1,6 +1,7 @@
 "use client";
 import { headingSizeMap } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { isDarkBackground } from "@/helpers/theme";
 import { HeadingSize } from "@/types/shared";
 import { themes } from "@quicktalog/common";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -238,11 +239,17 @@ export function useHeadingEditor() {
 	}, []);
 
 	useEffect(() => {
-		const currentTheme = themes.find(
-			(t) => t.key === catalogue?.appearance.theme.name,
-		);
-		setPlaceholderColor(currentTheme?.type === "dark" ? "#E5E7EB" : "#4A5565");
-	}, [catalogue?.appearance.theme.name]);
+		const isDark =
+			catalogue?.appearance.theme.type === "custom"
+				? isDarkBackground(catalogue?.appearance.theme.colors?.background)
+				: themes.find((t) => t.key === catalogue?.appearance.theme.name)
+						?.type === "dark";
+		setPlaceholderColor(isDark ? "#E5E7EB" : "#4A5565");
+	}, [
+		catalogue?.appearance.theme.type,
+		catalogue?.appearance.theme.name,
+		catalogue?.appearance.theme.colors,
+	]);
 
 	return {
 		editorRef,

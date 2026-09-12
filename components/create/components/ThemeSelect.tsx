@@ -45,12 +45,11 @@ const ThemeSelect = ({
 	}, [themeIndex, setFormData]);
 
 	useEffect(() => {
-		if (formData.theme !== "") {
-			const theme = themes.find((item) => item.key === formData.theme);
-			setThemeIndex(theme.id);
-		} else {
-			setThemeIndex(1);
-		}
+		const theme =
+			formData.theme !== ""
+				? themes.find((item) => item.key === formData.theme)
+				: undefined;
+		setThemeIndex(theme?.id ?? 1);
 	}, []);
 
 	const handlePrev = (e: React.MouseEvent) => {

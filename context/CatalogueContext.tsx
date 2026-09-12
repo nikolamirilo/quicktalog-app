@@ -4,11 +4,13 @@ import {
 	type OperationLimits,
 	type OperationOutcome,
 } from "@/helpers/catalogueOperations";
+import { CUSTOM_THEME_NAME } from "@/helpers/theme";
 import type { CatalogueOperation } from "@/types/ai";
 import { useUser } from "@clerk/nextjs";
 import {
 	Catalogue,
 	ContentBlock,
+	type CustomThemeColors,
 	defaultCatalogueData,
 	Item,
 } from "@quicktalog/common";
@@ -21,6 +23,7 @@ interface CatalogueContextType {
 	updateAppearance: (
 		partial: Partial<Catalogue["appearance"]["style"]>,
 	) => void;
+	updateThemeColors: (colors: CustomThemeColors) => void;
 	// Sidebar state
 	isSidebarOpen: boolean;
 	setIsSidebarOpen: (open: boolean) => void;
@@ -322,6 +325,20 @@ export const CatalogueContextProvider = ({
 		}));
 	};
 
+	const updateThemeColors = (colors: CustomThemeColors) => {
+		setCatalogue((prev) => ({
+			...prev,
+			appearance: {
+				...prev.appearance,
+				theme: {
+					type: "custom",
+					name: CUSTOM_THEME_NAME,
+					colors,
+				},
+			},
+		}));
+	};
+
 	return (
 		<CatalogueContext.Provider
 			value={{
@@ -329,6 +346,7 @@ export const CatalogueContextProvider = ({
 				resetCatalogue,
 				updateCatalogue,
 				updateAppearance,
+				updateThemeColors,
 				isSidebarOpen,
 				setIsSidebarOpen,
 				addBlock,

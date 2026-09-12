@@ -9,12 +9,17 @@ import {
 } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { htmlToText, kebabToTitle } from "@/helpers/client";
+import {
+	deriveCatalogueVars,
+	isDarkBackground,
+	serializeThemeCss,
+} from "@/helpers/theme";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes } from "@quicktalog/common";
 import { getRequiredPlan } from "@/helpers/client";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Overlay from "../../general/Overlay";
 import CatalogueChat from "../chat/CatalogueChat";
 import ContentBlockButton from "../inputs/ContentBlockButton";
@@ -45,10 +50,19 @@ const Catalogue = ({
 	} | null>(null);
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
 
-	const isDarkTheme = themes.some(
-		(theme) =>
-			theme.key === item.appearance.theme.name && theme.type === "dark",
-	);
+	const isCustomTheme = item.appearance.theme.type === "custom";
+
+	const customThemeCss = useMemo(() => {
+		if (!isCustomTheme) return "";
+		return serializeThemeCss(deriveCatalogueVars(item.appearance.theme.colors));
+	}, [isCustomTheme, item.appearance.theme.colors]);
+
+	const isDarkTheme = isCustomTheme
+		? isDarkBackground(item.appearance.theme.colors?.background)
+		: themes.some(
+				(theme) =>
+					theme.key === item.appearance.theme.name && theme.type === "dark",
+			);
 
 	const fontFamily =
 		fontFamilyMap[item.appearance.style.fontFamily] || fontFamilyMap.inter;
@@ -166,6 +180,9 @@ const Catalogue = ({
 						}}
 					/>
 				</>
+			)}
+			{customThemeCss && (
+				<style dangerouslySetInnerHTML={{ __html: customThemeCss }} />
 			)}
 			<div
 				aria-label={`${item.heading} Catalogue`}

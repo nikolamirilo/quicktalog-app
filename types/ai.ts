@@ -1,10 +1,26 @@
-import type { ContentLayout, FontSize, ShadowLevel } from "@quicktalog/common";
+import type {
+	ContentLayout,
+	FontSize,
+	OCRImageData,
+	ShadowLevel,
+} from "@quicktalog/common";
 
 export interface AiActionResult<T> {
 	success: boolean;
 	data?: T;
 	error?: string;
 	code?: "unauthorized" | "not_found" | "limit" | "ai_error";
+}
+
+/**
+ * An image the user attached to a chat turn. OCR runs in the browser, so what
+ * reaches the agent is the text pulled out of the picture, never the picture.
+ */
+export interface ChatScannedImage extends OCRImageData {
+	/** Set once the scan finishes and clears the confidence floor. */
+	text?: string;
+	/** Why this image contributes nothing, phrased for the user. */
+	failure?: string;
 }
 
 /** Section types the chat assistant is allowed to create. */
