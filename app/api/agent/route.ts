@@ -5,7 +5,7 @@ import type { Catalogue } from "@quicktalog/common";
 import * as Sentry from "@sentry/nextjs";
 import { createAgentUIStreamResponse } from "ai";
 
-export const maxDuration = 120;
+export const maxDuration = 60;
 
 const ERROR_STATUS: Record<string, number> = {
 	unauthorized: 401,
