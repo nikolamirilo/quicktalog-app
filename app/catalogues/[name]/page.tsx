@@ -15,17 +15,14 @@ export async function generateStaticParams() {
 		return [];
 	}
 	try {
-		const res = await fetch(
-			`${baseUrl}/api/items?type=name&status=active`,
-			{
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
-				next: {
-					tags: ["catalogues-list"],
-					revalidate: 3600,
-				},
+		const res = await fetch(`${baseUrl}/api/items?type=name&status=active`, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			next: {
+				tags: ["catalogues-list"],
+				revalidate: 3600,
 			},
-		);
+		});
 
 		if (!res.ok) {
 			console.warn("Error fetching catalogues:", res.statusText);
@@ -61,17 +58,14 @@ export async function generateMetadata({
 	try {
 		const { name } = await params;
 
-		const res = await fetch(
-			`${baseUrl}/api/items/${name}?type=meta`,
-			{
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
-				next: {
-					tags: [`catalogue-${name}`, "catalogue-metadata"],
-					revalidate: 3600,
-				},
+		const res = await fetch(`${baseUrl}/api/items/${name}?type=meta`, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			next: {
+				tags: [`catalogue-${name}`, "catalogue-metadata"],
+				revalidate: 3600,
 			},
-		);
+		});
 
 		if (!res.ok) {
 			return {
@@ -126,16 +120,13 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 			throw new Error("Catalogue name is required");
 		}
 
-		const res = await fetch(
-			`${baseUrl}/api/items/${name}`,
-			{
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
-				next: {
-					tags: [`catalogue-${name}`, "catalogue-detail"],
-				},
+		const res = await fetch(`${baseUrl}/api/items/${name}`, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			next: {
+				tags: [`catalogue-${name}`, "catalogue-detail"],
 			},
-		);
+		});
 
 		if (!res.ok) {
 			if (res.status === 404) {

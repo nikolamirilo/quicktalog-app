@@ -12,9 +12,7 @@ interface AuthLinksProps {
 }
 
 const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
-	const clerkEnabled = Boolean(
-		process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-	);
+	const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 	const clerkState = clerkEnabled ? safeUseUser() : null;
 	const isSignedIn = clerkState?.isSignedIn ?? false;
 	const user = clerkState?.user;
