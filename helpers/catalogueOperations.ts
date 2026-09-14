@@ -5,6 +5,7 @@ import type {
 	ContentBlock,
 	Item,
 } from "@quicktalog/common";
+import { CUSTOM_THEME_NAME, sanitizeCustomThemeColors } from "@/helpers/theme";
 import type {
 	AiItemInput,
 	AiSectionAccess,
@@ -490,6 +491,17 @@ export function applyCatalogueOperations(
 					theme.type = "standard";
 					theme.colors = undefined;
 					changed.push("theme");
+				}
+				if (fields.customColors !== undefined) {
+					const clean = sanitizeCustomThemeColors(fields.customColors);
+					if (Object.keys(clean).length === 0) {
+						skipped.push("Custom theme colours were all invalid.");
+						break;
+					}
+					theme.type = "custom";
+					theme.name = CUSTOM_THEME_NAME;
+					theme.colors = clean;
+					changed.push("custom theme");
 				}
 				if (fields.fontFamily !== undefined) {
 					style.fontFamily = fields.fontFamily;

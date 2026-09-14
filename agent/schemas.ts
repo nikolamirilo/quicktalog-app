@@ -95,12 +95,64 @@ export const catalogueFieldsSchema = z.object({
 		.optional(),
 });
 
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+
+export const customColorsSchema = z
+	.object({
+		background: z
+			.string()
+			.regex(HEX_COLOR)
+			.describe("Page background as a six-digit hex colour, e.g. #f3f3f3."),
+		heading: z
+			.string()
+			.regex(HEX_COLOR)
+			.describe("Heading colour as a six-digit hex colour, e.g. #000000."),
+		text: z
+			.string()
+			.regex(HEX_COLOR)
+			.describe("Body text colour as a six-digit hex colour, e.g. #1a1a1a."),
+		primary: z
+			.string()
+			.regex(HEX_COLOR)
+			.describe(
+				"Primary brand colour as a six-digit hex colour, e.g. #2563eb. Used for buttons, links, prices and category accents.",
+			),
+		secondary: z
+			.string()
+			.regex(HEX_COLOR)
+			.describe(
+				"Secondary brand colour as a six-digit hex colour, e.g. #4d4d4d.",
+			),
+		cardBackground: z
+			.string()
+			.regex(HEX_COLOR)
+			.describe(
+				"Card / surface background as a six-digit hex colour, e.g. #ffffff.",
+			),
+	})
+	.describe(
+		"Six-colour palette that switches the theme to the Custom theme. All six colours are required.",
+	);
+
 export const appearanceFieldsSchema = z.object({
 	theme: z.string().trim().max(60).optional(),
 	fontFamily: z.string().trim().max(40).optional(),
 	contentFontSize: z.enum(["small", "medium", "large"]).optional(),
 	borderRadius: z.coerce.number().min(0).max(64).optional(),
 	shadow: z.enum(["none", "low", "medium", "high"]).optional(),
+	customColors: customColorsSchema.optional(),
 });
 
 export type ItemInput = z.infer<typeof itemInputSchema>;
+
+export const setCustomThemeSchema = z.object({
+	name: z
+		.string()
+		.trim()
+		.min(1)
+		.max(60)
+		.describe(
+			"Short name to save the theme under in the user's theme library (1-60 characters). The user picks this; if they did not say one, ask them for it instead of guessing.",
+		),
+	colors: customColorsSchema,
+});

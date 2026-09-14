@@ -30,14 +30,16 @@ export async function listSavedThemes(): Promise<{
 	}
 }
 
-export async function saveTheme(
+/**
+ * Upserts one row in `user_themes` for `userId` under `name`. The save action
+ * and the chat agent both call this so the two entry points stay in lockstep.
+ */
+export async function persistTheme(
+	userId: string,
 	name: string,
 	colors: unknown,
 ): Promise<{ success: boolean; data?: SavedTheme; error?: string }> {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return { success: false, error: "Unauthorized" };
-
 		const trimmedName = name.trim();
 		if (!trimmedName) return { success: false, error: "Name is required" };
 
@@ -45,7 +47,7 @@ export async function saveTheme(
 
 		const existing = await drizzleClient.query.userThemes.findFirst({
 			where: and(
-				eq(userThemes.userId, user.id),
+				eq(userThemes.userId, userId),
 				eq(userThemes.name, trimmedName),
 			),
 			columns: { id: true },
@@ -59,15 +61,24 @@ export async function saveTheme(
 					.returning()
 			: await drizzleClient
 					.insert(userThemes)
-					.values({ userId: user.id, name: trimmedName, colors: cleanColors })
+					.values({ userId, name: trimmedName, colors: cleanColors })
 					.returning();
 
 		return { success: true, data: saved as SavedTheme };
 	} catch (err) {
-		Sentry.captureException(err, { tags: { op: "saveTheme" } });
+		Sentry.captureException(err, { tags: { op: "persistTheme" } });
 		console.error("Unexpected error while saving theme:", err);
 		return { success: false, error: "Unknown error" };
 	}
+}
+
+export async function saveTheme(
+	name: string,
+	colors: unknown,
+): Promise<{ success: boolean; data?: SavedTheme; error?: string }> {
+	const user = await currentUser();
+	if (!user?.id) return { success: false, error: "Unauthorized" };
+	return persistTheme(user.id, name, colors);
 }
 
 export async function deleteSavedTheme(

@@ -45,6 +45,8 @@ export class CatalogueSession {
 	/** Replayed against the builder draft in order. */
 	readonly operations: CatalogueOperation[] = [];
 	readonly applied: string[] = [];
+	/** Clerk id of the caller, so tools that touch the database do not re-query it. */
+	readonly userId?: string;
 	private readonly loadedSkills: Set<string>;
 	private fetches = 0;
 	private readWeb = false;
@@ -54,11 +56,13 @@ export class CatalogueSession {
 		limits: OperationLimits = {},
 		access?: AiSectionAccess,
 		loadedSkills: string[] = [],
+		userId?: string,
 	) {
 		this.working = catalogue;
 		this.limits = limits;
 		this.access = access;
 		this.loadedSkills = new Set(loadedSkills);
+		this.userId = userId;
 	}
 
 	loadSkill(

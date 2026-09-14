@@ -1,3 +1,4 @@
+import { persistTheme } from "@/actions/themes";
 import {
 	createImageCache,
 	registerPicture,
@@ -14,6 +15,7 @@ import {
 	MAX_ITEMS_PER_CALL,
 	sectionIndexSchema,
 	sectionTypeSchema,
+	setCustomThemeSchema,
 } from "@/agent/schemas";
 import type { CatalogueSession } from "@/agent/session";
 import { fetchPage, type PageResult } from "@/agent/web";
@@ -346,6 +348,39 @@ export function buildTools(session: CatalogueSession) {
 			inputSchema: z.object({ fields: appearanceFieldsSchema }),
 			execute: async ({ fields }): Promise<AgentToolResult> =>
 				session.run({ op: "update_appearance", fields }),
+		}),
+
+		setCustomTheme: tool({
+			description:
+				"Build a custom theme from six colours, apply it to the catalogue, and save it to the user's theme library under the given name. Use this whenever the user wants a look that none of the built-in themes offer, or when they name specific colours to use. The name is required: if the user did not say one, ask them for it instead of guessing.",
+			inputSchema: setCustomThemeSchema,
+			execute: async ({ name, colors }): Promise<AgentToolResult> => {
+				const result = session.run({
+					op: "update_appearance",
+					fields: { customColors: colors },
+				});
+				if (!result.ok) return result;
+
+				// The catalogue change is what the user asked for; the save is a
+				// convenience. If the save fails, the theme still lands and the
+				// model can tell the user how to retry from the Appearance tab.
+				if (!session.userId) {
+					return {
+						...result,
+						saveError:
+							"Not signed in, so the custom theme was applied but not saved.",
+					};
+				}
+
+				const saved = await persistTheme(session.userId, name, colors);
+				if (saved.success && saved.data) {
+					return { ...result, savedTheme: { name: saved.data.name } };
+				}
+				return {
+					...result,
+					saveError: saved.error ?? "Could not save the theme.",
+				};
+			},
 		}),
 	};
 

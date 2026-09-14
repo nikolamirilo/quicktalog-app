@@ -79,6 +79,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 		attachments,
 		loading,
 		error,
+		errorMessage,
 		showAiLimits,
 		setShowAiLimits,
 		currentPlan,
@@ -139,7 +140,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 			{!isOpen && (
 				<button
 					aria-label="Open AI assistant"
-					className="group fixed bottom-20 left-4 z-[49] flex w-[124px] items-center justify-center gap-2 rounded-full border border-black/5 bg-product-primary py-1.5 pl-1.5 pr-4 font-lora-semibold text-[13px] font-bold text-product-foreground shadow-[0_6px_18px_-6px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95 md:bottom-6 md:left-6"
+					className="group fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-3 z-[49] flex h-11 w-auto min-w-[124px] items-center justify-center gap-2 rounded-full border border-black/5 bg-product-primary px-2.5 pl-1.5 pr-4 font-lora-semibold text-[13px] font-bold text-product-foreground shadow-[0_6px_18px_-6px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95 sm:left-4 md:bottom-6 md:left-6 md:h-auto md:min-w-0 md:py-1.5"
 					onClick={() => setIsOpen(true)}
 					type="button"
 				>
@@ -152,10 +153,17 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 
 			{isOpen && (
 				<div
-					className="fixed inset-x-3 bottom-20 z-[60] flex h-[70dvh] animate-in flex-col overflow-hidden rounded-3xl border border-product-border bg-white font-lora text-product-foreground shadow-[0_24px_60px_-15px_rgba(0,0,0,0.3)] duration-300 fade-in slide-in-from-bottom-4 md:inset-x-auto md:bottom-6 md:left-6 md:h-[600px] md:w-[420px]"
+					className="fixed inset-x-0 bottom-0 z-[60] flex h-[92dvh] max-h-[92dvh] animate-in flex-col overflow-hidden rounded-t-3xl border border-product-border bg-white font-lora text-product-foreground shadow-[0_-12px_40px_-10px_rgba(0,0,0,0.35)] duration-300 fade-in slide-in-from-bottom-6 [padding-bottom:env(safe-area-inset-bottom)] md:inset-x-auto md:bottom-6 md:left-6 md:h-[600px] md:max-h-[calc(100dvh-3rem)] md:w-[420px] md:rounded-3xl md:[padding-bottom:0]"
 					ref={panelRef}
 				>
-					<header className="relative flex shrink-0 items-center justify-between gap-3 border-b border-product-border bg-gradient-to-r from-product-background-hover to-white px-4 py-3.5">
+					{/* Drag handle — mobile-only affordance so the sheet feels native. */}
+					<div className="flex shrink-0 justify-center pt-2 pb-1 md:hidden">
+						<span
+							aria-hidden="true"
+							className="h-1.5 w-10 rounded-full bg-product-border"
+						/>
+					</div>
+					<header className="relative flex shrink-0 items-center justify-between gap-3 border-b border-product-border bg-gradient-to-r from-product-background-hover to-white px-4 py-3 pt-1 md:pt-3.5">
 						<div className="flex min-w-0 items-center gap-3">
 							<span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-product-primary shadow-sm">
 								<Sparkles className="h-[18px] w-[18px] text-product-foreground" />
@@ -248,12 +256,14 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 						{error && (
 							<div className="flex items-start gap-2 rounded-xl border border-red-100 bg-red-50 px-3 py-2.5 text-xs text-red-600">
 								<AlertCircle className="mt-px h-4 w-4 shrink-0" />
-								<span>Something went wrong. Try again.</span>
+								<span>
+									{errorMessage ?? "Something went wrong. Try again."}
+								</span>
 							</div>
 						)}
 					</div>
 
-					<div className="shrink-0 border-t border-product-border bg-white px-3 pb-3 pt-3">
+					<div className="shrink-0 border-t border-product-border bg-white px-3 pb-3 pt-3 md:pb-3">
 						<ChatImageAttachments
 							disabled={loading}
 							images={attachments.images}

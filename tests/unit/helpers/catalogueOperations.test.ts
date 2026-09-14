@@ -310,4 +310,61 @@ describe("applyCatalogueOperations", () => {
 			defaultCatalogueData.appearance.style.fontFamily,
 		);
 	});
+
+	it("applies a custom six-colour theme and drops invalid hex values", () => {
+		const result = applyCatalogueOperations(base(), [
+			{
+				op: "update_appearance",
+				fields: {
+					customColors: {
+						background: "#0f172a",
+						heading: "#f8fafc",
+						text: "#cbd5e1",
+						primary: "#22d3ee",
+						secondary: "#64748b",
+						cardBackground: "not-a-hex",
+					},
+				},
+			},
+		]);
+
+		expect(result.applied).toHaveLength(1);
+		expect(result.skipped).toEqual([]);
+		expect(result.catalogue.appearance.theme.type).toBe("custom");
+		expect(result.catalogue.appearance.theme.name).toBe("theme-custom");
+		expect(result.catalogue.appearance.theme.colors).toEqual({
+			background: "#0f172a",
+			heading: "#f8fafc",
+			text: "#cbd5e1",
+			primary: "#22d3ee",
+			secondary: "#64748b",
+		});
+		expect(
+			result.catalogue.appearance.theme.colors?.cardBackground,
+		).toBeUndefined();
+	});
+
+	it("skips an update_appearance whose custom colours are all invalid", () => {
+		const result = applyCatalogueOperations(base(), [
+			{
+				op: "update_appearance",
+				fields: {
+					customColors: {
+						background: "rgb(0,0,0)",
+						heading: "white",
+						text: "#zzz",
+						primary: "black",
+						secondary: "#1234567",
+						cardBackground: "#1",
+					},
+				},
+			},
+		]);
+
+		expect(result.applied).toEqual([]);
+		expect(result.skipped[0]).toMatch(/invalid/i);
+		expect(result.catalogue.appearance.theme.type).toBe(
+			defaultCatalogueData.appearance.theme.type,
+		);
+	});
 });

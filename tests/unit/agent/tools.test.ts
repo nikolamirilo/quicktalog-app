@@ -7,7 +7,8 @@ import {
 	defaultCatalogueData,
 	fetchImageFromUnsplash,
 } from "@quicktalog/common";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { persistTheme } from "@/actions/themes";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));
 vi.mock("node:dns/promises", () => ({ lookup }));
@@ -19,6 +20,8 @@ vi.mock("@quicktalog/common", async () => {
 		);
 	return { ...actual, fetchImageFromUnsplash: vi.fn() };
 });
+
+vi.mock("@/actions/themes", () => ({ persistTheme: vi.fn() }));
 
 const catalogue = { ...defaultCatalogueData, name: "cafe" } as Catalogue;
 
@@ -313,5 +316,92 @@ describe("results", () => {
 			ok: true,
 			summary: 'Added category section "Drinks"',
 		});
+	});
+});
+
+const PALETTE = {
+	background: "#0f172a",
+	heading: "#f8fafc",
+	text: "#cbd5e1",
+	primary: "#22d3ee",
+	secondary: "#64748b",
+	cardBackground: "#1e293b",
+};
+
+describe("setCustomTheme", () => {
+	const persist = vi.mocked(persistTheme);
+
+	beforeEach(() => persist.mockReset());
+
+	it("applies the palette, saves it, and reports the name to the model", async () => {
+		persist.mockResolvedValue({
+			success: true,
+			data: {
+				id: "theme-1",
+				userId: "user-1",
+				name: "Midnight",
+				colors: PALETTE,
+				createdAt: "2026-01-01T00:00:00Z",
+				updatedAt: "2026-01-01T00:00:00Z",
+			},
+		});
+
+		const session = new CatalogueSession(
+			catalogue,
+			{},
+			undefined,
+			[],
+			"user-1",
+		);
+		const tools = buildTools(session);
+
+		const result = await run(tools, "setCustomTheme", {
+			name: "Midnight",
+			colors: PALETTE,
+		});
+
+		expect(result).toMatchObject({
+			ok: true,
+			savedTheme: { name: "Midnight" },
+		});
+		expect(session.operations).toHaveLength(1);
+		expect(persist).toHaveBeenCalledWith("user-1", "Midnight", PALETTE);
+	});
+
+	it("still applies the theme when the save fails, and surfaces a saveError", async () => {
+		persist.mockResolvedValue({ success: false, error: "Database is down" });
+
+		const session = new CatalogueSession(
+			catalogue,
+			{},
+			undefined,
+			[],
+			"user-1",
+		);
+		const tools = buildTools(session);
+
+		const result = await run(tools, "setCustomTheme", {
+			name: "Midnight",
+			colors: PALETTE,
+		});
+
+		expect(result).toMatchObject({
+			ok: true,
+			saveError: "Database is down",
+		});
+		expect(result).not.toHaveProperty("savedTheme");
+		expect(session.operations).toHaveLength(1);
+	});
+
+	it("falls back to a saveError when no user is signed in", async () => {
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		const result = await run(tools, "setCustomTheme", {
+			name: "Midnight",
+			colors: PALETTE,
+		});
+
+		expect(result).toMatchObject({ ok: true, saveError: expect.any(String) });
+		expect(persist).not.toHaveBeenCalled();
 	});
 });

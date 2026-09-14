@@ -64,7 +64,7 @@ const ItemDetails = ({ value, onChange, categoryName }: ItemDetailsProps) => {
 				<div className="flex items-center justify-between">
 					<Label htmlFor="item-description">Item Description</Label>
 					<button
-						className="inline-flex items-center gap-1.5 text-xs font-medium text-product-primary hover:text-product-primary/80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+						className="inline-flex min-h-7 items-center gap-1.5 rounded-full px-2 text-xs font-medium text-product-primary transition-colors hover:bg-product-primary/10 hover:text-product-primary active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
 						disabled={!canGenerate || loading}
 						onClick={handleGenerate}
 						title={canGenerate ? undefined : "Add an item name first to use AI"}

@@ -18,6 +18,19 @@ function parseErrorCode(error: Error): string | undefined {
 	}
 }
 
+/** Extract a user-facing message from an error. Auth/quota errors arrive as a
+ *  JSON body of the form `{ error, code }`; stream errors arrive as the plain
+ *  string returned by the route's `onError`. Falls back to the raw message. */
+function parseErrorMessage(error: Error | undefined): string | undefined {
+	if (!error?.message) return undefined;
+	try {
+		const parsed = JSON.parse(error.message);
+		return typeof parsed.error === "string" ? parsed.error : error.message;
+	} catch {
+		return error.message;
+	}
+}
+
 /**
  * Drives the builder's AI agent.
  *
@@ -158,6 +171,7 @@ export function useCatalogueChat() {
 		attachments,
 		loading,
 		error,
+		errorMessage: parseErrorMessage(error),
 		showAiLimits,
 		setShowAiLimits,
 		currentPlan: userData?.currentPlan,

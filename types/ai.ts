@@ -69,6 +69,21 @@ interface AiAppearanceFields {
 	contentFontSize?: FontSize;
 	borderRadius?: number;
 	shadow?: ShadowLevel;
+	/**
+	 * Six-colour palette that switches the theme to `theme-custom`. Sent only
+	 * when the user asks for a custom look; the standard `theme` field above
+	 * still resets the palette to its built-in defaults.
+	 */
+	customColors?: AiCustomColors;
+}
+
+interface AiCustomColors {
+	background?: string;
+	heading?: string;
+	text?: string;
+	primary?: string;
+	secondary?: string;
+	cardBackground?: string;
 }
 
 /**
@@ -145,6 +160,13 @@ export type AgentToolResult =
 			 * that does not exist - so the model can say so.
 			 */
 			imageMisses?: string[];
+			/**
+			 * Name of the saved theme when setCustomTheme wrote one to the
+			 * library, so the model can confirm it to the user.
+			 */
+			savedTheme?: { name: string };
+			/** Why the theme was applied to the catalogue but not saved. */
+			saveError?: string;
 	  }
 	| {
 			ok: false;
