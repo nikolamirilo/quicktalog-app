@@ -3,13 +3,13 @@
 import * as Sentry from "@sentry/nextjs";
 import { InformationEmail, WelcomeEmail } from "@/components/emails";
 import CancellationEmail from "@/components/emails/CancelationEmail";
-import { resend } from "@/constants/server";
+import { getResend } from "@/constants/server";
 import { ContactData } from "@quicktalog/common";
 
 export async function sendContactEmail(contactData: ContactData) {
 	const { message, email, name, subject } = contactData;
 	try {
-		const res = await resend.emails.send({
+		const res = await getResend().emails.send({
 			from: "Quicktalog<office@quicktalog.app>",
 			to: "quicktalog@outlook.com",
 			subject: subject,
@@ -39,7 +39,7 @@ export async function sendWelcomeEmail(
 ) {
 	const { email, name } = contactData;
 	try {
-		const res = await resend.emails.send({
+		const res = await getResend().emails.send({
 			from: "Quicktalog<office@quicktalog.app>",
 			to: email,
 			subject: `[Quicktalog] Welcome to Quicktalog! 🎉`,
@@ -61,7 +61,7 @@ export async function sendSubscriptionCancelationEmail(
 ) {
 	const { email, name } = contactData;
 	try {
-		const res = await resend.emails.send({
+		const res = await getResend().emails.send({
 			from: "Quicktalog<office@quicktalog.app>",
 			to: email,
 			subject: `[Quicktalog] We are Sorry to See You Go`,

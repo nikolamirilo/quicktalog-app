@@ -1,6 +1,5 @@
-import * as Sentry from "@sentry/nextjs";
-import { sendSubscriptionCancelationEmail } from "@/server_actions/email";
-import { cancelSubscription } from "@/server_actions/paddle";
+import { sendSubscriptionCancelationEmail } from "@/actions/email";
+import { cancelSubscription } from "@/actions/paddle";
 import { createClient } from "@/utils/supabase/server";
 import {
 	CustomerCreatedEvent,
@@ -15,6 +14,7 @@ import {
 	SubscriptionUpdatedEvent,
 } from "@paddle/paddle-node-sdk";
 import { tiers } from "@quicktalog/common";
+import * as Sentry from "@sentry/nextjs";
 
 export class ProcessWebhook {
 	async processEvent(eventData: EventEntity) {

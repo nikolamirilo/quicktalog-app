@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { createCatalogue } from "@/actions/catalogue";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
-import { createCatalogue } from "@/server_actions/catalogue";
 
 export const useCreateCatalogue = (disabled = false) => {
 	const router = useRouter();

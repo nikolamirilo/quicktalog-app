@@ -1,5 +1,6 @@
 "use client";
 
+import { updateCatalogue as updateCatalogueAction } from "@/actions/catalogue";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -17,7 +18,6 @@ import {
 } from "@/constants/catalogueTemplates";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/helpers/client";
-import { updateCatalogue as updateCatalogueAction } from "@/server_actions/catalogue";
 import { ContentBlock, defaultCatalogueData } from "@quicktalog/common";
 import { Layout, Plus, Zap } from "lucide-react";
 import { useState } from "react";

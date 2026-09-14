@@ -10,7 +10,7 @@
 --   qr_configs_catalogue_fkey ON UPDATE CASCADE ON DELETE CASCADE
 --   newsletter_catalogue_id_fkey  (none)            <- inconsistent
 --
--- server_actions/catalogue.ts:deleteItem() runs
+-- actions/catalogue.ts:deleteItem() runs
 -- `drizzleClient.delete(catalogues).where(...)` directly, with no newsletter
 -- cleanup first. With 0 rows in `newsletter` today this has never fired, but
 -- the moment a catalogue with a newsletter signup is deleted, the delete

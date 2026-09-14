@@ -52,9 +52,6 @@ const nextConfig: NextConfig = {
 		webpackBuildWorker: true,
 		webpackMemoryOptimizations: true,
 	},
-	// turbopack: {
-	// 	root: process.cwd(),
-	// },
 	async rewrites() {
 		return [
 			{

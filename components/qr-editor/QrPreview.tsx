@@ -1,5 +1,6 @@
 "use client";
 
+import { upsertQrConfig } from "@/actions/qr-configs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useQr } from "@/context/QRContext";
 import { useToast } from "@/hooks/use-toast";
-import { upsertQrConfig } from "@/server_actions/qr-configs";
 import { ArrowLeft, Download } from "lucide-react";
 import Link from "next/link";
 import QRCodeStyling from "qr-code-styling";

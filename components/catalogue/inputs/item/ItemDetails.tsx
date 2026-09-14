@@ -1,11 +1,11 @@
 "use client";
+import { writeItemDescription } from "@/actions/ai";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useAiAssist } from "@/hooks/useAiAssist";
-import { writeItemDescription } from "@/server_actions/ai";
 import { Item } from "@quicktalog/common";
 import { Loader2, Sparkles } from "lucide-react";
 

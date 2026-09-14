@@ -55,7 +55,7 @@ flowchart TD
         A8[setLoading true]
     end
 
-    subgraph SERVER["SERVER ACTION - chatEditCatalogue, server_actions/ai.ts"]
+    subgraph SERVER["SERVER ACTION - chatEditCatalogue, actions/ai.ts"]
         B1{"message non-empty<br/>and catalogue present?"}
         B2["authorize(catalogueName)"]
         B3{"Clerk currentUser"}
@@ -523,20 +523,20 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 | `components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text, applied changes, skipped reasons |
 | `hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
 | `hooks/useAiAssist.ts` | Client quota gate, loading/error state, usage refresh |
-| `server_actions/ai.ts` | `chatEditCatalogue` + `authorize` + `meter`, and the item-description assist |
+| `actions/ai.ts` | `chatEditCatalogue` + `authorize` + `meter`, and the item-description assist |
 | `lib/ai/catalogueEditor.ts` | System prompt, snapshot, zod schema, index→id, image resolution |
 | `helpers/catalogueOperations.ts` | Pure operation applier with plan limits |
 | `context/CatalogueContext.tsx` | `applyOperations`, holds the unsaved draft |
 | `utils/deepseek.ts` | DeepSeek client, JSON mode, `DeepseekResponseError` |
 | `types/ai.ts` | `CatalogueOperation` union and result types |
 | `lib/users/fetchUserData.ts` | Plan + monthly usage counts |
-| `tests/unit/server_actions/ai.test.ts` | Turn behaviour: metering, ownership, truncation |
+| `tests/unit/actions/ai.test.ts` | Turn behaviour: metering, ownership, truncation |
 | `tests/unit/lib/ai/catalogueEditor.test.ts` | Snapshot, index→id, image resolution |
 | `tests/unit/helpers/catalogueOperations.test.ts` | Apply semantics and limit skips |
 
 ### Sibling AI feature
 
-One other action lives in `server_actions/ai.ts` and shares `authorize` + `meter`
+One other action lives in `actions/ai.ts` and shares `authorize` + `meter`
 but not the operation pipeline. It is single-shot and returns plain data:
 
 - `writeItemDescription` - one string, temp 0.7

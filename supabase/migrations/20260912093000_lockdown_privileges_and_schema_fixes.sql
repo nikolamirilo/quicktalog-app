@@ -53,7 +53,7 @@ GRANT ALL ON ALL FUNCTIONS IN SCHEMA "public" TO "service_role";
 --           app/api/subscriptions/check/route.ts
 --   INSERT  lib/users/syncFromClerk.ts (upsertUser, Clerk user.created)
 --   UPDATE  lib/users/syncFromClerk.ts, utils/paddle/process-webhook.ts
---   DELETE  server_actions/users.ts (Clerk user.deleted)
+--   DELETE  actions/users.ts (Clerk user.deleted)
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "public"."users" TO "anon";
 
 -- catalogues
@@ -61,7 +61,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "public"."users" TO "anon";
 --           app/api/analytics/route.ts
 --   INSERT  app/api/items/route.ts (POST)
 --   UPDATE  app/api/items/route.ts (PATCH)
---   No DELETE: catalogue deletion runs through Drizzle in server_actions/catalogue.ts.
+--   No DELETE: catalogue deletion runs through Drizzle in actions/catalogue.ts.
 GRANT SELECT, INSERT, UPDATE ON TABLE "public"."catalogues" TO "anon";
 
 -- subscriptions
@@ -81,7 +81,7 @@ GRANT SELECT, INSERT ON TABLE "public"."analytics" TO "anon";
 
 -- newsletter
 --   SELECT only - app/api/dashboard/analytics/route.ts does a head count.
---   Signup inserts go through Drizzle in server_actions/newsletter.ts.
+--   Signup inserts go through Drizzle in actions/newsletter.ts.
 GRANT SELECT ON TABLE "public"."newsletter" TO "anon";
 
 -- job_logs

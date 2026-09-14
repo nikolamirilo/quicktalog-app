@@ -1,7 +1,7 @@
+import { getCatalogueByName } from "@/actions/catalogue";
+import { getUserData } from "@/actions/users";
 import Builder from "@/components/catalogue/builder/CatalogueBuilder";
 import CatalogueInitializer from "@/components/catalogue/builder/CatalogueInitializer";
-import { getCatalogueByName } from "@/server_actions/catalogue";
-import { getUserData } from "@/server_actions/users";
 import { currentUser } from "@clerk/nextjs/server";
 import { Catalogue, UserData } from "@quicktalog/common";
 import { notFound } from "next/navigation";

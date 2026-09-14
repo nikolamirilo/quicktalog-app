@@ -41,7 +41,7 @@ Two client helpers exist on top of `router.refresh()` - use them only when their
 | delete one | `revalidateCatalogue(name)` + `revalidateDashboard()` |
 | delete many | `revalidateCatalogue()` (no name → listing only) + `revalidateDashboard()` |
 
-Rule of thumb: pass the **name** whenever a single catalogue changed; add **`revalidateDashboard()`** whenever the change affects counts/stats shown on the dashboard. This matches [server_actions/catalogue.ts](../../../server_actions/catalogue.ts).
+Rule of thumb: pass the **name** whenever a single catalogue changed; add **`revalidateDashboard()`** whenever the change affects counts/stats shown on the dashboard. This matches [actions/catalogue.ts](../../../actions/catalogue.ts).
 
 ## Client side: the minimal pattern
 

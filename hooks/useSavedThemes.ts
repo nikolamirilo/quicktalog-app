@@ -1,11 +1,7 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { deleteSavedTheme, listSavedThemes, saveTheme } from "@/actions/themes";
 import type { CustomThemeColors, SavedTheme } from "@quicktalog/common";
-import {
-	deleteSavedTheme,
-	listSavedThemes,
-	saveTheme,
-} from "@/server_actions/themes";
+import { useCallback, useEffect, useState } from "react";
 
 export function useSavedThemes() {
 	const [themes, setThemes] = useState<SavedTheme[]>([]);

@@ -23,7 +23,7 @@ vi.mock("@/utils/deepseek", () => ({
 }));
 vi.mock("@sentry/nextjs", () => ({ captureException: vi.fn() }));
 
-import { writeItemDescription } from "@/server_actions/ai";
+import { writeItemDescription } from "@/actions/ai";
 
 const withPlan = (aiPrompts: number, used: number) => ({
 	ok: true,

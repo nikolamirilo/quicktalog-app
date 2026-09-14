@@ -1,13 +1,10 @@
 "use client";
+import { getCatalogueByName, publishCatalogue } from "@/actions/catalogue";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { htmlToText } from "@/helpers/client";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import {
-	getCatalogueByName,
-	publishCatalogue,
-} from "@/server_actions/catalogue";
 import type { Catalogue } from "@quicktalog/common";
 import { Edit, Rocket } from "lucide-react";
 import Link from "next/link";

@@ -1,14 +1,14 @@
 "use client";
+import {
+	publishCatalogue,
+	updateCatalogue as updateCatalogueAction,
+} from "@/actions/catalogue";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import {
-	publishCatalogue,
-	updateCatalogue as updateCatalogueAction,
-} from "@/server_actions/catalogue";
 import { Eye, LayoutTemplate, Rocket, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";

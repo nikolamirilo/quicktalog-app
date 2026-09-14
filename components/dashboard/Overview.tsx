@@ -1,13 +1,13 @@
 "use client";
-import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
-import { useCatalogueContext } from "@/context/CatalogueContext";
-import { useUserContext } from "@/context/UserContext";
 import {
 	deleteItem,
 	deleteMultipleItems,
 	duplicateItem,
 	updateItemStatus,
-} from "@/server_actions/catalogue";
+} from "@/actions/catalogue";
+import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
+import { useCatalogueContext } from "@/context/CatalogueContext";
+import { useUserContext } from "@/context/UserContext";
 import { OverviewProps } from "@/types/shared";
 import { Status, tiers } from "@quicktalog/common";
 import { useRouter } from "next/navigation";

@@ -1,8 +1,8 @@
+import { getCatalogueByName } from "@/actions/catalogue";
+import { getQrConfig } from "@/actions/qr-configs";
 import Navbar from "@/components/navigation/Navbar";
 import QrEditor from "@/components/qr-editor/QrEditor";
 import { QrProvider } from "@/context/QRContext";
-import { getCatalogueByName } from "@/server_actions/catalogue";
-import { getQrConfig } from "@/server_actions/qr-configs";
 import { currentUser } from "@clerk/nextjs/server";
 import { Catalogue } from "@quicktalog/common";
 import { notFound } from "next/navigation";

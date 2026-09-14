@@ -13,7 +13,7 @@ Where things go and how they're shaped in this codebase. This is the project-spe
 |---|---|---|
 | Feature components | `components/<feature>/` | Grouped by feature: `catalogue/`, `dashboard/`, `auth/`, `emails/`, `charts/` |
 | UI primitives | `components/ui/` | Radix/shadcn wrappers - reuse before building new |
-| Server mutations (React) | `server_actions/<domain>.ts` | `"use server"`, Drizzle. See [[server-action-and-route]] |
+| Server mutations (React) | `actions/<domain>.ts` | `"use server"`, Drizzle. See [[server-action-and-route]] |
 | HTTP endpoints / webhooks | `app/api/<name>/route.ts` | Only when a URL is needed |
 | Pages | `app/<route>/page.tsx` | App Router |
 | Custom hooks | `hooks/use<Thing>.ts(x)` | `use`-prefixed, one concern each |

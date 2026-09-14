@@ -1,6 +1,6 @@
 "use client";
 
-import { getUserData } from "@/server_actions/users";
+import { getUserData } from "@/actions/users";
 import { useUser as useClerkUser } from "@clerk/nextjs";
 import { UserData } from "@quicktalog/common";
 import {

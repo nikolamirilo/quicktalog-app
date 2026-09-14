@@ -1,3 +1,8 @@
+import {
+	handleUserDeletion,
+	retryOperation,
+	sendWelcomeEmailSafely,
+} from "@/actions/users";
 import { HANDLED_EVENT_TYPES } from "@/constants/users";
 import {
 	buildUserData,
@@ -6,11 +11,6 @@ import {
 	updateOrCreateUser,
 	upsertUser,
 } from "@/lib/users/syncFromClerk";
-import {
-	handleUserDeletion,
-	retryOperation,
-	sendWelcomeEmailSafely,
-} from "@/server_actions/users";
 import { createClient } from "@/utils/supabase/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import * as Sentry from "@sentry/nextjs";

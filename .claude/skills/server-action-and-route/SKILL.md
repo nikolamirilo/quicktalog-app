@@ -1,6 +1,6 @@
 ---
 name: server-action-and-route
-description: Use when adding or editing a server-side mutation in Quicktalog - a server action in server_actions/*.ts or an API route handler in app/api/*/route.ts. Covers the auth + ownership check, Drizzle/Supabase data access, Redis sync, Sentry error capture, cache revalidation, and return-shape conventions.
+description: Use when adding or editing a server-side mutation in Quicktalog - a server action in actions/*.ts or an API route handler in app/api/*/route.ts. Covers the auth + ownership check, Drizzle/Supabase data access, Redis sync, Sentry error capture, cache revalidation, and return-shape conventions.
 ---
 
 # Server Action & API Route
@@ -9,13 +9,13 @@ Every server-side mutation in Quicktalog follows the same skeleton. Miss a step 
 
 ## When to Use
 
-- Adding/editing a function in [server_actions/](../../../server_actions/) (`catalogue.ts`, `users.ts`, `paddle.ts`, …).
+- Adding/editing a function in [actions/](../../../actions/) (`catalogue.ts`, `users.ts`, `paddle.ts`, …).
 - Adding/editing a handler in [app/api/](../../../app/api/)`*/route.ts`.
 - Symptoms you skipped a step: a user can mutate another user's data, the UI shows stale data after a write, or an error is swallowed and never appears in Sentry.
 
 ## Server action vs. API route
 
-| Use a **server action** (`server_actions/`) | Use an **API route** (`app/api/`) |
+| Use a **server action** (`actions/`) | Use an **API route** (`app/api/`) |
 |---|---|
 | Called from React components (the default) | Needs a URL: webhooks (Clerk, Paddle), external callers, `fetch` from SWR hooks |
 | Uses **Drizzle** (`drizzleClient`) - the primary ORM | Some legacy routes use **Supabase** (`createClient`) |
@@ -24,7 +24,7 @@ Every server-side mutation in Quicktalog follows the same skeleton. Miss a step 
 
 ## Server action anatomy (the canonical pattern)
 
-Modeled on [server_actions/catalogue.ts](../../../server_actions/catalogue.ts):
+Modeled on [actions/catalogue.ts](../../../actions/catalogue.ts):
 
 ```typescript
 "use server";

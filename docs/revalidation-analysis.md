@@ -105,7 +105,7 @@ await revalidateData(); // result ignored
 ### 8. API Route Uses Supabase, Server Actions Use Drizzle
 
 - `app/api/items/route.ts` uses **Supabase client** directly
-- `server_actions/catalogue.ts` uses **Drizzle ORM**
+- `actions/catalogue.ts` uses **Drizzle ORM**
 
 Same data, two different access patterns. The API route also calls `revalidateData()` after mutations, creating a second pathway where cache invalidation can happen.
 
@@ -156,7 +156,7 @@ export async function revalidateDashboard() {
 The server action is the single source of truth for "what changed." It should own revalidation:
 
 ```typescript
-// server_actions/catalogue.ts
+// actions/catalogue.ts
 
 export async function deleteItem(name: string): Promise<boolean> {
   await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));

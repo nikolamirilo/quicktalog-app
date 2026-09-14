@@ -1,7 +1,7 @@
 "use client";
+import { updateCatalogue } from "@/actions/catalogue";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { updateCatalogue } from "@/server_actions/catalogue";
 import { Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
