@@ -138,7 +138,12 @@ export type AgentToolResult =
 			/** Replayed against the builder draft when the tool part resolves. */
 			operation: CatalogueOperation;
 			summary: string;
-			/** Photo searches that came back empty, so the model can say so. */
+			/** Where an added section landed, so the model can add to it next. */
+			section?: number;
+			/**
+			 * Photos that could not be found - an empty search, or a page picture
+			 * that does not exist - so the model can say so.
+			 */
 			imageMisses?: string[];
 	  }
 	| {

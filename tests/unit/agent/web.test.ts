@@ -3,6 +3,7 @@ import {
 	UNTRUSTED_OPEN,
 	fetchPage,
 	htmlToText,
+	pictureMarker,
 	resolveSafeUrl,
 } from "@/agent/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -215,5 +216,75 @@ describe("fetchPage", () => {
 		await fetchPage("http://localhost:3000/admin");
 
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe("pictures and links", () => {
+	/** Numbers addresses the way the tools do, and keeps what it was handed. */
+	const numbering = () => {
+		const seen: string[] = [];
+		const register = (url: string) => {
+			if (!seen.includes(url)) seen.push(url);
+			return seen.indexOf(url) + 1;
+		};
+		return { seen, register };
+	};
+
+	const textOf = (result: Awaited<ReturnType<typeof fetchPage>>) =>
+		"content" in result ? result.content : "";
+
+	// A listing card links both its picture and its name to the product page.
+	const CARD = [
+		"[![Tissot PRX](https://cdn.shop.test/prx.jpg)](https://shop.test/tissot-prx)",
+		"[Tissot PRX Powermatic 80](https://shop.test/tissot-prx)",
+		"84.900 RSD",
+	].join("\n\n");
+
+	it("numbers Firecrawl's pictures and drops every address", async () => {
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(
+			firecrawlOk(`${CARD}\n\n${LONG}`),
+		);
+		const pictures = numbering();
+
+		const text = textOf(
+			await fetchPage("https://cafe.test/menu", pictures.register),
+		);
+
+		expect(pictures.seen).toEqual(["https://cdn.shop.test/prx.jpg"]);
+		expect(text).toContain(pictureMarker(1, "Tissot PRX"));
+		expect(text).toContain("Tissot PRX Powermatic 80");
+		// Nothing left that the model could copy into a catalogue or follow.
+		expect(text).not.toContain("https://");
+	});
+
+	it("finds a lazy-loaded picture's real address on the direct path", async () => {
+		vi.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
+			isFirecrawl(input)
+				? new Response("{}", { status: 402 })
+				: page(
+						`<img src="data:image/gif;base64,R0lGOD" data-src="/img/prx.jpg?w=400&amp;h=400" alt="Tissot PRX"><p>${LONG}</p>`,
+					),
+		);
+		const pictures = numbering();
+
+		const text = textOf(
+			await fetchPage("https://cafe.test/menu", pictures.register),
+		);
+
+		expect(pictures.seen).toEqual([
+			"https://cafe.test/img/prx.jpg?w=400&h=400",
+		]);
+		expect(text).toContain(pictureMarker(1, "Tissot PRX"));
+	});
+
+	it("drops pictures when nothing is numbering them", async () => {
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(
+			firecrawlOk(`${CARD}\n\n${LONG}`),
+		);
+
+		const text = textOf(await fetchPage("https://cafe.test/menu"));
+
+		expect(text).not.toContain("(image");
+		expect(text).toContain("Tissot PRX Powermatic 80");
 	});
 });

@@ -3,7 +3,10 @@ import { buildTools } from "@/agent/tools";
 import { UNTRUSTED_OPEN } from "@/agent/web";
 import type { AgentToolResult } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
-import { defaultCatalogueData } from "@quicktalog/common";
+import {
+	defaultCatalogueData,
+	fetchImageFromUnsplash,
+} from "@quicktalog/common";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));
@@ -23,14 +26,14 @@ const catalogue = { ...defaultCatalogueData, name: "cafe" } as Catalogue;
 const PAGE = "Espresso 2.50. A short black coffee. ".repeat(10);
 
 /** Answers Firecrawl with a page, so no test touches the network. */
-const mockScrape = () => {
+const mockScrape = (markdown = PAGE) => {
 	lookup.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);
 	vi.stubEnv("FIRECRAWL_API_KEY", "fc-test");
 	return vi.spyOn(globalThis, "fetch").mockResolvedValue(
 		new Response(
 			JSON.stringify({
 				success: true,
-				data: { markdown: PAGE, metadata: { title: "Menu" } },
+				data: { markdown, metadata: { title: "Menu" } },
 			}),
 			{ status: 200 },
 		),
@@ -38,6 +41,7 @@ const mockScrape = () => {
 };
 
 afterEach(() => {
+	vi.useRealTimers();
 	vi.unstubAllEnvs();
 	vi.restoreAllMocks();
 });
@@ -188,5 +192,126 @@ describe("fetchUrl", () => {
 			await run(tools, "fetchUrl", { url: "http://169.254.169.254/" }),
 		).toMatchObject({ ok: false });
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe("photos", () => {
+	const unsplash = vi.mocked(fetchImageFromUnsplash);
+
+	const WATCHES = `${PAGE}\n\n[![Tissot PRX](https://cdn.shop.test/prx.jpg)](https://shop.test/prx)\n\nTissot PRX 84900`;
+
+	const itemsOf = (result: AgentToolResult) =>
+		(result as unknown as { operation: { items: Record<string, unknown>[] } })
+			.operation.items;
+
+	it("puts the picture from a page read this turn on the item", async () => {
+		mockScrape(WATCHES);
+		const tools = buildTools(new CatalogueSession(catalogue));
+		await run(tools, "fetchUrl", { url: "https://cafe.test/menu" });
+
+		const result = await run(tools, "addSection", {
+			sectionType: "container",
+			name: "Watches",
+			items: [{ name: "Tissot PRX", price: 84900, pageImage: 1 }],
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(result).not.toHaveProperty("imageMisses");
+		expect(itemsOf(result)[0].image).toBe("https://cdn.shop.test/prx.jpg");
+	});
+
+	// A number no page showed is a model slip, not a reason to lose the item.
+	it("adds the item without a photo when its picture number does not exist", async () => {
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		const result = await run(tools, "addSection", {
+			sectionType: "container",
+			name: "Watches",
+			items: [{ name: "Tissot PRX", pageImage: 7 }],
+		});
+
+		expect(result).toMatchObject({ ok: true, imageMisses: ["Tissot PRX"] });
+		expect(itemsOf(result)[0]).not.toHaveProperty("image");
+	});
+
+	it("runs every item's photo search, not just the first few", async () => {
+		unsplash.mockReset();
+		unsplash.mockImplementation(
+			async (query) => `https://images.test/${query}`,
+		);
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		const result = await run(tools, "addSection", {
+			sectionType: "container",
+			name: "Watches",
+			items: Array.from({ length: 30 }, (_, i) => ({
+				name: `Watch ${i}`,
+				imageQuery: `wrist watch ${i}`,
+			})),
+		});
+
+		expect(unsplash).toHaveBeenCalledTimes(30);
+		expect(result).not.toHaveProperty("imageMisses");
+	});
+
+	it("gives up on a photo search that hangs", async () => {
+		vi.useFakeTimers();
+		unsplash.mockReset();
+		unsplash.mockReturnValue(new Promise(() => {}));
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		const pending = run(tools, "addSection", {
+			sectionType: "container",
+			name: "Watches",
+			items: [{ name: "Tissot PRX", imageQuery: "steel wrist watch" }],
+		});
+		await vi.advanceTimersByTimeAsync(5000);
+
+		expect(await pending).toMatchObject({
+			ok: true,
+			imageMisses: ["steel wrist watch"],
+		});
+	});
+});
+
+describe("results", () => {
+	it("says where a new section landed, so the next batch can find it", async () => {
+		const tools = buildTools(new CatalogueSession(catalogue));
+		await run(tools, "addSection", { sectionType: "category", name: "Drinks" });
+
+		const result = await run(tools, "addSection", {
+			sectionType: "container",
+			name: "Watches",
+			position: 0,
+		});
+
+		expect(result).toMatchObject({ ok: true, section: 0 });
+	});
+
+	// The client replays `operation`; the model only needs to know it landed.
+	it("keeps the operation for the client but out of the model's context", async () => {
+		const tools = buildTools(new CatalogueSession(catalogue));
+		const output = await run(tools, "addSection", {
+			sectionType: "category",
+			name: "Drinks",
+		});
+
+		const forModel = await (
+			tools.addSection as unknown as {
+				toModelOutput: (options: {
+					toolCallId: string;
+					input: unknown;
+					output: unknown;
+				}) => Promise<{ type: string; value: Record<string, unknown> }>;
+			}
+		).toModelOutput({ toolCallId: "call-1", input: {}, output });
+
+		expect(output).toHaveProperty("operation");
+		expect(forModel.type).toBe("json");
+		expect(forModel.value).not.toHaveProperty("operation");
+		expect(forModel.value).toMatchObject({
+			ok: true,
+			summary: 'Added category section "Drinks"',
+		});
 	});
 });

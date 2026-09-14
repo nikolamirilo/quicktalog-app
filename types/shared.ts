@@ -105,7 +105,6 @@ export type IBenefitBullet = {
 	icon: JSX.Element;
 };
 
-
 export type DonutChartProps = {
 	data: number[];
 	labels: string[];

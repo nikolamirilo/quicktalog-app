@@ -2,10 +2,13 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	// Keep these heavy native packages out of the webpack bundle so they are
+	// required at runtime instead of being parsed/memoized into the build graph.
+	serverExternalPackages: ["puppeteer", "tesseract.js", "playwright"],
 	images: {
 		minimumCacheTTL: 2678400,
 		formats: ["image/webp"],
-		unoptimized: !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost"),
+		unoptimized: !process.env.NEXT_PUBLIC_BASE_URL?.includes("localhost"),
 		remotePatterns: [
 			{
 				protocol: "https",
@@ -42,6 +45,12 @@ const nextConfig: NextConfig = {
 	},
 	experimental: {
 		optimizePackageImports: ["react-icons"],
+		// withSentryConfig injects a custom webpack config, which makes Next skip the
+		// build worker by default. Without it the main process keeps the whole webpack
+		// compilation in memory through type-checking and page-data collection, which
+		// OOMs Vercel's 8 GB build container.
+		webpackBuildWorker: true,
+		webpackMemoryOptimizations: true,
 	},
 	// turbopack: {
 	// 	root: process.cwd(),
@@ -80,8 +89,9 @@ export default withSentryConfig(nextConfig, {
 	// For all available options, see:
 	// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-	// Upload a larger set of source maps for prettier stack traces (increases build time)
-	widenClientFileUpload: true,
+	// Upload a larger set of source maps for prettier stack traces (increases build time/memory).
+	// Disabled by default to avoid OOMing Vercel's 8 GB Hobby build container; enable on Pro/Enterprise.
+	widenClientFileUpload: process.env.SENTRY_WIDEN_CLIENT_FILE_UPLOAD === "true",
 
 	// Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
 	// This can increase your server load as well as your hosting bill.

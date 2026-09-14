@@ -1,4 +1,9 @@
-import { createImageCache, resolveImage, resolveItems } from "@/agent/images";
+import {
+	createImageCache,
+	registerPicture,
+	resolveImage,
+	resolveItems,
+} from "@/agent/images";
 import {
 	appearanceFieldsSchema,
 	catalogueFieldsSchema,
@@ -13,7 +18,7 @@ import {
 import type { CatalogueSession } from "@/agent/session";
 import { fetchPage, type PageResult } from "@/agent/web";
 import type { AgentToolResult } from "@/types/ai";
-import { tool } from "ai";
+import { type JSONValue, tool } from "ai";
 import { z } from "zod";
 
 /** Errors are returned, not thrown, so the model can correct itself next step. */
@@ -53,7 +58,9 @@ export function buildTools(session: CatalogueSession) {
 				const capped = session.allowWebFetch();
 				if (capped) return capped;
 
-				const outcome = await fetchPage(url);
+				const outcome = await fetchPage(url, (src) =>
+					registerPicture(images, src),
+				);
 				if ("error" in outcome) return fail(outcome.error);
 
 				pages.set(url, outcome);
@@ -128,9 +135,10 @@ export function buildTools(session: CatalogueSession) {
 					? await resolveItems(images, items)
 					: { items: [], misses: [] };
 
+				const id = crypto.randomUUID();
 				const result = session.run({
 					op: "add_section",
-					id: crypto.randomUUID(),
+					id,
 					sectionType: input.sectionType,
 					name: input.name,
 					layout: input.layout,
@@ -139,10 +147,15 @@ export function buildTools(session: CatalogueSession) {
 					items: resolved.items,
 					position: input.position,
 				});
+				if (!result.ok) return result;
 
-				return result.ok && resolved.misses.length > 0
-					? { ...result, imageMisses: resolved.misses }
-					: result;
+				return {
+					...result,
+					section: session.sectionIndex(id),
+					...(resolved.misses.length > 0
+						? { imageMisses: resolved.misses }
+						: {}),
+				};
 			},
 		}),
 
@@ -231,18 +244,13 @@ export function buildTools(session: CatalogueSession) {
 				price: z.coerce.number().min(0).optional(),
 				isFree: z.coerce.boolean().optional(),
 				denominator: z.string().trim().max(30).optional(),
-				imageQuery: z
-					.string()
-					.trim()
-					.max(120)
-					.optional()
-					.describe(
-						"Two or three plain English words describing the photo to find.",
-					),
+				pageImage: itemInputSchema.shape.pageImage,
+				imageQuery: itemInputSchema.shape.imageQuery,
 			}),
 			execute: async ({
 				section,
 				item,
+				pageImage,
 				imageQuery,
 				...fields
 			}): Promise<AgentToolResult> => {
@@ -251,10 +259,10 @@ export function buildTools(session: CatalogueSession) {
 
 				let image: string | undefined;
 				const misses: string[] = [];
-				if (imageQuery) {
-					const found = await resolveImage(images, imageQuery);
+				if (pageImage || imageQuery) {
+					const found = await resolveImage(images, { pageImage, imageQuery });
 					if (found) image = found;
-					else misses.push(imageQuery);
+					else misses.push(imageQuery || fields.name || target.name);
 				}
 
 				const result = session.run({
@@ -341,7 +349,7 @@ export function buildTools(session: CatalogueSession) {
 		}),
 	};
 
-	return gateCalls(session, tools);
+	return hideOperations(gateCalls(session, tools));
 }
 
 /**
@@ -388,6 +396,30 @@ function gateCalls<T extends Record<string, { execute?: unknown }>>(
 			session.requireSkills({ tool: name, input }) ??
 			session.requireNoWebCode({ tool: name, input }) ??
 			run(input, options);
+	}
+	return tools;
+}
+
+/**
+ * The model reads every result except `operation`.
+ *
+ * The client needs the operation to replay an edit; the model only needs to
+ * know it landed. Echoed back, 40 items with their ids and image URLs would be
+ * re-read on every later step and every later turn.
+ */
+function hideOperations<T extends Record<string, object>>(tools: T): T {
+	for (const definition of Object.values(tools)) {
+		(definition as { toModelOutput?: unknown }).toModelOutput = ({
+			output,
+		}: {
+			output: unknown;
+		}) => {
+			const { operation: _, ...rest } = (output ?? {}) as Record<
+				string,
+				unknown
+			>;
+			return { type: "json", value: rest as JSONValue };
+		};
 	}
 	return tools;
 }

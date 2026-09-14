@@ -69,7 +69,7 @@ describe("agent skills", () => {
 
 		it("uses no em or en dashes in any skill sent to the model", () => {
 			for (const skill of SKILLS) {
-				expect(skill.content).not.toMatch(/[-–]/);
+				expect(skill.content).not.toMatch(/[—–]/);
 			}
 		});
 	});

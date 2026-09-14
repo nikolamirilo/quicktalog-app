@@ -1,5 +1,10 @@
 import { buildInstructions } from "@/agent/instructions";
-import { AGENT_TEMPERATURE, MAX_AGENT_STEPS, agentModel } from "@/agent/model";
+import {
+	AGENT_REASONING,
+	AGENT_TEMPERATURE,
+	MAX_AGENT_STEPS,
+	agentModel,
+} from "@/agent/model";
 import type { CatalogueSession } from "@/agent/session";
 import { buildTools } from "@/agent/tools";
 import { type InferAgentUIMessage, stepCountIs, ToolLoopAgent } from "ai";
@@ -10,6 +15,7 @@ export function createCatalogueAgent(session: CatalogueSession) {
 		model: agentModel,
 		instructions: buildInstructions(session),
 		tools: buildTools(session),
+		reasoning: AGENT_REASONING,
 		temperature: AGENT_TEMPERATURE,
 		stopWhen: stepCountIs(MAX_AGENT_STEPS),
 	});

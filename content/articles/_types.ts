@@ -1,10 +1,6 @@
 import type { ReactNode } from "react";
 
-type ArticleCategory =
-	| "Use cases"
-	| "Guides"
-	| "Comparisons"
-	| "Product";
+type ArticleCategory = "Use cases" | "Guides" | "Comparisons" | "Product";
 
 export interface ArticleMeta {
 	/** URL segment, e.g. "digital-menu-for-restaurants" */

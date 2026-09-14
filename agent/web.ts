@@ -42,6 +42,94 @@ export type PageOutcome = PageResult | { error: string };
 const stripFences = (text: string): string =>
 	text.split(UNTRUSTED_OPEN).join("").split(UNTRUSTED_CLOSE).join("");
 
+/** Numbers a picture's address for this turn, or declines once there are too many. */
+export type RegisterPicture = (url: string) => number | undefined;
+
+/**
+ * Stands in for a picture in the page text.
+ *
+ * The model points at the number and the server keeps the address, so a
+ * picture reaches the catalogue without the model ever writing a URL, and a
+ * product listing costs a few tokens per picture instead of dozens.
+ */
+export const pictureMarker = (ref: number, label = ""): string =>
+	`(image ${ref}${label ? `: ${label}` : ""})`;
+
+function markPicture(
+	src: string,
+	alt: string,
+	base: string,
+	register?: RegisterPicture,
+): string {
+	if (!register) return " ";
+
+	let url: URL;
+	try {
+		url = new URL(src.replace(/&amp;/gi, "&"), base);
+	} catch {
+		return " ";
+	}
+	// data: and blob: are bytes inlined in that page, not an address to show.
+	if (url.protocol !== "https:" && url.protocol !== "http:") return " ";
+
+	const ref = register(url.toString());
+	if (!ref) return " ";
+
+	const label = alt
+		.replace(/[[\]()]/g, "")
+		.replace(/\s+/g, " ")
+		.trim()
+		.slice(0, 80);
+	return ` ${pictureMarker(ref, label)} `;
+}
+
+/** `![alt](src "title")` */
+const MARKDOWN_IMAGE = /!\[([^\]]*)\]\(\s*<?([^\s)>]+)>?(?:\s+"[^"]*")?\s*\)/g;
+/** `[text](href "title")`, matched after pictures so a linked picture keeps its marker. */
+const MARKDOWN_LINK = /\[([^\]]*)\]\(\s*<?[^\s)>]*>?(?:\s+"[^"]*")?\s*\)/g;
+
+/**
+ * Pictures become markers and links lose their addresses. The model may not
+ * follow a link from a page anyway, and on a product listing the addresses
+ * can take more room than the products, pushing them past the cap.
+ */
+const compactMarkdown = (
+	markdown: string,
+	base: string,
+	register?: RegisterPicture,
+): string =>
+	markdown
+		.replace(MARKDOWN_IMAGE, (_, alt: string, src: string) =>
+			markPicture(src, alt, base, register),
+		)
+		.replace(MARKDOWN_LINK, "$1");
+
+const IMG_TAG = /<img\b[^>]*>/gi;
+/** Lazy loaders keep the real address in a data attribute and a placeholder in src. */
+const IMG_SOURCES = ["data-src", "data-lazy-src", "data-original", "src"];
+
+const attributeOf = (tag: string, name: string): string | undefined => {
+	const match = tag.match(
+		new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'>]+))`, "i"),
+	);
+	return match ? (match[1] ?? match[2] ?? match[3]) : undefined;
+};
+
+/** Runs before `htmlToText`, which drops every <img> along with the markup. */
+const markHtmlPictures = (
+	html: string,
+	base: string,
+	register?: RegisterPicture,
+): string =>
+	html.replace(IMG_TAG, (tag) => {
+		const src = IMG_SOURCES.map((name) => attributeOf(tag, name)).find(
+			(value) => value && !value.startsWith("data:"),
+		);
+		return src
+			? markPicture(src, attributeOf(tag, "alt") ?? "", base, register)
+			: " ";
+	});
+
 /** Private, loopback, link-local and cloud metadata space. */
 function isPrivateAddress(address: string): boolean {
 	const host = address.toLowerCase();
@@ -168,7 +256,10 @@ function toPage(
 }
 
 /** Null means "fall back to a direct fetch", which every failure here does. */
-async function scrapeWithFirecrawl(url: URL): Promise<PageOutcome | null> {
+async function scrapeWithFirecrawl(
+	url: URL,
+	register?: RegisterPicture,
+): Promise<PageOutcome | null> {
 	const key = process.env.FIRECRAWL_API_KEY;
 	if (!key) return null;
 
@@ -207,10 +298,11 @@ async function scrapeWithFirecrawl(url: URL): Promise<PageOutcome | null> {
 		if (!body.success || !markdown) return null;
 
 		const title = body.data?.metadata?.title;
+		const page = body.data?.metadata?.url || url.toString();
 		return toPage(
-			body.data?.metadata?.url || url.toString(),
+			page,
 			Array.isArray(title) ? title[0] : title,
-			markdown,
+			compactMarkdown(markdown, page, register),
 			"firecrawl",
 		);
 	} catch (error) {
@@ -273,7 +365,10 @@ export const htmlToText = (html: string): string =>
 		.replace(/\n{3,}/g, "\n\n")
 		.trim();
 
-async function fetchDirect(start: URL): Promise<PageOutcome> {
+async function fetchDirect(
+	start: URL,
+	register?: RegisterPicture,
+): Promise<PageOutcome> {
 	let current = start;
 
 	for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
@@ -317,10 +412,11 @@ async function fetchDirect(start: URL): Promise<PageOutcome> {
 		}
 
 		const html = await readCapped(response);
+		const page = current.toString();
 		return toPage(
-			current.toString(),
+			page,
 			extractTitle(html),
-			htmlToText(html),
+			htmlToText(markHtmlPictures(html, page, register)),
 			"direct",
 		);
 	}
@@ -335,10 +431,19 @@ async function fetchDirect(start: URL): Promise<PageOutcome> {
  * When the account is empty or rate limited it returns nothing rather than
  * failing the turn, and the direct path takes over - which handles any
  * server-rendered page, which is most of them.
+ *
+ * Pictures on the page are numbered through `register`; without one they are
+ * dropped from the text.
  */
-export async function fetchPage(raw: string): Promise<PageOutcome> {
+export async function fetchPage(
+	raw: string,
+	register?: RegisterPicture,
+): Promise<PageOutcome> {
 	const resolved = await resolveSafeUrl(raw);
 	if ("error" in resolved) return resolved;
 
-	return (await scrapeWithFirecrawl(resolved.url)) ?? fetchDirect(resolved.url);
+	return (
+		(await scrapeWithFirecrawl(resolved.url, register)) ??
+		fetchDirect(resolved.url, register)
+	);
 }

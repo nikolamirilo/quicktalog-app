@@ -2,13 +2,7 @@ import { footerDetails } from "@/constants/details";
 import Link from "next/link";
 import { FiExternalLink, FiMail, FiPhone } from "react-icons/fi";
 
-const Contact = ({
-	type,
-	activeData,
-}: {
-	type: string;
-	activeData: any;
-}) => {
+const Contact = ({ type, activeData }: { type: string; activeData: any }) => {
 	if (type !== "default" && !activeData?.contact?.email) return null;
 
 	return (

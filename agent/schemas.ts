@@ -51,13 +51,21 @@ export const itemInputSchema = z.object({
 		.max(30)
 		.optional()
 		.describe('Unit the price is per, e.g. "kg" or "hour".'),
+	pageImage: z.coerce
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe(
+			"The number of this item's own picture on a page you read in this turn. Only set this when the user asked for images.",
+		),
 	imageQuery: z
 		.string()
 		.trim()
 		.max(120)
 		.optional()
 		.describe(
-			"Two or three plain English words describing the photo to find, e.g. 'espresso coffee cup'. A stock photo is looked up for you. Only set this when the user asked for images.",
+			"Two or three plain English words describing the photo to find, e.g. 'espresso coffee cup'. A stock photo is looked up for you. Only set this when the user asked for images and there is no pageImage for the item.",
 		),
 });
 

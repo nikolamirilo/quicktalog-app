@@ -151,6 +151,11 @@ export class CatalogueSession {
 		return this.content[index];
 	}
 
+	/** Where a section sits now, so a result can tell the model what to point at next. */
+	sectionIndex(id: string): number {
+		return this.content.findIndex((block) => block.id === id);
+	}
+
 	resolveSection(index: number): { id: string } | { error: string } {
 		const block = this.sectionAt(index);
 		if (!block) {
@@ -177,7 +182,7 @@ export class CatalogueSession {
 	resolveItem(
 		sectionIndex: number,
 		itemIndex: number,
-	): { sectionId: string; itemId: string } | { error: string } {
+	): { sectionId: string; itemId: string; name: string } | { error: string } {
 		const section = this.resolveItemSection(sectionIndex);
 		if ("error" in section) return section;
 
@@ -191,7 +196,7 @@ export class CatalogueSession {
 				}.`,
 			};
 		}
-		return { sectionId: section.id, itemId: item.id };
+		return { sectionId: section.id, itemId: item.id, name: item.name };
 	}
 
 	/** The applier's skip reasons double as the model's feedback. */

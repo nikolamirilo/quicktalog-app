@@ -146,4 +146,3 @@ export const faqs: IFAQ[] = [
 			"We offer flexible pricing starting at $5/month for the Basic plan. Our Starter plan is free forever with one catalog. Higher tiers include more catalogs, AI features, OCR import, and advanced analytics to help you grow your business.",
 	},
 ];
-
