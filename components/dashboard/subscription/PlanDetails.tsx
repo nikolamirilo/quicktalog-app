@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { formatPrice } from "@/helpers/client";
-import type { PricingPlan } from "@quicktalog/common";
+import { tiers, type PricingPlan } from "@quicktalog/common";
 import {
 	Calendar,
 	CheckCircle,
@@ -51,6 +51,13 @@ const getPlanColor = (planName: string) => {
 	return "bg-product-primary";
 };
 
+const highestStandardTierId = Math.max(
+	...tiers.filter((tier) => tier.type === "standard").map((tier) => tier.id),
+);
+
+const canUpgrade = (pricingPlan: PricingPlan) =>
+	pricingPlan.type === "standard" && pricingPlan.id < highestStandardTierId;
+
 export default function PlanDetails({
 	pricingPlan,
 	subscriptionStartDate,
@@ -90,25 +97,27 @@ export default function PlanDetails({
 	return (
 		<>
 			{/* Upgrade plan */}
-			<div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl p-6 shadow-lg">
-				<div className="text-center sm:text-left">
-					<h2 className="text-xl font-bold text-product-foreground flex items-center gap-2">
-						<Star className="w-5 h-5 text-product-primary" />
-						Upgrade your plan
-					</h2>
-					<p className="text-product-foreground-accent text-sm mt-1">
-						Get more features, higher limits, and premium support.
-					</p>
+			{canUpgrade(pricingPlan) && (
+				<div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl p-6 shadow-lg">
+					<div className="text-center sm:text-left">
+						<h2 className="text-xl font-bold text-product-foreground flex items-center gap-2">
+							<Star className="w-5 h-5 text-product-primary" />
+							Upgrade your plan
+						</h2>
+						<p className="text-product-foreground-accent text-sm mt-1">
+							Get more features, higher limits, and premium support.
+						</p>
+					</div>
+					<Button
+						className="w-fit min-w-56 bg-product-primary  shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+						onClick={onUpgrade}
+						variant="default"
+					>
+						<Star className="w-4 h-4" />
+						Upgrade plan
+					</Button>
 				</div>
-				<Button
-					className="w-fit min-w-56 bg-product-primary  shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-					onClick={onUpgrade}
-					variant="default"
-				>
-					<Star className="w-4 h-4" />
-					Upgrade plan
-				</Button>
-			</div>
+			)}
 
 			{/* Main Plan Card */}
 			<Card

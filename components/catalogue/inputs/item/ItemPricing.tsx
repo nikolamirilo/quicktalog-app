@@ -11,7 +11,7 @@ import {
 import { Item } from "@quicktalog/common";
 import { useEffect, useState } from "react";
 
-export interface ItemPricingProps {
+interface ItemPricingProps {
 	value: Item;
 	onChange: (value: Item) => void;
 	currency: string;

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export const SkeletonLoader = ({ className }: { className?: string }) => (
+const SkeletonLoader = ({ className }: { className?: string }) => (
 	<div
 		className={`${className} bg-gradient-to-r from-gray-100 via-gray-50 to-gray-100 relative overflow-hidden rounded-sm`}
 	>

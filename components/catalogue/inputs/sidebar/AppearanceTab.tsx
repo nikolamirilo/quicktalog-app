@@ -6,7 +6,12 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { readPaletteFromElement } from "@/helpers/theme";
+import {
+	customThemeColorsEqual,
+	DEFAULT_CUSTOM_COLORS,
+	readPaletteFromElement,
+} from "@/helpers/theme";
+import { useSavedThemes } from "@/hooks/useSavedThemes";
 import { PricingPlan } from "@quicktalog/common";
 import { Info } from "lucide-react";
 import LimitsOverlay from "./LimitsOverlay";
@@ -14,10 +19,16 @@ import CustomThemeConfiguration from "./appearance/CustomThemeConfiguration";
 import OverlayConfiguration from "./appearance/OverlayConfiguration";
 import StyleConfiguration from "./appearance/StyleConfiguration";
 import ThemeSelection from "./appearance/ThemeSelection";
+import { toast } from "sonner";
 
 const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue, updateAppearance, updateThemeColors } =
 		useCatalogueContext() || {};
+	const {
+		themes: savedThemes,
+		save: saveTheme,
+		remove: removeTheme,
+	} = useSavedThemes();
 	const hasStyles = plan?.features?.apperance?.styles;
 	const hasCustomThemes = plan?.features?.apperance?.customThemes;
 
@@ -26,6 +37,11 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 
 	const currentThemeName = catalogue.appearance?.theme?.name;
 	const isCustomActive = catalogue.appearance?.theme?.type === "custom";
+	const activeSavedTheme = isCustomActive
+		? savedThemes.find((saved) =>
+				customThemeColorsEqual(saved.colors, catalogue.appearance.theme.colors),
+			)
+		: undefined;
 	const currentStyle = catalogue.appearance?.style || ({} as any);
 	const currentOverlay = catalogue.appearance?.overlay || ({} as any);
 
@@ -41,12 +57,33 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 		});
 	};
 
+	const scrollToCustomPanel = () => {
+		requestAnimationFrame(() => {
+			document
+				.getElementById("custom-theme-panel")
+				?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+		});
+	};
+
 	const handleCustomSelect = () => {
-		if (isCustomActive) return;
-		const seeded = readPaletteFromElement(
-			document.querySelector('[role="application"]'),
-		);
+		// Coming from a standard theme, seed from what's on screen so the
+		// starting point looks intentional. Coming from a custom theme (saved
+		// or not), the DOM already reflects that same custom palette, so
+		// reading it back would just re-apply the theme being left - reset to
+		// the neutral defaults instead so "Custom" always starts fresh.
+		const seeded = isCustomActive
+			? DEFAULT_CUSTOM_COLORS
+			: readPaletteFromElement(document.querySelector('[role="application"]'));
 		updateThemeColors(seeded);
+		toast.success(
+			"Started a new custom theme. Customize the colors below, then save it to reuse later.",
+		);
+		scrollToCustomPanel();
+	};
+
+	const handleDeleteSavedTheme = async (id: string) => {
+		const res = await removeTheme(id);
+		if (!res.success) toast.error(res.error || "Failed to delete theme");
 	};
 
 	const handleStyleChange = (field: string, value: any) => {
@@ -71,22 +108,28 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 		<div className="space-y-4 p-2">
 			{/* Themes Section */}
 			<ThemeSelection
+				currentCustomColors={catalogue.appearance.theme.colors}
 				currentThemeName={currentThemeName}
 				isCustomActive={isCustomActive}
 				onCustomSelect={handleCustomSelect}
+				onDeleteSavedTheme={handleDeleteSavedTheme}
+				onSavedThemeSelect={updateThemeColors}
 				onThemeSelect={handleThemeSelect}
+				savedThemes={savedThemes}
 			/>
 
 			{isCustomActive && (
-				<div className="relative w-full">
+				<div className="relative w-full" id="custom-theme-panel">
 					{!hasCustomThemes && <LimitsOverlay />}
 					<div
 						className={`space-y-4 ${!hasCustomThemes ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
 					>
 						<h3 className="text-lg font-bold">Custom colors</h3>
 						<CustomThemeConfiguration
+							activeSavedThemeName={activeSavedTheme?.name}
 							colors={catalogue.appearance.theme.colors || {}}
 							onColorsChange={updateThemeColors}
+							onSave={saveTheme}
 						/>
 					</div>
 				</div>

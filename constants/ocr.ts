@@ -1,7 +1,6 @@
 import { LanguageOption } from "@quicktalog/common";
 
 export const OPTIMAL_DPI = 300;
-export const MIN_TEXT_HEIGHT = 20;
 export const MAX_IMAGE_DIMENSION = 2000;
 export const MIN_EFFECTIVE_DIMENSION = 1000;
 /** How many images the AI assistant will scan in a single chat turn. */

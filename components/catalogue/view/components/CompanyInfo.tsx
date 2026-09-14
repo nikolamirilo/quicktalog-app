@@ -1,7 +1,7 @@
 import { FiMapPin } from "react-icons/fi";
 import { MdTitle } from "react-icons/md";
 
-export const CompanyInfo = ({ activeData }: { activeData: any }) => {
+const CompanyInfo = ({ activeData }: { activeData: any }) => {
 	if (!activeData?.legal?.legalName && !activeData?.legal?.address) return null;
 
 	return (

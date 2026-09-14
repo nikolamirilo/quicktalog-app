@@ -5,7 +5,7 @@ import type { NewsletterSubscriber } from "@/types/shared";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export function useAnalytics(shouldFetch: boolean) {
+function useAnalytics(shouldFetch: boolean) {
 	const { data, error, isLoading, mutate } = useSWR(
 		shouldFetch ? "/api/dashboard/analytics" : null,
 		fetcher,
@@ -25,7 +25,7 @@ export function useAnalytics(shouldFetch: boolean) {
 	};
 }
 
-export function useCatalogues(shouldFetch: boolean) {
+function useCatalogues(shouldFetch: boolean) {
 	const { data, error, isLoading, mutate } = useSWR(
 		shouldFetch ? "/api/dashboard/catalogues" : null,
 		fetcher,
@@ -44,7 +44,7 @@ export function useCatalogues(shouldFetch: boolean) {
 	};
 }
 
-export function useNewsletter(shouldFetch: boolean) {
+function useNewsletter(shouldFetch: boolean) {
 	const { data, error, isLoading, mutate } = useSWR(
 		shouldFetch ? "/api/dashboard/newsletter" : null,
 		fetcher,

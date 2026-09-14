@@ -33,7 +33,7 @@ import {
 	welcomeTitle,
 } from "./style";
 
-export const CancellationEmail = ({ name }: { name: string }) => (
+const CancellationEmail = ({ name }: { name: string }) => (
 	<Html>
 		<Head>
 			<link href="https://fonts.googleapis.com" rel="preconnect" />

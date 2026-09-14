@@ -24,8 +24,9 @@ const CustomCodeInput = ({
 		code: string;
 	} | null>(null);
 
-	// Check if user has access to premium features (Growth or Premium plans)
-	const canUseTemplates = userData?.planId && userData.currentPlan.id >= 2; // 2 = Growth, 3 = Premium
+	// Check if user has access to premium features (plans with the customCode feature)
+	const canUseTemplates =
+		userData?.currentPlan.features.sections.customCode ?? false;
 
 	// Convert camelCase to Title Case
 	const toTitleCase = (str: string) => {

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FiPlus } from "react-icons/fi";
 import SocialIcon from "@/components/general/SocialIcon";
 
-export const DefaultActions = () => {
+const DefaultActions = () => {
 	const socialLinks = footerDetails.socials;
 
 	return (

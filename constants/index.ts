@@ -1,5 +1,4 @@
 import { getCurrencySymbol } from "@/helpers/client";
-import { ILinkItem } from "@/types/shared";
 import { CookiePreferences, Currency } from "@quicktalog/common";
 
 export const defaultCookiePreferences: CookiePreferences = {
@@ -50,20 +49,6 @@ export const KEYWORDS = [
 	"5 minutes setup",
 ];
 
-export const menuItems: ILinkItem[] = [
-	{
-		text: "Features",
-		url: "#features",
-	},
-	{
-		text: "Pricing",
-		url: "#pricing",
-	},
-	{
-		text: "Testimonials",
-		url: "#testimonials",
-	},
-];
 export const CURRENCIES: Currency[] = [
 	{ value: "AED", label: "United Arab Emirates dirham", locale: "ar-AE" },
 	{ value: "AFN", label: "Afghan afghani", locale: "fa-AF" },
@@ -230,16 +215,4 @@ export const CURRENCIES: Currency[] = [
 	symbol: getCurrencySymbol(c.value),
 }));
 
-export const contactTypes = [
-	{ value: "phone", label: "Phone" },
-	{ value: "email", label: "Email" },
-	{ value: "instagram", label: "Instagram" },
-	{ value: "tiktok", label: "TikTok" },
-	{ value: "website", label: "Website" },
-	{ value: "facebook", label: "Facebook" },
-	{ value: "twitter", label: "Twitter" },
-];
-
-export const DEFAULT_LOGO = "/logo.svg";
-export const DARK_LOGO = "/logo-light.svg";
 export const FAVICON = "/favicon.ico";

@@ -2,7 +2,7 @@ import SmartLink from "@/components/general/SmartLink";
 import SocialIcon from "@/components/general/SocialIcon";
 import { footerDetails } from "@/constants/details";
 
-export const Brand = ({
+const Brand = ({
 	type,
 	activeData,
 	logo,

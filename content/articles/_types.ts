@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type ArticleCategory =
+type ArticleCategory =
 	| "Use cases"
 	| "Guides"
 	| "Comparisons"

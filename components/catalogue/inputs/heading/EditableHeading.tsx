@@ -3,7 +3,7 @@ import { headingSizeMap } from "@/constants/builder";
 import { HeadingSize } from "@/types/shared";
 import React from "react";
 
-export interface EditableHeadingProps {
+interface EditableHeadingProps {
 	editorRef: React.RefObject<HTMLDivElement | null>;
 	headingSize: HeadingSize;
 	isEmpty: boolean;

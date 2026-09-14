@@ -1,6 +1,6 @@
 "use client";
 
-export interface CharacterCountProps {
+interface CharacterCountProps {
 	charCount: number;
 	charLimit: number;
 	visible: boolean;

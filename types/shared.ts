@@ -6,7 +6,6 @@ import {
 	PricingPlan,
 	Usage,
 	User,
-	UserData,
 } from "@quicktalog/common";
 import { JSX } from "react";
 
@@ -36,25 +35,10 @@ export interface ImageDropzoneProps {
 	image: string;
 }
 
-export type ITestimonial = {
-	name: string;
-	role: string;
-	message: string;
-	avatar: string;
-	industry?: string;
-	metric?: string;
-};
-
 export type CookiePreferencesModalProps = {
 	isOpen: boolean;
 	onClose: () => void;
 	onSave?: () => void;
-};
-
-export type IStats = {
-	title: string;
-	icon: JSX.Element;
-	description: string;
 };
 
 export type ISocials = {
@@ -75,22 +59,6 @@ export type SuccessModalProps = {
 	onClose: () => void;
 	catalogueUrl: string;
 	type?: "regular" | "ai" | "edit" | "ocr";
-};
-
-export type ThemeSelectProps = {
-	formData: {
-		name: string;
-		theme?: string;
-		heading?: string;
-		currency?: string;
-		description?: string;
-		language?: string;
-		businessType?: string;
-	};
-	setFormData: React.Dispatch<React.SetStateAction<any>>;
-	errors?: { [key: string]: string };
-	touched?: { [key: string]: boolean };
-	infoButtonComponent?: JSX.Element;
 };
 
 export type CatalogueHeaderProps = {
@@ -137,50 +105,6 @@ export type IBenefitBullet = {
 	icon: JSX.Element;
 };
 
-export type BuilderProps = {
-	type: "create" | "edit";
-	initialData?: any;
-	onSuccess?: (restaurantUrl: string) => void;
-	userData: UserData;
-};
-
-export type GeneralInformationInputProps = {
-	formData: {
-		name: string;
-		theme?: string;
-		heading?: string;
-		currency?: string;
-		description?: string;
-		language?: string;
-		businessType?: string;
-	};
-	handleInputChange: (
-		e:
-			| React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-			| { target: { name: string; value: string } },
-	) => void;
-	setFormData: React.Dispatch<React.SetStateAction<any>>;
-	errors?: { [key: string]: string };
-	touched?: { [key: string]: boolean };
-	setTouched: any;
-	setErrors: any;
-	type: "create" | "edit";
-	handleBlur?: (fieldName: string) => void;
-};
-
-export type PromptExamplesProps = {
-	setPrompt: (prompt: string) => void;
-	disabled?: boolean;
-};
-
-export type LanguageSelectorProps = {
-	selectedLanguage: string;
-	detectedLanguage?: string;
-	onLanguageChange: (language: string) => void;
-	type?: string;
-	errors?: { [key: string]: string };
-	touched?: { [key: string]: boolean };
-};
 
 export type DonutChartProps = {
 	data: number[];

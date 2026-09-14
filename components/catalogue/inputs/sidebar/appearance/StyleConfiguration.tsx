@@ -79,7 +79,7 @@ const FONT_OPTIONS = [
 const FONT_SIZES = ["small", "medium", "large"];
 const SHADOWS = ["none", "low", "medium", "high"];
 
-export interface StyleConfigurationProps {
+interface StyleConfigurationProps {
 	currentStyle: Record<string, any>;
 	onStyleChange: (field: string, value: any) => void;
 }

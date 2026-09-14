@@ -45,7 +45,7 @@ import {
 	welcomeTitle,
 } from "./style";
 
-export const WelcomeEmail = ({ name }: { name: string }) => (
+const WelcomeEmail = ({ name }: { name: string }) => (
 	<Html>
 		<Head>
 			<link href="https://fonts.googleapis.com" rel="preconnect" />

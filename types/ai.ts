@@ -53,7 +53,7 @@ export interface AiItemInput {
 	image?: string;
 }
 
-export interface AiCatalogueFields {
+interface AiCatalogueFields {
 	heading?: string;
 	currency?: string;
 	language?: string;
@@ -63,7 +63,7 @@ export interface AiCatalogueFields {
 	legal?: { legalName?: string; address?: string };
 }
 
-export interface AiAppearanceFields {
+interface AiAppearanceFields {
 	theme?: string;
 	fontFamily?: string;
 	contentFontSize?: FontSize;

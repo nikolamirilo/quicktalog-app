@@ -125,7 +125,7 @@ const ActionButtons = ({
 		{
 			key: "save",
 			icon: Save,
-			label: catalogue?.status === "active" ? "Save" : "Save as Draft",
+			label: "Save",
 			onClick: () => handleSave(),
 			disabled: false,
 		},

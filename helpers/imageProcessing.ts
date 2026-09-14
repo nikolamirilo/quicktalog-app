@@ -43,7 +43,7 @@ export const calculateDimensions = (
 	}
 };
 
-export const canvasToBlob = (
+const canvasToBlob = (
 	canvas: HTMLCanvasElement,
 	quality: number,
 ): Promise<Blob> => {

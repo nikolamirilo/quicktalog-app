@@ -83,7 +83,7 @@ const ItemDropdownMenu = ({
 	const STATUS_LABELS: Partial<Record<Status, string>> = {
 		active: "Activate",
 		inactive: "Deactivate",
-		draft: "Save as Draft",
+		draft: "Save",
 	};
 	const availableStatuses = USER_STATUSES.filter((s) => s !== catalogue.status);
 

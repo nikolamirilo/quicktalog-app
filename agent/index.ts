@@ -15,7 +15,7 @@ export function createCatalogueAgent(session: CatalogueSession) {
 	});
 }
 
-export type CatalogueAgent = ReturnType<typeof createCatalogueAgent>;
+type CatalogueAgent = ReturnType<typeof createCatalogueAgent>;
 
 export type CatalogueAgentUIMessage = InferAgentUIMessage<CatalogueAgent>;
 

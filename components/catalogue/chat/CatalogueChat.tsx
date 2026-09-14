@@ -139,7 +139,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 			{!isOpen && (
 				<button
 					aria-label="Open AI assistant"
-					className="group fixed bottom-20 left-4 z-[49] flex items-center gap-2 rounded-full border border-black/5 bg-product-primary py-1.5 pl-1.5 pr-4 font-lora-semibold text-[13px] font-bold text-product-foreground shadow-[0_6px_18px_-6px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95 md:bottom-6 md:left-6"
+					className="group fixed bottom-20 left-4 z-[49] flex w-[124px] items-center justify-center gap-2 rounded-full border border-black/5 bg-product-primary py-1.5 pl-1.5 pr-4 font-lora-semibold text-[13px] font-bold text-product-foreground shadow-[0_6px_18px_-6px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95 md:bottom-6 md:left-6"
 					onClick={() => setIsOpen(true)}
 					type="button"
 				>
@@ -194,7 +194,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 					</header>
 
 					<div
-						className="flex-1 space-y-4 overflow-y-auto bg-[#fbfbfc] px-4 py-4"
+						className="chat-scroll flex-1 space-y-4 overflow-y-auto bg-[#fbfbfc] px-4 py-4"
 						ref={scrollRef}
 					>
 						{isEmpty && (
@@ -266,7 +266,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 								onAttach={attachments.attach}
 							/>
 							<textarea
-								className="max-h-32 min-w-0 flex-1 resize-none overflow-y-auto border-0 bg-transparent px-2.5 py-2 text-sm leading-relaxed text-product-foreground outline-none ring-0 placeholder:text-gray-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+								className="chat-scroll max-h-32 min-w-0 flex-1 resize-none overflow-y-auto border-0 bg-transparent px-2.5 py-2 text-sm leading-relaxed text-product-foreground outline-none ring-0 placeholder:text-gray-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
 								disabled={loading}
 								onChange={(event) => setDraft(event.target.value)}
 								onKeyDown={handleKeyDown}

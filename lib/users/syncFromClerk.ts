@@ -1,6 +1,6 @@
 import { defaultCookiePreferences } from "@/constants";
 
-export const DEFAULT_PLAN_ID = "pri_01k27ajepm199twd1x77rpwdrq";
+const DEFAULT_PLAN_ID = "pri_01k27ajepm199twd1x77rpwdrq";
 
 export interface ClerkWebhookEvent {
 	type: string;
@@ -33,7 +33,7 @@ interface ClerkProfileLike {
 	publicMetadata?: Record<string, any>;
 }
 
-export function sanitizeString(value: unknown): string {
+function sanitizeString(value: unknown): string {
 	if (typeof value === "string") {
 		return value.trim();
 	}
@@ -46,7 +46,7 @@ export function validateEmail(email: string | null): boolean {
 	return emailRegex.test(email);
 }
 
-export function extractUserEmail(
+function extractUserEmail(
 	emailAddresses?: Array<{ email_address: string }>,
 ): string | null {
 	if (!Array.isArray(emailAddresses) || emailAddresses.length === 0) {
@@ -59,7 +59,7 @@ export function extractUserEmail(
 		: null;
 }
 
-export function buildFullName(
+function buildFullName(
 	firstName?: string | null,
 	lastName?: string | null,
 ): string {

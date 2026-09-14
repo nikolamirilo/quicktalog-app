@@ -2,7 +2,7 @@ import { footerDetails } from "@/constants/details";
 import Link from "next/link";
 import { FiExternalLink, FiMail, FiPhone } from "react-icons/fi";
 
-export const Contact = ({
+const Contact = ({
 	type,
 	activeData,
 }: {

@@ -244,7 +244,7 @@ async function readCapped(response: Response): Promise<string> {
 	return html;
 }
 
-export const extractTitle = (html: string): string | undefined =>
+const extractTitle = (html: string): string | undefined =>
 	html
 		.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]
 		?.replace(/\s+/g, " ")

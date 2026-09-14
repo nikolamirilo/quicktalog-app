@@ -1,6 +1,6 @@
+import HeadingInput from "@/components/catalogue/inputs/HeadingInput";
 import HtmlContent from "@/components/general/HtmlContent";
 import { Catalogue } from "@quicktalog/common";
-import { HeadingInput } from "../..";
 
 const Heading = ({
 	item,

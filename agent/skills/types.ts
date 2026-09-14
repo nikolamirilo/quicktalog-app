@@ -31,5 +31,3 @@ export type Skill =
 			when: string;
 			requiredFor?: (call: SkillGateCall) => boolean;
 	  });
-
-export type SkillLoad = Skill["load"];

@@ -1,6 +1,6 @@
 import { footerFeatures } from "@/constants/ui";
 
-export const Features = () => {
+const Features = () => {
 	return (
 		<div className="space-y-6">
 			<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">

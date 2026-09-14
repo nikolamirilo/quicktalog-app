@@ -149,13 +149,12 @@ export const getLimitContent = (
 			return {
 				feature: "Traffic",
 				icon: FolderTree,
-				description: `Better organization drives more sales. Upgrade to create ${nextLimit === "unlimited" ? "unlimited" : nextLimit} categories and help customers find exactly what they need.`,
+				description: `Your catalogue is getting noticed! Upgrade to get ${nextLimit === "unlimited" ? "unlimited" : nextLimit.toLocaleString("en-US")} page views per month and keep serving customers without interruption.`,
 				upgradeText: "traffic",
 				currentLimit,
 				nextLimit,
-				benefit:
-					"Perfect organization makes shopping effortless for your customers",
-				valueProposition: "Better navigation = Higher conversions",
+				benefit: "Handle more visitors without your catalogue going offline",
+				valueProposition: "More traffic capacity = More potential customers",
 			};
 		default:
 			return {

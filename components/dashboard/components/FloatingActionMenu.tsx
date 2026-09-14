@@ -1,75 +1,58 @@
 "use client";
 import { AreLimitesReached } from "@quicktalog/common";
-import { Plus, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Plus } from "lucide-react";
 
-import CreateCatalogueButton from "./CreateCatalogueButton";
+import InitCatalogueModal from "@/components/catalogue/modals/InitCatalogueModal";
+import LimitsModal from "@/components/modals/LimitsModal";
+import { getRequiredPlan } from "@/helpers/client";
+import { useCreateCatalogue } from "@/hooks/useCreateCatalogue";
 
 const FloatingActionMenu = ({
-	planId,
 	areLimitsReached,
 }: {
-	planId: number;
 	areLimitsReached: AreLimitesReached;
 }) => {
-	const [isOpen, setIsOpen] = useState(false);
-	const menuRef = useRef(null);
-
-	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (menuRef.current && !menuRef.current.contains(event.target)) {
-				setIsOpen(false);
-			}
-		};
-
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
+	const disabled = areLimitsReached["catalogues"];
+	const {
+		userData,
+		isModalOpen,
+		setIsModalOpen,
+		limitsModal,
+		setLimitsModal,
+		loading,
+		handleButtonClick,
+		handleCreateCatalogue,
+	} = useCreateCatalogue(disabled);
 
 	return (
-		<div className="fixed bottom-6 right-6 z-50" ref={menuRef}>
-			{isOpen && (
-				<div
-					className="fixed inset-0 bg-black bg-opacity-20 -z-10"
-					onClick={() => setIsOpen(false)}
-				/>
-			)}
-			<div
-				className={`absolute bottom-16 right-0 flex flex-col-reverse gap-3 transition-all duration-300 ${
-					isOpen
-						? "opacity-100 translate-y-0"
-						: "opacity-0 translate-y-4 pointer-events-none"
-				}`}
-			>
-				{/* Create Catalogue */}
-				<div
-					className={`transform transition-all duration-300 ${
-						isOpen ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
-					}`}
-					style={{ transitionDelay: isOpen ? "0ms" : "0ms" }}
-				>
-					<CreateCatalogueButton
-						className="min-w-[11rem] w-fit rounded-full shadow-lg z-10 hover:shadow-xl transform transition-all duration-200 "
-						disabled={planId < 0 || areLimitsReached["catalogues"]}
-						showUpgradeTooltip={true}
-						type="dashboard"
-					/>
-				</div>
-			</div>
-
+		<div className="fixed bottom-6 right-6 z-50">
 			<button
-				aria-label={isOpen ? "Close menu" : "Open create menu"}
+				aria-label="Create catalogue"
 				className={`w-14 h-14 bg-product-primary hover:product-primary/20 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center ${
-					isOpen ? "rotate-45" : "rotate-0"
+					disabled ? "opacity-50 cursor-not-allowed hover:scale-100" : ""
 				}`}
-				onClick={() => setIsOpen(!isOpen)}
+				onClick={handleButtonClick}
 			>
-				{isOpen ? (
-					<X className="transition-transform duration-200" size={30} />
-				) : (
-					<Plus className="transition-transform duration-200" size={30} />
-				)}
+				<Plus size={30} />
 			</button>
+
+			<InitCatalogueModal
+				isOpen={isModalOpen}
+				loading={loading}
+				onCancel={() => setIsModalOpen(false)}
+				onConfirm={handleCreateCatalogue}
+			/>
+			<LimitsModal
+				currentPlan={userData?.currentPlan}
+				isOpen={limitsModal}
+				onClose={() => setLimitsModal(false)}
+				requiredPlan={
+					userData
+						? getRequiredPlan(userData.currentPlan, "catalogue")
+						: undefined
+				}
+				type="catalogue"
+			/>
 		</div>
 	);
 };

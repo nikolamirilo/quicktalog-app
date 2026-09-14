@@ -1,6 +1,6 @@
 import PartnerBadge from "@/components/general/PartnerBadge";
 
-export const Partners = ({ activeData }: { activeData: any }) => {
+const Partners = ({ activeData }: { activeData: any }) => {
 	if (
 		!activeData?.partners ||
 		activeData?.partners.length === 0 ||

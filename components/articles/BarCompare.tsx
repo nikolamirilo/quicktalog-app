@@ -1,4 +1,4 @@
-export interface BarItem {
+interface BarItem {
 	label: string;
 	/** Numeric value driving the bar width. */
 	value: number;

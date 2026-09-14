@@ -20,7 +20,7 @@ export interface OwnerProfile {
 	publicMetadata?: Record<string, any>;
 }
 
-export type FetchUserDataCode = "not_found" | "no_plan" | "usage_failed";
+type FetchUserDataCode = "not_found" | "no_plan" | "usage_failed";
 export interface FetchUserDataResult {
 	ok: boolean;
 	data?: any;
@@ -82,14 +82,6 @@ export async function fetchUserData(args: {
 		console.warn(`Pricing plan not found for Plan ID: ${planId}.`);
 		return { ok: false, code: "no_plan" };
 	}
-
-	const standardTiers = tiers.filter((item) => item.type === "standard");
-	const nextPlan =
-		standardTiers.find(
-			(item) =>
-				item.features.items_per_catalogue >
-					pricingPlan.features.items_per_catalogue && item.id > pricingPlan.id,
-		) ?? standardTiers[standardTiers.length - 1];
 
 	const billingPeriod = Object.entries(pricingPlan.priceId).find(
 		([_, id]) => id === planId,
@@ -156,7 +148,6 @@ export async function fetchUserData(args: {
 				...pricingPlan,
 				billing_period: billingPeriod || "year",
 			},
-			nextPlan: nextPlan || tiers[1],
 			usage: {
 				traffic,
 				ocr: ocrUsage[0]?.count ?? 0,

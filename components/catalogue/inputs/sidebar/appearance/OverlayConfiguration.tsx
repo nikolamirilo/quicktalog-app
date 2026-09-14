@@ -10,7 +10,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Info } from "lucide-react";
 
-export interface OverlayConfigurationProps {
+interface OverlayConfigurationProps {
 	currentOverlay: Record<string, any>;
 	onOverlayChange: (field: string, value: any) => void;
 }

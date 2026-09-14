@@ -8,15 +8,10 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useCatalogueContext } from "@/context/CatalogueContext";
-import { useUserContext } from "@/context/UserContext";
-import { createCatalogue } from "@/server_actions/catalogue";
 import { getRequiredPlan } from "@/helpers/client";
+import { useCreateCatalogue } from "@/hooks/useCreateCatalogue";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { IoCreateOutline } from "react-icons/io5";
-import { toast } from "sonner";
 
 interface CreateCatalogueButtonProps {
 	disabled?: boolean;
@@ -31,67 +26,16 @@ const CreateCatalogueButton = ({
 	type = "dashboard",
 	className = "",
 }: CreateCatalogueButtonProps) => {
-	const router = useRouter();
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [limitsModal, setLimitsModal] = useState(false);
-	const [loading, setLoading] = useState(false);
-	const { catalogue, resetCatalogue } = useCatalogueContext();
-	const { userData, refreshUserData } = useUserContext();
-	const handleCreateCatalogue = async () => {
-		setLoading(true);
-		if (userData) {
-			try {
-				console.log("Creating catalog with data:", catalogue);
-				const result = await createCatalogue(
-					catalogue,
-					userData?.currentPlan?.features?.branding,
-				);
-
-				if (result.success) {
-					console.log("Catalogue created successfully!", result.data);
-					toast.success(
-						`Catalogue "${result.data.name}" created successfully!`,
-					);
-					setIsModalOpen(false);
-
-					resetCatalogue();
-					await refreshUserData();
-					router.refresh();
-
-					// Navigate to the builder page with the catalogue name
-					setTimeout(() => {
-						router.push(`/admin/${result.data.name}/builder`);
-					}, 200);
-				} else {
-					console.error("Failed to create catalog:", result.error);
-					toast.error(result.error || "Failed to create catalogue");
-				}
-			} catch (error) {
-				console.error("Unexpected error:", error);
-				toast.error("An unexpected error occurred");
-			} finally {
-				setLoading(false);
-			}
-		} else {
-			router.push("/auth?mode=signup");
-		}
-	};
-
-	const handleButtonClick = () => {
-		if (!userData) {
-			router.push("/auth?mode=signup");
-			return;
-		}
-		if (userData.usage.catalogues >= userData.currentPlan.features.catalogues) {
-			setLimitsModal(true);
-			return;
-		}
-		if (!disabled) {
-			resetCatalogue();
-			setIsModalOpen(true);
-			return;
-		}
-	};
+	const {
+		userData,
+		isModalOpen,
+		setIsModalOpen,
+		limitsModal,
+		setLimitsModal,
+		loading,
+		handleButtonClick,
+		handleCreateCatalogue,
+	} = useCreateCatalogue(disabled);
 
 	return (
 		<>

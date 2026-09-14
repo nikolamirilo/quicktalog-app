@@ -38,6 +38,10 @@ const LimitsModalHeader = ({
 	IconComponent,
 	onClose,
 }: LimitsModalHeaderProps) => {
+	const hasExistingAccess =
+		content.currentLimit === "unlimited" ||
+		(typeof content.currentLimit === "number" && content.currentLimit > 0);
+
 	return (
 		<AlertDialogHeader className="relative p-4 sm:p-6 md:p-8 text-center bg-product-background-hero space-y-0 flex-shrink-0">
 			{onClose ? (
@@ -71,7 +75,7 @@ const LimitsModalHeader = ({
 			<AlertDialogTitle className="text-xl sm:text-2xl font-bold mb-2 text-product-foreground text-center">
 				{isNotFound
 					? "Catalogue Not Found"
-					: `Need ${+content.currentLimit > 0 ? "More" : ""} ${content.feature}?`}
+					: `Need ${hasExistingAccess ? "More" : ""} ${content.feature}?`}
 			</AlertDialogTitle>
 			<AlertDialogDescription className="text-sm sm:text-base text-product-foreground-accent text-center leading-relaxed">
 				{isNotFound

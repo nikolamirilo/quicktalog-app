@@ -34,7 +34,7 @@ export function disableConsoleInProduction() {
 	}
 }
 
-export function cleanValue(value: any) {
+function cleanValue(value: any) {
 	// Handle arrays
 	if (Array.isArray(value)) {
 		const cleanedArray = value
@@ -143,29 +143,6 @@ export const handleDownloadHTML = (catalogueSlug: string, fullURL: string) => {
 	}
 };
 
-export const handleDownloadPDF = async (
-	catalogueSlug: string,
-	fullURL: string,
-) => {
-	try {
-		const response = await fetch(
-			`/api/pdf?url=${encodeURIComponent(fullURL)}&name=${encodeURIComponent(catalogueSlug)}`,
-		);
-
-		if (!response.ok) throw new Error("Failed to generate PDF");
-
-		const blob = await response.blob();
-		const link = document.createElement("a");
-		link.href = URL.createObjectURL(blob);
-		link.download = `${catalogueSlug}.pdf`;
-		document.body.appendChild(link);
-		link.click();
-		link.remove();
-	} catch (error) {
-		console.error("Error downloading PDF:", error);
-	}
-};
-
 export const handleDownloadPng = async (catalogueSlug: string) => {
 	const svg = document.querySelector("#qr-code svg");
 	if (!svg) {
@@ -210,10 +187,6 @@ export const handleDownloadPng = async (catalogueSlug: string) => {
 	};
 	img.src = url;
 };
-
-export function toTitleCase(str) {
-	return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
-}
 
 interface ValidationResult {
 	isValid: boolean;

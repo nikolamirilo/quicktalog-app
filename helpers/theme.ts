@@ -29,11 +29,40 @@ export const CUSTOM_COLOR_KEYS = [
 ] as const satisfies readonly (keyof CustomThemeColors)[];
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
+const HEX_SHORT = /^#[0-9a-fA-F]{3}$/;
 
-export const isHexColor = (value: unknown): value is string =>
+const isHexColor = (value: unknown): value is string =>
 	typeof value === "string" && HEX.test(value);
 
-export const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
+/**
+ * Expands `#rgb` to `#rrggbb`, otherwise passes a valid six-digit hex
+ * through and rejects everything else.
+ *
+ * This only matters at the boundary where colours are read in from the
+ * outside world (`getComputedStyle`, stored JSON): a CSS minifier is free to
+ * shorten any colour whose three channel pairs are each a repeated digit
+ * (`#ffffff` -> `#fff`) to the equivalent three-digit form, and the rest of
+ * this module assumes the six-digit form throughout.
+ */
+const normalizeHexColor = (value: unknown): string | undefined => {
+	if (typeof value !== "string") return undefined;
+	const trimmed = value.trim();
+	if (HEX.test(trimmed)) return trimmed.toLowerCase();
+	if (HEX_SHORT.test(trimmed)) {
+		const [r, g, b] = trimmed.slice(1).toLowerCase();
+		return `#${r}${r}${g}${g}${b}${b}`;
+	}
+	return undefined;
+};
+
+/** Whether two palettes hold the same six colours, so a saved theme tile can tell it's the active selection. */
+export const customThemeColorsEqual = (
+	a: CustomThemeColors | undefined,
+	b: CustomThemeColors | undefined,
+): boolean =>
+	CUSTOM_COLOR_KEYS.every((key) => (a?.[key] ?? "") === (b?.[key] ?? ""));
+
+const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
 	const safe = isHexColor(hex) ? hex : "#000000";
 	return {
 		r: parseInt(safe.slice(1, 3), 16),
@@ -51,7 +80,7 @@ const rgbToHex = (r: number, g: number, b: number) =>
 	`#${toHex(r)}${toHex(g)}${toHex(b)}`;
 
 /** Linear blend of `a` towards `b`; `t` is how much of `b` lands in the result. */
-export const mix = (a: string, b: string, t: number): string => {
+const mix = (a: string, b: string, t: number): string => {
 	const ratio = Math.max(0, Math.min(1, t));
 	const from = hexToRgb(a);
 	const to = hexToRgb(b);
@@ -63,7 +92,7 @@ export const mix = (a: string, b: string, t: number): string => {
 };
 
 /** WCAG 2.x relative luminance. */
-export const luminance = (hex: string): number => {
+const luminance = (hex: string): number => {
 	const { r, g, b } = hexToRgb(hex);
 	const channel = (value: number) => {
 		const c = value / 255;
@@ -73,7 +102,7 @@ export const luminance = (hex: string): number => {
 };
 
 /** WCAG contrast ratio, 1 (identical) to 21 (black on white). */
-export const contrastRatio = (a: string, b: string): number => {
+const contrastRatio = (a: string, b: string): number => {
 	const la = luminance(a);
 	const lb = luminance(b);
 	const lighter = Math.max(la, lb);
@@ -81,9 +110,19 @@ export const contrastRatio = (a: string, b: string): number => {
 	return (lighter + 0.05) / (darker + 0.05);
 };
 
-/** The legible foreground to lay over `background`. */
-export const onColor = (background: string): string =>
-	contrastRatio("#111111", background) >= contrastRatio("#ffffff", background)
+/**
+ * The legible foreground to lay over `background`.
+ *
+ * A plain "higher contrast wins" comparison flips to black on the slightest
+ * margin for medium-brightness colours (a saturated purple or blue, say) --
+ * exactly the kind of colour picked for a "Primary" brand swatch. That reads
+ * as a bug on button/badge text most people expect to be white. Black only
+ * wins once it's a clearly better fit, not a coin flip.
+ */
+const BLACK_CONTRAST_MARGIN = 1.15;
+const onColor = (background: string): string =>
+	contrastRatio("#111111", background) >
+	contrastRatio("#ffffff", background) * BLACK_CONTRAST_MARGIN
 		? "#111111"
 		: "#ffffff";
 
@@ -92,7 +131,7 @@ export const onColor = (background: string): string =>
  * WCAG AA body-text threshold, so a brand colour that happens to sit close to
  * the card background stays readable instead of disappearing.
  */
-export const ensureContrast = (
+const ensureContrast = (
 	foreground: string,
 	background: string,
 	target = 4.5,
@@ -119,8 +158,8 @@ export const sanitizeCustomThemeColors = (
 	const source = colors as Record<string, unknown>;
 	const clean: CustomThemeColors = {};
 	for (const key of CUSTOM_COLOR_KEYS) {
-		const value = source[key];
-		if (isHexColor(value)) clean[key] = value.toLowerCase();
+		const normalized = normalizeHexColor(source[key]);
+		if (normalized) clean[key] = normalized;
 	}
 	return clean;
 };
@@ -142,6 +181,15 @@ export const deriveCatalogueVars = (
 	const onCard = onColor(cardBackground);
 	const onBackground = onColor(background);
 	const cardBorder = mix(cardBackground, onCard, 0.12);
+	// The built-in themes give the navbar its own shade, usually a touch
+	// closer to the page background than the cards are. There's no seventh
+	// "navigation" swatch to seed this from exactly, so nudge card colours
+	// toward the background instead of reusing them verbatim -- closer than
+	// a flat copy, without pretending six colours can reproduce every
+	// hand-tuned theme exactly.
+	const navBackground = mix(cardBackground, background, 0.2);
+	const onNav = onColor(navBackground);
+	const navBorder = mix(cardBorder, background, 0.2);
 
 	return {
 		"--catalogue-background": background,
@@ -166,9 +214,9 @@ export const deriveCatalogueVars = (
 		"--catalogue-section-background": mix(background, onBackground, 0.06),
 		"--catalogue-section-border": mix(background, onBackground, 0.14),
 
-		"--catalogue-navigation-background": cardBackground,
-		"--catalogue-navigation-text": onCard,
-		"--catalogue-navigation-border": cardBorder,
+		"--catalogue-navigation-background": navBackground,
+		"--catalogue-navigation-text": onNav,
+		"--catalogue-navigation-border": navBorder,
 
 		"--catalogue-category-accent": primary,
 		"--catalogue-category-border": primary,

@@ -9,7 +9,7 @@ import { writeItemDescription } from "@/server_actions/ai";
 import { Item } from "@quicktalog/common";
 import { Loader2, Sparkles } from "lucide-react";
 
-export interface ItemDetailsProps {
+interface ItemDetailsProps {
 	value: Item;
 	onChange: (value: Item) => void;
 	categoryName?: string;

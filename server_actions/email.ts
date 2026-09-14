@@ -1,11 +1,7 @@
 //@ts-nocheck
 "use server";
 import * as Sentry from "@sentry/nextjs";
-import {
-	InformationEmail,
-	NewCatalogueEmail,
-	WelcomeEmail,
-} from "@/components/emails";
+import { InformationEmail, WelcomeEmail } from "@/components/emails";
 import CancellationEmail from "@/components/emails/CancelationEmail";
 import { resend } from "@/constants/server";
 import { ContactData } from "@quicktalog/common";
@@ -35,36 +31,6 @@ export async function sendContactEmail(contactData: ContactData) {
 			tags: { op: "sendContactEmail" },
 		});
 		console.error("Failed to send contact email:", error);
-		return false;
-	}
-}
-export async function sendNewCatalogueEmail(
-	contactData: Omit<ContactData, "message" | "subject">,
-	catalogueName: string,
-	catalogueSlug: string,
-) {
-	const { email, name } = contactData;
-	try {
-		const res = await resend.emails.send({
-			from: "Quicktalog<office@quicktalog.app>",
-			to: email,
-			subject: `[Quicktalog] Your Catalogue ${catalogueName} is Live! 🚀`,
-			react: NewCatalogueEmail({
-				name: name,
-				catalogueName: catalogueName,
-				catalogueSlug: catalogueSlug,
-			}) as React.ReactElement,
-		});
-		console.log(res);
-		if (res.error == null) {
-			return true;
-		}
-	} catch (error: any) {
-		Sentry.captureException(error, {
-			level: "warning",
-			tags: { op: "sendNewCatalogueEmail" },
-		});
-		console.error("Failed to send new catalogue email:", error);
 		return false;
 	}
 }

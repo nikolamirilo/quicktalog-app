@@ -5,7 +5,7 @@ import {
 } from "@/constants/ocr";
 import { createWorker, OEM, PSM } from "tesseract.js";
 
-export const preprocessImage = (imageFile: File): Promise<Blob | null> => {
+const preprocessImage = (imageFile: File): Promise<Blob | null> => {
 	return new Promise((resolve) => {
 		const reader = new FileReader();
 		reader.onload = (e) => {
@@ -124,38 +124,7 @@ export const preprocessImage = (imageFile: File): Promise<Blob | null> => {
 	});
 };
 
-// utils/language-detector.ts
-export const detectLanguage = (text: string): string => {
-	const patterns = [
-		{ code: "chi_sim", pattern: /[\u4e00-\u9fff]/ },
-		{ code: "chi_tra", pattern: /[\u4e00-\u9fff]/ },
-		{ code: "jpn", pattern: /[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fff]/ },
-		{
-			code: "kor",
-			pattern:
-				/[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f\ua960-\ua97f\ud7b0-\ud7ff]/,
-		},
-		{
-			code: "ara",
-			pattern:
-				/[\u0600-\u06ff\u0750-\u077f\u08a0-\u08ff\ufb50-\ufdff\ufe70-\ufeff]/,
-		},
-		{ code: "rus", pattern: /[\u0400-\u04ff]/ },
-		{ code: "hin", pattern: /[\u0900-\u097f]/ },
-		{ code: "tha", pattern: /[\u0e00-\u0e7f]/ },
-		{ code: "heb", pattern: /[\u0590-\u05ff]/ },
-	];
-
-	for (const { code, pattern } of patterns) {
-		if (pattern.test(text)) {
-			return code;
-		}
-	}
-
-	return "eng";
-};
-
-export const getLanguageParameters = (languageCode: string) => {
+const getLanguageParameters = (languageCode: string) => {
 	const baseParams = {
 		tessedit_pageseg_mode: PSM.AUTO,
 		tessedit_ocr_engine_mode: OEM.LSTM_ONLY,
@@ -207,7 +176,7 @@ export const getLanguageParameters = (languageCode: string) => {
 /** Tesseract ships no Serbian Latin model; Croatian uses the same alphabet. */
 const LANGUAGE_ALIASES: Record<string, string> = { srp_latn: "hrv" };
 
-export const resolveOcrLanguage = (language?: string): string => {
+const resolveOcrLanguage = (language?: string): string => {
 	const code = language || "eng";
 	return LANGUAGE_ALIASES[code] ?? code;
 };

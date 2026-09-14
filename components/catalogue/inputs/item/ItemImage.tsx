@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ContentLayout, Item } from "@quicktalog/common";
 import { useEffect, useState } from "react";
 
-export interface ItemImageProps {
+interface ItemImageProps {
 	value: Item;
 	onChange: (value: Item) => void;
 	layout?: ContentLayout | null;

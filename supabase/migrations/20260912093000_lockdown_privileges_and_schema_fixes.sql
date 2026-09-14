@@ -1,12 +1,12 @@
 -- ============================================================================
--- Quicktalog — privilege lockdown + schema defect fixes
+-- Quicktalog - privilege lockdown + schema defect fixes
 --
 -- Context:
 --   * RLS is intentionally NOT enabled and is not planned. That makes the
 --     GRANT layer the ONLY thing standing between the public `anon` key and
 --     the data, so the grants have to be exact.
 --   * The Next.js app talks to PostgREST with SUPABASE_ANON_KEY (server-side
---     only — there is no browser Supabase client and no Supabase Auth), so
+--     only - there is no browser Supabase client and no Supabase Auth), so
 --     every app query executes as `anon`.
 --   * The Cloudflare worker (quicktalog-backend) uses SUPABASE_SERVICE_ROLE_KEY
 --     for everything, so `service_role` keeps full access.
@@ -23,7 +23,7 @@
 -- 1. Blanket revoke from anon + authenticated
 --
 -- Today every table and view in `public` is `GRANT ALL` to anon, authenticated
--- and service_role. `ALL` includes TRUNCATE, REFERENCES and TRIGGER — i.e. the
+-- and service_role. `ALL` includes TRUNCATE, REFERENCES and TRIGGER - i.e. the
 -- anon key can currently truncate `users`. Start from zero, then hand back only
 -- what the app actually calls.
 -- ----------------------------------------------------------------------------
@@ -34,7 +34,7 @@ REVOKE ALL ON ALL FUNCTIONS IN SCHEMA "public" FROM "anon", "authenticated";
 -- `authenticated` gets nothing back. Schema USAGE is left in place only so
 -- PostgREST can still introspect; with no object privileges it can read nothing.
 
--- service_role is the backend's identity — make sure it is whole, including on
+-- service_role is the backend's identity - make sure it is whole, including on
 -- `user_themes`, which was created outside this migration history.
 GRANT ALL ON ALL TABLES IN SCHEMA "public" TO "service_role";
 GRANT ALL ON ALL SEQUENCES IN SCHEMA "public" TO "service_role";
@@ -73,19 +73,19 @@ GRANT SELECT, INSERT, UPDATE ON TABLE "public"."subscriptions" TO "anon";
 -- analytics
 --   SELECT  app/api/dashboard/analytics/route.ts, and the body of
 --           get_pageview_totals() (SECURITY INVOKER).
---   INSERT  app/api/analytics/route.ts and /all — both use
+--   INSERT  app/api/analytics/route.ts and /all - both use
 --           ignoreDuplicates: true, i.e. ON CONFLICT DO NOTHING, so UPDATE is
 --           not required. If either is ever switched to a merge upsert
 --           (ignoreDuplicates: false), UPDATE must be granted here too.
 GRANT SELECT, INSERT ON TABLE "public"."analytics" TO "anon";
 
 -- newsletter
---   SELECT only — app/api/dashboard/analytics/route.ts does a head count.
+--   SELECT only - app/api/dashboard/analytics/route.ts does a head count.
 --   Signup inserts go through Drizzle in server_actions/newsletter.ts.
 GRANT SELECT ON TABLE "public"."newsletter" TO "anon";
 
 -- job_logs
---   INSERT only — app/api/analytics/{route,all/route}.ts write job records and
+--   INSERT only - app/api/analytics/{route,all/route}.ts write job records and
 --   never read them back (no .select() chained), so SELECT is not needed.
 GRANT INSERT ON TABLE "public"."job_logs" TO "anon";
 GRANT USAGE ON SEQUENCE "public"."job_logs_id_seq" TO "anon";
@@ -123,7 +123,7 @@ GRANT EXECUTE ON FUNCTION "public"."get_pageview_totals"("start_date" timestamp 
 -- 4. Default privileges
 --
 -- `user_themes` was created recently and silently inherited GRANT ALL for anon
--- and authenticated from these defaults. Stop that from happening again — new
+-- and authenticated from these defaults. Stop that from happening again - new
 -- tables must be granted explicitly from now on.
 -- ----------------------------------------------------------------------------
 ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public"
@@ -174,7 +174,7 @@ DROP FUNCTION IF EXISTS "public"."update_analytics_on_conflict"();
 --
 -- quicktalog-backend/src/handlers/analyticsProcessingJob.ts inserts
 -- { job_name, status, execution_time_ms, log } but `log` does not exist, so
--- every worker job-log insert fails — and the return value is never checked,
+-- every worker job-log insert fails - and the return value is never checked,
 -- so it fails silently. jsonb because the success path writes an object and the
 -- failure path writes a string.
 -- ----------------------------------------------------------------------------

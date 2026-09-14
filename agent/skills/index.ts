@@ -59,4 +59,4 @@ export function loadedSkillsFromMessages(messages: unknown[]): string[] {
 	return [...loaded];
 }
 
-export type { Skill, SkillContext, SkillGateCall } from "@/agent/skills/types";
+export type { Skill, SkillContext } from "@/agent/skills/types";

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import SmartLink from "@/components/general/SmartLink";
 
-export const LegalLinks = ({
+const LegalLinks = ({
 	type,
 	activeData,
 }: {

@@ -1,6 +1,6 @@
 import { Check, Minus } from "lucide-react";
 
-export interface ComparisonRow {
+interface ComparisonRow {
 	label: string;
 	/** One value per column. Boolean renders a check or dash; string renders text. */
 	values: (boolean | string)[];

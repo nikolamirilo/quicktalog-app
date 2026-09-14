@@ -1,12 +1,11 @@
 // LD JSON Schema constants for structured data
 
-import { Catalogue } from "@quicktalog/common";
 import type { ArticleMeta } from "@/content/articles/_types";
 import type { DocMeta } from "@/content/docs/_types";
 import { faqs } from "./details";
 
 // Organization schema
-export const organizationSchema = {
+const organizationSchema = {
 	"@context": "https://schema.org",
 	"@type": "Organization",
 	name: "Quicktalog",
@@ -28,7 +27,7 @@ export const organizationSchema = {
 };
 
 // WebSite schema
-export const websiteSchema = {
+const websiteSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebSite",
 	name: "Quicktalog",
@@ -47,48 +46,8 @@ export const websiteSchema = {
 	},
 };
 
-// Service schema
-export const serviceSchema = {
-	"@context": "https://schema.org",
-	"@type": "Service",
-	name: "Digital Catalogue Creation Service",
-	description:
-		"Professional digital catalog creation and management service for businesses. Create interactive, mobile-friendly catalogs with AI-powered tools, OCR import, and real-time analytics.",
-	provider: {
-		"@type": "Organization",
-		name: "Quicktalog",
-		url: "https://www.quicktalog.app",
-	},
-	serviceType: "Digital Catalogue Software",
-	areaServed: "Worldwide",
-	hasOfferCatalog: {
-		"@type": "OfferCatalog",
-		name: "Quicktalog Plans",
-		itemListElement: [
-			{
-				"@type": "Offer",
-				itemOffered: {
-					"@type": "Service",
-					name: "Free Plan",
-					description:
-						"One digital catalog with basic customization and QR code sharing",
-				},
-			},
-			{
-				"@type": "Offer",
-				itemOffered: {
-					"@type": "Service",
-					name: "Pro Plan",
-					description:
-						"Multiple catalogs with AI features, OCR import, and advanced analytics",
-				},
-			},
-		],
-	},
-};
-
 // Home page schema
-export const homePageSchema = {
+const homePageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
 	name: "Quicktalog - Create Stunning Digital Catalogs in Minutes",
@@ -122,7 +81,7 @@ export const homePageSchema = {
 };
 
 // Pricing page schema
-export const pricingPageSchema = {
+const pricingPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
 	name: "Pricing - Simple, Transparent Pricing | Quicktalog",
@@ -157,7 +116,7 @@ export const pricingPageSchema = {
 };
 
 // Contact page schema
-export const contactPageSchema = {
+const contactPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "ContactPage",
 	name: "Contact Us - Get Help with Your Digital Catalogue | Quicktalog",
@@ -177,7 +136,7 @@ export const contactPageSchema = {
 };
 
 // Demo page schema
-export const demoPageSchema = {
+const demoPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
 	name: "Try the Demo - Test Our Catalogue Maker | Quicktalog",
@@ -200,7 +159,7 @@ export const demoPageSchema = {
 };
 
 // Showcases page schema
-export const showcasesPageSchema = {
+const showcasesPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
 	name: "Showcases - See Digital Catalogs in Action | Quicktalog",
@@ -213,7 +172,7 @@ export const showcasesPageSchema = {
 		description: "Real examples of digital catalogs created with Quicktalog",
 	},
 };
-export const helpPageSchema = {
+const helpPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "FAQPage",
 	name: "Help Center - FAQs, Guides & Support | Quicktalog",
@@ -230,7 +189,7 @@ export const helpPageSchema = {
 	})),
 };
 
-export const docsPageSchema = {
+const docsPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
 	name: "Docs - How to Build a Digital Catalogue | Quicktalog",
@@ -294,7 +253,7 @@ export function generateDocSchema(meta: DocMeta) {
 	};
 }
 
-export const authenticationPageSchema = {
+const authenticationPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
 	name: "Login & Sign Up - Access Your Quicktalog Account",
@@ -313,7 +272,7 @@ export const authenticationPageSchema = {
 	],
 };
 
-export const articlesPageSchema = {
+const articlesPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
 	name: "Quicktalog Blog - Guides for Digital Menus & Catalogs",
@@ -379,30 +338,6 @@ export function generateArticleSchema(meta: ArticleMeta) {
 				],
 			},
 		],
-	};
-}
-
-export function generateCatalogueSchema(item: Catalogue) {
-	return {
-		"@context": "https://schema.org",
-		"@type": "WebPage",
-		name: `${item.heading} - Digital Catalogue`,
-		description: `Explore ${item.heading}'s offerings in this interactive digital catalogue.`,
-		url: `https://www.quicktalog.app/catalogues/${item.name}`,
-		mainEntity: {
-			"@type": "Service",
-			name: item.heading,
-			description: `Explore ${item.heading}'s offerings in this interactive digital catalogue.`,
-			provider: {
-				"@type": "Organization",
-				name: item.heading,
-			},
-			serviceType: "Digital Catalogue",
-			offers: {
-				"@type": "Offer",
-				description: "Interactive digital catalogue services",
-			},
-		},
 	};
 }
 

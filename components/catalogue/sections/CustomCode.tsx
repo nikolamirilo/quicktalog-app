@@ -1,6 +1,7 @@
 "use client";
 
 import type { CustomCodeBlock } from "@quicktalog/common";
+import * as Sentry from "@sentry/nextjs";
 import { useEffect, useRef } from "react";
 import BlockControls from "../cards/common/BlockControls";
 
@@ -77,7 +78,19 @@ const CustomCodeBlockComponent = ({
 			// Dynamically inserted scripts default to async; keep source order.
 			if (newScript.src) newScript.async = false;
 
-			oldScript.replaceWith(newScript);
+			try {
+				// Inline (src-less) scripts run synchronously as part of this
+				// call. Custom code is author-supplied (often AI-generated) and
+				// can throw or misuse the DOM; one bad block must not take down
+				// every other block on the page.
+				oldScript.replaceWith(newScript);
+			} catch (error) {
+				Sentry.captureException(error, {
+					level: "warning",
+					tags: { area: "custom-code-block" },
+				});
+				console.error("Custom code block failed to execute:", error);
+			}
 		}
 
 		return () => {

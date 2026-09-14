@@ -143,5 +143,3 @@ export function useChatImageOcr(language?: string) {
 		context: buildScannedContext(images),
 	};
 }
-
-export type ChatImageOcr = ReturnType<typeof useChatImageOcr>;

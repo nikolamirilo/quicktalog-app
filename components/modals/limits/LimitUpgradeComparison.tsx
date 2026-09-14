@@ -144,7 +144,7 @@ const PlanComparison = ({
 										</li>
 									)}
 
-								{requiredPlan.features.ocr_ai_import > 1 && (
+								{requiredPlan.features.ocr_ai_import > 0 && (
 									<li className="flex items-start">
 										<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
 										<span className="text-product-foreground">

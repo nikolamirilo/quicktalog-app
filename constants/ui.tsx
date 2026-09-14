@@ -1,4 +1,4 @@
-import { IBenefit, IStats } from "@/types/shared";
+import { IBenefit } from "@/types/shared";
 import { JSX } from "react";
 import { BsGlobe2 } from "react-icons/bs";
 import {
@@ -19,7 +19,6 @@ import {
 	FiClock,
 	FiEdit3,
 	FiExternalLink,
-	FiLayers,
 	FiPieChart,
 	FiSettings,
 	FiShare2,
@@ -30,68 +29,7 @@ import {
 	FiZap,
 } from "react-icons/fi";
 import { IoMdHelpCircleOutline } from "react-icons/io";
-import { IoDiamondOutline } from "react-icons/io5";
-import { MdOutlineLocalOffer } from "react-icons/md";
-import { PiPaintBrushDuotone } from "react-icons/pi";
-import {
-	RiGamepadLine,
-	RiHeartPulseLine,
-	RiScissorsLine,
-	RiStore2Line,
-} from "react-icons/ri";
 import { TbFileAnalytics } from "react-icons/tb";
-
-export const stats: IStats[] = [
-	{
-		title: "5 Minutes",
-		icon: <FiClock className="text-product-primary" size={34} />,
-		description: "Average time to create your first digital catalog.",
-	},
-	{
-		title: "Any Industry",
-		icon: <FiUsers className="text-product-primary" size={34} />,
-		description:
-			"Perfect for any business that needs to showcase products or services.",
-	},
-	{
-		title: "OCR Import",
-		icon: <FiZap className="text-product-primary" size={34} />,
-		description:
-			"Convert existing paper catalogs instantly with AI technology.",
-	},
-];
-export const examplePrompts = [
-	{
-		icon: <RiStore2Line size={18} />,
-		category: "Italian Specialties",
-		prompt:
-			"Italian restaurant offering handmade pasta, wood-fired pizza, classic desserts, and a selection of wines and soft drinks.",
-	},
-	{
-		icon: <RiScissorsLine size={18} />,
-		category: "Beauty Treatments",
-		prompt:
-			"Beauty salon providing haircuts, coloring, facials, massages, and manicure or pedicure services.",
-	},
-	{
-		icon: <RiHeartPulseLine size={18} />,
-		category: "Fitness Programs",
-		prompt:
-			"Fitness center offering personal training, group workouts, yoga, and gym memberships.",
-	},
-	{
-		icon: <RiGamepadLine size={18} />,
-		category: "Leisure Activities",
-		prompt:
-			"Entertainment venue featuring bowling, arcade games, snacks, drinks, and private party options.",
-	},
-	{
-		icon: <RiStore2Line size={18} />,
-		category: "Coffee & Pastries",
-		prompt:
-			"Coffee shop serving espresso, cappuccino, fresh pastries, breakfast dishes, and seasonal drinks.",
-	},
-];
 
 export const benefits: IBenefit[] = [
 	{
@@ -265,33 +203,5 @@ export const footerFeatures = [
 		icon: <FiExternalLink className="w-4 h-4" />,
 		title: "QR Code Sharing",
 		description: "One-click sharing",
-	},
-];
-
-export const editSteps = [
-	{
-		value: 1,
-		label: "General",
-		icon: <FiEdit3 size={18} />,
-	},
-	{
-		value: 2,
-		label: "Sections",
-		icon: <FiLayers size={18} />,
-	},
-	{
-		value: 3,
-		label: "Items",
-		icon: <MdOutlineLocalOffer size={18} />,
-	},
-	{
-		value: 4,
-		label: "Branding",
-		icon: <IoDiamondOutline size={18} />,
-	},
-	{
-		value: 5,
-		label: "Appearance",
-		icon: <PiPaintBrushDuotone size={18} />,
 	},
 ];

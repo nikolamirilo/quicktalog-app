@@ -4,7 +4,7 @@ import { CardProps } from "@/types/shared";
 import CardControls from "./CardControls";
 import DiscountBadge from "./DiscountBadge";
 
-export interface BaseCardProps extends CardProps {
+interface BaseCardProps extends CardProps {
 	className: string;
 	children: (slugId: string) => React.ReactNode;
 	discountPosition?: "left" | "right";

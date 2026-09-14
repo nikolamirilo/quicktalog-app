@@ -391,5 +391,3 @@ function gateCalls<T extends Record<string, { execute?: unknown }>>(
 	}
 	return tools;
 }
-
-export type CatalogueTools = ReturnType<typeof buildTools>;

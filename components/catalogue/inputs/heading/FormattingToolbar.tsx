@@ -10,7 +10,7 @@ import { HeadingSize } from "@/types/shared";
 import { FiItalic } from "react-icons/fi";
 import { HiMiniBold } from "react-icons/hi2";
 
-export interface FormattingToolbarProps {
+interface FormattingToolbarProps {
 	showToolbar: boolean;
 	isBold: boolean;
 	isItalic: boolean;

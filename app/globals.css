@@ -68,6 +68,19 @@ html {
 	border-radius: 1rem;
 }
 
+.chat-scroll {
+	scrollbar-width: thin;
+}
+
+.chat-scroll::-webkit-scrollbar {
+	width: 4px;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb {
+	background: var(--product-primary);
+	border-radius: 1rem;
+}
+
 .dashboard-sidebar {
 	position: sticky;
 	top: 8rem;
