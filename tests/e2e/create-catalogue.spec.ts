@@ -26,20 +26,23 @@ test.describe("create catalogue", () => {
 	test("creates a catalogue via the manual builder", async ({ page }) => {
 		const name = `E2E Test ${Date.now()}`;
 		const dialog = page.getByRole("alertdialog");
+		const createBtn = page
+			.getByRole("button", { name: /create catalogue/i })
+			.filter({ visible: true })
+			.first();
 
-		// Open the create modal. Retry to ride out the client-side UserContext
-		// hydration window - clicking before it loads redirects to /auth.
+		// Open the create modal. The button redirects to /auth when the Clerk
+		// UserContext hasn't hydrated yet, so we wait for hydration before
+		// clicking. `toPass` stays as a safety net for cold-cache runs.
 		await expect(async () => {
 			if (!page.url().includes("/admin/dashboard")) {
-				await page.goto("/admin/dashboard");
+				await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
 			}
-			await page
-				.getByRole("button", { name: /create catalogue/i })
-				.filter({ visible: true })
-				.first()
-				.click();
+			await page.waitForLoadState("networkidle");
+			await createBtn.waitFor({ state: "visible" });
+			await createBtn.click();
 			await expect(dialog.getByText("Create a Catalog")).toBeVisible({
-				timeout: 3000,
+				timeout: 5_000,
 			});
 		}).toPass({ timeout: 30_000 });
 
