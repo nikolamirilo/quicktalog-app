@@ -12,11 +12,7 @@ interface AuthLinksProps {
 }
 
 const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
-	const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
-	const clerkState = clerkEnabled ? safeUseUser() : null;
-	const isSignedIn = clerkState?.isSignedIn ?? false;
-	const user = clerkState?.user;
-	const isLoaded = clerkState?.isLoaded ?? true;
+	const { isSignedIn, user, isLoaded } = useUser();
 
 	if (!isLoaded) {
 		if (isMobile) {
@@ -133,15 +129,5 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 		</div>
 	);
 };
-
-function safeUseUser() {
-	try {
-		return useUser();
-	} catch {
-		return { isLoaded: true, isSignedIn: false, user: null } as ReturnType<
-			typeof useUser
-		>;
-	}
-}
 
 export default AuthLinks;

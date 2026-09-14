@@ -10,19 +10,18 @@ import { notFound } from "next/navigation";
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
-	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-	if (!baseUrl) {
-		return [];
-	}
 	try {
-		const res = await fetch(`${baseUrl}/api/items?type=name&status=active`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-			next: {
-				tags: ["catalogues-list"],
-				revalidate: 3600,
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items?type=name&status=active`,
+			{
+				method: "GET",
+				headers: { "Content-Type": "application/json" },
+				next: {
+					tags: ["catalogues-list"],
+					revalidate: 3600,
+				},
 			},
-		});
+		);
 
 		if (!res.ok) {
 			console.warn("Error fetching catalogues:", res.statusText);
@@ -47,25 +46,20 @@ export async function generateMetadata({
 }: {
 	params: Promise<{ name: string }>;
 }): Promise<Metadata> {
-	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-	if (!baseUrl) {
-		return {
-			title: "Catalogue | Quicktalog",
-			description:
-				"Explore this digital service catalogue created with Quicktalog.",
-		};
-	}
 	try {
 		const { name } = await params;
 
-		const res = await fetch(`${baseUrl}/api/items/${name}?type=meta`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-			next: {
-				tags: [`catalogue-${name}`, "catalogue-metadata"],
-				revalidate: 3600,
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items/${name}?type=meta`,
+			{
+				method: "GET",
+				headers: { "Content-Type": "application/json" },
+				next: {
+					tags: [`catalogue-${name}`, "catalogue-metadata"],
+					revalidate: 3600,
+				},
 			},
-		});
+		);
 
 		if (!res.ok) {
 			return {
@@ -109,10 +103,6 @@ export async function generateMetadata({
 }
 
 const page = async ({ params }: { params: Promise<{ name: string }> }) => {
-	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-	if (!baseUrl) {
-		return <LimitsModal isOpen={true} type="notFound" />;
-	}
 	try {
 		const { name } = await params;
 
@@ -120,13 +110,16 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 			throw new Error("Catalogue name is required");
 		}
 
-		const res = await fetch(`${baseUrl}/api/items/${name}`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-			next: {
-				tags: [`catalogue-${name}`, "catalogue-detail"],
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items/${name}`,
+			{
+				method: "GET",
+				headers: { "Content-Type": "application/json" },
+				next: {
+					tags: [`catalogue-${name}`, "catalogue-detail"],
+				},
 			},
-		});
+		);
 
 		if (!res.ok) {
 			if (res.status === 404) {

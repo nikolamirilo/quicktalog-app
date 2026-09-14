@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
 			allow: "/",
 			disallow: ["/admin/", "/api/", "/test"],
 		},
-		sitemap: `${process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.quicktalog.app"}/sitemap.xml`,
+		sitemap: `${process.env.NEXT_PUBLIC_BASE_URL}/sitemap.xml`,
 	};
 }

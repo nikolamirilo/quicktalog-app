@@ -4,10 +4,7 @@ import { getAllArticles } from "@/helpers/articles";
 import { getAllDocSlugs } from "@/helpers/docs";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-	if (!baseUrl) {
-		return [];
-	}
+	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
 
 	let catalogues: Catalogue[] = [];
 	try {

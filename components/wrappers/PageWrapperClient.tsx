@@ -12,9 +12,12 @@ export const PageWrapperClient = ({
 }: Readonly<{
 	children: React.ReactNode;
 }>) => {
-	const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-	const tree = (
-		<>
+	return (
+		<ClerkProvider
+			afterSignOutUrl="/"
+			signInUrl="/auth"
+			signUpUrl="/auth?mode=signup"
+		>
 			<UserContextProvider>
 				<CatalogueContextProvider>
 					<MainContextProvider>{children}</MainContextProvider>
@@ -23,20 +26,6 @@ export const PageWrapperClient = ({
 			<CookieBanner />
 			<Toaster />
 			<SonnerToaster />
-		</>
-	);
-
-	if (!publishableKey) {
-		return tree;
-	}
-
-	return (
-		<ClerkProvider
-			afterSignOutUrl="/"
-			signInUrl="/auth"
-			signUpUrl="/auth?mode=signup"
-		>
-			{tree}
 		</ClerkProvider>
 	);
 };

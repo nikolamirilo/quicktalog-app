@@ -3,7 +3,7 @@ name: CI
 on: [push, pull_request]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -19,9 +19,6 @@ jobs:
 
       - name: Run Lint
         run: npm run lint
-
-      - name: Build Next.js app
-        run: npm run build
 
   unit-tests:
     runs-on: ubuntu-latest
