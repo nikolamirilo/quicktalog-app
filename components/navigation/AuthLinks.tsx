@@ -12,7 +12,13 @@ interface AuthLinksProps {
 }
 
 const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
-	const { isSignedIn, user, isLoaded } = useUser();
+	const clerkEnabled = Boolean(
+		process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+	);
+	const clerkState = clerkEnabled ? safeUseUser() : null;
+	const isSignedIn = clerkState?.isSignedIn ?? false;
+	const user = clerkState?.user;
+	const isLoaded = clerkState?.isLoaded ?? true;
 
 	if (!isLoaded) {
 		if (isMobile) {
@@ -99,7 +105,6 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 			</>
 		);
 	}
-
 	return (
 		<div className="ml-3 flex items-center gap-2">
 			{isSignedIn ? (
@@ -130,5 +135,15 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 		</div>
 	);
 };
+
+function safeUseUser() {
+	try {
+		return useUser();
+	} catch {
+		return { isLoaded: true, isSignedIn: false, user: null } as ReturnType<
+			typeof useUser
+		>;
+	}
+}
 
 export default AuthLinks;

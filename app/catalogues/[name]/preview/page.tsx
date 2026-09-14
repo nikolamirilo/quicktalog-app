@@ -1,6 +1,6 @@
 import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
-import { redis } from "@/utils/redis";
+import { getRedis } from "@/utils/redis";
 import * as Sentry from "@sentry/nextjs";
 import { Catalogue as CatalogueType } from "@quicktalog/common";
 
@@ -25,7 +25,7 @@ const PreviewPage = async ({
 
 		console.log("Fetching preview for:", name);
 
-		const data = await redis.get(name);
+		const data = await getRedis().get(name);
 
 		if (!data) {
 			console.warn("No data found for the service catalogue");

@@ -10,9 +10,13 @@ import { notFound } from "next/navigation";
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
+	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+	if (!baseUrl) {
+		return [];
+	}
 	try {
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items?type=name&status=active`,
+			`${baseUrl}/api/items?type=name&status=active`,
 			{
 				method: "GET",
 				headers: { "Content-Type": "application/json" },
@@ -46,11 +50,19 @@ export async function generateMetadata({
 }: {
 	params: Promise<{ name: string }>;
 }): Promise<Metadata> {
+	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+	if (!baseUrl) {
+		return {
+			title: "Catalogue | Quicktalog",
+			description:
+				"Explore this digital service catalogue created with Quicktalog.",
+		};
+	}
 	try {
 		const { name } = await params;
 
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items/${name}?type=meta`,
+			`${baseUrl}/api/items/${name}?type=meta`,
 			{
 				method: "GET",
 				headers: { "Content-Type": "application/json" },
@@ -103,6 +115,10 @@ export async function generateMetadata({
 }
 
 const page = async ({ params }: { params: Promise<{ name: string }> }) => {
+	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+	if (!baseUrl) {
+		return <LimitsModal isOpen={true} type="notFound" />;
+	}
 	try {
 		const { name } = await params;
 
@@ -111,7 +127,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 		}
 
 		const res = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_URL}/api/items/${name}`,
+			`${baseUrl}/api/items/${name}`,
 			{
 				method: "GET",
 				headers: { "Content-Type": "application/json" },

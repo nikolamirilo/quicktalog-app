@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
 import { sanitizeCustomThemeColors } from "@/helpers/theme";
 import { drizzleClient } from "@/utils/drizzle";
-import { redis, syncCache } from "@/utils/redis";
+import { getRedis, syncCache } from "@/utils/redis";
 import {
 	Catalogue,
 	defaultCatalogueData,
@@ -50,7 +50,7 @@ export async function deleteItem(name: string): Promise<boolean> {
 		if (!existing || existing.createdBy !== user.id) return false;
 
 		await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));
-		await syncCache(() => redis.del(name));
+		await syncCache(() => getRedis().del(name));
 		revalidateCatalogue(name);
 		revalidateDashboard();
 		return true;
@@ -109,11 +109,12 @@ export async function updateItemStatus(
 
 		if (name) {
 			await syncCache(async () => {
-				const cached = await redis.get(name);
+				const r = getRedis();
+				const cached = await r.get(name);
 				if (cached) {
 					const data = typeof cached === "string" ? JSON.parse(cached) : cached;
 					data.status = status;
-					await redis.set(name, JSON.stringify(data));
+					await r.set(name, JSON.stringify(data));
 				}
 			});
 			revalidateCatalogue(name);
@@ -211,7 +212,7 @@ export async function createCatalogue(
 			})
 			.returning();
 
-		const res = await redis.set(slug, JSON.stringify(data));
+		const res = await getRedis().set(slug, JSON.stringify(data));
 		console.log(res);
 
 		if (!data) {
@@ -252,7 +253,7 @@ export async function updateCatalogue(catalogueData: Catalogue) {
 
 		catalogueData = sanitizeAppearance(catalogueData);
 
-		const res = await redis.set(
+		const res = await getRedis().set(
 			catalogueData.name,
 			JSON.stringify(catalogueData),
 		);
@@ -282,7 +283,8 @@ export async function updateCatalogue(catalogueData: Catalogue) {
 
 export async function getCatalogueByName(name: string) {
 	try {
-		let catalogue = await redis.get(name);
+		const r = getRedis();
+		let catalogue = await r.get(name);
 		if (catalogue === null) {
 			const data = await drizzleClient.query.catalogues.findFirst({
 				where: eq(catalogues.name, name),
@@ -296,7 +298,7 @@ export async function getCatalogueByName(name: string) {
 					data: defaultCatalogueData,
 				};
 			}
-			await redis.set(name, JSON.stringify(data));
+			await r.set(name, JSON.stringify(data));
 			catalogue = data;
 		}
 		return {
@@ -344,7 +346,7 @@ export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 			})
 			.where(eq(catalogues.name, catalogueData.name));
 
-		const redisRes = await redis.set(
+		const redisRes = await getRedis().set(
 			catalogueData.name,
 			JSON.stringify(catalogueData),
 		);
