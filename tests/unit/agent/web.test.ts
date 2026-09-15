@@ -195,6 +195,22 @@ describe("fetchPage", () => {
 		});
 	});
 
+	it("names the address it actually read when a page yields nothing", async () => {
+		// A URL truncated at a space lands on a country or landing page, which
+		// has no listing text. Saying only "this page cannot be read" sends the
+		// user off to paste content when the real problem is the address.
+		vi.spyOn(globalThis, "fetch").mockResolvedValue(firecrawlOk("tiny"));
+		const result = await fetchPage("https://shop.test/rs/sr");
+
+		// The address reported is the one after redirects, which is the useful
+		// one: a truncated URL lands on a country or home page, and seeing where
+		// it ended up is what makes the real problem obvious.
+		expect(result).toEqual({
+			error: expect.stringContaining("https://cafe.test/menu"),
+		});
+		expect((result as { error: string }).error).toContain("confirm the full");
+	});
+
 	it("refuses a file that is not a web page", async () => {
 		vi.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
 			isFirecrawl(input)

@@ -237,9 +237,12 @@ function toPage(
 	const clean = stripFences(text).trim();
 
 	if (clean.length < MIN_USEFUL_CHARS) {
+		// Naming the address that was actually read is the point of this message.
+		// A truncated URL silently lands on a site's country or landing page,
+		// which has no product text on it - so the failure looks like the site
+		// being unscrapable when really the wrong page was fetched.
 		return {
-			error:
-				"That page returned almost no readable text. It may need JavaScript or be behind a cookie wall - ask the user to paste the content instead.",
+			error: `Read ${url} and it returned almost no readable text. Before telling the user the site cannot be read, check the address: if it is a home or landing page rather than the listing they meant, or if what they typed looks truncated or had a space in it, say exactly which address you read and ask them to confirm the full one. Only if the address was right is this a page that needs JavaScript or sits behind a cookie wall, and then ask them to paste the content instead.`,
 		};
 	}
 
