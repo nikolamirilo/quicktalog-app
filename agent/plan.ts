@@ -123,6 +123,21 @@ function currentAskFrom(messages: unknown[]): number {
 }
 
 /**
+ * Every part of every message belonging to the ask in progress.
+ *
+ * The unit anything per-ask has to be counted over: a plan spans several
+ * requests, so a budget scoped to one request is not a budget at all.
+ */
+export function currentAskParts(messages: unknown[]): unknown[] {
+	const parts: unknown[] = [];
+	for (const message of (messages ?? []).slice(currentAskFrom(messages))) {
+		const own = (message as { parts?: unknown[] })?.parts;
+		if (Array.isArray(own)) parts.push(...own);
+	}
+	return parts;
+}
+
+/**
  * The plan belonging to the ask in progress, or null if it needed none.
  *
  * Scoped to the current ask rather than the whole transcript, because a plan
@@ -136,37 +151,48 @@ function currentAskFrom(messages: unknown[]): number {
 export function planFromMessages(messages: unknown[]): PlanState | null {
 	let newest: PlanState | null = null;
 
-	for (const message of (messages ?? []).slice(currentAskFrom(messages))) {
-		const parts = (message as { parts?: unknown[] })?.parts;
-		if (!Array.isArray(parts)) continue;
+	for (const part of currentAskParts(messages)) {
+		const typed = part as {
+			type?: string;
+			state?: string;
+			output?: { plan?: unknown };
+		};
+		if (!typed?.type || !PLAN_TOOL_PARTS.has(typed.type)) continue;
+		if (typed.state !== "output-available") continue;
 
-		for (const part of parts) {
-			const typed = part as {
-				type?: string;
-				state?: string;
-				output?: { plan?: unknown };
+		const parsed = planStateSchema.safeParse(typed.output?.plan);
+		// Rebuilt field by field rather than taken as-is: `strict` is off in
+		// this project, so zod's inferred output does not line up with
+		// `PlanState`, and anything else the part carried is dropped here.
+		if (parsed.success) {
+			newest = {
+				tasks: parsed.data.tasks.map((task) => ({
+					title: task.title,
+					status: task.status,
+					...(task.note ? { note: task.note } : {}),
+				})),
+				revision: parsed.data.revision,
 			};
-			if (!typed?.type || !PLAN_TOOL_PARTS.has(typed.type)) continue;
-			if (typed.state !== "output-available") continue;
-
-			const parsed = planStateSchema.safeParse(typed.output?.plan);
-			// Rebuilt field by field rather than taken as-is: `strict` is off in
-			// this project, so zod's inferred output does not line up with
-			// `PlanState`, and anything else the part carried is dropped here.
-			if (parsed.success) {
-				newest = {
-					tasks: parsed.data.tasks.map((task) => ({
-						title: task.title,
-						status: task.status,
-						...(task.note ? { note: task.note } : {}),
-					})),
-					revision: parsed.data.revision,
-				};
-			}
 		}
 	}
 
 	return newest;
+}
+
+/**
+ * Pages already read while working on this ask.
+ *
+ * The fetch budget lives on the session, which is rebuilt per request - so
+ * without this a plan spanning five requests would get three fetches each.
+ * Counts settled calls, matching `allowWebFetch`, where a retry costs too.
+ */
+export function fetchesFromMessages(messages: unknown[]): number {
+	return currentAskParts(messages).filter((part) => {
+		const typed = part as { type?: string; state?: string };
+		return (
+			typed?.type === "tool-fetchUrl" && typed.state === "output-available"
+		);
+	}).length;
 }
 
 /** Is this request the builder resuming a plan rather than the user asking? */

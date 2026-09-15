@@ -1,6 +1,7 @@
 import {
 	activeTaskIndex,
 	CONTINUE_PLAN_MARKER,
+	fetchesFromMessages,
 	isPlanContinuation,
 	isPlanFinished,
 	MAX_PLAN_CONTINUATIONS,
@@ -453,5 +454,78 @@ describe("resumeDecision", () => {
 			expect(decision).toEqual({ action: "resume" });
 			lastRevision = plan.revision;
 		}
+	});
+});
+
+describe("fetchesFromMessages", () => {
+	const fetched = {
+		role: "assistant",
+		parts: [{ type: "tool-fetchUrl", state: "output-available" }],
+	};
+	const resume = {
+		role: "user",
+		parts: [{ type: "text", text: CONTINUE_PLAN_MARKER }],
+	};
+
+	it("counts nothing when no page was read", () => {
+		expect(
+			fetchesFromMessages([
+				{ role: "user", parts: [{ type: "text", text: "add a section" }] },
+			]),
+		).toBe(0);
+	});
+
+	it("carries the budget across the requests that work one plan", () => {
+		// The session is rebuilt per request, so without this a plan spanning
+		// five requests would get the full three-page budget on each of them.
+		expect(
+			fetchesFromMessages([
+				{ role: "user", parts: [{ type: "text", text: "build from my site" }] },
+				fetched,
+				resume,
+				fetched,
+			]),
+		).toBe(2);
+	});
+
+	it("gives a new ask its own budget", () => {
+		expect(
+			fetchesFromMessages([
+				{ role: "user", parts: [{ type: "text", text: "build from my site" }] },
+				fetched,
+				fetched,
+				fetched,
+				{ role: "user", parts: [{ type: "text", text: "now this other one" }] },
+				fetched,
+			]),
+		).toBe(1);
+	});
+
+	it("is enforced, not just counted", () => {
+		const agent = new CatalogueSession(
+			catalogue,
+			{},
+			undefined,
+			[],
+			"user-1",
+			null,
+			3,
+		);
+
+		expect(agent.allowWebFetch()).toMatchObject({
+			ok: false,
+			error: expect.stringContaining("already read 3 pages"),
+		});
+	});
+
+	it("ignores a fetch that never settled", () => {
+		expect(
+			fetchesFromMessages([
+				{
+					role: "assistant",
+					parts: [{ type: "tool-fetchUrl", state: "input-available" }],
+				},
+			]),
+		).toBe(0);
 	});
 });

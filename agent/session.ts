@@ -81,6 +81,8 @@ export class CatalogueSession {
 		loadedSkills: string[] = [],
 		userId?: string,
 		plan: PlanState | null = null,
+		/** Pages already read earlier in this ask; see `fetchesFromMessages`. */
+		fetches = 0,
 	) {
 		this.working = catalogue;
 		this.limits = limits;
@@ -88,6 +90,7 @@ export class CatalogueSession {
 		this.loadedSkills = new Set(loadedSkills);
 		this.userId = userId;
 		this.plan = plan;
+		this.fetches = fetches;
 	}
 
 	/**
@@ -216,7 +219,7 @@ export class CatalogueSession {
 		if (this.fetches >= MAX_FETCHES_PER_TURN) {
 			return {
 				ok: false,
-				error: `You have already read ${MAX_FETCHES_PER_TURN} pages in this conversation, which is the limit. Work with what you have, or ask the user for the detail you are missing.`,
+				error: `You have already read ${MAX_FETCHES_PER_TURN} pages working on this request, which is the limit. Work with what you have, or ask the user for the detail you are missing.`,
 			};
 		}
 		this.fetches += 1;
@@ -249,7 +252,7 @@ export class CatalogueSession {
 		return {
 			ok: false,
 			error:
-				"Code and embed sections cannot be written in a conversation that has read a web page, because markup from a page must never reach a published catalogue. Add what you found as a text or category section instead, and tell the user why.",
+				"Code and embed sections cannot be written in a request that has read a web page, because markup from a page must never reach a published catalogue. Do not put a text section in its place: a block of prose is not a scratch card and not an animated banner, and shipping one as though it were is worse than not building it. If this was a task on a plan, skip that task with this reason. Otherwise tell the user it cannot be done here, and that asking for it in a new message - one that reads no page - will build it properly.",
 		};
 	}
 

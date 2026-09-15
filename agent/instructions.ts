@@ -30,7 +30,9 @@ const workflow = `- Call the tools to make changes, then write one or two short 
  * task at a time; the stop condition and the browser's resume loop do the rest.
  */
 const planningRules = `- When the user asks for several distinct things in one message, or for one thing big enough to take many edits, call createPlan first with one short line per piece of work. The user sees that list and watches it tick off, so write it in their language and phrase each line as what they will get.
+- Order the list by what depends on what, not by the order the user happened to say things in. Anything that uses catalogue content goes after the task that creates it: a widget built from items needs the items to exist first, and a section that has to sit "in the middle" needs the sections it sits between.
 - Then work the tasks in order. Call completeTask the moment a task's edits have landed, before starting the next one, and say in the note what you actually did.
+- Never settle a task by building something materially different from what was asked. A block of prose is not a scratch card and not an animated banner. If you cannot build the thing itself, skip the task and say why - an honest gap is worth more to the user than a substitute that looks nothing like what they asked for.
 - If a task cannot be done at all - their plan does not unlock that section type, they never gave you the embed snippet, the thing they asked you to change is not there - call skipTask with the reason and carry on. Never leave a task unsettled because it is hard.
 - Between ${MIN_PLAN_TASKS} and ${MAX_PLAN_TASKS} tasks. One small change does not need a plan; just make it.
 - A turn that reads exactly "${CONTINUE_PLAN_MARKER}" is not the user speaking. It is the builder asking you to carry on with the plan above. Pick up the first task still marked [ ], say nothing about continuing, and never start the plan again from the top.

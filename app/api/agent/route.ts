@@ -1,5 +1,9 @@
 import { CatalogueSession, createCatalogueAgent } from "@/agent";
-import { isPlanContinuation, planFromMessages } from "@/agent/plan";
+import {
+	fetchesFromMessages,
+	isPlanContinuation,
+	planFromMessages,
+} from "@/agent/plan";
 import { loadedSkillsFromMessages } from "@/agent/skills";
 import { authorize, meter } from "@/lib/ai/access";
 import type { Catalogue } from "@quicktalog/common";
@@ -72,6 +76,9 @@ export async function POST(request: Request) {
 		loadedSkillsFromMessages(messages),
 		auth.userId,
 		plan,
+		// The session is per request but the fetch budget is per ask, or a plan
+		// spanning five requests would get three pages each.
+		fetchesFromMessages(messages),
 	);
 
 	// Combine the client-side abort (user clicks "Clear conversation") with a

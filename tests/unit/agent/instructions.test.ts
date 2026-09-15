@@ -101,6 +101,20 @@ describe("plan instructions", () => {
 		expect(withPlan(null)).toContain(CONTINUE_PLAN_MARKER);
 	});
 
+	it("orders the list by dependency, not by how the user said it", () => {
+		// "a scratch card from my items, and items from this page" has to build
+		// the items first, whatever order the two arrived in.
+		expect(withPlan(null)).toContain("Order the list by what depends on what");
+	});
+
+	it("tells the agent to skip rather than ship a substitute", () => {
+		// A text block standing in for a blocked widget is not a simpler version
+		// of it, and shipping one reads as the request having been met.
+		expect(withPlan(null)).toContain(
+			"materially different from what was asked",
+		);
+	});
+
 	it("carries no resume block when no plan is in flight", () => {
 		expect(withPlan(null)).not.toContain("PLAN (resumed");
 	});
