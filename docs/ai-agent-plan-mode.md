@@ -9,7 +9,28 @@ Two connected proposals for the builder's AI agent on branch `test`:
    mode makes "one prompt" stop meaning anything.
 
 Read `docs/ai-chat-flow.md` first if you have not; this document assumes the boxes
-in it. Nothing here is implemented yet.
+in it.
+
+**Status: Part 1 is built. Part 2 is not.** What shipped follows this plan with
+four deliberate departures, all noted in place below:
+
+- **No `turnId`.** The `prompts` table lives in `@quicktalog/common` and has no
+  column to dedupe on, so the route simply does not meter a request that is
+  resuming a plan. One ask still costs one prompt. It trusts the message history,
+  which is client-supplied; the airtight version is Part 2's ledger.
+- **`AGENT_TIMEOUT_MS` went from 30s to 50s.** The old ceiling was chosen for a
+  single-shot turn and sits below the 38s budget, so every long turn would have
+  ended as a timeout error rather than a paused plan.
+- **The resume policy is a pure function**, `resumeDecision` in `agent/plan.ts`,
+  rather than conditionals in the effect. It is the part that must not be wrong,
+  and this way it is tested without React.
+- **A plan is scoped to the ask that created it.** Not in the original design, and
+  a bug without it: a user abandons a half-finished list by typing something else,
+  and the loop would otherwise pick the old one back up.
+
+**§1.7 (context compaction) was not built.** Every resume still resends the whole
+history. It is the one piece of this design still outstanding, and the first thing
+to do if long plans prove expensive.
 
 ---
 
@@ -299,6 +320,9 @@ breaks that pairing and the provider rejects the request.
 | 8 | Checklist card, marker suppression | `components/catalogue/chat/PlanChecklist.tsx` (new), `CatalogueChat.tsx`, `ChatMessageBubble.tsx` |
 | 9 | Credits (Part 2) | `lib/ai/access.ts`, `lib/ai/credits.ts` (new), migration, `fetchUserData.ts` |
 | 10 | Docs | `docs/ai-chat-flow.md` - plan mode changes several of its boxes |
+
+Of these, 1-6 and 8 are built, 7 is built as `resumeDecision` plus the effect that
+carries it out, and 9-10 are not.
 
 Tests, alongside the existing `tests/unit/agent/` suite:
 

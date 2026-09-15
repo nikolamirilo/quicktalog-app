@@ -1,3 +1,13 @@
+import {
+	activeTaskIndex,
+	clonePlan,
+	isPlanFinished,
+	MAX_TASK_NOTE_CHARS,
+	pendingCount,
+	type PlanState,
+	type PlanTaskStatus,
+	type PlanToolResult,
+} from "@/agent/plan";
 import { allowedSectionTypes } from "@/agent/schemas";
 import { activeSkills, findSkill } from "@/agent/skills";
 import type { SkillGateCall } from "@/agent/skills/types";
@@ -21,6 +31,16 @@ const MAX_SNAPSHOT_SECTIONS = 40;
 const MAX_SNAPSHOT_ITEMS = 40;
 /** Each one is a Firecrawl credit and a chunk of context; the loop has 16 steps. */
 const MAX_FETCHES_PER_TURN = 3;
+/**
+ * How long a request keeps taking new steps before it hands the rest of the
+ * plan to the next one.
+ *
+ * It has to clear three ceilings in order: the step already in flight has to
+ * finish, `AGENT_TIMEOUT_MS` in the route aborts the stream, and the platform
+ * kills the function at `maxDuration`. Stopping at 38s leaves room for a slow
+ * `addSection` - forty items and twenty photo lookups - to land.
+ */
+const TURN_BUDGET_MS = 38_000;
 
 type ItemBlock = CategoryBlock | ContainerBlock;
 
@@ -47,7 +67,10 @@ export class CatalogueSession {
 	readonly applied: string[] = [];
 	/** Clerk id of the caller, so tools that touch the database do not re-query it. */
 	readonly userId?: string;
+	/** The multi-part request being worked, restored from history on a resume. */
+	plan: PlanState | null;
 	private readonly loadedSkills: Set<string>;
+	private readonly startedAt = Date.now();
 	private fetches = 0;
 	private readWeb = false;
 
@@ -57,12 +80,114 @@ export class CatalogueSession {
 		access?: AiSectionAccess,
 		loadedSkills: string[] = [],
 		userId?: string,
+		plan: PlanState | null = null,
 	) {
 		this.working = catalogue;
 		this.limits = limits;
 		this.access = access;
 		this.loadedSkills = new Set(loadedSkills);
 		this.userId = userId;
+		this.plan = plan;
+	}
+
+	/**
+	 * False once the request has spent its share of the function budget.
+	 *
+	 * Read by the agent's stop condition after every step, so the loop ends on
+	 * a clean boundary with its work streamed and the plan's remaining tasks
+	 * left for the next request.
+	 */
+	outOfTime(): boolean {
+		return Date.now() - this.startedAt > TURN_BUDGET_MS;
+	}
+
+	createPlan(titles: string[]): PlanToolResult {
+		if (this.plan && !isPlanFinished(this.plan)) {
+			return {
+				ok: false,
+				error:
+					"There is already a plan in progress. Work through the tasks that are left, or skip the ones that no longer apply.",
+			};
+		}
+
+		this.plan = {
+			tasks: titles.map((title) => ({ title, status: "pending" as const })),
+			revision: 1,
+		};
+		return { ok: true, plan: clonePlan(this.plan), remaining: titles.length };
+	}
+
+	completeTask(index: number, note?: string): PlanToolResult {
+		return this.settleTask(index, "done", note);
+	}
+
+	skipTask(index: number, reason: string): PlanToolResult {
+		return this.settleTask(index, "skipped", reason);
+	}
+
+	/**
+	 * A task that can never be settled is the one way the browser's resume loop
+	 * spins, so both outcomes are always available to the model - `skipTask` is
+	 * the way out of a task the plan, the catalogue or the user makes impossible.
+	 */
+	private settleTask(
+		index: number,
+		status: Exclude<PlanTaskStatus, "pending">,
+		note?: string,
+	): PlanToolResult {
+		const plan = this.plan;
+		if (!plan) {
+			return {
+				ok: false,
+				error:
+					"There is no plan yet. Call createPlan first, or just make the change without one.",
+			};
+		}
+
+		const task = plan.tasks[index];
+		if (!task) {
+			return {
+				ok: false,
+				error: `There is no task [${index}]. The plan has ${plan.tasks.length} task(s), [0] to [${plan.tasks.length - 1}].`,
+			};
+		}
+		if (task.status !== "pending") {
+			return {
+				ok: false,
+				error: `Task [${index}] is already ${task.status}. Move on to the first task still marked [ ].`,
+			};
+		}
+
+		const trimmed = note?.trim().slice(0, MAX_TASK_NOTE_CHARS);
+		plan.tasks[index] = {
+			...task,
+			status,
+			...(trimmed ? { note: trimmed } : {}),
+		};
+		plan.revision += 1;
+
+		return { ok: true, plan: clonePlan(plan), remaining: pendingCount(plan) };
+	}
+
+	/** The resume block in the instructions. Indices match completeTask's input. */
+	planSnapshot(): string {
+		const plan = this.plan;
+		if (!plan) return "";
+
+		const mark = { pending: " ", done: "x", skipped: "-" } as const;
+		const lines = plan.tasks.map((task, index) => {
+			const note = task.note ? ` - ${task.note}` : "";
+			return `  [${index}] [${mark[task.status]}] ${task.title}${note}`;
+		});
+		const next = activeTaskIndex(plan);
+
+		return [
+			"PLAN (resumed - everything ticked is already done and is in the CATALOGUE snapshot below):",
+			...lines,
+			next === -1
+				? "Every task is settled. Tell the user what you did and call no more tools."
+				: `Carry on with task [${next}]. Do not redo ticked work, and do not create a new plan.`,
+		].join("\n");
 	}
 
 	loadSkill(

@@ -4,6 +4,7 @@ import ChatImageAttachments, {
 	ChatAttachButton,
 } from "@/components/catalogue/chat/ChatImageAttachments";
 import ChatMessageBubble from "@/components/catalogue/chat/ChatMessageBubble";
+import PlanChecklist from "@/components/catalogue/chat/PlanChecklist";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { getRequiredPlan } from "@/helpers/client";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
@@ -80,6 +81,8 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 		loading,
 		error,
 		errorMessage,
+		plan,
+		planHalt,
 		showAiLimits,
 		setShowAiLimits,
 		currentPlan,
@@ -133,7 +136,11 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 	// moment of the turn is silent - waiting on the first token, and the
 	// round-trip after each tool settles, which is most of a long turn - and
 	// needs the indicator to stay up.
-	const isThinking = loading && !isNarrating(messages[messages.length - 1]);
+	// While a plan is running the checklist is the status display: it names the
+	// task in flight, which the dots never could, and it stays up through the
+	// gaps between requests where nothing is streaming at all.
+	const isThinking =
+		loading && !plan && !isNarrating(messages[messages.length - 1]);
 
 	return (
 		<>
@@ -240,6 +247,10 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 						{messages.map((message) => (
 							<ChatMessageBubble key={message.id} message={message} />
 						))}
+
+						{plan && (
+							<PlanChecklist halt={planHalt} plan={plan} running={loading} />
+						)}
 
 						{isThinking && (
 							<div className="flex items-start gap-2.5">

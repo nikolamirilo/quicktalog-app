@@ -1,4 +1,5 @@
 import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
+import { CONTINUE_PLAN_MARKER, type PlanState } from "@/agent/plan";
 import { buildInstructions } from "@/agent/instructions";
 import { CatalogueSession } from "@/agent/session";
 import type { AiSectionAccess } from "@/types/ai";
@@ -77,5 +78,47 @@ describe("buildInstructions", () => {
 			rendered.indexOf("This catalogue:"),
 		);
 		expect(rendered).toContain(new CatalogueSession(catalogue).snapshot());
+	});
+});
+
+describe("plan instructions", () => {
+	const withPlan = (plan: PlanState | null) =>
+		buildInstructions(
+			new CatalogueSession(catalogue, {}, undefined, [], "user-1", plan),
+		);
+
+	const PLAN: PlanState = {
+		tasks: [
+			{ title: "Add a drinks menu", status: "done", note: "added 8 items" },
+			{ title: "Translate everything", status: "pending" },
+		],
+		revision: 2,
+	};
+
+	it("always explains how to work a multi-part request", () => {
+		expect(withPlan(null)).toContain("Working through a multi-part request:");
+		expect(withPlan(null)).toContain("createPlan");
+		expect(withPlan(null)).toContain(CONTINUE_PLAN_MARKER);
+	});
+
+	it("carries no resume block when no plan is in flight", () => {
+		expect(withPlan(null)).not.toContain("PLAN (resumed");
+	});
+
+	it("shows a resumed plan with the ticks and the next task", () => {
+		const rendered = withPlan(PLAN);
+
+		expect(rendered).toContain("PLAN (resumed");
+		expect(rendered).toContain("[0] [x] Add a drinks menu - added 8 items");
+		expect(rendered).toContain("[1] [ ] Translate everything");
+		expect(rendered).toContain("Carry on with task [1]");
+	});
+
+	it("keeps the resume block above the catalogue snapshot it refers to", () => {
+		const rendered = withPlan(PLAN);
+
+		expect(rendered.indexOf("PLAN (resumed")).toBeLessThan(
+			rendered.indexOf("CATALOGUE:"),
+		);
 	});
 });

@@ -1,4 +1,9 @@
 import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
+import {
+	CONTINUE_PLAN_MARKER,
+	MAX_PLAN_TASKS,
+	MIN_PLAN_TASKS,
+} from "@/agent/plan";
 import { allowedSectionTypes } from "@/agent/schemas";
 import { pictureMarker, UNTRUSTED_CLOSE, UNTRUSTED_OPEN } from "@/agent/web";
 import type { CatalogueSession } from "@/agent/session";
@@ -16,6 +21,20 @@ const workflow = `- Call the tools to make changes, then write one or two short 
 - Make each change with as few tool calls as you can: pass a new section's items to addSection rather than adding them one at a time. When there are more than 20, pass the first 20 to addSection, then the rest to addItems 20 at a time until every item is in. The addSection result gives the new section's index.
 - Never mention tools, operations or indices in what you write to the user.
 - Do not ask permission before making a change the user has clearly asked for; make it, then say what you did.`;
+
+/**
+ * How a request too big for one function invocation gets finished.
+ *
+ * The model cannot be told "you have 38 seconds" in any way it can act on, so
+ * the budget is not mentioned. It is told to write the list down and settle one
+ * task at a time; the stop condition and the browser's resume loop do the rest.
+ */
+const planningRules = `- When the user asks for several distinct things in one message, or for one thing big enough to take many edits, call createPlan first with one short line per piece of work. The user sees that list and watches it tick off, so write it in their language and phrase each line as what they will get.
+- Then work the tasks in order. Call completeTask the moment a task's edits have landed, before starting the next one, and say in the note what you actually did.
+- If a task cannot be done at all - their plan does not unlock that section type, they never gave you the embed snippet, the thing they asked you to change is not there - call skipTask with the reason and carry on. Never leave a task unsettled because it is hard.
+- Between ${MIN_PLAN_TASKS} and ${MAX_PLAN_TASKS} tasks. One small change does not need a plan; just make it.
+- A turn that reads exactly "${CONTINUE_PLAN_MARKER}" is not the user speaking. It is the builder asking you to carry on with the plan above. Pick up the first task still marked [ ], say nothing about continuing, and never start the plan again from the top.
+- Write your closing sentence to the user only once the whole list is settled.`;
 
 /** What the catalogue is made of and which edit each request calls for. */
 const contentRules = `- The CATALOGUE snapshot is the current state and already contains everything you did on earlier turns. Before adding a section, check whether one like it already exists. If it does, say so instead of adding a duplicate.
@@ -85,6 +104,7 @@ export function buildInstructions(session: CatalogueSession): string {
 	const blocks = [
 		role,
 		`How you work:\n${workflow}`,
+		`Working through a multi-part request:\n${planningRules}`,
 		`Content rules:\n${contentRules}`,
 		canWriteCode ? `Writing code:\n${codeRules}` : "",
 		`Photos:\n${photoRules}`,
@@ -93,6 +113,7 @@ export function buildInstructions(session: CatalogueSession): string {
 		renderAlwaysOn({ sectionTypes }),
 		renderIndex({ sectionTypes }),
 		`This catalogue:\n${catalogueContext(session, sectionTypes)}`,
+		session.planSnapshot(),
 		`CATALOGUE:\n${session.snapshot()}`,
 	];
 

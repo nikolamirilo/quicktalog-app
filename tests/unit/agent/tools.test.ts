@@ -405,3 +405,72 @@ describe("setCustomTheme", () => {
 		expect(persist).not.toHaveBeenCalled();
 	});
 });
+
+describe("plan tools through the real wiring", () => {
+	it("writes the list down and ticks it off", async () => {
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+
+		const created = await run(tools, "createPlan", {
+			tasks: ["Add a drinks menu", "Translate everything"],
+		});
+		expect(created).toMatchObject({ ok: true, remaining: 2 });
+
+		const done = await run(tools, "completeTask", {
+			task: 0,
+			note: "added 8 items",
+		});
+		expect(done).toMatchObject({ ok: true, remaining: 1 });
+		expect(session.plan?.tasks[0]).toMatchObject({ status: "done" });
+	});
+
+	it("hands a bad task index back to the model to correct", async () => {
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "createPlan", { tasks: ["One", "Two"] });
+
+		expect(await run(tools, "skipTask", { task: 9, reason: "nope" })).toEqual({
+			ok: false,
+			error: expect.stringContaining("no task [9]"),
+		});
+	});
+
+	it("still lets a plan finish after a web page has been read", async () => {
+		// The code gate closes on untrusted text, but settling a task is not an
+		// edit - blocking it here would strand the browser's resume loop.
+		const session = new CatalogueSession(catalogue);
+		session.markWebContent();
+		const tools = buildTools(session);
+
+		await run(tools, "createPlan", { tasks: ["One", "Two"] });
+		expect(await run(tools, "completeTask", { task: 0 })).toMatchObject({
+			ok: true,
+		});
+	});
+
+	it("will not accept a one-item plan", () => {
+		// A single change does not need a checklist, and a plan of one is a round
+		// trip the user pays for and learns nothing from.
+		const schema = buildTools(new CatalogueSession(catalogue)).createPlan
+			.inputSchema as { safeParse: (value: unknown) => { success: boolean } };
+
+		expect(schema.safeParse({ tasks: ["Just the one"] }).success).toBe(false);
+		expect(schema.safeParse({ tasks: ["One", "Two"] }).success).toBe(true);
+	});
+
+	it("keeps the plan in what the model reads back", async () => {
+		// `hideOperations` strips the replay payload from every tool result; the
+		// plan is not one, and losing it would leave the model blind to its list.
+		const tools = buildTools(new CatalogueSession(catalogue));
+		const output = await run(tools, "createPlan", { tasks: ["One", "Two"] });
+		const toModelOutput = (
+			tools.createPlan as unknown as {
+				toModelOutput: (arg: { output: unknown }) => { value: unknown };
+			}
+		).toModelOutput;
+
+		expect(toModelOutput({ output }).value).toMatchObject({
+			plan: { tasks: [{ title: "One" }, { title: "Two" }] },
+		});
+	});
+});

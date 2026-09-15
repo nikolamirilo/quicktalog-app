@@ -1,6 +1,7 @@
 "use client";
 import type { CatalogueAgentUIMessage } from "@/agent";
 import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
+import { CONTINUE_PLAN_MARKER } from "@/agent/plan";
 import type { AgentToolResult } from "@/types/ai";
 import { isToolUIPart } from "ai";
 import {
@@ -27,6 +28,13 @@ const RUNNING_LABELS: Record<string, string> = {
 	updateCatalogue: "Updating catalogue settings",
 	updateAppearance: "Updating the appearance",
 };
+
+/**
+ * The plan tools have their own display - one checklist for the whole request,
+ * rendered by the panel - so they contribute nothing to a bubble. Left alone
+ * they would draw a spinner line and then a tickless green row per call.
+ */
+const PLAN_TOOLS = new Set(["createPlan", "completeTask", "skipTask"]);
 
 /**
  * The OCR that travelled with the turn. It is part of what the user said, so it
@@ -91,6 +99,10 @@ const ChatMessageBubble = ({
 	const body = message.parts.map((part, index) => {
 		if (part.type === "text") {
 			if (!part.text) return null;
+			// Resuming a plan is the builder talking to the agent, not the user
+			// talking to either. Showing it would turn one request into a column
+			// of identical bubbles.
+			if (part.text.trim() === CONTINUE_PLAN_MARKER) return null;
 			const key = `${message.id}-text-${index}`;
 			return part.text.startsWith(SCANNED_TEXT_MARKER) ? (
 				<ScannedText key={key} text={part.text} />
@@ -105,6 +117,8 @@ const ChatMessageBubble = ({
 
 		const name = part.type.replace(/^tool-/, "");
 		const key = part.toolCallId;
+
+		if (PLAN_TOOLS.has(name)) return null;
 
 		if (part.state === "input-streaming" || part.state === "input-available") {
 			return (
