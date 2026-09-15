@@ -170,52 +170,8 @@ describe("CatalogueSession", () => {
 	});
 });
 
-describe("web content guards", () => {
-	const codeCall = {
-		tool: "addSection",
-		input: { sectionType: "custom_code", code: "<div></div>" },
-	};
-
-	it("lets code sections through until a page has been read", () => {
-		const s = session();
-
-		expect(s.requireNoWebCode(codeCall)).toBeNull();
-		s.markWebContent();
-		expect(s.requireNoWebCode(codeCall)).toEqual({
-			ok: false,
-			error: expect.stringContaining("read a web page"),
-		});
-	});
-
-	// The danger is markup reaching a published page, not the word "code": an
-	// embed snippet from a fetched site is the same problem.
-	it("blocks embeds and any call carrying code, not just custom_code", () => {
-		const s = session();
-		s.markWebContent();
-
-		for (const input of [
-			{ sectionType: "embedding", code: "<iframe></iframe>" },
-			{ sectionId: "sec-1", code: "<script></script>" },
-		]) {
-			expect(s.requireNoWebCode({ tool: "addSection", input })).toMatchObject({
-				ok: false,
-			});
-		}
-	});
-
-	it("leaves ordinary edits alone after a fetch", () => {
-		const s = session();
-		s.markWebContent();
-
-		expect(
-			s.requireNoWebCode({
-				tool: "addSection",
-				input: { sectionType: "category", name: "Drinks" },
-			}),
-		).toBeNull();
-	});
-
-	it("caps how many pages one conversation can read", () => {
+describe("web fetch budget", () => {
+	it("caps how many pages one request can read", () => {
 		const s = session();
 
 		expect(s.allowWebFetch()).toBeNull();

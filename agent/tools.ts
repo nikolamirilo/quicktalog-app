@@ -127,9 +127,6 @@ export function buildTools(session: CatalogueSession) {
 				if ("error" in outcome) return fail(outcome.error);
 
 				pages.set(url, outcome);
-				// Untrusted text is now in context, so code sections close for the
-				// rest of the conversation.
-				session.markWebContent();
 
 				return describe(outcome);
 			},
@@ -488,10 +485,7 @@ function gateCalls<T extends Record<string, { execute?: unknown }>>(
 		definition.execute = async (
 			input: Record<string, unknown>,
 			options: unknown,
-		) =>
-			session.requireSkills({ tool: name, input }) ??
-			session.requireNoWebCode({ tool: name, input }) ??
-			run(input, options);
+		) => session.requireSkills({ tool: name, input }) ?? run(input, options);
 	}
 	return tools;
 }

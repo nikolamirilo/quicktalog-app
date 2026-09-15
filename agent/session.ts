@@ -72,7 +72,6 @@ export class CatalogueSession {
 	private readonly loadedSkills: Set<string>;
 	private readonly startedAt = Date.now();
 	private fetches = 0;
-	private readWeb = false;
 
 	constructor(
 		catalogue: Catalogue,
@@ -224,36 +223,6 @@ export class CatalogueSession {
 		}
 		this.fetches += 1;
 		return null;
-	}
-
-	/** Called once a page's text is actually in context, not merely requested. */
-	markWebContent(): void {
-		this.readWeb = true;
-	}
-
-	/**
-	 * Null when the call may proceed.
-	 *
-	 * A fetched page is attacker-controlled text sitting in a loop that can
-	 * write `custom_code` and `embedding` sections, and those go out as raw
-	 * markup on a published catalogue. Rather than trust the model to resist a
-	 * page telling it to paste a script, code sections are simply off the table
-	 * for the rest of a conversation that has read one.
-	 */
-	requireNoWebCode(call: SkillGateCall): AgentToolResult | null {
-		if (!this.readWeb) return null;
-
-		const writesCode =
-			typeof call.input.code === "string" ||
-			call.input.sectionType === "custom_code" ||
-			call.input.sectionType === "embedding";
-		if (!writesCode) return null;
-
-		return {
-			ok: false,
-			error:
-				"Code and embed sections cannot be written in a request that has read a web page, because markup from a page must never reach a published catalogue. Do not put a text section in its place: a block of prose is not a scratch card and not an animated banner, and shipping one as though it were is worse than not building it. If this was a task on a plan, skip that task with this reason. Otherwise tell the user it cannot be done here, and that asking for it in a new message - one that reads no page - will build it properly.",
-		};
 	}
 
 	/** Null when the call may proceed. */

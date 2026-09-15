@@ -165,23 +165,18 @@ describe("fetchUrl", () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	// The whole point of the guard: a page cannot talk the agent into writing
-	// markup onto a published catalogue, even once the skill has been read.
-	it("closes code sections for the rest of a conversation that read a page", async () => {
+	// This used to be refused outright. The fragment now runs in a sandboxed
+	// frame with no same-origin access, so markup from a page cannot reach
+	// anything worth reaching, and the work is allowed through.
+	it("still writes code sections after a page has been read", async () => {
 		mockScrape();
 		const session = new CatalogueSession(catalogue);
 		const tools = buildTools(session);
 		await run(tools, "loadSkill", { name: "responsive-design" });
 
-		expect(await run(tools, "addSection", WIDGET)).toMatchObject({ ok: true });
-
 		await run(tools, "fetchUrl", { url: "https://cafe.test/menu" });
 
-		expect(await run(tools, "addSection", WIDGET)).toEqual({
-			ok: false,
-			error: expect.stringContaining("read a web page"),
-		});
-		// The ordinary path is untouched.
+		expect(await run(tools, "addSection", WIDGET)).toMatchObject({ ok: true });
 		expect(
 			await run(tools, "addSection", { sectionType: "category", name: "Tea" }),
 		).toMatchObject({ ok: true });
@@ -432,19 +427,6 @@ describe("plan tools through the real wiring", () => {
 		expect(await run(tools, "skipTask", { task: 9, reason: "nope" })).toEqual({
 			ok: false,
 			error: expect.stringContaining("no task [9]"),
-		});
-	});
-
-	it("still lets a plan finish after a web page has been read", async () => {
-		// The code gate closes on untrusted text, but settling a task is not an
-		// edit - blocking it here would strand the browser's resume loop.
-		const session = new CatalogueSession(catalogue);
-		session.markWebContent();
-		const tools = buildTools(session);
-
-		await run(tools, "createPlan", { tasks: ["One", "Two"] });
-		expect(await run(tools, "completeTask", { task: 0 })).toMatchObject({
-			ok: true,
 		});
 	});
 
