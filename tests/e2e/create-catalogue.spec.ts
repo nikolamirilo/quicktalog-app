@@ -1,5 +1,11 @@
 import { type Locator, type Page, expect, test } from "@playwright/test";
-import { deleteCatalogueBySlug } from "./helpers/cleanup";
+import { deleteCataloguesByPrefix } from "./helpers/cleanup";
+
+/**
+ * Slug every catalogue this spec creates starts with, derived from the name
+ * below. Cleanup keys off it rather than off the slug the test captured.
+ */
+const SLUG_PREFIX = "e2e-test-";
 
 /**
  * Picks the first option of a Radix <Select>. The trigger lives inside the
@@ -16,14 +22,27 @@ async function selectFirstOption(page: Page, trigger: Locator) {
 test.describe("create catalogue", () => {
 	let createdSlug = "";
 
+	// The account this runs as is on a plan that allows exactly one catalogue,
+	// so anything left behind by an earlier run makes the create button open the
+	// upgrade modal instead of the dialog - and every later run fails looking
+	// like a product bug. Sweep before as well as after, because the run that
+	// leaves the mess is by definition the one that failed before cleaning up.
+	test.beforeEach(async () => {
+		await deleteCataloguesByPrefix(SLUG_PREFIX);
+	});
+
 	test.afterEach(async () => {
-		if (createdSlug) {
-			await deleteCatalogueBySlug(createdSlug);
-			createdSlug = "";
-		}
+		await deleteCataloguesByPrefix(SLUG_PREFIX);
+		createdSlug = "";
 	});
 
 	test("creates a catalogue via the manual builder", async ({ page }) => {
+		// The open-the-dialog retry loop below is allowed 30s on its own, which
+		// is the whole default budget - leaving nothing for the create and the
+		// redirect that follow. That is how a catalogue got created and then
+		// orphaned by a timeout.
+		test.setTimeout(90_000);
+
 		const name = `E2E Test ${Date.now()}`;
 		const dialog = page.getByRole("alertdialog");
 		const createBtn = page

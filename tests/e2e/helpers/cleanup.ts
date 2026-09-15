@@ -26,3 +26,44 @@ export async function deleteCatalogueBySlug(slug: string): Promise<void> {
 		await redis.del(slug);
 	}
 }
+
+/**
+ * Removes every catalogue whose slug starts with `prefix`.
+ *
+ * Deleting by the slug the test captured is not enough on its own. The test
+ * plan allows a single catalogue, so one run that dies between creating the
+ * catalogue and learning its slug leaves the account full - and every run
+ * after it gets the upgrade modal where it expected the create dialog, which
+ * looks like a product bug rather than a dirty fixture. Sweeping by prefix
+ * cleans up after a run that never got far enough to clean up after itself.
+ *
+ * Returns the slugs it removed, so a caller can say what it found.
+ */
+export async function deleteCataloguesByPrefix(
+	prefix: string,
+): Promise<string[]> {
+	if (!prefix) return [];
+
+	const databaseUrl = process.env.DATABASE_URL;
+	if (!databaseUrl) return [];
+
+	const sql = postgres(databaseUrl, { prepare: false });
+	let slugs: string[] = [];
+	try {
+		const rows = await sql<{ name: string }[]>`
+			DELETE FROM catalogues WHERE name LIKE ${`${prefix}%`} RETURNING name
+		`;
+		slugs = rows.map((row) => row.name);
+	} finally {
+		await sql.end({ timeout: 5 });
+	}
+
+	const url = process.env.UPSTASH_REDIS_REST_URL;
+	const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+	if (slugs.length > 0 && url && token) {
+		const redis = new Redis({ url, token });
+		await Promise.all(slugs.map((slug) => redis.del(slug)));
+	}
+
+	return slugs;
+}
