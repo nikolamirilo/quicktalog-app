@@ -265,6 +265,7 @@ const EmbeddingBlockComponent = ({
 						<HtmlContent
 							className="bg-transparent w-full h-auto"
 							html={block.code}
+							profile="embed"
 						/>
 					</div>
 				</div>
