@@ -60,7 +60,8 @@
 		"@supabase/supabase-js": "^2.47.10",
 		"@types/sanitize-html": "^2.16.1",
 		"@uploadthing/react": "^7.3.3",
-		"@upstash/redis": "^1.37.0",
+		"@upstash/ratelimit": "^2.1.0",
+		"@upstash/redis": "^1.38.4",
 		"ai": "^7.0.97",
 		"apexcharts": "^4.3.0",
 		"class-variance-authority": "^0.7.1",
@@ -78,7 +79,6 @@
 		"playwright": "^1.62.1",
 		"postgres": "^3.4.9",
 		"posthog-js": "^1.259.0",
-		"puppeteer": "^24.24.1",
 		"qr-code-styling": "^1.9.2",
 		"qrcode.react": "^4.2.0",
 		"react": "^19.0.0",
@@ -94,6 +94,7 @@
 		"recharts": "^2.15.4",
 		"resend": "^4.6.0",
 		"sanitize-html": "^2.17.7",
+		"server-only": "^0.0.1",
 		"sonner": "^2.0.5",
 		"swiper": "^11.2.10",
 		"swr": "^2.4.1",
@@ -101,7 +102,8 @@
 		"tailwindcss-animate": "^1.0.7",
 		"tesseract.js": "^6.0.1",
 		"uploadthing": "^7.7.4",
-		"vaul": "^1.1.2"
+		"vaul": "^1.1.2",
+		"zod": "^3.25.76"
 	},
 	"overrides": {
 		"import-in-the-middle": "^3.0.1"

@@ -4,6 +4,7 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import React from "react";
 import { FiGrid, FiUser, FiUserPlus } from "react-icons/fi";
+import { TbDeviceAnalytics } from "react-icons/tb";
 import { MobileNavLink, NavLink } from "./Navbar"; // Assuming NavLink and MobileNavLink are exported from Navbar.tsx
 
 interface AuthLinksProps {
@@ -103,7 +104,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 		<div className="ml-3 flex items-center gap-2">
 			{isSignedIn ? (
 				<>
-					<NavLink href="/admin/dashboard" icon={FiGrid}>
+					<NavLink href="/admin/dashboard" icon={TbDeviceAnalytics}>
 						Dashboard
 					</NavLink>
 					<div className="ml-2 flex items-center gap-1">

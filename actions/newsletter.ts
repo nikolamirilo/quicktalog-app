@@ -4,7 +4,7 @@ import { drizzleClient } from "@/utils/drizzle";
 import { schema } from "@quicktalog/common";
 import { and, eq } from "drizzle-orm";
 
-const { newsletter, productNewsletter } = schema;
+const { catalogues, newsletter, productNewsletter } = schema;
 
 export type ProductNewsletterResult =
 	| { status: "success" }
@@ -19,9 +19,20 @@ export type NewsletterSignupResult =
 export async function newsletterSignup(
 	email: string,
 	catalogueId: string,
-	ownerId: string,
 ): Promise<NewsletterSignupResult> {
 	try {
+		// The owner comes from the published catalogue, never from the browser.
+		const catalogue = await drizzleClient.query.catalogues.findFirst({
+			where: and(
+				eq(catalogues.id, catalogueId),
+				eq(catalogues.status, "active"),
+			),
+			columns: { createdBy: true },
+		});
+		if (!catalogue) {
+			return { status: "error" };
+		}
+
 		const existing = await drizzleClient
 			.select({ id: newsletter.id })
 			.from(newsletter)
@@ -40,7 +51,7 @@ export async function newsletterSignup(
 		await drizzleClient.insert(newsletter).values({
 			email,
 			catalogueId,
-			ownerId,
+			ownerId: catalogue.createdBy,
 		});
 
 		return { status: "success" };

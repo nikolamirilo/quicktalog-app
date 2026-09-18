@@ -39,11 +39,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 		setAlreadySubscribed(false);
 
 		try {
-			const result = await newsletterSignup(
-				newsletterEmail,
-				activeData?.id,
-				activeData?.createdBy ?? (activeData as any)?.created_by,
-			);
+			const result = await newsletterSignup(newsletterEmail, activeData?.id);
 
 			if (result.status === "already_subscribed") {
 				setAlreadySubscribed(true);

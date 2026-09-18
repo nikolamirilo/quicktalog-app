@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaRegCirclePlay } from "react-icons/fa6";
-import { FiBookOpen, FiCompass, FiHome, FiMail, FiX } from "react-icons/fi";
+import { FiCompass, FiHome, FiX } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { PiFilesDuotone } from "react-icons/pi";
@@ -92,14 +92,11 @@ const Navbar = () => {
 				<NavLink href="/" icon={FiHome}>
 					Home
 				</NavLink>
-				<NavLink href="/contact" icon={FiMail}>
-					Contact
+				<NavLink href="/docs" icon={PiFilesDuotone}>
+					Docs
 				</NavLink>
 				<NavLink href="/demo" icon={FaRegCirclePlay}>
 					Demo
-				</NavLink>
-				<NavLink href="/docs" icon={PiFilesDuotone}>
-					Docs
 				</NavLink>
 				<NavLink href="/showcases" icon={LuLayoutDashboard}>
 					Showcases
@@ -158,11 +155,11 @@ const Navbar = () => {
 					</MobileNavLink>
 
 					<MobileNavLink
-						href="/contact"
-						icon={FiMail}
+						href="/docs"
+						icon={FiCompass}
 						onClick={() => setMobileOpen(false)}
 					>
-						Contact
+						Docs
 					</MobileNavLink>
 
 					<MobileNavLink
@@ -174,19 +171,11 @@ const Navbar = () => {
 					</MobileNavLink>
 
 					<MobileNavLink
-						href="/articles"
-						icon={FiBookOpen}
+						href="/showcases"
+						icon={LuLayoutDashboard}
 						onClick={() => setMobileOpen(false)}
 					>
-						Articles
-					</MobileNavLink>
-
-					<MobileNavLink
-						href="/docs"
-						icon={FiCompass}
-						onClick={() => setMobileOpen(false)}
-					>
-						Docs
+						Showcases
 					</MobileNavLink>
 
 					<AuthLinks isMobile onLinkClick={() => setMobileOpen(false)} />

@@ -5,7 +5,7 @@ description: Use when writing or reviewing any code in the Quicktalog app - crea
 
 # Quicktalog Code Conventions
 
-Where things go and how they're shaped in this codebase. This is the project-specific layer on top of generic React/TypeScript good practice (SOLID, small components) - see [docs/solid-principles.md](../../../docs/solid-principles.md) for the principles; this skill is how they land *here*.
+Where things go and how they're shaped in this codebase. This is the project-specific layer on top of generic React/TypeScript good practice (SOLID, small components) - see [docs/standards/solid-principles.md](../../../docs/standards/solid-principles.md) for the principles; this skill is how they land *here*.
 
 ## Where code goes
 
@@ -27,7 +27,7 @@ Where things go and how they're shaped in this codebase. This is the project-spe
 Domain types (`Catalogue`, `ContentBlock`, `Item`, `User`, `UserData`, `Usage`, the Drizzle `schema`, helpers like `generateUniqueSlug`) live in the external **`@quicktalog/common`** package. [types/shared.ts](../../../types/shared.ts) **re-exports** them and adds app-local types (`DisplayItem`, etc.).
 
 - Need a domain type? Import from `@quicktalog/common` (or via `@/types/shared`), don't redefine it.
-- A domain type/schema change happens in `@quicktalog/common`, then flows here - see [[adding-new-section]] and the Drizzle workflow in [docs/drizzle.md](../../../docs/drizzle.md).
+- A domain type/schema change happens in `@quicktalog/common`, then flows here - see [[adding-new-content-block]] and the Drizzle workflow in [docs/guides/drizzle.md](../../../docs/guides/drizzle.md).
 - App-only prop/helper types → `types/components.ts` / `types/shared.ts`.
 
 ## State: React Context, not Redux/Zustand
@@ -36,16 +36,16 @@ Cross-component state lives in [context/](../../../context/): `CatalogueContext`
 
 ## Component patterns
 
-- **Renderer / Input pairing** - a catalogue block is a pair: `sections/[Name].tsx` (display, view+edit) and `inputs/[Name]Input.tsx` (config form). Keep them split; don't merge display and form into one component (SRP). Full flow: [[adding-new-section]].
+- **Renderer / Input pairing** - a catalogue block is a pair: `sections/[Name].tsx` (display, view+edit) and `inputs/[Name]Input.tsx` (config form). Keep them split; don't merge display and form into one component (SRP). Full flow: [[adding-new-content-block]].
 - **Modals** use Radix `AlertDialog` (`components/ui/`), with `sonner` for toasts and Zod schemas from `constants/schemas.ts` for validation.
-- **One job per component/hook.** Data-fetching, presentation, and form state are separate units (this is SRP/ISP in practice - the patterns [docs/solid-principles.md](../../../docs/solid-principles.md) argues for).
+- **One job per component/hook.** Data-fetching, presentation, and form state are separate units (this is SRP/ISP in practice - the patterns [docs/standards/solid-principles.md](../../../docs/standards/solid-principles.md) argues for).
 
 ## Mechanical conventions
 
 - **Imports use the `@/` alias** for anything outside the current folder: `import { drizzleClient } from "@/utils/drizzle"` (`@/*` → repo root, per `tsconfig.json`). Avoid `../../..` chains.
 - **Formatting/linting is Biome**, not Prettier/ESLint. Run `npm run format` (write), `npm run lint` (write), `npm run check`. Tabs, double quotes - let Biome decide; don't hand-format.
 - **Errors** are reported with `Sentry.captureException(err)` + `console.error(...)` in catches (see [[server-action-and-route]]).
-- **Branches**: develop on `test`, release via `main` - see [docs/github-workflow.md](../../../docs/github-workflow.md).
+- **Branches**: develop on `test`, release via `main` - see [docs/guides/git-workflow.md](../../../docs/guides/git-workflow.md).
 
 ## Common Mistakes
 

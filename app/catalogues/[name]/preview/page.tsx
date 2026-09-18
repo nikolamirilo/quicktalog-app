@@ -1,48 +1,40 @@
+import { getCatalogueByName } from "@/actions/catalogue";
 import Catalogue from "@/components/catalogue/view/Catalogue";
 import LimitsModal from "@/components/modals/LimitsModal";
-import { getRedis } from "@/utils/redis";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
 import * as Sentry from "@sentry/nextjs";
 import { Catalogue as CatalogueType } from "@quicktalog/common";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: "Preview | Quicktalog",
 	description: "Preview your catalogue",
+	robots: { index: false, follow: false },
 };
 
+/** Draft preview for the catalogue's owner only. */
 const PreviewPage = async ({
 	params,
 }: {
 	params: Promise<{ name: string }>;
 }) => {
+	const { name } = await params;
+
+	if (!(await getVerifiedIdentity())) {
+		redirect(`/auth?next=${encodeURIComponent(`/catalogues/${name}/preview`)}`);
+	}
+
 	try {
-		const { name } = await params;
-
-		if (!name) {
-			throw new Error("Catalogue name is required");
-		}
-
-		console.log("Fetching preview for:", name);
-
-		const data = await getRedis().get(name);
-
-		if (!data) {
-			console.warn("No data found for the service catalogue");
+		const result = await getCatalogueByName(name);
+		if (!result.success || !result.data) {
 			return <LimitsModal isOpen={true} type="notFound" />;
 		}
 
-		const item = data as CatalogueType;
-
-		if (!item.heading || !item.content) {
-			console.warn("Invalid catalogue data:", item);
-		}
-
-		// For preview, we don't strictly check status, or we allow draft
-		return <Catalogue item={item} type="view" />;
+		return <Catalogue item={result.data as CatalogueType} type="view" />;
 	} catch (error) {
-		// A Redis failure here is indistinguishable from "not found" for the
-		// visitor, so make sure it still reaches Sentry instead of only stderr.
 		Sentry.captureException(error, { tags: { op: "cataloguePreview" } });
 		console.warn("Catalogue preview error:", error);
 		return <LimitsModal isOpen={true} type="notFound" />;

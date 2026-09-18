@@ -1,32 +1,28 @@
 "use server";
 import { MAX_RETRIES, RETRY_DELAY } from "@/constants/users";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
 import { fetchUserData } from "@/lib/users/fetchUserData";
-import { isUniqueViolation, validateEmail } from "@/lib/users/syncFromClerk";
-import { currentUser } from "@clerk/nextjs/server";
+import { ensureUserRow, loadClerkProfile } from "@/lib/users/provision";
+import { validateEmail } from "@/lib/users/syncFromClerk";
+import { isUniqueViolation } from "@/utils/db/errors";
 import * as Sentry from "@sentry/nextjs";
 import { sendWelcomeEmail } from "./email";
 
-export async function getUserData(userId?: string) {
+/** Profile, plan and usage of the signed-in user, or null when signed out. */
+export async function getUserData() {
 	try {
-		const profile = await currentUser();
-		const id = userId ?? profile?.id;
-		if (!id) throw new Error("User not authenticated");
+		const me = await getVerifiedIdentity();
+		if (!me) return null;
 
-		const ownerProfile =
-			profile && profile.id === id
-				? {
-						id: profile.id,
-						emailAddresses: profile.emailAddresses?.map((e) => ({
-							emailAddress: e.emailAddress,
-						})),
-						firstName: profile.firstName,
-						lastName: profile.lastName,
-						imageUrl: profile.imageUrl,
-						publicMetadata: profile.publicMetadata as Record<string, any>,
-					}
-				: null;
-
-		const result = await fetchUserData({ userId: id, ownerProfile });
+		let result = await fetchUserData({ userId: me.userId });
+		if (!result.ok && result.code === "not_found") {
+			// The user.created webhook has not arrived yet: create the row now.
+			const profile = await loadClerkProfile(me.userId);
+			if (profile) {
+				await ensureUserRow(profile);
+				result = await fetchUserData({ userId: me.userId });
+			}
+		}
 		if (!result.ok) {
 			throw new Error(`Failed to fetch user data: ${result.code}`);
 		}
@@ -70,34 +66,6 @@ export async function retryOperation<T>(
 	}
 
 	throw lastError!;
-}
-
-export async function handleUserDeletion(
-	supabase: any,
-	userId: string,
-): Promise<void> {
-	if (!userId || typeof userId !== "string") {
-		throw new Error("Invalid user ID for deletion");
-	}
-
-	const { error, count } = await supabase
-		.from("users")
-		.delete()
-		.eq("id", userId.trim())
-		.select("id", { count: "exact" });
-
-	if (error) {
-		console.error("Database deletion error:", {
-			message: error.message,
-			details: error.details,
-			hint: error.hint,
-			code: error.code,
-			userId,
-		});
-		throw new Error(`Database deletion failed: ${error.message}`);
-	}
-
-	console.log(`Successfully deleted ${count} user record(s) for ID: ${userId}`);
 }
 
 export async function sendWelcomeEmailSafely(

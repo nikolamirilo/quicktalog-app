@@ -2,9 +2,14 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	env: {
+		// One source for the auth provider switch, inlined for server and client.
+		NEXT_PUBLIC_AUTH_PROVIDER:
+			process.env.AUTH_PROVIDER === "supabase" ? "supabase" : "clerk",
+	},
 	// Keep these heavy native packages out of the webpack bundle so they are
 	// required at runtime instead of being parsed/memoized into the build graph.
-	serverExternalPackages: ["puppeteer", "tesseract.js", "playwright"],
+	serverExternalPackages: ["tesseract.js", "playwright"],
 	images: {
 		minimumCacheTTL: 2678400,
 		formats: ["image/webp"],
@@ -19,29 +24,6 @@ const nextConfig: NextConfig = {
 				hostname: "**",
 			},
 		],
-	},
-	async headers() {
-		return [
-			{
-				source: "/api/:path*", // Apply to all API routes
-				headers: [
-					{ key: "Access-Control-Allow-Credentials", value: "true" },
-					{
-						key: "Access-Control-Allow-Origin",
-						value: "*",
-					},
-					{
-						key: "Access-Control-Allow-Methods",
-						value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-					},
-					{
-						key: "Access-Control-Allow-Headers",
-						value:
-							"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-					},
-				],
-			},
-		];
 	},
 	experimental: {
 		optimizePackageImports: ["react-icons"],

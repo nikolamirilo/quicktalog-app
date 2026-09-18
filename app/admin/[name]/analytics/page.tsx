@@ -1,12 +1,25 @@
 import * as Sentry from "@sentry/nextjs";
+import { notFound } from "next/navigation";
 import CatalogueAnalytics from "@/components/analytics/CatalogueAnalytics";
 import Navbar from "@/components/navigation/Navbar";
+import { requireUser } from "@/lib/auth/session";
+import { ownsCatalogue } from "@/lib/catalogue/ownership";
+
+/** Escapes a value for a single-quoted HogQL string literal. */
+function hogqlString(value: string): string {
+	return value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+}
 
 type tParams = Promise<{ name: string }>;
 export const dynamic = "force-dynamic";
 
 export default async function page({ params }: { params: tParams }) {
 	const { name } = await params;
+	const me = await requireUser(`/admin/${name}/analytics`);
+	// Only the catalogue's owner may see its visitors.
+	if (!(await ownsCatalogue(me, name))) {
+		notFound();
+	}
 	const transformedName = name
 		.split("-")
 		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -49,7 +62,7 @@ export default async function page({ params }: { params: tParams }) {
 				body: JSON.stringify({
 					query: {
 						kind: "HogQLQuery",
-						query: `select timestamp, properties.distinct_id, properties.$browser, properties.$device_type, properties.$geoip_country_name from events where properties.$current_url like '${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${name}' and event='$pageview' LIMIT 1000000`,
+						query: `select timestamp, properties.distinct_id, properties.$browser, properties.$device_type, properties.$geoip_country_name from events where properties.$current_url = '${hogqlString(`${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${name}`)}' and event='$pageview' LIMIT 1000000`,
 					},
 				}),
 				cache: "no-store",

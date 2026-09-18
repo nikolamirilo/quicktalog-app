@@ -19,8 +19,12 @@ case "$FILE_PATH" in
 		echo "Blocked: '$FILE_PATH' is a git hook under .husky/. Edit it manually if this is intended." >&2
 		exit 2 ;;
 	supabase/migrations/*|*/supabase/migrations/*)
-		echo "Blocked: '$FILE_PATH' is a Supabase migration. Generate migrations via the Supabase CLI, don't hand-edit." >&2
-		exit 2 ;;
+		# New migration files (created with `supabase migration new`, not yet committed) may be written.
+		# Committed migrations are treated as applied and must never be edited.
+		if git -C "${CLAUDE_PROJECT_DIR:-.}" ls-files --error-unmatch -- "$FILE_PATH" >/dev/null 2>&1; then
+			echo "Blocked: '$FILE_PATH' is a committed Supabase migration. Never edit an applied migration; create a new one with 'supabase migration new <name>'." >&2
+			exit 2
+		fi ;;
 esac
 
 exit 0

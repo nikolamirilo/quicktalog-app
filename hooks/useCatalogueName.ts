@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { checkCatalogueName } from "@/actions/catalogue";
 
 interface UseCatalogueNameProps {
 	initialName: string;
@@ -6,23 +7,18 @@ interface UseCatalogueNameProps {
 	setFormData: (updater: (prev: any) => any) => void;
 	setErrors?: (updater: (prev: any) => any) => void;
 	setTouched?: (updater: (prev: any) => any) => void;
-	/**
-	 * Fetch the existing names on mount. Defaults to true. Set false where many
-	 * instances render at once (e.g. the dashboard dropdowns) and names are only
-	 * needed on demand via refetchNames(), to avoid an N+1 burst of requests.
-	 */
-	autoFetch?: boolean;
 }
 
 interface UseCatalogueNameReturn {
 	handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	nameExists: boolean;
-	names: string[];
-	refetchNames: () => void;
 }
 
-const normalize = (str: string) =>
-	str.trim().toLowerCase().replace(/\s+/g, "-");
+export const NAME_TAKEN_ERROR =
+	"This name is already in use. Please choose a different name.";
+
+const VALID_NAME = /^[a-zA-Z0-9\s]*$/;
+const CHECK_DELAY_MS = 400;
 
 export const useCatalogueName = ({
 	initialName,
@@ -30,24 +26,52 @@ export const useCatalogueName = ({
 	setFormData,
 	setErrors,
 	setTouched,
-	autoFetch = true,
 }: UseCatalogueNameProps): UseCatalogueNameReturn => {
-	const [names, setNames] = useState<any[]>([]);
+	const [nameExists, setNameExists] = useState(false);
 
-	const nameExists = useMemo(() => {
-		if (type !== "create" || !initialName || !names.length) return false;
-		return names.some((n) => normalize(n.name) === normalize(initialName));
-	}, [initialName, names, type]);
+	// Ask the server whether the name is free once the user pauses typing.
+	useEffect(() => {
+		if (type !== "create") return;
+		const name = initialName?.trim() ?? "";
+		if (!name || !VALID_NAME.test(name)) {
+			setNameExists(false);
+			return;
+		}
+
+		let cancelled = false;
+		const timer = setTimeout(async () => {
+			try {
+				const result = await checkCatalogueName(name);
+				if (cancelled || "error" in result) return;
+				const taken = !result.available;
+				setNameExists(taken);
+				setErrors?.((prev: any) => {
+					if (taken) return { ...prev, name: NAME_TAKEN_ERROR };
+					if (prev?.name !== NAME_TAKEN_ERROR) return prev;
+					const { name: _removed, ...rest } = prev;
+					return rest;
+				});
+			} catch (error) {
+				console.error("Failed to check catalogue name:", error);
+			}
+		}, CHECK_DELAY_MS);
+
+		return () => {
+			cancelled = true;
+			clearTimeout(timer);
+		};
+	}, [initialName, type]);
 
 	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const newName = e.target.value;
 		setFormData((prev: any) => ({ ...prev, name: newName }));
+		setNameExists(false);
 
 		if (setTouched) {
 			setTouched((prev: any) => ({ ...prev, name: true }));
 		}
 
-		const isValidFormat = /^[a-zA-Z0-9\s]*$/.test(newName);
+		const isValidFormat = VALID_NAME.test(newName);
 		const isJustSpaces = newName.length > 0 && newName.trim().length === 0;
 
 		if ((!isValidFormat || isJustSpaces) && setErrors) {
@@ -60,68 +84,15 @@ export const useCatalogueName = ({
 			return;
 		}
 
-		// Clear any existing name errors when user types valid input
-		if (isValidFormat && !isJustSpaces && setErrors) {
+		// Valid input clears earlier name errors; the availability check re-adds one if needed.
+		if (setErrors) {
 			setErrors((prev: any) => {
 				const newErrors = { ...prev };
-				// Clear all name-related errors
 				delete newErrors.name;
 				return newErrors;
 			});
 		}
-
-		// Check for duplicates (only in create flow)
-		if (type === "create") {
-			if (newName.trim() && names.length > 0) {
-				const exists = names.some(
-					(n) => normalize(n.name) === normalize(newName),
-				);
-
-				if (exists && setErrors) {
-					setErrors((prev: any) => ({
-						...prev,
-						name: "This name is already in use. Please choose a different name.",
-					}));
-				}
-			}
-		}
-	};
-	const fetchNames = async () => {
-		try {
-			const res = await fetch("/api/items?type=name", {
-				method: "GET",
-				cache: "no-store",
-			});
-			const data = await res.json();
-			setNames(data);
-
-			// Check if initial name already exists
-			if (initialName && data.length > 0) {
-				const exists = data.some(
-					(n) => normalize(n.name) === normalize(initialName),
-				);
-				if (exists && setErrors) {
-					setErrors((prev: any) => ({
-						...prev,
-						name: "This name is already in use. Please choose a different name.",
-					}));
-				}
-			}
-		} catch (error) {
-			console.error("Failed to fetch names:", error);
-			setNames([]);
-		}
 	};
 
-	useEffect(() => {
-		if (type !== "create" || !autoFetch) return;
-		fetchNames();
-	}, [type, autoFetch]);
-
-	return {
-		handleNameChange,
-		nameExists,
-		names,
-		refetchNames: fetchNames,
-	};
+	return { handleNameChange, nameExists };
 };

@@ -4,6 +4,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { scrubBreadcrumb, scrubEvent } from "@/lib/observability/sentry-scrub";
 
 Sentry.init({
 	dsn: "https://04c218993c95f3450f8c7a08172075ff@o4511305257779200.ingest.us.sentry.io/4511305258762240",
@@ -15,9 +16,8 @@ Sentry.init({
 	// Logs are a separate high-volume stream, not critical errors - off.
 	enableLogs: false,
 
-	// Enable sending user PII (Personally Identifiable Information)
-	// https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-	sendDefaultPii: true,
+	// No cookies, IPs or request bodies: sessions and user data stay out of Sentry.
+	sendDefaultPii: false,
 
 	// Drop non-actionable edge/middleware noise (control-flow + transient network).
 	beforeSend(event, hint) {
@@ -38,6 +38,12 @@ Sentry.init({
 				return null;
 			}
 		}
-		return event;
+		return scrubEvent(event);
+	},
+	beforeSendTransaction(event) {
+		return scrubEvent(event);
+	},
+	beforeBreadcrumb(breadcrumb) {
+		return scrubBreadcrumb(breadcrumb);
 	},
 });

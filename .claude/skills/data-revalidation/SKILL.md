@@ -5,7 +5,7 @@ description: Use when a Quicktalog mutation needs to refresh data - deciding whi
 
 # Data Revalidation
 
-Quicktalog has **four** independent freshness mechanisms. Calling the wrong ones gives stale UI; calling all of them gives redundant re-fetches. This skill defines who owns what. Background: [docs/revalidation-analysis.md](../../../docs/revalidation-analysis.md).
+Quicktalog has **four** independent freshness mechanisms. Calling the wrong ones gives stale UI; calling all of them gives redundant re-fetches. This skill defines who owns what. Background: [plans/archive/revalidation-analysis.md](../../../plans/archive/revalidation-analysis.md).
 
 ## The core rule
 

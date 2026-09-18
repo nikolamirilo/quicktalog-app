@@ -1,9 +1,9 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { withinRateLimit } from "@/lib/rate-limit";
 
 const f = createUploadthing();
-
-const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
@@ -19,15 +19,16 @@ export const ourFileRouter = {
 		},
 	})
 		// Set permissions and file types for this FileRoute
-		.middleware(async ({ req }) => {
-			// This code runs on your server before upload
-			const user = await auth(req);
+		.middleware(async () => {
+			// Runs on the server before upload; throwing rejects the upload.
+			const me = await getVerifiedIdentity();
+			if (!me) throw new UploadThingError("Unauthorized");
+			if (!(await withinRateLimit("upload", me.userId))) {
+				throw new UploadThingError("Too many uploads, try again later");
+			}
 
-			// If you throw, the user will not be able to upload
-			if (!user) throw new UploadThingError("Unauthorized");
-
-			// Whatever is returned here is accessible in onUploadComplete as `metadata`
-			return { userId: user.id };
+			// Available in onUploadComplete as `metadata`.
+			return { userId: me.userId };
 		})
 		.onUploadComplete(async ({ metadata, file }) => {
 			console.log("file url", file.ufsUrl);

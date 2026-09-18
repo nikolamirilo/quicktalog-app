@@ -1,22 +1,21 @@
 import * as Sentry from "@sentry/nextjs";
-import { drizzleClient } from "@/utils/drizzle";
-import { currentUser } from "@clerk/nextjs/server";
 import { schema } from "@quicktalog/common";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { drizzleClient } from "@/utils/drizzle";
 
 const catalogues = schema.catalogues;
 
 export async function GET() {
 	try {
-		const { id } = await currentUser();
-
-		if (!id) {
+		const me = await getVerifiedIdentity();
+		if (!me) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
 		const data = await drizzleClient.query.catalogues.findMany({
-			where: eq(catalogues.createdBy, id),
+			where: eq(catalogues.createdBy, me.userId),
 		});
 
 		return NextResponse.json(data || []);

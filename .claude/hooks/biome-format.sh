@@ -12,6 +12,12 @@ case "$FILE_PATH" in
 esac
 [ -f "$FILE_PATH" ] || exit 0
 
+# Only format files inside this project; sibling repos have their own style.
+case "$FILE_PATH" in
+	"$CLAUDE_PROJECT_DIR"/*) ;;
+	*) exit 0 ;;
+esac
+
 cd "$CLAUDE_PROJECT_DIR" 2>/dev/null || exit 0
 npx --no-install biome check --write --no-errors-on-unmatched "$FILE_PATH" >/dev/null 2>&1
 exit 0

@@ -33,7 +33,7 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 
 		try {
 			setLoading(true);
-			const data = await getUserData(clerkUser.id);
+			const data = await getUserData();
 			setUserData(data);
 		} catch (error) {
 			console.error("Failed to fetch user data:", error);

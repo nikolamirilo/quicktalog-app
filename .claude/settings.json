@@ -10,7 +10,17 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "your-command-here",
+						"command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh",
+						"timeout": 30
+					}
+				]
+			},
+			{
+				"matcher": "Bash",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/guard-bash.sh",
 						"timeout": 30
 					}
 				]
@@ -22,8 +32,19 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "your-command-here",
+						"command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/biome-format.sh",
 						"timeout": 30
+					}
+				]
+			}
+		],
+		"Stop": [
+			{
+				"hooks": [
+					{
+						"type": "command",
+						"command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/typecheck-stop.sh",
+						"timeout": 180
 					}
 				]
 			}

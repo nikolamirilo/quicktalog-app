@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { scrubBreadcrumb, scrubEvent } from "@/lib/observability/sentry-scrub";
 import posthog from "posthog-js";
 
 if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
@@ -37,9 +38,8 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 		// Define how likely Replay events are sampled when an error occurs.
 		replaysOnErrorSampleRate: 1.0,
 
-		// Enable sending user PII (Personally Identifiable Information)
-		// https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-		sendDefaultPii: true,
+		// No cookies, IPs or request bodies: sessions and user data stay out of Sentry.
+		sendDefaultPii: false,
 
 		ignoreErrors: [
 			"Paddle.js not available",
@@ -108,10 +108,16 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 				) {
 					event.level = "info";
 					event.fingerprint = ["server-action-fetch-failed"];
-					return event;
+					return scrubEvent(event);
 				}
 			}
-			return event;
+			return scrubEvent(event);
+		},
+		beforeSendTransaction(event) {
+			return scrubEvent(event);
+		},
+		beforeBreadcrumb(breadcrumb) {
+			return scrubBreadcrumb(breadcrumb);
 		},
 	});
 }

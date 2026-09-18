@@ -87,15 +87,12 @@ const ItemDropdownMenu = ({
 	};
 	const availableStatuses = USER_STATUSES.filter((s) => s !== catalogue.status);
 
-	const { handleNameChange, refetchNames } = useCatalogueName({
+	const { handleNameChange } = useCatalogueName({
 		initialName: formData.name,
 		type: "create",
 		setFormData,
 		setErrors,
 		setTouched,
-		// Dashboard renders one of these per catalogue; fetch names only when the
-		// Duplicate modal opens (refetchNames below) instead of N times on mount.
-		autoFetch: false,
 	});
 
 	const menuItems: MenuItem[] = [
@@ -172,7 +169,6 @@ const ItemDropdownMenu = ({
 				setFormData({ name: "" });
 				setErrors({});
 				setTouched({});
-				refetchNames();
 				setIsDuplicateModalOpen(true);
 			},
 			className: ITEM_BASE_CLASS,

@@ -1,6 +1,27 @@
 import { Redis } from "@upstash/redis";
 import postgres from "postgres";
 
+const PROD_PROJECT_REF = "uhfbapjuzvlyzyodxhqn";
+
+/**
+ * The database URL for test cleanup. Refuses to touch the PROD project
+ * unless ALLOW_PROD=1 is set explicitly.
+ */
+function cleanupDatabaseUrl(): string | undefined {
+	const url = process.env.DB_CONNECTION_STRING;
+	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+	if (
+		(url?.includes(PROD_PROJECT_REF) ||
+			supabaseUrl.includes(PROD_PROJECT_REF)) &&
+		process.env.ALLOW_PROD !== "1"
+	) {
+		throw new Error(
+			"E2E cleanup refuses to run against the PROD Supabase project.",
+		);
+	}
+	return url;
+}
+
 /**
  * Removes a catalogue created during an E2E run from Postgres + Redis,
  * mirroring the app's own deleteItem server action. Self-contained (no
@@ -9,7 +30,7 @@ import postgres from "postgres";
 export async function deleteCatalogueBySlug(slug: string): Promise<void> {
 	if (!slug) return;
 
-	const databaseUrl = process.env.DATABASE_URL;
+	const databaseUrl = cleanupDatabaseUrl();
 	if (databaseUrl) {
 		const sql = postgres(databaseUrl, { prepare: false });
 		try {
@@ -44,7 +65,7 @@ export async function deleteCataloguesByPrefix(
 ): Promise<string[]> {
 	if (!prefix) return [];
 
-	const databaseUrl = process.env.DATABASE_URL;
+	const databaseUrl = cleanupDatabaseUrl();
 	if (!databaseUrl) return [];
 
 	const sql = postgres(databaseUrl, { prepare: false });

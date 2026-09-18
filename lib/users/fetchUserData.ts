@@ -1,24 +1,10 @@
 import * as Sentry from "@sentry/nextjs";
 import { endOfMonth, startOfMonth } from "@/helpers/client";
-import {
-	buildUserDataFromClerkProfile,
-	upsertUser,
-} from "@/lib/users/syncFromClerk";
 import { drizzleClient } from "@/utils/drizzle";
-import { createClient } from "@/utils/supabase/server";
 import { schema, tiers } from "@quicktalog/common";
 import { and, count, eq, gte, lt } from "drizzle-orm";
 
 const { analytics, catalogues, ocr, prompts, users } = schema;
-
-export interface OwnerProfile {
-	id: string;
-	emailAddresses?: Array<{ emailAddress: string }>;
-	firstName?: string | null;
-	lastName?: string | null;
-	imageUrl?: string | null;
-	publicMetadata?: Record<string, any>;
-}
 
 type FetchUserDataCode = "not_found" | "no_plan" | "usage_failed";
 export interface FetchUserDataResult {
@@ -29,48 +15,20 @@ export interface FetchUserDataResult {
 }
 
 /**
- * Loads a user's dashboard payload (profile + plan + usage). When the row is
- * missing and the caller proves ownership by passing `ownerProfile`, performs
- * an on-demand Clerk → Supabase sync to cover the webhook race for new signups.
+ * Loads a user's dashboard payload (profile + plan + usage). Callers must pass a
+ * verified user id; this function does no authorization of its own.
  */
 export async function fetchUserData(args: {
 	userId: string;
-	ownerProfile?: OwnerProfile | null;
 }): Promise<FetchUserDataResult> {
-	const { userId, ownerProfile } = args;
+	const { userId } = args;
 
-	let user = await drizzleClient.query.users.findFirst({
+	const user = await drizzleClient.query.users.findFirst({
 		where: eq(users.id, userId),
 	});
 
 	if (!user) {
-		if (!ownerProfile || ownerProfile.id !== userId) {
-			console.warn(`User data not found for Clerk ID: ${userId}.`);
-			return { ok: false, code: "not_found" };
-		}
-
-		try {
-			const supabase = await createClient();
-			const seed = buildUserDataFromClerkProfile(ownerProfile);
-			await upsertUser(supabase, seed);
-		} catch (syncError) {
-			Sentry.captureException(syncError, {
-				tags: { area: "user-sync", phase: "on-demand" },
-			});
-			console.error("On-demand Clerk sync failed:", syncError);
-			return { ok: false, code: "not_found" };
-		}
-
-		user = await drizzleClient.query.users.findFirst({
-			where: eq(users.id, userId),
-		});
-
-		if (!user) {
-			console.warn(
-				`User data not found for Clerk ID after on-demand sync: ${userId}.`,
-			);
-			return { ok: false, code: "not_found" };
-		}
+		return { ok: false, code: "not_found" };
 	}
 
 	const planId = user.planId;

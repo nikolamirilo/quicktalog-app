@@ -1,0 +1,167 @@
+[
+	{
+		"file": "00_A.0_M00_perimeter_close.sql",
+		"heading": "A.0 `MIGRATION M00_perimeter_close` (Phase 0A; CHANGE C1, PGlite-verified (final run))",
+		"planLines": "1370-1436"
+	},
+	{
+		"file": "01_A.1_M01_app_roles_private_schema.sql",
+		"heading": "A.1 `MIGRATION M01_app_roles_private_schema` (Phase 1)",
+		"planLines": "1442-1519"
+	},
+	{
+		"file": "02_A.2_M02_edge_functions_per_project.sql",
+		"heading": "A.2 `MIGRATION M02_edge_functions_per_project` (Phase 1; CHANGE W6, PGlite-verified (final run))",
+		"planLines": "1525-1651"
+	},
+	{
+		"file": "03_A.3_M03_integrity_constraints_ai_ledger.sql",
+		"heading": "A.3 `MIGRATION M03_integrity_constraints_ai_ledger` (Phase 1; CHANGE C2-C4, W8, PGlite-verified (final run))",
+		"planLines": "1657-1866"
+	},
+	{
+		"file": "04_A.4_M04_app_role_grants_policies.sql",
+		"heading": "A.4 `MIGRATION M04_app_role_grants_policies` (Phase 1; CHANGE C5, PGlite-verified (final run))",
+		"planLines": "1872-2060"
+	},
+	{
+		"file": "05_A.5_M05_private_entry_points.sql",
+		"heading": "A.5 `MIGRATION M05_private_entry_points` (Phase 1; CHANGE C6, C7, PGlite-verified (final run))",
+		"planLines": "2066-2297"
+	},
+	{
+		"file": "06_A.6_M06_ai_turn_plan_binding.sql",
+		"heading": "A.6 `MIGRATION M06_ai_turn_plan_binding` (Phase 1, CHANGE C8, PGlite-verified (final run))",
+		"planLines": "2303-2482"
+	},
+	{
+		"file": "07_A.7_M07_validate_after_audit.sql",
+		"heading": "A.7 `MIGRATION M07_validate_after_audit` (Phase 1, CHANGE C9, PGlite-verified (final run))",
+		"planLines": "2488-2510"
+	},
+	{
+		"file": "08_A.8_M08_app_rls_login_role.sql",
+		"heading": "A.8 `MIGRATION M08_app_rls_login_role` (Phase 1 end)",
+		"planLines": "2516-2547"
+	},
+	{
+		"file": "09_A.9_M09_edge_webhook_secret.sql",
+		"heading": "A.9 `MIGRATION M09_edge_webhook_secret` (Track K, CHANGE C10, W7, PGlite-verified (final run))",
+		"planLines": "2553-2635"
+	},
+	{
+		"file": "10_A.10_M10_auth_users_sync.sql",
+		"heading": "A.10 `MIGRATION M10_auth_users_sync` (Phase 2; CHANGE C11, W1, W2, PGlite-verified (final run))",
+		"planLines": "2641-2933"
+	},
+	{
+		"file": "11_A.R1_remap-user-ids.sql",
+		"heading": "A.R1 `scripts/cutover/remap-user-ids.sql` (Phase 4 runbook step 9; CHANGE C12 and W9 on top of the verified remap, PGlite-verified (final run))",
+		"planLines": "2939-3080"
+	},
+	{
+		"file": "12_A.R2_rollback-remap.sql",
+		"heading": "A.R2 `scripts/cutover/rollback-remap.sql` (R1/R2 rollback step 4; CHANGE W9, PGlite-verified (final run))",
+		"planLines": "3086-3125"
+	},
+	{
+		"file": "13_A.11_M11_users_id_uuid_check.sql",
+		"heading": "A.11 `MIGRATION M11_users_id_uuid_check` (Phase 4, immediately after A.R1 commits)",
+		"planLines": "3131-3140"
+	},
+	{
+		"file": "14_A.12_M12_validate_users_id_uuid.sql",
+		"heading": "A.12 `MIGRATION M12_validate_users_id_uuid` (Phase 5, T+30 after orphan triage)",
+		"planLines": "3146-3146"
+	},
+	{
+		"file": "15_A.13_M13_post_cutover_cleanup.sql",
+		"heading": "A.13 `MIGRATION M13_post_cutover_cleanup` (Phase 5, after the agreed retention; CHANGE W3, PGlite-verified (final run))",
+		"planLines": "3152-3179"
+	},
+	{
+		"file": "16_A.14_Rollback_SQL_roll_back_later_migrat.sql",
+		"heading": "A.14 Rollback SQL (roll back later migrations first)",
+		"planLines": "3187-3290"
+	},
+	{
+		"file": "17_A.15_preflight.sql",
+		"heading": "A.15 `scripts/audit/preflight.sql` (read-only; you run it on PROD; copied to `scripts/cutover/preflight.sql` with the Phase 3/4 queries enabled)",
+		"planLines": "3298-3343"
+	},
+	{
+		"file": "18_A.16_exposure-audit.sql",
+		"heading": "A.16 `scripts/audit/exposure-audit.sql` (read-only; PROD before and after M00)",
+		"planLines": "3351-3379"
+	},
+	{
+		"file": "A.14_split/rollback_M13.sql",
+		"heading": "A.14 rollback part M13",
+		"planLines": "3187-3187"
+	},
+	{
+		"file": "A.14_split/rollback_M12.sql",
+		"heading": "A.14 rollback part M12",
+		"planLines": "3188-3188"
+	},
+	{
+		"file": "A.14_split/rollback_R1.sql",
+		"heading": "A.14 rollback part R1",
+		"planLines": "3189-3190"
+	},
+	{
+		"file": "A.14_split/rollback_M10.sql",
+		"heading": "A.14 rollback part M10",
+		"planLines": "3191-3208"
+	},
+	{
+		"file": "A.14_split/rollback_M09.sql",
+		"heading": "A.14 rollback part M09",
+		"planLines": "3209-3210"
+	},
+	{
+		"file": "A.14_split/rollback_M08.sql",
+		"heading": "A.14 rollback part M08",
+		"planLines": "3211-3214"
+	},
+	{
+		"file": "A.14_split/rollback_M07.sql",
+		"heading": "A.14 rollback part M07",
+		"planLines": "3215-3219"
+	},
+	{
+		"file": "A.14_split/rollback_M06.sql",
+		"heading": "A.14 rollback part M06",
+		"planLines": "3220-3224"
+	},
+	{
+		"file": "A.14_split/rollback_M05.sql",
+		"heading": "A.14 rollback part M05",
+		"planLines": "3225-3232"
+	},
+	{
+		"file": "A.14_split/rollback_M04.sql",
+		"heading": "A.14 rollback part M04",
+		"planLines": "3233-3256"
+	},
+	{
+		"file": "A.14_split/rollback_M03.sql",
+		"heading": "A.14 rollback part M03",
+		"planLines": "3257-3266"
+	},
+	{
+		"file": "A.14_split/rollback_M02.sql",
+		"heading": "A.14 rollback part M02",
+		"planLines": "3267-3270"
+	},
+	{
+		"file": "A.14_split/rollback_M01.sql",
+		"heading": "A.14 rollback part M01",
+		"planLines": "3271-3284"
+	},
+	{
+		"file": "A.14_split/rollback_M00.sql",
+		"heading": "A.14 rollback part M00",
+		"planLines": "3285-3291"
+	}
+]

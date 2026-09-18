@@ -1,53 +1,34 @@
-import { createClient } from "@/utils/supabase/server";
 import * as Sentry from "@sentry/nextjs";
+import { schema } from "@quicktalog/common";
+import { asc, eq } from "drizzle-orm";
+import { drizzleClient } from "@/utils/drizzle";
+
+const { catalogues } = schema;
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+/**
+ * Names of published catalogues, for generateStaticParams and the sitemap.
+ * Drafts, content and owners are never listed here.
+ */
+export async function GET() {
 	try {
-		const { searchParams } = new URL(request.url);
-		const type = searchParams.get("type");
-		const status = searchParams.get("status");
-		const supabase = await createClient();
+		const data = await drizzleClient
+			.select({ name: catalogues.name })
+			.from(catalogues)
+			.where(eq(catalogues.status, "active"))
+			.orderBy(asc(catalogues.name));
 
-		let query = supabase
-			.from("catalogues")
-			.select(type === "name" ? "name" : "*");
-
-		if (status) {
-			query = query.eq("status", status);
-		}
-
-		const { data, error } = await query;
-
-		if (error) {
-			Sentry.captureException(error, {
-				level: "warning",
-				tags: { route: "items", method: "GET" },
-			});
-			console.error("Error retreiving catalogues:", error);
-			return new Response(JSON.stringify({ error: error.message }), {
-				status: 500,
-				headers: { "Content-Type": "application/json" },
-			});
-		}
-
-		if (!data || data.length === 0) {
-			return new Response(JSON.stringify({ error: "Catalogues not found" }), {
-				status: 404,
-				headers: { "Content-Type": "application/json" },
-			});
-		}
-
-		return new Response(JSON.stringify(data), {
-			status: 200,
-			headers: { "Content-Type": "application/json" },
+		return Response.json(data);
+	} catch (error) {
+		Sentry.captureException(error, {
+			level: "warning",
+			tags: { route: "items", method: "GET" },
 		});
-	} catch (error: any) {
-		console.error("Request error:", error);
-		return new Response(JSON.stringify({ error: error.message }), {
-			status: 400,
-			headers: { "Content-Type": "application/json" },
-		});
+		console.error("Error retrieving catalogues:", error);
+		return Response.json(
+			{ error: "Failed to retrieve catalogues" },
+			{ status: 500 },
+		);
 	}
 }

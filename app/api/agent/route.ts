@@ -119,7 +119,7 @@ export async function POST(request: Request) {
 			//
 			// This trusts the history, which is client-supplied - the airtight
 			// version is a ledger keyed on a turn id with a unique index, which is
-			// the credits work in docs/ai-agent-plan-mode.md.
+			// the credits work in plans/active/ai-agent-plan-mode.md.
 			if (plan) return;
 			try {
 				await meter(auth.userId, catalogueName);

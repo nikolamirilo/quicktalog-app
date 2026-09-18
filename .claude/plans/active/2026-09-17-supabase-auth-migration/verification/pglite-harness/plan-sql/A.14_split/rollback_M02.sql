@@ -1,0 +1,3 @@
+-- M02: only if M02 misbehaves on PROD (re-introduces TEST->PROD posting): recreate the function body from
+-- 20260911213819_remote_schema.sql:55-88, the unnarrowed Brevo trigger, and the cron DO block from
+-- 20260912093000_lockdown_privileges_and_schema_fixes.sql:242-267; delete from private.settings where key = 'edge_functions_base_url'.

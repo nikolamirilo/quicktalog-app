@@ -1,0 +1,1 @@
+-- M12: alter table public.users drop constraint if exists users_id_is_uuid;   (then re-add NOT VALID if still needed)

@@ -1,18 +1,19 @@
 "use server";
 import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { withinRateLimit } from "@/lib/rate-limit";
 import { sanitizeCustomThemeColors } from "@/helpers/theme";
 import { drizzleClient } from "@/utils/drizzle";
 import { getRedis, syncCache } from "@/utils/redis";
 import {
 	Catalogue,
-	defaultCatalogueData,
 	generateUniqueSlug,
 	schema,
 	Status,
 } from "@quicktalog/common";
 import { currentUser } from "@clerk/nextjs/server";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 const catalogues = schema.catalogues;
 
@@ -281,31 +282,51 @@ export async function updateCatalogue(catalogueData: Catalogue) {
 	}
 }
 
+/**
+ * The signed-in owner's catalogue for the editor: the database row, with any
+ * unsaved builder draft from Redis on top. Ownership is always proven against
+ * the database; the draft can never change the id, name, owner or status.
+ */
 export async function getCatalogueByName(name: string) {
 	try {
-		const r = getRedis();
-		let catalogue = await r.get(name);
-		if (catalogue === null) {
-			const data = await drizzleClient.query.catalogues.findFirst({
-				where: eq(catalogues.name, name),
-			});
-
-			if (!data) {
-				console.error("Failed to fetch catalogue: Not found");
-				return {
-					success: false,
-					error: "Catalogue not found",
-					data: defaultCatalogueData,
-				};
-			}
-			await r.set(name, JSON.stringify(data));
-			catalogue = data;
+		const me = await getVerifiedIdentity();
+		if (!me) {
+			return { success: false, error: "Unauthorized", data: null };
 		}
-		return {
-			success: true,
-			data: catalogue,
-			error: null,
-		};
+
+		const row = await drizzleClient.query.catalogues.findFirst({
+			where: and(
+				eq(catalogues.name, name),
+				eq(catalogues.createdBy, me.userId),
+			),
+		});
+		if (!row) {
+			return { success: false, error: "Catalogue not found", data: null };
+		}
+
+		let draft: unknown = null;
+		try {
+			draft = await getRedis().get(name);
+		} catch (err) {
+			Sentry.captureException(err, {
+				level: "warning",
+				tags: { op: "getCatalogueByName", step: "redis" },
+			});
+		}
+		const parsed = typeof draft === "string" ? JSON.parse(draft) : draft;
+
+		const data =
+			parsed && typeof parsed === "object"
+				? {
+						...(parsed as Catalogue),
+						id: row.id,
+						name: row.name,
+						createdBy: row.createdBy,
+						status: row.status,
+					}
+				: row;
+
+		return { success: true, data, error: null };
 	} catch (err) {
 		Sentry.captureException(err, {
 			level: "warning",
@@ -318,6 +339,32 @@ export async function getCatalogueByName(name: string) {
 			data: null,
 		};
 	}
+}
+
+/**
+ * Whether a catalogue name is still free, for the create and duplicate forms.
+ * Answers with a boolean only, so it cannot be used to list other users' names.
+ */
+export async function checkCatalogueName(
+	name: string,
+): Promise<{ available: boolean } | { error: string }> {
+	const me = await getVerifiedIdentity();
+	if (!me) return { error: "Unauthorized" };
+	if (typeof name !== "string" || name.length > 200) {
+		return { error: "Invalid name" };
+	}
+	if (!(await withinRateLimit("catalogueName", me.userId))) {
+		return { error: "Too many requests" };
+	}
+
+	const slug = generateUniqueSlug(name);
+	if (!slug) return { available: false };
+
+	const existing = await drizzleClient.query.catalogues.findFirst({
+		where: eq(catalogues.name, slug),
+		columns: { id: true },
+	});
+	return { available: !existing };
 }
 
 export async function publishCatalogue(data: Catalogue): Promise<boolean> {

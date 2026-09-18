@@ -1,0 +1,1 @@
+-- M09: re-run the M02 body of public.call_edge_function_with_vault_secret() and the M02 cron DO block.

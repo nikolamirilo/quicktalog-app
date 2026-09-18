@@ -1,39 +1,37 @@
 import * as Sentry from "@sentry/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+import { schema } from "@quicktalog/common";
+import { count, eq, sum } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { drizzleClient } from "@/utils/drizzle";
+
+const { analytics, newsletter } = schema;
 
 export async function GET() {
 	try {
-		const supabase = await createClient();
-		const user = await currentUser();
-
-		if (!user?.id) {
+		const me = await getVerifiedIdentity();
+		if (!me) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const { id } = user;
-
-		const { data: analyticsData } = await supabase
-			.from("analytics")
-			.select("date, current_url, pageview_count, unique_visitors")
-			.eq("user_id", id);
-
-		const { count: newsletterCount } = await supabase
-			.from("newsletter")
-			.select("*", { count: "exact", head: true })
-			.eq("owner_id", id);
-
-		const totalPageViews =
-			analyticsData?.reduce((sum, a) => sum + (a.pageview_count || 0), 0) || 0;
-		const totalUniqueVisitors =
-			analyticsData?.reduce((sum, a) => sum + (a.unique_visitors || 0), 0) || 0;
-		const totalNewsletterSubscriptions = newsletterCount || 0;
+		const [[traffic], [subscribers]] = await Promise.all([
+			drizzleClient
+				.select({
+					pageViews: sum(analytics.pageviewCount),
+					uniqueVisitors: sum(analytics.uniqueVisitors),
+				})
+				.from(analytics)
+				.where(eq(analytics.userId, me.userId)),
+			drizzleClient
+				.select({ total: count() })
+				.from(newsletter)
+				.where(eq(newsletter.ownerId, me.userId)),
+		]);
 
 		return NextResponse.json({
-			totalPageViews,
-			totalUniqueVisitors,
-			totalNewsletterSubscriptions,
+			totalPageViews: Number(traffic?.pageViews ?? 0),
+			totalUniqueVisitors: Number(traffic?.uniqueVisitors ?? 0),
+			totalNewsletterSubscriptions: subscribers?.total ?? 0,
 		});
 	} catch (error) {
 		Sentry.captureException(error, {
