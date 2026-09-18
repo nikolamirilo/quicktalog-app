@@ -13,10 +13,10 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0A.5 | Worker code: bearer token on HTTP routes, `JOBS_PAUSED`, usage computed in the job, safe image cleanup | Claude | Done |
 | 0A.6 | Rename DB env vars to `DB_CONNECTION_STRING` (app, packages, CI) | Claude | Done |
 | 0A.7 | Write M00 migration (RLS on all tables, revoke `anon`/`authenticated`) | Claude | Done |
-| 0A.8 | Review and commit Phase 0A changes (app, worker, packages) | Nikola | To Do |
-| 0A.9 | Set secrets: Vercel (`DB_CONNECTION_STRING`, `AUTH_PROVIDER`, `REVALIDATE_SECRET`, `REDIS_KEY_PREFIX`), GitHub (`DB_CONNECTION_STRING`), Cloudflare (`WORKER_ADMIN_TOKEN`, `REVALIDATE_SECRET`, `JOBS_PAUSED`) | Nikola | To Do |
-| 0A.10 | Deploy worker, then app, to TEST | Nikola | To Do |
-| 0A.11 | Soak 24h on TEST; confirm no app `/rest/v1` traffic | Nikola | To Do |
+| 0A.8 | Review and commit Phase 0A changes (app, worker, packages) | Nikola | Done |
+| 0A.9 | Set secrets: Vercel (`DB_CONNECTION_STRING`, `AUTH_PROVIDER`, `REVALIDATE_SECRET`, `REDIS_KEY_PREFIX`), GitHub (`DB_CONNECTION_STRING`), Cloudflare (`WORKER_ADMIN_TOKEN`, `REVALIDATE_SECRET`, `JOBS_PAUSED`, `SUPABASE_SECRET_KEY`; then delete `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`) | Nikola | Done |
+| 0A.10 | Deploy worker, then app, to TEST | Nikola | Done |
+| 0A.11 | Soak 24h on TEST; confirm no app `/rest/v1` traffic | Nikola | In Progress |
 | 0A.12 | Apply M00 on TEST and run the perimeter check | Nikola | To Do |
 | 0A.13 | PROD: check edge functions, backup, merge `test` → `main`, deploy, soak 24h, apply M00, perimeter check, re-run audit | Nikola | To Do |
 | 0A.14 | Fix any tampered data found by the audit; record the GDPR notification decision | Nikola | To Do |
@@ -27,8 +27,8 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0B.5 | Clerk `user.deleted`: cancel Paddle subscriptions before deleting | Claude | To Do |
 | 0B.6 | Paddle sandbox test: checkout, activation, renewal, cancel | Nikola | To Do |
 | 0B.7 | Deploy to TEST, then PROD; soak 48h | Nikola | To Do |
-| K.1 | Create named `sb_secret_` keys per project | Nikola | To Do |
-| K.2 | Worker: replace `SUPABASE_SERVICE_ROLE_KEY` with the secret key, remove `SUPABASE_ANON_KEY` | Claude | To Do |
+| K.1 | Create named `sb_secret_` keys per project | Nikola | Done |
+| K.2 | Worker: replace `SUPABASE_SERVICE_ROLE_KEY` with the secret key, remove `SUPABASE_ANON_KEY` | Claude | Done |
 | K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude | To Do |
 | K.4 | Apply M09 (webhooks send only the header); remove the Vault `service_role_key` | Nikola | To Do |
 | K.5 | Disable legacy API keys; watch logs 24h | Nikola | To Do |
