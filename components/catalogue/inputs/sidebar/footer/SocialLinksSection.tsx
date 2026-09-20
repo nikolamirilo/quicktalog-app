@@ -5,12 +5,11 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { MAX_SOCIALS } from "@/constants";
 import { extractDomain } from "@/helpers/client";
 import { Catalogue } from "@quicktalog/common";
 import { Info, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-
-const MAX_SOCIALS = 5;
 
 interface SocialLinksSectionProps {
 	catalogue: Catalogue;

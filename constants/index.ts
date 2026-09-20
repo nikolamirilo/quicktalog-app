@@ -216,3 +216,6 @@ export const CURRENCIES: Currency[] = [
 }));
 
 export const FAVICON = "/favicon.ico";
+
+/** How many social links a catalogue's footer can carry. */
+export const MAX_SOCIALS = 5;

@@ -1,9 +1,10 @@
-import type {
-	Catalogue,
-	CategoryBlock,
-	ContainerBlock,
-	ContentBlock,
-	Item,
+import {
+	type Catalogue,
+	type CategoryBlock,
+	type ContainerBlock,
+	type ContentBlock,
+	defaultCatalogueData,
+	type Item,
 } from "@quicktalog/common";
 import { CUSTOM_THEME_NAME, sanitizeCustomThemeColors } from "@/helpers/theme";
 import type {
@@ -19,6 +20,12 @@ export interface OperationLimits {
 	items?: number | "unlimited";
 	/** `features.sections` from the current plan - which block types are unlocked. */
 	sectionTypes?: AiSectionAccess;
+	/**
+	 * `features.branding` from the current plan. Gates the logo, contact, SEO,
+	 * legal, header and footer settings, exactly as the sidebar tabs do - the
+	 * assistant must not be a way around a lock the UI applies.
+	 */
+	branding?: boolean;
 }
 
 export interface OperationOutcome {
@@ -53,6 +60,9 @@ const SECTION_TYPE_LABELS: Record<string, string> = {
 	embedding: "Embed",
 	custom_code: "Custom code",
 };
+
+const hasKeys = (value: object | undefined): boolean =>
+	value !== undefined && Object.keys(value).length > 0;
 
 const reorder = <T extends { order: number }>(arr: T[]): T[] =>
 	arr.map((entry, index) => ({ ...entry, order: index }));
@@ -440,6 +450,23 @@ export function applyCatalogueOperations(
 				const changed: string[] = [];
 				const patch: Partial<Catalogue> = {};
 
+				// Branding-only fields, matching the three blocks GeneralTab hides
+				// behind LimitsOverlay and the whole of FooterTab. Name, language
+				// and currency sit outside those overlays and stay open to everyone.
+				if (
+					limits.branding === false &&
+					(fields.logo !== undefined ||
+						hasKeys(fields.metadata) ||
+						hasKeys(fields.contact) ||
+						hasKeys(fields.legal))
+				) {
+					limitReached = true;
+					skipped.push(
+						"Logo, contact, SEO and legal details are not part of your plan.",
+					);
+					break;
+				}
+
 				if (fields.heading !== undefined) {
 					patch.heading = fields.heading;
 					changed.push("heading");
@@ -456,15 +483,22 @@ export function applyCatalogueOperations(
 					patch.businessType = fields.businessType;
 					changed.push("business type");
 				}
-				if (fields.metadata) {
+				if (fields.logo !== undefined) {
+					patch.logo = fields.logo;
+					changed.push(fields.logo ? "logo" : "logo (removed)");
+				}
+				// `{}` is not a change. Every field on these is optional, so a call
+				// that sends an empty object would otherwise report success having
+				// touched nothing, and the model would believe the edit landed.
+				if (hasKeys(fields.metadata)) {
 					patch.metadata = { ...next.metadata, ...fields.metadata };
 					changed.push("SEO metadata");
 				}
-				if (fields.contact) {
+				if (hasKeys(fields.contact)) {
 					patch.contact = { ...next.contact, ...fields.contact };
 					changed.push("contact details");
 				}
-				if (fields.legal) {
+				if (hasKeys(fields.legal)) {
 					patch.legal = { ...next.legal, ...fields.legal };
 					changed.push("legal details");
 				}
@@ -525,6 +559,88 @@ export function applyCatalogueOperations(
 					break;
 				}
 				next = { ...next, appearance: { ...next.appearance, theme, style } };
+				applied.push(`Updated ${changed.join(", ")}`);
+				break;
+			}
+
+			case "update_header": {
+				if (limits.branding === false) {
+					limitReached = true;
+					skipped.push("Header settings are not part of your plan.");
+					break;
+				}
+
+				const { fields } = operation;
+				const changed: string[] = [];
+				const header = { ...defaultCatalogueData.header, ...next.header };
+
+				if (fields.type !== undefined) {
+					header.type = fields.type;
+					changed.push("header layout");
+				}
+				if (fields.cta) {
+					header.cta = { ...header.cta, ...fields.cta };
+					changed.push("header button");
+				}
+				if (fields.phoneCta !== undefined) {
+					header.phoneCta = fields.phoneCta;
+					changed.push("header phone icon");
+				}
+				if (fields.emailCta !== undefined) {
+					header.emailCta = fields.emailCta;
+					changed.push("header email icon");
+				}
+				if (fields.logoWidth !== undefined) {
+					header.logoSize = { ...header.logoSize, width: fields.logoWidth };
+					changed.push("header logo size");
+				}
+
+				if (changed.length === 0) {
+					skipped.push("No header settings to change.");
+					break;
+				}
+				next = { ...next, header };
+				applied.push(`Updated ${changed.join(", ")}`);
+				break;
+			}
+
+			case "update_footer": {
+				if (limits.branding === false) {
+					limitReached = true;
+					skipped.push("Footer settings are not part of your plan.");
+					break;
+				}
+
+				const { fields } = operation;
+				const changed: string[] = [];
+				const footer = { ...defaultCatalogueData.footer, ...next.footer };
+
+				if (fields.type !== undefined) {
+					footer.type = fields.type;
+					changed.push("footer layout");
+				}
+				if (fields.cta) {
+					footer.cta = { ...footer.cta, ...fields.cta };
+					changed.push("footer button");
+				}
+				if (fields.newsletter !== undefined) {
+					footer.newsletter = fields.newsletter;
+					changed.push("newsletter form");
+				}
+				if (fields.showPartners !== undefined) {
+					footer.showPartners = fields.showPartners;
+					changed.push("partners");
+				}
+				if (fields.logoWidth !== undefined) {
+					footer.logoSize = { ...footer.logoSize, width: fields.logoWidth };
+					changed.push("footer logo size");
+				}
+
+				if (changed.length === 0) {
+					skipped.push("No footer settings to change.");
+					break;
+				}
+				next = { ...next, footer };
 				applied.push(`Updated ${changed.join(", ")}`);
 				break;
 			}

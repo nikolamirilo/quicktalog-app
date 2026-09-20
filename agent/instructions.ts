@@ -47,6 +47,13 @@ const contentRules = `- The CATALOGUE snapshot is the current state and already 
 - Available themes: theme-monochrome, theme-elegant, theme-organic, theme-modern, theme-luxury, theme-creative, theme-coffee. Pass any of these as the theme field on updateAppearance when the user picks one. When they want a colour or palette that none of those offer, call setCustomTheme with the six hex colours it needs (background, heading, text, primary, secondary, cardBackground) and a short name to save it under in their theme library. The name is required: if the user did not say one, ask for it instead of guessing. Pick colours that read well together: a background close to white, a card background lighter or darker than the page, a primary with enough contrast against the card background for prices and buttons.
 - Never invent items, prices or contact details the user did not ask for. When a request is ambiguous, or destructive and unclear, ask instead of guessing.`;
 
+/** The three settings tabs the edit tools reach, and which tool owns which. */
+const settingsRules = `- Catalogue-wide settings live on updateCatalogue: heading, currency, language, business type, logo, SEO title and description, browser tab icon, phone, email, website and social links.
+- The header and footer are separate: updateHeader for the bar above the catalogue (its layout, call-to-action button, phone and email icons, logo size) and updateFooter for the one below it (layout, button, newsletter form, whether partners show, logo size). Turning a header or footer feature on needs its layout set to "custom"; say so rather than silently changing it.
+- updateLegal covers the registered business name, address, terms and conditions and privacy policy, all of which render in the footer.
+- Never write a URL into a call-to-action button, a social link, a logo or a tab icon unless the user gave you that address. Never draft terms or a privacy policy unless they ask you to, and never invent what a business does with customer data.
+- Some of these settings are not on every plan. When a tool says so, tell the user which setting their plan does not include rather than trying a different tool.`;
+
 /** Every bullet is a bug that reached a published page, hence the absolutes. */
 const codeRules = `- "embedding" is for third-party embeds. Its code must be an embed snippet or URL the user gave you in this conversation. Never invent a src, an API key or an account id. If they ask you to embed a service without supplying the snippet, ask for it instead of calling the tool.
 - "custom_code" is the opposite: original code you write yourself, such as an interactive widget, game, calculator or custom layout. Write it without being asked for a URL. It must be one self-contained HTML fragment with inline <style> and <script>, using no external scripts, CDNs, fonts, images or network calls. Prefix your class names so they cannot collide with the rest of the page, and keep the fragment compact. You may use item names, prices and descriptions from the snapshot.
@@ -110,6 +117,7 @@ export function buildInstructions(session: CatalogueSession): string {
 		`How you work:\n${workflow}`,
 		`Working through a multi-part request:\n${planningRules}`,
 		`Content rules:\n${contentRules}`,
+		`Settings, header and footer:\n${settingsRules}`,
 		canWriteCode ? `Writing code:\n${codeRules}` : "",
 		`Photos:\n${photoRules}`,
 		`Text scanned from uploaded images:\n${scanRules}`,

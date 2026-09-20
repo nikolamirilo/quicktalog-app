@@ -2,6 +2,7 @@
 import type { CatalogueAgentUIMessage } from "@/agent";
 import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
 import { CONTINUE_PLAN_MARKER } from "@/agent/plan";
+import { isHiddenTool, runningLabel } from "@/agent/tools/display";
 import type { AgentToolResult } from "@/types/ai";
 import { isToolUIPart } from "ai";
 import {
@@ -12,29 +13,6 @@ import {
 	ScanText,
 	Sparkles,
 } from "lucide-react";
-
-/** Turns "tool-addSection" into something a person can read while it runs. */
-const RUNNING_LABELS: Record<string, string> = {
-	fetchUrl: "Reading the page",
-	readSection: "Reading a section",
-	addSection: "Adding a section",
-	updateSection: "Updating a section",
-	deleteSection: "Deleting a section",
-	moveSection: "Moving a section",
-	addItems: "Adding items",
-	updateItem: "Updating an item",
-	deleteItem: "Deleting an item",
-	moveItem: "Moving an item",
-	updateCatalogue: "Updating catalogue settings",
-	updateAppearance: "Updating the appearance",
-};
-
-/**
- * The plan tools have their own display - one checklist for the whole request,
- * rendered by the panel - so they contribute nothing to a bubble. Left alone
- * they would draw a spinner line and then a tickless green row per call.
- */
-const PLAN_TOOLS = new Set(["createPlan", "completeTask", "skipTask"]);
 
 /**
  * The OCR that travelled with the turn. It is part of what the user said, so it
@@ -118,7 +96,9 @@ const ChatMessageBubble = ({
 		const name = part.type.replace(/^tool-/, "");
 		const key = part.toolCallId;
 
-		if (PLAN_TOOLS.has(name)) return null;
+		// The plan tools have their own display - one checklist for the whole
+		// request, rendered by the panel - so they contribute nothing here.
+		if (isHiddenTool(name)) return null;
 
 		if (part.state === "input-streaming" || part.state === "input-available") {
 			return (
@@ -127,7 +107,7 @@ const ChatMessageBubble = ({
 					key={key}
 				>
 					<Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-product-primary" />
-					{RUNNING_LABELS[name] ?? "Working"}…
+					{runningLabel(name)}…
 				</p>
 			);
 		}
