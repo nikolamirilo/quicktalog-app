@@ -9,7 +9,15 @@ import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { Eye, LayoutTemplate, Rocket, Save, Sparkles } from "lucide-react";
+import {
+	Eye,
+	LayoutTemplate,
+	Rocket,
+	Save,
+	SlidersHorizontal,
+	Sparkles,
+	X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { RxUpdate } from "react-icons/rx";
@@ -197,16 +205,45 @@ const ActionButtons = ({
 			</div>
 
 			{/* ── Mobile fixed bottom tab bar ── */}
-			<div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center bg-background/95 px-2 pb-[env(safe-area-inset-bottom)]">
+			{/*
+			 * The top padding is the strip the editor button below straddles into,
+			 * so it never covers the middle item's icon. No `relative` here: this
+			 * is already a containing block for the absolute child, and Tailwind
+			 * emits `relative` after `fixed`, so adding it would win and unpin the
+			 * bar from the bottom of the screen.
+			 */}
+			<div
+				aria-label="Builder actions"
+				className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center bg-background/95 px-2 pt-5 pb-[env(safe-area-inset-bottom)]"
+				role="toolbar"
+			>
+				{/*
+				 * Opens the editor panel. Positioned against this bar rather than
+				 * the sidebar's own row, so "40% in, 60% out" is exact: the
+				 * translate is a share of the button's own height.
+				 */}
+				<button
+					aria-label={isOpen ? "Close editor panel" : "Open editor panel"}
+					className="absolute left-1/2 top-0 flex h-12 w-12 -translate-x-1/2 -translate-y-[60%] items-center justify-center rounded-full border-none bg-product-primary text-white shadow-sm outline-none transition-transform focus:outline-none hover:bg-product-primary/90 active:scale-95"
+					onClick={() => setIsOpen(!isOpen)}
+					style={{ WebkitTapHighlightColor: "transparent" }}
+					title={isOpen ? "Close editor panel" : "Open editor panel"}
+					type="button"
+				>
+					{isOpen ? <X size={22} /> : <SlidersHorizontal size={22} />}
+				</button>
 				{/*
 				 * The switch into AI mode. On mobile this is the only way in: the
 				 * floating pill is desktop-only, because a pill hovering over the
 				 * page at a guessed offset is what used to collide with this bar.
 				 * Opening the chat hides this whole bar, so the two never overlap.
+				 *
+				 * Styled like every other item: a colour of its own read as a
+				 * selected tab, and nothing here is selected until it is tapped.
 				 */}
 				<button
 					aria-label="Ask AI"
-					className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-product-primary transition-all duration-200 active:scale-95"
+					className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 transition-all duration-200 active:scale-95"
 					onClick={() => {
 						setIsOpen(false);
 						setIsChatOpen(true);

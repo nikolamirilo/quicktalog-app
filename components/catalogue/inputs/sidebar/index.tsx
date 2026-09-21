@@ -2,12 +2,7 @@
 
 import { FileText, Home, Layout, Palette } from "lucide-react";
 import React from "react";
-import {
-	LuChevronsDown,
-	LuChevronsLeft,
-	LuChevronsRight,
-	LuChevronsUp,
-} from "react-icons/lu";
+import { LuChevronsLeft, LuChevronsRight } from "react-icons/lu";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -113,17 +108,9 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
           transition-all duration-300 ease-in-out
         `}
 			>
-				{/* Mobile toggle. Sits clear above the bar rather than straddling its
-				    top edge: the bar now carries five items, so the centre line lands
-				    on a label instead of the gap it used to fall in. */}
-				<button
-					className="md:hidden absolute -top-12 left-1/2 -translate-x-1/2 w-12 h-12 flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[200]"
-					onClick={() => setIsOpen(!isOpen)}
-					style={{ WebkitTapHighlightColor: "transparent" }}
-					title="Toggle Sidebar"
-				>
-					{isOpen ? <LuChevronsDown size={24} /> : <LuChevronsUp size={24} />}
-				</button>
+				{/* The mobile toggle lives in ActionButtons' own bottom bar, which is
+				    the element the user actually sees: positioned there, straddling
+				    its top edge is exact rather than guessed against this row. */}
 
 				<Button
 					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95 transition-transform duration-200"
