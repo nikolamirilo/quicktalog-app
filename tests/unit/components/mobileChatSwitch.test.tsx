@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@clerk/nextjs", () => ({ useUser: () => ({ user: null }) }));
@@ -152,6 +152,34 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 		act(() => context.current?.setIsChatOpen(true));
 
 		expect(aside().className).not.toMatch(/\bmax-(sm|md|lg|xl):/);
+	});
+
+	/**
+	 * A colour of its own made Ask AI look like the selected tab on a bar where
+	 * nothing is selected until it is tapped.
+	 */
+	it("gives no bar item a selected look before anything is tapped", () => {
+		setup();
+		// Scoped to the phone bar: the desktop row renders the same actions, and
+		// happy-dom applies no media queries, so both are in the document.
+		const bar = within(
+			screen.getByRole("toolbar", { name: "Builder actions" }),
+		);
+
+		for (const label of ["Ask AI", "Save", "Templates", "Preview"]) {
+			const item = bar.getByRole("button", { name: label });
+			expect(item.className).not.toMatch(/text-product-primary/);
+		}
+	});
+
+	it("toggles the editor panel from the button in the bar", () => {
+		const { context } = setup();
+
+		act(() => screen.getByLabelText("Open editor panel").click());
+		expect(context.current?.isSidebarOpen).toBe(true);
+
+		act(() => screen.getByLabelText("Close editor panel").click());
+		expect(context.current?.isSidebarOpen).toBe(false);
 	});
 
 	it("opens the chat and closes the editor panel from one tap", () => {
