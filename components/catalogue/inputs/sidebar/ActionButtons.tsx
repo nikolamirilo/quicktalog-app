@@ -191,7 +191,7 @@ const ActionButtons = ({
 	];
 
 	const barItemClass =
-		"flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-2.5 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-product-primary active:scale-95 disabled:pointer-events-none disabled:opacity-40";
+		"flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-2.5 outline-none transition-all duration-200 focus:outline-none focus-visible:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-40";
 
 	const PublishIcon = ACTIONS.publish.icon;
 
@@ -255,13 +255,13 @@ const ActionButtons = ({
 				 */}
 				<button
 					aria-label={isOpen ? "Close editor panel" : "Open editor panel"}
-					className="absolute left-1/2 top-0 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-none bg-product-primary text-white shadow-sm transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-product-primary focus-visible:ring-offset-2 hover:bg-product-primary/90 active:scale-95"
+					className="absolute left-1/2 top-0 flex h-[3.6rem] w-[3.6rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-none bg-product-primary text-white shadow-sm outline-none transition-transform focus:outline-none focus-visible:outline-none hover:bg-product-primary/90 active:scale-95"
 					onClick={() => setIsOpen(!isOpen)}
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title={isOpen ? "Close editor panel" : "Open editor panel"}
 					type="button"
 				>
-					{isOpen ? <X size={22} /> : <SlidersHorizontal size={22} />}
+					{isOpen ? <X size={26} /> : <SlidersHorizontal size={26} />}
 				</button>
 
 				{/*
