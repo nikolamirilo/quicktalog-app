@@ -191,7 +191,7 @@ const ActionButtons = ({
 	];
 
 	const barItemClass =
-		"flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 transition-all duration-200 active:scale-95 disabled:pointer-events-none disabled:opacity-40";
+		"flex flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-2.5 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-product-primary active:scale-95 disabled:pointer-events-none disabled:opacity-40";
 
 	const PublishIcon = ACTIONS.publish.icon;
 
@@ -248,13 +248,14 @@ const ActionButtons = ({
 				role="toolbar"
 			>
 				{/*
-				 * Opens the editor panel. Positioned against this bar rather than
-				 * the sidebar's own row, so "40% in, 60% out" is exact: the
-				 * translate is a share of the button's own height.
+				 * Opens the editor panel, straddling the bar's top edge half in and
+				 * half out. Positioned against this bar rather than the sidebar's
+				 * own row, so that split is exact: the translate is a share of the
+				 * button's own height.
 				 */}
 				<button
 					aria-label={isOpen ? "Close editor panel" : "Open editor panel"}
-					className="absolute left-1/2 top-0 flex h-12 w-12 -translate-x-1/2 -translate-y-[60%] items-center justify-center rounded-full border-none bg-product-primary text-white shadow-sm outline-none transition-transform focus:outline-none hover:bg-product-primary/90 active:scale-95"
+					className="absolute left-1/2 top-0 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-none bg-product-primary text-white shadow-sm transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-product-primary focus-visible:ring-offset-2 hover:bg-product-primary/90 active:scale-95"
 					onClick={() => setIsOpen(!isOpen)}
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title={isOpen ? "Close editor panel" : "Open editor panel"}
