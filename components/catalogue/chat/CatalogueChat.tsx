@@ -6,6 +6,7 @@ import ChatImageAttachments, {
 import ChatMessageBubble from "@/components/catalogue/chat/ChatMessageBubble";
 import PlanChecklist from "@/components/catalogue/chat/PlanChecklist";
 import LimitsModal from "@/components/modals/LimitsModal";
+import { useCatalogueContext } from "@/context/CatalogueContext";
 import { getRequiredPlan } from "@/helpers/client";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
 import { usePastedImages } from "@/hooks/usePastedImages";
@@ -68,7 +69,9 @@ const isNarrating = (message?: CatalogueAgentUIMessage): boolean => {
  * content.
  */
 const CatalogueChat = ({ userData }: { userData?: UserData }) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const context = useCatalogueContext();
+	const isOpen = context?.isChatOpen ?? false;
+	const setIsOpen = context?.setIsChatOpen ?? (() => {});
 	const [draft, setDraft] = useState("");
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -147,7 +150,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 			{!isOpen && (
 				<button
 					aria-label="Open AI assistant"
-					className="group fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-3 z-[49] flex h-11 w-auto min-w-[124px] items-center justify-center gap-2 rounded-full border border-black/5 bg-product-primary px-2.5 pl-1.5 pr-4 font-lora-semibold text-[13px] font-bold text-product-foreground shadow-[0_6px_18px_-6px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95 sm:left-4 md:bottom-6 md:left-6 md:h-auto md:min-w-0 md:py-1.5"
+					className="group fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-3 z-[49] hidden h-11 w-auto min-w-[124px] items-center justify-center gap-2 rounded-full md:flex border border-black/5 bg-product-primary px-2.5 pl-1.5 pr-4 font-lora-semibold text-[13px] font-bold text-product-foreground shadow-[0_6px_18px_-6px_rgba(0,0,0,0.25)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.3)] active:translate-y-0 active:scale-95 sm:left-4 md:bottom-6 md:left-6 md:h-auto md:min-w-0 md:py-1.5"
 					onClick={() => setIsOpen(true)}
 					type="button"
 				>
@@ -160,7 +163,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 
 			{isOpen && (
 				<div
-					className="fixed inset-x-0 bottom-0 z-[60] flex h-[92dvh] max-h-[92dvh] animate-in flex-col overflow-hidden rounded-t-3xl border border-product-border bg-white font-lora text-product-foreground shadow-[0_-12px_40px_-10px_rgba(0,0,0,0.35)] duration-300 fade-in slide-in-from-bottom-6 [padding-bottom:env(safe-area-inset-bottom)] md:inset-x-auto md:bottom-6 md:left-6 md:h-[600px] md:max-h-[calc(100dvh-3rem)] md:w-[420px] md:rounded-3xl md:[padding-bottom:0]"
+					className="fixed inset-x-0 bottom-0 z-[1050] flex h-[92dvh] max-h-[92dvh] animate-in flex-col overflow-hidden rounded-t-3xl border border-product-border bg-white font-lora text-product-foreground shadow-[0_-12px_40px_-10px_rgba(0,0,0,0.35)] duration-300 fade-in slide-in-from-bottom-6 [padding-bottom:env(safe-area-inset-bottom)] md:inset-x-auto md:bottom-6 md:left-6 md:h-[600px] md:max-h-[calc(100dvh-3rem)] md:w-[420px] md:rounded-3xl md:[padding-bottom:0]"
 					ref={panelRef}
 				>
 					{/* Drag handle — mobile-only affordance so the sheet feels native. */}
