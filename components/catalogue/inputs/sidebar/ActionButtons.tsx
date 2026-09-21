@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { Eye, LayoutTemplate, Rocket, Save } from "lucide-react";
+import { Eye, LayoutTemplate, Rocket, Save, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { RxUpdate } from "react-icons/rx";
@@ -22,8 +22,11 @@ const ActionButtons = ({
 	isOpen: boolean;
 	setIsOpen: (value: boolean) => void;
 }) => {
-	const { catalogue, updateCatalogue: updateContextCatalogue } =
-		useCatalogueContext();
+	const {
+		catalogue,
+		updateCatalogue: updateContextCatalogue,
+		setIsChatOpen,
+	} = useCatalogueContext();
 	const { refreshAll } = useDashboardData("overview");
 	const { refreshUserData } = useUserContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
@@ -195,6 +198,24 @@ const ActionButtons = ({
 
 			{/* ── Mobile fixed bottom tab bar ── */}
 			<div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center bg-background/95 px-2 pb-[env(safe-area-inset-bottom)]">
+				{/*
+				 * The switch into AI mode. On mobile this is the only way in: the
+				 * floating pill is desktop-only, because a pill hovering over the
+				 * page at a guessed offset is what used to collide with this bar.
+				 * Opening the chat hides this whole bar, so the two never overlap.
+				 */}
+				<button
+					aria-label="Ask AI"
+					className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-product-primary transition-all duration-200 active:scale-95"
+					onClick={() => {
+						setIsOpen(false);
+						setIsChatOpen(true);
+					}}
+					type="button"
+				>
+					<Sparkles className="h-5 w-5" />
+					<span className="text-[11px] font-medium">Ask AI</span>
+				</button>
 				{QUICK_ACTIONS.map(({ key, icon: Icon, label, onClick, disabled }) => (
 					<button
 						className={`

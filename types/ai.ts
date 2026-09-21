@@ -58,9 +58,48 @@ interface AiCatalogueFields {
 	currency?: string;
 	language?: string;
 	businessType?: string;
-	metadata?: { title?: string; description?: string };
-	contact?: { phone?: string; email?: string; website?: string };
-	legal?: { legalName?: string; address?: string };
+	/** Address of an image already uploaded; "" clears it. */
+	logo?: string;
+	metadata?: { title?: string; description?: string; icon?: string };
+	contact?: {
+		phone?: string;
+		email?: string;
+		website?: string;
+		/** Replaces the whole list, matching how the Footer tab edits it. */
+		socials?: string[];
+	};
+	legal?: {
+		legalName?: string;
+		address?: string;
+		termsAndConditions?: string;
+		privacyPolicy?: string;
+	};
+}
+
+interface AiCtaFields {
+	isEnabled?: boolean;
+	label?: string;
+	url?: string;
+}
+
+/**
+ * The builder exposes only the width; height is left as it is, so the two
+ * header/footer field shapes flatten `logoSize` to one number.
+ */
+interface AiHeaderFields {
+	type?: "default" | "custom";
+	cta?: AiCtaFields;
+	phoneCta?: boolean;
+	emailCta?: boolean;
+	logoWidth?: number;
+}
+
+interface AiFooterFields {
+	type?: "default" | "custom";
+	cta?: AiCtaFields;
+	newsletter?: boolean;
+	showPartners?: boolean;
+	logoWidth?: number;
 }
 
 interface AiAppearanceFields {
@@ -140,7 +179,9 @@ export type CatalogueOperation =
 			toSectionId?: string;
 	  }
 	| { op: "update_catalogue"; fields: AiCatalogueFields }
-	| { op: "update_appearance"; fields: AiAppearanceFields };
+	| { op: "update_appearance"; fields: AiAppearanceFields }
+	| { op: "update_header"; fields: AiHeaderFields }
+	| { op: "update_footer"; fields: AiFooterFields };
 
 /**
  * What every agent tool returns. A failure is not an exception: the model reads

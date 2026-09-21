@@ -27,6 +27,13 @@ interface CatalogueContextType {
 	// Sidebar state
 	isSidebarOpen: boolean;
 	setIsSidebarOpen: (open: boolean) => void;
+	/**
+	 * The AI chat sheet. It lives here rather than inside CatalogueChat because
+	 * the builder's bottom bar has to know: on mobile the two share one thumb
+	 * zone, so the bar hides itself while the chat is up.
+	 */
+	isChatOpen: boolean;
+	setIsChatOpen: (open: boolean) => void;
 	// Block actions
 	addBlock: (block: ContentBlock, index?: number) => void;
 	removeBlock: (index: number) => void;
@@ -70,6 +77,7 @@ export const CatalogueContextProvider = ({
 	const [catalogue, setCatalogue] =
 		useState<Omit<Catalogue, "id">>(defaultCatalogueData);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [isChatOpen, setIsChatOpen] = useState(false);
 	const { user } = useUser();
 
 	// Mirrors the latest committed catalogue so `applyOperations` can compute and
@@ -349,6 +357,8 @@ export const CatalogueContextProvider = ({
 				updateThemeColors,
 				isSidebarOpen,
 				setIsSidebarOpen,
+				isChatOpen,
+				setIsChatOpen,
 				addBlock,
 				removeBlock,
 				updateBlock,

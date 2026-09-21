@@ -28,6 +28,7 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const context = useCatalogueContext();
 	const isOpen = context?.isSidebarOpen ?? false;
 	const setIsOpen = context?.setIsSidebarOpen ?? (() => {});
+	const isChatOpen = context?.isChatOpen ?? false;
 	const TABS: {
 		key: TabKey;
 		icon: React.ElementType;
@@ -62,8 +63,17 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 	return (
 		<aside
-			className={`!z-[1000] fixed bg-product-background shadow-xl flex 
+			className={`!z-[1000] fixed bg-product-background shadow-xl
     bottom-0 left-0 w-full flex-col-reverse
+    ${
+			/* One thumb zone, one panel: the chat sheet owns the bottom edge while
+          it is up, so this bar steps aside rather than covering its input.
+          Phone only - on desktop the two sit side by side, so the bar comes
+          back at md. Written as "hidden + md:flex" rather than "max-md:hidden"
+          because withMT (material-tailwind) replaces Tailwind's screens and
+          no max-* variant compiles in this project. */ ""
+		}
+    ${isChatOpen ? "hidden md:flex" : "flex"}
     ${isOpen ? "h-[100dvh]" : "h-auto"}
     md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
     ${isOpen ? "md:w-fit md:max-w-[520px]" : "md:w-16"}
@@ -103,9 +113,11 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
           transition-all duration-300 ease-in-out
         `}
 			>
-				{/* Mobile Toggle Button (Centered, overlapping top edge) */}
+				{/* Mobile toggle. Sits clear above the bar rather than straddling its
+				    top edge: the bar now carries five items, so the centre line lands
+				    on a label instead of the gap it used to fall in. */}
 				<button
-					className="md:hidden absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[200]"
+					className="md:hidden absolute -top-12 left-1/2 -translate-x-1/2 w-12 h-12 flex justify-center items-center bg-product-primary text-white rounded-full shadow-sm outline-none border-none focus:outline-none hover:bg-product-primary/90 transition-transform active:scale-95 z-[200]"
 					onClick={() => setIsOpen(!isOpen)}
 					style={{ WebkitTapHighlightColor: "transparent" }}
 					title="Toggle Sidebar"

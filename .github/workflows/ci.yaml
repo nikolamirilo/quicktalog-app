@@ -46,7 +46,13 @@ jobs:
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
       E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
       E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
-      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+      # The app reads DB_CONNECTION_STRING (utils/drizzle.ts, utils/db/pool.ts,
+      # drizzle.config.ts, tests/e2e/helpers/cleanup.ts), so the variable name
+      # stays. The repository secret is still the older DATABASE_URL, so fall
+      # back to it: an unset secret is an empty string, which is falsy here.
+      # Without this the e2e job gets no database, every Drizzle query fails
+      # ECONNREFUSED, and the builder never renders for the specs to drive.
+      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING || secrets.DATABASE_URL }}
       REDIS_KEY_PREFIX: ci
       UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
       UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}

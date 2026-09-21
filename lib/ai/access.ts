@@ -82,6 +82,7 @@ export async function authorize(catalogueName: string): Promise<AuthResult> {
 			sections: features?.sections_per_catalogue,
 			items: features?.items_per_catalogue,
 			sectionTypes: features?.sections,
+			branding: features?.branding,
 		},
 	};
 }
