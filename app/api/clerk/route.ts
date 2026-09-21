@@ -1,6 +1,16 @@
-import { retryOperation, sendWelcomeEmailSafely } from "@/actions/users";
+import {
+	retryOperation,
+	sendWelcomeEmailSafely,
+} from "@/lib/email/transactional";
 import { HANDLED_EVENT_TYPES } from "@/constants/users";
-import { deleteClerkUser, upsertClerkUser } from "@/lib/users/provision";
+import {
+	deleteClerkUser,
+	loadUserFootprint,
+	upsertClerkUser,
+} from "@/lib/users/provision";
+import { cancelSubscription } from "@/actions/paddle";
+import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
+import { getRedis, syncCache } from "@/utils/redis";
 import {
 	buildClerkProfile,
 	type ClerkWebhookEvent,
@@ -64,7 +74,30 @@ export async function POST(req: NextRequest) {
 					return new Response("Invalid deletion request", { status: 400 });
 				}
 
+				// Cancel billing BEFORE the row is gone: afterwards the customer
+				// link is lost and the user would keep being charged. A failure here
+				// returns 500 so Svix retries the delivery.
+				const footprint = await loadUserFootprint(userId);
+				for (const subscriptionId of footprint.activeSubscriptionIds) {
+					const result = await cancelSubscription(subscriptionId);
+					if ("error" in result && result.error) {
+						throw new Error(
+							`Failed to cancel subscription ${subscriptionId}: ${result.details ?? result.error}`,
+						);
+					}
+				}
+
 				const deleted = await retryOperation(() => deleteClerkUser(userId));
+
+				if (footprint.catalogueNames.length > 0) {
+					await syncCache(() => getRedis().del(...footprint.catalogueNames));
+					for (const name of footprint.catalogueNames) {
+						revalidateCatalogue(name);
+					}
+				}
+				revalidateCatalogue();
+				revalidateDashboard();
+
 				console.log(
 					`Deleted ${deleted} user row(s) in ${Date.now() - startTime}ms`,
 				);

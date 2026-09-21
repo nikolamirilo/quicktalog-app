@@ -2,8 +2,12 @@
 import * as Sentry from "@sentry/nextjs";
 import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { applyPlanToCatalogue } from "@/lib/entitlements/catalogue";
+import { getUserTier, withinCatalogueQuota } from "@/lib/entitlements/plan";
 import { withinRateLimit } from "@/lib/rate-limit";
 import { sanitizeCustomThemeColors } from "@/helpers/theme";
+import { pickEditable } from "@/utils/db/columns";
+import { isUniqueViolation } from "@/utils/db/errors";
 import { drizzleClient } from "@/utils/drizzle";
 import { getRedis, syncCache } from "@/utils/redis";
 import {
@@ -12,10 +16,12 @@ import {
 	schema,
 	Status,
 } from "@quicktalog/common";
-import { currentUser } from "@clerk/nextjs/server";
 import { and, eq, inArray } from "drizzle-orm";
 
 const catalogues = schema.catalogues;
+
+/** The statuses a client may set; anything else is rejected. */
+const CLIENT_STATUSES: Status[] = ["active", "inactive", "draft"];
 
 /**
  * Re-validates `appearance.theme.colors` before it's persisted, so a crafted
@@ -39,18 +45,29 @@ function sanitizeAppearance(catalogueData: Catalogue): Catalogue {
 	};
 }
 
+/** The builder draft in Redis never carries the owner id or a client status. */
+function draftPayload<T extends object>(data: T) {
+	const {
+		createdBy: _owner,
+		status: _status,
+		...rest
+	} = data as T & { createdBy?: unknown; status?: unknown };
+	return JSON.stringify(rest);
+}
+
 export async function deleteItem(name: string): Promise<boolean> {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return false;
+		const me = await getVerifiedIdentity();
+		if (!me) return false;
 
-		const existing = await drizzleClient.query.catalogues.findFirst({
-			where: eq(catalogues.name, name),
-			columns: { createdBy: true },
-		});
-		if (!existing || existing.createdBy !== user.id) return false;
+		const deleted = await drizzleClient
+			.delete(catalogues)
+			.where(
+				and(eq(catalogues.name, name), eq(catalogues.createdBy, me.userId)),
+			)
+			.returning({ name: catalogues.name });
+		if (deleted.length === 0) return false;
 
-		await drizzleClient.delete(catalogues).where(eq(catalogues.name, name));
 		await syncCache(() => getRedis().del(name));
 		revalidateCatalogue(name);
 		revalidateDashboard();
@@ -64,20 +81,30 @@ export async function deleteItem(name: string): Promise<boolean> {
 
 export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return false;
+		const me = await getVerifiedIdentity();
+		if (!me) return false;
+		if (!Array.isArray(ids) || ids.length === 0) return false;
 
-		const existing = await drizzleClient.query.catalogues.findMany({
-			where: inArray(catalogues.id, ids),
-			columns: { createdBy: true },
-		});
-		if (
-			existing.length !== ids.length ||
-			existing.some((c) => c.createdBy !== user.id)
-		)
-			return false;
+		const deleted = await drizzleClient
+			.delete(catalogues)
+			.where(
+				and(inArray(catalogues.id, ids), eq(catalogues.createdBy, me.userId)),
+			)
+			.returning({ name: catalogues.name });
+		if (deleted.length !== ids.length) {
+			Sentry.captureMessage(
+				"deleteMultipleItems removed fewer rows than asked",
+				{
+					level: "warning",
+					extra: { asked: ids.length, deleted: deleted.length },
+				},
+			);
+		}
+		if (deleted.length === 0) return false;
 
-		await drizzleClient.delete(catalogues).where(inArray(catalogues.id, ids));
+		const names = deleted.map((row) => row.name);
+		await syncCache(() => getRedis().del(...names));
+		for (const name of names) revalidateCatalogue(name);
 		revalidateCatalogue();
 		revalidateDashboard();
 		return true;
@@ -91,36 +118,30 @@ export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 export async function updateItemStatus(
 	id: string,
 	status: Status,
-	name?: string,
 ): Promise<boolean> {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return false;
+		const me = await getVerifiedIdentity();
+		if (!me) return false;
+		if (!CLIENT_STATUSES.includes(status)) return false;
 
-		const existing = await drizzleClient.query.catalogues.findFirst({
-			where: eq(catalogues.id, id),
-			columns: { createdBy: true },
-		});
-		if (!existing || existing.createdBy !== user.id) return false;
-
-		await drizzleClient
+		const [updated] = await drizzleClient
 			.update(catalogues)
 			.set({ status })
-			.where(eq(catalogues.id, id));
+			.where(and(eq(catalogues.id, id), eq(catalogues.createdBy, me.userId)))
+			.returning({ name: catalogues.name });
+		if (!updated) return false;
 
-		if (name) {
-			await syncCache(async () => {
-				const r = getRedis();
-				const cached = await r.get(name);
-				if (cached) {
-					const data = typeof cached === "string" ? JSON.parse(cached) : cached;
-					data.status = status;
-					await r.set(name, JSON.stringify(data));
-				}
-			});
-			revalidateCatalogue(name);
-		}
-
+		const { name } = updated;
+		await syncCache(async () => {
+			const r = getRedis();
+			const cached = await r.get(name);
+			if (cached) {
+				const data = typeof cached === "string" ? JSON.parse(cached) : cached;
+				data.status = status;
+				await r.set(name, JSON.stringify(data));
+			}
+		});
+		revalidateCatalogue(name);
 		revalidateDashboard();
 		return true;
 	} catch (err) {
@@ -130,44 +151,55 @@ export async function updateItemStatus(
 	}
 }
 
-export async function duplicateItem(id: string, name: string) {
+export async function duplicateItem(id: string, name?: string) {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return null;
+		const me = await getVerifiedIdentity();
+		if (!me) return null;
 
-		const data = await drizzleClient.query.catalogues.findFirst({
-			where: eq(catalogues.id, id),
+		const source = await drizzleClient.query.catalogues.findFirst({
+			where: and(eq(catalogues.id, id), eq(catalogues.createdBy, me.userId)),
 		});
+		if (!source) return null;
 
-		if (!data) return null;
-		if (data.createdBy !== user.id) return null;
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { id: _oldId, ...rest } = data;
+		const tier = await getUserTier(me.userId);
+		if (!(await withinCatalogueQuota(me.userId, tier))) return null;
 
-		let suffix = "-copy";
-		let tryName = generateUniqueSlug(name);
-		let count = 1;
+		const {
+			id: _oldId,
+			createdAt: _createdAt,
+			updatedAt: _updatedAt,
+			...rest
+		} = source;
+		// The requested name is only a starting point: the slug and the unique
+		// index decide what is actually stored.
+		const base =
+			(typeof name === "string" && generateUniqueSlug(name)) ||
+			`${generateUniqueSlug(source.name)}-copy`;
 
-		while (true) {
-			const exists = await drizzleClient.query.catalogues.findFirst({
-				where: eq(catalogues.name, tryName),
-				columns: { id: true },
-			});
-
-			if (!exists) break;
-			tryName = `${name}${suffix}${count === 1 ? "" : count}`;
-			count++;
+		// The unique index decides, not a prior lookup: two parallel duplicates
+		// of the same catalogue would otherwise pick the same free name.
+		for (let attempt = 1; attempt <= 10; attempt++) {
+			const candidate = attempt === 1 ? base : `${base}-${attempt}`;
+			try {
+				const [created] = await drizzleClient
+					.insert(catalogues)
+					.values({
+						...rest,
+						...applyPlanToCatalogue(rest as Partial<Catalogue>, tier),
+						name: candidate,
+						status: "draft",
+						createdBy: me.userId,
+					})
+					.returning();
+				if (!created) return null;
+				revalidateCatalogue(candidate);
+				revalidateDashboard();
+				return created;
+			} catch (err) {
+				if (!isUniqueViolation(err)) throw err;
+			}
 		}
-
-		const [newData] = await drizzleClient
-			.insert(catalogues)
-			.values({ ...rest, name: tryName })
-			.returning();
-
-		if (!newData) return null;
-		revalidateCatalogue(tryName);
-		revalidateDashboard();
-		return newData;
+		return null;
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "duplicateItem" } });
 		console.error("Unexpected error while duplicating service catalogue:", err);
@@ -175,110 +207,90 @@ export async function duplicateItem(id: string, name: string) {
 	}
 }
 
-export async function createCatalogue(
-	catalogueData: Catalogue,
-	branding: boolean = false,
-) {
+export async function createCatalogue(catalogueData: Catalogue) {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return { success: false, error: "Unauthorized" };
+		const me = await getVerifiedIdentity();
+		if (!me) return { success: false, error: "Unauthorized" };
 
 		const slug = generateUniqueSlug(catalogueData.name);
+		if (!slug) return { success: false, error: "Invalid catalogue name" };
 
-		const existingCatalogue = await drizzleClient.query.catalogues.findFirst({
-			where: eq(catalogues.name, slug),
-			columns: { id: true },
-		});
-
-		if (existingCatalogue) {
+		const tier = await getUserTier(me.userId);
+		if (!(await withinCatalogueQuota(me.userId, tier))) {
 			return {
 				success: false,
-				error: "A catalogue with this name already exists",
+				error: "You have reached the catalogue limit of your plan",
 			};
 		}
 
-		catalogueData = sanitizeAppearance(catalogueData);
-
-		const type = branding === true ? "custom" : "default";
-		const { createdAt, updatedAt, ...rest } = catalogueData;
+		// Timestamps are the database's to set.
+		const {
+			createdAt: _c,
+			updatedAt: _u,
+			...rest
+		} = applyPlanToCatalogue(sanitizeAppearance(catalogueData), tier);
 
 		const [data] = await drizzleClient
 			.insert(catalogues)
 			.values({
 				...rest,
 				name: slug,
-				createdBy: user.id,
-				header: { ...rest.header, type: type },
-				footer: { ...rest.footer, type: type },
+				status: "draft",
+				createdBy: me.userId,
 			})
 			.returning();
 
-		const res = await getRedis().set(slug, JSON.stringify(data));
-		console.log(res);
-
 		if (!data) {
-			return {
-				success: false,
-				error: "Failed to insert catalogue",
-			};
+			return { success: false, error: "Failed to insert catalogue" };
 		}
 
+		await syncCache(() => getRedis().set(slug, draftPayload(data)));
 		revalidateCatalogue(slug);
 		revalidateDashboard();
-		return {
-			success: true,
-			data,
-		};
+		return { success: true, data };
 	} catch (err) {
+		if (isUniqueViolation(err)) {
+			return {
+				success: false,
+				error: "A catalogue with this name already exists",
+			};
+		}
 		Sentry.captureException(err, { tags: { op: "createCatalogue" } });
 		console.error("Unexpected error while creating catalogue:", err);
-		return {
-			success: false,
-			error: "An unexpected error occurred",
-		};
+		return { success: false, error: "An unexpected error occurred" };
 	}
 }
 
 export async function updateCatalogue(catalogueData: Catalogue) {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return { success: false, error: "Unauthorized" };
+		const me = await getVerifiedIdentity();
+		if (!me) return { success: false, error: "Unauthorized" };
 
-		const existing = await drizzleClient.query.catalogues.findFirst({
-			where: eq(catalogues.name, catalogueData.name),
-			columns: { createdBy: true },
+		const row = await drizzleClient.query.catalogues.findFirst({
+			where: and(
+				eq(catalogues.name, catalogueData.name),
+				eq(catalogues.createdBy, me.userId),
+			),
+			columns: { id: true, name: true },
 		});
-		if (!existing || existing.createdBy !== user.id) {
-			return { success: false, error: "Unauthorized" };
-		}
+		if (!row) return { success: false, error: "Unauthorized" };
 
-		catalogueData = sanitizeAppearance(catalogueData);
+		const tier = await getUserTier(me.userId);
+		const draft = applyPlanToCatalogue(sanitizeAppearance(catalogueData), tier);
 
-		const res = await getRedis().set(
-			catalogueData.name,
-			JSON.stringify(catalogueData),
+		const stored = await syncCache(() =>
+			getRedis().set(row.name, draftPayload({ ...draft, id: row.id })),
 		);
-
-		if (res !== "OK") {
-			console.error("Failed to update catalogue:", res);
-			return {
-				success: false,
-				error: res,
-			};
+		if (!stored) {
+			return { success: false, error: "Failed to save the draft" };
 		}
 
-		revalidateCatalogue(catalogueData.name);
-		return {
-			success: true,
-			data: catalogueData,
-		};
+		revalidateCatalogue(row.name);
+		return { success: true, data: draft };
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "updateCatalogue" } });
 		console.error("Unexpected error while updating catalogue:", err);
-		return {
-			success: false,
-			error: "An unexpected error occurred",
-		};
+		return { success: false, error: "An unexpected error occurred" };
 	}
 }
 
@@ -369,44 +381,37 @@ export async function checkCatalogueName(
 
 export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 	try {
-		const user = await currentUser();
-		if (!user?.id) return false;
+		const me = await getVerifiedIdentity();
+		if (!me) return false;
 
-		const existing = await drizzleClient.query.catalogues.findFirst({
-			where: eq(catalogues.name, data.name),
-			columns: { createdBy: true },
-		});
-		if (!existing || existing.createdBy !== user.id) return false;
+		const tier = await getUserTier(me.userId);
+		const editable = pickEditable(
+			applyPlanToCatalogue(sanitizeAppearance(data), tier),
+		);
 
-		data = sanitizeAppearance(data);
-
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { createdAt, updatedAt, ...rest } = data;
-		const catalogueData = { ...rest, status: "active" };
-
-		await drizzleClient
+		const [updated] = await drizzleClient
 			.update(catalogues)
 			.set({
-				...rest,
+				...editable,
 				status: "active" as Status,
 				updatedAt: new Date().toISOString(),
 			})
-			.where(eq(catalogues.name, catalogueData.name));
+			.where(
+				and(
+					eq(catalogues.name, data.name),
+					eq(catalogues.createdBy, me.userId),
+				),
+			)
+			.returning();
+		if (!updated) return false;
 
-		const redisRes = await getRedis().set(
-			catalogueData.name,
-			JSON.stringify(catalogueData),
-		);
-		if (redisRes !== "OK") {
-			console.error("Failed to update redis during publish");
-			return false;
-		}
-		revalidateCatalogue(catalogueData.name);
+		await syncCache(() => getRedis().set(updated.name, draftPayload(updated)));
+		revalidateCatalogue(updated.name);
 		revalidateDashboard();
 		return true;
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "publishCatalogue" } });
-		console.error("Unexpected error while updating status in v2:", err);
+		console.error("Unexpected error while publishing catalogue:", err);
 		return false;
 	}
 }

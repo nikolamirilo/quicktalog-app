@@ -10,7 +10,8 @@ Plans, analyses and investigations produced before implementing something. Human
 | Plan | Status |
 |---|---|
 | [2026-09-17-supabase-auth-migration](active/2026-09-17-supabase-auth-migration/README.md) | Approved, not started: Clerk to Supabase Auth, user-level RLS, DB access through Drizzle with private roles |
-| [ai-agent-plan-mode.md](active/ai-agent-plan-mode.md) | In progress: Part 1 (plan mode) built, Part 2 (credits) not |
+| [ai-agent-plan-mode.md](active/ai-agent-plan-mode.md) | In progress: Part 1 (plan mode) built; Part 2 (credits) superseded by 2026-09-21-ai-credits |
+| [2026-09-21-ai-credits](active/2026-09-21-ai-credits/PLAN.md) | Proposed: `ai_prompts` becomes a priced credit balance, and the free plan gets credits |
 
 ## Archive
 

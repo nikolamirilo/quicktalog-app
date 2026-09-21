@@ -6,7 +6,6 @@ import {
 } from "@/helpers/catalogueOperations";
 import { CUSTOM_THEME_NAME } from "@/helpers/theme";
 import type { CatalogueOperation } from "@/types/ai";
-import { useUser } from "@clerk/nextjs";
 import {
 	Catalogue,
 	ContentBlock,
@@ -14,7 +13,7 @@ import {
 	defaultCatalogueData,
 	Item,
 } from "@quicktalog/common";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 
 interface CatalogueContextType {
 	catalogue: Catalogue;
@@ -78,7 +77,6 @@ export const CatalogueContextProvider = ({
 		useState<Omit<Catalogue, "id">>(defaultCatalogueData);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [isChatOpen, setIsChatOpen] = useState(false);
-	const { user } = useUser();
 
 	// Mirrors the latest committed catalogue so `applyOperations` can compute and
 	// return its outcome synchronously instead of only inside a state updater.
@@ -288,14 +286,6 @@ export const CatalogueContextProvider = ({
 			return { ...prev, content: newContent };
 		});
 	};
-
-	useEffect(() => {
-		if (user && user.id !== catalogue.createdBy) {
-			updateCatalogue({
-				createdBy: user.id,
-			});
-		}
-	}, [user, catalogue.createdBy]);
 
 	/**
 	 * Applies a batch of AI chat edits in one commit and reports what landed.

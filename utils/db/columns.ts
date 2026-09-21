@@ -29,3 +29,38 @@ export const PUBLIC_CATALOGUE_COLUMNS = {
 	createdAt: catalogues.createdAt,
 	updatedAt: catalogues.updatedAt,
 };
+
+/**
+ * Catalogue fields a client may change. `id`, `name`, `createdBy`, `status`,
+ * `source` and the timestamps are server-owned: the client sends them back in
+ * the full `Catalogue` object, and they must never reach an UPDATE.
+ */
+export const CATALOGUE_EDITABLE_FIELDS = [
+	"logo",
+	"heading",
+	"language",
+	"currency",
+	"businessType",
+	"content",
+	"legal",
+	"appearance",
+	"contact",
+	"header",
+	"footer",
+	"partners",
+	"metadata",
+	"tags",
+] as const;
+
+type EditableField = (typeof CATALOGUE_EDITABLE_FIELDS)[number];
+
+/** Keeps only the editable fields that are actually present in `data`. */
+export function pickEditable<T extends Record<string, unknown>>(
+	data: T,
+): Pick<T, Extract<keyof T, EditableField>> {
+	const out: Record<string, unknown> = {};
+	for (const field of CATALOGUE_EDITABLE_FIELDS) {
+		if (field in data && data[field] !== undefined) out[field] = data[field];
+	}
+	return out as Pick<T, Extract<keyof T, EditableField>>;
+}

@@ -1,4 +1,4 @@
-import { persistTheme } from "@/actions/themes";
+import { upsertTheme } from "@/lib/themes/upsert";
 import type { ToolContext } from "@/agent/tools/types";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
@@ -95,7 +95,7 @@ export const appearanceTools = ({ session }: ToolContext) => ({
 				};
 			}
 
-			const saved = await persistTheme(session.userId, name, colors);
+			const saved = await upsertTheme(session.userId, name, colors);
 			if (saved.success && saved.data) {
 				return { ...result, savedTheme: { name: saved.data.name } };
 			}

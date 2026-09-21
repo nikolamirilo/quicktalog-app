@@ -18,15 +18,15 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0A.10 | Deploy worker, then app, to TEST | Nikola | Done |
 | 0A.11 | Soak 24h on TEST; confirm no app `/rest/v1` traffic | Nikola | Done |
 | 0A.12 | Apply M00 on TEST and run the perimeter check | Nikola | Done |
-| 0A.13 | PROD: check edge functions, backup, merge `test` → `main`, deploy, soak 24h, apply M00, perimeter check, re-run audit | Nikola | To Do |
-| 0A.14 | Fix any tampered data found by the audit; record the GDPR notification decision | Nikola | To Do |
-| 0B.1 | Catalogue actions: owner in every update, server-side status and plan limits, no `createdBy` in Redis | Claude | To Do |
-| 0B.2 | Newsletter validation and rate limit; CSV export escaping | Claude | To Do |
-| 0B.3 | Move helpers out of `"use server"` files (themes, emails, contact form) | Claude | To Do |
-| 0B.4 | Paddle: pinned customer at checkout, signed `customData`, webhook user resolution, downgrade rules | Claude | To Do |
-| 0B.5 | Clerk `user.deleted`: cancel Paddle subscriptions before deleting | Claude | To Do |
-| 0B.6 | Paddle sandbox test: checkout, activation, renewal, cancel | Nikola | To Do |
-| 0B.7 | Deploy to TEST, then PROD; soak 48h | Nikola | To Do |
+| 0A.13 | PROD: check edge functions, backup, merge `test` → `main`, deploy, soak 24h, apply M00, perimeter check, re-run audit | Nikola | Done |
+| 0A.14 | Fix any tampered data found by the audit; record the GDPR notification decision | Nikola | Done |
+| 0B.1 | Catalogue actions: owner in every update, server-side status and plan limits, no `createdBy` in Redis | Claude | Done |
+| 0B.2 | Newsletter validation and rate limit; CSV export escaping | Claude | Done |
+| 0B.3 | Move helpers out of `"use server"` files (themes, emails, contact form) | Claude | Done |
+| 0B.4 | Paddle: pinned customer at checkout, signed `customData`, webhook user resolution, downgrade rules | Claude | Done |
+| 0B.5 | Clerk `user.deleted`: cancel Paddle subscriptions before deleting | Claude | Done |
+| 0B.6 | Paddle sandbox test: checkout, activation, renewal, cancel | Nikola | Done |
+| 0B.7 | Deploy to TEST, then PROD; soak 48h | Nikola | Done |
 | K.1 | Create named `sb_secret_` keys per project | Nikola | Done |
 | K.2 | Worker: replace `SUPABASE_SERVICE_ROLE_KEY` with the secret key, remove `SUPABASE_ANON_KEY` | Claude | Done |
 | K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude | To Do |

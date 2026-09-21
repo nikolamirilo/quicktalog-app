@@ -57,12 +57,18 @@ const ActionButtons = ({
 			const promise = updateCatalogueAction(catalogue);
 			toast.promise(promise, {
 				loading: "Saving...",
-				success: "Catalogue saved successfully",
-				error: "Failed to save catalogue",
+				success: (res) => {
+					if (!res.success) {
+						throw new Error(res.error ?? "Failed to save catalogue");
+					}
+					return "Catalogue saved successfully";
+				},
+				error: (err) =>
+					err instanceof Error ? err.message : "Failed to save catalogue",
 			});
 			const res = await promise;
-			if (!res) throw new Error("Save failed");
-			return res.data;
+			if (!res.success) return null;
+			return "data" in res ? res.data : null;
 		} catch (err) {
 			console.error(err);
 			return null;

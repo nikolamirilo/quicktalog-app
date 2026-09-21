@@ -114,11 +114,7 @@ const ItemDropdownMenu = ({
 					: "Activate",
 			disabled: isDuplicating || disabled || (atTrafficLimit && !isActive),
 			onClick: () =>
-				handleUpdateItemStatus(
-					catalogue.id,
-					isActive ? "inactive" : "active",
-					catalogue.name,
-				),
+				handleUpdateItemStatus(catalogue.id, isActive ? "inactive" : "active"),
 			className: ITEM_BASE_CLASS,
 		},
 		{
@@ -243,11 +239,7 @@ const ItemDropdownMenu = ({
 														disabled={status === "active" && atTrafficLimit}
 														key={status}
 														onClick={() =>
-															handleUpdateItemStatus(
-																catalogue.id,
-																status,
-																catalogue.name,
-															)
+															handleUpdateItemStatus(catalogue.id, status)
 														}
 													>
 														{STATUS_LABELS[status]}

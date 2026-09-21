@@ -1,83 +1,30 @@
-//@ts-nocheck
 "use server";
-import * as Sentry from "@sentry/nextjs";
-import { InformationEmail, WelcomeEmail } from "@/components/emails";
-import CancellationEmail from "@/components/emails/CancelationEmail";
-import { getResend } from "@/constants/server";
-import { ContactData } from "@quicktalog/common";
+import { clientIp } from "@/lib/http/client-ip";
+import { sendContactMessage } from "@/lib/email/transactional";
+import { withinRateLimit } from "@/lib/rate-limit";
+import { z } from "zod";
 
-export async function sendContactEmail(contactData: ContactData) {
-	const { message, email, name, subject } = contactData;
-	try {
-		const res = await getResend().emails.send({
-			from: "Quicktalog<office@quicktalog.app>",
-			to: "quicktalog@outlook.com",
-			subject: subject,
-			reply_to: email,
-			react: InformationEmail({
-				email,
-				name,
-				message,
-				subject,
-			}) as React.ReactElement,
-		});
-		console.log(res);
-		if (res.error == null) {
-			return true;
-		}
-	} catch (error: any) {
-		Sentry.captureException(error, {
-			level: "warning",
-			tags: { op: "sendContactEmail" },
-		});
-		console.error("Failed to send contact email:", error);
+const contactSchema = z.object({
+	name: z.string().trim().min(1).max(100),
+	email: z.string().trim().toLowerCase().email().max(254),
+	subject: z.string().trim().min(1).max(150),
+	message: z.string().trim().min(1).max(5000),
+});
+
+/**
+ * Public contact form. Validated and rate-limited per IP; a Redis outage blocks
+ * the send rather than opening the form to abuse.
+ */
+export async function sendContactEmail(contactData: unknown): Promise<boolean> {
+	const parsed = contactSchema.safeParse(contactData);
+	if (!parsed.success) return false;
+
+	if (
+		!(await withinRateLimit("contact", await clientIp(), { failOpen: false }))
+	) {
 		return false;
 	}
-}
-export async function sendWelcomeEmail(
-	contactData: Omit<ContactData, "message" | "subject">,
-) {
-	const { email, name } = contactData;
-	try {
-		const res = await getResend().emails.send({
-			from: "Quicktalog<office@quicktalog.app>",
-			to: email,
-			subject: `[Quicktalog] Welcome to Quicktalog! 🎉`,
-			react: WelcomeEmail({
-				name: name,
-			}) as React.ReactElement,
-		});
-		console.log(res);
-		if (res.error == null) {
-			return true;
-		}
-	} catch (error: any) {
-		console.error("Failed to send welcome email:", error);
-		return false;
-	}
-}
-export async function sendSubscriptionCancelationEmail(
-	contactData: Omit<ContactData, "message" | "subject">,
-) {
-	const { email, name } = contactData;
-	try {
-		const res = await getResend().emails.send({
-			from: "Quicktalog<office@quicktalog.app>",
-			to: email,
-			subject: `[Quicktalog] We are Sorry to See You Go`,
-			react: CancellationEmail({
-				name: name,
-			}) as React.ReactElement,
-		});
-		if (res.error == null) {
-			return true;
-		}
-	} catch (error: any) {
-		Sentry.captureException(error, {
-			level: "warning",
-			tags: { op: "sendSubscriptionCancelationEmail" },
-		});
-		console.error("Failed to send cancellation email:", error);
-		return false;
-	}
+
+	const { name, email, subject, message } = parsed.data;
+	return sendContactMessage({ name, email, subject, message });
 }

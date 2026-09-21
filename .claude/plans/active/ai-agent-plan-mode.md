@@ -344,6 +344,11 @@ Steps 7-8 turn it into the full experience.
 
 ## Part 2 - Credits instead of prompts
 
+> **Superseded 2026-09-21** by [`2026-09-21-ai-credits/PLAN.md`](2026-09-21-ai-credits/PLAN.md).
+> This section predates the current AI surfaces (`/api/ai` and `AIBuilder` are gone, OCR
+> moved into the browser) and the auth migration's M03/M06 ledger work. Read it for the
+> reasoning; take the design from the newer plan.
+
 ### 2.1 Why `ai_prompts` stops working
 
 Today one row in `prompts` is inserted per request that changed something

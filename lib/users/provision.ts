@@ -1,10 +1,10 @@
 import "server-only";
 import { schema, tiers } from "@quicktalog/common";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { defaultCookiePreferences } from "@/constants";
 import { asAdmin } from "@/utils/db/admin";
 
-const { users } = schema;
+const { catalogues, subscriptions, users } = schema;
 
 const DEFAULT_PLAN_ID = tiers[0].priceId.month;
 
@@ -68,6 +68,55 @@ export async function ensureUserRow(profile: ClerkProfile): Promise<void> {
 					profile.cookiePreferences ?? defaultCookiePreferences,
 			})
 			.onConflictDoNothing({ target: users.id });
+	});
+}
+
+/**
+ * What still has to be settled elsewhere before the row disappears: the Paddle
+ * subscriptions to cancel, and the catalogue names whose cached pages and Redis
+ * drafts have to go.
+ */
+export type UserFootprint = {
+	activeSubscriptionIds: string[];
+	catalogueNames: string[];
+};
+
+export async function loadUserFootprint(
+	userId: string,
+): Promise<UserFootprint> {
+	return asAdmin("clerk:user-footprint", async (tx) => {
+		const [user] = await tx
+			.select({ customerId: users.customerId })
+			.from(users)
+			.where(eq(users.id, userId))
+			.limit(1);
+
+		const owned = await tx
+			.select({ name: catalogues.name })
+			.from(catalogues)
+			.where(eq(catalogues.createdBy, userId));
+
+		if (!user?.customerId) {
+			return {
+				activeSubscriptionIds: [],
+				catalogueNames: owned.map((row) => row.name),
+			};
+		}
+
+		const active = await tx
+			.select({ subscriptionId: subscriptions.subscriptionId })
+			.from(subscriptions)
+			.where(
+				and(
+					eq(subscriptions.customerId, user.customerId),
+					eq(subscriptions.subscriptionStatus, "active"),
+				),
+			);
+
+		return {
+			activeSubscriptionIds: active.map((row) => row.subscriptionId),
+			catalogueNames: owned.map((row) => row.name),
+		};
 	});
 }
 

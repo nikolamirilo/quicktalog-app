@@ -6,13 +6,20 @@ const mocks = vi.hoisted(() => ({
 	cancelSubscription: vi.fn(),
 	sendSubscriptionCancelationEmail: vi.fn(),
 	captureMessage: vi.fn(),
+	revalidateCatalogue: vi.fn(),
+	revalidateDashboard: vi.fn(),
+}));
+
+vi.mock("@/helpers/server", () => ({
+	revalidateCatalogue: mocks.revalidateCatalogue,
+	revalidateDashboard: mocks.revalidateDashboard,
 }));
 
 vi.mock("@/utils/db/admin", () => ({ asAdmin: mocks.asAdmin }));
 vi.mock("@/actions/paddle", () => ({
 	cancelSubscription: mocks.cancelSubscription,
 }));
-vi.mock("@/actions/email", () => ({
+vi.mock("@/lib/email/transactional", () => ({
 	sendSubscriptionCancelationEmail: mocks.sendSubscriptionCancelationEmail,
 }));
 vi.mock("@sentry/nextjs", () => ({
@@ -48,14 +55,18 @@ describe("ProcessWebhook", () => {
 		).rejects.toThrow("connection refused");
 	});
 
-	it("does not throw for a subscription whose customer is not linked yet", async () => {
-		mocks.asAdmin.mockResolvedValue({ kind: "unlinked" });
+	it("reports an event that cannot be tied to one user, without throwing", async () => {
+		mocks.asAdmin.mockResolvedValue({ kind: "unresolved", reason: "conflict" });
 		await expect(
 			new ProcessWebhook().processEvent(
 				subscriptionEvent(EventName.SubscriptionCreated),
 			),
 		).resolves.toBeUndefined();
 		expect(mocks.cancelSubscription).not.toHaveBeenCalled();
+		expect(mocks.captureMessage).toHaveBeenCalledWith(
+			"Paddle event could not be tied to one user",
+			expect.objectContaining({ level: "error" }),
+		);
 	});
 
 	it("cancels other active subscriptions only after the plan update committed", async () => {
@@ -73,6 +84,7 @@ describe("ProcessWebhook", () => {
 		mocks.asAdmin.mockResolvedValue({
 			kind: "downgraded",
 			user: { name: "Ana", email: "ana@example.com" },
+			deactivated: ["lux-watches"],
 		});
 		await new ProcessWebhook().processEvent(
 			subscriptionEvent(EventName.SubscriptionCanceled),
@@ -81,17 +93,14 @@ describe("ProcessWebhook", () => {
 			email: "ana@example.com",
 			name: "Ana",
 		});
+		expect(mocks.revalidateCatalogue).toHaveBeenCalledWith("lux-watches");
 	});
 
-	it("reports a customer that cannot be linked to exactly one user", async () => {
-		mocks.asAdmin.mockResolvedValue(2);
+	it("does not touch the database for customer events", async () => {
 		await new ProcessWebhook().processEvent({
 			eventType: EventName.CustomerCreated,
 			data: { id: "ctm_1", email: "Shared@Example.com" },
 		} as any);
-		expect(mocks.captureMessage).toHaveBeenCalledWith(
-			"Paddle customer not linked to a single user",
-			expect.objectContaining({ extra: { customerId: "ctm_1", matches: 2 } }),
-		);
+		expect(mocks.asAdmin).not.toHaveBeenCalled();
 	});
 });

@@ -26,7 +26,14 @@ export default function NewsletterTable({ subscribers }: NewsletterTableProps) {
 				new Date(s.createdAt).toLocaleDateString(),
 			]),
 		];
-		const csv = rows.map((r) => r.map((v) => `"${v}"`).join(",")).join("\n");
+		// Quote every cell and double inner quotes; a leading ' keeps Excel and
+		// Sheets from executing a cell that starts with = + - @ (CSV injection).
+		const escapeCell = (value: string) => {
+			const text = String(value ?? "");
+			const safe = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
+			return `"${safe.replace(/"/g, '""')}"`;
+		};
+		const csv = rows.map((r) => r.map(escapeCell).join(",")).join("\r\n");
 		const blob = new Blob([csv], { type: "text/csv" });
 		const url = URL.createObjectURL(blob);
 		const anchor = document.createElement("a");

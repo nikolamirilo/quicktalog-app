@@ -7,7 +7,7 @@ import {
 	defaultCatalogueData,
 	fetchImageFromUnsplash,
 } from "@quicktalog/common";
-import { persistTheme } from "@/actions/themes";
+import { upsertTheme } from "@/lib/themes/upsert";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));
@@ -21,7 +21,7 @@ vi.mock("@quicktalog/common", async () => {
 	return { ...actual, fetchImageFromUnsplash: vi.fn() };
 });
 
-vi.mock("@/actions/themes", () => ({ persistTheme: vi.fn() }));
+vi.mock("@/lib/themes/upsert", () => ({ upsertTheme: vi.fn() }));
 
 const catalogue = { ...defaultCatalogueData, name: "cafe" } as Catalogue;
 
@@ -324,7 +324,7 @@ const PALETTE = {
 };
 
 describe("setCustomTheme", () => {
-	const persist = vi.mocked(persistTheme);
+	const persist = vi.mocked(upsertTheme);
 
 	beforeEach(() => persist.mockReset());
 

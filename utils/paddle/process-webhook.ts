@@ -1,5 +1,12 @@
-import { sendSubscriptionCancelationEmail } from "@/actions/email";
 import { cancelSubscription } from "@/actions/paddle";
+import { revalidateCatalogue, revalidateDashboard } from "@/helpers/server";
+import { sendSubscriptionCancelationEmail } from "@/lib/email/transactional";
+import { applyPlanDowngrade } from "@/lib/entitlements/catalogue";
+import { tierForPlanId } from "@/lib/entitlements/plan";
+import {
+	type PaddleCustomData,
+	resolveUserId,
+} from "@/lib/paddle/resolve-user";
 import { asAdmin } from "@/utils/db/admin";
 import {
 	CustomerCreatedEvent,
@@ -28,15 +35,21 @@ type SubscriptionEvent =
 	| SubscriptionResumedEvent;
 
 type SubscriptionOutcome =
-	| { kind: "unlinked" }
+	| { kind: "unresolved"; reason: "conflict" | "unlinked" }
 	| { kind: "stored" }
 	| { kind: "activated"; otherActiveSubscriptionIds: string[] }
-	| { kind: "downgraded"; user: { name: string | null; email: string | null } };
+	| {
+			kind: "downgraded";
+			user: { name: string | null; email: string | null };
+			deactivated: string[];
+	  };
 
 /**
  * Applies Paddle webhook events to the database. Errors are not caught here:
  * they reach the route, which answers 500 so Paddle retries the event. Every
- * write is idempotent, so a retry is safe.
+ * write is idempotent, so a retry is safe. An event that cannot be tied to
+ * exactly one user is reported and answered 200, because retrying it would
+ * never resolve it.
  */
 export class ProcessWebhook {
 	async processEvent(eventData: EventEntity) {
@@ -49,7 +62,7 @@ export class ProcessWebhook {
 				break;
 			case EventName.CustomerCreated:
 			case EventName.CustomerUpdated:
-				await this.handleCustomerData(
+				this.handleCustomerData(
 					eventData as CustomerCreatedEvent | CustomerUpdatedEvent,
 				);
 				break;
@@ -67,21 +80,27 @@ export class ProcessWebhook {
 			scheduledChange: eventData.data.scheduledChange?.effectiveAt ?? null,
 			customerId: eventData.data.customerId,
 		};
+		const occurredAt = eventData.occurredAt;
+		const customData = (eventData.data.customData ?? null) as PaddleCustomData;
 
 		const outcome = await asAdmin(
 			"paddle:subscription",
 			async (tx): Promise<SubscriptionOutcome> => {
-				const [linkedUser] = await tx
-					.select({ id: users.id })
-					.from(users)
-					.where(eq(users.customerId, subscription.customerId))
-					.limit(1);
+				const resolution = await resolveUserId(
+					tx,
+					customData,
+					subscription.customerId,
+				);
+				if ("unresolved" in resolution) {
+					return { kind: "unresolved", reason: resolution.unresolved };
+				}
+				const userId = resolution.userId;
 
-				if (!linkedUser) return { kind: "unlinked" };
-
+				// Paddle does not guarantee delivery order: an older event must not
+				// overwrite a newer state.
 				await tx
 					.insert(subscriptions)
-					.values(subscription)
+					.values({ ...subscription, updatedAt: occurredAt })
 					.onConflictDoUpdate({
 						target: subscriptions.subscriptionId,
 						set: {
@@ -90,8 +109,9 @@ export class ProcessWebhook {
 							productId: subscription.productId,
 							scheduledChange: subscription.scheduledChange,
 							customerId: subscription.customerId,
-							updatedAt: sql`now()`,
+							updatedAt: occurredAt,
 						},
+						setWhere: sql`${subscriptions.updatedAt} <= ${occurredAt}`,
 					});
 
 				const activeSubscriptions = () =>
@@ -116,7 +136,12 @@ export class ProcessWebhook {
 					await tx
 						.update(users)
 						.set({ planId: subscription.priceId })
-						.where(eq(users.customerId, subscription.customerId));
+						.where(
+							and(
+								eq(users.id, userId),
+								eq(users.customerId, subscription.customerId),
+							),
+						);
 
 					return {
 						kind: "activated",
@@ -133,16 +158,29 @@ export class ProcessWebhook {
 					const [user] = await tx
 						.select({ name: users.name, email: users.email })
 						.from(users)
-						.where(eq(users.customerId, subscription.customerId))
+						.where(eq(users.id, userId))
 						.limit(1);
 					if (!user) return { kind: "stored" };
 
+					const freePlanId = tiers[0].priceId.month;
 					await tx
 						.update(users)
-						.set({ planId: tiers[0].priceId.month })
-						.where(eq(users.customerId, subscription.customerId));
+						.set({ planId: freePlanId })
+						.where(
+							and(
+								eq(users.id, userId),
+								eq(users.customerId, subscription.customerId),
+							),
+						);
 
-					return { kind: "downgraded", user };
+					// The user keeps only what the free plan includes.
+					const deactivated = await applyPlanDowngrade(
+						tx,
+						userId,
+						tierForPlanId(freePlanId),
+					);
+
+					return { kind: "downgraded", user, deactivated };
 				}
 
 				return { kind: "stored" };
@@ -150,11 +188,16 @@ export class ProcessWebhook {
 		);
 
 		// Side effects run only after the transaction committed.
-		if (outcome.kind === "unlinked") {
-			console.warn(
-				"Skipping subscription upsert: no user linked to customer_id",
-				subscription.customerId,
-			);
+		if (outcome.kind === "unresolved") {
+			Sentry.captureMessage("Paddle event could not be tied to one user", {
+				level: "error",
+				tags: { domain: "paddle", op: "resolve-user", reason: outcome.reason },
+				extra: {
+					customerId: subscription.customerId,
+					subscriptionId: subscription.subscriptionId,
+					eventType: eventData.eventType,
+				},
+			});
 			return;
 		}
 
@@ -164,53 +207,29 @@ export class ProcessWebhook {
 			}
 		}
 
-		if (outcome.kind === "downgraded" && outcome.user.email) {
-			await sendSubscriptionCancelationEmail({
-				email: outcome.user.email,
-				name: outcome.user.name ?? "",
-			});
+		if (outcome.kind === "downgraded") {
+			for (const name of outcome.deactivated) revalidateCatalogue(name);
+			if (outcome.deactivated.length > 0) revalidateDashboard();
+			if (outcome.user.email) {
+				await sendSubscriptionCancelationEmail({
+					email: outcome.user.email,
+					name: outcome.user.name ?? "",
+				});
+			}
 		}
 	}
 
-	private async handleCustomerData(
+	/**
+	 * Customers are linked at checkout (`ensurePaddleCustomer`) and through the
+	 * signed user id on the event, never by matching an email address: two
+	 * accounts can share an email at Paddle, and matching on it would hand one
+	 * user's subscription to another.
+	 */
+	private handleCustomerData(
 		eventData: CustomerCreatedEvent | CustomerUpdatedEvent,
 	) {
-		const email = eventData.data.email?.trim().toLowerCase();
-
-		if (!email) {
-			// Without an email there is nothing to match the Paddle customer to a
-			// user row, so record it for follow-up instead of writing to the DB.
-			Sentry.captureMessage("Paddle customer event without an email", {
-				level: "warning",
-				tags: { domain: "paddle", op: "link-customer-noemail" },
-				extra: { customerId: eventData.data.id },
-			});
-			return;
-		}
-
-		const matched = await asAdmin("paddle:link-customer", async (tx) => {
-			const candidates = await tx
-				.select({ id: users.id })
-				.from(users)
-				.where(sql`lower(${users.email}) = ${email}`)
-				.limit(2);
-
-			// Link only when exactly one user has this email.
-			if (candidates.length !== 1) return candidates.length;
-
-			await tx
-				.update(users)
-				.set({ customerId: eventData.data.id })
-				.where(eq(users.id, candidates[0].id));
-			return 1;
-		});
-
-		if (matched !== 1) {
-			Sentry.captureMessage("Paddle customer not linked to a single user", {
-				level: "warning",
-				tags: { domain: "paddle", op: "link-customer" },
-				extra: { customerId: eventData.data.id, matches: matched },
-			});
-		}
+		console.log(
+			`Paddle customer event ${eventData.eventType} for ${eventData.data.id}; linking happens at checkout`,
+		);
 	}
 }

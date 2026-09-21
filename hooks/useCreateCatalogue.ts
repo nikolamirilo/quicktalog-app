@@ -19,10 +19,7 @@ export const useCreateCatalogue = (disabled = false) => {
 		setLoading(true);
 		if (userData) {
 			try {
-				const result = await createCatalogue(
-					catalogue,
-					userData?.currentPlan?.features?.branding,
-				);
+				const result = await createCatalogue(catalogue);
 
 				if (result.success) {
 					toast.success(

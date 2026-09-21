@@ -8,6 +8,8 @@ type Window = `${number} ${"s" | "m" | "h"}`;
 const RULES = {
 	upload: { requests: 30, window: "1 h" },
 	catalogueName: { requests: 60, window: "1 m" },
+	newsletter: { requests: 5, window: "1 h" },
+	contact: { requests: 5, window: "1 h" },
 } satisfies Record<string, { requests: number; window: Window }>;
 
 export type RateLimitRule = keyof typeof RULES;
@@ -31,17 +33,20 @@ function limiterFor(rule: RateLimitRule): Ratelimit {
 
 /**
  * True when `key` (a user id or IP) is still within `rule`. A Redis outage is
- * reported to Sentry and does not block the request.
+ * reported to Sentry and, by default, lets the request through so an outage
+ * cannot take the product down. Pass `failOpen: false` where the limit is the
+ * only protection, such as an unauthenticated form that sends mail.
  */
 export async function withinRateLimit(
 	rule: RateLimitRule,
 	key: string,
+	{ failOpen = true }: { failOpen?: boolean } = {},
 ): Promise<boolean> {
 	try {
 		const { success } = await limiterFor(rule).limit(key);
 		return success;
 	} catch (error) {
 		Sentry.captureException(error, { tags: { op: "rateLimit", rule } });
-		return true;
+		return failOpen;
 	}
 }

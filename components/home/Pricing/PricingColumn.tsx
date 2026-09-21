@@ -1,4 +1,5 @@
 "use client";
+import { createCheckout } from "@/lib/paddle/checkout";
 import InformModal from "@/components/modals/InformModal";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/helpers/client";
@@ -32,6 +33,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 	mode = "column",
 }) => {
 	const [isHovered, setIsHovered] = useState(false);
+	const [isStartingCheckout, setIsStartingCheckout] = useState(false);
 	const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 	const [currentFeature, setCurrentFeature] = useState("");
 	const router = useRouter();
@@ -118,7 +120,7 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 
 	const filteredTiers = tiers.filter((item) => item?.type === "standard");
 
-	const handleButtonClick = () => {
+	const handleButtonClick = async () => {
 		if (!user) {
 			router.push("/auth");
 			return;
@@ -138,13 +140,25 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 			return;
 		}
 
-		paddle.Checkout.open({
-			items: [{ priceId: priceId, quantity: 1 }],
-			customer: user.email ? { email: user.email } : undefined,
-			settings: {
-				successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/checkout/success`,
-			},
-		});
+		setIsStartingCheckout(true);
+		try {
+			// The server creates the transaction: it pins the Paddle customer to
+			// the signed-in account and signs the user id the webhook will read,
+			// so the plan cannot be bought for somebody else.
+			const result = await createCheckout(priceId);
+			if ("error" in result) {
+				alert(result.error);
+				return;
+			}
+			paddle.Checkout.open({
+				transactionId: result.transactionId,
+				settings: {
+					successUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/admin/checkout/success`,
+				},
+			});
+		} finally {
+			setIsStartingCheckout(false);
+		}
 	};
 
 	if (mode === "row") {
@@ -238,10 +252,11 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 					<div className="flex-shrink-0 md:w-40">
 						<Button
 							className="w-full py-2.5 rounded-lg font-semibold transition-all duration-200 hover:scale-[1.02] text-sm"
+							disabled={isStartingCheckout}
 							onClick={handleButtonClick}
 							variant={tier.id == 2 ? "cta" : "cta-secondary"}
 						>
-							Get Started
+							{isStartingCheckout ? "Starting..." : "Get Started"}
 						</Button>
 					</div>
 				</div>
@@ -314,10 +329,11 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 
 				<Button
 					className="w-full py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-[1.02]"
+					disabled={isStartingCheckout}
 					onClick={handleButtonClick}
 					variant={tier.id == 2 ? "cta" : "cta-secondary"}
 				>
-					Get Started
+					{isStartingCheckout ? "Starting..." : "Get Started"}
 				</Button>
 			</div>
 
