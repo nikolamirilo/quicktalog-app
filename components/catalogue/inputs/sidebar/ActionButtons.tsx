@@ -6,10 +6,17 @@ import {
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
 import SuccessModal from "@/components/modals/SuccessModal";
 import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import {
+	ChevronUp,
 	Eye,
 	LayoutTemplate,
 	Rocket,
@@ -132,15 +139,16 @@ const ActionButtons = ({
 		}
 	};
 
-	const QUICK_ACTIONS = [
-		{
+	const ACTIONS = {
+		save: {
 			key: "save",
 			icon: Save,
 			label: "Save",
 			onClick: () => handleSave(),
 			disabled: false,
+			primary: false,
 		},
-		{
+		templates: {
 			key: "templates",
 			icon: LayoutTemplate,
 			label: "Templates",
@@ -149,15 +157,17 @@ const ActionButtons = ({
 				setIsTemplateModalOpen(true);
 			},
 			disabled: false,
+			primary: false,
 		},
-		{
+		preview: {
 			key: "preview",
 			icon: Eye,
 			label: "Preview",
 			onClick: handlePreview,
 			disabled: isPublishDisabled,
+			primary: false,
 		},
-		{
+		publish: {
 			key: "publish",
 			icon: catalogue?.status !== "active" ? Rocket : RxUpdate,
 			label: catalogue?.status !== "active" ? "Publish" : "Update",
@@ -165,7 +175,26 @@ const ActionButtons = ({
 			onClick: handlePublish,
 			disabled: isPublishDisabled,
 		},
+	};
+
+	/**
+	 * Both layouts read the same definitions; only the order differs, and the
+	 * phone bar groups preview and publish behind one item. Keyed rather than
+	 * looked up by string, so a renamed action is a compile error here instead
+	 * of a throw while the builder renders.
+	 */
+	const QUICK_ACTIONS = [
+		ACTIONS.save,
+		ACTIONS.templates,
+		ACTIONS.preview,
+		ACTIONS.publish,
 	];
+
+	const barItemClass =
+		"flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 transition-all duration-200 active:scale-95 disabled:pointer-events-none disabled:opacity-40";
+
+	const PublishIcon = ACTIONS.publish.icon;
+
 	return (
 		<>
 			{/* ── Desktop (original, unchanged) ── */}
@@ -206,11 +235,12 @@ const ActionButtons = ({
 
 			{/* ── Mobile fixed bottom tab bar ── */}
 			{/*
-			 * The top padding is the strip the editor button below straddles into,
-			 * so it never covers the middle item's icon. No `relative` here: this
-			 * is already a containing block for the absolute child, and Tailwind
-			 * emits `relative` after `fixed`, so adding it would win and unpin the
-			 * bar from the bottom of the screen.
+			 * Four items, so the centre line falls in the gap between the second
+			 * and the third - which is where the editor button straddles, with no
+			 * icon under it. The top padding is the strip it sits in. No
+			 * `relative` here: this is already a containing block for the absolute
+			 * child, and Tailwind emits `relative` after `fixed`, so adding it
+			 * would win and unpin the bar from the bottom of the screen.
 			 */}
 			<div
 				aria-label="Builder actions"
@@ -232,6 +262,7 @@ const ActionButtons = ({
 				>
 					{isOpen ? <X size={22} /> : <SlidersHorizontal size={22} />}
 				</button>
+
 				{/*
 				 * The switch into AI mode. On mobile this is the only way in: the
 				 * floating pill is desktop-only, because a pill hovering over the
@@ -243,7 +274,7 @@ const ActionButtons = ({
 				 */}
 				<button
 					aria-label="Ask AI"
-					className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 transition-all duration-200 active:scale-95"
+					className={barItemClass}
 					onClick={() => {
 						setIsOpen(false);
 						setIsChatOpen(true);
@@ -253,21 +284,62 @@ const ActionButtons = ({
 					<Sparkles className="h-5 w-5" />
 					<span className="text-[11px] font-medium">Ask AI</span>
 				</button>
-				{QUICK_ACTIONS.map(({ key, icon: Icon, label, onClick, disabled }) => (
-					<button
-						className={`
-                        flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5
-                        active:scale-95 transition-all duration-200
-                        disabled:opacity-40 disabled:pointer-events-none
-                    `}
-						disabled={disabled}
-						key={key}
-						onClick={onClick}
+
+				{[ACTIONS.templates, ACTIONS.save].map(
+					({ key, icon: Icon, label, onClick, disabled }) => (
+						<button
+							className={barItemClass}
+							disabled={disabled}
+							key={key}
+							onClick={onClick}
+							type="button"
+						>
+							<Icon className="w-5 h-5" />
+							<span className="text-[11px] font-medium">{label}</span>
+						</button>
+					),
+				)}
+
+				{/*
+				 * Preview and publish are one slot: both act on the finished
+				 * catalogue, and four items are what puts the editor button in a
+				 * gap rather than over an icon. Both are gated by the same
+				 * condition, so the trigger carries it and the menu never opens
+				 * onto two dead entries.
+				 */}
+				<DropdownMenu>
+					<DropdownMenuTrigger
+						aria-label={`${ACTIONS.publish.label} or preview`}
+						className={barItemClass}
+						disabled={ACTIONS.publish.disabled}
 					>
-						<Icon className="w-5 h-5" />
-						<span className="text-[11px] font-medium">{label}</span>
-					</button>
-				))}
+						<span className="relative flex items-center">
+							<PublishIcon className="w-5 h-5" />
+							<ChevronUp className="h-3 w-3 -mr-2 ml-0.5" />
+						</span>
+						<span className="text-[11px] font-medium">
+							{ACTIONS.publish.label}
+						</span>
+					</DropdownMenuTrigger>
+					{/*
+					 * Above the builder sidebar (z-1000), below the chat sheet and the
+					 * dialogs. The default z-50 would sit behind the sidebar.
+					 */}
+					<DropdownMenuContent
+						align="end"
+						className="z-[1010] mb-2 rounded-xl border border-product-border bg-product-background shadow-lg"
+						side="top"
+					>
+						<DropdownMenuItem onClick={ACTIONS.preview.onClick}>
+							<Eye className="mr-2 h-4 w-4" />
+							{ACTIONS.preview.label}
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={ACTIONS.publish.onClick}>
+							<PublishIcon className="mr-2 h-4 w-4" />
+							{ACTIONS.publish.label}
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 			</div>
 
 			{/* Spacer so page content isn't hidden behind mobile bar */}

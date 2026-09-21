@@ -166,10 +166,37 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 			screen.getByRole("toolbar", { name: "Builder actions" }),
 		);
 
-		for (const label of ["Ask AI", "Save", "Templates", "Preview"]) {
+		for (const label of ["Ask AI", "Templates", "Save", "Publish or preview"]) {
 			const item = bar.getByRole("button", { name: label });
 			expect(item.className).not.toMatch(/text-product-primary/);
 		}
+	});
+
+	it("puts Templates beside Ask AI, and publish/preview in one slot", () => {
+		setup();
+		const bar = screen.getByRole("toolbar", { name: "Builder actions" });
+
+		const labels = [...bar.querySelectorAll("button")]
+			.map((b) => b.textContent?.trim())
+			.filter((text) => text);
+		expect(labels).toEqual(["Ask AI", "Templates", "Save", "Publish"]);
+
+		// Preview moved into the grouped button's menu, which is closed.
+		expect(within(bar).queryByRole("button", { name: "Preview" })).toBeNull();
+	});
+
+	/**
+	 * Four items are what puts the editor button in the gap between the second
+	 * and the third rather than over an icon, so the count is load-bearing.
+	 */
+	it("keeps the bar at four items either side of the editor button", () => {
+		setup();
+		const bar = screen.getByRole("toolbar", { name: "Builder actions" });
+
+		const items = [...bar.querySelectorAll("button")].filter((b) =>
+			b.className.includes("flex-1"),
+		);
+		expect(items).toHaveLength(4);
 	});
 
 	it("toggles the editor panel from the button in the bar", () => {
