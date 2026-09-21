@@ -4,7 +4,20 @@ on:
 
 jobs:
   notify:
-    if: ${{ github.event.deployment_status.state == 'success' || github.event.deployment_status.state == 'failure' || github.event.deployment_status.state == 'error' }}
+    # Any job with an `environment:` makes GitHub create a deployment and post
+    # deployment_status events, so ci.yaml's e2e job (environment: TEST) was
+    # firing this workflow too - twice per push, since CI runs on both `push`
+    # and `pull_request`. Those arrived as "Vercel Deployment: Success/Failed"
+    # for a deployment that never happened, and read as duplicates because the
+    # substitution below turns Vercel's "Preview" into "Test".
+    #
+    # Only Vercel's own environments notify. The body already assumes exactly
+    # these two names, branching on Production for the live URL.
+    if: >-
+      ${{ contains(fromJSON('["Preview", "Production"]'), github.event.deployment.environment)
+      && (github.event.deployment_status.state == 'success'
+      || github.event.deployment_status.state == 'failure'
+      || github.event.deployment_status.state == 'error') }}
     runs-on: ubuntu-latest
     steps:
       - name: Send Discord notification
