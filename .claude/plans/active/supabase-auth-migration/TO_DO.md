@@ -16,8 +16,8 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0A.8 | Review and commit Phase 0A changes (app, worker, packages) | Nikola | Done |
 | 0A.9 | Set secrets: Vercel (`DB_CONNECTION_STRING`, `AUTH_PROVIDER`, `REVALIDATE_SECRET`, `REDIS_KEY_PREFIX`), GitHub (`DB_CONNECTION_STRING`), Cloudflare (`WORKER_ADMIN_TOKEN`, `REVALIDATE_SECRET`, `JOBS_PAUSED`, `SUPABASE_SECRET_KEY`; then delete `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY`) | Nikola | Done |
 | 0A.10 | Deploy worker, then app, to TEST | Nikola | Done |
-| 0A.11 | Soak 24h on TEST; confirm no app `/rest/v1` traffic | Nikola | In Progress |
-| 0A.12 | Apply M00 on TEST and run the perimeter check | Nikola | To Do |
+| 0A.11 | Soak 24h on TEST; confirm no app `/rest/v1` traffic | Nikola | Done |
+| 0A.12 | Apply M00 on TEST and run the perimeter check | Nikola | Done |
 | 0A.13 | PROD: check edge functions, backup, merge `test` → `main`, deploy, soak 24h, apply M00, perimeter check, re-run audit | Nikola | To Do |
 | 0A.14 | Fix any tampered data found by the audit; record the GDPR notification decision | Nikola | To Do |
 | 0B.1 | Catalogue actions: owner in every update, server-side status and plan limits, no `createdBy` in Redis | Claude | To Do |
