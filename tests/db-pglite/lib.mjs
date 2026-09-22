@@ -425,6 +425,7 @@ export const PHASE_MIGRATIONS = {
 	M05: "private_entry_points",
 	M06: "ai_turn_plan_binding",
 	M07: "validate_after_audit",
+	M08: "app_rls_login_role",
 };
 
 const phaseSuffixes = Object.values(PHASE_MIGRATIONS).map((n) => `_${n}.sql`);

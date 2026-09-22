@@ -36,10 +36,19 @@ export const getUserDb = () =>
 		3,
 	));
 
-/** Connection for system writes (webhooks, provisioning). Import only through utils/db/admin. */
+/**
+ * Connection for system writes (webhooks, provisioning). Import only through
+ * utils/db/admin.
+ *
+ * It has its own variable because the two connections stop being the same at
+ * M08: `DB_CONNECTION_STRING` moves to the fail-closed `app_rls` login, while
+ * this one must stay a role that may bypass RLS. Until that switch both point
+ * at the same `postgres` URL, so the fallback below is the normal state and not
+ * a misconfiguration.
+ */
 export const getAdminDb = () =>
 	(adminDb ??= make(
-		process.env.DB_CONNECTION_STRING,
-		"DB_CONNECTION_STRING",
+		process.env.DB_ADMIN_CONNECTION_STRING ?? process.env.DB_CONNECTION_STRING,
+		"DB_ADMIN_CONNECTION_STRING",
 		2,
 	));

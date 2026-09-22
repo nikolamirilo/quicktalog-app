@@ -82,3 +82,15 @@ This will download your project's environment variables and store them in a loca
 ## Useful Links
 
 - [Vercel Environment Variables Docs](https://vercel.com/docs/environment-variables)
+
+## Database connections
+
+The app uses two:
+
+- `DB_CONNECTION_STRING` — user and visitor traffic. After migration M08 this is
+  the `app_rls` login, which owns nothing and can only switch into the app roles.
+- `DB_ADMIN_CONNECTION_STRING` — webhooks, provisioning, e2e cleanup and
+  `drizzle-kit pull`. Stays on `postgres`, which bypasses RLS.
+
+Before M08 they are the same URL and the admin one may be omitted. After M08 they
+must differ. Both are pooler URLs on port 6543.

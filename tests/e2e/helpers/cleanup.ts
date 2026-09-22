@@ -4,11 +4,13 @@ import postgres from "postgres";
 const PROD_PROJECT_REF = "uhfbapjuzvlyzyodxhqn";
 
 /**
- * The database URL for test cleanup. Refuses to touch the PROD project
- * unless ALLOW_PROD=1 is set explicitly.
+ * The database URL for test cleanup. Prefers the admin connection: cleanup
+ * deletes rows it does not own, which the `app_rls` login cannot do after M08.
+ * Refuses to touch the PROD project unless ALLOW_PROD=1 is set explicitly.
  */
 function cleanupDatabaseUrl(): string | undefined {
-	const url = process.env.DB_CONNECTION_STRING;
+	const url =
+		process.env.DB_ADMIN_CONNECTION_STRING ?? process.env.DB_CONNECTION_STRING;
 	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 	if (
 		(url?.includes(PROD_PROJECT_REF) ||

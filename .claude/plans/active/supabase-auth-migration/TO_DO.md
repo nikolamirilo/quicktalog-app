@@ -37,8 +37,8 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 1.3 | Apply M01-M06 on TEST; run advisors and perimeter queries | Nikola | Done |
 | 1.4 | Packages: `drizzle-kit pull` without policies, release, bump app and worker | Claude | Done |
 | 1.5 | App code: RLS wrapper (`withUser`/`withPublic`/`asAdmin`), convert every query, cookie consent to DB, provider-neutral auth UI, import guardrails, skills and docs | Claude | Done |
-| 1.6 | Deploy to TEST; soak 3 days | Nikola | To Do |
-| 1.7 | Apply M07 on TEST | Nikola | To Do |
+| 1.6 | Deploy to TEST; soak 3 days | Nikola | Done |
+| 1.7 | Apply M07 on TEST | Nikola | Done |
 | 1.8 | Apply M08 on TEST, set `app_rls` password, add separate user/admin connection strings, load smoke test | Nikola | To Do |
 | 1.9 | PROD: preflight, M01-M06, deploy, soak 3 days, M07, M08, smoke | Nikola | To Do |
 | 2.1 | Add Supabase auth packages and clients; Supabase branch of `getVerifiedIdentity` | Claude | To Do |

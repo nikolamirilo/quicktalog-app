@@ -37,6 +37,22 @@ Policies read the id through `private.current_user_id()`, so they apply to every
 - **Timeouts per role**, because `SET ROLE` does not apply the role's own `ALTER ROLE` settings.
 - **No reset afterwards.** Resetting inside an aborted transaction throws `25P02`; the commit already discards the settings.
 
+## The two connection strings
+
+| Variable | Used by | Role |
+|---|---|---|
+| `DB_CONNECTION_STRING` | `getUserDb()`, i.e. `withUser` and `withPublic` | `postgres` today; the fail-closed `app_rls` login after M08 |
+| `DB_ADMIN_CONNECTION_STRING` | `getAdminDb()`, i.e. `asAdmin`, e2e cleanup, `drizzle-kit pull` | `postgres`, which may bypass RLS |
+
+Until M08 both point at the same URL and the admin variable may be left unset;
+the code falls back to the other one. After M08 they must differ, or every
+webhook write fails with `42501`.
+
+`app_rls` owns no privileges at all: it may only `SET ROLE` to `app_user` or
+`app_public`. That is what makes a forgotten wrapper an error rather than a
+silent full-table read, and it is what
+`tests/integration/db/forgotten-wrapper.test.ts` checks.
+
 ## Rules that follow from this
 
 1. **Never hold a block open across slow work** — no `fetch`, Redis, `revalidate*`, model call or streaming inside it. Each block pins a pooled connection.
