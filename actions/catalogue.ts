@@ -219,6 +219,8 @@ export async function duplicateItem(id: string, name?: string) {
 						.insert(catalogues)
 						.values({
 							...values,
+							// `tags` is NOT NULL without a default, so it is always sent.
+							tags: values.tags ?? [],
 							name: candidate,
 							status: "draft",
 							createdBy: me.userId,
@@ -284,6 +286,8 @@ export async function createCatalogue(
 					...(pickEditable(
 						shaped as Record<string, unknown>,
 					) as Partial<Catalogue>),
+					// `tags` is NOT NULL without a default, so it is always sent.
+					tags: shaped.tags ?? [],
 					name: slug,
 					status: "draft",
 					createdBy: me.userId,

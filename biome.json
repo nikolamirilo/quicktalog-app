@@ -57,11 +57,7 @@
 	},
 	"overrides": [
 		{
-			"includes": [
-				"utils/db/pool.ts",
-				"scripts/**",
-				"tests/**"
-			],
+			"includes": ["utils/db/pool.ts", "scripts/**", "tests/**"],
 			"linter": {
 				"rules": {
 					"style": {
