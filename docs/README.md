@@ -26,5 +26,6 @@ How parts of the app work.
 
 | Doc | About |
 |---|---|
+| [architecture/data-access.md](architecture/data-access.md) | How the app talks to Postgres: the three query blocks, RLS, and what fails without them |
 | [architecture/ai-chat-flow.md](architecture/ai-chat-flow.md) | Builder AI assistant flow (partly outdated, see its note) |
 | [architecture/catalogue-html-safety.md](architecture/catalogue-html-safety.md) | Where author HTML reaches a published catalogue and what filters it |

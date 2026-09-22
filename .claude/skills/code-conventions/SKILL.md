@@ -42,7 +42,7 @@ Cross-component state lives in [context/](../../../context/): `CatalogueContext`
 
 ## Mechanical conventions
 
-- **Imports use the `@/` alias** for anything outside the current folder: `import { drizzleClient } from "@/utils/drizzle"` (`@/*` → repo root, per `tsconfig.json`). Avoid `../../..` chains.
+- **Imports use the `@/` alias** for anything outside the current folder: `import { withUser } from "@/utils/db"` (`@/*` → repo root, per `tsconfig.json`). Avoid `../../..` chains.
 - **Formatting/linting is Biome**, not Prettier/ESLint. Run `npm run format` (write), `npm run lint` (write), `npm run check`. Tabs, double quotes - let Biome decide; don't hand-format.
 - **Errors** are reported with `Sentry.captureException(err)` + `console.error(...)` in catches (see [[server-action-and-route]]).
 - **Branches**: develop on `test`, release via `main` - see [docs/guides/git-workflow.md](../../../docs/guides/git-workflow.md).

@@ -11,9 +11,7 @@ const Footer: React.FC = () => {
 	const [newsletterEmail, setNewsletterEmail] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState("");
-	const [submitStatus, setSubmitStatus] = useState<
-		"idle" | "success" | "already_subscribed"
-	>("idle");
+	const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
 	const [year, setYear] = useState<number | null>(null);
 
 	useEffect(() => {
@@ -33,9 +31,6 @@ const Footer: React.FC = () => {
 			if (result.status === "success") {
 				setNewsletterEmail("");
 				setSubmitStatus("success");
-				setTimeout(() => setSubmitStatus("idle"), 3000);
-			} else if (result.status === "already_subscribed") {
-				setSubmitStatus("already_subscribed");
 				setTimeout(() => setSubmitStatus("idle"), 3000);
 			} else {
 				setSubmitError("Failed to subscribe. Please try again.");
@@ -182,9 +177,7 @@ const Footer: React.FC = () => {
 								className={`w-full transition-colors duration-200 font-semibold ${
 									submitStatus === "success"
 										? "bg-green-500 text-white hover:bg-green-600"
-										: submitStatus === "already_subscribed"
-											? "bg-blue-500 text-white hover:bg-blue-600"
-											: "bg-product-primary text-product-foreground "
+										: "bg-product-primary text-product-foreground "
 								}`}
 								disabled={isSubmitting || submitStatus !== "idle"}
 								type="submit"
@@ -196,23 +189,11 @@ const Footer: React.FC = () => {
 										<FiCheck className="w-4 h-4" />
 										Subscribed
 									</div>
-								) : submitStatus === "already_subscribed" ? (
-									<div className="flex items-center justify-center gap-2">
-										<FiCheck className="w-4 h-4" />
-										Already subscribed
-									</div>
 								) : (
 									"Subscribe"
 								)}
 							</Button>
-							{submitStatus === "already_subscribed" && (
-								<p
-									aria-live="polite"
-									className="text-product-foreground-accent text-xs"
-								>
-									This email is already on our list.
-								</p>
-							)}
+
 							{submitError && (
 								<p
 									aria-live="polite"

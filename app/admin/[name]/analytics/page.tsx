@@ -4,6 +4,7 @@ import CatalogueAnalytics from "@/components/analytics/CatalogueAnalytics";
 import Navbar from "@/components/navigation/Navbar";
 import { requireUser } from "@/lib/auth/session";
 import { ownsCatalogue } from "@/lib/catalogue/ownership";
+import { withUser } from "@/utils/db";
 
 /** Escapes a value for a single-quoted HogQL string literal. */
 function hogqlString(value: string): string {
@@ -17,7 +18,7 @@ export default async function page({ params }: { params: tParams }) {
 	const { name } = await params;
 	const me = await requireUser(`/admin/${name}/analytics`);
 	// Only the catalogue's owner may see its visitors.
-	if (!(await ownsCatalogue(me, name))) {
+	if (!(await withUser(me, (tx) => ownsCatalogue(tx, me, name)))) {
 		notFound();
 	}
 	const transformedName = name

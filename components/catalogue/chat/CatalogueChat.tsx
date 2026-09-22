@@ -22,10 +22,16 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+/**
+ * Deliberately industry-neutral: a catalogue is as often a service list or a
+ * product range as it is a menu, and a suggestion naming a cuisine reads as
+ * "not for me" to everyone else. Each one still exercises a different group of
+ * tools - sections, copy, prices, appearance - which is what the set is for.
+ */
 const SUGGESTIONS = [
-	"Add a Desserts section with 5 items",
+	"Add a new section with 6 items",
 	"Make every description shorter and friendlier",
-	"Raise all prices in the first section by 10%",
+	"Raise every price by 10%",
 	"Switch the theme to something more elegant",
 ];
 
@@ -294,7 +300,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 								disabled={loading}
 								onChange={(event) => setDraft(event.target.value)}
 								onKeyDown={handleKeyDown}
-								placeholder="Add a Drinks section with 6 items…"
+								placeholder="Describe the change you want…"
 								ref={inputRef}
 								rows={1}
 								value={draft}

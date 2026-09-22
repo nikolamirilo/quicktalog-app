@@ -1,6 +1,6 @@
 "use client";
 import ConsentModal from "@/components/modals/ConsentModal";
-import { SignIn, SignUp } from "@clerk/nextjs";
+import ClerkAuthForms from "@/components/auth/ClerkAuthForms";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -40,23 +40,7 @@ export default function Auth() {
 			<div className="product font-lora min-h-screen">
 				<div className="flex justify-center items-center mt-[5vh] min-h-screen px-4">
 					<div className="w-full max-w-md">
-						{showSignupForm && (
-							<>
-								{mode === "signup" ? (
-									<SignUp
-										forceRedirectUrl="/admin/dashboard"
-										routing="hash"
-										signInUrl="/auth?mode=signin"
-									/>
-								) : (
-									<SignIn
-										forceRedirectUrl="/admin/dashboard"
-										routing="hash"
-										signUpUrl="/auth?mode=signup"
-									/>
-								)}
-							</>
-						)}
+						{showSignupForm && <ClerkAuthForms mode={mode} />}
 					</div>
 				</div>
 			</div>

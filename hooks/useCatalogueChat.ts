@@ -140,6 +140,23 @@ export function useCatalogueChat() {
 		() => planFromMessages(messages),
 		[messages],
 	);
+
+	/**
+	 * The turn the server charged for this ask. It comes back in the assistant
+	 * message metadata, and every continuation sends it back, so a plan spanning
+	 * several requests is one charge rather than one per request. A missing or
+	 * stale id is simply charged again, which is the safe direction.
+	 */
+	const rootTurnId: string | null = useMemo(() => {
+		for (let i = messages.length - 1; i >= 0; i--) {
+			const message = messages[i];
+			if (message.role !== "assistant") continue;
+			const id = (message as { metadata?: { turnId?: string | null } }).metadata
+				?.turnId;
+			if (id) return id;
+		}
+		return null;
+	}, [messages]);
 	// Send the next request of an unfinished plan.
 	//
 	// The server stops each request short of the function timeout, so a plan with
@@ -184,10 +201,11 @@ export function useCatalogueChat() {
 				body: {
 					catalogueName: context.catalogue.name,
 					catalogue: context.catalogue,
+					continuationOf: rootTurnId,
 				},
 			},
 		);
-	}, [status, plan, error, context, messages, sendMessage]);
+	}, [status, plan, error, context, messages, sendMessage, rootTurnId]);
 
 	// Usage is metered server-side once the turn finishes; refresh so the limit
 	// modal and the dashboard counter stay accurate. `status` is "ready" on mount

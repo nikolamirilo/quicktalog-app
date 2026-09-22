@@ -13,7 +13,9 @@
 - Never read, print or commit `.env*` values. Server secrets never get a `NEXT_PUBLIC_` prefix.
 
 ### Data access and security
-- All data access goes through Drizzle. supabase-js is for auth only (no `.from()` / `.rpc()` in new code).
+- All data access goes through Drizzle, inside one of the three blocks in `utils/db`: `withUser` (signed-in), `withPublic` (visitors, ISR) or `asAdmin` (webhooks, provisioning only). A query outside them fails with 42501. See `docs/architecture/data-access.md`.
+- supabase-js is for auth only (no `.from()` / `.rpc()` in new code).
+- Never hold a `withUser`/`withPublic`/`asAdmin` block open across `fetch`, Redis, `revalidate*`, a model call or streaming: it pins a pooled connection.
 - Every server action and route handler checks identity itself; middleware and page checks are not enough.
 - Never trust `userId`, `ownerId`, `createdBy`, `status` or plan flags from the client; derive them from the session and the database.
 - Every owner query keeps an explicit owner filter, and updates/deletes check the returned row count.
@@ -36,7 +38,7 @@
 - Create every new plan in `/.claude/plans/active/YYYY-MM-DD-<slug>/` with a `PLAN.md` that starts with a status line (`Status: proposed | approved | in progress | done`). Supporting files (research, verification) go in the same folder.
 - When a plan is fully implemented or dropped, move it to `/.claude/plans/archive/`, update `/.claude/plans/README.md`, and move any lasting knowledge into `docs/`.
 - Code, skills and `CLAUDE.md` link to `docs/`, not to plans (except while a plan is actively being implemented).
-- When a pattern changes, update the matching skill (e.g. `server-action-and-route` still prescribes Clerk `currentUser()`).
+- When a pattern changes, update the matching skill in `.claude/skills/`.
 
 ## Tech stack
 
@@ -45,10 +47,10 @@
 | Framework | Next.js 15 (App Router), React 19, TypeScript | Web app: marketing pages, public catalogues (ISR), admin builder and dashboard |
 | Hosting | Vercel (Hobby plan) | App hosting; route `maxDuration` kept at 60s |
 | Database | Supabase Postgres (TEST and PROD are separate projects) | All app data |
-| Data access | Drizzle ORM (`drizzle-orm` + `postgres`) | All app queries; camelCase in the app, snake_case in the DB. Target: runs as private roles `app_user`/`app_public` so RLS applies |
+| Data access | Drizzle ORM (`drizzle-orm` + `postgres`) through `utils/db` | All app queries; camelCase in the app, snake_case in the DB. Runs as the private roles `app_user`/`app_public` so RLS applies; `asAdmin` (postgres) is for webhooks and provisioning only |
 | Migrations | Supabase CLI (`supabase/migrations/*.sql`) | Schema, RLS policies, grants, functions, triggers; applied to TEST first, then PROD. Never `drizzle-kit push/generate/migrate` |
 | DB types | `drizzle-kit pull` in `@quicktalog/common` | Regenerates TypeScript schema/types after each migration |
-| Auth | Clerk (current) → Supabase Auth via `@supabase/ssr` / supabase-js (planned) | Sign-in, sign-up, Google login, sessions. After migration supabase-js is used for auth only, never data queries |
+| Auth | Clerk (current, behind `AuthProvider`/`useAuth`) → Supabase Auth via `@supabase/ssr` / supabase-js (planned) | Sign-in, sign-up, Google login, sessions. After migration supabase-js is used for auth only, never data queries |
 | Shared package | `@quicktalog/common` (`../quicktalog-packages`) | Shared types, constants (pricing `tiers`), Drizzle schema |
 | Background jobs | Cloudflare Worker (`../quicktalog-backend`) | Daily cron: analytics ingestion, plan/traffic enforcement, image cleanup |
 | Cache | Upstash Redis | Catalogue draft cache for the builder and preview |

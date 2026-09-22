@@ -1,4 +1,5 @@
-import { upsertTheme } from "@/lib/themes/upsert";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { saveOwnTheme } from "@/lib/themes/upsert";
 import type { ToolContext } from "@/agent/tools/types";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
@@ -87,7 +88,12 @@ export const appearanceTools = ({ session }: ToolContext) => ({
 			// The catalogue change is what the user asked for; the save is a
 			// convenience. If the save fails, the theme still lands and the
 			// model can tell the user how to retry from the Appearance tab.
-			if (!session.userId) {
+			//
+			// The owner of the write is derived here rather than taken from the
+			// session, and `saveOwnTheme` then runs the upsert as that user
+			// under RLS.
+			const me = session.userId ? await getVerifiedIdentity() : null;
+			if (!me) {
 				return {
 					...result,
 					saveError:
@@ -95,7 +101,7 @@ export const appearanceTools = ({ session }: ToolContext) => ({
 				};
 			}
 
-			const saved = await upsertTheme(session.userId, name, colors);
+			const saved = await saveOwnTheme(me, name, colors);
 			if (saved.success && saved.data) {
 				return { ...result, savedTheme: { name: saved.data.name } };
 			}

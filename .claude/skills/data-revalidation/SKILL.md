@@ -19,7 +19,7 @@ A mutation changes data → it invalidates the caches it touched (Next.js + Redi
 |---|---|---|---|
 | `revalidateCatalogue(name?)` | [helpers/server.ts](../../../helpers/server.ts) | **Server action** | Any create/update/publish/delete of a catalogue |
 | `revalidateDashboard()` | [helpers/server.ts](../../../helpers/server.ts) | **Server action** | Anything that changes dashboard stats (status, delete, create, duplicate) |
-| `redis.set/del(name)` | inside the server action | **Server action** | Catalogues are cached in Redis by `name` - sync on every write |
+| `writeOwnedDraft` / `deleteDrafts` | inside the server action, **after** the transaction | **Server action** | Builder drafts live in Redis keyed by catalogue **id** (`lib/catalogue/draft-cache.ts`), so a reused name cannot surface a previous owner's draft. Never call Redis inside a `withUser` block: it would hold a pooled connection open |
 | `router.refresh()` | client component | **Client** | After awaiting the action, to re-render server components with fresh data |
 
 Two client helpers exist on top of `router.refresh()` - use them only when their specific condition holds:
@@ -47,7 +47,7 @@ Rule of thumb: pass the **name** whenever a single catalogue changed; add **`rev
 
 ```typescript
 // In a dashboard component, after a mutation that changes plan usage:
-await deleteItem(name);   // server action already invalidated Next.js + Redis
+await deleteItem(name);   // server action already invalidated Next.js + the draft
 await refreshAll();       // SWR: instant dashboard update (dashboard only)
 await refreshUserData();  // usage/limit changed (create/delete only)
 router.refresh();         // re-render server components
@@ -64,6 +64,6 @@ Server actions write via **Drizzle**; `app/api/items/route.ts` writes the same `
 - **Client re-invalidates what the server already did** - e.g. calling a `revalidateData()`-style purge from the component after the action already revalidated. Redundant; the action owns it.
 - **`refreshAll()` outside the dashboard** - it only mutates dashboard SWR caches; useless elsewhere.
 - **`refreshUserData()` on a content edit** - usage didn't change, so it's a wasted re-fetch. Reserve it for create/delete/plan-gate operations.
-- **Forgot Redis sync in the action** - `getCatalogueByName` reads Redis before the DB, so the public page stays stale even after `revalidateCatalogue`. Always `redis.set`/`redis.del` on write.
+- **Forgot the draft sync in the action** - the builder reads the draft on top of the database row (`readOwnedDraft`), so the editor keeps showing stale edits even after `revalidateCatalogue`. Write or delete the draft on every write.
 - **Nuclear revalidation** - purging the root layout for a single-catalogue edit. Pass the `name` and target it instead.
 - **Missing `revalidateDashboard()`** - a status change or delete that doesn't refresh dashboard stats.

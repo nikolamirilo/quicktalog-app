@@ -1,7 +1,7 @@
 "use client";
 
 import { getUserData } from "@/actions/users";
-import { useUser as useClerkUser } from "@clerk/nextjs";
+import { useAuth } from "@/context/AuthContext";
 import { UserData } from "@quicktalog/common";
 import {
 	createContext,
@@ -20,12 +20,12 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
-	const { user: clerkUser, isLoaded: isClerkLoaded } = useClerkUser();
+	const { user: authUser, isLoaded: isAuthLoaded } = useAuth();
 	const [userData, setUserData] = useState<UserData | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	const fetchUserData = async () => {
-		if (!clerkUser?.id) {
+		if (!authUser?.id) {
 			setUserData(null);
 			setLoading(false);
 			return;
@@ -44,10 +44,10 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 	};
 
 	useEffect(() => {
-		if (isClerkLoaded) {
+		if (isAuthLoaded) {
 			fetchUserData();
 		}
-	}, [isClerkLoaded, clerkUser?.id]);
+	}, [isAuthLoaded, authUser?.id]);
 
 	const refreshUserData = async () => {
 		await fetchUserData();

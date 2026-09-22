@@ -10,7 +10,7 @@ import {
 	updateGTMConsent,
 	updateUserConsent,
 } from "@/utils/cookies";
-import { useUser } from "@clerk/nextjs";
+import { useUserContext } from "@/context/UserContext";
 import { CookiePreferences } from "@quicktalog/common";
 import { Cookie, ExternalLink, Settings } from "lucide-react";
 import Link from "next/link";
@@ -18,7 +18,8 @@ import { useEffect, useState } from "react";
 import CookiePreferencesModal from "../modals/CookiePreferencesModal";
 
 const CookieBanner = () => {
-	const { user, isSignedIn } = useUser();
+	const { userData } = useUserContext();
+	const isSignedIn = !!userData;
 	const [isVisible, setIsVisible] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
@@ -37,18 +38,17 @@ const CookieBanner = () => {
 		// Initialize GTM consent on component mount
 		initializeGTMConsent();
 
-		if (isSignedIn && user) {
-			// For logged-in users, check Clerk's publicMetadata.cookieConsent
-			const hasClerkPreferences = !!user.publicMetadata.cookieConsent;
-			if (hasClerkPreferences) {
-				const clerkPrefs = user.publicMetadata
-					.cookieConsent as CookiePreferences;
-				savePreferences(clerkPrefs);
+		if (isSignedIn) {
+			// Signed in: the stored choice lives on the user's own row.
+			const stored = userData?.cookiePreferences as
+				| CookiePreferences
+				| undefined;
+			if (stored?.accepted) {
+				savePreferences(stored);
 				// Apply existing consent to GTM
-				updateGTMConsent(clerkPrefs.analytics, clerkPrefs.marketing);
+				updateGTMConsent(stored.analytics, stored.marketing);
 				setIsVisible(false);
 			} else {
-				// Show banner if no Clerk preferences
 				setIsVisible(true);
 			}
 		} else {
@@ -65,7 +65,7 @@ const CookieBanner = () => {
 		}
 
 		setIsLoading(false);
-	}, [isSignedIn, user]);
+	}, [isSignedIn, userData]);
 
 	const handleAcceptAll = async () => {
 		const prefs = savePreferences({
@@ -77,7 +77,7 @@ const CookieBanner = () => {
 		// Update GTM consent
 		updateGTMConsent(true, true);
 
-		await updateUserConsent(prefs, isSignedIn, user?.id);
+		await updateUserConsent(prefs, isSignedIn);
 		setIsVisible(false);
 
 		// Track accept all event
@@ -94,7 +94,7 @@ const CookieBanner = () => {
 		// Update GTM consent
 		updateGTMConsent(false, false);
 
-		await updateUserConsent(prefs, isSignedIn, user?.id);
+		await updateUserConsent(prefs, isSignedIn);
 		setIsVisible(false);
 
 		// Track essential only event

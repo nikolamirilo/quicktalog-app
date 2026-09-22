@@ -1,7 +1,7 @@
 import "server-only";
 import { schema } from "@quicktalog/common";
 import { and, eq, isNull } from "drizzle-orm";
-import type { Tx } from "@/utils/db/pool";
+import type { Tx } from "@/utils/db";
 import { verifyUserIdSig } from "@/lib/paddle/signature";
 
 const users = schema.users;

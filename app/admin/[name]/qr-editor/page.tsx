@@ -4,6 +4,7 @@ import { QrProvider } from "@/context/QRContext";
 import { requireUser } from "@/lib/auth/session";
 import { ownsCatalogue } from "@/lib/catalogue/ownership";
 import { getOwnedQrConfig } from "@/lib/qr/configs";
+import { withUser } from "@/utils/db";
 import { notFound } from "next/navigation";
 
 export default async function page({
@@ -14,16 +15,20 @@ export default async function page({
 	const { name } = await params;
 	const me = await requireUser(`/admin/${name}/qr-editor`);
 
-	if (!(await ownsCatalogue(me, name))) {
+	// Ownership and the config are read in one transaction, so a catalogue that
+	// is not the caller's is a 404 rather than an empty editor.
+	const owned = await withUser(me, async (tx) => {
+		if (!(await ownsCatalogue(tx, me, name))) return null;
+		return { config: await getOwnedQrConfig(tx, me, name) };
+	});
+	if (!owned) {
 		notFound();
 	}
-
-	const config = await getOwnedQrConfig(me, name);
 
 	return (
 		<>
 			<Navbar />
-			<QrProvider initialOptions={config}>
+			<QrProvider initialOptions={owned.config}>
 				<QrEditor name={name} />
 			</QrProvider>
 		</>

@@ -10,7 +10,7 @@ import {
 	updateGTMConsent,
 	updateUserConsent,
 } from "@/utils/cookies";
-import { useUser } from "@clerk/nextjs";
+import { useUserContext } from "@/context/UserContext";
 import { Shield, X } from "lucide-react";
 import { useState } from "react";
 import FocusLock from "react-focus-lock";
@@ -20,7 +20,8 @@ const CookiePreferencesModal = ({
 	onClose,
 	onSave,
 }: CookiePreferencesModalProps) => {
-	const { user, isSignedIn } = useUser();
+	const { userData } = useUserContext();
+	const isSignedIn = !!userData;
 	const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 	const [marketingEnabled, setMarketingEnabled] = useState(false);
 
@@ -40,7 +41,7 @@ const CookiePreferencesModal = ({
 		// Update GTM consent
 		updateGTMConsent(analyticsEnabled, marketingEnabled);
 
-		await updateUserConsent(prefs, isSignedIn, user?.id);
+		await updateUserConsent(prefs, isSignedIn);
 		onClose();
 		onSave?.();
 
@@ -64,7 +65,7 @@ const CookiePreferencesModal = ({
 		// Update GTM consent
 		updateGTMConsent(true, true);
 
-		await updateUserConsent(prefs, isSignedIn, user?.id);
+		await updateUserConsent(prefs, isSignedIn);
 		onClose();
 		onSave?.();
 
@@ -85,7 +86,7 @@ const CookiePreferencesModal = ({
 		// Update GTM consent
 		updateGTMConsent(false, false);
 
-		await updateUserConsent(prefs, isSignedIn, user?.id);
+		await updateUserConsent(prefs, isSignedIn);
 		onClose();
 		onSave?.();
 

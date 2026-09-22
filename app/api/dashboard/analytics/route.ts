@@ -3,7 +3,7 @@ import { schema } from "@quicktalog/common";
 import { count, eq, sum } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { drizzleClient } from "@/utils/drizzle";
+import { withUser } from "@/utils/db";
 
 const { analytics, newsletter } = schema;
 
@@ -14,24 +14,29 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const [[traffic], [subscribers]] = await Promise.all([
-			drizzleClient
+		// Both statements share one connection, so they run one after the other
+		// rather than through Promise.all.
+		const totals = await withUser(me, async (tx) => {
+			const [traffic] = await tx
 				.select({
 					pageViews: sum(analytics.pageviewCount),
 					uniqueVisitors: sum(analytics.uniqueVisitors),
 				})
 				.from(analytics)
-				.where(eq(analytics.userId, me.userId)),
-			drizzleClient
+				.where(eq(analytics.userId, me.userId));
+
+			const [subscribers] = await tx
 				.select({ total: count() })
 				.from(newsletter)
-				.where(eq(newsletter.ownerId, me.userId)),
-		]);
+				.where(eq(newsletter.ownerId, me.userId));
+
+			return { traffic, subscribers };
+		});
 
 		return NextResponse.json({
-			totalPageViews: Number(traffic?.pageViews ?? 0),
-			totalUniqueVisitors: Number(traffic?.uniqueVisitors ?? 0),
-			totalNewsletterSubscriptions: subscribers?.total ?? 0,
+			totalPageViews: Number(totals.traffic?.pageViews ?? 0),
+			totalUniqueVisitors: Number(totals.traffic?.uniqueVisitors ?? 0),
+			totalNewsletterSubscriptions: totals.subscribers?.total ?? 0,
 		});
 	} catch (error) {
 		Sentry.captureException(error, {

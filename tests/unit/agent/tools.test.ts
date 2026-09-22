@@ -7,7 +7,7 @@ import {
 	defaultCatalogueData,
 	fetchImageFromUnsplash,
 } from "@quicktalog/common";
-import { upsertTheme } from "@/lib/themes/upsert";
+import { saveOwnTheme } from "@/lib/themes/upsert";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));
@@ -21,7 +21,14 @@ vi.mock("@quicktalog/common", async () => {
 	return { ...actual, fetchImageFromUnsplash: vi.fn() };
 });
 
-vi.mock("@/lib/themes/upsert", () => ({ upsertTheme: vi.fn() }));
+vi.mock("@/lib/themes/upsert", () => ({ saveOwnTheme: vi.fn() }));
+vi.mock("@/lib/auth/identity", () => ({
+	getVerifiedIdentity: vi.fn().mockResolvedValue({
+		userId: "user-1",
+		sessionId: null,
+		provider: "clerk",
+	}),
+}));
 
 const catalogue = { ...defaultCatalogueData, name: "cafe" } as Catalogue;
 
@@ -324,7 +331,7 @@ const PALETTE = {
 };
 
 describe("setCustomTheme", () => {
-	const persist = vi.mocked(upsertTheme);
+	const persist = vi.mocked(saveOwnTheme);
 
 	beforeEach(() => persist.mockReset());
 
@@ -360,7 +367,11 @@ describe("setCustomTheme", () => {
 			savedTheme: { name: "Midnight" },
 		});
 		expect(session.operations).toHaveLength(1);
-		expect(persist).toHaveBeenCalledWith("user-1", "Midnight", PALETTE);
+		expect(persist).toHaveBeenCalledWith(
+			expect.objectContaining({ userId: "user-1" }),
+			"Midnight",
+			PALETTE,
+		);
 	});
 
 	it("still applies the theme when the save fails, and surfaces a saveError", async () => {

@@ -37,6 +37,47 @@ jobs:
       - name: Run unit tests
         run: npm test
 
+  db-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Fast gate: applies supabase/migrations plus the remaining plan SQL on
+      # PGlite (PostgreSQL 17 and 18) and runs the RLS scenarios. No Docker.
+      - name: Run migration and RLS scenarios (PGlite)
+        run: npm run test:db
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # Full gate: the real Postgres image, so pgTAP, triggers and extensions
+      # behave as they do on the hosted projects.
+      - name: Start local Supabase stack
+        run: supabase start
+
+      - name: Run pgTAP tests
+        run: supabase test db
+
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          DB_CONNECTION_STRING: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop
+
   e2e-tests:
     runs-on: ubuntu-latest
     environment: TEST

@@ -12,10 +12,13 @@ Drizzle is the app's query layer. It does not own the schema or migrations.
 ## Changing the database
 
 1. Create a migration: `supabase migration new <name>`, then write the SQL in the new file.
-2. Apply it to TEST first: `supabase link --project-ref imhinsgyzzyblghwnedk`, then `supabase db push`.
-3. Regenerate types in `../quicktalog-packages`: `npx drizzle-kit pull` (with `DB_CONNECTION_STRING` pointing at TEST), and review the diff.
-4. Release the package (`npm run release` in `../quicktalog-packages`) and bump `@quicktalog/common` in the app.
-5. When the change is ready for production, repeat step 2 against PROD (`uhfbapjuzvlyzyodxhqn`).
+2. Test it locally before it touches a hosted project:
+   - `npm run test:db` applies every migration on an in-memory Postgres (17 and 18) and runs the RLS scenarios. It needs no Docker. When the migration belongs to the auth/RLS plan, add it to `PHASE_MIGRATIONS` in `tests/db-pglite/lib.mjs` (see that folder's README).
+   - `supabase start` then `supabase test db` runs the pgTAP tests in `supabase/tests/database/` against the real Postgres image.
+3. Apply it to TEST first: `supabase link --project-ref imhinsgyzzyblghwnedk`, then `supabase db push`.
+4. Regenerate types in `../quicktalog-packages`: `npx drizzle-kit pull` (with `DB_CONNECTION_STRING` pointing at TEST), and review the diff.
+5. Release the package (`npm run release` in `../quicktalog-packages`) and bump `@quicktalog/common` in the app.
+6. When the change is ready for production, repeat step 3 against PROD (`uhfbapjuzvlyzyodxhqn`).
 
 ## Never run
 

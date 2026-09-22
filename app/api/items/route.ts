@@ -1,9 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
-import { schema } from "@quicktalog/common";
-import { asc, eq } from "drizzle-orm";
-import { drizzleClient } from "@/utils/drizzle";
-
-const { catalogues } = schema;
+import { listPublicCatalogueNames } from "@/lib/catalogue/public";
 
 export const dynamic = "force-dynamic";
 
@@ -13,11 +9,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
 	try {
-		const data = await drizzleClient
-			.select({ name: catalogues.name })
-			.from(catalogues)
-			.where(eq(catalogues.status, "active"))
-			.orderBy(asc(catalogues.name));
+		const data = await listPublicCatalogueNames();
 
 		return Response.json(data);
 	} catch (error) {

@@ -1,7 +1,8 @@
 import "server-only";
-import { schema, tiers } from "@quicktalog/common";
-import { count, eq } from "drizzle-orm";
-import { drizzleClient } from "@/utils/drizzle";
+import { type Catalogue, schema, tiers } from "@quicktalog/common";
+import { count, eq, sql } from "drizzle-orm";
+import type { VerifiedIdentity } from "@/lib/auth/identity";
+import type { Tx } from "@/utils/db";
 
 export type Tier = (typeof tiers)[number];
 
@@ -18,31 +19,121 @@ export function tierForPlanId(planId: string | null | undefined): Tier {
 }
 
 /**
- * The signed-in user's plan, read from the database. Never trust a plan or
- * feature flag sent by the client: the UI hides features, the server enforces
- * them.
+ * The caller's plan, read inside the transaction with the users row locked
+ * (`for no key update`). The lock serialises one user's plan-limited writes, so
+ * two parallel requests cannot both pass the same quota check. It is a
+ * no-key-update lock, so inserts into child tables are not blocked.
+ *
+ * Never trust a plan or feature flag sent by the client: the UI hides features,
+ * this decides them.
  */
-export async function getUserTier(userId: string): Promise<Tier> {
-	const [row] = await drizzleClient
+export async function getPlanForUpdate(
+	tx: Tx,
+	me: VerifiedIdentity,
+): Promise<Tier> {
+	const [row] = await tx
 		.select({ planId: users.planId })
 		.from(users)
-		.where(eq(users.id, userId))
+		.where(eq(users.id, me.userId))
+		.for("no key update")
 		.limit(1);
 	return tierForPlanId(row?.planId);
 }
 
-export async function countCatalogues(userId: string): Promise<number> {
-	const [row] = await drizzleClient
+export async function countCatalogues(
+	tx: Tx,
+	me: VerifiedIdentity,
+): Promise<number> {
+	const [row] = await tx
 		.select({ total: count() })
 		.from(catalogues)
-		.where(eq(catalogues.createdBy, userId));
+		.where(eq(catalogues.createdBy, me.userId));
 	return row?.total ?? 0;
 }
 
-/** Whether the user may create one more catalogue on their plan. */
+/** Whether the user may create one more catalogue on this plan. */
 export async function withinCatalogueQuota(
-	userId: string,
+	tx: Tx,
+	me: VerifiedIdentity,
 	tier: Tier,
 ): Promise<boolean> {
-	return (await countCatalogues(userId)) < tier.features.catalogues;
+	return (await countCatalogues(tx, me)) < tier.features.catalogues;
+}
+
+/**
+ * Whether a catalogue may be published or re-activated: the plan's traffic
+ * allowance for this month must not be used up. The numbers come from
+ * `private.my_usage()`, the same source the dashboard shows.
+ */
+export type PlanCheck = { ok: boolean; reason?: string };
+
+export async function canActivate(tx: Tx, tier: Tier): Promise<PlanCheck> {
+	const rows = await tx.execute<{ pageviews: string | number }>(
+		sql`select pageviews from private.my_usage()`,
+	);
+	const pageviews = Number([...rows][0]?.pageviews ?? 0);
+	if (pageviews >= tier.features.traffic_limit) {
+		return {
+			ok: false,
+			reason: "This month's traffic limit for your plan is reached",
+		};
+	}
+	return { ok: true };
+}
+
+/**
+ * Whether stored content stays within the plan's section and item limits.
+ * Growth-only: content that is already over the limit (after a downgrade) may
+ * be saved again as long as it does not grow.
+ */
+export function contentWithinPlan(
+	next: Partial<Catalogue>,
+	previous: Partial<Catalogue> | null,
+	tier: Tier,
+): PlanCheck {
+	const content = next.content;
+	if (!Array.isArray(content)) return { ok: true };
+
+	const sections = content.length;
+	const items = content.reduce(
+		(total, block: any) =>
+			total + (Array.isArray(block?.items) ? block.items.length : 0),
+		0,
+	);
+
+	const before = Array.isArray(previous?.content) ? previous.content : null;
+	const sectionsBefore = before ? before.length : 0;
+	const itemsBefore = before
+		? before.reduce(
+				(total, block: any) =>
+					total + (Array.isArray(block?.items) ? block.items.length : 0),
+				0,
+			)
+		: 0;
+
+	// A limit can be the string "unlimited", in which case there is nothing to
+	// enforce.
+	const limitOf = (value: number | "unlimited" | undefined) =>
+		typeof value === "number" ? value : null;
+
+	const sectionLimit = limitOf(tier.features.sections_per_catalogue);
+	if (
+		sectionLimit !== null &&
+		sections > sectionLimit &&
+		sections > sectionsBefore
+	) {
+		return {
+			ok: false,
+			reason: `Your plan allows ${sectionLimit} sections per catalogue`,
+		};
+	}
+
+	const itemLimit = limitOf(tier.features.items_per_catalogue);
+	if (itemLimit !== null && items > itemLimit && items > itemsBefore) {
+		return {
+			ok: false,
+			reason: `Your plan allows ${itemLimit} items per catalogue`,
+		};
+	}
+	return { ok: true };
 }

@@ -1,3 +1,4 @@
+import { saveCookiePreferences } from "@/actions/consent";
 import { CookiePreferences } from "@quicktalog/common";
 import { COOKIE_KEY } from "@/constants";
 
@@ -87,18 +88,12 @@ export function trackGTMEvent(
 export async function updateUserConsent(
 	prefs: CookiePreferences,
 	isSignedIn: boolean,
-	userId?: string,
 ) {
-	if (!isSignedIn || !userId) return;
+	if (!isSignedIn) return;
 	try {
-		const response = await fetch("/api/update-consent", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ cookieConsent: prefs }),
-		});
-		if (!response.ok) {
-			throw new Error("Failed to update consent");
-		}
+		// The server derives the user from the session; the browser no longer
+		// says whose consent this is.
+		await saveCookiePreferences(prefs);
 	} catch (error) {
 		// Best-effort write; transient aborts/offline ("Failed to fetch") are
 		// expected and don't need special handling.

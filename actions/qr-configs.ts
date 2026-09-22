@@ -1,11 +1,9 @@
 "use server";
 import * as Sentry from "@sentry/nextjs";
-import { schema } from "@quicktalog/common";
-import { eq } from "drizzle-orm";
-import type { Options } from "qr-code-styling";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { ownsCatalogue } from "@/lib/catalogue/ownership";
-import { drizzleClient } from "@/utils/drizzle";
+import { upsertOwnedQrConfig } from "@/lib/qr/configs";
+import { pgError, withUser } from "@/utils/db";
+import type { Options } from "qr-code-styling";
 
 export async function upsertQrConfig(
 	catalogue: string,
@@ -14,32 +12,19 @@ export async function upsertQrConfig(
 	try {
 		const me = await getVerifiedIdentity();
 		if (!me) return { success: false, error: "Unauthorized" };
-		if (!(await ownsCatalogue(me, catalogue))) {
-			return { success: false, error: "Catalogue not found" };
-		}
 
-		const existingConfig = await drizzleClient.query.qrConfigs.findFirst({
-			where: eq(schema.qrConfigs.catalogue, catalogue),
-			columns: { id: true },
-		});
-
-		if (existingConfig) {
-			await drizzleClient
-				.update(schema.qrConfigs)
-				.set({
-					config,
-					updatedAt: new Date().toISOString(),
-				})
-				.where(eq(schema.qrConfigs.catalogue, catalogue));
-		} else {
-			await drizzleClient.insert(schema.qrConfigs).values({
-				catalogue,
-				config,
-			});
-		}
+		const saved = await withUser(me, (tx) =>
+			upsertOwnedQrConfig(tx, me, catalogue, config),
+		);
+		if (!saved) return { success: false, error: "Catalogue not found" };
 
 		return { success: true };
 	} catch (err) {
+		// A policy violation means the catalogue is not the caller's (or stopped
+		// being theirs mid-transaction). That is a "not found", not a 500.
+		if (pgError(err)?.code === "42501") {
+			return { success: false, error: "Catalogue not found" };
+		}
 		Sentry.captureException(err, {
 			level: "warning",
 			tags: { op: "upsertQrConfig" },

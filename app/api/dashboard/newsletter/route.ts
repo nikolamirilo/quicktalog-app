@@ -1,55 +1,41 @@
 import * as Sentry from "@sentry/nextjs";
-import { drizzleClient } from "@/utils/drizzle";
-import { currentUser } from "@clerk/nextjs/server";
 import { schema } from "@quicktalog/common";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { withUser } from "@/utils/db";
 
 const { newsletter, catalogues } = schema;
 
 export async function GET() {
 	try {
-		const user = await currentUser();
-
-		if (!user?.id) {
+		const me = await getVerifiedIdentity();
+		if (!me) {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const newsletterRows = await drizzleClient
-			.select()
-			.from(newsletter)
-			.where(eq(newsletter.ownerId, user.id));
-
-		if (newsletterRows.length === 0) {
-			return NextResponse.json([]);
-		}
-
-		const uniqueCatalogueIds = [
-			...new Set(
-				newsletterRows.map((r) => r.catalogueId).filter(Boolean) as string[],
-			),
-		];
-
-		const catalogueRows =
-			uniqueCatalogueIds.length > 0
-				? await drizzleClient
-						.select({ id: catalogues.id, name: catalogues.name })
-						.from(catalogues)
-						.where(inArray(catalogues.id, uniqueCatalogueIds))
-				: [];
-
-		const catalogueNameMap: Record<string, string> = {};
-		for (const c of catalogueRows) {
-			if (c.id) catalogueNameMap[c.id] = c.name;
-		}
-
-		const data = newsletterRows.map((row) => ({
-			id: row.id,
-			email: row.email,
-			catalogueName: catalogueNameMap[row.catalogueId] ?? null,
-			catalogueId: row.catalogueId,
-			createdAt: row.createdAt,
-		}));
+		// The catalogue name is joined in, and the join itself is owner-filtered:
+		// a subscriber row pointing at someone else's catalogue reports no name
+		// instead of leaking it.
+		const data = await withUser(me, (tx) =>
+			tx
+				.select({
+					id: newsletter.id,
+					email: newsletter.email,
+					catalogueName: catalogues.name,
+					catalogueId: newsletter.catalogueId,
+					createdAt: newsletter.createdAt,
+				})
+				.from(newsletter)
+				.leftJoin(
+					catalogues,
+					and(
+						eq(catalogues.id, newsletter.catalogueId),
+						eq(catalogues.createdBy, me.userId),
+					),
+				)
+				.where(eq(newsletter.ownerId, me.userId)),
+		);
 
 		return NextResponse.json(data);
 	} catch (error) {

@@ -2,12 +2,9 @@
 import * as Sentry from "@sentry/nextjs";
 import { clientIp } from "@/lib/http/client-ip";
 import { withinRateLimit } from "@/lib/rate-limit";
-import { drizzleClient } from "@/utils/drizzle";
-import { schema } from "@quicktalog/common";
-import { and, eq } from "drizzle-orm";
+import { withPublic } from "@/utils/db";
+import { sql } from "drizzle-orm";
 import { z } from "zod";
-
-const { catalogues, newsletter, productNewsletter } = schema;
 
 const emailSchema = z.string().trim().toLowerCase().email().max(254);
 const signupSchema = z.object({
@@ -15,18 +12,21 @@ const signupSchema = z.object({
 	catalogueId: z.string().uuid(),
 });
 
-export type ProductNewsletterResult =
-	| { status: "success" }
-	| { status: "already_subscribed" }
-	| { status: "error" };
+export type ProductNewsletterResult = { status: "success" | "error" };
 
 export type NewsletterSignupResult = { status: "success" | "error" };
 
 /**
- * Public signup on a published catalogue. The owner is read from the catalogue
- * row, never sent by the browser, and the answer is the same whether the address
- * was new or already stored, so the form cannot be used to test who is on a
- * merchant's list.
+ * Public signup on a published catalogue. Visitor traffic, so it runs as
+ * `app_public` and never reads an identity.
+ *
+ * `app_public` has no INSERT on `newsletter`: the row is written by
+ * `private.subscribe_catalogue_newsletter`, which derives the owner from the
+ * catalogue, requires it to be active with `footer.newsletter` on, lower-cases
+ * the address and de-duplicates with ON CONFLICT. The browser therefore cannot
+ * choose an owner, and the answer is the same whether the address was new,
+ * already stored or the catalogue accepts no signups at all, so the form cannot
+ * be used to test who is on a merchant's list.
  */
 export async function newsletterSignup(
 	email: string,
@@ -36,40 +36,16 @@ export async function newsletterSignup(
 	if (!parsed.success) return { status: "error" };
 
 	try {
+		// Redis first: the rate limit must not hold a pooled connection open.
 		if (!(await withinRateLimit("newsletter", await clientIp()))) {
 			return { status: "error" };
 		}
 
-		// The owner comes from the published catalogue, never from the browser.
-		const catalogue = await drizzleClient.query.catalogues.findFirst({
-			where: and(
-				eq(catalogues.id, parsed.data.catalogueId),
-				eq(catalogues.status, "active"),
+		await withPublic((tx) =>
+			tx.execute(
+				sql`select private.subscribe_catalogue_newsletter(${parsed.data.catalogueId}::uuid, ${parsed.data.email})`,
 			),
-			columns: { createdBy: true },
-		});
-		if (!catalogue) {
-			return { status: "error" };
-		}
-
-		const existing = await drizzleClient
-			.select({ id: newsletter.id })
-			.from(newsletter)
-			.where(
-				and(
-					eq(newsletter.email, parsed.data.email),
-					eq(newsletter.catalogueId, parsed.data.catalogueId),
-				),
-			)
-			.limit(1);
-
-		if (existing.length === 0) {
-			await drizzleClient.insert(newsletter).values({
-				email: parsed.data.email,
-				catalogueId: parsed.data.catalogueId,
-				ownerId: catalogue.createdBy,
-			});
-		}
+		);
 
 		return { status: "success" };
 	} catch (err) {
@@ -85,6 +61,13 @@ export async function newsletterSignup(
 	}
 }
 
+/**
+ * Product newsletter signup from the marketing footer. Same shape: visitor
+ * traffic, `app_public`, and the insert happens inside
+ * `private.subscribe_product_newsletter`, which lower-cases the address and
+ * ignores a duplicate. Nothing is read back, so the form no longer tells a
+ * visitor whether an address is already subscribed.
+ */
 export async function productNewsletterSignup(
 	email: string,
 ): Promise<ProductNewsletterResult> {
@@ -96,19 +79,12 @@ export async function productNewsletterSignup(
 			return { status: "error" };
 		}
 
-		const existing = await drizzleClient
-			.select({ id: productNewsletter.id })
-			.from(productNewsletter)
-			.where(eq(productNewsletter.email, parsed.data))
-			.limit(1);
+		await withPublic((tx) =>
+			tx.execute(
+				sql`select private.subscribe_product_newsletter(${parsed.data})`,
+			),
+		);
 
-		if (existing.length > 0) {
-			return { status: "already_subscribed" };
-		}
-
-		await drizzleClient
-			.insert(productNewsletter)
-			.values({ email: parsed.data });
 		return { status: "success" };
 	} catch (err) {
 		Sentry.captureException(err, {

@@ -1,5 +1,6 @@
 // components/admin/dashboard/Dashboard.tsx
 "use client";
+import { useSearchParams } from "next/navigation";
 import Loader from "@/components/navigation/Loader";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { DashboardProps } from "@/types/shared";
@@ -22,12 +23,26 @@ interface ImprovedDashboardProps {
 	pricingPlan: DashboardProps["pricingPlan"];
 }
 
+const DASHBOARD_TABS = [
+	"overview",
+	"subscription",
+	"usage",
+	"settings",
+	"support",
+];
+
 export default function Dashboard({
 	user,
 	usage,
 	pricingPlan,
 }: ImprovedDashboardProps) {
-	const [activeTab, setActiveTab] = useState("overview");
+	// `?tab=settings` lets the account menu (and a bookmark) open a tab
+	// directly; anything unknown falls back to the overview.
+	const searchParams = useSearchParams();
+	const requestedTab = searchParams.get("tab") ?? "";
+	const [activeTab, setActiveTab] = useState(
+		DASHBOARD_TABS.includes(requestedTab) ? requestedTab : "overview",
+	);
 
 	// Fetch data only when needed based on active tab
 	const {

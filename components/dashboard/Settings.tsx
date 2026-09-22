@@ -1,16 +1,20 @@
-// components/Settings.tsx
 "use client";
 
-import CookiePreferencesModal from "@/components/modals/CookiePreferencesModal";
-import { Button } from "@/components/ui/button";
-import { SignOutButton, UserProfile } from "@clerk/nextjs";
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { FiSettings } from "react-icons/fi";
 import { LuCookie } from "react-icons/lu";
 import { MdLogout } from "react-icons/md";
+import CookiePreferencesModal from "@/components/modals/CookiePreferencesModal";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+
+// The account forms are provider-specific and heavy; everything above them is
+// not, so they load separately.
+const ClerkAccount = lazy(() => import("./account/ClerkAccount"));
 
 const Settings = () => {
 	const [isCookieSettingsOpen, setIsCookieSettingsOpen] = useState(false);
+	const { signOut } = useAuth();
 
 	return (
 		<div className="max-w-5xl space-y-6 relative">
@@ -30,13 +34,17 @@ const Settings = () => {
 					<LuCookie className="w-4 h-4" />
 					Manage Cookie Preferences
 				</Button>
-				<SignOutButton component="div" redirectUrl="/">
-					<Button variant="destructive">
-						<MdLogout /> Sign Out
-					</Button>
-				</SignOutButton>
+				<Button onClick={() => signOut()} variant="destructive">
+					<MdLogout /> Sign Out
+				</Button>
 			</div>
-			<UserProfile />
+			<Suspense
+				fallback={
+					<div className="h-40 w-full bg-product-background-hover animate-pulse rounded-xl" />
+				}
+			>
+				<ClerkAccount />
+			</Suspense>
 		</div>
 	);
 };

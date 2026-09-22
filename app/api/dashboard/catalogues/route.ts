@@ -3,7 +3,7 @@ import { schema } from "@quicktalog/common";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { drizzleClient } from "@/utils/drizzle";
+import { withUser } from "@/utils/db";
 
 const catalogues = schema.catalogues;
 
@@ -14,11 +14,11 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const data = await drizzleClient.query.catalogues.findMany({
-			where: eq(catalogues.createdBy, me.userId),
-		});
+		const data = await withUser(me, (tx) =>
+			tx.select().from(catalogues).where(eq(catalogues.createdBy, me.userId)),
+		);
 
-		return NextResponse.json(data || []);
+		return NextResponse.json(data);
 	} catch (error) {
 		Sentry.captureException(error, {
 			tags: { route: "dashboard/catalogues" },

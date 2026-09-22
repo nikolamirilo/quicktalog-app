@@ -1,6 +1,9 @@
 "use server";
-import { authorize, meter } from "@/lib/ai/access";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { refundAiTurn } from "@/lib/ai/metering";
+import { openAiTurn } from "@/lib/ai/turn";
 import type { AiActionResult } from "@/types/ai";
+import { withUser } from "@/utils/db";
 import { generateText } from "@/utils/deepseek";
 import * as Sentry from "@sentry/nextjs";
 
@@ -26,10 +29,37 @@ export async function writeItemDescription(
 			};
 		}
 
-		const auth = await authorize(catalogueName);
-		if (auth.ok === false) {
-			return { success: false, error: auth.error, code: auth.code };
+		const me = await getVerifiedIdentity();
+		if (!me) {
+			return {
+				success: false,
+				error: "You must be signed in.",
+				code: "unauthorized",
+			};
 		}
+
+		// Charged before the model runs, and refunded below if it produces
+		// nothing, so a failed generation costs the user nothing but a killed
+		// request still cannot be free.
+		const turn = await openAiTurn(me, {
+			catalogue: catalogueName,
+			kind: "describe",
+		});
+		if (turn.ok === false) {
+			return { success: false, error: turn.error, code: turn.code };
+		}
+
+		const refund = async () => {
+			if (!turn.turnId || !turn.charged) return;
+			try {
+				await withUser(me, (tx) => refundAiTurn(tx, turn.turnId!));
+			} catch (error) {
+				Sentry.captureException(error, {
+					level: "warning",
+					tags: { op: "writeItemDescription", step: "refund" },
+				});
+			}
+		};
 
 		const language = params.language || "English";
 		const context = [
@@ -45,9 +75,17 @@ export async function writeItemDescription(
 			? `Improve the description for the item "${params.itemName}". ${context} Keep the same meaning, fix grammar, make it clear and appealing. Current text: ${params.existing}`
 			: `Write a description for the item "${params.itemName}". ${context}`;
 
-		const raw = await generateText(system, user, { temperature: 0.7 });
+		let raw: string;
+		try {
+			raw = await generateText(system, user, { temperature: 0.7 });
+		} catch (error) {
+			await refund();
+			throw error;
+		}
+
 		const description = raw.replace(/^["'\s]+|["'\s]+$/g, "");
 		if (!description) {
+			await refund();
 			return {
 				success: false,
 				error: "The AI returned nothing. Try again.",
@@ -55,7 +93,6 @@ export async function writeItemDescription(
 			};
 		}
 
-		await meter(auth.userId, catalogueName);
 		return { success: true, data: description };
 	} catch (error) {
 		Sentry.captureException(error, { tags: { op: "writeItemDescription" } });

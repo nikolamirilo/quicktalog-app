@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { useAuth } from "@/context/AuthContext";
+import { UserMenu } from "./UserMenu";
 import Link from "next/link";
 import React from "react";
 import { FiGrid, FiUser, FiUserPlus } from "react-icons/fi";
@@ -13,7 +14,7 @@ interface AuthLinksProps {
 }
 
 const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
-	const { isSignedIn, user, isLoaded } = useUser();
+	const { isSignedIn, user, isLoaded } = useAuth();
 
 	if (!isLoaded) {
 		if (isMobile) {
@@ -45,36 +46,16 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 							>
 								Dashboard
 							</MobileNavLink>
-							<div
-								className="w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 hover:bg-product-nav-hover-bg hover:text-product-nav-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-product-nav-hover-border hover:font-bold cursor-pointer"
-								onClick={() => {
-									const userButton = document.querySelector(
-										".cl-userButtonBox",
-									) as HTMLElement;
-									if (userButton) {
-										userButton.click();
-									}
-								}}
-							>
+							<div className="w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left border border-transparent">
 								<FiUser
 									className="text-product-foreground-accent sm:w-5 sm:h-5 flex-shrink-0"
 									size={18}
 								/>
 								<span className="text-product-foreground font-medium text-sm sm:text-base flex-1 text-left">
-									{user?.firstName
-										? `${user.firstName} ${user.lastName || ""}`
-										: "Account"}
+									{user?.name ?? "Account"}
 								</span>
-								<div className="flex-shrink-0 pointer-events-none">
-									<UserButton
-										appearance={{
-											elements: {
-												userButtonBox: "w-8 h-8 sm:w-10 sm:h-10 cursor-pointer",
-												userButtonPopoverCard: "mobile-menu-dropdown",
-												userButtonPopoverCardRoot: "mobile-menu-dropdown-root",
-											},
-										}}
-									/>
+								<div className="flex-shrink-0">
+									<UserMenu onNavigate={onLinkClick} />
 								</div>
 							</div>
 						</div>
@@ -108,7 +89,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 						Dashboard
 					</NavLink>
 					<div className="ml-2 flex items-center gap-1">
-						<UserButton />
+						<UserMenu />
 					</div>
 				</>
 			) : (

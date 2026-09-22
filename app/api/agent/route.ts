@@ -2,10 +2,14 @@ import { CatalogueSession, createCatalogueAgent } from "@/agent";
 import {
 	fetchesFromMessages,
 	isPlanContinuation,
+	isPlanFinished,
 	planFromMessages,
 } from "@/agent/plan";
 import { loadedSkillsFromMessages } from "@/agent/skills";
-import { authorize, meter } from "@/lib/ai/access";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { refundAiTurn, setPlanState } from "@/lib/ai/metering";
+import { openAiTurn } from "@/lib/ai/turn";
+import { withUser } from "@/utils/db";
 import type { Catalogue } from "@quicktalog/common";
 import * as Sentry from "@sentry/nextjs";
 import { APICallError, createAgentUIStreamResponse } from "ai";
@@ -35,6 +39,12 @@ interface AgentRequestBody {
 	catalogueName: string;
 	/** The live builder draft, so unsaved edits are part of the context. */
 	catalogue: Catalogue;
+	/**
+	 * The turn this request continues, as sent to the browser in the previous
+	 * turn's message metadata. Absent or wrong means this is charged as a new
+	 * turn, which is the safe direction.
+	 */
+	continuationOf?: string | null;
 }
 
 export async function POST(request: Request) {
@@ -45,19 +55,25 @@ export async function POST(request: Request) {
 		return Response.json({ error: "Malformed request." }, { status: 400 });
 	}
 
-	const { messages, catalogueName, catalogue } = body;
+	const { messages, catalogueName, catalogue, continuationOf } = body;
 	if (!catalogueName || !catalogue) {
 		return Response.json(
 			{ error: "Catalogue is still loading. Try again." },
 			{ status: 400 },
 		);
 	}
+	// The draft in the body is only context; it must be the catalogue the
+	// request claims to be about.
+	if (catalogue.name !== catalogueName) {
+		return Response.json({ error: "Catalogue mismatch." }, { status: 400 });
+	}
 
-	const auth = await authorize(catalogueName);
-	if (auth.ok === false) {
+	// Identity and payment happen before a single token is streamed.
+	const me = await getVerifiedIdentity();
+	if (!me) {
 		return Response.json(
-			{ error: auth.error, code: auth.code },
-			{ status: ERROR_STATUS[auth.code] ?? 500 },
+			{ error: "You must be signed in.", code: "unauthorized" },
+			{ status: 401 },
 		);
 	}
 
@@ -67,14 +83,30 @@ export async function POST(request: Request) {
 	const resuming = isPlanContinuation(messages);
 	const plan = resuming ? planFromMessages(messages) : null;
 
+	const turn = await openAiTurn(me, {
+		catalogue: catalogueName,
+		kind: "agent",
+		continuationOf: resuming ? (continuationOf ?? null) : null,
+		plan,
+	});
+	if (turn.ok === false) {
+		return Response.json(
+			{ error: turn.error, code: turn.code },
+			{ status: ERROR_STATUS[turn.code] ?? 500 },
+		);
+	}
+	// For a continuation the database returns the root turn, so a plan spanning
+	// several requests stays one charge.
+	const rootTurnId = turn.turnId;
+
 	const session = new CatalogueSession(
 		catalogue,
-		auth.limits,
-		auth.sectionAccess,
+		turn.limits,
+		turn.sectionAccess,
 		// A skill loaded on an earlier turn is still in the message history, so
 		// the model can see it without being made to fetch it again.
 		loadedSkillsFromMessages(messages),
-		auth.userId,
+		me.userId,
 		plan,
 		// The session is per request but the fetch budget is per ask, or a plan
 		// spanning five requests would get three pages each.
@@ -109,20 +141,23 @@ export async function POST(request: Request) {
 
 			return "Something went wrong while making those changes. Try again.";
 		},
+		messageMetadata: () => ({ turnId: rootTurnId }),
 		onFinish: async () => {
-			// Charge the quota only when the turn actually changed something, so a
-			// question - or a turn where every edit was rejected - stays free.
-			if (session.applied.length === 0) return;
-			// One ask from the user is one prompt, however many requests it takes
-			// to work through its plan. Only the request the user actually sent is
-			// charged; the ones the builder sends to resume are not.
-			//
-			// This trusts the history, which is client-supplied - the airtight
-			// version is a ledger keyed on a turn id with a unique index, which is
-			// the credits work in plans/active/ai-agent-plan-mode.md.
-			if (plan) return;
+			if (!rootTurnId) return;
 			try {
-				await meter(auth.userId, catalogueName);
+				await withUser(me, async (tx) => {
+					// Record whether the turn left work unfinished: that is what buys
+					// the next request its free continuations.
+					const unfinished = session.plan && !isPlanFinished(session.plan);
+					await setPlanState(tx, rootTurnId, unfinished ? session.plan : null);
+
+					// A turn that changed nothing and opened no plan is refunded. The
+					// charge was taken up front, so this is the only place a question
+					// or a fully rejected turn becomes free again.
+					if (turn.charged && session.applied.length === 0 && !unfinished) {
+						await refundAiTurn(tx, rootTurnId);
+					}
+				});
 			} catch (error) {
 				Sentry.captureException(error, { tags: { op: "catalogueAgentMeter" } });
 			}

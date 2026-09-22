@@ -29,14 +29,14 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0B.7 | Deploy to TEST, then PROD; soak 48h | Nikola | Done |
 | K.1 | Create named `sb_secret_` keys per project | Nikola | Done |
 | K.2 | Worker: replace `SUPABASE_SERVICE_ROLE_KEY` with the secret key, remove `SUPABASE_ANON_KEY` | Claude | Done |
-| K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude | To Do |
-| K.4 | Apply M09 (webhooks send only the header); remove the Vault `service_role_key` | Nikola | To Do |
-| K.5 | Disable legacy API keys; watch logs 24h | Nikola | To Do |
-| 1.1 | Local and CI setup: `config.toml`, seed, PGlite harness in `tests/db-pglite/`, `db-tests` CI job | Claude | To Do |
-| 1.2 | Write M01-M07 migrations (private roles, policies, functions) and pgTAP tests | Claude | To Do |
-| 1.3 | Apply M01-M06 on TEST; run advisors and perimeter queries | Nikola | To Do |
-| 1.4 | Packages: `drizzle-kit pull` without policies, release, bump app and worker | Claude | To Do |
-| 1.5 | App code: RLS wrapper (`withUser`/`withPublic`/`asAdmin`), convert every query, cookie consent to DB, provider-neutral auth UI, import guardrails, skills and docs | Claude | To Do |
+| K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude | Done |
+| K.4 | Apply M09 (webhooks send only the header); remove the Vault `service_role_key` | Nikola | Done |
+| K.5 | Disable legacy API keys; watch logs 24h | Nikola | Done |
+| 1.1 | Local and CI setup: `config.toml`, seed, PGlite harness in `tests/db-pglite/`, `db-tests` CI job | Claude | Done |
+| 1.2 | Write M01-M07 migrations (private roles, policies, functions) and pgTAP tests | Claude | Done |
+| 1.3 | Apply M01-M06 on TEST; run advisors and perimeter queries | Nikola | Done |
+| 1.4 | Packages: `drizzle-kit pull` without policies, release, bump app and worker | Claude | Done |
+| 1.5 | App code: RLS wrapper (`withUser`/`withPublic`/`asAdmin`), convert every query, cookie consent to DB, provider-neutral auth UI, import guardrails, skills and docs | Claude | Done |
 | 1.6 | Deploy to TEST; soak 3 days | Nikola | To Do |
 | 1.7 | Apply M07 on TEST | Nikola | To Do |
 | 1.8 | Apply M08 on TEST, set `app_rls` password, add separate user/admin connection strings, load smoke test | Nikola | To Do |

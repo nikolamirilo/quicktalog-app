@@ -1,10 +1,10 @@
 "use server";
 import * as Sentry from "@sentry/nextjs";
-import { schema, type SavedTheme } from "@quicktalog/common";
-import { and, eq } from "drizzle-orm";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { upsertTheme } from "@/lib/themes/upsert";
-import { drizzleClient } from "@/utils/drizzle";
+import { saveOwnTheme } from "@/lib/themes/upsert";
+import { withUser } from "@/utils/db";
+import { type SavedTheme, schema } from "@quicktalog/common";
+import { and, desc, eq } from "drizzle-orm";
 
 const userThemes = schema.userThemes;
 
@@ -17,10 +17,13 @@ export async function listSavedThemes(): Promise<{
 		const me = await getVerifiedIdentity();
 		if (!me) return { success: false, error: "Unauthorized" };
 
-		const data = await drizzleClient.query.userThemes.findMany({
-			where: eq(userThemes.userId, me.userId),
-			orderBy: (themes, { desc }) => [desc(themes.updatedAt)],
-		});
+		const data = await withUser(me, (tx) =>
+			tx
+				.select()
+				.from(userThemes)
+				.where(eq(userThemes.userId, me.userId))
+				.orderBy(desc(userThemes.updatedAt)),
+		);
 
 		return { success: true, data: data as SavedTheme[] };
 	} catch (err) {
@@ -36,7 +39,7 @@ export async function saveTheme(
 ): Promise<{ success: boolean; data?: SavedTheme; error?: string }> {
 	const me = await getVerifiedIdentity();
 	if (!me) return { success: false, error: "Unauthorized" };
-	return upsertTheme(me.userId, name, colors);
+	return saveOwnTheme(me, name, colors);
 }
 
 export async function deleteSavedTheme(
@@ -46,10 +49,12 @@ export async function deleteSavedTheme(
 		const me = await getVerifiedIdentity();
 		if (!me) return { success: false, error: "Unauthorized" };
 
-		const deleted = await drizzleClient
-			.delete(userThemes)
-			.where(and(eq(userThemes.id, id), eq(userThemes.userId, me.userId)))
-			.returning({ id: userThemes.id });
+		const deleted = await withUser(me, (tx) =>
+			tx
+				.delete(userThemes)
+				.where(and(eq(userThemes.id, id), eq(userThemes.userId, me.userId)))
+				.returning({ id: userThemes.id }),
+		);
 		if (deleted.length === 0) return { success: false, error: "Not found" };
 
 		return { success: true };

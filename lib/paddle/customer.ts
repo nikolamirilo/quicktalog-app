@@ -2,8 +2,8 @@ import "server-only";
 import { schema } from "@quicktalog/common";
 import { and, eq, isNull } from "drizzle-orm";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
+import { withUser } from "@/utils/db";
 import { asAdmin } from "@/utils/db/admin";
-import { drizzleClient } from "@/utils/drizzle";
 import { getPaddleInstance } from "@/utils/paddle/get-paddle-instance";
 
 const users = schema.users;
@@ -13,15 +13,22 @@ const users = schema.users;
  * stored in `users.customer_id`. Pinning the customer on the transaction stops
  * Paddle Checkout from attaching the purchase to somebody else's existing
  * customer when a different email is typed in the checkout form.
+ *
+ * The lookup runs as the user, so RLS answers for their own row only; the
+ * Paddle calls happen with no transaction open. Storing the id is admin work:
+ * `app_user` may not write `customer_id`, and the link has to survive whatever
+ * the user does to their row afterwards.
  */
 export async function ensurePaddleCustomer(
 	me: VerifiedIdentity,
 ): Promise<string> {
-	const [row] = await drizzleClient
-		.select({ customerId: users.customerId, email: users.email })
-		.from(users)
-		.where(eq(users.id, me.userId))
-		.limit(1);
+	const [row] = await withUser(me, (tx) =>
+		tx
+			.select({ customerId: users.customerId, email: users.email })
+			.from(users)
+			.where(eq(users.id, me.userId))
+			.limit(1),
+	);
 
 	if (!row) throw new Error("No user row for the signed-in user");
 	if (row.customerId) return row.customerId;

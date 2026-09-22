@@ -1,7 +1,7 @@
 import "server-only";
 import type { Catalogue } from "@quicktalog/common";
 import { sql } from "drizzle-orm";
-import type { Tx } from "@/utils/db/admin";
+import type { Tx } from "@/utils/db";
 import type { Tier } from "./plan";
 
 /**
