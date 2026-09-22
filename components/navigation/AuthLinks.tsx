@@ -4,9 +4,9 @@ import { useAuth } from "@/context/AuthContext";
 import { UserMenu } from "./UserMenu";
 import Link from "next/link";
 import React from "react";
-import { FiGrid, FiUser, FiUserPlus } from "react-icons/fi";
-import { TbDeviceAnalytics } from "react-icons/tb";
-import { MobileNavLink, NavLink } from "./Navbar"; // Assuming NavLink and MobileNavLink are exported from Navbar.tsx
+import { FiUser, FiUserPlus } from "react-icons/fi";
+import { MdOutlineDashboard } from "react-icons/md";
+import { MobileNavLink, NavLink } from "./NavLink";
 
 interface AuthLinksProps {
 	isMobile?: boolean;
@@ -41,7 +41,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 						<div className="border-t border-product-border pt-3 sm:pt-4 mt-3 sm:mt-4">
 							<MobileNavLink
 								href="/admin/dashboard"
-								icon={FiGrid}
+								icon={MdOutlineDashboard}
 								onClick={onLinkClick}
 							>
 								Dashboard
@@ -72,7 +72,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 							<Link href="/auth?mode=signup" onClick={onLinkClick}>
 								<Button className="w-full bg-product-primary text-product-foreground  hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
 									<FiUserPlus className="w-4 h-4" />
-									Sign Up
+									Start free
 								</Button>
 							</Link>
 						</div>
@@ -85,7 +85,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 		<div className="ml-3 flex items-center gap-2">
 			{isSignedIn ? (
 				<>
-					<NavLink href="/admin/dashboard" icon={TbDeviceAnalytics}>
+					<NavLink href="/admin/dashboard" icon={MdOutlineDashboard}>
 						Dashboard
 					</NavLink>
 					<div className="ml-2 flex items-center gap-1">
@@ -103,7 +103,7 @@ const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
 					<Link href="/auth?mode=signup">
 						<Button className="bg-product-primary text-product-foreground  hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
 							<FiUserPlus className="w-4 h-4" />
-							Sign Up
+							Start free
 						</Button>
 					</Link>
 				</>

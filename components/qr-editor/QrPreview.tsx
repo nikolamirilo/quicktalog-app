@@ -32,7 +32,6 @@ export default function QrPreview({
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const isInitializedRef = useRef(false);
 
-	// Initialize QR code instance once
 	useEffect(() => {
 		if (!qrCode.current) {
 			qrCode.current = new QRCodeStyling(options);
@@ -40,24 +39,21 @@ export default function QrPreview({
 		}
 	}, [setQrCodeInstance]);
 
-	// Update QR code when options change (only mark dirty after initialization)
 	useEffect(() => {
 		if (qrCode.current) {
 			qrCode.current.update(options);
-			// Only mark as dirty if this is not the initial setup
+			// Skip marking dirty on the initial options load.
 			if (isInitializedRef.current) {
 				setIsDirty(true);
 			}
 		}
 	}, [options]);
 
-	// Append QR code to DOM once
 	useEffect(() => {
 		if (ref.current && qrCode.current) {
 			ref.current.innerHTML = "";
 			qrCode.current.append(ref.current);
-			// Mark initialization as complete after a short delay
-			// This ensures the initial options load doesn't trigger isDirty
+			// Delay so the initial options load doesn't trigger isDirty.
 			setTimeout(() => {
 				isInitializedRef.current = true;
 			}, 100);
@@ -66,9 +62,8 @@ export default function QrPreview({
 
 	const handleDownload = (extension: "png" | "jpeg" | "svg" | "webp") => {
 		if (qrCode.current) {
-			// Ensure the QR code is updated with the latest options before downloading
 			qrCode.current.update(options);
-			// Use a small timeout to ensure the update is applied before download
+			// Small delay so the update is applied before download starts.
 			setTimeout(() => {
 				qrCode.current?.download({ extension });
 			}, 100);

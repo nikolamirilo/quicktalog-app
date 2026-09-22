@@ -49,8 +49,7 @@ export function useAiAssist() {
 				}
 				return null;
 			}
-			// Usage was metered server-side; refresh so the gate stays accurate.
-			void refreshUserData();
+			void refreshUserData(); // usage metered server-side; refresh keeps the gate accurate
 			return (res.data ?? null) as T | null;
 		} catch {
 			const message = "Something went wrong. Try again.";

@@ -3,6 +3,7 @@
 	"uri_allow_list": "https://test.quicktalog.app/**,http://localhost:3000/**,http://127.0.0.1:3000/**",
 	"disable_signup": true,
 	"external_anonymous_users_enabled": false,
+	"security_manual_linking_enabled": true,
 	"mailer_autoconfirm": false,
 	"mailer_secure_email_change_enabled": true,
 	"security_update_password_require_reauthentication": true,
@@ -21,5 +22,10 @@
 	"smtp_user": "resend",
 	"smtp_sender_name": "Quicktalog TEST",
 	"smtp_admin_email": "no-reply@auth.quicktalog.app",
-	"mailer_templates_confirmation_content": null
+	"mailer_templates_confirmation_content": "file:supabase/templates/confirmation.html",
+	"mailer_templates_recovery_content": "file:supabase/templates/recovery.html",
+	"mailer_templates_email_change_content": "file:supabase/templates/email-change.html",
+	"mailer_subjects_confirmation": "Confirm your email address",
+	"mailer_subjects_recovery": "Reset your Quicktalog password",
+	"mailer_subjects_email_change": "Confirm your new email address"
 }

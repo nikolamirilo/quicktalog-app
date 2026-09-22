@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import AuthLayout from "@/components/auth/common/AuthLayout";
 import ConfirmContinue from "@/components/auth/ConfirmContinue";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
@@ -19,13 +20,9 @@ export default function ConfirmContinuePage() {
 	return (
 		<>
 			<Navbar />
-			<div className="product font-lora min-h-screen">
-				<div className="flex justify-center items-center mt-[5vh] min-h-screen px-4">
-					<div className="w-full max-w-md bg-product-background rounded-3xl shadow-md p-8 border border-product-border">
-						<ConfirmContinue />
-					</div>
-				</div>
-			</div>
+			<AuthLayout>
+				<ConfirmContinue />
+			</AuthLayout>
 			<Footer />
 		</>
 	);

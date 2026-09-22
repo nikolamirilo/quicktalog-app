@@ -24,14 +24,14 @@ const meta = {
 		"start a catalogue",
 	],
 	relatedSlugs: ["build-and-edit", "customize-design"],
-	coverImage: "/documentation/create-catalogue-cover.svg",
+	coverImage: "/images/documentation/create-catalogue-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/create-catalogue-cover.svg"
+				src="/images/documentation/create-catalogue-cover.svg"
 				alt="Three ways to start a Quicktalog catalogue: from scratch, with AI, or by importing a photo"
 				maxWidth="640px"
 				priority
@@ -102,7 +102,7 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/documentation/create-catalogue-ai-flow.svg"
+				src="/images/documentation/create-catalogue-ai-flow.svg"
 				alt="The AI catalogue generation flow from business description to finished draft in the builder"
 				maxWidth="640px"
 			/>
@@ -131,7 +131,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/create-catalogue-ocr-flow.svg"
+				src="/images/documentation/create-catalogue-ocr-flow.svg"
 				alt="The OCR photo import flow: upload a photo or PDF and Quicktalog reads it into a draft catalogue"
 				maxWidth="640px"
 			/>
@@ -160,7 +160,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/create-catalogue-decision.svg"
+				src="/images/documentation/create-catalogue-decision.svg"
 				alt="Decision guide: AI generation for new catalogues, photo import for existing printed ones"
 				maxWidth="640px"
 			/>

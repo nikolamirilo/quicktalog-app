@@ -66,11 +66,9 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	const handleCustomSelect = () => {
-		// Coming from a standard theme, seed from what's on screen so the
-		// starting point looks intentional. Coming from a custom theme (saved
-		// or not), the DOM already reflects that same custom palette, so
-		// reading it back would just re-apply the theme being left - reset to
-		// the neutral defaults instead so "Custom" always starts fresh.
+		// From a standard theme, seed from what's on screen so it looks intentional.
+		// From a custom theme, the DOM already reflects it, so reset to neutral
+		// defaults instead - "Custom" always starts fresh.
 		const seeded = isCustomActive
 			? DEFAULT_CUSTOM_COLORS
 			: readPaletteFromElement(document.querySelector('[role="application"]'));
@@ -106,7 +104,6 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 
 	return (
 		<div className="space-y-4 p-2">
-			{/* Themes Section */}
 			<ThemeSelection
 				currentCustomColors={catalogue.appearance.theme.colors}
 				currentThemeName={currentThemeName}
@@ -135,7 +132,6 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 				</div>
 			)}
 
-			{/* Style + Overlay Section */}
 			<div className="relative w-full">
 				{!hasStyles && <LimitsOverlay />}
 				<div

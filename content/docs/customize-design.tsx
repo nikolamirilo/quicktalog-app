@@ -23,14 +23,14 @@ const meta = {
 		"header and footer",
 	],
 	relatedSlugs: ["share-your-catalogue", "build-and-edit"],
-	coverImage: "/documentation/customize-design-cover.svg",
+	coverImage: "/images/documentation/customize-design-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/customize-design-cover.svg"
+				src="/images/documentation/customize-design-cover.svg"
 				alt="Quicktalog design customization showing the Appearance tab with themes, fonts, and colour options"
 				maxWidth="640px"
 				priority
@@ -66,7 +66,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/customize-design-themes.svg"
+				src="/images/documentation/customize-design-themes.svg"
 				alt="Theme picker in the Quicktalog Appearance tab showing a grid of available catalogue themes"
 			/>
 
@@ -102,7 +102,7 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/documentation/customize-design-fonts-colours.svg"
+				src="/images/documentation/customize-design-fonts-colours.svg"
 				alt="Font and colour controls in Quicktalog showing heading font selection and brand colour options"
 				maxWidth="640px"
 			/>
@@ -125,7 +125,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/customize-design-header-footer.svg"
+				src="/images/documentation/customize-design-header-footer.svg"
 				alt="Header and footer settings showing business name, logo, social links, and contact details"
 			/>
 
@@ -137,7 +137,7 @@ function Body() {
 			</Callout>
 
 			<ArticleImage
-				src="/documentation/customize-design-mobile-check.svg"
+				src="/images/documentation/customize-design-mobile-check.svg"
 				alt="Quicktalog catalogue previewed on a mobile phone showing the responsive layout"
 				maxWidth="380px"
 			/>

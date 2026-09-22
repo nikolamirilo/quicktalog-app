@@ -119,7 +119,7 @@ function Body() {
 			<ArticleImage
 				alt="A vector illustration of AI assembling structured catalog content"
 				caption="AI gives you a structured draft. You refine it in the builder."
-				src="/images/ai.svg"
+				src="/images/marketing/ai.svg"
 			/>
 
 			<Prose>

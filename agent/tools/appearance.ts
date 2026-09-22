@@ -85,13 +85,9 @@ export const appearanceTools = ({ session }: ToolContext) => ({
 			});
 			if (!result.ok) return result;
 
-			// The catalogue change is what the user asked for; the save is a
-			// convenience. If the save fails, the theme still lands and the
-			// model can tell the user how to retry from the Appearance tab.
-			//
-			// The owner of the write is derived here rather than taken from the
-			// session, and `saveOwnTheme` then runs the upsert as that user
-			// under RLS.
+			// The catalogue change is the point; the save is a convenience, so a
+			// save failure still lands the theme. Identity is re-derived here (not
+			// taken from the session) so `saveOwnTheme` upserts as that user under RLS.
 			const me = session.userId ? await getVerifiedIdentity() : null;
 			if (!me) {
 				return {

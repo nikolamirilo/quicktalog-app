@@ -26,6 +26,7 @@ export default withUt(
 					"product-background-hover": "var(--product-background-hover)",
 					"product-icon": "var(--product-icon)",
 					"product-shadow": "var(--product-shadow)",
+					"product-warning": "var(--product-warning)",
 					"button-text": "var(--button-text)",
 					"product-scale-hover": "var(--product-scale-hover)",
 					"product-shadow-hover": "var(--product-shadow-hover)",

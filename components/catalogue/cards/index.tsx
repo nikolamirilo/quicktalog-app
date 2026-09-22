@@ -43,7 +43,6 @@ const CardsSwitcher = ({
 	isLast?: boolean;
 	blockIndex?: number;
 }) => {
-	// Validate record data early
 	if (!record || !record.name || record.price === undefined) {
 		console.error("CardsSwitcher: Invalid record data:", record);
 		return (

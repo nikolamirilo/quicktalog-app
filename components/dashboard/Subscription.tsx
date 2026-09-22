@@ -61,7 +61,6 @@ export default function Subscription({
 		return result;
 	};
 
-	// Get current price from Paddle
 	const currentPrice = pricingPlan.priceId
 		? prices[pricingPlan.priceId[pricingPlan.billing_period]]
 		: "0";

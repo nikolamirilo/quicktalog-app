@@ -17,16 +17,11 @@ export type ProductNewsletterResult = { status: "success" | "error" };
 export type NewsletterSignupResult = { status: "success" | "error" };
 
 /**
- * Public signup on a published catalogue. Visitor traffic, so it runs as
- * `app_public` and never reads an identity.
- *
- * `app_public` has no INSERT on `newsletter`: the row is written by
- * `private.subscribe_catalogue_newsletter`, which derives the owner from the
- * catalogue, requires it to be active with `footer.newsletter` on, lower-cases
- * the address and de-duplicates with ON CONFLICT. The browser therefore cannot
- * choose an owner, and the answer is the same whether the address was new,
- * already stored or the catalogue accepts no signups at all, so the form cannot
- * be used to test who is on a merchant's list.
+ * Public signup on a published catalogue; runs as `app_public`, no identity read.
+ * `app_public` has no INSERT on `newsletter` - the row is written by
+ * `private.subscribe_catalogue_newsletter`, which derives the owner, requires
+ * the catalogue active with signups on, and de-dupes. Same answer regardless
+ * of outcome, so the form can't be used to probe a merchant's list.
  */
 export async function newsletterSignup(
 	email: string,
@@ -61,13 +56,7 @@ export async function newsletterSignup(
 	}
 }
 
-/**
- * Product newsletter signup from the marketing footer. Same shape: visitor
- * traffic, `app_public`, and the insert happens inside
- * `private.subscribe_product_newsletter`, which lower-cases the address and
- * ignores a duplicate. Nothing is read back, so the form no longer tells a
- * visitor whether an address is already subscribed.
- */
+/** Marketing footer signup; same shape as `subscribeToNewsletter` via `private.subscribe_product_newsletter`. */
 export async function productNewsletterSignup(
 	email: string,
 ): Promise<ProductNewsletterResult> {

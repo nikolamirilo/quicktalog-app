@@ -17,7 +17,7 @@ const Demo = () => {
 						<img
 							alt="Quicktalog product preview"
 							className="w-full h-auto will-change-transform transition-transform [transition-duration:1800ms] [transition-timing-function:cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-[1.01]"
-							src="/images/quicktalog-banner.png"
+							src="/images/marketing/quicktalog-banner.png"
 						/>
 					</div>
 

@@ -73,7 +73,9 @@ const Catalogue = ({
 	const borderRadius = `${item.appearance.style.borderRadius ?? 12}px`;
 	const boxShadow = shadowMap[item.appearance.style.shadow || "low"];
 
-	const defaultLogo = isDarkTheme ? "/logo-light.svg" : "/logo.svg";
+	const defaultLogo = isDarkTheme
+		? "/images/brand/logo-light.svg"
+		: "/images/brand/logo.svg";
 	const customLogo = item.logo;
 	const logoSrc = item.header.type === "custom" ? customLogo : defaultLogo;
 
@@ -102,7 +104,8 @@ const Catalogue = ({
 			document.title = `${titleText} | Quicktalog`;
 		}
 
-		const iconUrl = activeData.metadata?.icon || "/opengraph-image.png";
+		const iconUrl =
+			activeData.metadata?.icon || "/images/brand/opengraph-image.png";
 		const updateOrCreateIcon = (rel: string) => {
 			let link: HTMLLinkElement | null = document.querySelector(
 				`link[rel~='${rel}']`,
@@ -195,13 +198,11 @@ const Catalogue = ({
 						"--catalogue-font-body": fontFamily,
 						"--catalogue-weight-heading": "700",
 						"--catalogue-weight-body": "400",
-						// New Style Variables
 						"--content-font-size": contentFontSize,
 						"--title-font-size": titleFontSize,
 						"--border-radius": borderRadius,
 						"--box-shadow": boxShadow,
 						"--animation-duration": "0.5s",
-						// Override theme-specific section header shadow if needed
 						"--catalogue-category-shadow":
 							boxShadow !== "none" ? boxShadow : undefined,
 					} as React.CSSProperties

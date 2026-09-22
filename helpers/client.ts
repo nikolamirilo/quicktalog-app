@@ -35,7 +35,6 @@ export function disableConsoleInProduction() {
 }
 
 function cleanValue(value: any) {
-	// Handle arrays
 	if (Array.isArray(value)) {
 		const cleanedArray = value
 			.map(cleanValue)
@@ -51,7 +50,6 @@ function cleanValue(value: any) {
 		return cleanedArray.length > 0 ? value : [];
 	}
 
-	// Handle objects
 	if (value && typeof value === "object") {
 		const cleanedObj = {};
 		for (const [key, val] of Object.entries(value)) {
@@ -70,7 +68,7 @@ function cleanValue(value: any) {
 		return Object.keys(cleanedObj).length > 0 ? cleanedObj : {};
 	}
 
-	// Primitive values → only keep if not false/""/null/undefined
+	// Primitive values: only keep if not false/""/null/undefined.
 	if (
 		value === false ||
 		value === "" ||
@@ -341,28 +339,22 @@ export function htmlToText(html: string): string {
 		"h6",
 	]);
 
-	return (
-		html
-			// Replace block-level closing/self-closing tags with newlines
-			.replace(
-				/<\/(p|div|section|article|header|footer|aside|li|ul|ol|table|tr|td|th|h[1-6])>/gi,
-				"\n",
-			)
-			.replace(/<(br|hr)\s*\/?>/gi, "\n")
-			// Strip all remaining tags
-			.replace(/<[^>]+>/g, "")
-			// Decode common HTML entities
-			.replace(/&nbsp;/g, " ")
-			.replace(/&amp;/g, "&")
-			.replace(/&lt;/g, "<")
-			.replace(/&gt;/g, ">")
-			.replace(/&quot;/g, '"')
-			.replace(/&#39;/g, "'")
-			// Normalize whitespace
-			.replace(/[ \t]+/g, " ")
-			.replace(/\n{3,}/g, "\n\n")
-			.trim()
-	);
+	return html
+		.replace(
+			/<\/(p|div|section|article|header|footer|aside|li|ul|ol|table|tr|td|th|h[1-6])>/gi,
+			"\n",
+		)
+		.replace(/<(br|hr)\s*\/?>/gi, "\n")
+		.replace(/<[^>]+>/g, "")
+		.replace(/&nbsp;/g, " ")
+		.replace(/&amp;/g, "&")
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&quot;/g, '"')
+		.replace(/&#39;/g, "'")
+		.replace(/[ \t]+/g, " ")
+		.replace(/\n{3,}/g, "\n\n")
+		.trim();
 }
 
 export function snakeToTitleCase(str: string) {

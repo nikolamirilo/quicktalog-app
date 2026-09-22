@@ -59,7 +59,6 @@ const ItemModal = ({
 	}, [isOpen, initialItem]);
 
 	const handleSave = (addAnother: boolean) => {
-		// If adding a new item, check limits before saving
 		if (!initialItem && checkItemLimits && checkItemLimits()) {
 			onShowLimits?.();
 			onClose();

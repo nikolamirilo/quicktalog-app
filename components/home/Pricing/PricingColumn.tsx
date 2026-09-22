@@ -278,7 +278,6 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 		);
 	}
 
-	// Column mode layout (original)
 	return (
 		<div
 			className={clsx(

@@ -450,9 +450,7 @@ export function applyCatalogueOperations(
 				const changed: string[] = [];
 				const patch: Partial<Catalogue> = {};
 
-				// Branding-only fields, matching the three blocks GeneralTab hides
-				// behind LimitsOverlay and the whole of FooterTab. Name, language
-				// and currency sit outside those overlays and stay open to everyone.
+				// Branding-only fields, matching what GeneralTab/FooterTab hide behind LimitsOverlay.
 				if (
 					limits.branding === false &&
 					(fields.logo !== undefined ||
@@ -487,9 +485,7 @@ export function applyCatalogueOperations(
 					patch.logo = fields.logo;
 					changed.push(fields.logo ? "logo" : "logo (removed)");
 				}
-				// `{}` is not a change. Every field on these is optional, so a call
-				// that sends an empty object would otherwise report success having
-				// touched nothing, and the model would believe the edit landed.
+				// `{}` is not a change - an empty object shouldn't report success touching nothing.
 				if (hasKeys(fields.metadata)) {
 					patch.metadata = { ...next.metadata, ...fields.metadata };
 					changed.push("SEO metadata");

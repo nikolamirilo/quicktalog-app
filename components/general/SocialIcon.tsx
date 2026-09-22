@@ -10,7 +10,6 @@ export default function SocialIcon({
 	href: string;
 	className?: string;
 }) {
-	// Ensure href is an absolute URL
 	const normalizedHref =
 		href.startsWith("http://") || href.startsWith("https://")
 			? href

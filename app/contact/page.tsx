@@ -3,6 +3,7 @@ import Navbar from "@/components/navigation/Navbar";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = generatePageMetadata("contact");
 
@@ -12,11 +13,14 @@ const page = () => {
 	return (
 		<>
 			<script
-				type="application/ld+json"
 				dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageSchema) }}
+				type="application/ld+json"
 			/>
 			<Navbar />
-			<Contact />
+			{/* Contact reads ?subject= via useSearchParams, which needs a Suspense boundary to stay statically prerendered. */}
+			<Suspense>
+				<Contact />
+			</Suspense>
 		</>
 	);
 };

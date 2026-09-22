@@ -1,12 +1,7 @@
 import type { AiSectionAccess, AiSectionType } from "@/types/ai";
 import { z } from "zod";
 
-/**
- * Schemas more than one tool group needs. Anything used by a single group
- * lives in that group's file - appearance palettes in `tools/appearance.ts`,
- * catalogue settings in `tools/general.ts`, header and footer in
- * `tools/navigation.ts` - so this file does not grow with every new tab.
- */
+/** Schemas shared by more than one tool group; single-group schemas live in that group's own file. */
 
 export const MAX_ITEMS_PER_CALL = 40;
 export const MAX_CODE_CHARS = 40000;

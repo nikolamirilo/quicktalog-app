@@ -3,12 +3,11 @@
 import type { Options } from "qr-code-styling";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-// Define the shape of our context state
 interface QrContextType {
 	options: Options;
 	setOptions: React.Dispatch<React.SetStateAction<Options>>;
 	updateOptions: (newOptions: Partial<Options>) => void;
-	qrCodeInstance: any; // We'll store the instance here to trigger downloads
+	qrCodeInstance: any;
 	setQrCodeInstance: (instance: any) => void;
 }
 
@@ -65,9 +64,6 @@ export function QrProvider({
 		setOptions((prev) => ({
 			...prev,
 			...newOptions,
-			// Deep merge for nested objects if necessary, but for now simple spread is okay for top level.
-			// Actually, for nested objects like dotsOptions, we need to be careful.
-			// Let's do a shallow merge of the top-level keys, and if the key is an object, merge that too.
 			qrOptions: { ...prev.qrOptions, ...newOptions.qrOptions },
 			imageOptions: { ...prev.imageOptions, ...newOptions.imageOptions },
 			dotsOptions: { ...prev.dotsOptions, ...newOptions.dotsOptions },

@@ -142,17 +142,13 @@ function isPrivateAddress(address: string): boolean {
 			a === 127 ||
 			(a === 172 && b >= 16 && b <= 31) ||
 			(a === 192 && b === 168) ||
-			// 169.254.169.254 is the cloud metadata endpoint, and reading it
-			// would hand the model our own credentials.
-			(a === 169 && b === 254) ||
+			(a === 169 && b === 254) || // cloud metadata endpoint - reading it would hand the model our own credentials
 			a >= 224
 		);
 	}
 
 	if (isIP(host) === 6) {
-		// ::ffff:10.0.0.1 is the same private address wearing a different hat,
-		// and `new URL()` rewrites it to its hex form (::ffff:a00:1) on the way
-		// past, so the dotted quad has to be reassembled before it is checked.
+		// IPv4-mapped IPv6; `new URL()` rewrites it to hex (::ffff:a00:1), so the dotted quad is reassembled before checking.
 		if (host.startsWith("::ffff:")) {
 			const mapped = host.slice(7);
 			if (mapped.includes(".")) return isPrivateAddress(mapped);
@@ -237,10 +233,8 @@ function toPage(
 	const clean = stripFences(text).trim();
 
 	if (clean.length < MIN_USEFUL_CHARS) {
-		// Naming the address that was actually read is the point of this message.
-		// A truncated URL silently lands on a site's country or landing page,
-		// which has no product text on it - so the failure looks like the site
-		// being unscrapable when really the wrong page was fetched.
+		// Naming the URL read matters: a truncated one silently lands on a landing
+		// page, which looks like "unscrapable" when really the wrong page was fetched.
 		return {
 			error: `Read ${url} and it returned almost no readable text. Before telling the user the site cannot be read, check the address: if it is a home or landing page rather than the listing they meant, or if what they typed looks truncated or had a space in it, say exactly which address you read and ask them to confirm the full one. Only if the address was right is this a page that needs JavaScript or sits behind a cookie wall, and then ask them to paste the content instead.`,
 		};
@@ -378,8 +372,7 @@ async function fetchDirect(
 		let response: Response;
 		try {
 			response = await fetch(current, {
-				// Followed by hand so every hop is vetted: a redirect into private
-				// space is the standard way around a check on the first address.
+				// Followed by hand so every hop is vetted (a redirect into private space is a common bypass).
 				redirect: "manual",
 				headers: {
 					"User-Agent": DIRECT_USER_AGENT,

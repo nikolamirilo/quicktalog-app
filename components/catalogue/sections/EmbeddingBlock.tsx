@@ -102,48 +102,38 @@ const EmbeddingBlockComponent = ({
 	const containerRef = useRef<HTMLElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 
-	// Apply 100% width to embedded iframes and blockquotes
 	useEffect(() => {
 		if (!contentRef.current || !block.code) return;
 
 		const applyEmbedStyles = () => {
-			// Find all iframes
 			const iframes = contentRef.current?.querySelectorAll("iframe");
 			iframes?.forEach((iframe) => {
 				const src = iframe.getAttribute("src") || "";
 				const embedType = detectEmbedType(src);
-
-				// Apply 100% width for all embed types
 				iframe.style.width = "100%";
 
-				// Set height based on embed type - use auto where possible
 				if (embedType === "media" || embedType === "social") {
-					// Video and social media embeds - maintain aspect ratio
+					// Video/social embeds keep their aspect ratio.
 					iframe.style.aspectRatio = "16/9";
 					iframe.style.height = "100%";
 					iframe.style.minHeight = "300px";
 				} else if (embedType === "maps") {
-					// Maps - use auto height with min
 					iframe.style.height = "auto";
 					iframe.style.minHeight = "400px";
 				} else if (embedType === "booking") {
-					// Booking widgets - use auto height with min
 					iframe.style.height = "auto";
 					iframe.style.minHeight = "500px";
 				} else {
-					// Default - set min-height but allow auto
 					iframe.style.height = "auto";
 					iframe.style.minHeight = "400px";
 				}
 			});
 
-			// Find all blockquotes (commonly used for social media embeds)
+			// Blockquotes are commonly used for social media embeds.
 			const blockquotes = contentRef.current?.querySelectorAll("blockquote");
 			blockquotes?.forEach((blockquote) => {
 				const style = blockquote.getAttribute("style") || "";
 				const embedType = detectEmbedType(style);
-
-				// Apply width 100%
 				blockquote.style.width = "100%";
 				blockquote.style.maxWidth = "100%";
 
@@ -152,7 +142,6 @@ const EmbeddingBlockComponent = ({
 				}
 			});
 
-			// Find all embeds and other elements
 			const embedElements = contentRef.current?.querySelectorAll(
 				"embed, object, video",
 			);
@@ -163,10 +152,9 @@ const EmbeddingBlockComponent = ({
 			});
 		};
 
-		// Run after a short delay to ensure HTML is rendered
+		// Short delay so the HTML has rendered; re-run on later DOM changes too.
 		const timer = setTimeout(applyEmbedStyles, 100);
 
-		// Also run when DOM changes
 		const observer = new MutationObserver(() => {
 			applyEmbedStyles();
 		});
@@ -198,12 +186,10 @@ const EmbeddingBlockComponent = ({
 				await new Promise<void>((resolve) => {
 					const newScript = document.createElement("script");
 
-					// Copy all attributes
 					Array.from(oldScript.attributes).forEach((attr) => {
 						newScript.setAttribute(attr.name, attr.value);
 					});
 
-					// Copy inline content if any
 					if (oldScript.innerHTML) {
 						newScript.innerHTML = oldScript.innerHTML;
 					} else if (oldScript.textContent) {
@@ -215,7 +201,7 @@ const EmbeddingBlockComponent = ({
 						newScript.onerror = () => resolve();
 					}
 
-					// Insert the new script exactly where the old one was
+					// A script tag inserted via innerHTML never executes; it must be recreated to run.
 					if (oldScript.parentNode) {
 						oldScript.parentNode.replaceChild(newScript, oldScript);
 					} else {

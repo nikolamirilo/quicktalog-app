@@ -31,12 +31,7 @@ const catalogues = schema.catalogues;
 /** The statuses a client may set; anything else is rejected. */
 const CLIENT_STATUSES: Status[] = ["active", "inactive", "draft"];
 
-/**
- * Re-validates `appearance.theme.colors` before it's persisted, so a crafted
- * payload can't push arbitrary strings into Postgres/Redis. The render-time
- * allowlist in `serializeThemeCss` already guards against unsafe CSS, but
- * without this the bad value would silently survive as stored data.
- */
+/** Re-validates theme colors before persisting; `serializeThemeCss` guards render-time CSS, this guards stored data. */
 function sanitizeAppearance(catalogueData: Catalogue): Catalogue {
 	if (catalogueData.appearance?.theme?.type !== "custom") return catalogueData;
 	return {
@@ -371,11 +366,7 @@ export async function updateCatalogue(
 	}
 }
 
-/**
- * The signed-in owner's catalogue for the editor: the database row with any
- * unsaved draft on top. Ownership is proven by RLS plus the owner predicate;
- * the draft can never change the id, name, owner or status.
- */
+/** The signed-in owner's catalogue for the editor: DB row with any unsaved draft on top. */
 export async function getCatalogueByName(name: string) {
 	try {
 		const me = await getVerifiedIdentity();
@@ -402,12 +393,7 @@ export async function getCatalogueByName(name: string) {
 	}
 }
 
-/**
- * Whether a catalogue name is still free, for the create and duplicate forms.
- * Answers with a boolean only, so it cannot be used to list other users' names:
- * the check runs in the database through a definer function that returns
- * nothing but true or false.
- */
+/** Whether a name is free. Answers boolean-only, via a definer function, so it can't enumerate other users' names. */
 export async function checkCatalogueName(
 	name: string,
 ): Promise<{ available: boolean } | { error: string }> {

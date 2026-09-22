@@ -23,14 +23,14 @@ const meta = {
 		"custom QR code",
 	],
 	relatedSlugs: ["track-performance", "customize-design"],
-	coverImage: "/documentation/share-catalogue-cover.svg",
+	coverImage: "/images/documentation/share-catalogue-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/share-catalogue-cover.svg"
+				src="/images/documentation/share-catalogue-cover.svg"
 				alt="Sharing a Quicktalog catalogue via a link and a branded QR code"
 				maxWidth="640px"
 				priority
@@ -65,7 +65,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/share-catalogue-publish.svg"
+				src="/images/documentation/share-catalogue-publish.svg"
 				alt="The publish button in the Quicktalog builder taking a draft catalogue live"
 				maxWidth="380px"
 			/>
@@ -80,7 +80,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/share-catalogue-link-channels.svg"
+				src="/images/documentation/share-catalogue-link-channels.svg"
 				alt="Channels for sharing a catalogue link: text message, email, social media profiles, and website"
 				maxWidth="380px"
 			/>
@@ -111,7 +111,7 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/documentation/share-catalogue-qr-placements.svg"
+				src="/images/documentation/share-catalogue-qr-placements.svg"
 				alt="Branded QR codes placed on a table card, a sign, a menu, and a flyer"
 			/>
 
@@ -132,7 +132,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/share-catalogue-update.svg"
+				src="/images/documentation/share-catalogue-update.svg"
 				alt="Updating a live catalogue: edit in the builder, publish, and the same link and QR code show the new version"
 				maxWidth="640px"
 			/>

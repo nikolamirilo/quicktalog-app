@@ -3,21 +3,16 @@ import { type RefObject, useEffect, useRef } from "react";
 
 /**
  * Images arriving on the clipboard - a screenshot, a photo copied from a page.
- *
- * Listens on the document rather than on the text field, because a screenshot
- * is usually pasted the moment a panel opens, before anything inside it has
- * focus, and a paste with nothing focused never reaches a React handler. The
- * `scope` element decides whether the paste was meant for it: inside it, or
- * with nothing focused at all. That keeps a paste into some other field on the
- * page from being swallowed while the panel happens to be open, and the null
- * ref while the panel is closed means nothing is captured then either.
+ * Listens on the document, not the text field, since a paste before anything
+ * has focus never reaches a React handler. `scope` decides whether the paste
+ * was meant for it: inside it, or with nothing focused at all - so a paste
+ * into some other field isn't swallowed while the panel happens to be open.
  */
 export function usePastedImages(
 	scope: RefObject<HTMLElement | null>,
 	onImages: (files: File[]) => void,
 ): void {
-	// Bound once for the component's life; reading the callback back off a ref
-	// keeps a fresh function identity each render from rebinding the listener.
+	// Ref, not a dependency, so a fresh callback each render doesn't rebind the listener.
 	const handler = useRef(onImages);
 	handler.current = onImages;
 
@@ -38,9 +33,7 @@ export function usePastedImages(
 			);
 			if (images.length === 0) return;
 
-			// Copying from a rich source puts an image and its text on the
-			// clipboard together. Take the image, but let the text land in the
-			// field as well rather than eating the half the user could see.
+			// A rich-source copy carries image and text together; take the image but let the text land too.
 			if (!event.clipboardData?.getData("text/plain")) event.preventDefault();
 
 			handler.current(images);

@@ -11,18 +11,16 @@ import {
 /**
  * Plan 3.1: the fixture rehearsal.
  *
- * It runs the real cutover scripts — the import, `remap-user-ids.sql`,
- * `verify.sql` and `rollback-remap.sql` — against a real Postgres and a real
- * GoTrue, in the order the runbook runs them, and then rolls the whole thing
- * back and does it again. The point is not that the SQL parses (the PGlite
- * suite already proves that) but that the import script and GoTrue agree: that
- * a pre-claimed map row really does stop the sign-up trigger, that an imported
- * digest really does still let somebody sign in, and that the re-key really
- * does refuse while a paying user is unmapped.
+ * Runs the real cutover scripts - the import, `remap-user-ids.sql`,
+ * `verify.sql` and `rollback-remap.sql` - against a real Postgres and a real
+ * GoTrue, in runbook order, then rolls back and does it again. The point isn't
+ * that the SQL parses (the PGlite suite proves that) but that the import
+ * script and GoTrue agree: a pre-claimed map row stops the sign-up trigger, an
+ * imported digest still lets someone sign in, and the re-key refuses while a
+ * paying user is unmapped.
  *
- * **It rewrites every user in the database it is pointed at.** It therefore
- * refuses anything that is not a local stack, and only runs when `REHEARSAL=1`
- * is set on purpose.
+ * **It rewrites every user in the database it is pointed at.** It refuses
+ * anything that isn't a local stack, and only runs with `REHEARSAL=1` set.
  *
  *   supabase start
  *   sed -i '' 's/^enable_signup = true/enable_signup = false/' supabase/config.toml

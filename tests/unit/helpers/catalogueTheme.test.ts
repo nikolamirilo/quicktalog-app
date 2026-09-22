@@ -21,7 +21,7 @@ const TYPOGRAPHY_VARS: Record<keyof ThemeTypography, string> = {
 // Parsed independently of the generator so the data is checked against what renders today.
 const parseLegacyStylesheet = () => {
 	const css = readFileSync(
-		join(process.cwd(), "css/themes.css"),
+		join(process.cwd(), "styles/themes.css"),
 		"utf8",
 	).replace(/\/\*[\s\S]*?\*\//g, "");
 	const blocks = new Map<
@@ -57,7 +57,7 @@ describe("theme data matches the legacy stylesheet", () => {
 
 	it.each(THEME_KEYS)("%s keeps every value", (key) => {
 		const block = legacy.get(key);
-		if (!block) throw new Error(`${key} is missing from css/themes.css`);
+		if (!block) throw new Error(`${key} is missing from styles/themes.css`);
 		const { vars, hasDecoration } = block;
 		const theme = THEMES[key];
 		const accounted = new Set<string>();

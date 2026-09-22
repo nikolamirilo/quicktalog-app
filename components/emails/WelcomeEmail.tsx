@@ -68,7 +68,7 @@ const WelcomeEmail = ({ name }: { name: string }) => (
 							<Img
 								alt="Quicktalog Logo"
 								height="40"
-								src={`https://www.quicktalog.app/logo.svg`}
+								src={`https://www.quicktalog.app/images/brand/logo.svg`}
 								style={logo}
 								width="120"
 							/>

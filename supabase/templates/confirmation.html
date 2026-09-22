@@ -1,0 +1,13 @@
+<h2>Confirm your email address</h2>
+
+<p>Follow the link below to confirm this address and finish creating your Quicktalog account.</p>
+
+<p>
+  <a href="{{ .RedirectTo }}/auth/confirm?token_hash={{ .TokenHash }}&type=email">Confirm email address</a>
+</p>
+
+<p>Or paste this into your browser:<br />
+  {{ .RedirectTo }}/auth/confirm?token_hash={{ .TokenHash }}&type=email
+</p>
+
+<p>The link can be used once and expires in 24 hours. If you did not create a Quicktalog account, ignore this email.</p>

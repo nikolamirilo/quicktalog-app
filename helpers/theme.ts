@@ -35,14 +35,10 @@ const isHexColor = (value: unknown): value is string =>
 	typeof value === "string" && HEX.test(value);
 
 /**
- * Expands `#rgb` to `#rrggbb`, otherwise passes a valid six-digit hex
- * through and rejects everything else.
- *
- * This only matters at the boundary where colours are read in from the
- * outside world (`getComputedStyle`, stored JSON): a CSS minifier is free to
- * shorten any colour whose three channel pairs are each a repeated digit
- * (`#ffffff` -> `#fff`) to the equivalent three-digit form, and the rest of
- * this module assumes the six-digit form throughout.
+ * Expands `#rgb` to `#rrggbb`, passes a valid six-digit hex through, rejects
+ * the rest. Matters at the boundary where colours are read from outside
+ * (`getComputedStyle`, stored JSON) - a minifier can shorten a repeated-digit
+ * hex to three digits, and the rest of this module assumes six.
  */
 const normalizeHexColor = (value: unknown): string | undefined => {
 	if (typeof value !== "string") return undefined;
@@ -111,13 +107,10 @@ const contrastRatio = (a: string, b: string): number => {
 };
 
 /**
- * The legible foreground to lay over `background`.
- *
- * A plain "higher contrast wins" comparison flips to black on the slightest
- * margin for medium-brightness colours (a saturated purple or blue, say) --
- * exactly the kind of colour picked for a "Primary" brand swatch. That reads
- * as a bug on button/badge text most people expect to be white. Black only
- * wins once it's a clearly better fit, not a coin flip.
+ * The legible foreground to lay over `background`. A plain "higher contrast
+ * wins" comparison flips to black on the slightest margin for a saturated
+ * mid-brightness colour (a typical brand "Primary"), which reads as a bug on
+ * text expected to stay white - so black only wins by a clear margin.
  */
 const BLACK_CONTRAST_MARGIN = 1.15;
 const onColor = (background: string): string =>
@@ -126,11 +119,7 @@ const onColor = (background: string): string =>
 		? "#111111"
 		: "#ffffff";
 
-/**
- * Nudges `foreground` towards the on-colour of `background` until it clears the
- * WCAG AA body-text threshold, so a brand colour that happens to sit close to
- * the card background stays readable instead of disappearing.
- */
+/** Nudges `foreground` toward the on-colour of `background` until it clears WCAG AA. */
 const ensureContrast = (
 	foreground: string,
 	background: string,
@@ -181,12 +170,8 @@ export const deriveCatalogueVars = (
 	const onCard = onColor(cardBackground);
 	const onBackground = onColor(background);
 	const cardBorder = mix(cardBackground, onCard, 0.12);
-	// The built-in themes give the navbar its own shade, usually a touch
-	// closer to the page background than the cards are. There's no seventh
-	// "navigation" swatch to seed this from exactly, so nudge card colours
-	// toward the background instead of reusing them verbatim -- closer than
-	// a flat copy, without pretending six colours can reproduce every
-	// hand-tuned theme exactly.
+	// No seventh "navigation" swatch to seed from, so nudge the card colour
+	// toward the background instead of reusing it verbatim.
 	const navBackground = mix(cardBackground, background, 0.2);
 	const onNav = onColor(navBackground);
 	const navBorder = mix(cardBorder, background, 0.2);
@@ -229,12 +214,9 @@ const SAFE_VAR_VALUE =
 	/^(#[0-9a-fA-F]{6}|linear-gradient\(135deg, #[0-9a-fA-F]{6} 0%, #[0-9a-fA-F]{6} 100%\))$/;
 
 /**
- * Renders the derived map as a `.theme-custom` rule for a <style> tag.
- *
- * This is the security boundary between owner-supplied JSON and the document,
- * so both names and values are matched against an allowlist and anything that
- * fails is dropped. It must never become a denylist: a value containing
- * "</style>" would otherwise break out of the tag.
+ * Renders the derived map as a `.theme-custom` rule for a <style> tag. This is
+ * the security boundary between owner-supplied JSON and the document: an
+ * allowlist, not a denylist, since a raw "</style>" would break out of the tag.
  */
 export const serializeThemeCss = (vars: Record<string, string>): string => {
 	const declarations = Object.entries(vars)
@@ -251,12 +233,9 @@ export const serializeThemeCss = (vars: Record<string, string>): string => {
 };
 
 /**
- * Seeds the picker from whatever theme is currently applied, so switching from
- * a standard theme to Custom starts from what the owner can already see rather
- * than from an unrelated default.
- *
- * Unregistered custom properties resolve to their raw `#rrggbb` token, so no
- * colour-space conversion is needed; anything else is simply dropped.
+ * Seeds the picker from whatever theme is currently applied, so switching to
+ * Custom starts from what the owner can already see. Unregistered custom
+ * properties resolve to their raw `#rrggbb` token; anything else is dropped.
  */
 export const readPaletteFromElement = (
 	element: Element | null,

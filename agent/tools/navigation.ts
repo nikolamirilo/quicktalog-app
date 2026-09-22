@@ -102,12 +102,7 @@ export const legalFieldsSchema = z.object({
 		),
 });
 
-/**
- * The Header and Footer tabs: the chrome around the catalogue's content.
- *
- * Legal sits here rather than in `general.ts` because terms and privacy render
- * in the footer and are edited in the Footer tab.
- */
+/** The Header and Footer tabs. Legal lives here too since it renders in and is edited via the Footer tab. */
 export const navigationTools = ({ session }: ToolContext) => ({
 	updateHeader: tool({
 		description:

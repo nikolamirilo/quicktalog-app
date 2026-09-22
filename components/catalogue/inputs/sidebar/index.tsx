@@ -85,7 +85,6 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 		}
   `}
 		>
-			{/* Backdrop blur overlay for mobile when open */}
 			{isOpen && (
 				<div
 					className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm -z-10 transition-opacity duration-300"
@@ -98,13 +97,8 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 			<div
 				className={`relative flex items-center pt-3 pb-3 px-2 sm:px-4 justify-around md:justify-around bg-product-background rounded-none shadow-[0_-8px_30px_-5px_rgba(0,0,0,0.12)] md:shadow-none border-t border-gray-100 md:border-t-0
-          /* Mobile: Row, height fits content */
           w-full flex-row
-          
-          /* Desktop: Column when closed, Row when open */
           ${isOpen ? "md:flex-row md:gap-2 md:py-3" : "md:flex-col md:gap-4 md:py-3"}
-          
-          /* Smooth transitions */
           transition-all duration-300 ease-in-out
         `}
 			>
@@ -118,7 +112,6 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 					size={isOpen ? "sm" : "icon"}
 					variant="grayed"
 				>
-					{/* Desktop Icons */}
 					<div className="hidden md:block">
 						{isOpen ? (
 							<LuChevronsRight size={25} />
@@ -133,7 +126,6 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
           `}
 				></span>
 
-				{/* Mobile: ActionButtons usually on left/center. Desktop: Top/Center */}
 				<div className="flex md:contents w-full justify-around md:w-auto md:justify-start gap-1.5 sm:gap-2.5 items-center">
 					<ActionButtons isOpen={isOpen} setIsOpen={setIsOpen} />
 				</div>
@@ -142,11 +134,9 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 			<div
 				className={`mx-auto w-[95%] border-t border-gray-300/70 transition-opacity duration-300 ${!isOpen && "md:hidden"}`}
 			/>
-			{/* Tabs Content */}
 			{isOpen && (
 				<Tabs
-					className={`flex flex-col flex-1 overflow-hidden bg-product-background md:bg-gray-50/50 
-            /* Slide and fade in animation */
+					className={`flex flex-col flex-1 overflow-hidden bg-product-background md:bg-gray-50/50
             animate-in fade-in slide-in-from-bottom-4 md:slide-in-from-right-4 duration-500
           `}
 					defaultValue="general"

@@ -2,7 +2,7 @@
 
 import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { type AuthState, AuthStateProvider } from "@/context/AuthContext";
 import { createClient } from "@/utils/supabase/client";
 
@@ -34,13 +34,21 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
 	const router = useRouter();
 	const [user, setUser] = useState<ReturnType<typeof toAuthUser>>(null);
 	const [isLoaded, setIsLoaded] = useState(false);
+	/**
+	 * Who the last event was about, kept outside state: comparing inside a
+	 * `setUser` updater would let `router.refresh()` run mid-render, since React
+	 * treats updaters as pure and may call them during render.
+	 */
+	const seenUserId = useRef<string | null>(null);
 
 	useEffect(() => {
 		let active = true;
 
 		supabase.auth.getUser().then(({ data }) => {
 			if (!active) return;
-			setUser(toAuthUser(data.user ?? null));
+			const next = toAuthUser(data.user ?? null);
+			seenUserId.current = next?.id ?? null;
+			setUser(next);
 			setIsLoaded(true);
 		});
 
@@ -48,13 +56,15 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
 			(_event, session) => {
 				if (!active) return;
 				const next = toAuthUser(session?.user ?? null);
-				setUser((previous) => {
-					// A token refresh fires this too; only a different user is worth
-					// re-rendering the server components for.
-					if (previous?.id !== next?.id) router.refresh();
-					return next;
-				});
+				const nextId = next?.id ?? null;
+				// A token refresh fires this too; only a different user is worth
+				// re-rendering the server components for.
+				const changed = seenUserId.current !== nextId;
+				seenUserId.current = nextId;
+
+				setUser(next);
 				setIsLoaded(true);
+				if (changed) router.refresh();
 			},
 		);
 

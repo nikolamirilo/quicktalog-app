@@ -22,11 +22,8 @@ async function selectFirstOption(page: Page, trigger: Locator) {
 test.describe("create catalogue", () => {
 	let createdSlug = "";
 
-	// The account this runs as is on a plan that allows exactly one catalogue,
-	// so anything left behind by an earlier run makes the create button open the
-	// upgrade modal instead of the dialog - and every later run fails looking
-	// like a product bug. Sweep before as well as after, because the run that
-	// leaves the mess is by definition the one that failed before cleaning up.
+	// Sweep before and after: a leftover catalogue makes the create button open
+	// the upgrade modal instead of the dialog, and later runs fail looking like a product bug.
 	test.beforeEach(async () => {
 		await deleteCataloguesByPrefix(SLUG_PREFIX);
 	});

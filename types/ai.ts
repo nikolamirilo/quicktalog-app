@@ -126,11 +126,9 @@ interface AiCustomColors {
 }
 
 /**
- * A single edit the chat assistant wants to make to the catalogue.
- *
- * The model addresses sections/items by their position in the snapshot it was
- * given; the server resolves those positions to stable ids before the ops
- * reach the client, so applying a batch is order-independent.
+ * A single edit the chat assistant wants to make to the catalogue. The model
+ * addresses by position in its snapshot; the server resolves those to stable
+ * ids before the ops reach the client, so a batch applies order-independently.
  */
 export type CatalogueOperation =
 	| {
@@ -183,11 +181,7 @@ export type CatalogueOperation =
 	| { op: "update_header"; fields: AiHeaderFields }
 	| { op: "update_footer"; fields: AiFooterFields };
 
-/**
- * What every agent tool returns. A failure is not an exception: the model reads
- * `error` on its next step and corrects itself within the same turn, which is
- * why a bad section index no longer disappears silently.
- */
+/** What every agent tool returns. A failure is not an exception - the model reads `error` and corrects itself within the same turn. */
 export type AgentToolResult =
 	| {
 			ok: true;

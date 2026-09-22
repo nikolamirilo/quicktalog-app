@@ -17,10 +17,8 @@ export function createCatalogueAgent(session: CatalogueSession) {
 		tools: buildTools(session),
 		reasoning: AGENT_REASONING,
 		temperature: AGENT_TEMPERATURE,
-		// Two ceilings, whichever comes first. The step count has always been
-		// here; the clock is what lets a plan span requests - the loop stops on
-		// a clean step boundary with its work streamed, and the browser sends
-		// the rest of the plan back for a fresh function budget.
+		// Two ceilings, whichever comes first: step count, and the clock (`outOfTime`)
+		// that lets a plan span requests via the browser's resume loop.
 		stopWhen: [stepCountIs(MAX_AGENT_STEPS), () => session.outOfTime()],
 	});
 }

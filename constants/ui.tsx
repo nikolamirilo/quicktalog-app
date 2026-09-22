@@ -56,7 +56,7 @@ export const benefits: IBenefit[] = [
 				icon: <FiZap size={26} />,
 			},
 		],
-		imageSrc: "/images/mockup-1.svg",
+		imageSrc: "/images/marketing/mockup-1.svg",
 	},
 	{
 		title: "Look Professional, Build Trust",
@@ -82,7 +82,7 @@ export const benefits: IBenefit[] = [
 				icon: <FiShare2 size={26} />,
 			},
 		],
-		imageSrc: "/images/mockup-2.svg",
+		imageSrc: "/images/marketing/mockup-2.svg",
 	},
 	{
 		title: "Grow Your Business, Not Your Workload",
@@ -108,7 +108,7 @@ export const benefits: IBenefit[] = [
 				icon: <FiTrendingUp size={26} />,
 			},
 		],
-		imageSrc: "/images/mockup-3.svg",
+		imageSrc: "/images/marketing/mockup-3.svg",
 	},
 ];
 

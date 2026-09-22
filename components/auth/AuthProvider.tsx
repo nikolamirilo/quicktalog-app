@@ -1,8 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { ClerkAuthProvider } from "@/components/auth/ClerkAuthProvider";
-import { SupabaseAuthProvider } from "@/components/auth/SupabaseAuthProvider";
+import { ClerkAuthProvider } from "@/components/auth/session/ClerkAuthProvider";
+import { SupabaseAuthProvider } from "@/components/auth/session/SupabaseAuthProvider";
 import { AUTH_PROVIDER } from "@/lib/auth/provider";
 
 /**

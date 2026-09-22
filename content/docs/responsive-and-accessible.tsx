@@ -22,14 +22,14 @@ const meta = {
 		"catalogue accessibility",
 	],
 	relatedSlugs: ["customize-design", "share-your-catalogue"],
-	coverImage: "/documentation/docs-landing-one-source.svg",
+	coverImage: "/images/documentation/docs-landing-one-source.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/docs-landing-one-source.svg"
+				src="/images/documentation/docs-landing-one-source.svg"
 				alt="One catalogue as the single source feeding phones, tablets, desktops, and print"
 				priority
 			/>
@@ -71,7 +71,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/responsive-devices-layout.svg"
+				src="/images/documentation/responsive-devices-layout.svg"
 				alt="The same catalogue shown on a phone, tablet, and desktop - layout adapts automatically to each screen size"
 			/>
 
@@ -119,7 +119,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/responsive-accessibility-features.svg"
+				src="/images/documentation/responsive-accessibility-features.svg"
 				alt="Three accessibility features: keyboard navigation with focus ring, screen reader support, and WCAG AA colour contrast"
 			/>
 

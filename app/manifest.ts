@@ -30,27 +30,27 @@ export default function manifest(): MetadataRoute.Manifest {
 				type: "image/x-icon",
 			},
 			{
-				src: "/logo.svg",
+				src: "/images/brand/logo.svg",
 				sizes: "any",
 				type: "image/svg+xml",
 			},
 			{
-				src: "/opengraph-image.png",
+				src: "/images/brand/opengraph-image.png",
 				sizes: "1200x630",
 				type: "image/png",
 			},
 			{
-				src: "/twitter-image.png",
+				src: "/images/brand/twitter-image.png",
 				sizes: "1200x630",
 				type: "image/png",
 			},
 			{
-				src: "/icon-192.png",
+				src: "/images/brand/icon-192.png",
 				sizes: "192x192",
 				type: "image/png",
 			},
 			{
-				src: "/icon-512.png",
+				src: "/images/brand/icon-512.png",
 				sizes: "512x512",
 				type: "image/png",
 			},

@@ -1,12 +1,8 @@
 import type { ChatScannedImage } from "@/types/ai";
 
 /**
- * Opens the block of scanned text appended to a user's turn.
- *
- * Three things key off it: the model, which is told in its instructions what
- * follows the marker; the chat bubble, which collapses the block rather than
- * printing a wall of OCR at the user; and the tests below this file. Changing
- * the wording means changing all three.
+ * Opens the block of scanned text appended to a user's turn. The model's
+ * instructions, the chat bubble and the tests all key off this exact string.
  */
 export const SCANNED_TEXT_MARKER = "[Text scanned from uploaded images]";
 

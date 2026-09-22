@@ -22,12 +22,12 @@ const ContentBlockButton = ({
 			>
 				{/* Subtle radial glow on hover */}
 				<span
+					aria-hidden="true"
 					className="
 						pointer-events-none absolute inset-0 opacity-0
 						group-hover:opacity-100 transition-opacity duration-300
 						bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,hsl(var(--catalogue-primary)/0.07),transparent)]
 					"
-					aria-hidden="true"
 				/>
 
 				<img
@@ -38,7 +38,7 @@ const ContentBlockButton = ({
 						transition-transform duration-300 ease-out
 						group-hover:-translate-y-1 group-hover:scale-105
 					"
-					src="/builder/content.svg"
+					src="/images/builder/content.svg"
 				/>
 
 				<div className="relative z-10 flex flex-col items-center gap-1">

@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import AuthLayout from "@/components/auth/common/AuthLayout";
 import UpdatePasswordForm from "@/components/auth/UpdatePasswordForm";
 import Footer from "@/components/navigation/Footer";
 import Navbar from "@/components/navigation/Navbar";
@@ -23,13 +24,9 @@ export default async function UpdatePasswordPage() {
 	return (
 		<>
 			<Navbar />
-			<div className="product font-lora min-h-screen">
-				<div className="flex justify-center items-center mt-[5vh] min-h-screen px-4">
-					<div className="w-full max-w-md bg-product-background rounded-3xl shadow-md p-8 border border-product-border">
-						<UpdatePasswordForm />
-					</div>
-				</div>
-			</div>
+			<AuthLayout>
+				<UpdatePasswordForm />
+			</AuthLayout>
 			<Footer />
 		</>
 	);

@@ -77,9 +77,7 @@ const ChatMessageBubble = ({
 	const body = message.parts.map((part, index) => {
 		if (part.type === "text") {
 			if (!part.text) return null;
-			// Resuming a plan is the builder talking to the agent, not the user
-			// talking to either. Showing it would turn one request into a column
-			// of identical bubbles.
+			// Resuming a plan is the builder talking to the agent, not the user; showing it would repeat identical bubbles.
 			if (part.text.trim() === CONTINUE_PLAN_MARKER) return null;
 			const key = `${message.id}-text-${index}`;
 			return part.text.startsWith(SCANNED_TEXT_MARKER) ? (
@@ -125,9 +123,7 @@ const ChatMessageBubble = ({
 		// readSection is the agent looking things up; it has nothing to report.
 		if (name === "readSection") return null;
 
-		// A fetch reads something the user can go and check, so unlike the other
-		// reads it is worth a line. A failed one renders nothing: the agent
-		// explains that in its reply, same as a rejected edit.
+		// A fetch reads something the user can go check, unlike other reads, so it's worth a line.
 		if (name === "fetchUrl") {
 			const page = part.output as { summary?: string } | undefined;
 			return page?.summary ? (
@@ -138,9 +134,7 @@ const ChatMessageBubble = ({
 		}
 
 		const output = part.output as AgentToolResult | undefined;
-		// A rejected edit is the agent's own feedback loop - it reads the
-		// reason and corrects itself, then explains anything the user needs
-		// to know in its reply. Surfacing it here would just be noise.
+		// A rejected edit is the agent's own feedback loop; it self-corrects and explains in its reply.
 		if (!output?.ok) return null;
 
 		return (

@@ -3,19 +3,17 @@ import postgres from "postgres";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 /**
- * The M10 sign-up triggers against a real GoTrue.
- *
- * pgTAP already proves the trigger bodies do what they say when a row is
- * inserted into `auth.users` by hand. What it cannot prove is how GoTrue
- * actually writes those rows, and that is where the interesting bug lives:
+ * The M10 sign-up triggers against a real GoTrue. pgTAP already proves the
+ * trigger bodies work on a hand-inserted row; what it can't prove is how
+ * GoTrue actually writes those rows - and that's the interesting bug:
  * `admin.createUser` sets `app_metadata` in a *second* UPDATE, so a trigger
  * that only looked at `app_metadata` would fire on the INSERT and give every
- * imported user a second, empty `public.users` row — losing everything they
- * own at the re-key. PATCH P5 consults `migration.clerk_user_map` instead, and
- * this is where that is checked against the real thing.
+ * imported user a second, empty `public.users` row, losing everything they
+ * own at the re-key. PATCH P5 consults `migration.clerk_user_map` instead,
+ * and this is where that's checked against the real thing.
  *
- * It creates and deletes its own users and never touches anyone else's, but it
- * still refuses anything that is not a local stack.
+ * Creates and deletes only its own users, but still refuses anything that
+ * isn't a local stack.
  *
  *   supabase start
  *   DB_CONNECTION_STRING=postgresql://postgres:postgres@127.0.0.1:54322/postgres \
@@ -145,13 +143,14 @@ describe.skipIf(!enabled)("sign-up against a real GoTrue", () => {
 		expect(consents["terms-and-conditions"]).toBe(false);
 	});
 
-	it("records consent when the form sends the current terms version", async () => {
+	it("records consent when the form sends the current terms version", async (ctx) => {
 		if (!signupsOpen) return;
 		const [terms] = await sql<{ value: string }[]>`
 			select value from private.settings where key = 'terms_version'`;
 		if (!terms) {
-			console.warn("Skipping: private.settings.terms_version is not set.");
-			return;
+			// Reported as skipped rather than passed: a green tick for a test that
+			// never ran is how a gap stays invisible.
+			ctx.skip("private.settings.terms_version is not set on this stack");
 		}
 
 		const email = address("terms");
@@ -190,9 +189,14 @@ describe.skipIf(!enabled)("sign-up against a real GoTrue", () => {
 			await admin.auth.admin.createUser({
 				email,
 				email_confirm: true,
+				// `id`, not `user_id`: GoTrue silently ignores an unknown field and
+				// allocates its own uuid, which is what this test caught the first
+				// time it ran. `migrate-clerk-to-supabase.ts` uses `id` too, and it
+				// has to — a generated uuid would not match the claimed map row and
+				// the imported user would get a second, empty public.users row.
+				id: uuid,
 				password: PASSWORD,
-				user_id: uuid,
-			} as never),
+			}),
 		);
 		expect(error).toBe(null);
 		expect(data.user?.id).toBe(uuid);

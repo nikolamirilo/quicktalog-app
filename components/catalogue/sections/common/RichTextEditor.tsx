@@ -61,9 +61,7 @@ export default function RichTextEditor({
 				} else {
 					setFontSize("5");
 				}
-			} catch {
-				// ignore
-			}
+			} catch {}
 		}
 	};
 

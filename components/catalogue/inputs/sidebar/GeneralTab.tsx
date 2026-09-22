@@ -24,7 +24,6 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 	if (!catalogue || !updateCatalogue) return null;
 
 	const handleChange = (field: string, value: any) => {
-		// Handle nested updates for metadata and contact
 		if (field.startsWith("metadata.")) {
 			const key = field.split(".")[1];
 			updateCatalogue({

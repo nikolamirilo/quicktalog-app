@@ -23,14 +23,14 @@ const meta = {
 		"billing",
 	],
 	relatedSlugs: ["getting-started", "create-a-catalogue"],
-	coverImage: "/documentation/plans-billing-cover.svg",
+	coverImage: "/images/documentation/plans-billing-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/plans-billing-cover.svg"
+				src="/images/documentation/plans-billing-cover.svg"
 				alt="Quicktalog plans overview showing Starter, Pro, and higher tiers with their key features"
 				priority
 			/>
@@ -79,7 +79,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/plans-billing-comparison.svg"
+				src="/images/documentation/plans-billing-comparison.svg"
 				alt="Side-by-side comparison of Quicktalog plans showing catalogues, items, view limits, and feature availability"
 				maxWidth="640px"
 			/>
@@ -105,7 +105,7 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/documentation/plans-billing-hit-limit.svg"
+				src="/images/documentation/plans-billing-hit-limit.svg"
 				alt="Quicktalog upgrade prompt showing when a plan limit is reached with options to move to the next tier"
 				maxWidth="380px"
 			/>
@@ -118,7 +118,7 @@ function Body() {
 			</Callout>
 
 			<ArticleImage
-				src="/documentation/plans-billing-manage.svg"
+				src="/images/documentation/plans-billing-manage.svg"
 				alt="The billing management screen in the Quicktalog dashboard showing current plan, renewal date, and upgrade or cancel options"
 				maxWidth="640px"
 			/>

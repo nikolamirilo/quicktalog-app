@@ -7,22 +7,19 @@ import { getMyUserData } from "@/lib/users/my-user-data";
 import { ensureUserRow, loadClerkProfile } from "@/lib/users/provision";
 import { sendWelcomeEmailOnce } from "@/lib/users/welcome";
 
-/**
- * Profile, plan and usage of the signed-in user, or null when signed out.
- *
- * Takes no argument: the identity comes from the session, and `getMyUserData`
- * reads everything in one `app_user` transaction, so RLS decides what is
- * visible.
- */
+/** Profile, plan and usage of the signed-in user, or null when signed out. Identity comes from the session; RLS decides visibility. */
 export async function getUserData() {
 	try {
 		const me = await getVerifiedIdentity();
 		if (!me) return null;
 
 		let result = await getMyUserData(me);
-		if (!result.ok && result.code === "not_found") {
-			// The user.created webhook has not arrived yet: create the row now.
-			// Provisioning is admin work and runs outside the user transaction.
+		if (
+			!result.ok &&
+			result.code === "not_found" &&
+			AUTH_PROVIDER === "clerk"
+		) {
+			// user.created webhook hasn't arrived yet: provision now (admin work, outside the user tx).
 			const profile = await loadClerkProfile(me.userId);
 			if (profile) {
 				await ensureUserRow(profile);
@@ -33,11 +30,8 @@ export async function getUserData() {
 			throw new Error(`Failed to fetch user data: ${result.code}`);
 		}
 
-		// Supabase Auth has no `user.created` webhook, so the welcome email is
-		// claimed and sent here instead. `after` runs it once the response has
-		// been flushed, so a new user's first dashboard load is not held up by
-		// Resend; on every later load the claim matches no row and costs one
-		// cheap statement.
+		// No `user.created` webhook in Supabase Auth, so the welcome email is claimed
+		// and sent here via `after`, off the response, so Resend can't hold up the load.
 		if (AUTH_PROVIDER === "supabase") {
 			after(() => sendWelcomeEmailOnce(me));
 		}

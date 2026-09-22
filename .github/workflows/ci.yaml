@@ -78,6 +78,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANON_KEY" \
           NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 \
           DB_CONNECTION_STRING=postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+          DB_RLS_CONNECTION_STRING=postgresql://app_rls:postgres@127.0.0.1:54322/postgres \
           npm run test:integration
 
       # Plan 3.1: the cutover rehearsal runs the real import, re-key, verify and

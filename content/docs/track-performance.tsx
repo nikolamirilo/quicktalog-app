@@ -21,14 +21,14 @@ const meta = {
 		"customer engagement",
 	],
 	relatedSlugs: ["plans-and-billing", "share-your-catalogue"],
-	coverImage: "/documentation/track-performance-cover.svg",
+	coverImage: "/images/documentation/track-performance-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/track-performance-cover.svg"
+				src="/images/documentation/track-performance-cover.svg"
 				alt="Quicktalog analytics dashboard showing catalogue views, busiest day, and a daily views chart"
 				priority
 			/>
@@ -69,7 +69,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/track-performance-metrics.svg"
+				src="/images/documentation/track-performance-metrics.svg"
 				alt="Catalogue analytics metrics: total views, busiest day, average views per day, and a daily views line chart"
 				maxWidth="640px"
 			/>
@@ -86,7 +86,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/track-performance-decision-loop.svg"
+				src="/images/documentation/track-performance-decision-loop.svg"
 				alt="The analytics decision loop: read the chart, spot the pattern, update or promote, then watch it respond"
 			/>
 

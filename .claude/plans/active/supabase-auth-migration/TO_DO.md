@@ -1,5 +1,7 @@
 # Clerk to Supabase Auth + RLS: To Do
 
+**PROD cutover sequence: [`PROD_RUNBOOK.md`](PROD_RUNBOOK.md)** — every step, in order, with the four traps TEST hit.
+
 High-level task list for [`PLAN.md`](PLAN.md) (section 5 has the detailed steps). Every task runs on TEST first, then PROD.
 
 Phases: **0A** close open database access · **0B** integrity and billing hardening · **K** legacy API key exit (parallel from 0B) · **1** DB layer and RLS, still on Clerk · **2** Supabase Auth built behind a switch · **3** import and re-key rehearsals · **4** PROD cutover · **5** remove Clerk.
@@ -90,6 +92,7 @@ In this order. 2 blocks 2.13; 4 is the one that may be hurting users today.
 
 | # | Task | Why now |
 |---|---|---|
+| 0 | **Set `SUPABASE_SECRET_KEY` on Vercel *preview*** | It is set on `production` only. Preview has none, so `createForwardedAuthClient()` throws and both the OAuth callback and the email confirm fail as "that link is no longer valid". This is what is blocking 2.13 right now. |
 | 1 | Commit and push | CI has never run the rehearsal, the sign-up tests or M09/M12/M13. ~18 tests execute for the first time. |
 | 2 | Set `private.settings.terms_version` on TEST | **Blocks 2.13.** Without it `currentTermsVersion()` returns null and the sign-up form disables itself, so Supabase sign-up cannot be tested at all. |
 | 3 | Release `@quicktalog/common` and bump app + worker | M10 changed `public.users`; the installed 1.58.0 predates it. `drizzle-kit pull`, release, bump. |
@@ -164,3 +167,58 @@ Later, in phase order: 3.2 (TEST dress rehearsal), 3.5, then Phase 4.
   today's schema against pre-M10 snapshots. `appLayer` now brings a snapshot to M10 before running app SQL, and the
   Phase 0A gate asserts the 42703 explicitly so the constraint is documented rather than rediscovered in production.
   Delete that assertion when the baseline includes M10.
+
+## Vercel environment variables (read 2026-09-22, names only)
+
+Confirmed against the `quicktalog` project. `test.quicktalog.app` runs on **preview**.
+
+**Missing on preview (TEST):**
+- `SUPABASE_SECRET_KEY` — production only. Breaks `/auth/callback` and `/auth/confirm`; nothing else, because
+  `createMiddlewareAuthClient` falls back to the publishable key. **This is the 2.13 blocker.**
+- `DB_ADMIN_CONNECTION_STRING` — absent everywhere. 1.8 ("add separate user/admin connection strings") is marked Done
+  but was never applied to Vercel. `getAdminDb()` therefore falls back to `DB_CONNECTION_STRING`, which means either
+  that value is still `postgres` — so M08's fail-closed protection is not actually in effect on TEST, which was the
+  whole point of 1.8 — or it is `app_rls` and every `asAdmin` call (Paddle webhook, Clerk provisioning) is failing
+  with 42501. Whichever it is, it is not what 1.8 claims.
+
+**Missing on production, and needed before the current branch is deployed there:**
+- `DB_CONNECTION_STRING` — production still has the old `DATABASE_URL`. 0A.6's rename reached preview only, so a
+  deploy of `main` today would leave `getUserDb()` with no connection string at all.
+- `AUTH_PROVIDER` — absent, so it defaults to `clerk`. Correct for now; required at 4.3.
+- `REVALIDATE_SECRET` — absent, so the worker's revalidation calls would be rejected.
+- `REDIS_KEY_PREFIX` — absent, so `draftKey()` falls back to `"dev"` and PROD drafts would share a keyspace with
+  local development.
+
+**Dead on production:** `SUPABASE_ANON_KEY` and `SUPABASE_URL` (legacy names; the anon key is disabled since K.5),
+`DATABASE_URL` once the rename lands. Also `POSTHGOG_API_KEY` sits alongside `POSTHOG_API_KEY` on both targets — a
+typo'd duplicate worth deleting.
+
+## Auth config and email templates (2.6 / 2.9) — TEST done 2026-09-22
+
+`auth-config.ts --apply` now reports zero drift on TEST and the go/no-go passes:
+confirm-email on, secure email change on, anonymous off, captcha on, reauthentication on.
+
+Done along the way:
+- **Email templates exist** (`supabase/templates/{confirmation,recovery,email-change}.html`, with a README
+  explaining the reasoning). They point at `{{ .RedirectTo }}/auth/confirm?token_hash={{ .TokenHash }}&type=…`,
+  not `{{ .ConfirmationURL }}` — GoTrue's verify endpoint spends the token when the link is *fetched*, so a mail
+  scanner following it burns the token. The previous TEST templates had exactly that flaw.
+- **`auth-config.ts` resolves `"file:supabase/templates/x.html"`** so HTML lives in .html files, and truncates long
+  values in the drift output. It also takes `--only` / `--skip` for staged applies, and a staged apply still prints
+  the go/no-go failures and exits non-zero so a partial run never looks finished.
+- Templates carry **no HTML comments**: GoTrue sends the body verbatim, so anything in the file reaches the customer.
+- Turnstile is wired end to end: site key on Vercel preview, secret in Supabase.
+
+**Still PROD-only work:** none of this has been applied to PROD. `--check --project prod` will show the same drift
+plus whatever else has never been set there.
+
+## Decision (Nikola, 2026-09-22): full import with passwords
+
+The 2200 PROD users keep their existing passwords and Google logins. No mass password reset, no fresh start.
+
+**That makes the Clerk password digests a hard dependency.** They exist only in the dashboard CSV export
+(Settings → User exports) — the Backend API never returns them. If that export is not available on the production
+instance, a support request to Clerk is the only other route and is a multi-day lead time, so it is the long pole.
+
+Everything else can proceed without it, including the full TEST rehearsal: the dev-instance CSV (3 users) is already
+in hand.

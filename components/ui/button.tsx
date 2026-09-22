@@ -126,7 +126,7 @@ const buttonVariants = cva(
 				nav: `
           text-product-foreground text-sm font-medium px-3 py-2 h-9 transition-all duration-200 relative overflow-hidden
           hover:text-black hover:font-bold
-          focus:ring-2 focus:ring-product-nav-focus-ring focus:ring-offset-2
+          focus:outline-none focus:shadow-[var(--product-nav-focus-ring)]
           border-0
           active:bg-product-background-hover active:text-product-nav-active active:border-product-primary
           after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[3px] after:bg-product-primary
@@ -182,18 +182,18 @@ const Button = React.forwardRef<
 				>
 					<div className="absolute inset-0 bg-gray-100/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
 						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
+							className="lucide lucide-lock w-4 h-4 text-gray-500"
 							fill="none"
+							height="16"
 							stroke="currentColor"
-							strokeWidth="2"
 							strokeLinecap="round"
 							strokeLinejoin="round"
-							className="lucide lucide-lock w-4 h-4 text-gray-500"
+							strokeWidth="2"
+							viewBox="0 0 24 24"
+							width="16"
+							xmlns="http://www.w3.org/2000/svg"
 						>
-							<rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+							<rect height="11" rx="2" ry="2" width="18" x="3" y="11" />
 							<path d="M7 11V7a5 5 0 0 1 10 0v4" />
 						</svg>
 					</div>

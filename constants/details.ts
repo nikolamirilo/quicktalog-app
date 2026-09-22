@@ -10,46 +10,69 @@ export const siteDetails = {
 	},
 	language: "en-us",
 	locale: "en-US",
-	siteLogo: `${process.env.BASE_PATH || ""}/images/logo.svg`,
+	siteLogo: `${process.env.BASE_PATH || ""}/images/brand/logo.svg`,
 	googleAnalyticsId: "",
 };
 
 export const footerDetails: {
 	subheading: string;
-	quickLinks: ILinkItem[];
+	productLinks: ILinkItem[];
+	resourceLinks: ILinkItem[];
+	contactLink: ILinkItem;
 	legalLinks: ILinkItem[];
 	email: string;
-	telephone: string;
 	socials: ISocials;
 } = {
 	subheading:
 		"Empowering businesses to go digital with interactive catalogues.",
-	quickLinks: [
+	productLinks: [
 		{
-			text: "Pricing",
-			url: "/pricing",
+			text: "Live demo",
+			url: "/demo",
 		},
 		{
 			text: "Showcases",
 			url: "/showcases",
 		},
 		{
-			text: "Articles",
-			url: "/articles",
+			text: "Pricing",
+			url: "/pricing",
 		},
+		{
+			text: "How it works",
+			url: "/#how-it-works",
+		},
+		{
+			text: "Create a catalogue",
+			url: "/auth?mode=signup",
+		},
+	],
+	resourceLinks: [
 		{
 			text: "Docs",
 			url: "/docs",
+		},
+		{
+			text: "Articles",
+			url: "/articles",
 		},
 		{
 			text: "Help Center",
 			url: "/help",
 		},
 		{
-			text: "Contact Us",
-			url: "/contact",
+			text: "FAQ",
+			url: "/#faq",
+		},
+		{
+			text: "Release Notes",
+			url: "/release-notes",
 		},
 	],
+	contactLink: {
+		text: "Contact us",
+		url: "/contact",
+	},
 	legalLinks: [
 		{
 			text: "Terms & Conditions",
@@ -63,9 +86,12 @@ export const footerDetails: {
 			text: "Refund Policy",
 			url: "/refund-policy",
 		},
+		{
+			text: "Sitemap",
+			url: "/sitemap.xml",
+		},
 	],
 	email: "quicktalog@outlook.com",
-	telephone: "+1 (800) 123-4567",
 	socials: {
 		// github: 'https://github.com',
 		// x: 'https://twitter.com/x',

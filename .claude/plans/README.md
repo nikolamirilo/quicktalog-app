@@ -17,6 +17,7 @@ Plans, analyses and investigations produced before implementing something. Human
 
 | Plan | Status |
 |---|---|
+| [2026-09-22-auth-folder-refactor](archive/2026-09-22-auth-folder-refactor/PLAN.md) | Done: `components/auth/` split into `common/`/`forms/`/`session/`; sign-in and sign-up are one card with a mode toggle |
 | [articles-implementation-plan.md](archive/articles-implementation-plan.md) | Done: `/articles` exists |
 | [revalidation-analysis.md](archive/revalidation-analysis.md) | Done: codified in the `data-revalidation` skill |
 | [sentry-remediation-plan.md](archive/sentry-remediation-plan.md) | Archived 2026-09-17; whether every fix shipped is unconfirmed |

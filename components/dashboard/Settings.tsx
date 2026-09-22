@@ -23,16 +23,16 @@ const Settings = () => {
 	const { signOut } = useAuth();
 
 	return (
-		<div className="max-w-5xl space-y-6 relative">
+		<div className="max-w-5xl space-y-4 relative">
 			<CookiePreferencesModal
 				isOpen={isCookieSettingsOpen}
 				onClose={() => setIsCookieSettingsOpen(false)}
 			/>
-			<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
-				<FiSettings className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" />{" "}
+			<h2 className="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4 text-product-foreground flex items-center gap-2 font-heading">
+				<FiSettings className="text-product-primary w-5 h-5 sm:w-6 sm:h-6" />{" "}
 				Settings
 			</h2>
-			<div className="flex flex-col max-w-[300px] mx-auto md:mx-0 md:flex-row gap-5 my-8">
+			<div className="flex flex-col max-w-[300px] mx-auto md:mx-0 md:flex-row gap-3 my-4">
 				<Button
 					aria-label="Manage cookie preferences"
 					onClick={() => setIsCookieSettingsOpen(true)}
@@ -46,7 +46,7 @@ const Settings = () => {
 			</div>
 			<Suspense
 				fallback={
-					<div className="h-40 w-full bg-product-background-hover animate-pulse rounded-xl" />
+					<div className="h-32 w-full bg-product-background-hover animate-pulse rounded-xl" />
 				}
 			>
 				<Account />

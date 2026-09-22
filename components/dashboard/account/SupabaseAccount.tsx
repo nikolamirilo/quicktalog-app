@@ -78,14 +78,11 @@ function describe(error: AuthError | null, fallback: string): string {
 
 /**
  * The Supabase half of the settings page: everything Clerk's hosted `UserProfile`
- * used to cover, as the app's own forms.
- *
- * Credential calls (`updateUser`, `reauthenticate`, `linkIdentity`, `signOut`)
- * run in the browser client on purpose: Supabase rate limits them per end-user
- * IP, and a server would present one shared Vercel egress IP for everybody.
- * Deleting the account is the exception — it cancels billing and uses the admin
- * key — so it is a server action that takes no arguments and derives the user
- * from the session.
+ * used to cover, as the app's own forms. Credential calls run in the browser
+ * client on purpose - Supabase rate limits them per end-user IP, and a server
+ * would present one shared Vercel egress IP for everybody. Deleting the
+ * account is the exception (cancels billing, uses the admin key), so it's a
+ * server action deriving the user from the session.
  */
 export default function SupabaseAccount() {
 	const supabase = useMemo(() => createClient(), []);
@@ -94,7 +91,7 @@ export default function SupabaseAccount() {
 	const { userData, refreshUserData } = useUserContext();
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4">
 			<ProfileCard
 				initialName={(userData?.name as string) ?? user?.name ?? ""}
 				onSaved={refreshUserData}
@@ -119,8 +116,11 @@ export default function SupabaseAccount() {
 					// The account is gone; this only clears the cookies this browser
 					// still holds. The access token itself is dead either way.
 					await supabase.auth.signOut({ scope: "local" }).catch(() => {});
-					router.replace("/");
-					router.refresh();
+					// Hard navigation, not router.replace + refresh: this page is still
+					// mounted on /admin/dashboard, and a refresh fired before the replace
+					// settles re-runs its data load with the now-deleted user's session,
+					// crashing getUserData instead of landing cleanly on home.
+					window.location.href = "/";
 				}}
 			/>
 		</div>
@@ -147,8 +147,8 @@ function Section({
 			className={tone === "danger" ? "border-red-300" : undefined}
 			type="form"
 		>
-			<CardHeader>
-				<CardTitle className="flex items-center gap-2 text-product-foreground font-heading text-base sm:text-lg">
+			<CardHeader className="space-y-1 p-4 pb-2 sm:p-5 sm:pb-2">
+				<CardTitle className="flex items-center gap-2 text-product-foreground font-heading text-sm sm:text-base">
 					<span
 						className={
 							tone === "danger" ? "text-red-500" : "text-product-primary"
@@ -158,11 +158,13 @@ function Section({
 					</span>
 					{title}
 				</CardTitle>
-				<CardDescription className="text-product-foreground-accent">
+				<CardDescription className="text-xs text-product-foreground-accent">
 					{description}
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="space-y-4">{children}</CardContent>
+			<CardContent className="space-y-3 p-4 pt-0 sm:p-5 sm:pt-0">
+				{children}
+			</CardContent>
 		</Card>
 	);
 }
@@ -203,7 +205,7 @@ function ProfileCard({
 			icon={<FiUser className="w-5 h-5" />}
 			title="Profile"
 		>
-			<div className="space-y-2 max-w-md">
+			<div className="space-y-1.5 max-w-md">
 				<Label htmlFor="account-name">Name</Label>
 				<Input
 					autoComplete="name"
@@ -267,7 +269,7 @@ function EmailCard({
 					{currentEmail ?? "unknown"}
 				</span>
 			</p>
-			<div className="space-y-2 max-w-md">
+			<div className="space-y-1.5 max-w-md">
 				<Label htmlFor="account-new-email">New email address</Label>
 				<Input
 					autoComplete="email"
@@ -366,8 +368,8 @@ function PasswordCard({ supabase }: { supabase: Supabase }) {
 			icon={<FiLock className="w-5 h-5" />}
 			title="Password"
 		>
-			<div className="grid gap-4 max-w-md">
-				<div className="space-y-2">
+			<div className="grid gap-3 max-w-md">
+				<div className="space-y-1.5">
 					<Label htmlFor="account-current-password">Current password</Label>
 					<Input
 						autoComplete="current-password"
@@ -377,7 +379,7 @@ function PasswordCard({ supabase }: { supabase: Supabase }) {
 						value={current}
 					/>
 				</div>
-				<div className="space-y-2">
+				<div className="space-y-1.5">
 					<Label htmlFor="account-new-password">New password</Label>
 					<Input
 						autoComplete="new-password"
@@ -387,7 +389,7 @@ function PasswordCard({ supabase }: { supabase: Supabase }) {
 						value={next}
 					/>
 				</div>
-				<div className="space-y-2">
+				<div className="space-y-1.5">
 					<Label htmlFor="account-confirm-password">Repeat new password</Label>
 					<Input
 						autoComplete="new-password"
@@ -398,7 +400,7 @@ function PasswordCard({ supabase }: { supabase: Supabase }) {
 					/>
 				</div>
 				{nonceNeeded && (
-					<div className="space-y-2">
+					<div className="space-y-1.5">
 						<Label htmlFor="account-nonce">Emailed confirmation code</Label>
 						<Input
 							autoComplete="one-time-code"
@@ -473,7 +475,7 @@ function IdentitiesCard({ supabase }: { supabase: Supabase }) {
 			icon={<FiLink className="w-5 h-5" />}
 			title="Connected accounts"
 		>
-			<div className="flex flex-col sm:flex-row sm:items-center gap-3">
+			<div className="flex flex-col sm:flex-row sm:items-center gap-2">
 				<span className="flex items-center gap-2 text-sm text-product-foreground">
 					<FcGoogle className="w-5 h-5" />
 					Google
@@ -529,7 +531,7 @@ function SessionsCard({
 			icon={<FiLogOut className="w-5 h-5" />}
 			title="Sessions"
 		>
-			<div className="flex flex-col sm:flex-row gap-3">
+			<div className="flex flex-col sm:flex-row gap-2">
 				<Button
 					disabled={busy}
 					onClick={() => run(onSignOut)}
@@ -597,7 +599,7 @@ function DangerCard({ onDeleted }: { onDeleted: () => Promise<void> }) {
 						</DialogDescription>
 					</DialogHeader>
 
-					<div className="space-y-2">
+					<div className="space-y-1.5">
 						<Label htmlFor="account-delete-confirm">
 							Type DELETE to confirm
 						</Label>

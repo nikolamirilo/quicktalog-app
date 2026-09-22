@@ -1,4 +1,3 @@
-// components/admin/dashboard/Dashboard.tsx
 "use client";
 import { useSearchParams } from "next/navigation";
 import Loader from "@/components/navigation/Loader";
@@ -16,7 +15,6 @@ const SidebarContent = lazy(
 	() => import("@/components/navigation/SidebarContent"),
 );
 
-// Updated interface without required catalogues and overallAnalytics
 interface ImprovedDashboardProps {
 	user: DashboardProps["user"];
 	usage: DashboardProps["usage"];
@@ -44,7 +42,6 @@ export default function Dashboard({
 		DASHBOARD_TABS.includes(requestedTab) ? requestedTab : "overview",
 	);
 
-	// Fetch data only when needed based on active tab
 	const {
 		analytics,
 		catalogues,
@@ -61,16 +58,8 @@ export default function Dashboard({
 
 	return (
 		<>
-			{/* {pricingPlan.id > 2 && (
-				<Script
-					id="hs-script-loader"
-					src="https://js-eu1.hs-scripts.com/146895463.js"
-					strategy="lazyOnload"
-				/>
-			)} */}
 			<div className="w-full min-h-screen px-4 sm:px-4 relative md:px-6 lg:px-8 pt-32 pb-12 bg-gradient-to-br from-product-background to-product-background-hero animate-fade-in">
 				<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8">
-					{/* Sidebar tabs (hidden on mobile) */}
 					<Suspense
 						fallback={
 							<div className="w-64 h-96 bg-gray-100 animate-pulse rounded-lg" />
@@ -83,9 +72,7 @@ export default function Dashboard({
 						/>
 					</Suspense>
 
-					{/* Main Content Section */}
 					<section className="flex-1 min-w-0 bg-product-background/95 border border-product-border shadow-md rounded-3xl p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 relative z-10 text-xs sm:text-sm md:text-base lg:text-lg">
-						{/* Mobile tab bar */}
 						<Suspense fallback={null}>
 							<MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
 						</Suspense>
@@ -98,7 +85,6 @@ export default function Dashboard({
 									</div>
 								) : (
 									<section className="animate-fade-in">
-										{/* <JoinOurCommunity /> */}
 										<Overview
 											catalogues={catalogues || []}
 											newsletterSubscribers={newsletterSubscribers || []}

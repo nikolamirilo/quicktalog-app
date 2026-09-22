@@ -7,7 +7,16 @@ import * as React from "react";
 
 import { cn } from "@/helpers/client";
 
-const DropdownMenu = DropdownMenuPrimitive.Root;
+// Non-modal by default: a modal menu locks scroll and pads the body for a
+// scrollbar that `scrollbar-gutter: stable` (globals.css) already reserves, so
+// every open shifted the page.
+const DropdownMenu = ({
+	modal = false,
+	...props
+}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Root>) => (
+	<DropdownMenuPrimitive.Root modal={modal} {...props} />
+);
+DropdownMenu.displayName = DropdownMenuPrimitive.Root.displayName;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 const DropdownMenuGroup = DropdownMenuPrimitive.Group;
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal;

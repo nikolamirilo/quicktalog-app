@@ -1,22 +1,16 @@
 import type { AgentToolName } from "@/agent/tools";
 
 /**
- * How a tool call is drawn in the chat while it runs.
- *
- * `hidden` is for the tools that have their own display elsewhere: the plan
- * tools are one checklist for the whole request, rendered by the panel, so a
- * bubble line per call would be a spinner followed by a tickless green row.
+ * How a tool call is drawn in the chat while it runs. `hidden` is for tools
+ * with their own display elsewhere, e.g. the plan tools' checklist panel.
  */
 export type ToolDisplay = { label: string } | { hidden: true };
 
 /**
- * Client-safe on purpose. This file imports nothing from the tool files
- * themselves - doing so would pull `node:dns`, Firecrawl and the theme server
- * action into the browser bundle - and `AgentToolName` is a type-only import,
- * erased at compile time.
- *
- * Typed as a full `Record`, so adding a tool without deciding how it looks is
- * a compile error rather than a silent "Working…".
+ * Client-safe on purpose: imports nothing from the tool files themselves
+ * (would pull `node:dns`/Firecrawl into the browser bundle); `AgentToolName`
+ * is type-only. A full `Record` so a new tool without a display is a compile
+ * error, not a silent "Working…".
  */
 export const TOOL_DISPLAY: Record<AgentToolName, ToolDisplay> = {
 	createPlan: { hidden: true },

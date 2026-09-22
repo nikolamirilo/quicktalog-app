@@ -38,15 +38,12 @@ setup("authenticate with Supabase", async ({ page, baseURL }) => {
 		throw new Error(`Could not generate a login link: ${error?.message}`);
 	}
 
-	// The browser completes the link itself, so the session cookies are written
-	// by the app exactly as they are for a real visitor.
-	//
-	// `/auth/confirm` verifies nothing: it moves the token into a short-lived
-	// cookie and redirects to an interstitial, so a mail scanner or a link
-	// prefetcher cannot spend it. That means the token is only consumed when
-	// something presses the button, and the setup has to press it — going
-	// straight to /admin/dashboard leaves the session unmade and the token
-	// unspent.
+	// The browser completes the link itself, so cookies are written exactly as
+	// for a real visitor. `/auth/confirm` verifies nothing - it moves the token
+	// into a short-lived cookie and redirects to an interstitial, so a mail
+	// scanner can't spend it. The token is only consumed on button press, so
+	// this setup has to press it - skipping straight to /admin/dashboard
+	// leaves the session unmade.
 	await page.goto(
 		`${baseURL}/auth/confirm?token_hash=${data.properties.hashed_token}&type=email`,
 	);

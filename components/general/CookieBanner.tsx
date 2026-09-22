@@ -35,7 +35,6 @@ const CookieBanner = () => {
 			return;
 		}
 
-		// Initialize GTM consent on component mount
 		initializeGTMConsent();
 
 		if (isSignedIn) {
@@ -45,18 +44,15 @@ const CookieBanner = () => {
 				| undefined;
 			if (stored?.accepted) {
 				savePreferences(stored);
-				// Apply existing consent to GTM
 				updateGTMConsent(stored.analytics, stored.marketing);
 				setIsVisible(false);
 			} else {
 				setIsVisible(true);
 			}
 		} else {
-			// For non-logged-in users, check localStorage
 			const hasLocalPreferences = !!localStorage.getItem(COOKIE_KEY);
 			if (hasLocalPreferences) {
 				const localPrefs = loadPreferences();
-				// Apply existing consent to GTM
 				updateGTMConsent(localPrefs.analytics, localPrefs.marketing);
 				setIsVisible(false);
 			} else {
@@ -74,13 +70,10 @@ const CookieBanner = () => {
 			marketing: true,
 		});
 
-		// Update GTM consent
 		updateGTMConsent(true, true);
 
 		await updateUserConsent(prefs, isSignedIn);
 		setIsVisible(false);
-
-		// Track accept all event
 		trackGTMEvent("cookie_banner_accept_all");
 	};
 
@@ -91,13 +84,10 @@ const CookieBanner = () => {
 			marketing: false,
 		});
 
-		// Update GTM consent
 		updateGTMConsent(false, false);
 
 		await updateUserConsent(prefs, isSignedIn);
 		setIsVisible(false);
-
-		// Track essential only event
 		trackGTMEvent("cookie_banner_essential_only");
 	};
 

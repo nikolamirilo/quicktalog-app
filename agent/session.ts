@@ -32,13 +32,9 @@ const MAX_SNAPSHOT_ITEMS = 40;
 /** Each one is a Firecrawl credit and a chunk of context; the loop has 16 steps. */
 const MAX_FETCHES_PER_TURN = 3;
 /**
- * How long a request keeps taking new steps before it hands the rest of the
- * plan to the next one.
- *
- * It has to clear three ceilings in order: the step already in flight has to
- * finish, `AGENT_TIMEOUT_MS` in the route aborts the stream, and the platform
- * kills the function at `maxDuration`. Stopping at 38s leaves room for a slow
- * `addSection` - forty items and twenty photo lookups - to land.
+ * How long a request keeps taking new steps before handing the rest of the
+ * plan to the next one. Stops at 38s to clear `AGENT_TIMEOUT_MS` and the
+ * platform's `maxDuration`, with room for a slow `addSection` to land.
  */
 const TURN_BUDGET_MS = 38_000;
 
@@ -92,13 +88,7 @@ export class CatalogueSession {
 		this.fetches = fetches;
 	}
 
-	/**
-	 * False once the request has spent its share of the function budget.
-	 *
-	 * Read by the agent's stop condition after every step, so the loop ends on
-	 * a clean boundary with its work streamed and the plan's remaining tasks
-	 * left for the next request.
-	 */
+	/** False once the request has spent its share of the function budget; checked after every step so the loop ends on a clean boundary. */
 	outOfTime(): boolean {
 		return Date.now() - this.startedAt > TURN_BUDGET_MS;
 	}
@@ -127,11 +117,7 @@ export class CatalogueSession {
 		return this.settleTask(index, "skipped", reason);
 	}
 
-	/**
-	 * A task that can never be settled is the one way the browser's resume loop
-	 * spins, so both outcomes are always available to the model - `skipTask` is
-	 * the way out of a task the plan, the catalogue or the user makes impossible.
-	 */
+	/** `skipTask` is always available so a task the model can't complete can't spin the resume loop forever. */
 	private settleTask(
 		index: number,
 		status: Exclude<PlanTaskStatus, "pending">,

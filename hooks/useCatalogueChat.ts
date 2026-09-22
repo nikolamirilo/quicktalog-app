@@ -25,9 +25,7 @@ function parseErrorCode(error: Error): string | undefined {
 	}
 }
 
-/** Extract a user-facing message from an error. Auth/quota errors arrive as a
- *  JSON body of the form `{ error, code }`; stream errors arrive as the plain
- *  string returned by the route's `onError`. Falls back to the raw message. */
+/** Extract a user-facing message: auth/quota errors are `{ error, code }` JSON, stream errors are plain strings. */
 function parseErrorMessage(error: Error | undefined): string | undefined {
 	if (!error?.message) return undefined;
 	try {
@@ -39,53 +37,35 @@ function parseErrorMessage(error: Error | undefined): string | undefined {
 }
 
 /**
- * Drives the builder's AI agent.
+ * Drives the builder's AI agent. Tool parts stream back with id-addressed
+ * edits, replayed live against the builder draft as the agent works - so
+ * hand-made edits mid-turn aren't clobbered. Attached images are scanned in
+ * the browser and ride along as a second text part.
  *
- * The agent streams its work back as tool parts. Each one that resolves carries
- * the edit it made to the server's working copy, which is replayed here against
- * the live builder draft - so the catalogue fills in as the agent works rather
- * than all at once at the end. Operations are id-addressed, so edits the user
- * makes by hand mid-turn are not clobbered.
+ * A multi-part request comes back as a plan (a to-do list ticked off as it
+ * works); the server stops each request before its function times out, so
+ * finishing the list takes several requests - sending those is this hook's
+ * job (the loop below), guarded against a confused model looping forever.
  *
- * Attached images are scanned in the browser and ride along as a second text
- * part of the user's turn, so the agent works from the words on the photo.
- *
- * A request with several things in it comes back as a plan: a to-do list the
- * agent writes before it starts, ticked off as it works. The server stops each
- * request before the function times out, so finishing the list takes more than
- * one - and sending those follow-up requests is this hook's job. The loop below
- * is what makes "add a drinks menu, translate it and restyle it" finish at all,
- * and the two guards on it are what keep a confused model from looping forever.
- *
- * Nothing is persisted: the user still saves or publishes with the normal
- * builder actions.
+ * Nothing is persisted here: the user still saves/publishes normally.
  */
 export function useCatalogueChat() {
 	const context = useCatalogueContext();
 	const { userData, refreshUserData } = useUserContext();
-	// The catalogue's language is the one Tesseract is asked to read in; it is
-	// already a Tesseract code, chosen when the catalogue was created.
+	// Catalogue language is already a Tesseract code, chosen at creation.
 	const attachments = useChatImageOcr(context?.catalogue?.language);
 	const [showAiLimits, setShowAiLimits] = useState(false);
 	const [contentLimitHit, setContentLimitHit] = useState(false);
 
-	// Tool parts re-render on every stream chunk; this keeps an edit from being
-	// applied twice as its part settles.
+	// Tool parts re-render on every stream chunk; keeps an edit from applying twice as its part settles.
 	const appliedCalls = useRef(new Set<string>());
 
-	// Resume-loop state. Refs rather than state: nothing here should re-render
-	// the panel, and the continuation effect has to read the values it just
-	// wrote on the very next pass.
+	// Resume-loop state as refs: shouldn't re-render the panel, and the
+	// continuation effect must read values it just wrote on the next pass.
 	const continuations = useRef(0);
 	const lastRevision = useRef(-1);
 	const abandoned = useRef(false);
-	/**
-	 * Id of the last message the loop has already ruled on.
-	 *
-	 * The effect re-runs on anything that touches the draft, and for a moment
-	 * after a round ends the status is still "ready" - so without this it would
-	 * either fire twice or read its own dispatch as a round that changed nothing.
-	 */
+	/** Id of the last message the loop already ruled on - guards against firing twice while `status` is momentarily stale. */
 	const settledFor = useRef<string | null>(null);
 	const [planHalt, setPlanHalt] = useState<PlanHalt | null>(null);
 
@@ -100,8 +80,7 @@ export function useCatalogueChat() {
 	} = useChat<CatalogueAgentUIMessage>({
 		transport: new DefaultChatTransport({ api: "/api/agent" }),
 		onError: (err) => {
-			// The client gate below catches most of these, but the server's check
-			// is the authoritative one and arrives as a failed response body.
+			// The client gate below catches most; the server's check is authoritative.
 			if (parseErrorCode(err) === "limit") setShowAiLimits(true);
 		},
 	});
@@ -121,9 +100,7 @@ export function useCatalogueChat() {
 				if (!output) continue;
 
 				appliedCalls.current.add(part.toolCallId);
-				// The agent enforces plan ceilings on the server, so an edit refused
-				// for that reason never reaches the draft. This is the only signal
-				// left that the user should be offered an upgrade.
+				// Plan-ceiling refusals never reach the draft; this is the only signal left to offer an upgrade.
 				if (output.ok === false) {
 					if (output.limitReached) setContentLimitHit(true);
 					continue;
@@ -141,12 +118,7 @@ export function useCatalogueChat() {
 		[messages],
 	);
 
-	/**
-	 * The turn the server charged for this ask. It comes back in the assistant
-	 * message metadata, and every continuation sends it back, so a plan spanning
-	 * several requests is one charge rather than one per request. A missing or
-	 * stale id is simply charged again, which is the safe direction.
-	 */
+	/** The turn charged for this ask; continuations resend it so a multi-request plan is one charge, not several. */
 	const rootTurnId: string | null = useMemo(() => {
 		for (let i = messages.length - 1; i >= 0; i--) {
 			const message = messages[i];
@@ -157,23 +129,15 @@ export function useCatalogueChat() {
 		}
 		return null;
 	}, [messages]);
-	// Send the next request of an unfinished plan.
-	//
-	// The server stops each request short of the function timeout, so a plan with
-	// tasks left is not a failure - it is a pause, and this is what un-pauses it.
-	// The whole history goes back with it, and so does the live draft, which has
-	// already had this round's edits replayed into it: that is how the next
-	// request knows what was done without anything being stored server-side.
-	//
-	// `resumeDecision` holds the policy; this only carries it out.
+	// Un-pauses an unfinished plan: sends the whole history plus the live draft
+	// (already carrying this round's edits), which is how the next request knows
+	// what was done without server-side storage. `resumeDecision` holds the policy.
 	useEffect(() => {
 		if (status !== "ready") return;
 		if (abandoned.current || !context?.catalogue?.name) return;
 
-		// Only ever act on a finished round, which always ends with the agent
-		// speaking. A user message on top means either the ask that was just
-		// submitted or the resume turn this effect itself wrote a moment ago -
-		// reading that as a round would call a fresh dispatch a stalled one.
+		// Only act on a finished round (ends with the agent speaking); a trailing
+		// user message is either the fresh ask or this effect's own resume turn.
 		const last = messages[messages.length - 1];
 		if (!last || last.role === "user") return;
 		if (settledFor.current === last.id) return;
@@ -207,9 +171,7 @@ export function useCatalogueChat() {
 		);
 	}, [status, plan, error, context, messages, sendMessage, rootTurnId]);
 
-	// Usage is metered server-side once the turn finishes; refresh so the limit
-	// modal and the dashboard counter stay accurate. `status` is "ready" on mount
-	// too, so only refresh once a turn has actually run.
+	// Refresh usage after a turn finishes (not on mount, where status is also "ready").
 	const hasRun = useRef(false);
 	useEffect(() => {
 		if (loading) hasRun.current = true;
@@ -234,18 +196,16 @@ export function useCatalogueChat() {
 			return;
 		}
 
-		// An error left over from the last ask would read as this one failing.
-		clearError();
+		clearError(); // a leftover error from the last ask would read as this one failing
 
-		// A new ask starts a new plan, so the loop starts over with it.
+		// A new ask starts a new plan, so the loop starts over.
 		continuations.current = 0;
 		lastRevision.current = -1;
 		settledFor.current = null;
 		abandoned.current = false;
 		setPlanHalt(null);
 
-		// A second text part rather than one concatenated string: the bubble can
-		// then collapse the scan on its own instead of picking it back apart.
+		// A second text part, not one concatenated string, so the bubble can collapse the scan on its own.
 		const scanned = attachments.context;
 		void sendMessage(
 			{
@@ -263,9 +223,7 @@ export function useCatalogueChat() {
 				},
 			},
 		);
-		// The scan is in the history now; keeping the thumbnails would send it
-		// again on the next turn.
-		attachments.clear();
+		attachments.clear(); // the scan is in history now; keeping thumbnails would resend it
 	};
 
 	const reset = () => {
@@ -274,9 +232,7 @@ export function useCatalogueChat() {
 		clearError();
 		appliedCalls.current.clear();
 		attachments.clear();
-		// Clearing the conversation has to stop the plan too, not just the request
-		// in flight - otherwise the next round fires into an empty transcript.
-		abandoned.current = true;
+		abandoned.current = true; // must stop the plan too, not just the in-flight request
 		continuations.current = 0;
 		lastRevision.current = -1;
 		settledFor.current = null;

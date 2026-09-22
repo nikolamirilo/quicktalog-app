@@ -11,7 +11,6 @@ import {
 } from "react-icons/fi";
 import CreateCatalogueButton from "../dashboard/components/CreateCatalogueButton";
 
-// Static data for reusability
 const valuePropositions = [
 	{ icon: FiClock, text: "Go live in under 5 minutes" },
 	{ icon: FiSmartphone, text: "Works on any device" },
@@ -23,7 +22,6 @@ const trustIndicators = [
 	{ icon: FiCheck, text: "Start with our free plan" },
 ];
 
-// Reusable component for icons with text
 const IconText: React.FC<{ icon: React.ElementType; text: string }> = ({
 	icon: Icon,
 	text,
@@ -111,7 +109,7 @@ const Hero: React.FC = () => {
 						fetchPriority="high"
 						height={340 * 1.6}
 						sizes="(max-width: 1024px) 90vw, 900px"
-						src="/images/hero.png"
+						src="/images/marketing/hero.png"
 					/>
 				</div>
 			</div>

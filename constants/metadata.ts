@@ -3,7 +3,6 @@ import type { DocMeta } from "@/content/docs/_types";
 import { KEYWORDS } from "@/constants";
 import { Metadata } from "next";
 
-// Site-wide metadata
 const siteMetadata = {
 	title: "Quicktalog - Free Online Catalogue Maker",
 	description:
@@ -18,17 +17,16 @@ const siteMetadata = {
 		locale: "en_US",
 		url: "https://www.quicktalog.app",
 		siteName: "Quicktalog",
-		images: ["/opengraph-image.png"],
+		images: ["/images/brand/opengraph-image.png"],
 	},
 	twitter: {
 		card: "summary_large_image",
 		site: "@quicktalog",
 		creator: "@quicktalog",
-		images: ["/twitter-image.png"],
+		images: ["/images/brand/twitter-image.png"],
 	},
 };
 
-// Page-specific metadata
 export const pageMetadata = {
 	home: {
 		title: "Quicktalog - Create Stunning Digital Catalogs in Minutes",
@@ -96,6 +94,12 @@ export const pageMetadata = {
 			"Practical guides on digital menus, product catalogs, QR codes, and growing your business with Quicktalog.",
 		url: "https://www.quicktalog.app/articles",
 	},
+	releaseNotes: {
+		title: "Release Notes - What's New in Quicktalog",
+		description:
+			"See what's new, improved, and fixed in Quicktalog. Track every update to the digital catalog builder, AI tools, and analytics.",
+		url: "https://www.quicktalog.app/release-notes",
+	},
 	authentication: {
 		title: "Login & Sign Up - Access Your Quicktalog Account",
 		description:
@@ -104,7 +108,6 @@ export const pageMetadata = {
 	},
 };
 
-// Helper function to generate metadata for a page
 export function generatePageMetadata(
 	page: keyof typeof pageMetadata,
 ): Metadata {

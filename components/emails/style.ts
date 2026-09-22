@@ -1,4 +1,3 @@
-// Styles using your product color system
 export const main = {
 	fontFamily: '"Inter", "Segoe UI", "Roboto", sans-serif',
 	backgroundColor: "#f3f3f5", // product-background-hero

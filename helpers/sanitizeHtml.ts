@@ -1,23 +1,13 @@
 import sanitize from "sanitize-html";
 
 /**
- * Allowlist for the markup that reaches a published catalogue.
- *
- * Three sinks render author-supplied HTML straight into the page through
- * `HtmlContent`: a text section's `content`, the catalogue `heading`, and an
- * embedding block's `code`. All three can be written by the AI editor, which
- * means all three can be written under the influence of text it did not get
- * from the user - a fetched web page, or the OCR of a photo someone handed
- * them to scan. `<img src=x onerror=...>` is enough, and a published catalogue
- * is served from the same origin as the signed-in app.
- *
- * So the markup is filtered where it is rendered rather than where it is
- * written: that covers the AI, the builder, imported catalogues and rows that
- * predate any of this, in one place.
- *
- * Allowlist, never a blocklist. Anything not named here is dropped, which is
- * what makes `on*` handlers, `<script>`, `<form>` and `<svg>` a non-issue
- * without enumerating them.
+ * Allowlist for the markup that reaches a published catalogue. Three sinks
+ * render author HTML via `HtmlContent` (a text section's `content`, the
+ * catalogue `heading`, an embedding block's `code`), all writable by the AI
+ * editor under the influence of untrusted text - a fetched page, an OCR scan -
+ * on the same origin as the signed-in app. So markup is filtered at render,
+ * not at write, covering AI, builder and imports in one place. Allowlist,
+ * never a blocklist, so `on*`/`<script>`/`<form>`/`<svg>` need no enumeration.
  */
 
 /** Hosts an `embedding` block may point an iframe at. */

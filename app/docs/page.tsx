@@ -50,10 +50,10 @@ export default function DocsIndexPage() {
 							</p>
 							<ArticleImage
 								alt="Six-step learning path from sign-up to a live shared catalogue"
+								className="mr-auto"
 								maxWidth="890px"
 								priority
-								className="mr-auto"
-								src="/documentation/docs-landing-cover.svg"
+								src="/images/documentation/docs-landing-cover.svg"
 							/>
 						</header>
 

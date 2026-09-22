@@ -92,7 +92,7 @@ function Body() {
 			<ArticleImage
 				alt="A Quicktalog digital menu open on a smartphone"
 				caption="A digital menu adapts to whatever screen your guest is holding."
-				src="/images/hero-mockup.png"
+				src="/images/marketing/hero-mockup.png"
 			/>
 
 			<Prose>

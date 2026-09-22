@@ -8,8 +8,7 @@ import { withUser } from "@/utils/db";
 
 const users = schema.users;
 
-// Kept small on purpose: the column has a 2 KiB size check, and anything the
-// banner does not send has no business being stored.
+// Kept small: the column has a 2 KiB size check.
 const preferencesSchema = z.object({
 	accepted: z.boolean(),
 	essential: z.boolean(),
@@ -20,12 +19,8 @@ const preferencesSchema = z.object({
 });
 
 /**
- * Stores the signed-in user's cookie choices on their own row. Consent used to
- * live in Clerk's public metadata, which the browser could read and which would
- * have been lost at the cutover.
- *
- * Visitors who are not signed in keep their choices in localStorage only; this
- * action simply reports that nothing was stored.
+ * Stores the signed-in user's cookie choices on their own row. Signed-out
+ * visitors keep choices in localStorage only; this reports nothing stored.
  */
 export async function saveCookiePreferences(
 	preferences: unknown,

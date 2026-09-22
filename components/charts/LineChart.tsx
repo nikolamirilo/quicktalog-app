@@ -8,7 +8,6 @@ interface LineChartProps {
 }
 
 export default function LineChart({ data = [] }: LineChartProps) {
-	// Prepare chart data from props
 	const categories = data.map((d) => d.date);
 	const seriesData = data.map((d) => d.count);
 

@@ -23,7 +23,6 @@ interface CatalogueContextType {
 		partial: Partial<Catalogue["appearance"]["style"]>,
 	) => void;
 	updateThemeColors: (colors: CustomThemeColors) => void;
-	// Sidebar state
 	isSidebarOpen: boolean;
 	setIsSidebarOpen: (open: boolean) => void;
 	/**
@@ -33,12 +32,10 @@ interface CatalogueContextType {
 	 */
 	isChatOpen: boolean;
 	setIsChatOpen: (open: boolean) => void;
-	// Block actions
 	addBlock: (block: ContentBlock, index?: number) => void;
 	removeBlock: (index: number) => void;
 	updateBlock: (index: number, data: Partial<ContentBlock>) => void;
 	moveBlock: (index: number, direction: "up" | "down") => void;
-	// Item actions
 	addItem: (blockIndex: number, item: Item) => void;
 	updateItem: (blockIndex: number, itemIndex: number, item: Item) => void;
 	removeItem: (blockIndex: number, itemIndex: number) => void;
@@ -52,7 +49,6 @@ interface CatalogueContextType {
 		itemIndex: number,
 		toBlockIndex: number,
 	) => void;
-	// AI chat actions
 	applyOperations: (
 		operations: CatalogueOperation[],
 		limits?: OperationLimits,
@@ -94,7 +90,6 @@ export const CatalogueContextProvider = ({
 		}));
 	};
 
-	// Block Actions
 	const addBlock = (block: ContentBlock, index?: number) => {
 		setCatalogue((prev) => {
 			const newContent = [...prev.content];
@@ -112,7 +107,6 @@ export const CatalogueContextProvider = ({
 		setCatalogue((prev) => {
 			const newContent = [...prev.content];
 			newContent.splice(index, 1);
-			// Re-order remaining sections
 			return { ...prev, content: reorderArray(newContent) };
 		});
 	};
@@ -132,23 +126,19 @@ export const CatalogueContextProvider = ({
 			const newContent = [...prev.content];
 			const targetIndex = direction === "up" ? index - 1 : index + 1;
 
-			// Bounds check
 			if (targetIndex < 0 || targetIndex >= newContent.length) {
 				return prev;
 			}
 
-			// Swap sections
 			[newContent[index], newContent[targetIndex]] = [
 				newContent[targetIndex],
 				newContent[index],
 			];
 
-			// Re-order all sections
 			return { ...prev, content: reorderArray(newContent) };
 		});
 	};
 
-	// Item Actions
 	const addItem = (blockIndex: number, item: Item) => {
 		setCatalogue((prev) => {
 			const newContent = [...prev.content];
@@ -204,7 +194,6 @@ export const CatalogueContextProvider = ({
 				const block = { ...originalBlock };
 				const newItems = [...block.items];
 				newItems.splice(itemIndex, 1);
-				// Re-order remaining items
 				block.items = reorderArray(newItems);
 				newContent[blockIndex] = block;
 			}
@@ -231,18 +220,15 @@ export const CatalogueContextProvider = ({
 				const newItems = [...block.items];
 				const targetIndex = direction === "up" ? itemIndex - 1 : itemIndex + 1;
 
-				// Bounds check
 				if (targetIndex < 0 || targetIndex >= newItems.length) {
 					return prev;
 				}
 
-				// Swap items
 				[newItems[itemIndex], newItems[targetIndex]] = [
 					newItems[targetIndex],
 					newItems[itemIndex],
 				];
 
-				// Re-order all items
 				block.items = reorderArray(newItems);
 				newContent[blockIndex] = block;
 			}

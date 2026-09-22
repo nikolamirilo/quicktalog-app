@@ -22,12 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-/**
- * Deliberately industry-neutral: a catalogue is as often a service list or a
- * product range as it is a menu, and a suggestion naming a cuisine reads as
- * "not for me" to everyone else. Each one still exercises a different group of
- * tools - sections, copy, prices, appearance - which is what the set is for.
- */
+/** Deliberately industry-neutral (a cuisine-specific suggestion reads as "not for me" to everyone else); each exercises a different tool group. */
 const SUGGESTIONS = [
 	"Add a new section with 6 items",
 	"Make every description shorter and friendlier",
@@ -48,12 +43,7 @@ const TypingDots = () => (
 	</span>
 );
 
-/**
- * Is the assistant visibly saying something of its own right now - text
- * arriving token by token, or a tool part still showing its spinner line?
- * Anything else (a settled tool, a finished paragraph, a user turn) leaves the
- * panel static while the agent keeps working.
- */
+/** Is the assistant visibly saying something right now - streaming text, or a tool still showing its spinner line? */
 const isNarrating = (message?: CatalogueAgentUIMessage): boolean => {
 	if (message?.role !== "assistant") return false;
 	const part = message.parts[message.parts.length - 1];
@@ -66,13 +56,10 @@ const isNarrating = (message?: CatalogueAgentUIMessage): boolean => {
 
 /**
  * Floating AI assistant for the catalogue builder. Edits land in
- * `CatalogueContext` straight away; the user still saves or publishes with the
- * normal builder actions.
- *
- * The panel pins itself to the Quicktalog product font (`font-lora`) rather
- * than inheriting: the builder writes the catalogue's own theme font onto
- * `documentElement`, and the assistant is product chrome, not catalogue
- * content.
+ * `CatalogueContext` immediately; the user still saves/publishes normally.
+ * Pinned to the product font (`font-lora`) rather than inherited, since the
+ * builder writes the catalogue's own theme font onto `documentElement` and
+ * this panel is product chrome, not catalogue content.
  */
 const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 	const context = useCatalogueContext();
@@ -107,15 +94,12 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 		});
 	}, [messages, loading, attachments.images]);
 
-	// Pasting a screenshot is the fastest way to get a printed menu in here, so
-	// it goes through the same scan as the picker. Ignored mid-turn, matching
-	// the attach button.
+	// Pasted screenshots go through the same scan as the picker; ignored mid-turn, matching the attach button.
 	usePastedImages(panelRef, (files) => {
 		if (!loading) attachments.attach(files);
 	});
 
-	// Grow with the text. Reset to auto first so it shrinks again on delete;
-	// `max-h` on the element caps it and hands over to scrolling.
+	// Grow with the text; reset to auto first so it shrinks on delete. `max-h` caps it and hands over to scrolling.
 	useEffect(() => {
 		const field = inputRef.current;
 		if (!field) return;
@@ -140,14 +124,8 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 	};
 
 	const isEmpty = messages.length === 0 && !loading;
-	// The assistant narrates itself while text streams in or a tool is running,
-	// so the standalone indicator would be a duplicate right then. Every other
-	// moment of the turn is silent - waiting on the first token, and the
-	// round-trip after each tool settles, which is most of a long turn - and
-	// needs the indicator to stay up.
-	// While a plan is running the checklist is the status display: it names the
-	// task in flight, which the dots never could, and it stays up through the
-	// gaps between requests where nothing is streaming at all.
+	// Only shown when the assistant isn't already narrating itself (streaming text
+	// or a running tool), and not while a plan's checklist is the status display instead.
 	const isThinking =
 		loading && !plan && !isNarrating(messages[messages.length - 1]);
 

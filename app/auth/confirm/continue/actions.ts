@@ -5,13 +5,16 @@ import { cookies } from "next/headers";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
 import { clientIp } from "@/lib/http/client-ip";
 import { withinRateLimit } from "@/lib/rate-limit";
-import { createForwardedAuthClient } from "@/utils/supabase/server-forwarded";
+import {
+	AuthConfigError,
+	createForwardedAuthClient,
+} from "@/utils/supabase/server-forwarded";
 
 export type ConfirmResult =
 	| { ok: true; email: string | null; next: string }
 	| {
 			ok: false;
-			code: "rate_limited" | "signed_in" | "expired" | "link";
+			code: "rate_limited" | "signed_in" | "expired" | "link" | "config";
 	  };
 
 const TYPES = new Set(["email", "recovery", "email_change"]);
@@ -67,6 +70,15 @@ export async function confirmEmailToken(): Promise<ConfirmResult> {
 			next: type === "recovery" ? "/auth/update-password" : "/admin/dashboard",
 		};
 	} catch (err) {
+		// A missing SUPABASE_SECRET_KEY is not an expired link, and telling the
+		// visitor to request a new one would send them round the loop forever.
+		if (err instanceof AuthConfigError) {
+			Sentry.captureException(err, {
+				level: "error",
+				tags: { op: "confirmEmailToken", reason: "misconfigured" },
+			});
+			return { ok: false, code: "config" };
+		}
 		Sentry.captureException(err, { tags: { op: "confirmEmailToken" } });
 		return { ok: false, code: "link" };
 	}

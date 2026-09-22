@@ -1,26 +1,16 @@
 import { z } from "zod";
 
 /**
- * A multi-part request, broken into tasks the agent works one after another.
- *
- * The point is the 60-second function ceiling on `/api/agent`. One request
- * cannot finish "add a drinks menu, translate everything, restyle it and embed
- * our map", and being killed halfway leaves the draft in a state nobody can
- * describe. So the agent writes the list down first, works what fits in its
- * budget, and the browser sends it back for another go until the list is done.
- *
- * The plan is never stored server-side. It rides in the message history as the
- * output of the plan tools and is read back out on the next request, exactly
- * the way `loadedSkillsFromMessages` recovers loaded skills.
+ * A multi-part request, broken into tasks the agent works one after another,
+ * to fit the 60s ceiling on `/api/agent`: the agent writes the list down,
+ * works what fits, and the browser resends until it's done. Never stored
+ * server-side - it rides in the message history like `loadedSkillsFromMessages`.
  */
 
 /**
- * Opens the turn the builder sends to resume a plan.
- *
- * Three things key off it: the route, which only restores a plan when it sees
- * one; the model, whose instructions explain that this turn is not the user
- * speaking; and the chat bubble, which renders nothing for it so the transcript
- * shows one request rather than nine.
+ * Opens the turn the builder sends to resume a plan. The route restores a plan
+ * only when it sees this; the model is told this turn isn't the user speaking;
+ * the chat bubble renders nothing for it.
  */
 export const CONTINUE_PLAN_MARKER = "[Continue the plan]";
 
@@ -43,11 +33,7 @@ export interface PlanTask {
 
 export interface PlanState {
 	tasks: PlanTask[];
-	/**
-	 * Bumped on every change. The browser compares it across rounds: a round
-	 * that moves nothing ends the loop, so a model that stops settling tasks
-	 * cannot spin forever.
-	 */
+	/** Bumped on every change; a round that moves nothing ends the resume loop. */
 	revision: number;
 }
 
@@ -105,12 +91,7 @@ const textParts = (message: unknown): string[] => {
 		.map((part) => part.text);
 };
 
-/**
- * Where the current ask begins: the last thing the user actually typed.
- *
- * Everything after it - the agent's work, and the builder's resume turns -
- * belongs to that ask. Everything before it belongs to an earlier one.
- */
+/** Where the current ask begins: the last thing the user actually typed. */
 function currentAskFrom(messages: unknown[]): number {
 	for (let index = (messages ?? []).length - 1; index >= 0; index -= 1) {
 		const message = messages[index] as { role?: string } | undefined;
@@ -122,12 +103,7 @@ function currentAskFrom(messages: unknown[]): number {
 	return 0;
 }
 
-/**
- * Every part of every message belonging to the ask in progress.
- *
- * The unit anything per-ask has to be counted over: a plan spans several
- * requests, so a budget scoped to one request is not a budget at all.
- */
+/** Every part of every message belonging to the ask in progress - the unit per-ask budgets are counted over. */
 export function currentAskParts(messages: unknown[]): unknown[] {
 	const parts: unknown[] = [];
 	for (const message of (messages ?? []).slice(currentAskFrom(messages))) {
@@ -138,15 +114,10 @@ export function currentAskParts(messages: unknown[]): unknown[] {
 }
 
 /**
- * The plan belonging to the ask in progress, or null if it needed none.
- *
- * Scoped to the current ask rather than the whole transcript, because a plan
- * the user walked away from must not come back: they abandon a half-finished
- * list by simply typing something else, and without this the resume loop would
- * pick the old one back up and carry on editing their catalogue.
- *
- * Within the ask, last in document order wins rather than highest revision -
- * revisions count from one again each time a plan is written.
+ * The plan belonging to the ask in progress, or null if it needed none. Scoped
+ * to the current ask, not the whole transcript, so an abandoned plan can't
+ * resurface when the user just types something else. Last in document order
+ * wins, not highest revision - revisions restart at each new plan.
  */
 export function planFromMessages(messages: unknown[]): PlanState | null {
 	let newest: PlanState | null = null;
@@ -161,9 +132,7 @@ export function planFromMessages(messages: unknown[]): PlanState | null {
 		if (typed.state !== "output-available") continue;
 
 		const parsed = planStateSchema.safeParse(typed.output?.plan);
-		// Rebuilt field by field rather than taken as-is: `strict` is off in
-		// this project, so zod's inferred output does not line up with
-		// `PlanState`, and anything else the part carried is dropped here.
+		// Rebuilt field by field: `strict` is off, so zod's output doesn't line up with `PlanState`.
 		if (parsed.success) {
 			newest = {
 				tasks: parsed.data.tasks.map((task) => ({
@@ -180,11 +149,9 @@ export function planFromMessages(messages: unknown[]): PlanState | null {
 }
 
 /**
- * Pages already read while working on this ask.
- *
- * The fetch budget lives on the session, which is rebuilt per request - so
- * without this a plan spanning five requests would get three fetches each.
- * Counts settled calls, matching `allowWebFetch`, where a retry costs too.
+ * Pages already read for this ask. The fetch budget lives on the session,
+ * rebuilt per request, so without this a five-request plan would get fetches
+ * reset each time. Counts settled calls, matching `allowWebFetch`.
  */
 export function fetchesFromMessages(messages: unknown[]): number {
 	return currentAskParts(messages).filter((part) => {
@@ -204,14 +171,7 @@ export function isPlanContinuation(messages: unknown[]): boolean {
 	return textParts(last).some((text) => text.trim() === CONTINUE_PLAN_MARKER);
 }
 
-/**
- * How many times the builder will resume a plan on its own.
- *
- * Twelve tasks at a couple per request is the worst realistic case, so eight is
- * headroom rather than a target. It is the backstop for a case the checks below
- * miss: without a hard stop, a loop that never settles anything would bill the
- * user for requests they did not ask for.
- */
+/** Hard cap on auto-resumes; backstop against an unsettling loop billing unwanted requests. */
 export const MAX_PLAN_CONTINUATIONS = 8;
 
 /** Why the builder stopped resuming a plan before its list was finished. */
@@ -233,26 +193,17 @@ export type ResumeDecision =
 	| { action: "halt"; halt: PlanHalt }
 	| { action: "wait" };
 
-/**
- * What the builder should do now that a round has finished.
- *
- * Kept away from React because it is the part that must not be wrong: every
- * path that is not "resume" has to be reachable, or an agent having a bad day
- * turns into an unbounded run of requests the user pays for.
- */
+/** What the builder should do now that a round has finished. Kept out of React since every non-"resume" path must be reachable, or a bad run becomes unbounded. */
 export function resumeDecision(state: ResumeState): ResumeDecision {
 	const { plan, failed, continuations, lastRevision } = state;
 
-	// No plan, or every task settled: the request is finished either way.
+	// No plan, or every task settled: finished either way.
 	if (!plan || isPlanFinished(plan)) return { action: "wait" };
 
-	// Whatever broke is unlikely to fix itself on a retry, and the checklist is
-	// left showing exactly how far the plan got.
+	// Unlikely to fix itself on a retry; checklist shows how far it got.
 	if (failed) return { action: "halt", halt: "failed" };
 
-	// Nothing moved since the last round. Either the model stopped settling
-	// tasks, or every task left keeps failing; sending the same request again
-	// would only charge the user to watch it happen twice.
+	// Nothing moved since the last round - resending would just charge the user twice.
 	if (plan.revision === lastRevision)
 		return { action: "halt", halt: "stalled" };
 

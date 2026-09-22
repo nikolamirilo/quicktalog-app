@@ -22,14 +22,14 @@ const meta = {
 		"create digital catalogue",
 	],
 	relatedSlugs: ["create-a-catalogue", "build-and-edit"],
-	coverImage: "/documentation/getting-started-cover.svg",
+	coverImage: "/images/documentation/getting-started-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/getting-started-cover.svg"
+				src="/images/documentation/getting-started-cover.svg"
 				alt="Overview of the Quicktalog platform showing a digital catalogue on multiple devices"
 				maxWidth="640px"
 				priority
@@ -71,7 +71,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/getting-started-account-setup.svg"
+				src="/images/documentation/getting-started-account-setup.svg"
 				alt="Quicktalog account setup screen showing the sign-up form and plan selection"
 				maxWidth="640px"
 			/>
@@ -87,7 +87,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/getting-started-dashboard.svg"
+				src="/images/documentation/getting-started-dashboard.svg"
 				alt="Quicktalog dashboard showing a list of catalogues with their status and quick actions"
 			/>
 
@@ -129,7 +129,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/getting-started-workflow.svg"
+				src="/images/documentation/getting-started-workflow.svg"
 				alt="Quicktalog workflow diagram: create a draft, build it in the builder, share with a link or QR code, then track performance"
 			/>
 		</>

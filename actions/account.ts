@@ -20,11 +20,7 @@ const users = schema.users;
 
 export type AccountResult = { success: boolean; error?: string };
 
-/**
- * The display name, normalised before it is stored: the same string ends up in
- * the dashboard, in transactional email and in the CRM, so leading space,
- * runs of whitespace and control characters are removed rather than persisted.
- */
+/** Display name, normalised before storage: no control chars, collapsed whitespace. */
 const nameSchema = z
 	.string()
 	.max(200)
@@ -38,13 +34,8 @@ const nameSchema = z
 	);
 
 /**
- * Renames the signed-in user. The id comes from the session, never from the
- * caller, and the write runs as `app_user`, which may set `name` and nothing
- * else on its own row.
- *
- * Rate limited to five changes an hour per user: a rename rewrites the row and
- * fires the CRM sync trigger, so an unbounded loop here is an outbound spam
- * pump. The limit fails closed, because it is the only bound there is.
+ * Renames the signed-in user (id from the session, not the caller).
+ * Rate limited: a rename fires the CRM sync trigger, so it must not be abusable.
  */
 export async function updateProfile(name: string): Promise<AccountResult> {
 	try {
@@ -71,8 +62,7 @@ export async function updateProfile(name: string): Promise<AccountResult> {
 		);
 		if (!row) return { success: false, error: "Account not found." };
 
-		// Outside the transaction: revalidation must never hold a pooled
-		// connection open.
+		// Outside the transaction: revalidation must never hold a pooled connection.
 		revalidateDashboard();
 		return { success: true };
 	} catch (err) {
@@ -84,49 +74,19 @@ export async function updateProfile(name: string): Promise<AccountResult> {
 }
 
 /**
- * Deletes the signed-in user's account: their Paddle subscriptions, their
- * `auth.users` record, everything that hangs off it, and their cached drafts.
- *
- * The order is the whole point of this function, because the two systems cannot
- * be updated in one transaction:
- *
- * 1. `requireFreshUser()` rather than `requireIdentity()`. An access token stays
- *    valid for up to an hour after a ban or a sign-out everywhere, and this is
- *    not an operation to run for a token whose user may already be gone.
- * 2. Read the footprint while the row still exists. The subscriptions are
- *    reachable only through `users.customer_id` and the drafts only through the
- *    catalogue ids; step 4 takes both away.
- * 3. Cancel Paddle BEFORE anything is deleted, and abort the whole deletion if a
- *    cancellation fails. If the account went first, the customer link would be
- *    gone, nobody could find the subscription, and an account that no longer
- *    exists would keep being charged. A failure here leaves the user whole in
- *    both systems and they can try again; the only cost is a visible error.
- * 4. `deleteUser` is the single irreversible step, and it is also the only one
- *    that touches two systems at once: GoTrue's delete fires the `auth.users`
- *    delete trigger, which removes `public.users` in the same database
- *    transaction and cascades to catalogues, usage and subscriptions. There is
- *    therefore no state where the auth user is gone and the app row survives, or
- *    the other way round. The app never deletes `public.users` itself.
- * 5. Redis and revalidation come last and are best effort. They cannot be
- *    retried usefully (the account is already gone), and being stale is
- *    harmless: draft keys are catalogue ids, which are never reused, the keys
- *    expire on their own, and a public page 404s as soon as it re-renders. A
- *    failure is reported to Sentry, not to the caller.
- *
- * The one window that cannot be closed: if step 4 fails after step 3 succeeded,
- * the subscription is cancelled but the account still exists. That direction is
- * chosen deliberately — cancelled-but-alive is visible to the user and can be
- * fixed by subscribing again, deleted-but-still-charged is neither.
- *
- * No database transaction is open across the Paddle calls, the Redis delete or
- * the revalidations; each database read is its own short transaction.
+ * Deletes the signed-in user: Paddle subscriptions, then `auth.users` (whose
+ * delete trigger cascades `public.users`), then cached drafts. Paddle must be
+ * cancelled first and the whole deletion aborts if that fails, or a deleted
+ * account could keep being charged with no subscription left to find. Redis
+ * and revalidation run last, best effort, since the account is already gone.
+ * Uses `requireFreshUser`, not `requireIdentity`: a stale token can outlive a
+ * ban or sign-out-everywhere by up to an hour.
  */
 export async function deleteAccount(): Promise<AccountResult> {
 	try {
 		const me = await requireFreshUser();
 
-		// The admin auth API only knows Supabase users. Under Clerk the account
-		// UI lives in Clerk, and this action must do nothing at all.
+		// Admin auth API only knows Supabase users; Clerk accounts manage this in Clerk.
 		if (me.provider !== "supabase") {
 			return {
 				success: false,
@@ -174,7 +134,10 @@ export async function deleteAccount(): Promise<AccountResult> {
 		);
 		for (const name of footprint.catalogueNames) revalidateCatalogue(name);
 		revalidateCatalogue();
-		revalidateDashboard();
+		// No revalidateDashboard(): the user is gone, so there's no dashboard left to
+		// refresh for them, and doing it here re-renders the still-mounted dashboard
+		// page mid-delete with the now-deleted session, throwing a benign but noisy
+		// not_found from getUserData.
 
 		return { success: true };
 	} catch (err) {
@@ -188,10 +151,7 @@ export async function deleteAccount(): Promise<AccountResult> {
 	}
 }
 
-/**
- * A signed-out or stale caller is not an incident, so it is answered rather than
- * reported to Sentry. Not exported: a `"use server"` file exports actions only.
- */
+/** A signed-out/stale caller is not an incident, so it's answered, not reported to Sentry. */
 function isUnauthorized(err: unknown): boolean {
 	return err instanceof UnauthorizedError;
 }

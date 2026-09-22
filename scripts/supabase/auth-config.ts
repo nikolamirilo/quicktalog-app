@@ -37,7 +37,16 @@ const SECRET_FIELDS: Record<string, string> = {
 function usage(message: string): never {
 	console.error(`${message}
 
-usage: npx tsx scripts/supabase/auth-config.ts --project <test|prod> [--check|--apply]`);
+usage: npx tsx scripts/supabase/auth-config.ts --project <test|prod> [--check|--apply]
+                                              [--only a,b] [--skip a,b]
+
+  --only  apply (or report) just these settings
+  --skip  apply (or report) everything except these
+
+Use them to land a change in stages. Some settings are only safe once
+something else is in place — captcha needs the site key deployed in the app
+first, or every sign-in is rejected — and the Management API applies the whole
+batch or none of it, so one unsafe field blocks the rest.`);
 	process.exit(2);
 }
 
@@ -49,7 +58,50 @@ function parseArgs() {
 	}
 	const apply = args.includes("--apply");
 	const check = args.includes("--check") || !apply;
-	return { project, apply, check };
+
+	const list = (flag: string): string[] => {
+		const index = args.indexOf(flag);
+		if (index === -1) return [];
+		const value = args[index + 1];
+		if (!value || value.startsWith("--"))
+			usage(`${flag} needs a comma-separated list`);
+		return value
+			.split(",")
+			.map((field) => field.trim())
+			.filter(Boolean);
+	};
+	const only = list("--only");
+	const skip = list("--skip");
+	for (const field of only) {
+		if (skip.includes(field)) usage(`${field} is in both --only and --skip`);
+	}
+	return { project, apply, check, only, skip };
+}
+
+/**
+ * `"file:supabase/templates/x.html"` loads that file, relative to the repo root.
+ *
+ * Email templates are HTML and belong in .html files where they can be read and
+ * diffed, not escaped into a single JSON string. They are also the one setting
+ * with a security argument attached — they must point at the app's own
+ * /auth/confirm rather than GoTrue's verify endpoint — so they need to be
+ * reviewable.
+ */
+async function resolveFileRefs(config: AuthConfig): Promise<AuthConfig> {
+	const fs = await import("node:fs/promises");
+	const resolved: AuthConfig = { ...config };
+
+	for (const [field, value] of Object.entries(config)) {
+		if (typeof value !== "string" || !value.startsWith("file:")) continue;
+		const relative = value.slice("file:".length);
+		const path = new URL(`../../${relative}`, import.meta.url);
+		try {
+			resolved[field] = await fs.readFile(path, "utf8");
+		} catch {
+			throw new Error(`${field}: cannot read ${relative}`);
+		}
+	}
+	return resolved;
 }
 
 async function loadDesired(project: ProjectName): Promise<AuthConfig> {
@@ -57,7 +109,7 @@ async function loadDesired(project: ProjectName): Promise<AuthConfig> {
 	const file = await import("node:fs/promises").then((fs) =>
 		fs.readFile(path, "utf8"),
 	);
-	const desired = JSON.parse(file) as AuthConfig;
+	const desired = await resolveFileRefs(JSON.parse(file) as AuthConfig);
 
 	for (const [field, envName] of Object.entries(SECRET_FIELDS)) {
 		const value = process.env[envName];
@@ -94,8 +146,13 @@ async function managementApi(
 }
 
 const isSecret = (field: string) => field in SECRET_FIELDS;
-const show = (field: string, value: unknown) =>
-	isSecret(field) ? "«secret»" : JSON.stringify(value);
+const show = (field: string, value: unknown) => {
+	if (isSecret(field)) return "«secret»";
+	const text = JSON.stringify(value);
+	// Email template bodies are hundreds of characters; the drift list is meant
+	// to be read.
+	return text && text.length > 120 ? `${text.slice(0, 117)}…` : text;
+};
 
 /** The settings that must hold before any project is allowed to accept sign-ups. */
 function goNoGo(config: AuthConfig): string[] {
@@ -119,18 +176,26 @@ function goNoGo(config: AuthConfig): string[] {
 }
 
 async function main() {
-	const { project, apply } = parseArgs();
+	const { project, apply, only, skip } = parseArgs();
 	const ref = PROJECTS[project];
 
 	const desired = await loadDesired(project);
 	const current = await managementApi(ref, "GET");
 
-	const drift = Object.entries(desired).filter(
+	const allDrift = Object.entries(desired).filter(
 		([field, value]) =>
 			JSON.stringify(current[field]) !== JSON.stringify(value),
 	);
+	const drift = allDrift.filter(
+		([field]) =>
+			(only.length === 0 || only.includes(field)) && !skip.includes(field),
+	);
+	const held = allDrift.length - drift.length;
 
-	console.log(`Project ${project} (${ref}): ${drift.length} setting(s) differ`);
+	console.log(
+		`Project ${project} (${ref}): ${allDrift.length} setting(s) differ` +
+			(held > 0 ? `, ${held} held back by --only/--skip` : ""),
+	);
 	for (const [field, value] of drift) {
 		console.log(
 			`  ${field}: ${show(field, current[field])} -> ${show(field, value)}`,
@@ -153,7 +218,8 @@ async function main() {
 	}
 
 	const failures = goNoGo({ ...current, ...Object.fromEntries(drift) });
-	if (failures.length > 0) {
+	const staged = only.length > 0 || skip.length > 0;
+	if (failures.length > 0 && !staged) {
 		console.error("Refusing to apply: the result would be unsafe.");
 		for (const failure of failures) console.error(`  - ${failure}`);
 		process.exit(1);
@@ -161,6 +227,15 @@ async function main() {
 
 	await managementApi(ref, "PATCH", Object.fromEntries(drift));
 	console.log(`Applied ${drift.length} setting(s) to ${project}.`);
+
+	if (failures.length > 0) {
+		// A staged apply is allowed to leave the project short of the safe state,
+		// but never quietly: this is the list that has to be empty before the
+		// project may accept sign-ups.
+		console.error("\nStill NOT safe to accept sign-ups:");
+		for (const failure of failures) console.error(`  - ${failure}`);
+		process.exitCode = 1;
+	}
 }
 
 main().catch((error) => {

@@ -24,11 +24,9 @@ const CustomCodeInput = ({
 		code: string;
 	} | null>(null);
 
-	// Check if user has access to premium features (plans with the customCode feature)
 	const canUseTemplates =
 		userData?.currentPlan.features.sections.customCode ?? false;
 
-	// Convert camelCase to Title Case
 	const toTitleCase = (str: string) => {
 		return str
 			.replace(/([A-Z])/g, " $1")

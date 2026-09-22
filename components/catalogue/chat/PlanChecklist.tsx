@@ -55,14 +55,9 @@ const Marker = ({
 
 /**
  * The to-do list the agent wrote for a multi-part request, ticking off live.
- *
- * It is the honest status display for a plan: the work spans several requests,
- * and between them there is nothing streaming, so a spinner alone would look
- * like a hang. It is also where a misread request gets caught - the user sees
- * what was understood before the edits start rather than after.
- *
- * Rendered from the newest plan in the transcript, so it is one list that fills
- * in rather than a fresh copy per round.
+ * The honest status display for a plan spanning several requests, where a bare
+ * spinner would look like a hang between them - and where a misread request
+ * gets caught, since the user sees what was understood before edits start.
  */
 const PlanChecklist = ({
 	plan,

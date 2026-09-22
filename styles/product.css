@@ -23,6 +23,7 @@
 	--product-nav-focus-ring: 0 0 0 3px rgba(211, 175, 55, 0.2);
 	--product-nav-active: #000;
 	--product-error: #ff0000;
+	--product-warning: #d97706;
 	color: var(--product-foreground);
 	background: var(--product-background);
 

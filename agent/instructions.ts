@@ -23,11 +23,9 @@ const workflow = `- Call the tools to make changes, then write one or two short 
 - Do not ask permission before making a change the user has clearly asked for; make it, then say what you did.`;
 
 /**
- * How a request too big for one function invocation gets finished.
- *
- * The model cannot be told "you have 38 seconds" in any way it can act on, so
- * the budget is not mentioned. It is told to write the list down and settle one
- * task at a time; the stop condition and the browser's resume loop do the rest.
+ * How a request too big for one function invocation gets finished. The model
+ * isn't told about the time budget - it's told to write a list and settle one
+ * task at a time, and the stop condition + resume loop do the rest.
  */
 const planningRules = `- When the user asks for several distinct things in one message, or for one thing big enough to take many edits, call createPlan first with one short line per piece of work. The user sees that list and watches it tick off, so write it in their language and phrase each line as what they will get.
 - Order the list by what depends on what, not by the order the user happened to say things in. Anything that uses catalogue content goes after the task that creates it: a widget built from items needs the items to exist first, and a section that has to sit "in the middle" needs the sections it sits between.

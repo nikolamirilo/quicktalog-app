@@ -2,7 +2,10 @@ import * as Sentry from "@sentry/nextjs";
 import { type NextRequest, NextResponse } from "next/server";
 import { AUTH_PROVIDER } from "@/lib/auth/provider";
 import { safeNext } from "@/lib/auth/redirects";
-import { createForwardedAuthClient } from "@/utils/supabase/server-forwarded";
+import {
+	AuthConfigError,
+	createForwardedAuthClient,
+} from "@/utils/supabase/server-forwarded";
 
 /**
  * Where an OAuth sign-in comes back to. It exchanges the PKCE code for a
@@ -36,8 +39,25 @@ export async function GET(req: NextRequest) {
 	try {
 		const auth = await createForwardedAuthClient();
 		const { error } = await auth.exchangeCodeForSession(code);
-		if (error) return fail;
+		if (error) {
+			// Previously dropped on the floor, which made every cause look like an
+			// expired link. The usual one is a missing PKCE verifier cookie: the
+			// sign-in was started on a different host, or the cookie was cleared
+			// between leaving for Google and coming back.
+			Sentry.captureException(error, {
+				level: "warning",
+				tags: { op: "authCallback", reason: "exchange_failed" },
+			});
+			return fail;
+		}
 	} catch (err) {
+		if (err instanceof AuthConfigError) {
+			Sentry.captureException(err, {
+				level: "error",
+				tags: { op: "authCallback", reason: "misconfigured" },
+			});
+			return NextResponse.redirect(new URL("/auth?error=config", origin));
+		}
 		Sentry.captureException(err, { tags: { op: "authCallback" } });
 		return fail;
 	}

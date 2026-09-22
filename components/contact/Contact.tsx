@@ -1,14 +1,30 @@
 "use client";
 import { sendContactEmail } from "@/actions/email";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import ContactForm from "./ContactForm";
+import ContactForm, { subjectOptions } from "./ContactForm";
+
+/** Matches a `?subject=` param (e.g. "feature-request") against the exact option strings. */
+const matchSubjectParam = (param: string | null) => {
+	if (!param) return null;
+	const normalized = param
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, " ");
+	return (
+		subjectOptions.find((option) => option.toLowerCase() === normalized) ?? null
+	);
+};
 
 const Contact = ({ type = "regular" }: { type?: string }) => {
+	const searchParams = useSearchParams();
 	const [name, setName] = useState("");
 	const [company, setCompany] = useState("");
 	const [subject, setSubject] = useState(
-		type !== "support" ? "Custom Plan" : "Technical Support",
+		() =>
+			matchSubjectParam(searchParams.get("subject")) ??
+			(type !== "support" ? "Custom Plan" : "Technical Support"),
 	);
 	const [message, setMessage] = useState("");
 	const [email, setEmail] = useState("");

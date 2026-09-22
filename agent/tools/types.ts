@@ -4,11 +4,9 @@ import type { PageResult } from "@/agent/web";
 import type { AgentToolResult } from "@/types/ai";
 
 /**
- * Everything a tool needs that is per request rather than per process.
- *
- * Built once in `buildContext` and handed to every group factory, which is what
- * lets a picture registered by `fetchUrl` in `research.ts` be resolved by
- * `addItems` in `items.ts` without either knowing about the other.
+ * Everything a tool needs that is per request rather than per process. Built
+ * once in `buildContext` and shared, so e.g. a picture registered by `fetchUrl`
+ * can be resolved by `addItems` without either knowing about the other.
  */
 export interface ToolContext {
 	session: CatalogueSession;

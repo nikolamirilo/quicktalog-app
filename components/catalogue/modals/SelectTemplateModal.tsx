@@ -25,7 +25,6 @@ const SelectTemplateModal = ({
 	const [internalIsOpen, setInternalIsOpen] = useState(false);
 	const hasAutoOpened = useRef(false);
 
-	// Determine if the modal should be open based on external or internal state
 	const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
 
 	useEffect(() => {
@@ -34,7 +33,6 @@ const SelectTemplateModal = ({
 		}
 	}, [isOpen, setIsSidebarOpen]);
 
-	// Helper to handle closing the modal correctly
 	const handleClose = () => {
 		if (externalOnClose) {
 			externalOnClose();

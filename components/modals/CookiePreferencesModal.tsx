@@ -1,4 +1,3 @@
-// components/CookiePreferencesModal.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,8 @@ import {
 } from "@/utils/cookies";
 import { useUserContext } from "@/context/UserContext";
 import { Shield, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import FocusLock from "react-focus-lock";
 
 const CookiePreferencesModal = ({
@@ -24,12 +24,17 @@ const CookiePreferencesModal = ({
 	const isSignedIn = !!userData;
 	const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 	const [marketingEnabled, setMarketingEnabled] = useState(false);
+	const [mounted, setMounted] = useState(false);
 
 	useState(() => {
 		const prefs = loadPreferences();
 		setAnalyticsEnabled(prefs.analytics);
 		setMarketingEnabled(prefs.marketing);
 	});
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	const handleSaveSettings = async () => {
 		const prefs = savePreferences({
@@ -38,14 +43,11 @@ const CookiePreferencesModal = ({
 			marketing: marketingEnabled,
 		});
 
-		// Update GTM consent
 		updateGTMConsent(analyticsEnabled, marketingEnabled);
 
 		await updateUserConsent(prefs, isSignedIn);
 		onClose();
 		onSave?.();
-
-		// Track save settings event
 		trackGTMEvent("cookie_modal_save_settings", {
 			consent_analytics: analyticsEnabled,
 			consent_marketing: marketingEnabled,
@@ -62,14 +64,11 @@ const CookiePreferencesModal = ({
 			marketing: true,
 		});
 
-		// Update GTM consent
 		updateGTMConsent(true, true);
 
 		await updateUserConsent(prefs, isSignedIn);
 		onClose();
 		onSave?.();
-
-		// Track accept all event
 		trackGTMEvent("cookie_modal_accept_all");
 	};
 
@@ -83,20 +82,17 @@ const CookiePreferencesModal = ({
 			marketing: false,
 		});
 
-		// Update GTM consent
 		updateGTMConsent(false, false);
 
 		await updateUserConsent(prefs, isSignedIn);
 		onClose();
 		onSave?.();
-
-		// Track reject all event
 		trackGTMEvent("cookie_modal_reject_all");
 	};
 
-	if (!isOpen) return null;
+	if (!isOpen || !mounted) return null;
 
-	return (
+	return createPortal(
 		<div
 			aria-labelledby="cookie-settings-title"
 			aria-modal="true"
@@ -105,7 +101,6 @@ const CookiePreferencesModal = ({
 		>
 			<FocusLock>
 				<div className="bg-product-background rounded-lg shadow-lg max-w-lg w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
-					{/* Header */}
 					<div className="relative p-6 text-center bg-product-background-hero">
 						<button
 							aria-label="Close cookie settings"
@@ -130,7 +125,6 @@ const CookiePreferencesModal = ({
 						</p>
 					</div>
 
-					{/* Content */}
 					<div className="p-6 space-y-4">
 						<div className="p-4 rounded-lg bg-blue-50 border border-blue-200 mb-6">
 							<p className="text-sm text-blue-800">
@@ -222,7 +216,6 @@ const CookiePreferencesModal = ({
 						</div>
 					</div>
 
-					{/* Action Buttons */}
 					<div className="p-6 pt-0">
 						<div className="flex flex-col gap-3">
 							<div className="flex gap-3">
@@ -241,7 +234,8 @@ const CookiePreferencesModal = ({
 					</div>
 				</div>
 			</FocusLock>
-		</div>
+		</div>,
+		document.body,
 	);
 };
 

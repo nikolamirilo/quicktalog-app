@@ -5,7 +5,7 @@ import { BiGridAlt, BiScan } from "react-icons/bi";
 import { FiBarChart2 } from "react-icons/fi";
 import { IoAnalyticsOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
-import DonutChart from "../charts/DonutChart";
+import GaugeChart from "../charts/GaugeChart";
 
 const MonthlyUsage = ({
 	data,
@@ -15,42 +15,39 @@ const MonthlyUsage = ({
 	pricingPlan: PricingPlan;
 }) => {
 	const trafficUsage = {
-		data: [
-			data.traffic.pageview_count,
-			pricingPlan.features.traffic_limit - data.traffic.pageview_count,
-		],
-		labels: ["Used", "Remaining"],
+		used: data.traffic.pageview_count,
+		limit: pricingPlan.features.traffic_limit,
+		unit: "views",
 		title: "Traffic",
-		icon: <IoAnalyticsOutline className="w-6 h-6" />,
+		icon: <IoAnalyticsOutline className="w-5 h-5" />,
 		shown: true,
-		color: "text-product-primary",
 	};
 
 	const cataloguesUsage = {
-		data: [data.catalogues, pricingPlan.features.catalogues - data.catalogues],
-		labels: ["Used", "Remaining"],
+		used: data.catalogues,
+		limit: pricingPlan.features.catalogues,
+		unit: "catalogues",
 		title: "Catalogues",
-		icon: <BiGridAlt className="w-6 h-6" />,
+		icon: <BiGridAlt className="w-5 h-5" />,
 		shown: true,
-		color: "text-product-secondary",
 	};
 
 	const aiPromptsUsage = {
-		data: [data.prompts, pricingPlan.features.ai_prompts - data.prompts],
-		labels: ["Used", "Remaining"],
+		used: data.prompts,
+		limit: pricingPlan.features.ai_prompts,
+		unit: "prompts",
 		title: "AI Prompts",
-		icon: <RiSparkling2Line className="w-6 h-6" />,
+		icon: <RiSparkling2Line className="w-5 h-5" />,
 		shown: pricingPlan.features.ai_prompts > 0 ? true : false,
-		color: "text-product-primary-accent",
 	};
 
 	const ocrUsage = {
-		data: [data.ocr, pricingPlan.features.ocr_ai_import - data.ocr],
-		labels: ["Used", "Remaining"],
+		used: data.ocr,
+		limit: pricingPlan.features.ocr_ai_import,
+		unit: "imports",
 		title: "OCR Import",
-		icon: <BiScan className="w-6 h-6" />,
+		icon: <BiScan className="w-5 h-5" />,
 		shown: pricingPlan.features.ocr_ai_import > 0 ? true : false,
-		color: "text-product-icon",
 	};
 
 	const charts = [trafficUsage, cataloguesUsage, aiPromptsUsage, ocrUsage];
@@ -79,47 +76,23 @@ const MonthlyUsage = ({
 				{charts
 					.filter((item) => item.shown === true)
 					.map((chart, index) => (
-						<Card
-							className="bg-white border border-product-border shadow-lg overflow-hidden"
-							key={`usage-${index}`}
-						>
+						<Card className="shadow-lg overflow-hidden" key={`usage-${index}`}>
 							<CardContent className="p-6">
 								{/* Header with Icon */}
-								<div className="flex items-center gap-4 mb-6">
-									<div className={chart.color}>{chart.icon}</div>
-									<div>
-										<h3 className="text-xl font-bold text-product-foreground">
-											{chart.title}
-										</h3>
+								<div className="flex items-center gap-3 mb-6">
+									<div className="w-10 h-10 rounded-full flex items-center justify-center bg-product-primary/10 text-product-primary">
+										{chart.icon}
 									</div>
+									<h3 className="text-xl font-bold text-product-foreground">
+										{chart.title}
+									</h3>
 								</div>
 
-								{/* Donut Chart */}
-								<div className="flex justify-center mb-6">
-									<div className="w-full max-w-48 h-32 sm:h-40 md:h-48">
-										<DonutChart data={chart.data} labels={chart.labels} />
-									</div>
-								</div>
-
-								{/* Usage Stats */}
-								<div className="grid grid-cols-2 gap-4 pt-6 border-t border-product-border">
-									<div className="text-center">
-										<div className="text-2xl font-bold text-product-foreground">
-											{chart.data[0].toLocaleString("en-US")}
-										</div>
-										<div className="text-sm text-product-foreground-accent">
-											Used
-										</div>
-									</div>
-									<div className="text-center">
-										<div className="text-2xl font-bold text-product-foreground">
-											{chart.data[1].toLocaleString("en-US")}
-										</div>
-										<div className="text-sm text-product-foreground-accent">
-											Remaining
-										</div>
-									</div>
-								</div>
+								<GaugeChart
+									limit={chart.limit}
+									unit={chart.unit}
+									used={chart.used}
+								/>
 							</CardContent>
 						</Card>
 					))}

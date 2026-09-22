@@ -1,11 +1,9 @@
 /**
- * Drops the draft-cache keys written before Phase 1.
- *
- * The old cache was keyed by the catalogue *slug*, with no environment prefix.
- * Two things were wrong with that: a reused slug served the previous owner's
- * unsaved draft, and every environment sharing one Redis database shared one
- * keyspace. Phase 1 moved to `${REDIS_KEY_PREFIX}:catalogue:${catalogueId}`,
- * which leaves the old keys behind with nothing reading them.
+ * Drops the draft-cache keys written before Phase 1. The old cache was keyed
+ * by the catalogue *slug* with no environment prefix, so a reused slug served
+ * the previous owner's draft and every environment sharing one Redis database
+ * shared one keyspace. Phase 1 moved to
+ * `${REDIS_KEY_PREFIX}:catalogue:${catalogueId}`, leaving the old keys behind.
  *
  * **Run it once, after every environment is on Phase 1 code** — on a shared
  * Redis that means after PROD, not after TEST. A legacy key deleted while an

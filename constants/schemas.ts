@@ -1,16 +1,13 @@
-// LD JSON Schema constants for structured data
-
 import type { ArticleMeta } from "@/content/articles/_types";
 import type { DocMeta } from "@/content/docs/_types";
 import { faqs } from "./details";
 
-// Organization schema
 const organizationSchema = {
 	"@context": "https://schema.org",
 	"@type": "Organization",
 	name: "Quicktalog",
 	url: "https://www.quicktalog.app",
-	logo: "https://www.quicktalog.app/logo.svg",
+	logo: "https://www.quicktalog.app/images/brand/logo.svg",
 	description:
 		"Quicktalog empowers businesses to create, manage, and share interactive digital catalogues for products and services.",
 	foundingDate: "2024",
@@ -26,7 +23,6 @@ const organizationSchema = {
 	},
 };
 
-// WebSite schema
 const websiteSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebSite",
@@ -37,7 +33,7 @@ const websiteSchema = {
 	publisher: {
 		"@type": "Organization",
 		name: "Quicktalog",
-		logo: "https://www.quicktalog.app/logo.svg",
+		logo: "https://www.quicktalog.app/images/brand/logo.svg",
 	},
 	potentialAction: {
 		"@type": "SearchAction",
@@ -46,7 +42,6 @@ const websiteSchema = {
 	},
 };
 
-// Home page schema
 const homePageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
@@ -80,7 +75,6 @@ const homePageSchema = {
 	},
 };
 
-// Pricing page schema
 const pricingPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
@@ -115,7 +109,6 @@ const pricingPageSchema = {
 	},
 };
 
-// Contact page schema
 const contactPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "ContactPage",
@@ -135,7 +128,6 @@ const contactPageSchema = {
 	},
 };
 
-// Demo page schema
 const demoPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
@@ -158,7 +150,6 @@ const demoPageSchema = {
 	},
 };
 
-// Showcases page schema
 const showcasesPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
@@ -220,7 +211,7 @@ export function generateDocSchema(meta: DocMeta) {
 					name: "Quicktalog",
 					logo: {
 						"@type": "ImageObject",
-						url: "https://www.quicktalog.app/logo.svg",
+						url: "https://www.quicktalog.app/images/brand/logo.svg",
 					},
 				},
 				mainEntityOfPage: { "@type": "WebPage", "@id": url },
@@ -308,7 +299,7 @@ export function generateArticleSchema(meta: ArticleMeta) {
 					name: "Quicktalog",
 					logo: {
 						"@type": "ImageObject",
-						url: "https://www.quicktalog.app/logo.svg",
+						url: "https://www.quicktalog.app/images/brand/logo.svg",
 					},
 				},
 				mainEntityOfPage: { "@type": "WebPage", "@id": url },
@@ -341,7 +332,20 @@ export function generateArticleSchema(meta: ArticleMeta) {
 	};
 }
 
-// Helper function to get schema for a page
+const releaseNotesPageSchema = {
+	"@context": "https://schema.org",
+	"@type": "CollectionPage",
+	name: "Release Notes - What's New in Quicktalog",
+	description:
+		"See what's new, improved, and fixed in Quicktalog. Track every update to the digital catalog builder, AI tools, and analytics.",
+	url: "https://www.quicktalog.app/release-notes",
+	mainEntity: {
+		"@type": "ItemList",
+		name: "Quicktalog release notes",
+		description: "Every ship to the Quicktalog platform, newest first.",
+	},
+};
+
 export function getPageSchema(page: string) {
 	const schemas = {
 		home: homePageSchema,
@@ -356,6 +360,7 @@ export function getPageSchema(page: string) {
 		docs: docsPageSchema,
 		auth: authenticationPageSchema,
 		articles: articlesPageSchema,
+		releaseNotes: releaseNotesPageSchema,
 	};
 
 	return schemas[page as keyof typeof schemas] || websiteSchema;

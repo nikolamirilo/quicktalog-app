@@ -21,7 +21,7 @@ import {
 	robotoSlab,
 	sourceSans3,
 	workSans,
-} from "@/fonts";
+} from "@/lib/fonts";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import type { Metadata } from "next";

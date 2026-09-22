@@ -38,9 +38,7 @@ export async function writeItemDescription(
 			};
 		}
 
-		// Charged before the model runs, and refunded below if it produces
-		// nothing, so a failed generation costs the user nothing but a killed
-		// request still cannot be free.
+		// Charged before the model runs, refunded below on empty output.
 		const turn = await openAiTurn(me, {
 			catalogue: catalogueName,
 			kind: "describe",

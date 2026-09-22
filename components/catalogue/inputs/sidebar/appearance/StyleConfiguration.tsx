@@ -28,7 +28,7 @@ import {
 	robotoSlab,
 	sourceSans3,
 	workSans,
-} from "@/fonts";
+} from "@/lib/fonts";
 
 const FONT_OPTIONS = [
 	{ label: "Inter", value: "inter", className: inter.className },
@@ -84,7 +84,6 @@ interface StyleConfigurationProps {
 	onStyleChange: (field: string, value: any) => void;
 }
 
-// Helper to get slider index from string value
 const getSliderValue = (options: string[], value: string) => {
 	const index = options.indexOf(value);
 	return index === -1 ? 0 : index;

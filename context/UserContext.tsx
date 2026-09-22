@@ -37,7 +37,6 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 			setUserData(data);
 		} catch (error) {
 			console.error("Failed to fetch user data:", error);
-			// Optionally handle error state
 		} finally {
 			setLoading(false);
 		}

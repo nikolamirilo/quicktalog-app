@@ -23,14 +23,14 @@ const meta = {
 		"add products",
 	],
 	relatedSlugs: ["customize-design", "share-your-catalogue"],
-	coverImage: "/documentation/build-edit-cover.svg",
+	coverImage: "/images/documentation/build-edit-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/documentation/build-edit-cover.svg"
+				src="/images/documentation/build-edit-cover.svg"
 				alt="The Quicktalog builder showing a live catalogue preview alongside the settings panel"
 				priority
 			/>
@@ -85,7 +85,7 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/documentation/build-edit-item-anatomy.svg"
+				src="/images/documentation/build-edit-item-anatomy.svg"
 				alt="Anatomy of a catalogue item: name, price, photo, and description fields in the builder"
 				maxWidth="640px"
 			/>
@@ -101,7 +101,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/build-edit-categories.svg"
+				src="/images/documentation/build-edit-categories.svg"
 				alt="Category management in the Quicktalog builder showing grouped items under named sections"
 				maxWidth="640px"
 			/>
@@ -118,7 +118,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/build-edit-content-blocks.svg"
+				src="/images/documentation/build-edit-content-blocks.svg"
 				alt="Content blocks panel in the builder showing text, divider, and embed block options"
 				maxWidth="640px"
 			/>
@@ -135,7 +135,7 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/documentation/build-edit-settings-tabs.svg"
+				src="/images/documentation/build-edit-settings-tabs.svg"
 				alt="The four builder settings tabs: General, Header, Footer, and Appearance"
 			/>
 

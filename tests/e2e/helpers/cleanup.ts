@@ -51,16 +51,11 @@ export async function deleteCatalogueBySlug(slug: string): Promise<void> {
 }
 
 /**
- * Removes every catalogue whose slug starts with `prefix`.
- *
- * Deleting by the slug the test captured is not enough on its own. The test
- * plan allows a single catalogue, so one run that dies between creating the
- * catalogue and learning its slug leaves the account full - and every run
- * after it gets the upgrade modal where it expected the create dialog, which
- * looks like a product bug rather than a dirty fixture. Sweeping by prefix
- * cleans up after a run that never got far enough to clean up after itself.
- *
- * Returns the slugs it removed, so a caller can say what it found.
+ * Removes every catalogue whose slug starts with `prefix`. Deleting by the
+ * captured slug alone isn't enough: the test plan allows one catalogue, so a
+ * run that dies before learning its slug leaves the account full, and every
+ * later run hits the upgrade modal instead of the create dialog - looking
+ * like a product bug rather than a dirty fixture. Returns the slugs removed.
  */
 export async function deleteCataloguesByPrefix(
 	prefix: string,

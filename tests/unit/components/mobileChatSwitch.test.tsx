@@ -9,7 +9,7 @@ vi.mock("@clerk/nextjs", () => ({ useUser: () => ({ user: null }) }));
  * the Appearance tab, so stub every font this or any future tab asks for.
  */
 // vi.mock is hoisted, so the stub is built inside the factory. A Proxy is not
-// accepted as a module namespace, so the loaders fonts/index.ts uses are listed.
+// accepted as a module namespace, so the loaders lib/fonts/index.ts uses are listed.
 vi.mock("next/font/google", () => {
 	const font = () => ({
 		className: "font-stub",

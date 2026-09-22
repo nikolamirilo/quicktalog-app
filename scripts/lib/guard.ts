@@ -1,25 +1,21 @@
 /**
- * The shared safety rail for the cutover scripts.
- *
- * Every script under `scripts/cutover` starts here, before it opens a
- * connection or touches the Auth admin API. The guard answers four questions
- * and refuses to continue unless all four have a safe answer:
+ * The shared safety rail for the cutover scripts. Every script under
+ * `scripts/cutover` starts here, before it opens a connection or touches the
+ * Auth admin API, and refuses to continue unless all four have a safe answer:
  *
  *  1. Which Supabase project am I about to act on, and is it PROD?
  *  2. Which database am I about to act on, and is it the *same* project?
  *  3. Am I allowed to write at all (`DRY_RUN=0`), and has a human confirmed it?
  *  4. Do the credentials I was handed belong together?
  *
- * The accident this file exists to prevent is a TEST database paired with PROD
- * auth credentials (or the reverse): every row would look fine, and every user
- * identity would be wrong. The environment is therefore derived independently
- * from `NEXT_PUBLIC_SUPABASE_URL` and from `MIGRATION_DATABASE_URL`, the two
- * must agree, and `assertSameInstance()` then proves it against live data
- * rather than against a string.
+ * The accident this exists to prevent: a TEST database paired with PROD auth
+ * credentials (or the reverse) - every row would look fine, every user
+ * identity would be wrong. The environment is derived independently from
+ * `NEXT_PUBLIC_SUPABASE_URL` and `MIGRATION_DATABASE_URL`, the two must agree,
+ * and `assertSameInstance()` proves it against live data, not just a string.
  *
- * Nothing here ever prints a secret. Emails are masked, and everything that
- * leaves this process through stdout or a report file goes through `mask*` or
- * `redact()` first.
+ * Nothing here ever prints a secret - everything leaving via stdout or a
+ * report file goes through `mask*` or `redact()` first.
  */
 
 import { createInterface } from "node:readline/promises";

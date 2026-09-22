@@ -26,7 +26,7 @@ const Brand = ({
 						<img
 							alt={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} logo`}
 							className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
-							src={logo ?? "/logo.svg"}
+							src={logo ?? "/images/brand/logo.svg"}
 							style={{
 								width:
 									type === "default"

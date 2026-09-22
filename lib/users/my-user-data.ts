@@ -86,8 +86,7 @@ export async function loadInTx(
 	return {
 		ok: true,
 		data: {
-			// Includes cookiePreferences: the cookie banner reads the stored
-			// choice from here instead of from the auth provider's metadata.
+			// Includes cookiePreferences: the banner reads it from here, not auth-provider metadata.
 			...user,
 			currentPlan: { ...pricingPlan, billing_period: billingPeriod || "year" },
 			usage: {

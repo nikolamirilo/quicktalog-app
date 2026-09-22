@@ -13,6 +13,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
+import { initialsFrom } from "@/lib/users/initials";
 
 /**
  * The signed-in user's menu. Replaces Clerk's `<UserButton/>`, which could only
@@ -26,14 +27,7 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
 
 	if (!user) return null;
 
-	const initials =
-		user.name
-			.split(" ")
-			.map((part) => part.trim()[0])
-			.filter(Boolean)
-			.slice(0, 2)
-			.join("")
-			.toUpperCase() || "Q";
+	const initials = initialsFrom(user.name);
 
 	const handleSignOut = async () => {
 		setSigningOut(true);
@@ -49,7 +43,7 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				aria-label="Account menu"
-				className="flex items-center justify-center w-9 h-9 rounded-full border border-product-border bg-product-background-hover text-product-foreground text-sm font-semibold overflow-hidden cursor-pointer hover:shadow-md transition-all duration-200"
+				className="flex items-center justify-center w-9 h-9 rounded-full ring-2 ring-product-primary ring-offset-2 ring-offset-product-background bg-product-background-hover text-product-foreground text-xs font-semibold overflow-hidden cursor-pointer hover:ring-product-primary-accent hover:shadow-md transition-all duration-200"
 			>
 				{user.imageUrl ? (
 					<img
@@ -64,44 +58,47 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				align="end"
-				className="bg-product-background border border-product-border rounded-xl shadow-lg min-w-56"
+				className="bg-product-background border border-product-border rounded-xl shadow-lg min-w-52 p-1 text-sm"
+				sideOffset={8}
 			>
-				<DropdownMenuLabel className="text-product-foreground">
-					<span className="block font-semibold">{user.name}</span>
+				<DropdownMenuLabel className="px-2 py-1.5 text-product-foreground">
+					<span className="block truncate text-sm font-semibold leading-tight">
+						{user.name}
+					</span>
 					{user.email && (
-						<span className="block text-xs text-product-foreground-accent font-normal">
+						<span className="mt-0.5 block truncate text-xs font-normal text-product-foreground-accent">
 							{user.email}
 						</span>
 					)}
 				</DropdownMenuLabel>
-				<DropdownMenuSeparator />
+				<DropdownMenuSeparator className="my-1" />
 				<DropdownMenuItem asChild>
 					<Link
-						className="flex items-center gap-2 cursor-pointer"
+						className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm"
 						href="/admin/dashboard"
 						onClick={onNavigate}
 					>
-						<FiGrid size={16} />
+						<FiGrid className="shrink-0 opacity-70" size={15} />
 						Dashboard
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem asChild>
 					<Link
-						className="flex items-center gap-2 cursor-pointer"
+						className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm"
 						href={accountHref}
 						onClick={onNavigate}
 					>
-						<FiUser size={16} />
+						<FiUser className="shrink-0 opacity-70" size={15} />
 						Account
 					</Link>
 				</DropdownMenuItem>
-				<DropdownMenuSeparator />
+				<DropdownMenuSeparator className="my-1" />
 				<DropdownMenuItem
-					className="flex items-center gap-2 cursor-pointer"
+					className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm"
 					disabled={signingOut}
 					onClick={handleSignOut}
 				>
-					<FiLogOut size={16} />
+					<FiLogOut className="shrink-0 opacity-70" size={15} />
 					{signingOut ? "Signing out…" : "Sign out"}
 				</DropdownMenuItem>
 			</DropdownMenuContent>

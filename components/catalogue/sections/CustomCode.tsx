@@ -102,24 +102,18 @@ interface CustomCodeBlockProps {
 }
 
 /**
- * A custom code block, run inside a sandboxed frame.
+ * A custom code block, run inside a sandboxed frame. The fragment is arbitrary
+ * HTML/CSS/JS, and the AI editor can write it under the influence of
+ * untrusted text (a fetched page, an OCR scan), mounted same-origin with the
+ * app in the owner's signed-in session. No source filter can make that safe,
+ * so the control is isolation: `sandbox="allow-scripts"` WITHOUT
+ * `allow-same-origin` gives the frame an opaque origin - it can reach no
+ * cookie, storage, parent DOM or credentialed request.
  *
- * The fragment is arbitrary HTML, CSS and JavaScript, and the AI editor writes
- * it while holding text it did not get from the user - a page read by
- * `fetchUrl`, the OCR of a photo handed over to scan. Mounted into the page it
- * would run same-origin with the app, and in the builder that means inside the
- * owner's signed-in session.
+ * Do not add `allow-same-origin`: combined with `allow-scripts` it lets the
+ * frame remove its own sandbox attribute, undoing all of this.
  *
- * No filter over JavaScript source fixes that while still letting widgets run,
- * so the control is isolation instead. `sandbox="allow-scripts"` WITHOUT
- * `allow-same-origin` gives the frame an opaque origin: the widget runs, and it
- * can reach no cookie, no storage, no parent DOM and no credentialed request.
- *
- * Do not add `allow-same-origin`. Together with `allow-scripts` it lets the
- * frame reach out and remove its own sandbox attribute, which undoes all of it.
- *
- * A frame does not size to its content, so the document carries a reporter that
- * posts its height out and the parent sets it here.
+ * A frame doesn't size to its content, so the document reports its height and the parent sets it here.
  */
 const CustomCodeBlockComponent = ({
 	block,

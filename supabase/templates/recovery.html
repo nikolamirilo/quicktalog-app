@@ -1,0 +1,13 @@
+<h2>Reset your password</h2>
+
+<p>Follow the link below to choose a new password for your Quicktalog account.</p>
+
+<p>
+  <a href="{{ .RedirectTo }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery">Choose a new password</a>
+</p>
+
+<p>Or paste this into your browser:<br />
+  {{ .RedirectTo }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery
+</p>
+
+<p>The link can be used once and expires in one hour. If you did not ask to reset your password, ignore this email — your current password still works.</p>

@@ -19,8 +19,8 @@ import InformModal from "../modals/InformModal";
 import OverallAnalytics from "./components/OverallAnalytics";
 import UserProfile from "./components/UserProfile";
 import CatalogueGrid from "./overview/CatalogueGrid";
+import LimitCTAs from "./overview/LimitCTAs";
 import NewsletterTable from "./overview/NewsletterTable";
-import QuickActions from "./overview/QuickActions";
 
 const Overview = ({
 	user,
@@ -161,7 +161,7 @@ const Overview = ({
 					Catalogues
 				</h2>
 
-				<QuickActions matchedTier={matchedTier} usage={usage} />
+				<LimitCTAs matchedTier={matchedTier} usage={usage} />
 
 				<CatalogueGrid
 					catalogues={catalogues}

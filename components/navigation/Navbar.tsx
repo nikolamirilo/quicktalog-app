@@ -1,75 +1,42 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { MobileNavLinkProps, NavLinkProps } from "@/types/components";
+import { mobileHomeLink, navLinks, navMenus } from "@/constants/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { FaRegCirclePlay } from "react-icons/fa6";
-import { FiCompass, FiHome, FiX } from "react-icons/fi";
+import { useCallback, useEffect, useState } from "react";
+import { FiX } from "react-icons/fi";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { LuLayoutDashboard } from "react-icons/lu";
-import { PiFilesDuotone } from "react-icons/pi";
 import AuthLinks from "./AuthLinks";
-
-// NavLink component for active state handling
-export const NavLink = ({
-	href,
-	children,
-	icon: Icon,
-	className = "",
-}: NavLinkProps) => {
-	const pathname = usePathname();
-	const isActive = pathname === href;
-
-	return (
-		<Link href={href}>
-			<Button
-				className={`${isActive ? "font-bold !bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm hover:scale-[1.03] hover:transform" : "font-medium"} ${className}`}
-				variant="nav"
-			>
-				{Icon && <Icon className="w-4 h-4" />}
-				{children}
-			</Button>
-		</Link>
-	);
-};
-// Mobile NavLink component
-export const MobileNavLink = ({
-	href,
-	children,
-	icon: Icon,
-	onClick,
-}: MobileNavLinkProps) => {
-	const pathname = usePathname();
-	const isActive = pathname === href;
-
-	return (
-		<Link href={href} onClick={onClick}>
-			<button
-				className={`w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left transition-all duration-200 ${
-					isActive
-						? "bg-product-background-hover text-product-primary border border-product-primary shadow-sm font-semibold"
-						: "hover:bg-product-nav-hover-bg hover:text-product-nav-hover-text hover:shadow-md hover:scale-[1.03] hover:transform hover:-translate-y-[2px] border border-transparent hover:border-product-nav-hover-border hover:font-bold"
-				}`}
-			>
-				{Icon && (
-					<Icon
-						className={`${isActive ? "text-product-primary" : "text-gray-600"} sm:w-5 sm:h-5`}
-						size={18}
-					/>
-				)}
-				<span
-					className={`font-medium text-sm sm:text-base ${isActive ? "text-product-primary" : "text-product-foreground"}`}
-				>
-					{children}
-				</span>
-			</button>
-		</Link>
-	);
-};
+import MobileNavSection from "./MobileNavSection";
+import NavDropdown from "./NavDropdown";
+import { MobileNavLink, NavLink } from "./NavLink";
 
 const Navbar = () => {
 	const [mobileOpen, setMobileOpen] = useState(false);
+	const [openMenu, setOpenMenu] = useState<string | null>(null);
+	const [openMobileMenu, setOpenMobileMenu] = useState<string | null>(null);
+	const pathname = usePathname();
+
+	// A hash link keeps the same pathname, so close the menus on every click too.
+	useEffect(() => {
+		setMobileOpen(false);
+		setOpenMenu(null);
+		setOpenMobileMenu(null);
+	}, [pathname]);
+
+	const toggleMenu = useCallback((label: string) => {
+		setOpenMenu((current) => (current === label ? null : label));
+	}, []);
+
+	const closeMenu = useCallback(() => setOpenMenu(null), []);
+
+	const toggleMobileMenu = useCallback((label: string) => {
+		setOpenMobileMenu((current) => (current === label ? null : label));
+	}, []);
+
+	const closeMobile = useCallback(() => {
+		setMobileOpen(false);
+		setOpenMobileMenu(null);
+	}, []);
 
 	return (
 		<nav className="w-full flex items-center justify-between px-4 sm:px-6 font-lora py-2 sm:py-3 bg-product-background shadow-lg border-b border-gray-100 fixed top-0 left-0 z-50">
@@ -80,7 +47,7 @@ const Navbar = () => {
 						className="h-[7vh] w-auto rounded-full"
 						fetchPriority="high"
 						height={160}
-						src="/logo.svg"
+						src="/images/brand/logo.svg"
 						style={{ width: "auto", height: "7vh" }}
 						width={160}
 					/>
@@ -89,18 +56,22 @@ const Navbar = () => {
 
 			{/* Desktop links */}
 			<div className="hidden lg:flex items-center gap-2">
-				<NavLink href="/" icon={FiHome}>
-					Home
-				</NavLink>
-				<NavLink href="/docs" icon={PiFilesDuotone}>
-					Docs
-				</NavLink>
-				<NavLink href="/demo" icon={FaRegCirclePlay}>
-					Demo
-				</NavLink>
-				<NavLink href="/showcases" icon={LuLayoutDashboard}>
-					Showcases
-				</NavLink>
+				{navMenus.map((menu) => (
+					<NavDropdown
+						isOpen={openMenu === menu.label}
+						key={menu.label}
+						menu={menu}
+						onClose={closeMenu}
+						onToggle={toggleMenu}
+					/>
+				))}
+
+				{navLinks.map((link) => (
+					<NavLink href={link.url} icon={link.icon} key={link.url}>
+						{link.text}
+					</NavLink>
+				))}
+
 				<AuthLinks />
 			</div>
 
@@ -119,7 +90,7 @@ const Navbar = () => {
 			{mobileOpen && (
 				<div
 					className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-					onClick={() => setMobileOpen(false)}
+					onClick={closeMobile}
 				/>
 			)}
 
@@ -138,47 +109,44 @@ const Navbar = () => {
 					<button
 						aria-label="Close menu"
 						className="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1 transition-colors"
-						onClick={() => setMobileOpen(false)}
+						onClick={closeMobile}
 					>
 						<FiX className="text-product-foreground" size={20} />
 					</button>
 				</div>
 
 				{/* Mobile menu items */}
-				<div className="flex flex-col p-4 sm:p-6 gap-2 sm:gap-3">
+				<div className="flex flex-col p-4 sm:p-6 gap-2 sm:gap-3 overflow-y-auto">
 					<MobileNavLink
-						href="/"
-						icon={FiHome}
-						onClick={() => setMobileOpen(false)}
+						href={mobileHomeLink.url}
+						icon={mobileHomeLink.icon}
+						onClick={closeMobile}
 					>
-						Home
+						{mobileHomeLink.text}
 					</MobileNavLink>
 
-					<MobileNavLink
-						href="/docs"
-						icon={FiCompass}
-						onClick={() => setMobileOpen(false)}
-					>
-						Docs
-					</MobileNavLink>
+					{navMenus.map((menu) => (
+						<MobileNavSection
+							isOpen={openMobileMenu === menu.label}
+							key={menu.label}
+							menu={menu}
+							onLinkClick={closeMobile}
+							onToggle={toggleMobileMenu}
+						/>
+					))}
 
-					<MobileNavLink
-						href="/demo"
-						icon={FaRegCirclePlay}
-						onClick={() => setMobileOpen(false)}
-					>
-						Demo
-					</MobileNavLink>
+					{navLinks.map((link) => (
+						<MobileNavLink
+							href={link.url}
+							icon={link.icon}
+							key={link.url}
+							onClick={closeMobile}
+						>
+							{link.text}
+						</MobileNavLink>
+					))}
 
-					<MobileNavLink
-						href="/showcases"
-						icon={LuLayoutDashboard}
-						onClick={() => setMobileOpen(false)}
-					>
-						Showcases
-					</MobileNavLink>
-
-					<AuthLinks isMobile onLinkClick={() => setMobileOpen(false)} />
+					<AuthLinks isMobile onLinkClick={closeMobile} />
 				</div>
 			</div>
 		</nav>

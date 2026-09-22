@@ -105,9 +105,12 @@ export type IBenefitBullet = {
 	icon: JSX.Element;
 };
 
-export type DonutChartProps = {
-	data: number[];
-	labels: string[];
+export type GaugeStatus = "normal" | "warning" | "critical";
+
+export type GaugeChartProps = {
+	used: number;
+	limit: number;
+	unit: string;
 };
 
 export type CatalogueAnalyticsProps = {

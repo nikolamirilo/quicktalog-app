@@ -37,13 +37,9 @@ type AuthApi = Pick<SupabaseClient["auth"], "getClaims">;
 
 /**
  * Turns verified Supabase claims into an identity. Split out so it can be
- * tested without a request, and so both the app and the middleware read the
- * same rules.
- *
- * `getClaims()` verifies the access token locally against the project's JWKS
- * while an asymmetric (ES256) key is current. Anonymous sessions and anything
- * whose `sub` is not a uuid are refused: `public.users.id` holds that uuid, and
- * an id of another shape would not match any row.
+ * tested without a request, and so the app and middleware share the same
+ * rules. `getClaims()` verifies the token locally against the project's JWKS.
+ * Anonymous sessions and a non-uuid `sub` are refused - `public.users.id` is a uuid.
  */
 export async function identityFromSupabaseAuth(
 	auth: AuthApi,
@@ -63,11 +59,9 @@ export async function identityFromSupabaseAuth(
 }
 
 /**
- * The signed-in user for this request, or null. Deduplicated per request, so a
- * page and the actions it renders verify once.
- *
- * Clerk: `auth()`, already verified by clerkMiddleware, no Backend API call.
- * Supabase: local JWT verification through `getClaims()`.
+ * The signed-in user for this request, or null. Deduplicated per request.
+ * Clerk: `auth()`, already verified by clerkMiddleware. Supabase: local JWT
+ * verification via `getClaims()`.
  */
 export const getVerifiedIdentity = cache(
 	async (): Promise<VerifiedIdentity | null> => {
@@ -91,13 +85,9 @@ export async function requireIdentity(): Promise<VerifiedIdentity> {
 }
 
 /**
- * For the few operations where a stale-but-valid token is not good enough:
- * deleting the account, changing credentials, billing actions.
- *
- * A JWT stays valid for up to an hour after a user is banned, deleted or signed
- * out everywhere. This costs a round trip to the auth service, which sees all
- * three, and returns the account's email so a caller does not have to trust one
- * from the client.
+ * For operations where stale-but-valid isn't good enough (account deletion,
+ * credential changes, billing): a JWT can stay valid up to an hour after a ban,
+ * deletion or sign-out-everywhere, so this round-trips the auth service.
  */
 export async function requireFreshUser(): Promise<
 	VerifiedIdentity & { email: string | null }

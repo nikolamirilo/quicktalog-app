@@ -1,17 +1,13 @@
 "use client";
 import type { Usage } from "@quicktalog/common";
 import UpgradePlanCTA from "../../general/UpgradePlanCTA";
-import CreateCatalogueButton from "../components/CreateCatalogueButton";
 
-export interface QuickActionsProps {
+export interface LimitCTAs {
 	matchedTier: any;
 	usage: Usage;
 }
 
-export default function QuickActions({
-	matchedTier,
-	usage,
-}: QuickActionsProps) {
+export default function LimitCTAs({ matchedTier, usage }: LimitCTAs) {
 	const isAtCatalogueLimit =
 		usage.catalogues >= matchedTier.features.catalogues;
 	const isAtTrafficLimit =
@@ -19,14 +15,6 @@ export default function QuickActions({
 
 	return (
 		<>
-			<div className="flex flex-wrap gap-2 sm:gap-3 lg:gap-4 mb-4 sm:mb-6">
-				<span className="w-9/12 sm:w-fit">
-					<CreateCatalogueButton
-						disabled={isAtCatalogueLimit || isAtTrafficLimit}
-						showUpgradeTooltip={isAtCatalogueLimit || isAtTrafficLimit}
-					/>
-				</span>
-			</div>
 			{isAtCatalogueLimit && (
 				<UpgradePlanCTA
 					ctaLabel="Upgrade plan"

@@ -19,13 +19,10 @@ export function tierForPlanId(planId: string | null | undefined): Tier {
 }
 
 /**
- * The caller's plan, read inside the transaction with the users row locked
- * (`for no key update`). The lock serialises one user's plan-limited writes, so
- * two parallel requests cannot both pass the same quota check. It is a
- * no-key-update lock, so inserts into child tables are not blocked.
- *
- * Never trust a plan or feature flag sent by the client: the UI hides features,
- * this decides them.
+ * The caller's plan, read with the users row locked (`for no key update`) so
+ * two parallel requests can't both pass the same quota check; a no-key-update
+ * lock so child-table inserts aren't blocked. Never trust a plan/flag from the
+ * client - the UI hides features, this decides them.
  */
 export async function getPlanForUpdate(
 	tx: Tx,
@@ -111,8 +108,7 @@ export function contentWithinPlan(
 			)
 		: 0;
 
-	// A limit can be the string "unlimited", in which case there is nothing to
-	// enforce.
+	// "unlimited" means nothing to enforce.
 	const limitOf = (value: number | "unlimited" | undefined) =>
 		typeof value === "number" ? value : null;
 

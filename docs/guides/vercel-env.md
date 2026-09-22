@@ -126,3 +126,92 @@ wait 15 seconds and check from two separate requests before relying on it.
 `clerk_frozen_<env>` is switched on at T-3 of the Clerk → Supabase cutover and
 off once the switch is done; the account forms still work, the notice only warns
 that a change made now will not be carried across.
+
+## Every environment variable
+
+There is no `.env.example` in this repo: a git hook refuses to write any
+`.env*` path, so the list lives here instead. For local work, create
+`.env.local` by hand from the tables below — only the **App runtime** section is
+needed to boot the app.
+
+Audited against the code on 2026-09-22 (`grep` for `process.env.*` plus the
+dynamic lookups in `scripts/lib/guard.ts` and `scripts/supabase/auth-config.ts`).
+
+### App runtime
+
+Set on Vercel for every environment the app serves, and in `.env.local` for
+development. A `NEXT_PUBLIC_` prefix means **the value ships to the browser** —
+never give one to a key that grants more than a visitor already has.
+
+| Variable | Purpose |
+|---|---|
+| `AUTH_PROVIDER` | `clerk` or `supabase`. `next.config.ts` copies it to `NEXT_PUBLIC_AUTH_PROVIDER`, so set only this one. |
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL. Decides which project everything else talks to. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Browser auth client. Safe to expose; every table is closed to it. |
+| `SUPABASE_SECRET_KEY` | Server-side auth only (`/auth/callback`, `/auth/confirm`, middleware refresh). Bypasses RLS — never `NEXT_PUBLIC_`. |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Captcha widget. Must be set **and deployed** before captcha is enabled in Supabase, or every password sign-in, sign-up and reset is rejected. |
+| `DB_CONNECTION_STRING` | User and visitor traffic. See *Database connections* above. |
+| `DB_ADMIN_CONNECTION_STRING` | Webhooks, provisioning, e2e cleanup. Required once M08 is applied. |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Catalogue draft cache. |
+| `REDIS_KEY_PREFIX` | Keyspace separation: `prod`, `test`, `ci`, `dev-<name>`. **Unset falls back to `dev`**, so an unset PROD shares a keyspace with local development. |
+| `REVALIDATE_SECRET` | Shared with the worker; authenticates `/api/revalidate`. |
+| `RESEND_API_KEY` | Transactional email from the app (welcome, cancellation, contact). Separate from the SMTP credentials Supabase Auth uses. |
+| `PADDLE_API_KEY`, `PADDLE_CUSTOM_DATA_SECRET`, `PADDLE_NOTIFICATION_WEBHOOK_SECRET` | Checkout, signed `customData`, webhook verification. |
+| `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`, `NEXT_PUBLIC_PADDLE_ENV` | Paddle.js in the browser. |
+| `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Only while `AUTH_PROVIDER=clerk`. Removed at Phase 5. |
+| `DEEPSEEK_API_KEY`, `FIRECRAWL_API_KEY` | The catalogue builder agent and web page fetching. |
+| `NEXT_PUBLIC_BASE_URL` | Canonical origin. Also read by Playwright to decide what it is testing. |
+| `NEXT_PUBLIC_APP_URL` | QR code target. Falls back to `https://quicktalog.com` — note the `.com`, which is not this product's domain; set it explicitly. |
+
+Analytics and monitoring, all optional and inert when unset:
+`NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` (build-time source maps),
+`NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`, `POSTHOG_API_KEY`,
+`POSTHOG_PROJECT_ID`, `GTM_ID`, `NEXT_PUBLIC_LOGO_DEV_TOKEN`,
+`NEXT_PUBLIC_CALENDLY_URL`, `NEXT_PUBLIC_DISABLE_LOGGING`.
+
+### Set by the platform
+
+`NODE_ENV`, `VERCEL_ENV`, `VERCEL_URL`, `NEXT_RUNTIME`, `CI`, `BASE_PATH`.
+Do not set these by hand. `NODE_ENV` in particular is currently overridden on
+all three Vercel environments, and anything other than `production` on a
+deployed environment disables Sentry (`sentry.server.config.ts`) and stops
+session cookies being marked `Secure` (`lib/auth/cookie-options.ts`).
+
+### Operator scripts
+
+Exported in the shell for one run, never committed and never in `.env.local`.
+See `scripts/README.md`.
+
+| Variable | Used by |
+|---|---|
+| `MIGRATION_DATABASE_URL` | every cutover script — `postgres`, session pooler 5432 or direct, never 6543 |
+| `DRY_RUN`, `ALLOW_PROD`, `CONFIRM_REF`, `ALLOW_UNKNOWN_REF` | the shared guard |
+| `CLERK_CSV`, `EXPORTED_AT`, `CLERK_FIXTURE`, `CLERK_DELETED_AFTER_EXPORT` | the Clerk import |
+| `OUT_DIR`, `CONCURRENCY` | import and rollback push reports |
+| `MAX_DELETIONS`, `KEEP_USER_IDS`, `KEEP_EMAILS`, `SKIP_CONFIRM`, `CONFIRM_COUNT` | the purge and Redis cleanup scripts |
+| `SUPABASE_ACCESS_TOKEN` | `auth-config.ts` — a personal access token for the Management API. Account-wide: treat it as a root credential. |
+| `SUPABASE_SMTP_PASS`, `SUPABASE_CAPTCHA_SECRET`, `SUPABASE_GOOGLE_CLIENT_ID`, `SUPABASE_GOOGLE_SECRET` | `auth-config.ts` secret fields. Omitted values are simply not sent — but the non-secret settings around them **are**, which is how captcha gets enabled without a secret. |
+
+### Tests
+
+`E2E_CLERK_USER_USERNAME`, `E2E_CLERK_USER_PASSWORD`,
+`E2E_SUPABASE_USER_EMAIL`, `SUPABASE_PUBLISHABLE_KEY` /
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `DB_RLS_CONNECTION_STRING` (the `app_rls`
+login, so the M08 assertions actually run), `REHEARSAL=1` (the cutover
+rehearsal, which rewrites every user). See `docs/guides/e2e-testing.md`.
+
+### Cloudflare Worker (`../quicktalog-backend`)
+
+`SUPABASE_URL`, `SUPABASE_SECRET_KEY`, `WORKER_ADMIN_TOKEN`,
+`REVALIDATE_SECRET`, `APP_URL`, `JOBS_PAUSED`, `ENVIRONMENT`,
+`UPLOADTHING_TOKEN`, `POSTHOG_API_KEY`, `POSTHOG_HOST`, `POSTHOG_PROJECT_ID`.
+
+`REVALIDATE_SECRET` must be identical to the app's.
+
+### Known drift
+
+- `BACKEND_BASE_URL` is set on Vercel and in CI but is **not referenced anywhere
+  in the app**. Confirm before deleting.
+- `SUPABASE_URL` and `SUPABASE_ANON_KEY` on production are pre-rename leftovers;
+  the app reads `NEXT_PUBLIC_SUPABASE_URL` and the anon key has been disabled.
+- `POSTHGOG_API_KEY` sits alongside `POSTHOG_API_KEY` on both targets — a typo.

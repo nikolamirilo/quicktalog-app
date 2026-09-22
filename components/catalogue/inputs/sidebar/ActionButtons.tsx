@@ -183,12 +183,7 @@ const ActionButtons = ({
 		},
 	};
 
-	/**
-	 * Both layouts read the same definitions; only the order differs, and the
-	 * phone bar groups preview and publish behind one item. Keyed rather than
-	 * looked up by string, so a renamed action is a compile error here instead
-	 * of a throw while the builder renders.
-	 */
+	/** Both layouts read the same definitions; keyed so a renamed action is a compile error, not a render-time throw. */
 	const QUICK_ACTIONS = [
 		ACTIONS.save,
 		ACTIONS.templates,
@@ -203,7 +198,7 @@ const ActionButtons = ({
 
 	return (
 		<>
-			{/* ── Desktop (original, unchanged) ── */}
+			{/* Desktop */}
 			<div className="hidden md:contents">
 				{QUICK_ACTIONS.map(
 					({ key, icon: Icon, label, primary, onClick, disabled }) => (
@@ -239,26 +234,18 @@ const ActionButtons = ({
 				)}
 			</div>
 
-			{/* ── Mobile fixed bottom tab bar ── */}
 			{/*
-			 * Four items, so the centre line falls in the gap between the second
-			 * and the third - which is where the editor button straddles, with no
-			 * icon under it. The top padding is the strip it sits in. No
-			 * `relative` here: this is already a containing block for the absolute
-			 * child, and Tailwind emits `relative` after `fixed`, so adding it
-			 * would win and unpin the bar from the bottom of the screen.
+			 * Mobile fixed bottom tab bar. Four items, so the centre gap is where the
+			 * editor button straddles with no icon under it. No `relative` here: it's
+			 * already a containing block, and adding `relative` after Tailwind's
+			 * `fixed` would unpin the bar from the bottom of the screen.
 			 */}
 			<div
 				aria-label="Builder actions"
 				className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center bg-background/95 px-2 pt-5 pb-[env(safe-area-inset-bottom)]"
 				role="toolbar"
 			>
-				{/*
-				 * Opens the editor panel, straddling the bar's top edge half in and
-				 * half out. Positioned against this bar rather than the sidebar's
-				 * own row, so that split is exact: the translate is a share of the
-				 * button's own height.
-				 */}
+				{/* Opens the editor panel, straddling the bar's top edge half in/out. */}
 				<button
 					aria-label={isOpen ? "Close editor panel" : "Open editor panel"}
 					className="absolute left-1/2 top-0 flex h-[3.6rem] w-[3.6rem] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-none bg-product-primary text-white shadow-sm outline-none transition-transform focus:outline-none focus-visible:outline-none hover:bg-product-primary/90 active:scale-95"
@@ -270,15 +257,7 @@ const ActionButtons = ({
 					{isOpen ? <X size={26} /> : <SlidersHorizontal size={26} />}
 				</button>
 
-				{/*
-				 * The switch into AI mode. On mobile this is the only way in: the
-				 * floating pill is desktop-only, because a pill hovering over the
-				 * page at a guessed offset is what used to collide with this bar.
-				 * Opening the chat hides this whole bar, so the two never overlap.
-				 *
-				 * Styled like every other item: a colour of its own read as a
-				 * selected tab, and nothing here is selected until it is tapped.
-				 */}
+				{/* Switch into AI mode; the only entry on mobile, since the floating pill (desktop-only) used to collide with this bar. */}
 				<button
 					aria-label="Ask AI"
 					className={barItemClass}
@@ -307,13 +286,7 @@ const ActionButtons = ({
 					),
 				)}
 
-				{/*
-				 * Preview and publish are one slot: both act on the finished
-				 * catalogue, and four items are what puts the editor button in a
-				 * gap rather than over an icon. Both are gated by the same
-				 * condition, so the trigger carries it and the menu never opens
-				 * onto two dead entries.
-				 */}
+				{/* Preview + publish share one slot (keeps the editor button in a gap between four items); both gated by the same condition. */}
 				<DropdownMenu>
 					<DropdownMenuTrigger
 						aria-label={`${ACTIONS.publish.label} or preview`}
@@ -328,10 +301,7 @@ const ActionButtons = ({
 							{ACTIONS.publish.label}
 						</span>
 					</DropdownMenuTrigger>
-					{/*
-					 * Above the builder sidebar (z-1000), below the chat sheet and the
-					 * dialogs. The default z-50 would sit behind the sidebar.
-					 */}
+					{/* Above the builder sidebar (z-1000), below the chat sheet/dialogs; default z-50 would sit behind the sidebar. */}
 					<DropdownMenuContent
 						align="end"
 						className="z-[1010] mb-2 rounded-xl border border-product-border bg-product-background shadow-lg"
@@ -349,7 +319,6 @@ const ActionButtons = ({
 				</DropdownMenu>
 			</div>
 
-			{/* Spacer so page content isn't hidden behind mobile bar */}
 			<div className="md:hidden h-16" />
 
 			<SuccessModal

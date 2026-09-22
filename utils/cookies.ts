@@ -34,7 +34,6 @@ export function savePreferences(
 }
 
 export function updateGTMConsent(analytics: boolean, marketing: boolean) {
-	// Update GTM consent for existing dataLayer
 	if (typeof window !== "undefined" && window.dataLayer) {
 		window.dataLayer.push({
 			event: "consent_update",
@@ -51,13 +50,11 @@ export function updateGTMConsent(analytics: boolean, marketing: boolean) {
 }
 
 export function initializeGTMConsent() {
-	// Initialize default consent state for GTM
 	if (typeof window !== "undefined") {
 		if (!window.dataLayer) {
 			window.dataLayer = [];
 		}
 
-		// Set default consent to denied
 		window.dataLayer.push({
 			event: "consent_default",
 			consent: {

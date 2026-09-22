@@ -36,16 +36,11 @@ const settle = (scan: OcrScan | null): Partial<ChatScannedImage> => {
 };
 
 /**
- * Images attached to an AI chat turn, and the text read out of them.
- *
- * OCR runs here in the browser rather than on the server: the agent's model is
- * text-only, and Tesseract already ships with the app for the import flow. The
- * scan starts the moment images are attached, so by the time the user has
- * finished typing their request the text is usually ready to go with it.
- *
- * A low-confidence or unreadable image is kept in the list with its reason
- * showing rather than dropped, so the user can swap it out instead of
- * wondering why the assistant ignored half their menu.
+ * Images attached to an AI chat turn, and the text read out of them. OCR runs
+ * in the browser (the agent's model is text-only) and starts the moment
+ * images are attached, so it's usually ready by the time the user finishes
+ * typing. A low-confidence or unreadable image stays in the list with its
+ * reason shown, rather than being silently dropped.
  */
 export function useChatImageOcr(language?: string) {
 	const [images, setImages] = useState<ChatScannedImage[]>([]);
@@ -70,8 +65,7 @@ export function useChatImageOcr(language?: string) {
 				);
 			});
 		} catch (error) {
-			// The worker itself failed to start - the language data is missing or
-			// the CDN is unreachable - so nothing in the batch will ever land.
+			// Worker failed to start (missing language data or CDN unreachable); nothing in the batch will land.
 			Sentry.captureException(error, { tags: { op: "chatImageOcr" } });
 			console.error("Chat image OCR failed:", error);
 			const ids = new Set(batch.map((image) => image.id));

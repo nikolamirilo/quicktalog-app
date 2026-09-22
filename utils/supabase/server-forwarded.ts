@@ -7,24 +7,43 @@ import { COOKIE_OPTIONS } from "@/lib/auth/cookie-options";
 /**
  * Auth calls that must run on the server but be rate limited per **end user**:
  * the PKCE exchange at `/auth/callback` and `verifyOtp` at `/auth/confirm`.
- * Server calls come from shared Vercel egress IPs, so without forwarding one
- * busy region could exhaust the limit for everyone.
+ * Server calls share Vercel egress IPs, so without forwarding one busy region
+ * could exhaust the limit for everyone.
  *
- * It uses the secret key, because only that key's requests honour
- * `sb-forwarded-for`. A secret-key client also skips captcha and carries
- * `auth.admin`, so this module deliberately returns a narrow facade: nothing
- * else on `auth` is reachable through it, and the architecture test keeps its
- * importers to the two routes above.
+ * Uses the secret key, since only that key's requests honour
+ * `sb-forwarded-for` - but a secret-key client also skips captcha and carries
+ * `auth.admin`, so this module deliberately returns a narrow facade; an
+ * architecture test keeps its importers to the two routes above.
  */
 export type ForwardedAuth = Pick<
 	SupabaseClient["auth"],
 	"exchangeCodeForSession" | "verifyOtp" | "getClaims"
 >;
 
+/**
+ * The server is misconfigured, as opposed to the visitor's link being bad -
+ * worth its own type since collapsing both into "that link is no longer
+ * valid" sends the wrong person to fix the wrong thing. Asymmetric with
+ * `createMiddlewareAuthClient`, which falls back to the publishable key: a
+ * missing `SUPABASE_SECRET_KEY` breaks only this, not session refresh.
+ */
+export class AuthConfigError extends Error {
+	constructor(missing: string) {
+		super(`Supabase auth env is not set: ${missing}`);
+		this.name = "AuthConfigError";
+	}
+}
+
 export async function createForwardedAuthClient(): Promise<ForwardedAuth> {
 	const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 	const key = process.env.SUPABASE_SECRET_KEY;
-	if (!url || !key) throw new Error("Supabase auth env is not set");
+	if (!url || !key) {
+		throw new AuthConfigError(
+			[!url && "NEXT_PUBLIC_SUPABASE_URL", !key && "SUPABASE_SECRET_KEY"]
+				.filter(Boolean)
+				.join(", "),
+		);
+	}
 
 	const [jar, headerList] = await Promise.all([cookies(), headers()]);
 	// Set by Vercel; the first entry is the client.

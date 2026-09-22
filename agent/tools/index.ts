@@ -11,13 +11,10 @@ import { skillTools } from "@/agent/tools/skills";
 import { type JSONValue } from "ai";
 
 /**
- * Every tool the agent can call, grouped by the builder tab it edits.
- *
- * Spreading object literals is what keeps the keys literal, so `AgentToolName`
- * stays an exact union of the tools that exist - which is what makes the
- * `Record<AgentToolName, ...>` in `display.ts` catch a tool nobody gave a
- * label. Building the set from an array with `Object.fromEntries` collapses it
- * to `Record<string, Tool>` and silently loses that; don't.
+ * Every tool the agent can call, grouped by the builder tab it edits. Spread
+ * as object literals (not built via `Object.fromEntries`) to keep the keys
+ * literal, so `AgentToolName` stays exact and `display.ts`'s
+ * `Record<AgentToolName, ...>` can catch a tool with no label.
  */
 export function buildTools(session: CatalogueSession) {
 	const context = buildContext(session);
@@ -60,11 +57,9 @@ function gateCalls<T extends Record<string, { execute?: unknown }>>(
 }
 
 /**
- * The model reads every result except `operation`.
- *
- * The client needs the operation to replay an edit; the model only needs to
- * know it landed. Echoed back, 40 items with their ids and image URLs would be
- * re-read on every later step and every later turn.
+ * The model reads every result except `operation` - the client needs it to
+ * replay an edit, but echoing it back (ids, image URLs, ...) would get
+ * re-read on every later step and turn for no benefit to the model.
  */
 function hideOperations<T extends Record<string, object>>(tools: T): T {
 	for (const definition of Object.values(tools)) {

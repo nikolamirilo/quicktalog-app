@@ -17,7 +17,7 @@ interface ContactFormProps {
 	handleSubmit: (e: React.MouseEvent) => void;
 }
 
-const subjectOptions = [
+export const subjectOptions = [
 	"Custom Plan",
 	"Pricing Questions",
 	"Technical Support",
@@ -27,7 +27,6 @@ const subjectOptions = [
 	"Other",
 ];
 
-// Email validation regex (simple version)
 const isValidEmail = (email: string) =>
 	/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 

@@ -12,7 +12,6 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [activeLayoutIndex, setActiveLayoutIndex] = useState(0);
 
-	// Find current theme index
 	useEffect(() => {
 		const currentIndex = themes.findIndex((t) => t.key === theme);
 		if (currentIndex !== -1) {
@@ -20,7 +19,6 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 		}
 	}, [theme]);
 
-	// Find current layout index
 	useEffect(() => {
 		const currentIndex = [
 			{ key: "variant_1", label: "Side Image" },
