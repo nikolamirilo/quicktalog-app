@@ -305,11 +305,27 @@ group = "A gate 0A: baseline + M00";
 		app.deleteClerkUser("user_2eEeeeeeeeeeeeeeeeeeee5"),
 	);
 	check(
-		"Phase 0A app paths after M00 (DB_CONNECTION_STRING/DATABASE_ADMIN_URL = postgres): Clerk upsert/ensure/delete, Paddle plan update + subscriptions upsert (fires CRM triggers), public items read, dashboard analytics",
+		"Phase 0A app paths after M00 (DB_CONNECTION_STRING/DATABASE_ADMIN_URL = postgres): Paddle plan update + subscriptions upsert (fires CRM triggers), public items read, dashboard analytics, Clerk delete",
 		"all ok",
-		[up, ens, pads, pub, dash, del].map(sv).join(" | ") +
-			` | subs=${summarize(subs)}`,
-		up.ok && ens.ok && pads.ok && pub.ok && dash.ok && del.ok && subs.ok,
+		[pads, pub, dash, del].map(sv).join(" | ") + ` | subs=${summarize(subs)}`,
+		pads.ok && pub.ok && dash.ok && del.ok && subs.ok,
+	);
+	// Drizzle names EVERY column of a table in an INSERT, filling the ones the
+	// caller omitted with `default`. The installed @quicktalog/common schema is
+	// pulled from a post-M10 database, so every insert into `users` names
+	// `welcome_email_sent_at` — and fails on a database that has not had M10.
+	//
+	// That makes M10 a hard precondition for deploying this app, not a migration
+	// that can follow the deploy the way M00 did. This check is here so the
+	// constraint is asserted rather than discovered in production; it is expected
+	// to start failing the day the baseline includes M10, and should be deleted
+	// then. UPDATE and DELETE name only the columns they touch, which is why
+	// `paddleSetPlan` and `deleteClerkUser` above still pass.
+	check(
+		"Clerk-era inserts into public.users need M10 first (the installed schema has welcome_email_sent_at)",
+		"both fail 42703",
+		[up, ens].map(sv).join(" | "),
+		!up.ok && up.code === "42703" && !ens.ok && ens.code === "42703",
 	);
 	o = await REST(
 		db,

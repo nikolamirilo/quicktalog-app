@@ -10,7 +10,7 @@ setup("authenticate with Clerk", async ({ page }) => {
 	if (!identifier || !password) {
 		throw new Error(
 			"Missing E2E_CLERK_USER_USERNAME / E2E_CLERK_USER_PASSWORD. " +
-				"Add them to .env.test.local (see .env.test.local.example).",
+				"Add them to .env.test.local - see docs/guides/e2e-testing.md.",
 		);
 	}
 

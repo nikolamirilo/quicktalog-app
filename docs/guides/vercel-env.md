@@ -94,3 +94,35 @@ The app uses two:
 
 Before M08 they are the same URL and the admin one may be omitted. After M08 they
 must differ. Both are pooler URLs on port 6543.
+
+## Runtime switches
+
+Three things have to change without a deploy, because a redeploy is too slow
+and too risky during a maintenance window. They live in Vercel Global Config
+(formerly Edge Config) and are read by `lib/ops/flags.ts`.
+
+Hobby allows one Global Config store per account, so PROD and TEST share it and
+are told apart by the key suffix (`_prod` / `_test`), chosen from `VERCEL_ENV`.
+
+| Key | Type | Effect | Env-var fallback |
+|---|---|---|---|
+| `maintenance_<env>` | boolean | Write paths and server actions return 503; `middleware.ts` enforces it | `MAINTENANCE_MODE=1` |
+| `banner_<env>` | string | A message shown to everyone, e.g. to announce the sign-in change | `BANNER_MESSAGE` |
+| `clerk_frozen_<env>` | boolean | The account settings page shows "Account changes are paused" | `CLERK_FROZEN=1` |
+
+The environment variable is the fallback when no store is connected — local, CI
+and previews. With a store connected it is ignored.
+
+**Every switch fails safe rather than closed.** An unreachable store must not
+take the site down or freeze a page nobody asked to freeze, so a failed read
+falls through to the environment variable (maintenance) or returns "off"
+(banner, freeze). The one exception is `maintenanceBypass()`, which fails
+closed: with no `MAINTENANCE_BYPASS_TOKEN`, or one shorter than 32 characters,
+nobody gets past maintenance.
+
+Propagation takes up to about 10 seconds. After writing `maintenance_prod`,
+wait 15 seconds and check from two separate requests before relying on it.
+
+`clerk_frozen_<env>` is switched on at T-3 of the Clerk → Supabase cutover and
+off once the switch is done; the account forms still work, the notice only warns
+that a change made now will not be carried across.

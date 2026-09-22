@@ -40,6 +40,30 @@ export async function banner(): Promise<string | null> {
 }
 
 /**
+ * The T-3 Clerk freeze (plan 3.4).
+ *
+ * In the three days before the cutover, the Clerk export is the source of truth
+ * for passwords and email addresses. A profile edit or a password reset made
+ * after the export lands in Clerk but not in the import, so the user would
+ * arrive on the other side with credentials nobody carried across. Clerk's own
+ * settings cannot reliably turn those forms off, so the app says so instead.
+ *
+ * It is a notice, not an enforcement: sign-in, and everything that is not an
+ * account change, keeps working throughout.
+ */
+export async function accountChangesPaused(): Promise<boolean> {
+	if (hasStore()) {
+		try {
+			return (await get<boolean>(`clerk_frozen_${ENV}`)) === true;
+		} catch {
+			// An unreachable store must not put the account page into a freeze
+			// nobody asked for: fall through to the environment variable.
+		}
+	}
+	return process.env.CLERK_FROZEN === "1";
+}
+
+/**
  * Fail closed: with no token configured, or one too short to be worth anything,
  * nobody gets past maintenance. Operators set the cookie by hand during the
  * cutover so they can smoke-test before users are let back in.

@@ -1,6 +1,7 @@
 // Reusable scenario blocks (ported from wf2 run.mjs, adapted to the final object names and M06 signatures).
 import {
 	IDS,
+	applyTx,
 	run,
 	inRole,
 	U,
@@ -790,6 +791,24 @@ export async function appLayer(
 ) {
 	const g = (x) => `[${label}] ${x}`;
 	const db = await env.load(snap, { role: sessionRole });
+
+	// The app layer runs the REAL @quicktalog/common schema, which is pulled from
+	// a post-M10 database: every Drizzle statement on `users` names
+	// `welcome_email_sent_at`. Running it against a pre-M10 snapshot tests a
+	// combination that can never be deployed, so bring the snapshot up to M10
+	// first. Snapshots that already have it are left alone — M10 rewrites the
+	// legacy consent marker and must not run twice.
+	{
+		const prev = db.session;
+		await db.as("postgres");
+		const present = await db.rows(
+			`select 1 from information_schema.columns
+			  where table_schema = 'public' and table_name = 'users'
+			    and column_name = 'welcome_email_sent_at'`,
+		);
+		if (present.length === 0) await applyTx(env, db, "M10");
+		await db.as(prev);
+	}
 	const adm = async (f) => {
 		const prev = db.session;
 		await db.as("postgres");

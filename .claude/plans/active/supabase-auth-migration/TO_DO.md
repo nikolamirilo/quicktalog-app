@@ -29,7 +29,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0B.7 | Deploy to TEST, then PROD; soak 48h | Nikola | Done |
 | K.1 | Create named `sb_secret_` keys per project | Nikola | Done |
 | K.2 | Worker: replace `SUPABASE_SERVICE_ROLE_KEY` with the secret key, remove `SUPABASE_ANON_KEY` | Claude | Done |
-| K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude | Done |
+| K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude / Nikola | In Progress |
 | K.4 | Apply M09 (webhooks send only the header); remove the Vault `service_role_key` | Nikola | In Progress |
 | K.5 | Disable legacy API keys; watch logs 24h | Nikola | Done |
 | 1.1 | Local and CI setup: `config.toml`, seed, PGlite harness in `tests/db-pglite/`, `db-tests` CI job | Claude | Done |
@@ -57,7 +57,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 3.1 | Fixture rehearsal in CI (import, re-key, verify, reverse, re-key) | Claude | In Progress |
 | 3.2 | Full TEST dress rehearsal: cutover, rollback, re-cutover; time every step | Nikola | To Do |
 | 3.3 | Optional: PROD data rehearsal on a local copy | Nikola | To Do |
-| 3.4 | Clerk freeze at T-3 (account changes paused notice) | Claude / Nikola | To Do |
+| 3.4 | Clerk freeze at T-3 (account changes paused notice) | Claude / Nikola | In Progress |
 | 3.5 | PROD dark import at T-3; reconcile and decide on every conflict | Nikola | To Do |
 | 4.1 | Deploy freeze from T-7; go/no-go checklist at T-1 | Nikola | To Do |
 | 4.2 | Cutover window: maintenance on, pause worker, final import, backup, re-key user ids | Nikola | To Do |
@@ -66,27 +66,101 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 5.1 | T+14: remove Clerk code, packages, provider switch and e2e leg | Claude | To Do |
 | 5.2 | T+30: remove Clerk DNS records, then delete Clerk instances and Google callback URI | Nikola | To Do |
 | 5.3 | Shred CSV exports; revoke the cutover secret key | Nikola | To Do |
-| 5.4 | Write and apply M12 (uuid ids check) and M13 (drop backup tables) | Claude / Nikola | To Do |
+| 5.4 | Write and apply M12 (uuid ids check) and M13 (drop backup tables) | Claude / Nikola | In Progress |
 | 5.5 | Update terms, privacy policy, README, docs and skills | Claude | To Do |
 | 5.6 | Move this plan to `.claude/plans/archive/` | Claude | To Do |
 
-## Notes
+## Where things stand
 
-_Last checked read-only against TEST on 2026-09-22, after `supabase db push`._
+_Verified read-only against TEST on 2026-09-22. PROD has not been inspected._
 
-Applied on TEST: everything through `20260922090003_edge_webhook_secret` (M09). M10 and M09 both verified —
-`call_edge_function_with_vault_secret()` now prefers `x-webhook-secret`, the three `auth.users` triggers exist, and the
-`migration` schema tables are there.
+**Applied on TEST:** everything through `20260922090003_edge_webhook_secret`. That is M00–M08, M10 and M09.
+Verified after the push: `call_edge_function_with_vault_secret()` prefers `x-webhook-secret`, the three `auth.users`
+triggers exist, the `migration` schema tables are there, `users_id_is_uuid` is absent (correct, the re-key has not
+run) and all 3 users are still Clerk-keyed.
 
-- **K.4 still not finished.** M09 is applied now, but `vault.secrets` is empty and no edge functions are deployed on
-  TEST (`list_edge_functions` → none), so the webhook still logs a warning and posts nothing. Remaining, in order:
-  deploy the edge functions that accept `x-webhook-secret` (K.3, code is in the repo), then set the Vault secret
-  `edge_webhook_secret`. **PROD has not been checked** and is where the Brevo new-contact webhook matters.
-- **2.5: M10 is applied on TEST, not on PROD.**
-- **`private.settings.terms_version` is not set on TEST** (only `default_plan_id` is). M10 leaves it to an operator
-  after legal sign-off. Until it is set, every new sign-up gets `consents` all-false with `source: 'signup'` and the
-  consent gate asks everyone. Set it before 2.13, or 2.13 tests the wrong behaviour.
-- **M12 and M13 live in `supabase/phase5/`, not `supabase/migrations/`.** Anything in the migrations directory is
-  applied by the next `supabase db push`, and those two are only correct at T+30 after the cutover and orphan triage.
-  Move a file into `supabase/migrations/` when it is time to apply it; see `supabase/phase5/README.md`. They are still
-  covered by `npm run test:db`.
+**Not applied anywhere:** M12 and M13. They live in `supabase/phase5/`, deliberately outside the
+`supabase db push` path — see the note under 5.4 below.
+
+**Applied on PROD:** unknown beyond M00–M08 (1.9). M09 and M10 are not.
+
+## Next actions — Nikola
+
+In this order. 2 blocks 2.13; 4 is the one that may be hurting users today.
+
+| # | Task | Why now |
+|---|---|---|
+| 1 | Commit and push | CI has never run the rehearsal, the sign-up tests or M09/M12/M13. ~18 tests execute for the first time. |
+| 2 | Set `private.settings.terms_version` on TEST | **Blocks 2.13.** Without it `currentTermsVersion()` returns null and the sign-up form disables itself, so Supabase sign-up cannot be tested at all. |
+| 3 | Release `@quicktalog/common` and bump app + worker | M10 changed `public.users`; the installed 1.58.0 predates it. `drizzle-kit pull`, release, bump. |
+| 3b | **Do not deploy the app to PROD until M10 is applied there** | `@quicktalog/common` 1.59.0 adds `welcome_email_sent_at` to the Drizzle `users` schema. Drizzle names every column of a table in an INSERT and in `select()`, so **every** read or insert on `users` fails with 42703 on a database without M10. PROD does not have M10. This reverses the plan's usual deploy-then-migrate order for this one migration. |
+| 4 | Check PROD's edge-function state | If PROD has the Vault `service_role_key` gone, M09 unapplied and its functions deployed, the Brevo contact sync is failing silently (`raise warning`, no error anywhere). |
+| 5 | K.3 on PROD: download the four function sources | Prerequisite for everything else in Track K, and an outstanding Phase 0A step. Then hand them to Claude for the `x-webhook-secret` change. |
+| 6 | 2.13 | Once 2, 3 and 5 are done. |
+
+Later, in phase order: 3.2 (TEST dress rehearsal), 3.5, then Phase 4.
+
+## Next actions — Claude
+
+| # | Task | Blocked on |
+|---|---|---|
+| 1 | Fix whatever the first CI run turns up in the rehearsal and sign-up tests | Nikola action 1 |
+| 2 | Add the `x-webhook-secret` check and `verify_jwt = false` to the four edge functions | Nikola action 5 |
+| 3 | Wire `banner()` to the UI (see open items) | nothing — say the word |
+| 4 | 5.1, 5.5, 5.6 | the cutover |
+
+## Open questions and decisions
+
+- **Decided (Nikola, 2026-09-22): the edge-function integrations are PROD-only.** TEST does not need them, so TEST's
+  state is correct and final — `edge_functions_base_url` unset, no functions deployed,
+  `call_edge_function_with_vault_secret()` returning at its first check without posting. Leave the three triggers in
+  place: they are cheap no-ops and `remap-user-ids.sql` already disables the Brevo one for the re-key. **Do not
+  "fix" TEST.** All Track K edge work is PROD-only.
+- **Open:** `migration.t0_password_digests` is created by `migrate-clerk-to-supabase.ts` rather than by a migration.
+  It is now load-bearing in three places (V12 in `verify.sql`, the rollback push's drift detection, and M13 drops it).
+  Worth promoting to a migration.
+- **Open:** which Clerk Account Portal settings can actually be frozen for 3.4 is still unverified.
+- **Open:** `banner()` in `lib/ops/flags.ts` is not wired to any UI, so plan 12's T-30min announcement banner has
+  nowhere to appear.
+
+## Corrections to earlier "Done" marks
+
+- **K.3 was never done.** There is no edge-function source in any of the three repos: `grep -r x-webhook-secret`
+  matches only the plan documents and `supabase/functions/` does not exist. Plan 10.6 says as much — "sources in no
+  repo". The four functions (`create-brevo-contact`, `create-crm-contact`, `discord-subscription-alert`,
+  `sync-available-plans`) live only in the PROD dashboard.
+- **0A.13's "check edge functions" needs confirming.** The same evidence suggests the Phase 0A download-and-grep step
+  never happened. If it did, and the answers to "does any function use the anon key / store `users.id` as an external
+  id" are known, record them here; if not, it rides along with K.3 action 5.
+- **K.4 is not finished.** M09 is applied on TEST, but the Vault secret `edge_webhook_secret` does not exist and the
+  functions that would accept it are not deployed. PROD-only work now, per the decision above.
+- **2.5 was marked Done before M10 was applied.** M10 is on TEST now; PROD still pending.
+
+## Notes on specific tasks
+
+- **5.4 — M12 and M13 are written but must not be pushed.** They live in `supabase/phase5/` because anything in
+  `supabase/migrations/` is applied by the next `supabase db push`, and those two are only correct at T+30, after the
+  cutover and orphan triage. A `supabase db push` on 2026-09-22 proved the point: M12 refused, correctly, because
+  `users_id_is_uuid` does not exist yet. Move a file into `supabase/migrations/` when it is time to apply it; see
+  `supabase/phase5/README.md`. Both are still covered by `npm run test:db` on PG17 and PG18.
+- **3.1 — written, never executed.** The rehearsal drives the real scripts against a real Postgres and GoTrue, but
+  there is no Docker or `psql` on the dev machine, so its first run is in CI. Expect fixes.
+- **3.4 — the notice is built, the freeze is not applied.** `ClerkAccount.tsx` shows "Account changes are paused" when
+  the `clerk_frozen_<env>` Global Config key is true (env fallback `CLERK_FROZEN=1`); the runtime-switches table in
+  `docs/guides/vercel-env.md` documents all three switches. At T-3, flip the key and do the Clerk dashboard half.
+- **2.3/2.4 — the welcome email now works on the Supabase path.** M10 created `private.claim_welcome_email()` but
+  nothing called it, so under `AUTH_PROVIDER=supabase` new users got no welcome email at all (smoke test S13).
+  `getUserData()` now claims and sends it through `next/server`'s `after()`. Imported users are unaffected:
+  `remap-user-ids.sql` backfills `welcome_email_sent_at` during the re-key.
+- **2.13 — set `terms_version` first** (Nikola action 2), or it tests the wrong consent behaviour.
+- **e2e was broken in four ways, now fixed** (2026-09-22). `globalSetup` called `clerkSetup()` on both legs, so the
+  Supabase leg died before any test ran; `auth.supabase.setup.ts` opened the magic link and went straight to the
+  dashboard, but `/auth/confirm` only parks the token and the interstitial has to be *pressed* twice, so no session was
+  ever made; `playwright.config.ts` started a dev server on localhost even when `NEXT_PUBLIC_BASE_URL` pointed at TEST,
+  and had no guard against production; and both setup files told the reader to see `.env.test.local.example`, which
+  does not exist and cannot be created (a git hook blocks every `.env*` path). The variables now live in
+  `docs/guides/e2e-testing.md`, which the error messages point at.
+- **`npm run test:db` caught the M10 deploy constraint**, which is how it was found. Three app-layer scenarios ran
+  today's schema against pre-M10 snapshots. `appLayer` now brings a snapshot to M10 before running app SQL, and the
+  Phase 0A gate asserts the 42703 explicitly so the constraint is documented rather than rediscovered in production.
+  Delete that assertion when the baseline includes M10.

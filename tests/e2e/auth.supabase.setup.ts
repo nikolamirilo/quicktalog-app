@@ -22,7 +22,7 @@ setup("authenticate with Supabase", async ({ page, baseURL }) => {
 	if (!url || !secretKey || !email) {
 		throw new Error(
 			"Missing NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SECRET_KEY / E2E_SUPABASE_USER_EMAIL. " +
-				"Add them to .env.test.local (see .env.test.local.example).",
+				"Add them to .env.test.local - see docs/guides/e2e-testing.md.",
 		);
 	}
 
@@ -40,11 +40,34 @@ setup("authenticate with Supabase", async ({ page, baseURL }) => {
 
 	// The browser completes the link itself, so the session cookies are written
 	// by the app exactly as they are for a real visitor.
+	//
+	// `/auth/confirm` verifies nothing: it moves the token into a short-lived
+	// cookie and redirects to an interstitial, so a mail scanner or a link
+	// prefetcher cannot spend it. That means the token is only consumed when
+	// something presses the button, and the setup has to press it — going
+	// straight to /admin/dashboard leaves the session unmade and the token
+	// unspent.
 	await page.goto(
-		`${baseURL}/auth/confirm?token_hash=${data.properties.hashed_token}&type=email&next=/admin/dashboard`,
+		`${baseURL}/auth/confirm?token_hash=${data.properties.hashed_token}&type=email`,
 	);
+	await expect(page).toHaveURL(/\/auth\/confirm\/continue/);
 
-	await page.goto("/admin/dashboard");
+	const confirmButton = page.getByRole("button", {
+		name: /confirm and continue/i,
+	});
+	if (!(await confirmButton.isVisible().catch(() => false))) {
+		// The interstitial refuses for reasons worth reading: already signed in,
+		// the 10-minute cookie expired, or the confirm rate limit was hit by an
+		// earlier run from this IP. A bare timeout would say none of that.
+		const shown = await page.locator("body").innerText();
+		throw new Error(
+			`The confirm interstitial did not offer the button. Page said:\n${shown.slice(0, 500)}`,
+		);
+	}
+	await confirmButton.click();
+
+	// Second step: the page names the account before it lets the visitor in.
+	await page.getByRole("button", { name: /^continue$/i }).click();
 	await expect(page).toHaveURL(/\/admin\/dashboard/);
 
 	await page.context().storageState({ path: STORAGE_STATE });
