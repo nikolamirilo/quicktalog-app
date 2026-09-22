@@ -8,6 +8,13 @@ export const APP_MIGRATIONS_DIR = new URL(
 	import.meta.url,
 ).pathname;
 
+// Phase 5 migrations are finished but must not be applied yet, so they are kept
+// out of the `supabase db push` path. They are still tested from here.
+export const PHASE5_MIGRATIONS_DIR = new URL(
+	"../../supabase/phase5",
+	import.meta.url,
+).pathname;
+
 // ---------------------------------------------------------------------------------------------------
 // SQL splitting (handles -- and /* */ comments, '' strings, "" identifiers, $tag$ dollar quotes)
 // ---------------------------------------------------------------------------------------------------
@@ -426,21 +433,35 @@ export const PHASE_MIGRATIONS = {
 	M06: "ai_turn_plan_binding",
 	M07: "validate_after_audit",
 	M08: "app_rls_login_role",
+	M09: "edge_webhook_secret",
+	M10: "auth_users_sync",
+	M12: "validate_users_id_uuid",
+	M13: "post_cutover_cleanup",
 };
 
 const phaseSuffixes = Object.values(PHASE_MIGRATIONS).map((n) => `_${n}.sql`);
 const isPhaseMigration = (file) => phaseSuffixes.some((s) => file.endsWith(s));
 
-/** Absolute path of the repo migration for a phase key, or null. */
+/**
+ * Absolute path of the repo migration for a phase key, or null.
+ *
+ * Looks in `supabase/migrations` first and then in `supabase/phase5`, so a
+ * migration that has been moved out of the push path is still the file the
+ * suite tests.
+ */
 export function phaseMigrationPath(key) {
 	const suffix = PHASE_MIGRATIONS[key];
 	if (!suffix) return null;
-	const file = fs
-		.readdirSync(APP_MIGRATIONS_DIR)
-		.filter((f) => f.endsWith(`_${suffix}.sql`))
-		.sort()
-		.pop();
-	return file ? path.join(APP_MIGRATIONS_DIR, file) : null;
+	for (const dir of [APP_MIGRATIONS_DIR, PHASE5_MIGRATIONS_DIR]) {
+		if (!fs.existsSync(dir)) continue;
+		const file = fs
+			.readdirSync(dir)
+			.filter((f) => f.endsWith(`_${suffix}.sql`))
+			.sort()
+			.pop();
+		if (file) return path.join(dir, file);
+	}
+	return null;
 }
 
 export function readAppMigrations() {

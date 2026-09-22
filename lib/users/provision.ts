@@ -73,12 +73,17 @@ export async function ensureUserRow(profile: ClerkProfile): Promise<void> {
 
 /**
  * What still has to be settled elsewhere before the row disappears: the Paddle
- * subscriptions to cancel, and the catalogue names whose cached pages and Redis
- * drafts have to go.
+ * subscriptions to cancel, the catalogue names whose cached pages have to go,
+ * and the catalogue ids those pages' Redis drafts are keyed by.
+ *
+ * It is read while the row is still there, because every one of these is
+ * reachable only through it: `subscriptions` hangs off `users.customer_id`, and
+ * both cascade away with the row.
  */
 export type UserFootprint = {
 	activeSubscriptionIds: string[];
 	catalogueNames: string[];
+	catalogueIds: string[];
 };
 
 export async function loadUserFootprint(
@@ -92,7 +97,7 @@ export async function loadUserFootprint(
 			.limit(1);
 
 		const owned = await tx
-			.select({ name: catalogues.name })
+			.select({ id: catalogues.id, name: catalogues.name })
 			.from(catalogues)
 			.where(eq(catalogues.createdBy, userId));
 
@@ -100,6 +105,7 @@ export async function loadUserFootprint(
 			return {
 				activeSubscriptionIds: [],
 				catalogueNames: owned.map((row) => row.name),
+				catalogueIds: owned.map((row) => row.id),
 			};
 		}
 
@@ -116,6 +122,7 @@ export async function loadUserFootprint(
 		return {
 			activeSubscriptionIds: active.map((row) => row.subscriptionId),
 			catalogueNames: owned.map((row) => row.name),
+			catalogueIds: owned.map((row) => row.id),
 		};
 	});
 }

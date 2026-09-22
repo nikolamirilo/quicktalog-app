@@ -1,10 +1,17 @@
 "use client";
-import ConsentModal from "@/components/modals/ConsentModal";
 import ClerkAuthForms from "@/components/auth/ClerkAuthForms";
+import SupabaseAuthForms from "@/components/auth/SupabaseAuthForms";
+import ConsentModal from "@/components/modals/ConsentModal";
+import { AUTH_PROVIDER } from "@/lib/auth/provider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Auth() {
+export default function Auth({
+	termsVersion = null,
+}: {
+	/** Read on the server from `private.current_terms_version()`; only the Supabase forms use it. */
+	termsVersion?: string | null;
+}) {
 	const searchParams = useSearchParams();
 	const mode = searchParams.get("mode");
 	const router = useRouter();
@@ -40,7 +47,12 @@ export default function Auth() {
 			<div className="product font-lora min-h-screen">
 				<div className="flex justify-center items-center mt-[5vh] min-h-screen px-4">
 					<div className="w-full max-w-md">
-						{showSignupForm && <ClerkAuthForms mode={mode} />}
+						{showSignupForm &&
+							(AUTH_PROVIDER === "supabase" ? (
+								<SupabaseAuthForms mode={mode} termsVersion={termsVersion} />
+							) : (
+								<ClerkAuthForms mode={mode} />
+							))}
 					</div>
 				</div>
 			</div>

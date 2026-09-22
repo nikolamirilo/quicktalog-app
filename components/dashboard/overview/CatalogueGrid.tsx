@@ -14,10 +14,6 @@ export interface CatalogueGridProps {
 	isModalOpen: boolean;
 	matchedTier: any;
 	setIsLinkCopied: (value: boolean) => void;
-	sourceConfig: Record<
-		string,
-		{ label: string; className: string; Icon: React.ElementType }
-	>;
 	statusColors: Record<string, string>;
 	usage: Usage;
 }
@@ -34,7 +30,6 @@ export default function CatalogueGrid({
 	isModalOpen,
 	matchedTier,
 	setIsLinkCopied,
-	sourceConfig,
 	statusColors,
 	usage,
 }: CatalogueGridProps) {
@@ -70,7 +65,6 @@ export default function CatalogueGrid({
 						key={`dashboard-item-${index}`}
 						matchedTier={matchedTier}
 						setIsLinkCopied={setIsLinkCopied}
-						sourceConfig={sourceConfig}
 						statusColors={statusColors}
 						usage={usage}
 					/>

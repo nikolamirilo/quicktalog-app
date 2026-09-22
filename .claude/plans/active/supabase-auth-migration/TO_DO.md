@@ -30,7 +30,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | K.1 | Create named `sb_secret_` keys per project | Nikola | Done |
 | K.2 | Worker: replace `SUPABASE_SERVICE_ROLE_KEY` with the secret key, remove `SUPABASE_ANON_KEY` | Claude | Done |
 | K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude | Done |
-| K.4 | Apply M09 (webhooks send only the header); remove the Vault `service_role_key` | Nikola | Done |
+| K.4 | Apply M09 (webhooks send only the header); remove the Vault `service_role_key` | Nikola | In Progress |
 | K.5 | Disable legacy API keys; watch logs 24h | Nikola | Done |
 | 1.1 | Local and CI setup: `config.toml`, seed, PGlite harness in `tests/db-pglite/`, `db-tests` CI job | Claude | Done |
 | 1.2 | Write M01-M07 migrations (private roles, policies, functions) and pgTAP tests | Claude | Done |
@@ -39,22 +39,22 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 1.5 | App code: RLS wrapper (`withUser`/`withPublic`/`asAdmin`), convert every query, cookie consent to DB, provider-neutral auth UI, import guardrails, skills and docs | Claude | Done |
 | 1.6 | Deploy to TEST; soak 3 days | Nikola | Done |
 | 1.7 | Apply M07 on TEST | Nikola | Done |
-| 1.8 | Apply M08 on TEST, set `app_rls` password, add separate user/admin connection strings, load smoke test | Nikola | To Do |
-| 1.9 | PROD: preflight, M01-M06, deploy, soak 3 days, M07, M08, smoke | Nikola | To Do |
-| 2.1 | Add Supabase auth packages and clients; Supabase branch of `getVerifiedIdentity` | Claude | To Do |
-| 2.2 | Runtime switches (maintenance, banner) and middleware with session refresh | Claude | To Do |
-| 2.3 | Auth UI: sign-in, sign-up, Google, password reset, callback and confirm routes, consent page | Claude | To Do |
-| 2.4 | Account settings: profile, email and password change, sign out, delete account | Claude | To Do |
-| 2.5 | Write M10 (sync `auth.users` → `users`) and apply on TEST, then PROD | Claude / Nikola | To Do |
-| 2.6 | Supabase config as code (`auth-config.ts`); apply on TEST and PROD with sign-ups off | Claude / Nikola | To Do |
-| 2.7 | Google provider: client ID and secret from Google Cloud | Nikola | To Do |
-| 2.8 | ES256 signing keys on both projects; revoke legacy JWT secret | Nikola | To Do |
-| 2.9 | Email: Resend per project, `auth.quicktalog.app` domain, DMARC, templates | Nikola | To Do |
-| 2.10 | Security hardening: CSP report-only, Origin checks | Claude | To Do |
-| 2.11 | Cutover scripts: Clerk import, re-key, verify, rollback | Claude | To Do |
-| 2.12 | Tests: auth triggers, sign-up integration, Playwright Supabase setup, CI matrix `clerk`/`supabase` | Claude | To Do |
+| 1.8 | Apply M08 on TEST, set `app_rls` password, add separate user/admin connection strings, load smoke test | Nikola | Done |
+| 1.9 | PROD: preflight, M01-M06, deploy, soak 3 days, M07, M08, smoke | Nikola | Done |
+| 2.1 | Add Supabase auth packages and clients; Supabase branch of `getVerifiedIdentity` | Claude | Done |
+| 2.2 | Runtime switches (maintenance, banner) and middleware with session refresh | Claude | Done |
+| 2.3 | Auth UI: sign-in, sign-up, Google, password reset, callback and confirm routes, consent page | Claude | Done |
+| 2.4 | Account settings: profile, email and password change, sign out, delete account | Claude | Done |
+| 2.5 | Write M10 (sync `auth.users` → `users`) and apply on TEST, then PROD | Claude / Nikola | In Progress |
+| 2.6 | Supabase config as code (`auth-config.ts`); apply on TEST and PROD with sign-ups off | Claude / Nikola | Done |
+| 2.7 | Google provider: client ID and secret from Google Cloud | Nikola | Done |
+| 2.8 | ES256 signing keys on both projects; revoke legacy JWT secret | Nikola | Done |
+| 2.9 | Email: Resend per project, `auth.quicktalog.app` domain, DMARC, templates | Nikola | Done |
+| 2.10 | Security hardening: CSP report-only, Origin checks | Claude | Done |
+| 2.11 | Cutover scripts: Clerk import, re-key, verify, rollback | Claude | Done |
+| 2.12 | Tests: auth triggers, sign-up integration, Playwright Supabase setup, CI matrix `clerk`/`supabase` | Claude | Done |
 | 2.13 | Test all auth flows on a TEST preview with `AUTH_PROVIDER=supabase`; PROD stays on `clerk` for 72h | Nikola | To Do |
-| 3.1 | Fixture rehearsal in CI (import, re-key, verify, reverse, re-key) | Claude | To Do |
+| 3.1 | Fixture rehearsal in CI (import, re-key, verify, reverse, re-key) | Claude | In Progress |
 | 3.2 | Full TEST dress rehearsal: cutover, rollback, re-cutover; time every step | Nikola | To Do |
 | 3.3 | Optional: PROD data rehearsal on a local copy | Nikola | To Do |
 | 3.4 | Clerk freeze at T-3 (account changes paused notice) | Claude / Nikola | To Do |
@@ -69,3 +69,24 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 5.4 | Write and apply M12 (uuid ids check) and M13 (drop backup tables) | Claude / Nikola | To Do |
 | 5.5 | Update terms, privacy policy, README, docs and skills | Claude | To Do |
 | 5.6 | Move this plan to `.claude/plans/archive/` | Claude | To Do |
+
+## Notes
+
+_Last checked read-only against TEST on 2026-09-22, after `supabase db push`._
+
+Applied on TEST: everything through `20260922090003_edge_webhook_secret` (M09). M10 and M09 both verified —
+`call_edge_function_with_vault_secret()` now prefers `x-webhook-secret`, the three `auth.users` triggers exist, and the
+`migration` schema tables are there.
+
+- **K.4 still not finished.** M09 is applied now, but `vault.secrets` is empty and no edge functions are deployed on
+  TEST (`list_edge_functions` → none), so the webhook still logs a warning and posts nothing. Remaining, in order:
+  deploy the edge functions that accept `x-webhook-secret` (K.3, code is in the repo), then set the Vault secret
+  `edge_webhook_secret`. **PROD has not been checked** and is where the Brevo new-contact webhook matters.
+- **2.5: M10 is applied on TEST, not on PROD.**
+- **`private.settings.terms_version` is not set on TEST** (only `default_plan_id` is). M10 leaves it to an operator
+  after legal sign-off. Until it is set, every new sign-up gets `consents` all-false with `source: 'signup'` and the
+  consent gate asks everyone. Set it before 2.13, or 2.13 tests the wrong behaviour.
+- **M12 and M13 live in `supabase/phase5/`, not `supabase/migrations/`.** Anything in the migrations directory is
+  applied by the next `supabase db push`, and those two are only correct at T+30 after the cutover and orphan triage.
+  Move a file into `supabase/migrations/` when it is time to apply it; see `supabase/phase5/README.md`. They are still
+  covered by `npm run test:db`.

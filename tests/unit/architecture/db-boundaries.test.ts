@@ -151,6 +151,42 @@ describe("database boundaries", () => {
 		expect(offenders.map((f) => f.path)).toEqual([]);
 	});
 
+	it("only the account action and scripts can act as any user", () => {
+		expect(
+			importersOf("utils/supabase/auth-admin", [
+				"actions/account",
+				"scripts/**",
+			]),
+		).toEqual([]);
+	});
+
+	it("only the auth callbacks use the forwarded-IP auth client", () => {
+		expect(
+			importersOf("utils/supabase/server-forwarded", [
+				"app/auth/callback/**",
+				"app/auth/confirm/**",
+				"utils/supabase/middleware",
+			]),
+		).toEqual([]);
+	});
+
+	it("the secret key is read only where a user IP must be forwarded", () => {
+		// It skips captcha and carries auth.admin, so every reader is reviewed.
+		const offenders = files.filter(
+			(f) =>
+				f.text.includes("SUPABASE_SECRET_KEY") &&
+				!matches(f.path, [
+					"utils/supabase/server-forwarded",
+					"utils/supabase/middleware",
+					"utils/supabase/auth-admin",
+					"app/auth/callback/**",
+					"app/auth/confirm/**",
+					"scripts/**",
+				]),
+		);
+		expect(offenders.map((f) => f.path)).toEqual([]);
+	});
+
 	it("no application code queries data through supabase-js", () => {
 		const offenders = files.filter(
 			(f) =>

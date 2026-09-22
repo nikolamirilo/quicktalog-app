@@ -6,7 +6,14 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env" });
 dotenv.config({ path: ".env.test.local", override: true });
 
-const STORAGE_STATE = "playwright/.clerk/user.json";
+// Which provider the app under test is running. The e2e suite has to sign in
+// the way that provider does, so the setup project and the saved session differ.
+const AUTH_PROVIDER =
+	process.env.AUTH_PROVIDER === "supabase" ? "supabase" : "clerk";
+const STORAGE_STATE =
+	AUTH_PROVIDER === "supabase"
+		? "playwright/.supabase/user.json"
+		: "playwright/.clerk/user.json";
 
 export default defineConfig({
 	testDir: "./tests/e2e",
@@ -21,7 +28,13 @@ export default defineConfig({
 		trace: "on-first-retry",
 	},
 	projects: [
-		{ name: "setup", testMatch: /auth\.setup\.ts/ },
+		{
+			name: "setup",
+			testMatch:
+				AUTH_PROVIDER === "supabase"
+					? /auth\.supabase\.setup\.ts/
+					: /auth\.setup\.ts/,
+		},
 		{
 			name: "chromium",
 			testMatch: /create-catalogue\.spec\.ts/,

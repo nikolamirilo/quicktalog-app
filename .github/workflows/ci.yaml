@@ -69,10 +69,37 @@ jobs:
       - name: Run pgTAP tests
         run: supabase test db
 
+      # Sign-ups are still open here, which the sign-up test needs; the
+      # rehearsal below closes them.
       - name: Run integration tests
-        run: npm run test:integration
-        env:
-          DB_CONNECTION_STRING: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+        run: |
+          eval "$(supabase status -o env | sed 's/^/export /')"
+          SUPABASE_SECRET_KEY="$SERVICE_ROLE_KEY" \
+          NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANON_KEY" \
+          NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 \
+          DB_CONNECTION_STRING=postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+          npm run test:integration
+
+      # Plan 3.1: the cutover rehearsal runs the real import, re-key, verify and
+      # rollback scripts against this stack. It rewrites every user, so it runs
+      # after the other integration tests, and it needs sign-ups off — the
+      # import refuses to run while a real person could claim a pre-claimed
+      # email. GoTrue reads that flag at boot, hence the restart.
+      - name: Turn sign-ups off for the rehearsal
+        run: |
+          sed -i 's/^enable_signup = true/enable_signup = false/' supabase/config.toml
+          supabase stop
+          supabase start
+
+      - name: Run the cutover fixture rehearsal
+        run: |
+          eval "$(supabase status -o env | sed 's/^/export /')"
+          REHEARSAL=1 \
+          SUPABASE_SECRET_KEY="$SERVICE_ROLE_KEY" \
+          NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANON_KEY" \
+          NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 \
+          DB_CONNECTION_STRING=postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+          npm run test:rehearsal
 
       - name: Stop local Supabase stack
         if: always()
@@ -81,7 +108,16 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     environment: TEST
+    strategy:
+      fail-fast: false
+      matrix:
+        # Both providers exist between Phase 2 and the cutover; the suite has to
+        # pass on each. The `supabase` leg is skipped until its secrets exist.
+        auth: [clerk, supabase]
     env:
+      AUTH_PROVIDER: ${{ matrix.auth }}
+      E2E_SUPABASE_USER_EMAIL: ${{ secrets.E2E_SUPABASE_USER_EMAIL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
       NEXT_PUBLIC_BASE_URL: http://localhost:3000
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
@@ -117,16 +153,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # The supabase leg is inert until its test user and key exist; skipping is
+      # better than a red build that says nothing.
+      - name: Check provider secrets
+        id: provider
+        run: |
+          if [ "$AUTH_PROVIDER" = "supabase" ] && [ -z "$E2E_SUPABASE_USER_EMAIL" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping: no Supabase e2e user configured yet."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install Playwright browsers
+        if: steps.provider.outputs.run == 'true'
         run: npx playwright install --with-deps chromium
 
       - name: Run e2e tests
+        if: steps.provider.outputs.run == 'true'
         run: npm run test:e2e
 
       - name: Upload Playwright report
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.provider.outputs.run == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.auth }}
           path: playwright-report/
           retention-days: 7

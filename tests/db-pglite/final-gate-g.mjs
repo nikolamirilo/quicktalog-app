@@ -734,9 +734,11 @@ export async function gateG(ctx) {
 		const m12bad = await applyTx(env, db, "M12");
 		check(
 			"M12 before orphan triage (legacy C row still present)",
-			"fails 23514 (validation refuses legacy ids)",
+			"fails, naming the rows that block it (P0001) or on the constraint itself (23514)",
 			T(m12bad),
-			!m12bad.ok && m12bad.code === "23514",
+			!m12bad.ok &&
+				(m12bad.code === "23514" ||
+					/orphan triage is not finished/.test(m12bad.message ?? "")),
 		);
 		const tri = await run(db, `delete from public.users where id = $1`, [C]);
 		const m12 = await applyTx(env, db, "M12");

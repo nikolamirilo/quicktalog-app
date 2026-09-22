@@ -18,6 +18,9 @@ export default defineConfig({
 	},
 	test: {
 		environment: "node",
+		// The cutover rehearsal rewrites every user in the database, so no two
+		// integration files may be in flight at once.
+		fileParallelism: false,
 		include: ["tests/integration/**/*.test.ts"],
 		passWithNoTests: true,
 		testTimeout: 30000,

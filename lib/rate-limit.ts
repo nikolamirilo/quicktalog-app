@@ -10,6 +10,12 @@ const RULES = {
 	catalogueName: { requests: 60, window: "1 m" },
 	newsletter: { requests: 5, window: "1 h" },
 	contact: { requests: 5, window: "1 h" },
+	// Auth email links (confirm, recovery, email change), keyed by IP. Generous
+	// enough for a shared office network, tight enough to stop token grinding.
+	confirm: { requests: 20, window: "10 m" },
+	// A name change fans out: it rewrites the row and fires the CRM sync trigger.
+	// Nobody renames themselves five times an hour for a good reason.
+	profile: { requests: 5, window: "1 h" },
 } satisfies Record<string, { requests: number; window: Window }>;
 
 export type RateLimitRule = keyof typeof RULES;

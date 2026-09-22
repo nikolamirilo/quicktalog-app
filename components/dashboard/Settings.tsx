@@ -7,10 +7,16 @@ import { MdLogout } from "react-icons/md";
 import CookiePreferencesModal from "@/components/modals/CookiePreferencesModal";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { AUTH_PROVIDER } from "@/lib/auth/provider";
 
 // The account forms are provider-specific and heavy; everything above them is
-// not, so they load separately.
-const ClerkAccount = lazy(() => import("./account/ClerkAccount"));
+// not, so they load separately. `AUTH_PROVIDER` is inlined at build time, so
+// only the live provider's forms end up in the bundle.
+const Account = lazy(() =>
+	AUTH_PROVIDER === "supabase"
+		? import("./account/SupabaseAccount")
+		: import("./account/ClerkAccount"),
+);
 
 const Settings = () => {
 	const [isCookieSettingsOpen, setIsCookieSettingsOpen] = useState(false);
@@ -43,7 +49,7 @@ const Settings = () => {
 					<div className="h-40 w-full bg-product-background-hover animate-pulse rounded-xl" />
 				}
 			>
-				<ClerkAccount />
+				<Account />
 			</Suspense>
 		</div>
 	);

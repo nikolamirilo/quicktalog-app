@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { ClerkAuthProvider } from "@/components/auth/ClerkAuthProvider";
+import { SupabaseAuthProvider } from "@/components/auth/SupabaseAuthProvider";
 import { AUTH_PROVIDER } from "@/lib/auth/provider";
 
 /**
@@ -9,14 +10,12 @@ import { AUTH_PROVIDER } from "@/lib/auth/provider";
  * build time from `AUTH_PROVIDER`, so both branches cannot be bundled with
  * conflicting session state.
  *
- * Phase 2 adds `SupabaseAuthProvider` next to this one; nothing else in the UI
- * changes, because everything reads `useAuth()`.
+ * Nothing else in the UI knows which provider is live, because everything
+ * reads `useAuth()`.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
 	if (AUTH_PROVIDER === "supabase") {
-		throw new Error(
-			"AUTH_PROVIDER=supabase is not implemented yet (Phase 2 of the auth migration)",
-		);
+		return <SupabaseAuthProvider>{children}</SupabaseAuthProvider>;
 	}
 	return <ClerkAuthProvider>{children}</ClerkAuthProvider>;
 }

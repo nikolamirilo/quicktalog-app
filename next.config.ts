@@ -34,6 +34,40 @@ const nextConfig: NextConfig = {
 		webpackBuildWorker: true,
 		webpackMemoryOptimizations: true,
 	},
+	/**
+	 * Report-only for now: it collects violations without breaking anything, so
+	 * the allowlist can be corrected before it is enforced. Every third-party
+	 * script the app loads has to be listed, and `unsafe-inline`/`unsafe-eval`
+	 * stay until GTM and the analytics snippets are moved to nonces.
+	 *
+	 * `object-src 'none'`, `base-uri 'self'` and `frame-ancestors 'self'` are
+	 * the parts that already matter: they stop plugin embedding, base-tag
+	 * hijacking and clickjacking.
+	 */
+	async headers() {
+		const csp = [
+			"default-src 'self'",
+			"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com https://www.google-analytics.com https://*.clarity.ms https://challenges.cloudflare.com https://*.paddle.com https://cdn.paddle.com",
+			"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+			"font-src 'self' data: https://fonts.gstatic.com",
+			"img-src 'self' data: blob: https:",
+			"media-src 'self' blob: https:",
+			"connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.clerk.accounts.dev https://clerk.quicktalog.app https://*.ingest.sentry.io https://*.posthog.com https://*.clarity.ms https://*.google-analytics.com https://*.googletagmanager.com https://*.paddle.com https://*.uploadthing.com https://uploadthing.com https://api.deepseek.com",
+			"frame-src 'self' https://challenges.cloudflare.com https://*.paddle.com https://*.clerk.accounts.dev",
+			"worker-src 'self' blob:",
+			"object-src 'none'",
+			"base-uri 'self'",
+			"frame-ancestors 'self'",
+			"form-action 'self'",
+		].join("; ");
+
+		return [
+			{
+				source: "/:path*",
+				headers: [{ key: "Content-Security-Policy-Report-Only", value: csp }],
+			},
+		];
+	},
 	async rewrites() {
 		return [
 			{

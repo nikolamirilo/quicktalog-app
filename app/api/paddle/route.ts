@@ -1,3 +1,4 @@
+import { isMaintenance } from "@/lib/ops/flags";
 import { getPaddleInstance } from "@/utils/paddle/get-paddle-instance";
 import { ProcessWebhook } from "@/utils/paddle/process-webhook";
 import * as Sentry from "@sentry/nextjs";
@@ -6,6 +7,15 @@ import { NextRequest } from "next/server";
 const webhookProcessor = new ProcessWebhook();
 
 export async function POST(request: NextRequest) {
+	// The webhook is excluded from middleware, so maintenance is checked here.
+	// A 503 makes Paddle retry after the window instead of dropping the event.
+	if (await isMaintenance()) {
+		return new Response(null, {
+			status: 503,
+			headers: { "Retry-After": "900" },
+		});
+	}
+
 	const signature = request.headers.get("paddle-signature") || "";
 	const rawRequestBody = await request.text();
 	const privateKey = process.env.PADDLE_NOTIFICATION_WEBHOOK_SECRET || "";

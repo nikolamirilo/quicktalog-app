@@ -8,7 +8,6 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import type { Catalogue } from "@quicktalog/common";
 import { Edit, Rocket } from "lucide-react";
 import Link from "next/link";
-import { FiFileText } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { LuSquareMenu } from "react-icons/lu";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
@@ -28,7 +27,6 @@ const DashboardItem = ({
 	usage,
 	matchedTier,
 	statusColors,
-	sourceConfig,
 }) => {
 	const { refreshAll } = useDashboardData("overview");
 	const handlePublish = async () => {
@@ -118,23 +116,6 @@ const DashboardItem = ({
 				>
 					{catalogue.status.toUpperCase()}
 				</Badge>
-
-				{(() => {
-					const source = sourceConfig[catalogue.source] || {
-						label: catalogue.source,
-						className: "bg-gray-100 text-gray-700",
-						Icon: FiFileText,
-					};
-					const { label, className, Icon } = source;
-					return (
-						<span
-							className={`${className} flex items-center gap-1 w-fit rounded px-2 py-0.5 text-xs font-medium`}
-						>
-							<Icon className="w-3.5 h-3.5" />
-							{label}
-						</span>
-					);
-				})()}
 			</div>
 
 			<div className="text-product-foreground-accent text-xs 2xl:text-sm break-words">
@@ -228,14 +209,8 @@ const DashboardItem = ({
 					</div>
 
 					<div>
-						{catalogue.status === "error" ? (
+						{catalogue.status === "error" && (
 							<>Error occured. Please delete the catalogue and retry.</>
-						) : (
-							<>
-								{catalogue.source === "ai_prompt"
-									? "AI generation of catalogue in progress"
-									: "OCR import of catalogue in progress"}
-							</>
 						)}
 					</div>
 				</div>

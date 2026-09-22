@@ -7,6 +7,7 @@ import {
 } from "@/agent/plan";
 import { loadedSkillsFromMessages } from "@/agent/skills";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { sameOrigin } from "@/lib/http/origin";
 import { refundAiTurn, setPlanState } from "@/lib/ai/metering";
 import { openAiTurn } from "@/lib/ai/turn";
 import { withUser } from "@/utils/db";
@@ -66,6 +67,12 @@ export async function POST(request: Request) {
 	// request claims to be about.
 	if (catalogue.name !== catalogueName) {
 		return Response.json({ error: "Catalogue mismatch." }, { status: 400 });
+	}
+
+	// Cookie-authenticated and it spends money, so the request must come from
+	// our own pages, not merely be same-site.
+	if (!sameOrigin(request)) {
+		return Response.json({ error: "Bad origin." }, { status: 403 });
 	}
 
 	// Identity and payment happen before a single token is streamed.

@@ -12,7 +12,6 @@ import { OverviewProps } from "@/types/shared";
 import { Status, tiers } from "@quicktalog/common";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FiCpu, FiFileText, FiTool } from "react-icons/fi";
 import { LuSquareMenu } from "react-icons/lu";
 import { MdOutlineEmail } from "react-icons/md";
 import { TbFileAnalytics } from "react-icons/tb";
@@ -67,27 +66,6 @@ const Overview = ({
 			setIsModalOpen(false);
 		}
 	}
-
-	const sourceConfig: Record<
-		string,
-		{ label: string; className: string; Icon: React.ElementType }
-	> = {
-		builder: {
-			label: "Builder",
-			className: "bg-blue-100 text-blue-700",
-			Icon: FiTool,
-		},
-		ai_prompt: {
-			label: "AI Prompt",
-			className: "bg-purple-100 text-purple-700",
-			Icon: FiCpu,
-		},
-		ocr_import: {
-			label: "OCR Import",
-			className: "bg-yellow-100 text-orange-700",
-			Icon: FiFileText,
-		},
-	};
 
 	const statusColors: Record<string, string> = {
 		active: "text-white bg-[#00875A]",
@@ -195,7 +173,6 @@ const Overview = ({
 					isModalOpen={isModalOpen}
 					matchedTier={matchedTier}
 					setIsLinkCopied={setIsLinkCopied}
-					sourceConfig={sourceConfig}
 					statusColors={statusColors}
 					usage={usage}
 				/>
