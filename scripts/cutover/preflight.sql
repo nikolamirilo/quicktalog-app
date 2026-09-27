@@ -78,7 +78,7 @@ select c.relname as table, c.relrowsecurity as rls
 \echo '--- constraints on the re-keyed tables (the six ON UPDATE CASCADE FKs, users_id_is_uuid) ---'
 select conrelid::regclass as table, conname, contype, pg_get_constraintdef(oid) as definition
   from pg_constraint
- where conrelid in ('public.prompts'::regclass, 'public.ocr'::regclass,
+ where conrelid in ('public.prompts'::regclass,
                     'public.catalogues'::regclass, 'public.users'::regclass)
  order by 1, 2;
 
@@ -97,7 +97,6 @@ select t.tgrelid::regclass as table, t.tgname, t.tgenabled
 select status, count(*) from public.catalogues group by 1 order by 1;
 
 select count(*) filter (where user_id is null) as prompts_null_user from public.prompts;
-select count(*) filter (where user_id is null) as ocr_null_user     from public.ocr;
 
 \echo '--- duplicates that a unique index would reject ---'
 select catalogue_id, lower(email) as email, count(*)

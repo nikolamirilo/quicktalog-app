@@ -66,11 +66,13 @@ export default function GaugeChart({ used, limit, unit }: GaugeChartProps) {
 					/>
 				</svg>
 				<div className="absolute inset-x-0 top-[58%] flex -translate-y-1/2 flex-col items-center">
+					{/* The arc clamps at 100%, the number must not: "capped" read as
+					    though the overage had been prevented, when it had not. */}
 					<span className="text-4xl font-bold text-product-foreground tabular-nums">
-						{overBy > 0 ? "100%" : `${percent}%`}
+						{percent}%
 					</span>
 					<span className="text-sm text-product-foreground-accent">
-						{overBy > 0 ? "capped" : "of limit"}
+						{overBy > 0 ? "over limit" : "of limit"}
 					</span>
 				</div>
 			</div>
@@ -87,7 +89,9 @@ export default function GaugeChart({ used, limit, unit }: GaugeChartProps) {
 						)}
 					>
 						<span className="h-1.5 w-1.5 rounded-full bg-current" />
-						{overBy > 0 ? `${overBy}% over limit` : STATUS_LABEL[status]}
+						{overBy > 0
+							? `${(used - limit).toLocaleString("en-US")} ${unit} over`
+							: STATUS_LABEL[status]}
 					</span>
 				) : null}
 			</div>

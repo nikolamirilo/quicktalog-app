@@ -3,24 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
-type ContentOption =
-	| "container"
-	| "category"
-	| "text"
-	| "embedding"
-	| "custom_code"
-	| "divider";
+type ContentOption = "items" | "text" | "embedding" | "custom_code" | "divider";
 
 interface BlockConfigHeaderProps {
 	selectedOption: ContentOption;
 	onClose: () => void;
 }
 
+const LABELS: Record<ContentOption, string> = {
+	items: "Items",
+	text: "Text",
+	embedding: "External content",
+	custom_code: "Custom code",
+	divider: "Divider",
+};
+
 const DESCRIPTIONS: Record<ContentOption, string> = {
-	container:
-		"A layout block that holds multiple items in a single structured section.",
-	category:
-		"A collapsible section used to group related items under one heading.",
+	items:
+		"A section of items. Give it a heading to make it collapsible, or leave the heading off for a plain grid.",
 	embedding:
 		"Embed external content such as maps, videos, or third-party widgets.",
 	custom_code: "Insert custom HTML to add advanced or custom functionality.",
@@ -36,8 +36,8 @@ const BlockConfigHeader = ({
 	return (
 		<div className="pt-0 pb-4 border-gray-100 flex justify-between items-start">
 			<div>
-				<h3 className="text-xl text-product-foreground font-semibold capitalize">
-					{selectedOption.split("_").join(" ")}
+				<h3 className="text-xl text-product-foreground font-semibold">
+					{LABELS[selectedOption]}
 				</h3>
 				<p className="text-sm text-gray-700 mt-1">
 					{DESCRIPTIONS[selectedOption]}

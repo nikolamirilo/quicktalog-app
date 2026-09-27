@@ -18,11 +18,12 @@ const category = (id: string): ContentBlock =>
 	({
 		id,
 		order: 0,
-		type: "category",
+		type: "items",
+		showHeading: true,
+		isExpanded: true,
 		name: id,
 		layout: "variant_1",
 		items: [],
-		isExpanded: true,
 	}) as ContentBlock;
 
 const item = (id: string): Item =>

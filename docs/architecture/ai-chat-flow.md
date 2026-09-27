@@ -1,6 +1,8 @@
 # AI Chat - Agent Flow
 
-> **Outdated (noted 2026-09-17):** parts of this document predate the current agent. For example, section 1 says the chat is not an agent loop, but `agent/index.ts` now builds a `ToolLoopAgent`, and plan mode (`plans/active/ai-agent-plan-mode.md`, Part 1) has shipped. Check the code before relying on it, and refresh this document when the agent is next changed.
+> **Outdated (noted 2026-09-17):** parts of this document predate the current agent. For example, section 1 says the chat is not an agent loop, but `agent/index.ts` now builds a `ToolLoopAgent`, and plan mode has shipped. Check the code before relying on it, and refresh this document when the agent is next changed.
+>
+> **Metering is the exception and is current:** charging moved from a per-prompt row count to credits, taken in the database before any model call. See [ai-credits.md](./ai-credits.md) - that page, not this one, is the reference for what a turn costs.
 
 How the builder's "Ask AI" assistant works, end to end, on branch `test`.
 
@@ -52,7 +54,7 @@ flowchart TD
         A3["useCatalogueChat.send<br/>guard: catalogue.name exists"]
         A4["Build history<br/>last 8 messages, role + content only"]
         A5[Append user message to transcript]
-        A6{"useAiAssist.run<br/>client quota gate<br/>usage.prompts >= ai_prompts?"}
+        A6{"useAiAssist.run<br/>client credit gate<br/>usage.credits >= ai_credits?"}
         A7["Open AI LimitsModal<br/>no server call made"]
         A8[setLoading true]
     end
@@ -65,7 +67,7 @@ flowchart TD
         B5{"createdBy === user.id?"}
         B5a{"fetchUserData ok?"}
         B5b["FAILS OPEN<br/>no quota cap, and every<br/>section type advertised"]
-        B6{"usage.prompts < plan.ai_prompts?"}
+        B6{"private.begin_ai_turn<br/>sum(credits) < plan.ai_credits?"}
         B7["Read sectionAccess<br/>plan.features.sections"]
         B8["Trim history + message<br/>last 8 messages, each 2000 chars"]
         B9["buildEditorSystemPrompt<br/>rules + allowed ops + snapshot"]
@@ -82,7 +84,7 @@ flowchart TD
         D1{"catalogueEditResponseSchema<br/>zod safeParse"}
         D2["toClientOperations<br/>section/item index to stable id"]
         D3["resolveOperationImages<br/>imageQuery to Unsplash URL"]
-        D4["meter()<br/>INSERT INTO prompts"]
+        D4["private.settle_ai_turn<br/>adds tasks and page reads<br/>to the charge taken up front"]
     end
 
     subgraph APPLY["BROWSER - applying the batch"]
@@ -165,10 +167,12 @@ Three things about this diagram that are easy to miss:
   `code === "limit"` and does not call `onError`, so nothing is appended - the
   transcript is left ending on an unanswered user message. Only `unauthorized`,
   `not_found` and `ai_error` become error bubbles.
-- **`authorize` fails open.** The quota check sits inside `if (userData.ok && userData.data)`.
-  If `fetchUserData` returns `ok: false` - missing user, no plan, or a failed usage
-  query - the turn runs with **no monthly cap**, and `sectionAccess` is `undefined`,
-  which makes `allowedSectionTypes` advertise every type including the paid ones.
+- **The credit check fails closed.** It is no longer a TypeScript branch that can be
+  skipped: `private.begin_ai_turn` raises `42501` when there is no verified identity,
+  returns `not_found` for a catalogue the caller does not own, and holds
+  `for no key update` on the caller's `users` row so two parallel requests cannot
+  both pass it. The client gate (A6) is a convenience only - it saves a round trip,
+  it does not decide anything.
 - **Error bubbles re-enter the model's context.** Failures are appended with
   `role: "assistant"`, and the next turn's history is built from that same array -
   so *"Generation failed. Try again."* is sent back to DeepSeek as if the assistant
@@ -324,7 +328,7 @@ it is why the "never repeat an operation, check the snapshot first" rule exists.
 | Items per `add_section` / `add_items` | 40 | zod |
 | `reply` length | 1200 chars | zod |
 | Unsplash lookups per turn | 24, deduped | `MAX_IMAGE_LOOKUPS` |
-| Monthly AI calls | `plan.features.ai_prompts` | checked client **and** server |
+| Monthly AI credits | `plan.features.ai_credits` | decided in the database; see [ai-credits.md](./ai-credits.md) |
 | Sections per catalogue | `plan.features.sections_per_catalogue` | applied client-side; **`text` blocks are exempt** |
 | Items per catalogue | `plan.features.items_per_catalogue` | applied client-side |
 | Model temperature | 0.3 | `ai.ts` |
@@ -353,7 +357,7 @@ flowchart TD
     S2 -->|"whole object, every turn"| M
     S3 -->|"gate + section access"| M
     M -->|operations| S2
-    M -->|"meter()"| S6
+    M -->|"begin_ai_turn / settle_ai_turn"| S6
     S2 -->|"manual Save"| S5
     S2 -->|"manual Publish"| S4
     S4 --> S5
@@ -485,10 +489,10 @@ A refresh loses the conversation while the draft edits it produced may still be
 there. Even `sessionStorage` keyed by catalogue slug would close the gap.
 
 **H17 - Show the quota in the panel.** *(client)*
-The user only discovers they are out of prompts when the modal appears - and when the
-*server* rejects on quota, nothing is appended to the transcript at all, so the last
-thing on screen is their own unanswered message. `usage.prompts` and `ai_prompts` are
-both already in `UserContext`.
+Partly addressed: the chat footer now shows the credits left, because an ask no
+longer costs a fixed amount. A server rejection still appends nothing to the
+transcript, so the last thing on screen is the user's own unanswered message.
+`usage.credits` and `ai_credits` are both already in `UserContext`.
 
 **H18 - Fix the React keys in `ChatMessageBubble`.** *(client)*
 Both lists key on the string itself - `key={change}` and `key={reason}`. The skipped

@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
 	getVerifiedIdentity: vi.fn(),
 	openAiTurn: vi.fn(),
 	refundAiTurn: vi.fn(),
+	aiRateLimitOk: vi.fn(),
 	withUser: vi.fn(),
 	generateText: vi.fn(),
 }));
@@ -12,7 +13,10 @@ vi.mock("@/lib/auth/identity", () => ({
 	getVerifiedIdentity: mocks.getVerifiedIdentity,
 }));
 vi.mock("@/lib/ai/turn", () => ({ openAiTurn: mocks.openAiTurn }));
-vi.mock("@/lib/ai/metering", () => ({ refundAiTurn: mocks.refundAiTurn }));
+vi.mock("@/lib/ai/metering", () => ({
+	refundAiTurn: mocks.refundAiTurn,
+	aiRateLimitOk: mocks.aiRateLimitOk,
+}));
 vi.mock("@/utils/db", () => ({
 	withUser: mocks.withUser,
 }));
@@ -34,6 +38,7 @@ describe("AI block-level server actions", () => {
 		mocks.getVerifiedIdentity.mockResolvedValue(ME);
 		mocks.openAiTurn.mockResolvedValue(grant);
 		mocks.refundAiTurn.mockResolvedValue(true);
+		mocks.aiRateLimitOk.mockResolvedValue(true);
 		// The action's refund runs inside withUser; run the callback with a stub tx.
 		mocks.withUser.mockImplementation(
 			(_me: unknown, fn: (tx: unknown) => unknown) => Promise.resolve(fn({})),

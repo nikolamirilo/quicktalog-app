@@ -5,6 +5,7 @@ import {
 	type PlanHalt,
 	type PlanState,
 } from "@/agent/plan";
+import { estimatePlanCredits } from "@/lib/ai/pricing";
 import { AlertTriangle, Check, ListChecks, Loader2 } from "lucide-react";
 
 /** Every one of these leaves tasks unfinished, so each says what to do next. */
@@ -15,6 +16,8 @@ const HALT_NOTICES: Record<PlanHalt, string> = {
 		"Stopped after several rounds. Ask again for whatever is still missing.",
 	failed:
 		"Stopped after an error. Everything ticked above is already in your draft.",
+	credits:
+		"Stopped - you are out of AI credits for this month. Everything ticked above is already in your draft.",
 };
 
 const Marker = ({
@@ -80,7 +83,7 @@ const PlanChecklist = ({
 					<span className="truncate">
 						{finished
 							? "All done"
-							: `Working through ${plan.tasks.length} things`}
+							: `Working through ${plan.tasks.length} things · about ${estimatePlanCredits(plan.tasks.length)} credits`}
 					</span>
 				</p>
 				<span className="shrink-0 text-[11px] font-bold tabular-nums text-product-foreground-accent">

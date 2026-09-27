@@ -2,6 +2,7 @@ import { CatalogueSession } from "@/agent/session";
 import { buildTools } from "@/agent/tools";
 import { UNTRUSTED_OPEN } from "@/agent/web";
 import type { AgentToolResult } from "@/types/ai";
+import type { AiSectionAccess } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
 import {
 	defaultCatalogueData,
@@ -72,9 +73,16 @@ const WIDGET = {
 	code: "<div class='qt-x'>hi</div>",
 };
 
+/** Code sections are gated, so a test that exercises them must grant them. */
+const FULL_ACCESS: AiSectionAccess = {
+	divider: true,
+	embedding: true,
+	customCode: true,
+};
+
 describe("skill gate through the real tools", () => {
 	it("refuses a code write before the skill is read, then allows it after", async () => {
-		const session = new CatalogueSession(catalogue);
+		const session = new CatalogueSession(catalogue, {}, FULL_ACCESS);
 		const tools = buildTools(session);
 
 		const blocked = await run(tools, "addSection", WIDGET);
@@ -97,7 +105,7 @@ describe("skill gate through the real tools", () => {
 		const tools = buildTools(session);
 
 		const result = await run(tools, "addSection", {
-			sectionType: "category",
+			sectionType: "items",
 			name: "Drinks",
 			items: [],
 		});
@@ -106,7 +114,7 @@ describe("skill gate through the real tools", () => {
 	});
 
 	it("leaves loadSkill itself ungated", async () => {
-		const tools = buildTools(new CatalogueSession(catalogue));
+		const tools = buildTools(new CatalogueSession(catalogue, {}, FULL_ACCESS));
 
 		expect(
 			await run(tools, "loadSkill", { name: "responsive-design" }),
@@ -121,7 +129,7 @@ describe("skill gate through the real tools", () => {
 	it("never returns ok:true without an operation to replay", async () => {
 		const session = new CatalogueSession(catalogue);
 		const tools = buildTools(session);
-		await run(tools, "addSection", { sectionType: "category", name: "Drinks" });
+		await run(tools, "addSection", { sectionType: "items", name: "Drinks" });
 
 		mockScrape();
 
@@ -177,7 +185,7 @@ describe("fetchUrl", () => {
 	// anything worth reaching, and the work is allowed through.
 	it("still writes code sections after a page has been read", async () => {
 		mockScrape();
-		const session = new CatalogueSession(catalogue);
+		const session = new CatalogueSession(catalogue, {}, FULL_ACCESS);
 		const tools = buildTools(session);
 		await run(tools, "loadSkill", { name: "responsive-design" });
 
@@ -185,7 +193,7 @@ describe("fetchUrl", () => {
 
 		expect(await run(tools, "addSection", WIDGET)).toMatchObject({ ok: true });
 		expect(
-			await run(tools, "addSection", { sectionType: "category", name: "Tea" }),
+			await run(tools, "addSection", { sectionType: "items", name: "Tea" }),
 		).toMatchObject({ ok: true });
 	});
 
@@ -215,7 +223,7 @@ describe("photos", () => {
 		await run(tools, "fetchUrl", { url: "https://cafe.test/menu" });
 
 		const result = await run(tools, "addSection", {
-			sectionType: "container",
+			sectionType: "items",
 			name: "Watches",
 			items: [{ name: "Tissot PRX", price: 84900, pageImage: 1 }],
 		});
@@ -230,7 +238,7 @@ describe("photos", () => {
 		const tools = buildTools(new CatalogueSession(catalogue));
 
 		const result = await run(tools, "addSection", {
-			sectionType: "container",
+			sectionType: "items",
 			name: "Watches",
 			items: [{ name: "Tissot PRX", pageImage: 7 }],
 		});
@@ -247,7 +255,7 @@ describe("photos", () => {
 		const tools = buildTools(new CatalogueSession(catalogue));
 
 		const result = await run(tools, "addSection", {
-			sectionType: "container",
+			sectionType: "items",
 			name: "Watches",
 			items: Array.from({ length: 30 }, (_, i) => ({
 				name: `Watch ${i}`,
@@ -266,7 +274,7 @@ describe("photos", () => {
 		const tools = buildTools(new CatalogueSession(catalogue));
 
 		const pending = run(tools, "addSection", {
-			sectionType: "container",
+			sectionType: "items",
 			name: "Watches",
 			items: [{ name: "Tissot PRX", imageQuery: "steel wrist watch" }],
 		});
@@ -282,10 +290,10 @@ describe("photos", () => {
 describe("results", () => {
 	it("says where a new section landed, so the next batch can find it", async () => {
 		const tools = buildTools(new CatalogueSession(catalogue));
-		await run(tools, "addSection", { sectionType: "category", name: "Drinks" });
+		await run(tools, "addSection", { sectionType: "items", name: "Drinks" });
 
 		const result = await run(tools, "addSection", {
-			sectionType: "container",
+			sectionType: "items",
 			name: "Watches",
 			position: 0,
 		});
@@ -297,7 +305,7 @@ describe("results", () => {
 	it("keeps the operation for the client but out of the model's context", async () => {
 		const tools = buildTools(new CatalogueSession(catalogue));
 		const output = await run(tools, "addSection", {
-			sectionType: "category",
+			sectionType: "items",
 			name: "Drinks",
 		});
 
@@ -316,7 +324,7 @@ describe("results", () => {
 		expect(forModel.value).not.toHaveProperty("operation");
 		expect(forModel.value).toMatchObject({
 			ok: true,
-			summary: 'Added category section "Drinks"',
+			summary: 'Added items section "Drinks"',
 		});
 	});
 });

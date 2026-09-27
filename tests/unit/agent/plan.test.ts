@@ -369,6 +369,7 @@ describe("resumeDecision", () => {
 	const at = (overrides: Partial<ResumeState> = {}): ResumeState => ({
 		plan: unfinished,
 		failed: false,
+		outOfCredits: false,
 		continuations: 0,
 		lastRevision: -1,
 		...overrides,
@@ -376,6 +377,14 @@ describe("resumeDecision", () => {
 
 	it("resumes a plan with work left", () => {
 		expect(resumeDecision(at())).toEqual({ action: "resume" });
+	});
+
+	it("halts on credits, and says so rather than blaming an error", () => {
+		// A credit refusal arrives as an error too, so the reason has to win.
+		expect(resumeDecision(at({ outOfCredits: true, failed: true }))).toEqual({
+			action: "halt",
+			halt: "credits",
+		});
 	});
 
 	it("does nothing for a request that never needed a plan", () => {

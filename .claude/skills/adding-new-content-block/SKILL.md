@@ -1,72 +1,76 @@
 ---
 name: adding-new-content-block
-description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. DividerBlock, VideoBlock) - covers the type definition, renderer + input components, AddContentModal wiring, ContentOptionsSelector option, and CatalogueContent render branch.
+description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. VideoBlock, GalleryBlock) - covers the type definition, renderer + input components, AddContentModal wiring, ContentOptionsSelector option, CatalogueContent render branch, and the AI-agent and plan-gating paths that are easy to miss.
 ---
 
 # Adding a New Content Block
 
-Reference for adding a new content block type (a "section") to the Quicktalog catalogue. A new block touches five areas: the type union, two UI components, the add-content modal, the option selector, and the main renderer. Miss any one and the block won't render, won't be selectable, or won't save.
+Reference for adding a new block/section type to the Quicktalog catalogue. A block
+type's identity is declared in several places that do not import from each other,
+so missing one fails quietly: the block won't be selectable, won't render, or -
+worst - will be written to the database as a *different* type.
 
 ## When to Use
 
-- Adding a new block/section kind such as `DividerBlock`, `VideoBlock`, `GalleryBlock`.
-- Symptoms that you skipped a step: new option missing from the "Add Content" modal, block selected but no input form shows, block saved but renders blank in the catalogue, or a TS error on the `ContentBlock` union.
+- Adding a new block kind such as `VideoBlock`, `GalleryBlock`, `FaqBlock`.
+- Symptoms you skipped a step: the option is missing from "Add Content"; selecting
+  it shows no form; it saves but renders blank; the AI can create it on a plan that
+  should not have it; a TS error on the `ContentBlock` union.
 
-Not for: editing an existing block's fields (just update its interface + components) or styling-only changes.
+Not for: editing an existing block's fields (update its interface + its two
+components) or styling-only changes.
+
+## The item-bearing block
+
+There is one block that holds items: `ItemsBlock` (`type: "items"`), rendered by
+[components/catalogue/sections/ItemsSection.tsx](../../../components/catalogue/sections/ItemsSection.tsx).
+`showHeading` decides whether it renders a heading (which is also the collapse
+toggle, so a headless section is always open).
+
+`category` and `container` are its **deprecated predecessors**. They remain in the
+`ContentBlock` union so old rows typecheck, and
+[helpers/contentBlocks.ts](../../../helpers/contentBlocks.ts) maps them to
+`items` on read. Never write them. Never match on `block.type === "category"`;
+use `isItemsBlock` / `asItemsBlock` from that helper.
 
 ## Quick Reference
 
 | # | Area | File(s) | What to do |
 |---|------|---------|------------|
-| 1 | Type definitions | `@quicktalog/common` (or [types/shared.ts](../../../types/shared.ts)) | New interface extends `BaseContentBlock`; add to `ContentBlock` union |
-| 2 | UI components | [components/catalogue/sections/](../../../components/catalogue/sections/)`[Name].tsx`, [components/catalogue/inputs/](../../../components/catalogue/inputs/)`[Name]Input.tsx` | Renderer (view + edit modes) + config Input |
-| 3 | Modal integration | [components/catalogue/modals/AddContentModal.tsx](../../../components/catalogue/modals/AddContentModal.tsx) | `ContentOption` key, `blockData` state, render logic, `handleAdd`, header description |
-| 4 | Selection UI | [components/catalogue/sections/common/ContentOptionsSelector.tsx](../../../components/catalogue/sections/common/ContentOptionsSelector.tsx) | `lucide-react` icon, `OptionKey` type, `OPTIONS` entry |
-| 5 | Main renderer | [components/catalogue/view/CatalogueContent.tsx](../../../components/catalogue/view/CatalogueContent.tsx) | Import renderer, add `block.type` branch in render loop |
+| 1 | Shared type | `@quicktalog/common` → `src/types/catalogue.ts` | Interface extends `BaseContentBlock`; add to the `ContentBlock` union. **Needs a package release.** |
+| 2 | Renderer | [components/catalogue/sections/](../../../components/catalogue/sections/)`[Name].tsx` | View + edit mode; `BlockControls` in edit mode |
+| 3 | Input | [components/catalogue/inputs/](../../../components/catalogue/inputs/)`[Name]Input.tsx` | The config form |
+| 4 | Picker option | [sections/common/ContentOptionsSelector.tsx](../../../components/catalogue/sections/common/ContentOptionsSelector.tsx) | `OptionKey`, `OPTIONS` entry, icon, `isLocked` case |
+| 5 | Modal state | [modals/AddContentModal.tsx](../../../components/catalogue/modals/AddContentModal.tsx) | `ContentOption`, `DEFAULT_BLOCK_DATA`, edit-hydration, `handleAdd`, `isFormValid`, `isLocked` |
+| 6 | Modal form + copy | [modals/content/BlockConfigForm.tsx](../../../components/catalogue/modals/content/BlockConfigForm.tsx), [BlockConfigHeader.tsx](../../../components/catalogue/modals/content/BlockConfigHeader.tsx) | Render branch; `LABELS` + `DESCRIPTIONS` entry |
+| 7 | Main renderer | [view/CatalogueContent.tsx](../../../components/catalogue/view/CatalogueContent.tsx) | Import + a `block.type` branch in the render loop |
+| 8 | AI section type | [types/ai.ts](../../../types/ai.ts) | Add to `AiSectionType`, plus any new op fields |
+| 9 | AI schema + gate | [agent/schemas.ts](../../../agent/schemas.ts) | `allowedSectionTypes` - gated types are pushed only on `=== true` |
+| 10 | AI builder | [helpers/catalogueOperations.ts](../../../helpers/catalogueOperations.ts) | `buildSection` case (the `default:` is an exhaustive `never` - a missing case is a **compile error**, by design), `isSectionTypeLocked`, `SECTION_TYPE_LABELS` |
+| 11 | AI tool schema | [agent/tools/sections.ts](../../../agent/tools/sections.ts) | Any new field on `addSection` / `updateSection` |
+| 12 | Plan gating | `@quicktalog/common` → `src/constants/pricing.ts` | If gated: add the flag to `features.sections` **for every tier**, and to `AiSectionAccess` |
 
-## 1. Type Definitions
+## Gating rules
 
-**Update in:** `@quicktalog/common` (or local types in [types/shared.ts](../../../types/shared.ts), which re-exports from `@quicktalog/common`)
-
-1. Define the block interface extending `BaseContentBlock`.
-2. Add the new type to the `ContentBlock` union type.
-
-## 2. UI Components
-
-**Create:** `components/catalogue/sections/[SectionName].tsx` and `components/catalogue/inputs/[SectionName]Input.tsx`
-
-1. **Renderer** (`[SectionName].tsx`) - displays the block in the catalogue. Handle both "view" and "edit" modes.
-2. **Input** (`[SectionName]Input.tsx`) - the configuration form shown in the "Add Content" modal.
-
-## 3. Modal Integration
-
-**Update in:** [components/catalogue/modals/AddContentModal.tsx](../../../components/catalogue/modals/AddContentModal.tsx)
-
-1. Add the new block key to the `ContentOption` type.
-2. Add initial values for the new block to the `blockData` state.
-3. Add the option to the render logic so the Input Component shows when selected.
-4. Update `handleAdd` to construct the correct block object when saving.
-5. Add description text for the new block type in the modal header.
-
-## 4. Selection UI
-
-**Update in:** [components/catalogue/sections/common/ContentOptionsSelector.tsx](../../../components/catalogue/sections/common/ContentOptionsSelector.tsx)
-
-1. Import a suitable icon from `lucide-react`.
-2. Add the new option key to the `OptionKey` type.
-3. Add the new option object (`key`, `label`, `icon`) to the `OPTIONS` array.
-
-## 5. Main Renderer
-
-**Update in:** [components/catalogue/view/CatalogueContent.tsx](../../../components/catalogue/view/CatalogueContent.tsx)
-
-1. Import the new Renderer Component.
-2. Add a condition in the main render loop to render it when `block.type` matches.
+- `features.sections` flags are read as **`=== true`**, not `!== false`. Every tier
+  must set the flag explicitly or the feature is off there. This is deliberate: a
+  missing flag must not grant a paid block.
+- `isSectionTypeLocked` in `catalogueOperations.ts` only gates when an access
+  object is supplied. The browser replays operations the server already
+  authorised and passes none - re-gating there would drop blocks the user paid
+  for. The server always supplies one, so that is where the gate bites.
+- Gating in the UI is never sufficient. It is duplicated in the AI path because
+  the assistant must not be a way around a lock the builder applies.
 
 ## Common Mistakes
 
-- **Block saves but renders blank** → missing step 5 (no `block.type` branch in `CatalogueContent.tsx`).
-- **Option not in modal** → missing step 4 (`OPTIONS` array / `OptionKey`).
-- **Selecting the option shows no form** → missing step 3 render logic, or `blockData` has no initial values.
-- **`handleAdd` produces a malformed block** → step 3.4 not aligned with the step-1 interface shape.
-- **TS union error** → step 1.2 not done; the new interface isn't part of `ContentBlock`.
+- **Saves but renders blank** → no branch in `CatalogueContent.tsx` (step 7).
+- **Option missing from the modal** → `OPTIONS` / `OptionKey` (step 4).
+- **Option shows no form** → step 6, or `DEFAULT_BLOCK_DATA` has no initial values.
+- **Editing an existing block loses fields** → the hydration block in step 5.
+- **Written as the wrong type** → a missing `buildSection` case. This now fails to
+  compile; before, the `default:` silently produced a divider.
+- **Free on the AI path** → step 9 or 12; check the flag exists on every tier.
+- **Matching a legacy key** → use `isItemsBlock`, never `=== "category"`.
+- **Forgot the release** → steps 1 and 12 live in `@quicktalog/common`; the app
+  pins a published version, so CI fails until it is released and bumped.

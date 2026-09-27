@@ -18,8 +18,7 @@ export interface MyUserDataResult {
 
 type UsageRow = {
 	catalogues: string | number;
-	prompts: string | number;
-	ocr: string | number;
+	credits: string | number;
 	pageviews: string | number;
 	unique_visitors: string | number;
 };
@@ -94,8 +93,7 @@ export async function loadInTx(
 					pageview_count: asNumber(usage?.pageviews),
 					unique_visitors: asNumber(usage?.unique_visitors),
 				},
-				ocr: asNumber(usage?.ocr),
-				prompts: asNumber(usage?.prompts),
+				credits: asNumber(usage?.credits),
 				catalogues: asNumber(usage?.catalogues),
 			},
 		},

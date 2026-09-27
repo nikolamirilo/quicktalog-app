@@ -76,6 +76,8 @@ export type CatalogueFooterProps = {
 export type CatalogueContentProps = {
 	data: ContentBlock[];
 	currency: string;
+	/** BCP-47 tag derived from `catalogue.language`, for price formatting. */
+	locale?: string;
 	type: "demo" | "item";
 	theme?: string;
 	mode: "edit" | "view";

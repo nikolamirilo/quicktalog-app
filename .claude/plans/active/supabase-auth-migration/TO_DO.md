@@ -1,5 +1,7 @@
 # Clerk to Supabase Auth + RLS: To Do
 
+**TEST rehearsal (do this first): [`TEST_REHEARSAL.md`](TEST_REHEARSAL.md)** — the migration has never been run end to end anywhere.
+
 **PROD cutover sequence: [`PROD_RUNBOOK.md`](PROD_RUNBOOK.md)** — every step, in order, with the four traps TEST hit.
 
 High-level task list for [`PLAN.md`](PLAN.md) (section 5 has the detailed steps). Every task runs on TEST first, then PROD.
@@ -20,7 +22,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0A.10 | Deploy worker, then app, to TEST | Nikola | Done |
 | 0A.11 | Soak 24h on TEST; confirm no app `/rest/v1` traffic | Nikola | Done |
 | 0A.12 | Apply M00 on TEST and run the perimeter check | Nikola | Done |
-| 0A.13 | PROD: check edge functions, backup, merge `test` → `main`, deploy, soak 24h, apply M00, perimeter check, re-run audit | Nikola | Done |
+| 0A.13 | PROD: check edge functions, backup, merge `test` → `main`, deploy, soak 24h, apply M00, perimeter check, re-run audit | Nikola | **To Do** |
 | 0A.14 | Fix any tampered data found by the audit; record the GDPR notification decision | Nikola | Done |
 | 0B.1 | Catalogue actions: owner in every update, server-side status and plan limits, no `createdBy` in Redis | Claude | Done |
 | 0B.2 | Newsletter validation and rate limit; CSV export escaping | Claude | Done |
@@ -28,7 +30,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 0B.4 | Paddle: pinned customer at checkout, signed `customData`, webhook user resolution, downgrade rules | Claude | Done |
 | 0B.5 | Clerk `user.deleted`: cancel Paddle subscriptions before deleting | Claude | Done |
 | 0B.6 | Paddle sandbox test: checkout, activation, renewal, cancel | Nikola | Done |
-| 0B.7 | Deploy to TEST, then PROD; soak 48h | Nikola | Done |
+| 0B.7 | Deploy to TEST, then PROD; soak 48h | Nikola | **To Do (PROD half)** |
 | K.1 | Create named `sb_secret_` keys per project | Nikola | Done |
 | K.2 | Worker: replace `SUPABASE_SERVICE_ROLE_KEY` with the secret key, remove `SUPABASE_ANON_KEY` | Claude | Done |
 | K.3 | Edge functions: require a webhook secret header instead of the service JWT | Claude / Nikola | In Progress |
@@ -42,7 +44,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 1.6 | Deploy to TEST; soak 3 days | Nikola | Done |
 | 1.7 | Apply M07 on TEST | Nikola | Done |
 | 1.8 | Apply M08 on TEST, set `app_rls` password, add separate user/admin connection strings, load smoke test | Nikola | Done |
-| 1.9 | PROD: preflight, M01-M06, deploy, soak 3 days, M07, M08, smoke | Nikola | Done |
+| 1.9 | PROD: preflight, M01-M06, deploy, soak 3 days, M07, M08, smoke | Nikola | **To Do** |
 | 2.1 | Add Supabase auth packages and clients; Supabase branch of `getVerifiedIdentity` | Claude | Done |
 | 2.2 | Runtime switches (maintenance, banner) and middleware with session refresh | Claude | Done |
 | 2.3 | Auth UI: sign-in, sign-up, Google, password reset, callback and confirm routes, consent page | Claude | Done |
@@ -57,7 +59,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 2.12 | Tests: auth triggers, sign-up integration, Playwright Supabase setup, CI matrix `clerk`/`supabase` | Claude | Done |
 | 2.13 | Test all auth flows on a TEST preview with `AUTH_PROVIDER=supabase`; PROD stays on `clerk` for 72h | Nikola | To Do |
 | 3.1 | Fixture rehearsal in CI (import, re-key, verify, reverse, re-key) | Claude | In Progress |
-| 3.2 | Full TEST dress rehearsal: cutover, rollback, re-cutover; time every step | Nikola | To Do |
+| 3.2 | Full TEST dress rehearsal: cutover, rollback, re-cutover; time every step | Nikola | **To Do — see `TEST_REHEARSAL.md`. TEST's Clerk-keyed rows are gone; step 1 rebuilds them** |
 | 3.3 | Optional: PROD data rehearsal on a local copy | Nikola | To Do |
 | 3.4 | Clerk freeze at T-3 (account changes paused notice) | Claude / Nikola | In Progress |
 | 3.5 | PROD dark import at T-3; reconcile and decide on every conflict | Nikola | To Do |
@@ -222,3 +224,26 @@ instance, a support request to Clerk is the only other route and is a multi-day 
 
 Everything else can proceed without it, including the full TEST rehearsal: the dev-instance CSV (3 users) is already
 in hand.
+
+## ⚠️ PROD audit, 2026-09-26 — the tracker was wrong
+
+Run read-only against `uhfbapjuzvlyzyodxhqn` with the Supabase connector.
+
+**PROD is at migration 3 of 16.** Applied: `remote_schema`, `add_user_themes`,
+`lockdown_privileges_and_schema_fixes`. Everything from `fix_newsletter_catalogue_fk_cascade`
+onward — including **M00** — has never been applied.
+
+Consequences, live in production right now:
+
+- **All 12 public tables have RLS disabled.**
+- `anon` holds **DELETE/INSERT/SELECT/UPDATE on `public.users`**, plus write access to
+  `catalogues`, `subscriptions`, `analytics` and `job_logs`.
+- Both the legacy `anon` JWT and the `sb_publishable_` key are enabled. The publishable key is
+  in the browser bundle by design.
+- **2171 users, 72 paying.** Supabase's advisor flags this ERROR / EXTERNAL.
+
+This is R1 in `PLAN.md`, rated critical. Remediation sequence is **P0** in
+[`PROD_RUNBOOK.md`](PROD_RUNBOOK.md) — note that `supabase db push` is *not* the answer, because
+PROD still runs pre-Phase-0A code that reads through PostgREST.
+
+Statuses corrected above: 0A.13, 1.9 and the PROD half of 0B.7 were marked Done and are not.

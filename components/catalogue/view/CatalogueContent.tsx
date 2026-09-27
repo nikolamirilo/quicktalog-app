@@ -9,22 +9,23 @@ import {
 	getDisplayItems,
 	getTotalItemCount,
 } from "@/helpers/catalogueItems";
+import { asItemsBlock, isItemsBlock } from "@/helpers/contentBlocks";
 import { getRequiredPlan } from "@/helpers/client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FiFileMinus } from "react-icons/fi";
 import ItemModal from "../modals/ItemModal";
-import CategoryBlockComponent from "../sections/CategoryBlock";
-import ContainerBlockComponent from "../sections/ContainerBlock";
 import CustomCodeBlockComponent from "../sections/CustomCode";
 import DividerBlockComponent from "../sections/DividerBlock";
 import EmbeddingBlockComponent from "../sections/EmbeddingBlock";
+import ItemsSection from "../sections/ItemsSection";
 import TextBlockComponent from "../sections/TextBlock";
 import CatalogueSearchBar from "./CatalogueSearchBar";
 
 const CatalogueContent = ({
 	data,
 	currency,
+	locale,
 	type,
 	theme,
 	mode,
@@ -90,11 +91,12 @@ const CatalogueContent = ({
 		if (!data || data.length === 0) return;
 		const initialExpanded = data.reduce(
 			(acc, item, idx) => {
+				const itemsBlock = asItemsBlock(item);
 				const isExpanded =
 					type === "demo"
 						? idx === 0
-						: item.type === "category"
-							? ((item as any).isExpanded ?? true)
+						: itemsBlock?.showHeading
+							? itemsBlock.isExpanded
 							: true;
 
 				acc[`${item.id}-${item.order}`] = isExpanded;
@@ -121,7 +123,7 @@ const CatalogueContent = ({
 	const handleEditItem = (categoryIndex: number, itemIndex: number) => {
 		const targetBlock = data[categoryIndex];
 		if (
-			(targetBlock.type === "category" || targetBlock.type === "container") &&
+			isItemsBlock(targetBlock) &&
 			targetBlock.items &&
 			targetBlock.items[itemIndex]
 		) {
@@ -175,7 +177,7 @@ const CatalogueContent = ({
 		}
 
 		const targetBlock = data[index];
-		if (targetBlock.type === "category" || targetBlock.type === "container") {
+		if (isItemsBlock(targetBlock)) {
 			setActiveBlockLayout(targetBlock.layout);
 		}
 		setActiveCategoryIndex(index);
@@ -226,72 +228,24 @@ const CatalogueContent = ({
 					}
 				};
 
-				if (block.type === "category") {
-					const categoryDisplayItems = getDisplayItems(block, query);
-					if (isSearching && categoryDisplayItems.length === 0) return null;
-					const forceExpanded = isSearching ? true : isExpanded;
+				const itemsBlock = asItemsBlock(block);
+				if (itemsBlock) {
+					if (isSearching && getDisplayItems(itemsBlock, query).length === 0) {
+						return null;
+					}
 					const currentLayout =
-						type === "demo" ? (layout as ContentLayout) : block.layout;
+						type === "demo" ? (layout as ContentLayout) : itemsBlock.layout;
 					return (
-						<CategoryBlockComponent
-							block={block}
+						<ItemsSection
+							block={itemsBlock}
 							blockIndex={index}
 							currency={currency}
 							currentLayout={currentLayout}
-							isExpanded={forceExpanded}
+							isExpanded={isSearching ? true : isExpanded}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}
 							key={`${block.id}-${block.order}`}
-							mode={mode}
-							onAddItem={isSearching ? undefined : openAddItemModal}
-							onDelete={handleDeleteClick}
-							onDeleteItem={
-								isSearching
-									? undefined
-									: (itemIndex) => handleDeleteItem(index, itemIndex)
-							}
-							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
-							onEditItem={
-								isSearching
-									? undefined
-									: (itemIndex) => handleEditItem(index, itemIndex)
-							}
-							onMoveDown={() => moveBlock(index, "down")}
-							onMoveItemDown={
-								isSearching
-									? undefined
-									: (itemIndex) => moveItem(index, itemIndex, "down")
-							}
-							onMoveItemUp={
-								isSearching
-									? undefined
-									: (itemIndex) => moveItem(index, itemIndex, "up")
-							}
-							onMoveUp={() => moveBlock(index, "up")}
-							onToggle={handleToggleSection}
-							onUpdateBlock={
-								updateBlock ? (data) => updateBlock(index, data) : undefined
-							}
-							query={query}
-							slug={block.id}
-							theme={theme}
-						/>
-					);
-				} else if (block.type === "container") {
-					const containerDisplayItems = getDisplayItems(block, query);
-					if (isSearching && containerDisplayItems.length === 0) return null;
-					const currentLayout =
-						type === "demo" ? (layout as ContentLayout) : block.layout;
-					return (
-						<ContainerBlockComponent
-							block={block}
-							blockIndex={index}
-							currency={currency}
-							currentLayout={currentLayout}
-							isExpanded={isExpanded}
-							isFirst={index === 0}
-							isLast={index === data.length - 1}
-							key={`${block.id}-${block.order}`}
+							locale={locale}
 							mode={mode}
 							onAddItem={isSearching ? undefined : openAddItemModal}
 							onDelete={handleDeleteClick}
@@ -310,20 +264,17 @@ const CatalogueContent = ({
 								moveBlock ? () => moveBlock(index, "down") : undefined
 							}
 							onMoveItemDown={
-								isSearching
+								isSearching || !moveItem
 									? undefined
-									: moveItem
-										? (itemIndex) => moveItem(index, itemIndex, "down")
-										: undefined
+									: (itemIndex) => moveItem(index, itemIndex, "down")
 							}
 							onMoveItemUp={
-								isSearching
+								isSearching || !moveItem
 									? undefined
-									: moveItem
-										? (itemIndex) => moveItem(index, itemIndex, "up")
-										: undefined
+									: (itemIndex) => moveItem(index, itemIndex, "up")
 							}
 							onMoveUp={moveBlock ? () => moveBlock(index, "up") : undefined}
+							onToggle={handleToggleSection}
 							onUpdateBlock={
 								updateBlock ? (data) => updateBlock(index, data) : undefined
 							}
@@ -408,8 +359,7 @@ const CatalogueContent = ({
 
 			{isSearching &&
 				data.every((block) => {
-					if (block.type !== "category" && block.type !== "container")
-						return true;
+					if (!isItemsBlock(block)) return true;
 					return getDisplayItems(block, query).length === 0;
 				}) && (
 					<div

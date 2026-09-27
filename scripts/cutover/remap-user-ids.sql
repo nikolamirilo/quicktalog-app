@@ -11,7 +11,7 @@ set local application_name = 'cutover:remap';
 -- 1. CHANGE C12 + W9: strongest lock first, BEFORE the precondition reads (they would otherwise take ACCESS SHARE on
 -- public.users and turn this into a lock upgrade, and a webhook could change a checked row before the lock).
 lock table public.users in access exclusive mode;
-lock table public.catalogues, public.analytics, public.newsletter, public.ocr, public.prompts, public.user_themes
+lock table public.catalogues, public.analytics, public.newsletter, public.prompts, public.user_themes
   in share row exclusive mode;
 
 -- 0. Preconditions
@@ -62,7 +62,6 @@ select u.id as old_id, u.plan_id, u.customer_id,
        (select count(*) from public.analytics   a where a.user_id    = u.id) as analytics,
        (select coalesce(sum(a.pageview_count), 0) from public.analytics a where a.user_id = u.id) as pageviews,
        (select count(*) from public.newsletter  n where n.owner_id   = u.id) as newsletter,
-       (select count(*) from public.ocr         o where o.user_id    = u.id) as ocr,
        (select count(*) from public.prompts     p where p.user_id    = u.id) as prompts,
        (select count(*) from public.user_themes t where t.user_id    = u.id) as themes
   from public.users u;
@@ -127,7 +126,6 @@ begin
         or b.analytics  <> (select count(*) from public.analytics   a where a.user_id    = u.id)
         or b.pageviews  <> (select coalesce(sum(a.pageview_count), 0) from public.analytics a where a.user_id = u.id)
         or b.newsletter <> (select count(*) from public.newsletter  n where n.owner_id   = u.id)
-        or b.ocr        <> (select count(*) from public.ocr         o where o.user_id    = u.id)
         or b.prompts    <> (select count(*) from public.prompts     p where p.user_id    = u.id)
         or b.themes     <> (select count(*) from public.user_themes t where t.user_id    = u.id)
   ) then

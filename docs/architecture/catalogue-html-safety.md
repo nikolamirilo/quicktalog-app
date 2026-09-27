@@ -38,6 +38,14 @@ It is an allowlist, so `on*` handlers, `<script>`, `<form>`, `<svg>`,
 `EMBED_HOSTS` - matched as an exact host or a `.host` suffix, so
 `player.vimeo.com` passes and `youtube.com.evil.example` does not.
 
+Because `<script>` is discarded, an embedding block never runs one. Two effects
+used to re-create `<script>` elements from author markup and append them to the
+live document - `EmbeddingBlock` over its own subtree and `CodePreview` onto
+`document.body` in the signed-in builder. Both found nothing to run, since the
+sanitizer had already removed the tags, and both were deleted: a same-origin
+script sink that only awaits someone widening a profile is not worth keeping.
+Anything that genuinely needs to execute belongs in the sandboxed frame below.
+
 Before this, `<img src=x onerror=...>` in any of the three reached the page
 intact. Note that the code gate's old advice made this worse rather than
 better: when it blocked a widget it told the model to *"add what you found as a

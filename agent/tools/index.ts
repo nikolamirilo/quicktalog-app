@@ -30,6 +30,13 @@ export function buildTools(session: CatalogueSession) {
 		...navigationTools(context),
 	};
 
+	if (session.aiLimits.maxFetches === 0) {
+		// Removed rather than left to refuse, so the model never spends a step
+		// discovering it cannot read pages. The key stays in AgentTools so
+		// display.ts's exhaustive record still covers it.
+		delete (tools as { fetchUrl?: unknown }).fetchUrl;
+	}
+
 	return hideOperations(gateCalls(session, tools));
 }
 

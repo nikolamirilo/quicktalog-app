@@ -4,9 +4,11 @@ import ChatImageAttachments, {
 	ChatAttachButton,
 } from "@/components/catalogue/chat/ChatImageAttachments";
 import ChatMessageBubble from "@/components/catalogue/chat/ChatMessageBubble";
+import CreditMeter from "@/components/catalogue/chat/CreditMeter";
 import PlanChecklist from "@/components/catalogue/chat/PlanChecklist";
 import LimitsModal from "@/components/modals/LimitsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { useUserContext } from "@/context/UserContext";
 import { getRequiredPlan } from "@/helpers/client";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
 import { usePastedImages } from "@/hooks/usePastedImages";
@@ -61,7 +63,16 @@ const isNarrating = (message?: CatalogueAgentUIMessage): boolean => {
  * builder writes the catalogue's own theme font onto `documentElement` and
  * this panel is product chrome, not catalogue content.
  */
-const CatalogueChat = ({ userData }: { userData?: UserData }) => {
+const CatalogueChat = ({
+	userData: initialUserData,
+}: {
+	userData?: UserData;
+}) => {
+	// The prop is rendered once by the server component that owns this page, so it
+	// never reflects a charge made during the session. The context is the live copy.
+	const { userData: liveUserData } = useUserContext();
+	const userData = liveUserData ?? initialUserData;
+	const creditLimit = userData?.currentPlan?.features?.ai_credits;
 	const context = useCatalogueContext();
 	const isOpen = context?.isChatOpen ?? false;
 	const setIsOpen = context?.setIsChatOpen ?? (() => {});
@@ -172,10 +183,16 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 							</div>
 						</div>
 						<div className="flex shrink-0 items-center gap-0.5">
+							{typeof creditLimit === "number" && (
+								<CreditMeter
+									limit={creditLimit}
+									used={userData?.usage?.credits ?? 0}
+								/>
+							)}
 							{messages.length > 0 && (
 								<button
 									aria-label="Clear conversation"
-									className="rounded-full p-2 text-product-foreground-accent transition-colors hover:bg-black/5 hover:text-product-foreground"
+									className="flex h-8 w-8 items-center justify-center rounded-full text-product-foreground-accent transition-colors hover:bg-black/5 hover:text-product-foreground"
 									onClick={reset}
 									title="Clear conversation"
 									type="button"
@@ -185,7 +202,7 @@ const CatalogueChat = ({ userData }: { userData?: UserData }) => {
 							)}
 							<button
 								aria-label="Minimize AI assistant"
-								className="rounded-full p-2 text-product-foreground-accent transition-colors hover:bg-black/5 hover:text-product-foreground"
+								className="flex h-8 w-8 items-center justify-center rounded-full text-product-foreground-accent transition-colors hover:bg-black/5 hover:text-product-foreground"
 								onClick={() => setIsOpen(false)}
 								title="Minimize, your conversation is kept"
 								type="button"

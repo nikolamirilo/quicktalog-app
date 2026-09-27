@@ -1,9 +1,10 @@
 "use server";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { refundAiTurn } from "@/lib/ai/metering";
+import { aiRateLimitOk, refundAiTurn } from "@/lib/ai/metering";
 import { openAiTurn } from "@/lib/ai/turn";
 import type { AiActionResult } from "@/types/ai";
 import { withUser } from "@/utils/db";
+import { describeBusinessType } from "@quicktalog/common";
 import { generateText } from "@/utils/deepseek";
 import * as Sentry from "@sentry/nextjs";
 
@@ -38,6 +39,14 @@ export async function writeItemDescription(
 			};
 		}
 
+		if (!(await aiRateLimitOk(me.userId))) {
+			return {
+				success: false,
+				error: "Too many requests. Give it a moment.",
+				code: "limit",
+			};
+		}
+
 		// Charged before the model runs, refunded below on empty output.
 		const turn = await openAiTurn(me, {
 			catalogue: catalogueName,
@@ -62,13 +71,13 @@ export async function writeItemDescription(
 		const language = params.language || "English";
 		const context = [
 			params.categoryName ? `Category: "${params.categoryName}".` : "",
-			params.businessType ? `Business type: ${params.businessType}.` : "",
+			describeBusinessType(params.businessType),
 		]
 			.filter(Boolean)
 			.join(" ");
 		const enhance = Boolean(params.existing?.trim());
 
-		const system = `You write short, appetizing descriptions for items in a digital catalogue or menu. Reply with ONLY the description text: one or two sentences, no quotes, no markdown, no label. Write in ${language}.`;
+		const system = `You write short, appealing descriptions for items in a digital catalogue or menu. Reply with ONLY the description text: one or two sentences, no quotes, no markdown, no label. Write in ${language}.`;
 		const user = enhance
 			? `Improve the description for the item "${params.itemName}". ${context} Keep the same meaning, fix grammar, make it clear and appealing. Current text: ${params.existing}`
 			: `Write a description for the item "${params.itemName}". ${context}`;

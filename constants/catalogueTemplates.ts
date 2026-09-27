@@ -1,8 +1,10 @@
-import { DEFAULT_IMAGE } from "@quicktalog/common";
+import { type ContentBlock, DEFAULT_IMAGE } from "@quicktalog/common";
 
-export const standardTemplate = [
+export const standardTemplate: ContentBlock[] = [
 	{
-		type: "category",
+		type: "items",
+		showHeading: true,
+		isExpanded: true,
 		order: 1,
 		id: crypto.randomUUID(),
 		name: "Featured Collection",
@@ -71,7 +73,9 @@ export const standardTemplate = [
 		],
 	},
 	{
-		type: "category",
+		type: "items",
+		showHeading: true,
+		isExpanded: true,
 		order: 2,
 		id: crypto.randomUUID(),
 		name: "Main Offerings",
@@ -125,7 +129,9 @@ export const standardTemplate = [
 		],
 	},
 	{
-		type: "category",
+		type: "items",
+		showHeading: true,
+		isExpanded: true,
 		order: 3,
 		id: crypto.randomUUID(),
 		name: "Limited Additions",
@@ -164,7 +170,9 @@ export const standardTemplate = [
 		],
 	},
 	{
-		type: "category",
+		type: "items",
+		showHeading: true,
+		isExpanded: true,
 		order: 4,
 		id: crypto.randomUUID(),
 		name: "Premium Range",
@@ -233,7 +241,9 @@ export const standardTemplate = [
 		],
 	},
 	{
-		type: "container",
+		type: "items",
+		showHeading: false,
+		isExpanded: true,
 		order: 5,
 		id: crypto.randomUUID(),
 		name: "Complementary Extras",
@@ -273,10 +283,12 @@ export const standardTemplate = [
 	},
 ];
 
-export const placeholderTemplate = [
+export const placeholderTemplate: ContentBlock[] = [
 	{
 		id: crypto.randomUUID(),
-		type: "category",
+		type: "items",
+		showHeading: true,
+		isExpanded: true,
 		order: 1,
 		name: "Core Offerings",
 		layout: "variant_1",
@@ -330,7 +342,9 @@ export const placeholderTemplate = [
 	},
 	{
 		id: crypto.randomUUID(),
-		type: "category",
+		type: "items",
+		showHeading: true,
+		isExpanded: true,
 		order: 2,
 		name: "Additional Selections",
 		layout: "variant_2",

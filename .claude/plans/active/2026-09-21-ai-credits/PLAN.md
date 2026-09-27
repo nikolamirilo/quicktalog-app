@@ -185,16 +185,16 @@ measured cost — §5 Phase 0 exists to produce that measurement.
 | Plan | `ai_prompts` today | `ai_credits` | ≈ asks / month | Reasoning |
 |---|---|---|---|---|
 | **Starter (free)** | 0 | **15** | ~5 | Enough to build one catalogue with the agent and edit it, which is the whole demo. The plan caps out at 1 catalogue / 5 sections / 15 items anyway, so there is a natural ceiling on what those credits can produce |
-| Basic | 0 | **40** | ~13 | AI stops being a paid-tier teaser; the cheapest paid plan must clearly beat free |
-| Pro | 10 | **120** | ~40 | |
+| Basic | 0 | **50** | ~17 | AI stops being a paid-tier teaser; the cheapest paid plan must clearly beat free |
+| Pro | 10 | **150** | ~50 | |
 | Growth | 25 | **300** | ~100 | |
 | Premium | 50 | **600** | ~200 | |
-| German Silva (custom) | 0 | **40** | ~13 | Matches Basic — **confirm with the owner before shipping** |
+| German Silva (custom) | 0 | **50** | ~17 | Matches Basic — **confirm with the owner before shipping** |
 
 "≈ asks" assumes an average ask of 3 credits (base 2, plus roughly one task or fetch).
-Paid tiers land at roughly 4× today's nominal prompt count. That looks generous, and it
-is deliberate: §1.2 means today's nominal number was never actually enforced, so
-launching at parity would feel like a downgrade to every active user.
+Pro lands at 5× today's nominal prompt count, Growth and Premium at 4×. That looks
+generous, and it is deliberate: §1.2 means today's nominal number was never actually
+enforced, so launching at parity would feel like a downgrade to every active user.
 
 **No rollover, no welcome bonus.** Unused credits expire at the month boundary
 (simpler to explain, and it keeps the liability bounded). A one-time signup grant was
@@ -299,7 +299,7 @@ Apply to TEST, soak, then PROD. Never edit an applied migration.
 | 3 | "AI Prompts" donut becomes "AI Credits"; remove the OCR donut | `components/dashboard/MonthlyUsage.tsx:38-56` |
 | 4 | Remaining balance in the chat panel footer — under credits the cost per ask is no longer constant, so discovering the limit through a modal is worse than it was | `components/catalogue/chat/CatalogueChat.tsx` |
 | 5 | "4 things · about 5 credits" on the checklist once `createPlan` returns, before the first edit lands | `components/catalogue/chat/PlanChecklist.tsx` |
-| 6 | Limit modal: credits copy, next tier's credit figure, and for a free user the specific "you have 15 free credits a month, Basic gives you 40" framing | `components/modals/limits/limitContent.ts`, `LimitUpgradeComparison.tsx` |
+| 6 | Limit modal: credits copy, next tier's credit figure, and for a free user the specific "you have 15 free credits a month, Basic gives you 50" framing | `components/modals/limits/limitContent.ts`, `LimitUpgradeComparison.tsx` |
 | 7 | `"{n} AI prompts per month"` → `"{n} AI credits per month"`, plus the §2.4 price table nearby (without it the number means nothing), and Starter's credits shown on the free tier | `components/home/Pricing/PricingColumn.tsx:62-72` |
 | 8 | Drop the `ocr_ai_import` row | `components/dashboard/subscription/BillingHistory.tsx:12,50` |
 
@@ -360,7 +360,7 @@ allowances are wrong, not the users.
    cost. Worth a side-by-side on three typical asks before deciding.
 3. **Does a skipped task cost a credit?** Proposed: no, only `completeTask` charges.
    Watch for a model that learns to skip its way to cheapness.
-4. **The custom plan (`tiers[5]`)** — 40 credits is a guess against a contract this
+4. **The custom plan (`tiers[5]`)** — 50 credits is a guess against a contract this
    plan has not seen.
 5. **Rollover** — proposed no. If it ever becomes yes, it needs a balance table rather
    than a sum over a window, which is a much bigger change; decide now.

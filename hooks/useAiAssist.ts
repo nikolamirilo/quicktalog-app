@@ -7,7 +7,7 @@ import { useState } from "react";
 
 /**
  * Shared plumbing for block-level AI assists (currently the item description
- * writer). Runs the client-side `ai_prompts` gate before calling a
+ * writer). Runs the client-side `ai_credits` gate before calling a
  * server action, surfaces loading/error state, opens the AI LimitsModal when
  * the quota is spent, and refreshes usage after a successful metered call.
  *
@@ -22,8 +22,8 @@ export function useAiAssist() {
 	const [showLimits, setShowLimits] = useState(false);
 
 	const isOverLimit = (): boolean => {
-		const limit = userData?.currentPlan?.features?.ai_prompts;
-		const used = userData?.usage?.prompts ?? 0;
+		const limit = userData?.currentPlan?.features?.ai_credits;
+		const used = userData?.usage?.credits ?? 0;
 		return typeof limit === "number" && used >= limit;
 	};
 

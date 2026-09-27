@@ -2,9 +2,10 @@ import { FiChevronDown } from "react-icons/fi";
 import { Button } from "../../../ui/button";
 import BlockControls from "../../cards/common/BlockControls";
 
-const CategoryHeader = ({
+const SectionHeader = ({
 	title,
 	code,
+	contentId,
 	isExpanded,
 	onToggle,
 	onDelete,
@@ -19,6 +20,8 @@ const CategoryHeader = ({
 }: {
 	title: string;
 	code: string;
+	/** Id of the element this header expands. Omitted only by the error fallback. */
+	contentId?: string;
 	isExpanded: boolean;
 	onToggle: (code: string) => void;
 	onDelete?: () => void;
@@ -35,7 +38,7 @@ const CategoryHeader = ({
 	return (
 		<div className="relative group/header">
 			<Button
-				aria-controls={`section-content-${code}`}
+				aria-controls={contentId}
 				aria-expanded={showContent}
 				aria-label={`${showContent ? "Collapse" : "Expand"} ${title} section`}
 				className="group relative overflow-hidden will-change-transform w-full"
@@ -105,18 +108,18 @@ const CategoryHeader = ({
 
 			{mode === "edit" && (
 				<BlockControls
-					onMoveDown={onMoveDown}
-					onMoveUp={onMoveUp}
+					currentLayout={currentLayout}
 					isFirst={isFirst}
 					isLast={isLast}
 					onDelete={onDelete}
 					onEdit={onEdit}
-					currentLayout={currentLayout}
 					onLayoutChange={onLayoutChange}
+					onMoveDown={onMoveDown}
+					onMoveUp={onMoveUp}
 				/>
 			)}
 		</div>
 	);
 };
 
-export default CategoryHeader;
+export default SectionHeader;

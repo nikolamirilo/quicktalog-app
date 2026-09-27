@@ -8,7 +8,13 @@ import {
 import { loadedSkillsFromMessages } from "@/agent/skills";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
 import { sameOrigin } from "@/lib/http/origin";
-import { refundAiTurn, setPlanState } from "@/lib/ai/metering";
+import {
+	aiRateLimitOk,
+	refundAiTurn,
+	setPlanState,
+	settleAiTurn,
+} from "@/lib/ai/metering";
+import { CREDITS } from "@/lib/ai/pricing";
 import { openAiTurn } from "@/lib/ai/turn";
 import { withUser } from "@/utils/db";
 import type { Catalogue } from "@quicktalog/common";
@@ -31,7 +37,9 @@ const AGENT_TIMEOUT_MS = 50_000;
 const ERROR_STATUS: Record<string, number> = {
 	unauthorized: 401,
 	not_found: 404,
+	unverified: 403,
 	limit: 429,
+	rate_limited: 429,
 	ai_error: 500,
 };
 
@@ -84,6 +92,14 @@ export async function POST(request: Request) {
 		);
 	}
 
+	// Ahead of the ledger, so a script cannot spend a month of credits in seconds.
+	if (!(await aiRateLimitOk(me.userId))) {
+		return Response.json(
+			{ error: "Too many requests. Give it a moment.", code: "rate_limited" },
+			{ status: 429 },
+		);
+	}
+
 	// A plan is only picked back up when the browser is explicitly resuming one.
 	// On a fresh message from the user the plan stays null, so the agent is free
 	// to write a new list rather than being told it already has one.
@@ -118,6 +134,7 @@ export async function POST(request: Request) {
 		// The session is per request but the fetch budget is per ask, or a plan
 		// spanning five requests would get three pages each.
 		fetchesFromMessages(messages),
+		turn.ai,
 	);
 
 	// Combine the client-side abort (user clicks "Clear conversation") with a
@@ -163,7 +180,19 @@ export async function POST(request: Request) {
 					// or a fully rejected turn becomes free again.
 					if (turn.charged && session.applied.length === 0 && !unfinished) {
 						await refundAiTurn(tx, rootTurnId);
+						return;
 					}
+
+					// The base was charged up front; this adds what the turn turned out
+					// to cost. The base covers the turn's first task, so only the
+					// request that took the charge discounts one - a continuation
+					// settles onto the same root turn and every task on it is extra.
+					const tasks = session.tasksSettledThisRequest;
+					const extra =
+						(turn.charged ? Math.max(0, tasks - 1) : tasks) *
+							CREDITS.perExtraTask +
+						session.fetchesThisRequest * CREDITS.perPageFetch;
+					await settleAiTurn(tx, rootTurnId, extra);
 				});
 			} catch (error) {
 				Sentry.captureException(error, { tags: { op: "catalogueAgentMeter" } });

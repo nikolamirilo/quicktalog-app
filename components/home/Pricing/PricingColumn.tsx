@@ -61,17 +61,11 @@ const PricingColumn: React.FC<PricingColumnProps> = ({
 				text: `${features.traffic_limit.toLocaleString("en-US")} page views per month`,
 				type: "traffic-limit",
 			},
-			features.ai_prompts === 0
+			features.ai_credits === 0
 				? null
 				: {
-						text: `${features.ai_prompts} AI prompts per month`,
+						text: `${features.ai_credits} AI credits per month`,
 						type: "ai-catalogue-generation",
-					},
-			features.ocr_ai_import === 0
-				? null
-				: {
-						text: `${features.ocr_ai_import} OCR AI imports per month`,
-						type: "ocr-ai-import",
 					},
 
 			features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,

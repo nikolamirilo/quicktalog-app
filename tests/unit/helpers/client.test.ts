@@ -155,8 +155,7 @@ describe("getRequiredPlan", () => {
 			type: "standard",
 			features: {
 				catalogues: 1,
-				ai_prompts: 0,
-				ocr_ai_import: 0,
+				ai_credits: 0,
 				items_per_catalogue: 10,
 				sections_per_catalogue: 3,
 				traffic_limit: 100,
@@ -167,8 +166,7 @@ describe("getRequiredPlan", () => {
 			type: "standard",
 			features: {
 				catalogues: 5,
-				ai_prompts: 10,
-				ocr_ai_import: 5,
+				ai_credits: 40,
 				items_per_catalogue: 50,
 				sections_per_catalogue: 10,
 				traffic_limit: 1000,
@@ -179,8 +177,7 @@ describe("getRequiredPlan", () => {
 			type: "standard",
 			features: {
 				catalogues: "unlimited",
-				ai_prompts: 100,
-				ocr_ai_import: 50,
+				ai_credits: 300,
 				items_per_catalogue: "unlimited",
 				sections_per_catalogue: "unlimited",
 				traffic_limit: 10000,

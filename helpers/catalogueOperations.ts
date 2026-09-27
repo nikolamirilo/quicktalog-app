@@ -1,11 +1,11 @@
 import {
+	type AnyItemsBlock,
 	type Catalogue,
-	type CategoryBlock,
-	type ContainerBlock,
 	type ContentBlock,
 	defaultCatalogueData,
 	type Item,
 } from "@quicktalog/common";
+import { isItemsBlock, normalizeContent } from "@/helpers/contentBlocks";
 import { CUSTOM_THEME_NAME, sanitizeCustomThemeColors } from "@/helpers/theme";
 import type {
 	AiItemInput,
@@ -38,28 +38,46 @@ export interface OperationOutcome {
 	limitReached: boolean;
 }
 
-type ItemBlock = CategoryBlock | ContainerBlock;
+type ItemBlock = AnyItemsBlock;
 
 const isItemBlock = (block: ContentBlock): block is ItemBlock =>
-	block.type === "category" || block.type === "container";
+	isItemsBlock(block);
 
-/** Same per-type gating `AddContentModal` applies to the manual "add section" flow. */
+/** Types every plan includes. Anything else must be granted explicitly. */
+const UNGATED_SECTION_TYPES = new Set(["items", "text"]);
+
+/**
+ * Same per-type gating `AddContentModal` applies to the manual "add section"
+ * flow.
+ *
+ * No `access` means there is no plan to enforce against - the browser replaying
+ * operations the server already authorised - so nothing is gated. When access
+ * *is* given it is the authority, and then this fails closed: a gated type must
+ * be granted explicitly, and an unrecognised type is locked rather than free.
+ */
 const isSectionTypeLocked = (
 	type: string,
 	access: AiSectionAccess | undefined,
 ): boolean => {
 	if (!access) return false;
-	if (type === "divider") return access.divider === false;
-	if (type === "embedding") return access.embedding === false;
-	if (type === "custom_code") return access.customCode === false;
-	return false;
+	if (UNGATED_SECTION_TYPES.has(type)) return false;
+	if (type === "divider") return access.divider !== true;
+	if (type === "embedding") return access.embedding !== true;
+	if (type === "custom_code") return access.customCode !== true;
+	return true;
 };
 
 const SECTION_TYPE_LABELS: Record<string, string> = {
+	items: "Items",
+	text: "Text",
 	divider: "Divider",
 	embedding: "Embed",
 	custom_code: "Custom code",
 };
+
+/** Never interpolate a bare `undefined` into a message the user reads. */
+const sectionTypeLabel = (type: string): string =>
+	SECTION_TYPE_LABELS[type] ?? type.split("_").join(" ");
 
 const hasKeys = (value: object | undefined): boolean =>
 	value !== undefined && Object.keys(value).length > 0;
@@ -107,20 +125,13 @@ const buildSection = (
 ): ContentBlock => {
 	const base = { id: op.id ?? crypto.randomUUID(), order };
 	switch (op.sectionType) {
-		case "category":
+		case "items":
 			return {
 				...base,
-				type: "category",
+				type: "items",
 				name: op.name ?? "New section",
-				layout: op.layout ?? "variant_1",
-				items,
+				showHeading: op.showHeading ?? true,
 				isExpanded: true,
-			};
-		case "container":
-			return {
-				...base,
-				type: "container",
-				name: op.name ?? "New section",
 				layout: op.layout ?? "variant_1",
 				items,
 			};
@@ -145,7 +156,7 @@ const buildSection = (
 				name: op.name || undefined,
 				code: op.code ?? "",
 			};
-		default:
+		case "divider":
 			return {
 				...base,
 				type: "divider",
@@ -159,6 +170,12 @@ const buildSection = (
 					opacity: 100,
 				},
 			};
+		default: {
+			// Exhaustive: a new AiSectionType must be handled here, not silently
+			// written as some other block.
+			const unhandled: never = op.sectionType;
+			throw new Error(`Unhandled section type: ${String(unhandled)}`);
+		}
 	}
 };
 
@@ -175,7 +192,10 @@ export function applyCatalogueOperations(
 	operations: CatalogueOperation[],
 	limits: OperationLimits = {},
 ): OperationOutcome {
-	let next: Catalogue = { ...catalogue, content: [...catalogue.content] };
+	let next: Catalogue = {
+		...catalogue,
+		content: normalizeContent(catalogue.content),
+	};
 	const applied: string[] = [];
 	const skipped: string[] = [];
 	let limitReached = false;
@@ -202,7 +222,7 @@ export function applyCatalogueOperations(
 				if (isSectionTypeLocked(operation.sectionType, limits.sectionTypes)) {
 					limitReached = true;
 					skipped.push(
-						`${SECTION_TYPE_LABELS[operation.sectionType]} sections are not part of your plan.`,
+						`${sectionTypeLabel(operation.sectionType)} sections are not part of your plan.`,
 					);
 					break;
 				}
@@ -251,7 +271,10 @@ export function applyCatalogueOperations(
 				if (operation.name !== undefined) patch.name = operation.name;
 				if (isItemBlock(block)) {
 					if (operation.layout !== undefined) patch.layout = operation.layout;
-					if (block.type === "category" && operation.isExpanded !== undefined) {
+					if (operation.showHeading !== undefined) {
+						patch.showHeading = operation.showHeading;
+					}
+					if (operation.isExpanded !== undefined) {
 						patch.isExpanded = operation.isExpanded;
 					}
 				}

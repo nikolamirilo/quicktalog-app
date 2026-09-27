@@ -1,15 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { PricingPlan } from "@quicktalog/common";
-import { Code, Globe, Layout, SeparatorHorizontal, Type } from "lucide-react";
-import { TbCategoryPlus } from "react-icons/tb";
+import {
+	Code,
+	Globe,
+	LayoutGrid,
+	SeparatorHorizontal,
+	Type,
+} from "lucide-react";
 
-type OptionKey =
-	| "container"
-	| "category"
-	| "embedding"
-	| "custom_code"
-	| "text"
-	| "divider";
+type OptionKey = "items" | "embedding" | "custom_code" | "text" | "divider";
 
 interface ContentOptionsSelectorProps {
 	selectedOption: OptionKey;
@@ -22,8 +21,7 @@ const OPTIONS: {
 	label: string;
 	icon: React.ElementType;
 }[] = [
-	{ key: "container", label: "Container", icon: Layout },
-	{ key: "category", label: "Category", icon: TbCategoryPlus },
+	{ key: "items", label: "Items", icon: LayoutGrid },
 	{ key: "text", label: "Text", icon: Type },
 	{ key: "divider", label: "Divider", icon: SeparatorHorizontal },
 	{ key: "embedding", label: "External Content", icon: Globe },

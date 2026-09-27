@@ -8,69 +8,90 @@ interface ContentInputProps {
 	value: {
 		name: string;
 		layout: any;
+		showHeading?: boolean;
 		isExpanded?: boolean;
 		items?: any[];
 	};
 	onChange: (value: any) => void;
-	type: "category" | "container";
 }
 
-const ContentInput = ({ value, onChange, type }: ContentInputProps) => {
+const ContentInput = ({ value, onChange }: ContentInputProps) => {
+	const showHeading = value.showHeading ?? true;
+
 	return (
 		<div className="flex flex-col gap-6 w-full">
-			{/* Name field */}
 			<div className="flex flex-col gap-1.5 max-w-md">
 				<Label
 					className="text-product-foreground font-medium"
-					htmlFor={`${type}-name-input`}
+					htmlFor="items-name-input"
 				>
-					{type === "category" ? "Category" : "Container"} Name
+					{showHeading ? "Heading" : "Section name"}
 					<span className="text-red-500 ml-1">*</span>
 				</Label>
 
 				<Input
-					id={`${type}-name-input`}
+					id="items-name-input"
 					onChange={(e) => onChange({ ...value, name: e.target.value })}
-					placeholder={`Enter ${type} name`}
+					placeholder={showHeading ? "Enter heading" : "Enter section name"}
 					value={value.name}
 				/>
-				{type === "container" && (
+				{!showHeading && (
 					<span className="text-xs text-gray-500 -mt-0.5">
-						Used to identify this container when moving items. Not visible to
-						end users.
+						Used to identify this section when moving items. Not visible to end
+						users.
 					</span>
 				)}
 			</div>
 
-			{/* Auto-expand toggle */}
-			{type === "category" && (
+			<div className="flex flex-col gap-3">
 				<div className="flex items-center gap-2">
 					<Switch
-						checked={value.isExpanded}
-						id="expanded"
+						checked={showHeading}
+						id="show-heading"
 						onCheckedChange={(checked) =>
-							onChange({ ...value, isExpanded: checked })
+							onChange({ ...value, showHeading: checked })
 						}
 					/>
 					<Label
-						className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-						htmlFor="expanded"
+						className="text-sm font-medium leading-none"
+						htmlFor="show-heading"
 					>
-						Auto-expand on page load
+						Show heading above the items
 					</Label>
 				</div>
-			)}
 
-			{/* Layout selection */}
+				{/* The heading is the collapse toggle, so without one there is nothing to expand. */}
+				{showHeading && (
+					<div className="flex items-center gap-2">
+						<Switch
+							checked={value.isExpanded ?? true}
+							id="expanded"
+							onCheckedChange={(checked) =>
+								onChange({ ...value, isExpanded: checked })
+							}
+						/>
+						<Label
+							className="text-sm font-medium leading-none"
+							htmlFor="expanded"
+						>
+							Auto-expand on page load
+						</Label>
+					</div>
+				)}
+			</div>
+
 			<div className="flex flex-col gap-3">
 				<Label
 					className="text-product-foreground font-medium"
-					htmlFor="category-layout-input"
+					htmlFor="items-layout-input"
 				>
 					Select Layout
 					<span className="text-red-500 ml-1">*</span>
 				</Label>
-				<div className="grid grid-cols-4 gap-1 md:gap-3">
+				<div
+					className="grid grid-cols-4 gap-1 md:gap-3"
+					id="items-layout-input"
+				>
 					{layouts.map((layoutOption) => (
 						<div
 							className={`relative cursor-pointer rounded-xl border p-1.5 transition-colors ${

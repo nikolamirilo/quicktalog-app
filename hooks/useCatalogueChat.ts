@@ -146,6 +146,7 @@ export function useCatalogueChat() {
 		const decision = resumeDecision({
 			plan,
 			failed: Boolean(error),
+			outOfCredits: error ? parseErrorCode(error) === "limit" : false,
 			continuations: continuations.current,
 			lastRevision: lastRevision.current,
 		});
@@ -171,19 +172,22 @@ export function useCatalogueChat() {
 		);
 	}, [status, plan, error, context, messages, sendMessage, rootTurnId]);
 
-	// Refresh usage after a turn finishes (not on mount, where status is also "ready").
+	// Read the balance once the turn is over, and only then. The status leaves
+	// "streaming" after the response body closes, which is after the server's
+	// stream flush has settled and committed the charge - so this read is final.
+	// Anything optimistic before it would have to guess at a price that is not
+	// known until the turn ends, and a refunded question would visibly bounce.
 	const hasRun = useRef(false);
 	useEffect(() => {
 		if (loading) hasRun.current = true;
-		if (status === "ready" && hasRun.current) {
-			hasRun.current = false;
-			void refreshUserData();
-		}
+		if ((status !== "ready" && status !== "error") || !hasRun.current) return;
+		hasRun.current = false;
+		void refreshUserData();
 	}, [status, loading, refreshUserData]);
 
 	const isOverLimit = (): boolean => {
-		const limit = userData?.currentPlan?.features?.ai_prompts;
-		const used = userData?.usage?.prompts ?? 0;
+		const limit = userData?.currentPlan?.features?.ai_credits;
+		const used = userData?.usage?.credits ?? 0;
 		return typeof limit === "number" && used >= limit;
 	};
 

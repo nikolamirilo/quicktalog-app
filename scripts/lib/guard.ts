@@ -21,12 +21,9 @@
 import { createInterface } from "node:readline/promises";
 import { createClient } from "@supabase/supabase-js";
 import postgres from "postgres";
+import { applyConfigDefaults, PROJECT_REFS } from "../cutover/config";
 
-/** The two real projects. Anything else has to be allowed explicitly. */
-export const PROJECT_REFS = {
-	prod: "uhfbapjuzvlyzyodxhqn",
-	test: "imhinsgyzzyblghwnedk",
-} as const;
+export { PROJECT_REFS } from "../cutover/config";
 
 export type Environment = "prod" | "test" | "local" | "unknown";
 
@@ -232,6 +229,8 @@ async function confirmTarget(
  * business holding either credential.
  */
 export async function guard(options: GuardOptions): Promise<Guard> {
+	applyConfigDefaults();
+
 	const needsDatabase = options.needsDatabase !== false;
 	const needsAuthAdmin = options.needsAuthAdmin !== false;
 
@@ -328,6 +327,8 @@ export async function guard(options: GuardOptions): Promise<Guard> {
 			}).auth.admin
 		: (undefined as unknown as AuthAdmin);
 
+	if (needsDatabase) await assertAdminRole(sql);
+
 	return {
 		assertSameInstance: () =>
 			assertSameInstance(sql, auth, needsDatabase && needsAuthAdmin),
@@ -342,6 +343,27 @@ export async function guard(options: GuardOptions): Promise<Guard> {
 		sql,
 		supabaseUrl,
 	};
+}
+
+/**
+ * The cutover rewrites other people's rows, so the connection has to be an
+ * admin one. `MIGRATION_DATABASE_URL` can fall back to the app's own URLs, and
+ * after M08 `DB_CONNECTION_STRING` is the fail-closed `app_rls` login — which
+ * would get several statements into a re-key before dying on a permission
+ * error that looks like a bug in the script.
+ */
+async function assertAdminRole(sql: Sql): Promise<void> {
+	const [row] = await sql<{ me: string; superuser: boolean }[]>`
+		select current_user as me,
+		       pg_catalog.has_table_privilege(current_user, 'public.users', 'UPDATE') as superuser`;
+	if (!row.superuser) {
+		throw new GuardError(
+			`connected as "${row.me}", which cannot update public.users — set MIGRATION_DATABASE_URL to the postgres login (the app's DB_CONNECTION_STRING is app_rls after M08)`,
+		);
+	}
+	if (row.me !== "postgres") {
+		console.log(`  connected as ${row.me} (not postgres, but can write)`);
+	}
 }
 
 /**

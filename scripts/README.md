@@ -1,5 +1,8 @@
 # Cutover scripts
 
+**Running the PROD cutover? Use [`cutover/PROD_GUIDE.md`](cutover/PROD_GUIDE.md)** for the
+commands in order. This file explains what each script does and why.
+
 The Clerk → Supabase Auth cutover, run by hand from an operator machine.
 The plan these implement is `.claude/plans/active/supabase-auth-migration/PLAN.md`
 (section 6 for the identity migration, section 12 for the runbook).
@@ -29,9 +32,39 @@ as any user and write any row. Read this file before running any of them.
 Environment variables (export them from the encrypted volume; nothing here reads
 a `.env` file):
 
+`scripts/cutover/config.ts` names every setting in one place. **`CUTOVER_PROJECT=test|prod`
+supplies `NEXT_PUBLIC_SUPABASE_URL`, `CLERK_CSV` and `OUT_DIR`** from a per-project
+block, so a normal run needs only that plus the credentials below. Environment
+always overrides config.
+
+Paths are keyed per project rather than shared, which is what stops a PROD run
+falling through to the TEST export. Credentials and `DRY_RUN` stay out of the
+file: it is committed, and a `DRY_RUN=0` in git would make every run write.
+
+Credentials can live in a gitignored **`.env.cutover`** at the repo root instead
+of shell exports — `config.ts` loads it on import, and anything already exported
+still wins:
+
+```sh
+MIGRATION_DATABASE_URL=postgresql://postgres.<ref>:<password>@...:5432/postgres
+SUPABASE_SECRET_KEY=sb_secret_...
+CLERK_SECRET_KEY=sk_...
+SUPABASE_ACCESS_TOKEN=sbp_...
+```
+
+It is a dedicated file rather than `.env.local` on purpose. The app's
+`DB_CONNECTION_STRING` is the `app_rls` login after M08 — it owns nothing and
+cannot do admin work — so a run that silently adopted it would fail mid-re-key
+with a permissions error. No name is mapped onto another: `MIGRATION_DATABASE_URL`
+is spelled out, and it must be `postgres`.
+
+`DRY_RUN` deliberately is **not** read from that file. Keeping it on the command
+line is what makes every write a deliberate one.
+
 | Variable | Used by | Meaning |
 |---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | all | Target project. Decides TEST vs PROD. |
+| `CUTOVER_PROJECT` | all | `test` or `prod`. Resolves the settings above. |
+| `NEXT_PUBLIC_SUPABASE_URL` | all | Target project; set it directly to override `CUTOVER_PROJECT`. |
 | `SUPABASE_SECRET_KEY` | all | The `cutover-script` secret key. Never a `NEXT_PUBLIC_` one. |
 | `MIGRATION_DATABASE_URL` | all | `postgres` login, session pooler 5432 or direct. Operator machine only. |
 | `DRY_RUN` | all | `0` to write. Anything else is a rehearsal. |

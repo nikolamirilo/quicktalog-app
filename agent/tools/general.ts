@@ -1,5 +1,6 @@
 import type { ToolContext } from "@/agent/tools/types";
 import { MAX_SOCIALS } from "@/constants";
+import { BUSINESS_TYPE_VALUES } from "@quicktalog/common";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
 import { z } from "zod";
@@ -8,7 +9,7 @@ export const catalogueFieldsSchema = z.object({
 	heading: z.string().max(2000).optional(),
 	currency: z.string().trim().max(10).optional(),
 	language: z.string().trim().max(10).optional(),
-	businessType: z.string().trim().max(60).optional(),
+	businessType: z.enum(BUSINESS_TYPE_VALUES).optional(),
 	logo: z
 		.string()
 		.trim()

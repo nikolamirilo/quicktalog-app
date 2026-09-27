@@ -15,22 +15,30 @@ import {
 	applyCatalogueOperations,
 	type OperationLimits,
 } from "@/helpers/catalogueOperations";
+import { isItemsBlock, normalizeContent } from "@/helpers/contentBlocks";
+import type { AiPlanLimits } from "@/lib/ai/limits";
 import type {
 	AgentToolResult,
 	AiSectionAccess,
 	CatalogueOperation,
 } from "@/types/ai";
-import type {
-	Catalogue,
-	CategoryBlock,
-	ContainerBlock,
-	ContentBlock,
+import {
+	type AnyItemsBlock,
+	type Catalogue,
+	type ContentBlock,
+	resolveBusinessType,
 } from "@quicktalog/common";
 
 const MAX_SNAPSHOT_SECTIONS = 40;
 const MAX_SNAPSHOT_ITEMS = 40;
 /** Each one is a Firecrawl credit and a chunk of context; the loop has 16 steps. */
-const MAX_FETCHES_PER_TURN = 3;
+/** Paid-plan defaults; the caller passes the plan's own numbers. See lib/ai/limits.ts. */
+const DEFAULT_AI_LIMITS: AiPlanLimits = {
+	maxFetches: 3,
+	maxPlanTasks: 12,
+	proModel: true,
+	requireVerifiedEmail: false,
+};
 /**
  * How long a request keeps taking new steps before handing the rest of the
  * plan to the next one. Stops at 38s to clear `AGENT_TIMEOUT_MS` and the
@@ -38,10 +46,10 @@ const MAX_FETCHES_PER_TURN = 3;
  */
 const TURN_BUDGET_MS = 38_000;
 
-type ItemBlock = CategoryBlock | ContainerBlock;
+type ItemBlock = AnyItemsBlock;
 
 const isItemBlock = (block: ContentBlock): block is ItemBlock =>
-	block.type === "category" || block.type === "container";
+	isItemsBlock(block);
 
 const stripHtml = (value: string): string =>
 	value
@@ -61,6 +69,21 @@ export class CatalogueSession {
 	/** Replayed against the builder draft in order. */
 	readonly operations: CatalogueOperation[] = [];
 	readonly applied: string[] = [];
+
+	/** Pages read in this request only - earlier ones are already paid for. */
+	get fetchesThisRequest(): number {
+		return this.fetches - this.fetchesAtStart;
+	}
+
+	/**
+	 * Plan tasks *completed* in this request - the billable unit. Not
+	 * `applied.length`, which counts one entry per edit, so a single task that
+	 * adds ten items would otherwise be charged ten times. Skipped tasks are
+	 * free, or the model could skip its way to a cheap turn.
+	 */
+	get tasksSettledThisRequest(): number {
+		return this.tasksCompleted;
+	}
 	/** Clerk id of the caller, so tools that touch the database do not re-query it. */
 	readonly userId?: string;
 	/** The multi-part request being worked, restored from history on a resume. */
@@ -68,6 +91,8 @@ export class CatalogueSession {
 	private readonly loadedSkills: Set<string>;
 	private readonly startedAt = Date.now();
 	private fetches = 0;
+	private fetchesAtStart = 0;
+	private tasksCompleted = 0;
 
 	constructor(
 		catalogue: Catalogue,
@@ -78,14 +103,21 @@ export class CatalogueSession {
 		plan: PlanState | null = null,
 		/** Pages already read earlier in this ask; see `fetchesFromMessages`. */
 		fetches = 0,
+		readonly aiLimits: AiPlanLimits = DEFAULT_AI_LIMITS,
 	) {
-		this.working = catalogue;
+		// Normalized up front so the snapshot shows the model the same section
+		// vocabulary its tools accept, even for a row still on a legacy key.
+		this.working = {
+			...catalogue,
+			content: normalizeContent(catalogue.content),
+		};
 		this.limits = limits;
 		this.access = access;
 		this.loadedSkills = new Set(loadedSkills);
 		this.userId = userId;
 		this.plan = plan;
 		this.fetches = fetches;
+		this.fetchesAtStart = fetches;
 	}
 
 	/** False once the request has spent its share of the function budget; checked after every step so the loop ends on a clean boundary. */
@@ -99,6 +131,13 @@ export class CatalogueSession {
 				ok: false,
 				error:
 					"There is already a plan in progress. Work through the tasks that are left, or skip the ones that no longer apply.",
+			};
+		}
+
+		if (titles.length > this.aiLimits.maxPlanTasks) {
+			return {
+				ok: false,
+				error: `This plan has ${titles.length} tasks, more than the ${this.aiLimits.maxPlanTasks} allowed on this plan. Write a shorter plan that covers the most important parts first.`,
 			};
 		}
 
@@ -153,6 +192,7 @@ export class CatalogueSession {
 			...(trimmed ? { note: trimmed } : {}),
 		};
 		plan.revision += 1;
+		if (status === "done") this.tasksCompleted += 1;
 
 		return { ok: true, plan: clonePlan(plan), remaining: pendingCount(plan) };
 	}
@@ -201,10 +241,13 @@ export class CatalogueSession {
 
 	/** Null when another page may be read. Counts attempts, so retries cost too. */
 	allowWebFetch(): AgentToolResult | null {
-		if (this.fetches >= MAX_FETCHES_PER_TURN) {
+		if (this.fetches >= this.aiLimits.maxFetches) {
 			return {
 				ok: false,
-				error: `You have already read ${MAX_FETCHES_PER_TURN} pages working on this request, which is the limit. Work with what you have, or ask the user for the detail you are missing.`,
+				error:
+					this.aiLimits.maxFetches === 0
+						? "Reading web pages is not available on this plan. Work from what the user has told you, or ask them to paste the text."
+						: `You have already read ${this.aiLimits.maxFetches} pages working on this request, which is the limit. Work with what you have, or ask the user for the detail you are missing.`,
 			};
 		}
 		this.fetches += 1;
@@ -260,7 +303,7 @@ export class CatalogueSession {
 		if (!block) return this.resolveSection(index);
 		if (!isItemBlock(block)) {
 			return {
-				error: `Section [${index}] is a "${block.type}" section, which cannot hold items. Only category and container sections can.`,
+				error: `Section [${index}] is a "${block.type}" section, which cannot hold items. Only items sections can.`,
 			};
 		}
 		return { id: block.id };
@@ -335,7 +378,7 @@ export class CatalogueSession {
 		const lines: string[] = [
 			`SLUG: ${this.working.name}`,
 			`HEADING: ${truncate(stripHtml(this.working.heading ?? ""), 160) || "(empty)"}`,
-			`CURRENCY: ${this.working.currency} | LANGUAGE: ${this.working.language} | BUSINESS TYPE: ${this.working.businessType || "(unset)"}`,
+			`CURRENCY: ${this.working.currency} | LANGUAGE: ${this.working.language} | BUSINESS TYPE: ${resolveBusinessType(this.working.businessType)?.label ?? "(unset)"}`,
 			`APPEARANCE: theme=${theme.name} font=${style.fontFamily} size=${style.contentFontSize} radius=${style.borderRadius} shadow=${style.shadow}`,
 			`SECTIONS (${content.length}):`,
 		];

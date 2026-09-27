@@ -4,6 +4,7 @@ import {
 	type OperationLimits,
 	type OperationOutcome,
 } from "@/helpers/catalogueOperations";
+import { isItemsBlock } from "@/helpers/contentBlocks";
 import { CUSTOM_THEME_NAME } from "@/helpers/theme";
 import type { CatalogueOperation } from "@/types/ai";
 import {
@@ -144,11 +145,7 @@ export const CatalogueContextProvider = ({
 			const newContent = [...prev.content];
 			const originalBlock = newContent[blockIndex];
 
-			if (
-				originalBlock &&
-				(originalBlock.type === "category" ||
-					originalBlock.type === "container")
-			) {
+			if (originalBlock && isItemsBlock(originalBlock)) {
 				const block = { ...originalBlock };
 				const itemWithOrder = { ...item, order: block.items?.length || 0 };
 				block.items = block.items
@@ -166,8 +163,7 @@ export const CatalogueContextProvider = ({
 			const originalBlock = newContent[blockIndex];
 			if (
 				originalBlock &&
-				(originalBlock.type === "category" ||
-					originalBlock.type === "container") &&
+				isItemsBlock(originalBlock) &&
 				originalBlock.items &&
 				originalBlock.items[itemIndex]
 			) {
@@ -185,12 +181,7 @@ export const CatalogueContextProvider = ({
 		setCatalogue((prev) => {
 			const newContent = [...prev.content];
 			const originalBlock = newContent[blockIndex];
-			if (
-				originalBlock &&
-				(originalBlock.type === "category" ||
-					originalBlock.type === "container") &&
-				originalBlock.items
-			) {
+			if (originalBlock && isItemsBlock(originalBlock) && originalBlock.items) {
 				const block = { ...originalBlock };
 				const newItems = [...block.items];
 				newItems.splice(itemIndex, 1);
@@ -210,12 +201,7 @@ export const CatalogueContextProvider = ({
 			const newContent = [...prev.content];
 			const originalBlock = newContent[blockIndex];
 
-			if (
-				originalBlock &&
-				(originalBlock.type === "category" ||
-					originalBlock.type === "container") &&
-				originalBlock.items
-			) {
+			if (originalBlock && isItemsBlock(originalBlock) && originalBlock.items) {
 				const block = { ...originalBlock };
 				const newItems = [...block.items];
 				const targetIndex = direction === "up" ? itemIndex - 1 : itemIndex + 1;
@@ -249,8 +235,8 @@ export const CatalogueContextProvider = ({
 			if (
 				!fromBlock ||
 				!toBlock ||
-				!(fromBlock.type === "category" || fromBlock.type === "container") ||
-				!(toBlock.type === "category" || toBlock.type === "container") ||
+				!isItemsBlock(fromBlock) ||
+				!isItemsBlock(toBlock) ||
 				!fromBlock.items ||
 				!fromBlock.items[itemIndex]
 			) {

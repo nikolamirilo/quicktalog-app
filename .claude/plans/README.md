@@ -12,6 +12,7 @@ Plans, analyses and investigations produced before implementing something. Human
 | [2026-09-17-supabase-auth-migration](active/2026-09-17-supabase-auth-migration/README.md) | Approved, not started: Clerk to Supabase Auth, user-level RLS, DB access through Drizzle with private roles |
 | [ai-agent-plan-mode.md](active/ai-agent-plan-mode.md) | In progress: Part 1 (plan mode) built; Part 2 (credits) superseded by 2026-09-21-ai-credits |
 | [2026-09-21-ai-credits](active/2026-09-21-ai-credits/PLAN.md) | Proposed: `ai_prompts` becomes a priced credit balance, and the free plan gets credits |
+| [2026-09-25-content-blocks-expansion](active/2026-09-25-content-blocks-expansion/PLAN.md) | Proposed: block registry + server-side content gate first, then 6 new block types, a grouped picker, and catalogue-level GA4/Pixel tracking |
 
 ## Archive
 

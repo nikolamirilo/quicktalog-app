@@ -8,7 +8,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { snakeToTitleCase } from "@/helpers/client";
-import { ContentBlock, UserData } from "@quicktalog/common";
+import { ContentBlock, ItemsBlock, UserData } from "@quicktalog/common";
+import { normalizeBlock } from "@/helpers/contentBlocks";
 import { getRequiredPlan } from "@/helpers/client";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -25,18 +26,11 @@ interface AddContentModalProps {
 	userData: UserData;
 }
 
-type ContentOption =
-	| "container"
-	| "category"
-	| "text"
-	| "embedding"
-	| "custom_code"
-	| "divider";
+type ContentOption = "items" | "text" | "embedding" | "custom_code" | "divider";
 
 const DEFAULT_BLOCK_DATA = {
 	name: "",
 	layout: "variant_1",
-	src: "",
 	items: [] as any[],
 	code: "",
 	content: "",
@@ -50,6 +44,7 @@ const DEFAULT_BLOCK_DATA = {
 			opacity: 100,
 		},
 	},
+	showHeading: true,
 	isExpanded: true,
 };
 
@@ -63,8 +58,7 @@ const AddContentModal = ({
 }: AddContentModalProps) => {
 	const { catalogue, updateCatalogue, updateBlock, setIsSidebarOpen } =
 		useCatalogueContext() || {};
-	const [selectedOption, setSelectedOption] =
-		useState<ContentOption>("container");
+	const [selectedOption, setSelectedOption] = useState<ContentOption>("items");
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
 	const [blockData, setBlockData] = useState({ ...DEFAULT_BLOCK_DATA });
 
@@ -72,19 +66,20 @@ const AddContentModal = ({
 		if (isOpen) {
 			setIsSidebarOpen?.(false);
 			if (editingBlock) {
-				setSelectedOption(editingBlock.type as ContentOption);
+				// A stored row may still carry the legacy `category`/`container` key.
+				const block = normalizeBlock(editingBlock);
+				setSelectedOption(block.type as ContentOption);
 				setBlockData({
-					name: (editingBlock as any).name || "",
-					layout: (editingBlock as any).layout || "variant_1",
-					src: (editingBlock as any).src || "",
-					items: (editingBlock as any).items || [],
-					code: (editingBlock as any).code || "",
-					content: (editingBlock as any).content || "",
+					name: (block as any).name || "",
+					layout: (block as any).layout || "variant_1",
+					items: (block as any).items || [],
+					code: (block as any).code || "",
+					content: (block as any).content || "",
 					divider:
-						editingBlock.type === "divider"
+						block.type === "divider"
 							? {
-									spacing: (editingBlock as any).spacing,
-									border: (editingBlock as any).border,
+									spacing: (block as any).spacing,
+									border: (block as any).border,
 								}
 							: {
 									spacing: 2,
@@ -96,10 +91,11 @@ const AddContentModal = ({
 										opacity: 100,
 									},
 								},
-					isExpanded: (editingBlock as any).isExpanded ?? true,
+					showHeading: (block as any).showHeading ?? true,
+					isExpanded: (block as any).isExpanded ?? true,
 				});
 			} else {
-				setSelectedOption("container");
+				setSelectedOption("items");
 				setBlockData({ ...DEFAULT_BLOCK_DATA });
 			}
 		}
@@ -156,27 +152,19 @@ const AddContentModal = ({
 			type: selectedOption,
 		};
 
-		if (selectedOption === "category") {
+		if (selectedOption === "items") {
+			const existing = editingBlock ? normalizeBlock(editingBlock) : null;
 			newBlock = {
 				...newBlock,
 				name: blockData.name,
-				layout: blockData.layout,
-				items:
-					editingBlock?.type === "category"
-						? (editingBlock as any).items
-						: (blockData.items ?? []),
+				showHeading: blockData.showHeading,
 				isExpanded: blockData.isExpanded,
-			};
-		} else if (selectedOption === "container") {
-			newBlock = {
-				...newBlock,
-				name: blockData.name,
 				layout: blockData.layout,
 				items:
-					editingBlock?.type === "container"
-						? (editingBlock as any).items
+					existing?.type === "items"
+						? (existing as ItemsBlock).items
 						: (blockData.items ?? []),
-			};
+			} satisfies ItemsBlock;
 		} else if (selectedOption === "embedding") {
 			newBlock = {
 				...newBlock,
@@ -216,7 +204,7 @@ const AddContentModal = ({
 
 	const isFormValid = () => {
 		if (isLocked(selectedOption)) return false;
-		if (selectedOption === "category" || selectedOption === "container")
+		if (selectedOption === "items")
 			return (blockData.name?.trim().length ?? 0) > 0;
 		if (selectedOption === "embedding")
 			return (blockData.code?.trim().length ?? 0) > 0;
@@ -250,6 +238,7 @@ const AddContentModal = ({
 						</div>
 						<ContentOptionsSelector
 							onSelect={setSelectedOption as any}
+							planFeatures={userData?.currentPlan?.features}
 							selectedOption={selectedOption as any}
 						/>
 					</div>
@@ -266,7 +255,6 @@ const AddContentModal = ({
 							locked={locked}
 							selectedOption={selectedOption}
 							setBlockData={setBlockData}
-							userData={userData}
 						/>
 
 						{/* Footer Actions */}

@@ -11,6 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { isItemsBlock } from "@/helpers/contentBlocks";
 import {
 	ChevronDown,
 	ChevronUp,
@@ -47,11 +48,7 @@ const CardControls = ({
 
 	const availableSections = sections
 		.map((block, index) => ({ block, index }))
-		.filter(
-			({ block, index }) =>
-				(block.type === "category" || block.type === "container") &&
-				index !== blockIndex,
-		);
+		.filter(({ block, index }) => isItemsBlock(block) && index !== blockIndex);
 
 	return (
 		<div
@@ -159,10 +156,7 @@ const CardControls = ({
 												>
 													<span className="flex items-center justify-between gap-3 w-full">
 														<span className="font-medium truncate flex-1">
-															{block.type === "category" ||
-															block.type === "container"
-																? block.name
-																: "Unnamed"}
+															{isItemsBlock(block) ? block.name : "Unnamed"}
 														</span>
 														<span className="text-xs text-gray-500 capitalize bg-gray-100 px-2 py-0.5 rounded-full flex-shrink-0">
 															{block.type}

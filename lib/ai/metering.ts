@@ -2,10 +2,18 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { sql } from "drizzle-orm";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
+import { aiLimitsFor } from "@/lib/ai/limits";
 import { getPlanForUpdate, type Tier } from "@/lib/entitlements/plan";
+import { withinRateLimit } from "@/lib/rate-limit";
 import { type Tx, withUser } from "@/utils/db";
 
-export type AiTurnOutcome = "charged" | "continued" | "limit" | "not_found";
+export type AiTurnOutcome =
+	| "charged"
+	| "continued"
+	| "limit"
+	| "not_found"
+	| "unverified";
+
 export type Plan = {
 	revision: number;
 	tasks: { title: string; status: string }[];
@@ -36,6 +44,7 @@ export function startAiTurn(
 		kind: "agent" | "describe";
 		continuationOf: string | null;
 		plan: Plan | null;
+		credits: number;
 	},
 ): Promise<{
 	plan: Tier;
@@ -44,16 +53,20 @@ export function startAiTurn(
 	return withUser(me, async (tx) => {
 		const plan = await getPlanForUpdate(tx, me);
 		const limit =
-			typeof plan.features.ai_prompts === "number"
-				? plan.features.ai_prompts
+			typeof plan.features.ai_credits === "number"
+				? plan.features.ai_credits
 				: null;
+		// Derived from the plan read in this same transaction, so the caller
+		// cannot be out of step with the tier the charge is made against.
+		const { requireVerifiedEmail } = aiLimitsFor(plan);
 		const rows = await tx.execute<{
 			outcome: AiTurnOutcome;
 			ai_turn_id: string | null;
 		}>(sql`
 			select outcome, ai_turn_id
 			  from private.begin_ai_turn(${a.catalogue}, ${limit}::int, ${a.kind},
-			       ${a.continuationOf}::uuid, ${a.plan ? planHash(a.plan) : null}::text)`);
+			       ${a.continuationOf}::uuid, ${a.plan ? planHash(a.plan) : null}::text,
+			       ${a.credits}::int, ${requireVerifiedEmail}::boolean)`);
 		const row = [...rows][0];
 		return {
 			plan,
@@ -63,6 +76,15 @@ export function startAiTurn(
 			},
 		};
 	});
+}
+
+/** Both AI entry points share one budget, so neither is a way around the other. */
+export async function aiRateLimitOk(userId: string): Promise<boolean> {
+	const [burst, hourly] = await Promise.all([
+		withinRateLimit("aiBurst", userId),
+		withinRateLimit("aiHourly", userId),
+	]);
+	return burst && hourly;
 }
 
 /** Records whether the turn left an open plan, and the budget of free continuations. */
@@ -77,6 +99,22 @@ export async function setPlanState(
 	await tx.execute(
 		sql`select private.set_plan_state(${turnId}::uuid, ${pending > 0}, ${pending}::int,
 			${plan ? planHash(plan) : null}::text)`,
+	);
+}
+
+/**
+ * Adds the variable part of the price once the turn is over. The base charge is
+ * already on the row, so a turn may finish a few credits past the allowance;
+ * that blocks the next ask rather than abandoning a half-applied plan.
+ */
+export async function settleAiTurn(
+	tx: Tx,
+	turnId: string,
+	extraCredits: number,
+): Promise<void> {
+	if (extraCredits <= 0) return;
+	await tx.execute(
+		sql`select private.settle_ai_turn(${turnId}::uuid, ${extraCredits}::int)`,
 	);
 }
 

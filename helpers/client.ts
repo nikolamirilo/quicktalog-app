@@ -386,9 +386,7 @@ export function getRequiredPlan(
 			case "catalogue":
 				return plan.features.catalogues;
 			case "ai":
-				return plan.features.ai_prompts;
-			case "ocr":
-				return plan.features.ocr_ai_import;
+				return plan.features.ai_credits;
 			case "traffic":
 				return plan.features.traffic_limit;
 			default:

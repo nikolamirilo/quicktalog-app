@@ -6,11 +6,16 @@ import { z } from "zod";
 export const MAX_ITEMS_PER_CALL = 40;
 export const MAX_CODE_CHARS = 40000;
 
+/**
+ * Fail closed: a gated type is offered only when the plan explicitly grants it.
+ * Absent access used to mean "allow everything", which handed a locked block
+ * type to any caller that forgot to pass the plan.
+ */
 export function allowedSectionTypes(access?: AiSectionAccess): AiSectionType[] {
-	const types: AiSectionType[] = ["category", "container", "text"];
-	if (access?.divider !== false) types.push("divider");
-	if (access?.embedding !== false) types.push("embedding");
-	if (access?.customCode !== false) types.push("custom_code");
+	const types: AiSectionType[] = ["items", "text"];
+	if (access?.divider === true) types.push("divider");
+	if (access?.embedding === true) types.push("embedding");
+	if (access?.customCode === true) types.push("custom_code");
 	return types;
 }
 
@@ -24,7 +29,7 @@ export function sectionTypeSchema(access?: AiSectionAccess) {
 
 export const layoutSchema = z
 	.enum(["variant_1", "variant_2", "variant_3", "variant_4"])
-	.describe("Card layout for category and container sections.");
+	.describe("Card layout for an items section.");
 
 export const sectionIndexSchema = z.coerce
 	.number()

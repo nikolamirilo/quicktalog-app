@@ -9,7 +9,7 @@ export interface AiActionResult<T> {
 	success: boolean;
 	data?: T;
 	error?: string;
-	code?: "unauthorized" | "not_found" | "limit" | "ai_error";
+	code?: "unauthorized" | "not_found" | "limit" | "ai_error" | "unverified";
 }
 
 /**
@@ -25,8 +25,7 @@ export interface ChatScannedImage extends OCRImageData {
 
 /** Section types the chat assistant is allowed to create. */
 export type AiSectionType =
-	| "category"
-	| "container"
+	| "items"
 	| "text"
 	| "divider"
 	| "embedding"
@@ -137,6 +136,8 @@ export type CatalogueOperation =
 			id?: string;
 			sectionType: AiSectionType;
 			name?: string;
+			/** `items` sections only. Defaults to true, matching the builder. */
+			showHeading?: boolean;
 			layout?: ContentLayout;
 			/** Body of a `text` section. */
 			content?: string;
@@ -152,6 +153,7 @@ export type CatalogueOperation =
 			layout?: ContentLayout;
 			content?: string;
 			code?: string;
+			showHeading?: boolean;
 			isExpanded?: boolean;
 	  }
 	| { op: "delete_section"; sectionId: string }

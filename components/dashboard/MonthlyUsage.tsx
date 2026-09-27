@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { PricingPlan, Usage } from "@quicktalog/common";
-import { BiGridAlt, BiScan } from "react-icons/bi";
+import { BiGridAlt } from "react-icons/bi";
 import { FiBarChart2 } from "react-icons/fi";
 import { IoAnalyticsOutline } from "react-icons/io5";
 import { RiSparkling2Line } from "react-icons/ri";
@@ -32,25 +32,16 @@ const MonthlyUsage = ({
 		shown: true,
 	};
 
-	const aiPromptsUsage = {
-		used: data.prompts,
-		limit: pricingPlan.features.ai_prompts,
-		unit: "prompts",
-		title: "AI Prompts",
+	const aiCreditsUsage = {
+		used: data.credits,
+		limit: pricingPlan.features.ai_credits,
+		unit: "credits",
+		title: "AI Credits",
 		icon: <RiSparkling2Line className="w-5 h-5" />,
-		shown: pricingPlan.features.ai_prompts > 0 ? true : false,
+		shown: pricingPlan.features.ai_credits > 0,
 	};
 
-	const ocrUsage = {
-		used: data.ocr,
-		limit: pricingPlan.features.ocr_ai_import,
-		unit: "imports",
-		title: "OCR Import",
-		icon: <BiScan className="w-5 h-5" />,
-		shown: pricingPlan.features.ocr_ai_import > 0 ? true : false,
-	};
-
-	const charts = [trafficUsage, cataloguesUsage, aiPromptsUsage, ocrUsage];
+	const charts = [trafficUsage, cataloguesUsage, aiCreditsUsage];
 
 	return (
 		<div className="max-w-6xl space-y-8 bg-gradient-to-br from-product-background to-product-background-hero  rounded-3xl">

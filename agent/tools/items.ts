@@ -10,10 +10,10 @@ import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
 import { z } from "zod";
 
-/** The entries inside a category or container section. */
+/** The entries inside an items section. */
 export const itemTools = ({ session, images, fail }: ToolContext) => ({
 	addItems: tool({
-		description: "Add one or more items to an existing category or container.",
+		description: "Add one or more items to an existing items section.",
 		inputSchema: z.object({
 			section: sectionIndexSchema,
 			items: z.array(itemInputSchema).min(1).max(MAX_ITEMS_PER_CALL),

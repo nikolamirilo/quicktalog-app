@@ -122,14 +122,14 @@ const PlanComparison = ({
 									</span>
 								</li>
 
-								{requiredPlan.features.ai_prompts > 0 && (
+								{requiredPlan.features.ai_credits > 0 && (
 									<li className="flex items-start">
 										<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
 										<span className="text-product-foreground">
 											<strong>
-												{formatLimit(requiredPlan.features.ai_prompts)}
+												{formatLimit(requiredPlan.features.ai_credits)}
 											</strong>{" "}
-											AI prompts per month
+											AI credits per month
 										</span>
 									</li>
 								)}
@@ -143,18 +143,6 @@ const PlanComparison = ({
 											</span>
 										</li>
 									)}
-
-								{requiredPlan.features.ocr_ai_import > 0 && (
-									<li className="flex items-start">
-										<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-										<span className="text-product-foreground">
-											<strong>
-												{formatLimit(requiredPlan.features.ocr_ai_import)}
-											</strong>{" "}
-											OCR AI imports to digitize printed materials
-										</span>
-									</li>
-								)}
 
 								<li className="flex items-start">
 									<TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />

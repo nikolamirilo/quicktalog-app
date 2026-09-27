@@ -93,6 +93,7 @@ describe("CatalogueSession", () => {
 
 		it("leaves the working copy untouched when nothing applied", () => {
 			const s = session();
+			const before = s.working;
 			const result = s.run({
 				op: "update_section",
 				sectionId: "does-not-exist",
@@ -101,7 +102,7 @@ describe("CatalogueSession", () => {
 
 			expect(result).toEqual({ ok: false, error: expect.any(String) });
 			expect(s.operations).toHaveLength(0);
-			expect(s.working).toBe(catalogue);
+			expect(s.working).toBe(before);
 		});
 
 		it("reports a plan limit back as a tool error", () => {
@@ -110,7 +111,7 @@ describe("CatalogueSession", () => {
 			const result = s.run({
 				op: "add_section",
 				id: "sec-3",
-				sectionType: "category",
+				sectionType: "items",
 				name: "Food",
 				items: [],
 			});
@@ -129,7 +130,7 @@ describe("CatalogueSession", () => {
 			s.run({
 				op: "add_section",
 				id: "sec-fixed",
-				sectionType: "category",
+				sectionType: "items",
 				name: "Food",
 				items: [{ id: "item-fixed", name: "Toast" }],
 			});
@@ -153,7 +154,7 @@ describe("CatalogueSession", () => {
 			const snapshot = s.snapshot();
 
 			expect(snapshot).toContain("SECTIONS (2):");
-			expect(snapshot).toContain('[0] category "Drinks"');
+			expect(snapshot).toContain('[0] items "Drinks"');
 			expect(snapshot).toContain('[0] "Espresso" 2.5 [img]');
 			expect(snapshot).toContain("[1] text");
 			// HTML is stripped so the model reads prose, not markup.

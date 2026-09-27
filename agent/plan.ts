@@ -175,13 +175,15 @@ export function isPlanContinuation(messages: unknown[]): boolean {
 export const MAX_PLAN_CONTINUATIONS = 8;
 
 /** Why the builder stopped resuming a plan before its list was finished. */
-export type PlanHalt = "stalled" | "exhausted" | "failed";
+export type PlanHalt = "stalled" | "exhausted" | "failed" | "credits";
 
 export interface ResumeState {
 	/** The newest plan in the transcript, or null if the request needed none. */
 	plan: PlanState | null;
 	/** The round that just finished ended in an error. */
 	failed: boolean;
+	/** The server refused the last round for want of credits. */
+	outOfCredits: boolean;
 	/** Rounds the builder has already sent for this plan. */
 	continuations: number;
 	/** Plan revision when the last round was sent; -1 before the first. */
@@ -195,10 +197,14 @@ export type ResumeDecision =
 
 /** What the builder should do now that a round has finished. Kept out of React since every non-"resume" path must be reachable, or a bad run becomes unbounded. */
 export function resumeDecision(state: ResumeState): ResumeDecision {
-	const { plan, failed, continuations, lastRevision } = state;
+	const { plan, failed, outOfCredits, continuations, lastRevision } = state;
 
 	// No plan, or every task settled: finished either way.
 	if (!plan || isPlanFinished(plan)) return { action: "wait" };
+
+	// Checked before `failed`: a credit refusal arrives as an error too, and
+	// "you are out of credits" is the useful thing to say, not "something broke".
+	if (outOfCredits) return { action: "halt", halt: "credits" };
 
 	// Unlikely to fix itself on a retry; checklist shows how far it got.
 	if (failed) return { action: "halt", halt: "failed" };

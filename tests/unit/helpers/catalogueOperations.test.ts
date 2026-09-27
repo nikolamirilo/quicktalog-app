@@ -24,18 +24,21 @@ const catalogue = (content: ContentBlock[]): Catalogue =>
 const starters = (): ContentBlock => ({
 	id: "sec-1",
 	order: 0,
-	type: "category",
+	type: "items",
 	name: "Starters",
-	layout: "variant_1",
+	showHeading: true,
 	isExpanded: true,
+	layout: "variant_1",
 	items: [item("it-1", "Bruschetta", 0), item("it-2", "Soup", 1)],
 });
 
 const mains = (): ContentBlock => ({
 	id: "sec-2",
 	order: 1,
-	type: "container",
+	type: "items",
 	name: "Mains",
+	showHeading: false,
+	isExpanded: true,
 	layout: "variant_1",
 	items: [item("it-3", "Risotto", 0)],
 });
@@ -58,14 +61,14 @@ describe("applyCatalogueOperations", () => {
 		const result = applyCatalogueOperations(base(), [
 			{
 				op: "add_section",
-				sectionType: "category",
+				sectionType: "items",
 				name: "Desserts",
 				items: [{ name: "Tiramisu", price: 6 }],
 			},
 		]);
 
 		const added = result.catalogue.content[2];
-		expect(added.type).toBe("category");
+		expect(added.type).toBe("items");
 		expect((added as any).name).toBe("Desserts");
 		expect((added as any).items).toHaveLength(1);
 		expect((added as any).items[0]).toMatchObject({
@@ -250,7 +253,7 @@ describe("applyCatalogueOperations", () => {
 			[
 				{ op: "add_section", sectionType: "custom_code", code: "<b>x</b>" },
 				{ op: "add_section", sectionType: "embedding", code: "<iframe/>" },
-				{ op: "add_section", sectionType: "category", name: "Desserts" },
+				{ op: "add_section", sectionType: "items", name: "Desserts" },
 			],
 			{ sectionTypes: { divider: true, embedding: false, customCode: false } },
 		);
@@ -268,7 +271,7 @@ describe("applyCatalogueOperations", () => {
 	it("refuses a new non-text section once the section allowance is spent", () => {
 		const result = applyCatalogueOperations(
 			base(),
-			[{ op: "add_section", sectionType: "category", name: "Desserts" }],
+			[{ op: "add_section", sectionType: "items", name: "Desserts" }],
 			{ sections: 2 },
 		);
 
@@ -366,5 +369,110 @@ describe("applyCatalogueOperations", () => {
 		expect(result.catalogue.appearance.theme.type).toBe(
 			defaultCatalogueData.appearance.theme.type,
 		);
+	});
+	describe("per-type plan gating", () => {
+		const addCode = {
+			op: "add_section" as const,
+			sectionType: "custom_code" as const,
+			name: "Widget",
+			code: "<div>hi</div>",
+		};
+
+		it("refuses a gated type the plan does not grant", () => {
+			const result = applyCatalogueOperations(base(), [addCode], {
+				sectionTypes: { divider: true, embedding: true, customCode: false },
+			});
+
+			expect(result.applied).toEqual([]);
+			expect(result.skipped[0]).toContain("not part of your plan");
+			expect(result.limitReached).toBe(true);
+		});
+
+		// Was the fail-open hole: an access object that simply omits the flag.
+		it("refuses a gated type the plan does not mention at all", () => {
+			const result = applyCatalogueOperations(base(), [addCode], {
+				sectionTypes: { divider: true },
+			});
+
+			expect(result.applied).toEqual([]);
+			expect(result.skipped[0]).toContain("not part of your plan");
+		});
+
+		it("allows a gated type the plan grants explicitly", () => {
+			const result = applyCatalogueOperations(base(), [addCode], {
+				sectionTypes: { divider: true, embedding: true, customCode: true },
+			});
+
+			expect(result.applied).toHaveLength(1);
+			expect(result.catalogue.content.at(-1)?.type).toBe("custom_code");
+		});
+
+		// The browser replays operations the server already authorised, and it has
+		// no plan to check against; re-gating there would drop paid-for blocks.
+		it("does not re-gate when no plan is supplied", () => {
+			const result = applyCatalogueOperations(base(), [addCode]);
+
+			expect(result.skipped).toEqual([]);
+			expect(result.catalogue.content.at(-1)?.type).toBe("custom_code");
+		});
+
+		it("never gates the types every plan includes", () => {
+			const result = applyCatalogueOperations(
+				base(),
+				[
+					{ op: "add_section", sectionType: "items", name: "Sides" },
+					{ op: "add_section", sectionType: "text", content: "<p>hi</p>" },
+				],
+				{ sectionTypes: {} },
+			);
+
+			expect(result.applied).toHaveLength(2);
+			expect(result.skipped).toEqual([]);
+		});
+	});
+
+	describe("legacy block keys", () => {
+		it("normalizes stored category/container rows before applying an edit", () => {
+			const legacy = catalogue([
+				{
+					id: "sec-1",
+					order: 0,
+					type: "category",
+					name: "Drinks",
+					layout: "variant_1",
+					isExpanded: false,
+					items: [],
+				},
+				{
+					id: "sec-2",
+					order: 1,
+					type: "container",
+					name: "Hidden",
+					layout: "variant_1",
+					items: [],
+				},
+			] as any);
+
+			const result = applyCatalogueOperations(legacy, [
+				{ op: "add_items", sectionId: "sec-1", items: [{ name: "Latte" }] },
+			]);
+
+			const [first, second] = result.catalogue.content as any[];
+			expect(first.type).toBe("items");
+			expect(first.showHeading).toBe(true);
+			expect(first.isExpanded).toBe(false);
+			expect(first.items).toHaveLength(1);
+			expect(second.type).toBe("items");
+			expect(second.showHeading).toBe(false);
+		});
+
+		it("can turn an items section's heading on and off", () => {
+			const result = applyCatalogueOperations(base(), [
+				{ op: "update_section", sectionId: "sec-1", showHeading: false },
+			]);
+
+			expect(result.applied).toHaveLength(1);
+			expect((result.catalogue.content[0] as any).showHeading).toBe(false);
+		});
 	});
 });

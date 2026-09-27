@@ -18,6 +18,7 @@ const CardsSwitcher = ({
 	variant,
 	record,
 	currency,
+	locale = "en-US",
 	i,
 	theme,
 	mode,
@@ -32,6 +33,7 @@ const CardsSwitcher = ({
 	variant: string;
 	record: Item;
 	currency: string;
+	locale?: string;
 	i: number;
 	theme?: string;
 	mode?: string;
@@ -43,7 +45,9 @@ const CardsSwitcher = ({
 	isLast?: boolean;
 	blockIndex?: number;
 }) => {
-	if (!record || !record.name || record.price === undefined) {
+	// A missing price is a valid item (a service list, an "ask us" menu); only a
+	// nameless record is unrenderable.
+	if (!record || !record.name) {
 		console.error("CardsSwitcher: Invalid record data:", record);
 		return (
 			<div
@@ -59,15 +63,17 @@ const CardsSwitcher = ({
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const { validatedRecord, formattedCurrency } = useMemo(() => {
-		const price =
-			record.price == 0
+		const hasPrice = record.price !== undefined && record.price !== null;
+		const price = !hasPrice
+			? ""
+			: record.price == 0
 				? "Free"
-				: Number(record.price).toLocaleString("en-US", {
+				: Number(record.price).toLocaleString(locale, {
 						minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
 						maximumFractionDigits: 2,
 					});
 
-		const formattedCurrency = price !== "Free" ? currency : "";
+		const formattedCurrency = hasPrice && price !== "Free" ? currency : "";
 
 		const validatedRecord = {
 			...record,
@@ -77,7 +83,7 @@ const CardsSwitcher = ({
 		};
 
 		return { validatedRecord, formattedCurrency };
-	}, [record, currency, i]);
+	}, [record, currency, i, locale]);
 
 	const CardComponent = CARD_VARIANTS[variant] || SideImageCard;
 

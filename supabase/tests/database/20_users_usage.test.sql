@@ -37,17 +37,14 @@ insert into public.catalogues (id, name, created_by, status, tags) values
   ('c0000000-0000-0000-0000-000000000002', 'alice-two', '11111111-1111-1111-1111-111111111111', 'draft',  '{}'),
   ('c0000000-0000-0000-0000-000000000003', 'bob-one',   '22222222-2222-2222-2222-222222222222', 'active', '{}');
 
--- AI ledger: my_usage() counts this month's unrefunded prompts only (M05 5.4 lines 97-98).
-insert into public.prompts (user_id, catalogue, datetime, refunded_at) values
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', now(), null),                                      -- counted
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', now(), now()),                                     -- refunded
-  ('11111111-1111-1111-1111-111111111111', 'alice-two', now(), null),                                      -- counted
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', date_trunc('month', now(), 'UTC') - interval '1 second', null), -- last month
-  ('22222222-2222-2222-2222-222222222222', 'bob-one',   now(), null);
-
-insert into public.ocr (user_id, catalogue, datetime) values
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', now()),
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', date_trunc('month', now(), 'UTC') - interval '1 second');
+-- AI ledger: my_usage() sums this month's unrefunded credits only. The credits differ
+-- per row on purpose, so a regression to count(*) fails here instead of passing quietly.
+insert into public.prompts (user_id, catalogue, datetime, refunded_at, credits) values
+  ('11111111-1111-1111-1111-111111111111', 'alice-one', now(), null, 2),                                      -- counted
+  ('11111111-1111-1111-1111-111111111111', 'alice-one', now(), now(), 9),                                     -- refunded
+  ('11111111-1111-1111-1111-111111111111', 'alice-two', now(), null, 3),                                      -- counted
+  ('11111111-1111-1111-1111-111111111111', 'alice-one', date_trunc('month', now(), 'UTC') - interval '1 second', null, 7), -- last month
+  ('22222222-2222-2222-2222-222222222222', 'bob-one',   now(), null, 4);
 
 insert into public.analytics (user_id, date, current_url, pageview_count, unique_visitors) values
   ('11111111-1111-1111-1111-111111111111', now(), 'https://quicktalog.app/catalogues/alice-one', 10, 4),
@@ -141,11 +138,12 @@ select throws_ok(
   'app_user cannot DELETE from users'
 );
 
--- M05 5.4: catalogues, this month's unrefunded prompts, this month's ocr, pageviews, unique visitors.
--- Alice: 2 catalogues, 2 of 4 prompts, 1 of 2 ocr rows, 10+5 pageviews, 4+2 unique visitors.
+-- catalogues, this month's unrefunded credits, pageviews, unique visitors.
+-- Alice: 2 catalogues, 2+3 credits (the refunded 9 and last month's 7 excluded),
+-- 10+5 pageviews, 4+2 unique visitors.
 select results_eq(
   $$ select * from private.my_usage() $$,
-  $$ values (2::bigint, 2::bigint, 1::bigint, 15::bigint, 6::bigint) $$,
+  $$ values (2::bigint, 5::bigint, 15::bigint, 6::bigint) $$,
   'private.my_usage() returns the caller''s own numbers'
 );
 
@@ -159,7 +157,7 @@ set local role app_user;
 
 select results_eq(
   $$ select * from private.my_usage() $$,
-  $$ values (1::bigint, 1::bigint, 0::bigint, 100::bigint, 50::bigint) $$,
+  $$ values (1::bigint, 4::bigint, 100::bigint, 50::bigint) $$,
   'private.my_usage() is per caller: Bob gets only Bob''s numbers'
 );
 

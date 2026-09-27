@@ -174,60 +174,8 @@ const EmbeddingBlockComponent = ({
 		};
 	}, [block.code]);
 
-	useEffect(() => {
-		if (!containerRef.current || !block.code) return;
-		const oldScripts = Array.from(
-			containerRef.current.querySelectorAll("script"),
-		);
-		const newScripts: HTMLScriptElement[] = [];
-
-		const loadScripts = async () => {
-			for (const oldScript of oldScripts) {
-				await new Promise<void>((resolve) => {
-					const newScript = document.createElement("script");
-
-					Array.from(oldScript.attributes).forEach((attr) => {
-						newScript.setAttribute(attr.name, attr.value);
-					});
-
-					if (oldScript.innerHTML) {
-						newScript.innerHTML = oldScript.innerHTML;
-					} else if (oldScript.textContent) {
-						newScript.textContent = oldScript.textContent;
-					}
-
-					if (newScript.src) {
-						newScript.onload = () => resolve();
-						newScript.onerror = () => resolve();
-					}
-
-					// A script tag inserted via innerHTML never executes; it must be recreated to run.
-					if (oldScript.parentNode) {
-						oldScript.parentNode.replaceChild(newScript, oldScript);
-					} else {
-						containerRef.current?.appendChild(newScript);
-					}
-
-					newScripts.push(newScript);
-
-					if (!newScript.src) {
-						resolve();
-					}
-				});
-			}
-		};
-
-		loadScripts();
-
-		return () => {
-			newScripts.forEach((script) => {
-				if (script.parentNode) {
-					script.parentNode.removeChild(script);
-				}
-			});
-		};
-	}, [block.code]);
-
+	// No script rehydration here: the `embed` sanitizer profile discards
+	// `<script>`, and re-creating one would run author markup same-origin.
 	return (
 		<section
 			aria-label={block.name || undefined}

@@ -8,6 +8,7 @@ import {
 	titleFontSizeMap,
 } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { localeForLanguage } from "@/helpers/catalogueItems";
 import { htmlToText, kebabToTitle } from "@/helpers/client";
 import {
 	deriveCatalogueVars,
@@ -220,9 +221,6 @@ const Catalogue = ({
 					aria-label="Catalogue content"
 					className={`flex-1 flex flex-col min-h-0 relative ${type === "demo" && "pt-16"}`}
 				>
-					{item.appearance.overlay.isEnabled && (
-						<Overlay emoji={item.appearance.overlay.icon} />
-					)}
 					<section
 						aria-labelledby={item.heading}
 						className="flex flex-col justify-start items-center text-center px-4 md:pt-16 flex-shrink-0 w-full"
@@ -244,6 +242,7 @@ const Catalogue = ({
 							<CatalogueContent
 								currency={item.currency}
 								data={item.content}
+								locale={localeForLanguage(item.language)}
 								mode={type === "edit" ? "edit" : "view"}
 								onEditBlock={handleEditBlock}
 								theme={item.appearance.theme.name}

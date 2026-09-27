@@ -56,6 +56,12 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 				.describe(
 					"Short descriptive name. Always set one: on text, divider, embedding and custom_code sections it is the accessible name and how the section is identified in the builder.",
 				),
+			showHeading: z.coerce
+				.boolean()
+				.optional()
+				.describe(
+					"Items sections only. True (the default) shows the name as a heading visitors can collapse; false renders a plain grid and keeps the name for the builder only.",
+				),
 			layout: layoutSchema.optional(),
 			content: z
 				.string()
@@ -83,6 +89,7 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 				id,
 				sectionType: input.sectionType,
 				name: input.name,
+				showHeading: input.showHeading,
 				layout: input.layout,
 				content: input.content,
 				code: input.code,
@@ -108,6 +115,7 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 			layout: layoutSchema.optional(),
 			content: z.string().max(4000).optional(),
 			code: z.string().max(MAX_CODE_CHARS).optional(),
+			showHeading: z.coerce.boolean().optional(),
 			isExpanded: z.coerce.boolean().optional(),
 		}),
 		execute: async ({ section, ...fields }): Promise<AgentToolResult> => {

@@ -1,7 +1,9 @@
 import "server-only";
 import type { OperationLimits } from "@/helpers/catalogueOperations";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
+import { type AiPlanLimits, aiLimitsFor } from "@/lib/ai/limits";
 import { type Plan, startAiTurn } from "@/lib/ai/metering";
+import { CREDITS } from "@/lib/ai/pricing";
 import type { AiActionResult, AiSectionAccess } from "@/types/ai";
 
 export type TurnGrant = {
@@ -11,6 +13,8 @@ export type TurnGrant = {
 	charged: boolean;
 	sectionAccess?: AiSectionAccess;
 	limits: OperationLimits;
+	/** What this plan lets one turn spend; see lib/ai/limits.ts. */
+	ai: AiPlanLimits;
 };
 
 export type TurnDenial = {
@@ -44,10 +48,18 @@ export async function openAiTurn(
 		kind: a.kind,
 		continuationOf: a.continuationOf ?? null,
 		plan: a.plan ?? null,
+		credits: a.kind === "agent" ? CREDITS.agentBase : CREDITS.describe,
 	});
 
 	if (start.turn.outcome === "not_found") {
 		return { ok: false, error: "Catalogue not found.", code: "not_found" };
+	}
+	if (start.turn.outcome === "unverified") {
+		return {
+			ok: false,
+			error: "Confirm your email address to use the AI assistant.",
+			code: "unverified",
+		};
 	}
 	if (start.turn.outcome === "limit") {
 		return {
@@ -69,5 +81,6 @@ export async function openAiTurn(
 			sectionTypes: features.sections,
 			branding: features.branding,
 		},
+		ai: aiLimitsFor(start.plan),
 	};
 }

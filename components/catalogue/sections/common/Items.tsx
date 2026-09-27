@@ -8,7 +8,7 @@ import {
 	INITIAL_ITEM_COUNT,
 	LOAD_MORE_STEP,
 } from "@/helpers/catalogueItems";
-import { CategoryBlock, ContainerBlock } from "@quicktalog/common";
+import { AnyItemsBlock } from "@quicktalog/common";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import { useState } from "react";
@@ -18,11 +18,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import CardsSwitcher from "../../cards";
 
 interface Props {
-	block: ContainerBlock | CategoryBlock;
+	block: AnyItemsBlock;
 	displayItems: DisplayItem[];
 	blockIndex: number;
+	/** Referenced by the section header's `aria-controls`. */
+	contentId?: string;
 	currentLayout: string;
 	currency: string;
+	locale?: string;
 	mode: string;
 	showContent: boolean;
 	theme: string;
@@ -37,8 +40,10 @@ const Items = ({
 	block,
 	displayItems,
 	blockIndex,
+	contentId,
 	currentLayout,
 	currency,
+	locale,
 	mode,
 	showContent,
 	theme,
@@ -71,6 +76,7 @@ const Items = ({
 					aria-label={`${block.name} items`}
 					className="overflow-hidden my-2"
 					exit="hidden"
+					id={contentId}
 					initial="hidden"
 					key="content"
 					role="region"
@@ -99,6 +105,7 @@ const Items = ({
 											i={originalIndex}
 											isFirst={originalIndex === 0}
 											isLast={originalIndex === totalItemsInBlock - 1}
+											locale={locale}
 											mode={mode}
 											onDelete={
 												onDeleteItem
@@ -153,6 +160,7 @@ const Items = ({
 										isFirst={originalIndex === 0}
 										isLast={originalIndex === totalItemsInBlock - 1}
 										key={record.id || originalIndex}
+										locale={locale}
 										mode={mode}
 										onDelete={
 											onDeleteItem

@@ -7,7 +7,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { BUSINESS_TYPES } from "@quicktalog/common";
+import { BUSINESS_TYPES, resolveBusinessType } from "@quicktalog/common";
 
 const BusinessType = ({ disabled = false }: { disabled?: boolean }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
@@ -22,7 +22,7 @@ const BusinessType = ({ disabled = false }: { disabled?: boolean }) => {
 			<Select
 				disabled={disabled}
 				onValueChange={(value) => updateCatalogue({ businessType: value })}
-				value={catalogue.businessType}
+				value={resolveBusinessType(catalogue.businessType)?.value ?? ""}
 			>
 				<SelectTrigger
 					className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"

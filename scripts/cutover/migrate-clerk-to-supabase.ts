@@ -720,12 +720,17 @@ async function importUser(context: Context, plan: Plan): Promise<Outcome> {
 		await db`
 			insert into auth.identities (id, provider_id, user_id, provider, identity_data, created_at, updated_at)
 			values (gen_random_uuid(), ${account.sub}, ${uuid}::uuid, 'google',
-				${JSON.stringify({
-					email: account.email ?? plan.email,
-					email_verified: true,
-					provider_id: account.sub,
-					sub: account.sub,
-				})}::jsonb, now(), now())
+				${
+					// db.json, not JSON.stringify: the driver encodes a string parameter
+					// as a JSON string, and GoTrue then fails to scan identity_data into
+					// its JSONMap — "cannot unmarshal string into Go value".
+					db.json({
+						email: account.email ?? plan.email,
+						email_verified: true,
+						provider_id: account.sub,
+						sub: account.sub,
+					})
+				}, now(), now())
 			on conflict (provider_id, provider) do nothing`;
 		actions.push(`created the google identity ${maskSub(account.sub)}`);
 	}

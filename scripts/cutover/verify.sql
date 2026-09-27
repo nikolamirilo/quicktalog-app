@@ -77,7 +77,6 @@ v5 as (
       (select count(*) from public.catalogues  where created_by like 'user\_%') +
       (select count(*) from public.analytics   where user_id    like 'user\_%') +
       (select count(*) from public.newsletter  where owner_id   like 'user\_%') +
-      (select count(*) from public.ocr         where user_id    like 'user\_%') +
       (select count(*) from public.prompts     where user_id    like 'user\_%') +
       (select count(*) from public.user_themes where user_id    like 'user\_%')
     )::bigint as value

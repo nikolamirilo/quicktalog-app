@@ -46,10 +46,10 @@ select set_eq(
   $q$,
   $q$
     values ('users'), ('catalogues'), ('analytics'), ('newsletter'),
-           ('subscriptions'), ('job_logs'), ('prompts'), ('ocr'),
+           ('subscriptions'), ('job_logs'), ('prompts'),
            ('qr_configs'), ('user_themes'), ('product_newsletter'), ('plans')
   $q$,
-  'RLS is enabled on exactly the 12 public tables listed in M00'
+  'RLS is enabled on exactly the 11 public tables listed in M00'
 );
 
 -- ---------------------------------------------------------------------------

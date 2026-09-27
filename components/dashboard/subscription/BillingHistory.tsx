@@ -9,12 +9,11 @@ const FEATURE_LABELS: Record<string, string> = {
 	support: "Support",
 	catalogues: "Catalogues",
 	newsletter: "Newsletter",
-	ocr_ai_import: "OCR AI Import",
 	traffic_limit: "Traffic Limit",
 	branding: "Branding",
 	custom_features: "Custom Features",
 	analytics: "Analytics",
-	ai_prompts: "AI Prompts",
+	ai_credits: "AI Credits",
 	sections_per_catalogue: "Sections per Catalogue",
 	items_per_catalogue: "Items per Catalogue",
 	styles: "Style",
@@ -47,10 +46,8 @@ const formatFeatureValue = (key: string, value: any): string => {
 			return `${value.toLocaleString("en-US")} views/month`;
 		if (key === "catalogues")
 			return `${value} catalogue${value !== 1 ? "s" : ""}`;
-		if (key === "ocr_ai_import")
-			return `${value} OCR AI import${value !== 1 ? "s" : ""}`;
-		if (key === "ai_prompts")
-			return `${value} AI generation${value !== 1 ? "s" : ""}`;
+		if (key === "ai_credits")
+			return `${value} AI credit${value !== 1 ? "s" : ""}`;
 		return value.toString();
 	}
 	return String(value);

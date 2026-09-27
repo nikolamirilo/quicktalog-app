@@ -14,8 +14,14 @@ import { describe, expect, it } from "vitest";
 const names = (types: AiSectionType[]) =>
 	activeSkills({ sectionTypes: types }).map((skill) => skill.name);
 
-const FREE_PLAN: AiSectionType[] = ["category", "container", "text"];
+const FREE_PLAN: AiSectionType[] = ["items", "text"];
 const PAID_PLAN: AiSectionType[] = [...FREE_PLAN, "embedding", "custom_code"];
+
+const FULL_ACCESS: AiSectionAccess = {
+	divider: true,
+	embedding: true,
+	customCode: true,
+};
 
 const NO_CODE: AiSectionAccess = {
 	divider: true,
@@ -24,8 +30,12 @@ const NO_CODE: AiSectionAccess = {
 };
 
 const catalogue = { ...defaultCatalogueData, name: "cafe" } as Catalogue;
-const session = (access?: AiSectionAccess, loaded: string[] = []) =>
-	new CatalogueSession(catalogue, {}, access, loaded);
+// Defaults to a plan with code unlocked: the gate under test is the skill gate,
+// not the plan gate.
+const session = (
+	access: AiSectionAccess = FULL_ACCESS,
+	loaded: string[] = [],
+) => new CatalogueSession(catalogue, {}, access, loaded);
 
 const WIDGET = { tool: "addSection", input: { code: "<div>hi</div>" } };
 

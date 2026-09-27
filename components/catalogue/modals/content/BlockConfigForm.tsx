@@ -1,6 +1,5 @@
 "use client";
 
-import { UserData } from "@quicktalog/common";
 import BlockNameInput from "../../inputs/BlockNameInput";
 import ContentInput from "../../inputs/ContentInput";
 import CustomCodeInput from "../../inputs/CustomCodeInput";
@@ -9,18 +8,11 @@ import EmbeddingInput from "../../inputs/EmbeddingInput";
 import LimitsOverlay from "../../inputs/sidebar/LimitsOverlay";
 import RichTextEditor from "../../sections/common/RichTextEditor";
 
-type ContentOption =
-	| "container"
-	| "category"
-	| "text"
-	| "embedding"
-	| "custom_code"
-	| "divider";
+type ContentOption = "items" | "text" | "embedding" | "custom_code" | "divider";
 
 interface BlockData {
 	name: string;
 	layout: string;
-	src: string;
 	items: any[];
 	code: string;
 	content: string;
@@ -34,6 +26,7 @@ interface BlockData {
 			opacity: number;
 		};
 	};
+	showHeading: boolean;
 	isExpanded: boolean;
 }
 
@@ -42,7 +35,6 @@ interface BlockConfigFormProps {
 	blockData: BlockData;
 	setBlockData: (data: BlockData) => void;
 	locked: boolean;
-	userData: UserData;
 }
 
 const BlockConfigForm = ({
@@ -50,25 +42,15 @@ const BlockConfigForm = ({
 	blockData,
 	setBlockData,
 	locked,
-	userData,
 }: BlockConfigFormProps) => {
 	return (
 		<div className="flex-1 min-h-0 mt-4 pb-8 flex flex-col relative">
 			<div className="max-w-2xl w-full">
 				{locked && <LimitsOverlay size="sm" />}
 				<>
-					{selectedOption === "category" && (
+					{selectedOption === "items" && (
 						<ContentInput
 							onChange={(val) => setBlockData({ ...blockData, ...val })}
-							type="category"
-							value={blockData}
-						/>
-					)}
-
-					{selectedOption === "container" && (
-						<ContentInput
-							onChange={(val) => setBlockData({ ...blockData, ...val })}
-							type="container"
 							value={blockData}
 						/>
 					)}
@@ -83,7 +65,6 @@ const BlockConfigForm = ({
 					{selectedOption === "custom_code" && (
 						<CustomCodeInput
 							onChange={(val) => setBlockData({ ...blockData, ...val })}
-							userData={userData}
 							value={blockData}
 						/>
 					)}

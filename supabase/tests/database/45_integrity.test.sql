@@ -21,7 +21,7 @@ grant usage on schema extensions to app_user, app_public;
 grant execute on all functions in schema extensions to app_user, app_public;
 set local search_path = public, extensions, pg_temp;
 
-select plan(28);
+select plan(26);
 
 -- ---------------------------------------------------------------------------------------------------------
 -- Fixtures. User ids are uuid-shaped; catalogue names are slugs (catalogues_name_slug, M07).
@@ -204,20 +204,6 @@ select results_eq(
   $$ select catalogue from public.prompts where id = 'd0000000-0000-0000-0000-000000000001' $$,
   $$ values (null::text) $$,
   'prompts_catalogue_fkey is ON DELETE SET NULL: the charge survives the catalogue'
-);
-
--- ---------------------------------------------------------------------------------------------------------
--- 3.8 ocr (same ledger rules)
--- ---------------------------------------------------------------------------------------------------------
-select throws_ok(
-  $$ insert into public.ocr (user_id, catalogue) values (null, 'alice-cat') $$,
-  '23502', null,
-  'ocr.user_id is NOT NULL'
-);
-
-select lives_ok(
-  $$ insert into public.ocr (user_id) values ('11111111-1111-1111-1111-111111111111') $$,
-  'ocr.catalogue is nullable and has no '''' default left to violate the foreign key'
 );
 
 -- ---------------------------------------------------------------------------------------------------------

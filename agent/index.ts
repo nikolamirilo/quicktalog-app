@@ -3,7 +3,7 @@ import {
 	AGENT_REASONING,
 	AGENT_TEMPERATURE,
 	MAX_AGENT_STEPS,
-	agentModel,
+	modelFor,
 } from "@/agent/model";
 import type { CatalogueSession } from "@/agent/session";
 import { buildTools } from "@/agent/tools";
@@ -12,7 +12,7 @@ import { type InferAgentUIMessage, stepCountIs, ToolLoopAgent } from "ai";
 /** Per request: the tools close over the session, so a singleton would leak catalogues. */
 export function createCatalogueAgent(session: CatalogueSession) {
 	return new ToolLoopAgent({
-		model: agentModel,
+		model: modelFor(session.aiLimits.proModel),
 		instructions: buildInstructions(session),
 		tools: buildTools(session),
 		reasoning: AGENT_REASONING,

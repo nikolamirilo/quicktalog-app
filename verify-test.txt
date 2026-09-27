@@ -1,0 +1,45 @@
+Pager usage is off.
+DO
+
+=== V1-V10, V12 ===========================================================
+ n  |                           check                           |         value         |         expected          | pass 
+----+-----------------------------------------------------------+-----------------------+---------------------------+------
+  1 | V1  legacy user_% rows in public.users                    | 0                     | 0                         | t
+  2 | V2  uuid users without an auth.users row                  | 0                     | 0                         | t
+  3 | V3  confirmed auth users without a public row             | 0                     | 0                         | t
+  4 | V4  mapped users whose email differs from auth            | 0                     | 0                         | t
+  5 | V5  child rows still owned by user_% ids                  | 0                     | 0                         | t
+  6 | V6a catalogues total vs pre-re-key snapshot               | 3 vs 3                | equal                     | t
+  7 | V6b pageviews total vs pre-re-key snapshot                | 0 vs 0                | equal                     | t
+  8 | V6c users with a customer_id vs snapshot                  | 0 vs 0                | equal                     | t
+  9 | V6d subscriptions (compare with preflight-t0.txt by hand) | 0                     | unchanged                 | 
+ 10 | V7  mapped users with a clerk.com image                   | 0                     | 0                         | t
+ 11 | V8  catalogues updated in the last 30 minutes             | 3                     | ~0                        | f
+ 12 | V9  the three disabled triggers are enabled               | 3                     | 3                         | t
+ 13 | V10 users_id_is_uuid present and NOT VALID                | present=1 validated=f | present=1 validated=false | t
+ 14 | V12 imported digests equal the T-0 CSV digests            | 1 of 1                | all                       | t
+(14 rows)
+
+
+=== V11 (RLS read as a migrated user; rolled back) ========================
+BEGIN
+SET
+                             claims_set                              
+---------------------------------------------------------------------
+ {"sub": "e1c2559c-28e0-495c-85b5-62263e021f44", "role": "app_user"}
+(1 row)
+
+SET
+                   check                   | value | expected | pass 
+-------------------------------------------+-------+----------+------
+ V11 catalogues visible to a migrated user | 1     | 1        | t
+(1 row)
+
+ROLLBACK
+
+=== map status breakdown (context, not a check) ===========================
+  status  | origin | count 
+----------+--------+-------
+ migrated | import |     3
+(1 row)
+

@@ -22,6 +22,11 @@ const PriceDisplay = ({
 	const finalPrice = isOnDiscount ? discount.discountedPrice : price;
 	const delimiterText = denominator ? ` / ${denominator}` : "";
 
+	// An item with no price renders no price row at all.
+	if (finalPrice === "" || finalPrice === undefined || finalPrice === null) {
+		return null;
+	}
+
 	if (layout === "horizontal" && isOnDiscount) {
 		return (
 			<div className={cn("flex items-center gap-2", className)}>

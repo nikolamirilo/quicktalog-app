@@ -17,10 +17,9 @@
  * every setting from the local file, including ones this file does not manage.
  */
 
-const PROJECTS = {
-	test: "imhinsgyzzyblghwnedk",
-	prod: "uhfbapjuzvlyzyodxhqn",
-} as const;
+// Importing this also loads .env.cutover / .env.local, so SUPABASE_ACCESS_TOKEN
+// and the secret fields come from the same place as the cutover scripts.
+import { PROJECT_REFS as PROJECTS } from "../cutover/config";
 
 type ProjectName = keyof typeof PROJECTS;
 

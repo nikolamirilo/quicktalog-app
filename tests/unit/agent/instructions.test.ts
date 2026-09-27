@@ -21,7 +21,13 @@ const FREE_PLAN: AiSectionAccess = {
 	customCode: false,
 };
 
-const prompt = (access?: AiSectionAccess) =>
+const FULL_ACCESS: AiSectionAccess = {
+	divider: true,
+	embedding: true,
+	customCode: true,
+};
+
+const prompt = (access: AiSectionAccess = FULL_ACCESS) =>
 	buildInstructions(new CatalogueSession(catalogue, {}, access));
 
 describe("buildInstructions", () => {
@@ -55,9 +61,9 @@ describe("buildInstructions", () => {
 
 	it("sends the code rules once a code section is unlocked", () => {
 		expect(prompt()).toContain("Writing code:");
-		expect(prompt({ divider: false, customCode: false })).toContain(
-			"Writing code:",
-		);
+		expect(
+			prompt({ divider: false, embedding: true, customCode: false }),
+		).toContain("Writing code:");
 	});
 
 	it("keeps every per-catalogue value in the context block, not the rules", () => {
