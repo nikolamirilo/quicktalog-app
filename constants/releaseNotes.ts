@@ -17,14 +17,16 @@ export type ReleaseNote = {
  * Newest first. `date` drives both the displayed month and the sidebar order.
  * Grouped by what actually merged into `main` and went live, not by when work
  * landed on `test` - months of `test`-only work can ship as one release.
- * `version` mirrors package.json's real version at the time of each release
- * (see git history on package.json), not an invented number, so a new entry
- * can be appended straight from the current package.json version.
+ *
+ * Everything shipped before Builder 2.0 is collapsed into a single `v1.0`
+ * entry. From v2 on, each release bumps the minor (`v2.1`, `v2.2`, ...)
+ * regardless of package.json, so a new entry takes the previous entry's
+ * version plus one.
  */
 export const releaseNotes: ReleaseNote[] = [
 	{
 		slug: "builder-2-0",
-		version: "v2.1.0",
+		version: "v2.0",
 		date: "2026-05-01",
 		title: "Builder 2.0",
 		items: [
@@ -56,48 +58,9 @@ export const releaseNotes: ReleaseNote[] = [
 		],
 	},
 	{
-		slug: "qr-codes-and-live-chat",
-		version: "v1.1.2",
-		date: "2025-11-01",
-		title: "QR codes and live chat",
-		items: [
-			{
-				tag: "New",
-				text: "Built-in QR code editor for sharing a catalogue in print or in-store.",
-			},
-			{ tag: "New", text: "Live chat support widget." },
-			{
-				tag: "Improved",
-				text: "Smoother plan upgrades and cancellations, with confirmation emails.",
-			},
-			{ tag: "Fixed", text: "Analytics reporting inaccuracies." },
-		],
-	},
-	{
-		slug: "faster-builder-smarter-imports",
-		version: "v1.1.2",
-		date: "2025-10-01",
-		title: "Faster builder, smarter imports",
-		items: [
-			{
-				tag: "New",
-				text: "Generate catalogue content with AI, or import an existing menu with OCR.",
-			},
-			{
-				tag: "New",
-				text: "Duplicate an existing catalogue to start a new one faster.",
-			},
-			{ tag: "New", text: "Rich text formatting for item descriptions." },
-			{
-				tag: "Improved",
-				text: "Faster image uploads and a redesigned builder flow with a live preview.",
-			},
-		],
-	},
-	{
 		slug: "quicktalog-launches",
-		version: "v0.1.0",
-		date: "2025-09-01",
+		version: "v1.0",
+		date: "2025-11-01",
 		title: "Quicktalog launches",
 		items: [
 			{
@@ -113,6 +76,29 @@ export const releaseNotes: ReleaseNote[] = [
 				tag: "New",
 				text: "An analytics dashboard for every catalogue.",
 			},
+			{
+				tag: "New",
+				text: "Generate catalogue content with AI, or import an existing menu with OCR.",
+			},
+			{
+				tag: "New",
+				text: "Duplicate an existing catalogue to start a new one faster.",
+			},
+			{ tag: "New", text: "Rich text formatting for item descriptions." },
+			{
+				tag: "New",
+				text: "Built-in QR code editor for sharing a catalogue in print or in-store.",
+			},
+			{ tag: "New", text: "Live chat support widget." },
+			{
+				tag: "Improved",
+				text: "Faster image uploads and a redesigned builder flow with a live preview.",
+			},
+			{
+				tag: "Improved",
+				text: "Smoother plan upgrades and cancellations, with confirmation emails.",
+			},
+			{ tag: "Fixed", text: "Analytics reporting inaccuracies." },
 		],
 	},
 ];
