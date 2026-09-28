@@ -11,7 +11,7 @@ could reason about.
 
 ## 1. The price list
 
-Set in [`lib/ai/pricing.ts`](../../lib/ai/pricing.ts). Change it there and the
+Set in [`src/lib/ai/pricing.ts`](../../src/lib/ai/pricing.ts). Change it there and the
 server charge, the builder's plan estimate and the tests all move together.
 
 | Action | Credits | Why |
@@ -116,7 +116,7 @@ stop resetting.
 ## 5. Free-plan guards
 
 Starter has credits, so an unpaid account can cost real money. The controls ship
-with the feature, in [`lib/ai/limits.ts`](../../lib/ai/limits.ts):
+with the feature, in [`src/lib/ai/limits.ts`](../../src/lib/ai/limits.ts):
 
 | Control | Free | Paid |
 |---|---|---|

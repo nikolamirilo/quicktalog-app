@@ -16,7 +16,7 @@ A query outside these blocks runs as a role that holds no privileges and fails w
 
 ## Why roles and not just careful code
 
-The app used to connect as `postgres`, which ignores row level security, so every `where created_by = …` was the only thing standing between one merchant's catalogue and another's. `utils/db/rls.ts` switches the transaction into `app_user` or `app_public` and sets the verified user id as a transaction-local claim:
+The app used to connect as `postgres`, which ignores row level security, so every `where created_by = …` was the only thing standing between one merchant's catalogue and another's. `src/utils/db/rls.ts` switches the transaction into `app_user` or `app_public` and sets the verified user id as a transaction-local claim:
 
 ```sql
 select
@@ -56,23 +56,23 @@ silent full-table read, and it is what
 ## Rules that follow from this
 
 1. **Never hold a block open across slow work** — no `fetch`, Redis, `revalidate*`, model call or streaming inside it. Each block pins a pooled connection.
-2. **Identity is derived, never passed.** A server action calls `getVerifiedIdentity()` itself. Helpers that take a user id live in `server-only` modules under `lib/`, so they cannot be called from a browser.
+2. **Identity is derived, never passed.** A server action calls `getVerifiedIdentity()` itself. Helpers that take a user id live in `server-only` modules under `src/lib/`, so they cannot be called from a browser.
 3. **Keep the owner predicate** even though RLS enforces it, and check what `returning(...)` gave back: zero rows means "not yours or gone", not an error.
-4. **The client decides nothing that matters.** Status, plan flags, ids and owners come from the database. `pickEditable()` filters catalogue payloads down to the fields a client may set; `lib/entitlements/` decides what a plan allows.
+4. **The client decides nothing that matters.** Status, plan flags, ids and owners come from the database. `pickEditable()` filters catalogue payloads down to the fields a client may set; `src/lib/entitlements/` decides what a plan allows.
 5. **`asAdmin` is not ordinary code.** It is importable only from `@/utils/db/admin`, and `tests/unit/architecture/db-boundaries.test.ts` fails the build if a server action can reach it, even transitively.
 
 ## Where things live
 
 | Module | Purpose |
 |---|---|
-| `utils/db/index.ts` | the entry point: `withUser`, `withPublic`, `pickEditable`, error helpers |
-| `utils/db/rls.ts` | the role switch and per-role timeouts |
-| `utils/db/admin.ts` | `asAdmin`, for system writes only |
-| `utils/db/pool.ts` | the two connection pools; nothing else may open one |
-| `lib/catalogue/public.ts` | visitor-facing reads |
-| `lib/catalogue/draft-cache.ts` | Redis drafts, keyed by catalogue **id** so a reused name cannot show a previous owner's draft |
-| `lib/entitlements/` | plan limits, read from the database with the user's row locked |
-| `lib/ai/metering.ts` | AI turns, charged before any model call |
+| `src/utils/db/index.ts` | the entry point: `withUser`, `withPublic`, `pickEditable`, error helpers |
+| `src/utils/db/rls.ts` | the role switch and per-role timeouts |
+| `src/utils/db/admin.ts` | `asAdmin`, for system writes only |
+| `src/utils/db/pool.ts` | the two connection pools; nothing else may open one |
+| `src/lib/catalogue/public.ts` | visitor-facing reads |
+| `src/lib/catalogue/draft-cache.ts` | Redis drafts, keyed by catalogue **id** so a reused name cannot show a previous owner's draft |
+| `src/lib/entitlements/` | plan limits, read from the database with the user's row locked |
+| `src/lib/ai/metering.ts` | AI turns, charged before any model call |
 
 ## Verifying a change
 

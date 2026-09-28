@@ -124,7 +124,7 @@ jobs:
       CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
       E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
       E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
-      # The app reads DB_CONNECTION_STRING (utils/db/pool.ts, drizzle.config.ts,
+      # The app reads DB_CONNECTION_STRING (utils/db/pool.ts,
       # tests/e2e/helpers/cleanup.ts), so the variable name stays. The
       # repository secret is still the older DATABASE_URL, so fall back to it:
       # an unset secret is an empty string, which is falsy here.

@@ -5,7 +5,7 @@ description: Use when a Quicktalog mutation needs to refresh data - deciding whi
 
 # Data Revalidation
 
-Quicktalog has **four** independent freshness mechanisms. Calling the wrong ones gives stale UI; calling all of them gives redundant re-fetches. This skill defines who owns what. Background: [plans/archive/revalidation-analysis.md](../../../plans/archive/revalidation-analysis.md).
+Quicktalog has **four** independent freshness mechanisms. Calling the wrong ones gives stale UI; calling all of them gives redundant re-fetches. This skill defines who owns what. Background: [plans/archive/revalidation-analysis.md](../../plans/archive/revalidation-analysis.md).
 
 ## The core rule
 
@@ -17,15 +17,15 @@ A mutation changes data → it invalidates the caches it touched (Next.js + Redi
 
 | Mechanism | Where | Owner | When |
 |---|---|---|---|
-| `revalidateCatalogue(name?)` | [helpers/server.ts](../../../helpers/server.ts) | **Server action** | Any create/update/publish/delete of a catalogue |
-| `revalidateDashboard()` | [helpers/server.ts](../../../helpers/server.ts) | **Server action** | Anything that changes dashboard stats (status, delete, create, duplicate) |
-| `writeOwnedDraft` / `deleteDrafts` | inside the server action, **after** the transaction | **Server action** | Builder drafts live in Redis keyed by catalogue **id** (`lib/catalogue/draft-cache.ts`), so a reused name cannot surface a previous owner's draft. Never call Redis inside a `withUser` block: it would hold a pooled connection open |
+| `revalidateCatalogue(name?)` | [lib/cache/revalidate.ts](../../../src/lib/cache/revalidate.ts) | **Server action** | Any create/update/publish/delete of a catalogue |
+| `revalidateDashboard()` | [lib/cache/revalidate.ts](../../../src/lib/cache/revalidate.ts) | **Server action** | Anything that changes dashboard stats (status, delete, create, duplicate) |
+| `writeOwnedDraft` / `deleteDrafts` | inside the server action, **after** the transaction | **Server action** | Builder drafts live in Redis keyed by catalogue **id** (`src/lib/catalogue/draft-cache.ts`), so a reused name cannot surface a previous owner's draft. Never call Redis inside a `withUser` block: it would hold a pooled connection open |
 | `router.refresh()` | client component | **Client** | After awaiting the action, to re-render server components with fresh data |
 
 Two client helpers exist on top of `router.refresh()` - use them only when their specific condition holds:
 
-- **`refreshAll()`** ([hooks/useDashboardData.ts](../../../hooks/useDashboardData.ts)) - SWR `mutate()` for the dashboard's analytics/catalogues/newsletter. Use **only on the dashboard** for immediate/optimistic update. Pointless anywhere else.
-- **`refreshUserData()`** ([context/UserContext.tsx](../../../context/UserContext.tsx)) - re-fetches the user's plan/usage. Use **only when the mutation changed the user's usage or limits** (creating/deleting a catalogue, hitting a plan gate). Not for edits within an existing catalogue.
+- **`refreshAll()`** ([hooks/useDashboardData.ts](../../../src/hooks/useDashboardData.ts)) - SWR `mutate()` for the dashboard's analytics/catalogues/newsletter. Use **only on the dashboard** for immediate/optimistic update. Pointless anywhere else.
+- **`refreshUserData()`** ([context/UserContext.tsx](../../../src/context/UserContext.tsx)) - re-fetches the user's plan/usage. Use **only when the mutation changed the user's usage or limits** (creating/deleting a catalogue, hitting a plan gate). Not for edits within an existing catalogue.
 
 ## Which server helper to call
 
@@ -41,7 +41,7 @@ Two client helpers exist on top of `router.refresh()` - use them only when their
 | delete one | `revalidateCatalogue(name)` + `revalidateDashboard()` |
 | delete many | `revalidateCatalogue()` (no name → listing only) + `revalidateDashboard()` |
 
-Rule of thumb: pass the **name** whenever a single catalogue changed; add **`revalidateDashboard()`** whenever the change affects counts/stats shown on the dashboard. This matches [actions/catalogue.ts](../../../actions/catalogue.ts).
+Rule of thumb: pass the **name** whenever a single catalogue changed; add **`revalidateDashboard()`** whenever the change affects counts/stats shown on the dashboard. This matches [actions/catalogue.ts](../../../src/actions/catalogue.ts).
 
 ## Client side: the minimal pattern
 
@@ -57,7 +57,7 @@ Off the dashboard, or for an edit that doesn't touch usage, you need **only** `r
 
 ## Two data layers (know this)
 
-Server actions write via **Drizzle**; `app/api/items/route.ts` writes the same `catalogues` table via **Supabase**. Both call revalidation, so a write can happen on two paths. Prefer the server-action (Drizzle) path for app mutations; don't introduce a second path for data an action already owns. See [[server-action-and-route]].
+Server actions write via **Drizzle**; `src/app/api/items/route.ts` writes the same `catalogues` table via **Supabase**. Both call revalidation, so a write can happen on two paths. Prefer the server-action (Drizzle) path for app mutations; don't introduce a second path for data an action already owns. See [[server-action-and-route]].
 
 ## Common Mistakes
 

@@ -93,13 +93,34 @@ The app uses two:
   `drizzle-kit pull`. Stays on `postgres`, which bypasses RLS.
 
 Before M08 they are the same URL and the admin one may be omitted. After M08 they
-must differ. Both are pooler URLs on port 6543.
+must differ. Both are Supavisor transaction-pooler URLs on port 6543.
+
+Only the username changes. The `.<ref>` suffix is pooler tenant routing, not part
+of the role name:
+
+```bash
+# before M08 — identical
+DB_CONNECTION_STRING=postgresql://postgres.<ref>:<db-password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+DB_ADMIN_CONNECTION_STRING=postgresql://postgres.<ref>:<db-password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+
+# after M08 — only the first one moves
+DB_CONNECTION_STRING=postgresql://app_rls.<ref>:<app_rls-password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+DB_ADMIN_CONNECTION_STRING=postgresql://postgres.<ref>:<db-password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+```
+
+`app_rls` has its own password, set out of band with
+`alter role app_rls with password '<generated>'` and never committed.
+
+**Set the admin variable before switching the user one.** `getAdminDb()` falls back
+to `DB_CONNECTION_STRING`, so flipping that to `app_rls` while the admin one is unset
+hands a no-privilege role to every webhook, provisioning call and e2e cleanup — all of
+which then fail with `42501`.
 
 ## Runtime switches
 
 Three things have to change without a deploy, because a redeploy is too slow
 and too risky during a maintenance window. They live in Vercel Global Config
-(formerly Edge Config) and are read by `lib/ops/flags.ts`.
+(formerly Edge Config) and are read by `src/lib/ops/flags.ts`.
 
 Hobby allows one Global Config store per account, so PROD and TEST share it and
 are told apart by the key suffix (`_prod` / `_test`), chosen from `VERCEL_ENV`.
@@ -175,7 +196,7 @@ Analytics and monitoring, all optional and inert when unset:
 Do not set these by hand. `NODE_ENV` in particular is currently overridden on
 all three Vercel environments, and anything other than `production` on a
 deployed environment disables Sentry (`sentry.server.config.ts`) and stops
-session cookies being marked `Secure` (`lib/auth/cookie-options.ts`).
+session cookies being marked `Secure` (`src/lib/auth/cookie-options.ts`).
 
 ### Operator scripts
 
@@ -196,9 +217,14 @@ See `scripts/README.md`.
 
 `E2E_CLERK_USER_USERNAME`, `E2E_CLERK_USER_PASSWORD`,
 `E2E_SUPABASE_USER_EMAIL`, `SUPABASE_PUBLISHABLE_KEY` /
-`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `DB_RLS_CONNECTION_STRING` (the `app_rls`
-login, so the M08 assertions actually run), `REHEARSAL=1` (the cutover
-rehearsal, which rewrites every user). See `docs/guides/e2e-testing.md`.
+`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `REHEARSAL=1` (the cutover rehearsal, which
+rewrites every user). See `docs/guides/e2e-testing.md`.
+
+`DB_RLS_CONNECTION_STRING` is **test-only** and deliberately absent from
+`.env.example`: nothing at runtime reads it. It is an override for
+`tests/integration/db/forgotten-wrapper.test.ts`, which falls back to
+`DB_CONNECTION_STRING` when it is unset — so the M08 assertions only really run when
+it points at the `app_rls` login. `ci.yaml` sets it to the local Supabase stack.
 
 ### Cloudflare Worker (`../quicktalog-backend`)
 

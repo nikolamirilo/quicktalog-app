@@ -443,6 +443,34 @@ const phaseSuffixes = Object.values(PHASE_MIGRATIONS).map((n) => `_${n}.sql`);
 const isPhaseMigration = (file) => phaseSuffixes.some((s) => file.endsWith(s));
 
 /**
+ * The base is the database *before* the phase migrations run, so it may only
+ * contain migrations that precede them. A migration written after the last phase
+ * one belongs after the chain, not before it: putting it in the base applies it
+ * out of order and can undo what a phase expects. `20260926120000_ai_credits_ledger`
+ * dropping `public.ocr` is the case that surfaced this - M03 then failed on
+ * `like public.ocr` and rolled back, losing `prompts.turn_id` with it.
+ */
+const lastPhaseFile = () => {
+	const files = fs
+		.readdirSync(APP_MIGRATIONS_DIR)
+		.filter((f) => f.endsWith(".sql") && isPhaseMigration(f))
+		.sort();
+	return files.length ? files[files.length - 1] : null;
+};
+const isPostPhaseMigration = (file) => {
+	const last = lastPhaseFile();
+	return last !== null && !isPhaseMigration(file) && file > last;
+};
+
+/** Migrations newer than the phase chain; not covered by this suite (reported, not applied). */
+export function readPostPhaseMigrations() {
+	return fs
+		.readdirSync(APP_MIGRATIONS_DIR)
+		.filter((f) => f.endsWith(".sql") && isPostPhaseMigration(f))
+		.sort();
+}
+
+/**
  * Absolute path of the repo migration for a phase key, or null.
  *
  * Looks in `supabase/migrations` first and then in `supabase/phase5`, so a
@@ -467,7 +495,10 @@ export function phaseMigrationPath(key) {
 export function readAppMigrations() {
 	return fs
 		.readdirSync(APP_MIGRATIONS_DIR)
-		.filter((f) => f.endsWith(".sql") && !isPhaseMigration(f))
+		.filter(
+			(f) =>
+				f.endsWith(".sql") && !isPhaseMigration(f) && !isPostPhaseMigration(f),
+		)
 		.sort()
 		.map((f) => ({
 			file: f,

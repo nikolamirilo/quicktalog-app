@@ -60,8 +60,8 @@
 | AI | Vercel AI SDK (`ai`) with DeepSeek, Firecrawl | Catalogue builder agent, item description writing, web page fetching |
 | OCR | tesseract.js | In-browser text recognition from images |
 | UI | Tailwind CSS 3, Radix UI / shadcn components, Framer Motion, lucide/react-icons | Styling, accessible components, animation, icons |
-| Editors and visuals | Monaco editor, qr-code-styling, Recharts / ApexCharts | Custom code editing, QR codes, dashboard charts |
-| Client data | SWR, React Context, react-hook-form | Dashboard data fetching, app state, forms |
+| Editors and visuals | Monaco editor, qr-code-styling, ApexCharts (`react-apexcharts`) | Custom code editing, QR codes, dashboard charts |
+| Client data | SWR, React Context | Dashboard data fetching, app state; forms are plain `useState` + Zod schemas from `src/constants/schemas.ts` |
 | Analytics | PostHog, Microsoft Clarity, Google Tag Manager | Product analytics and catalogue traffic |
 | Monitoring | Sentry | Error tracking |
 | Testing | Vitest (+ Testing Library, happy-dom), Playwright | Unit tests, end-to-end tests |

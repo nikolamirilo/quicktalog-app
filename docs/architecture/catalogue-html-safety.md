@@ -26,7 +26,7 @@ inputs an attacker can choose.
 
 ### The three that are filtered
 
-`helpers/sanitizeHtml.ts` runs inside `components/general/HtmlContent.tsx`, the
+`src/lib/html/sanitize.ts` runs inside `src/components/general/HtmlContent.tsx`, the
 one component where author HTML becomes live DOM. Filtering there rather than
 at each call site covers the AI, the builder, imported catalogues and rows that
 predate any of this, in one place. It runs on the server too, so the SSR output

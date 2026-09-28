@@ -184,13 +184,60 @@ Adding variables changes nothing until a deploy, so this is safe now.
 
 | Variable | Value | Why |
 |---|---|---|
-| `DB_CONNECTION_STRING` | pooler URL, port 6543 | Production only has the old `DATABASE_URL`; 0A.6's rename never reached it |
-| `DB_ADMIN_CONNECTION_STRING` | `postgres` pooler URL | Absent everywhere. After M08 the app login cannot do admin work |
+| `DB_CONNECTION_STRING` | `postgres.<prod-ref>` pooler URL, port 6543 | Production only has the old `DATABASE_URL`; 0A.6's rename never reached it |
+| `DB_ADMIN_CONNECTION_STRING` | `postgres.<prod-ref>` pooler URL, port 6543 | Absent everywhere. After M08 the app login cannot do admin work |
 | `REVALIDATE_SECRET` | same as the Cloudflare worker | Byte-identical or revalidation is rejected |
 | `REDIS_KEY_PREFIX` | `prod` | Unset falls back to `"dev"`, sharing a keyspace with local development |
 | `AUTH_PROVIDER` | `clerk` | Set now; C3 flips it |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Turnstile **site** key | A3 |
 | `NEXT_PUBLIC_APP_URL` | `https://www.quicktalog.app` | Falls back to `quicktalog.com` — wrong TLD — in QR codes |
+
+### The two database URLs, and the order they must be set in
+
+Both are Supavisor **transaction-pooler** URLs on port 6543 — the app sets
+`prepare: false` for that mode, and a 5432 session-mode URL would silently defeat it.
+Only the **username** differs, and only after M08. The `.<ref>` suffix is pooler tenant
+routing, not part of the role name.
+
+```bash
+# Set both now, identical. This is the whole of A2 for the database.
+DB_CONNECTION_STRING=postgresql://postgres.<prod-ref>:<db-password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+DB_ADMIN_CONNECTION_STRING=postgresql://postgres.<prod-ref>:<db-password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+
+# Later, when M08 is live and the app login switches over, ONLY the first one moves:
+DB_CONNECTION_STRING=postgresql://app_rls.<prod-ref>:<app_rls-password>@aws-0-<region>.pooler.supabase.com:6543/postgres
+DB_ADMIN_CONNECTION_STRING=postgresql://postgres.<prod-ref>:<db-password>@aws-0-<region>.pooler.supabase.com:6543/postgres   # unchanged
+```
+
+> **Set `DB_ADMIN_CONNECTION_STRING` before `DB_CONNECTION_STRING` ever becomes
+> `app_rls`.** `getAdminDb()` falls back to `DB_CONNECTION_STRING`
+> (`src/utils/db/pool.ts:51`). Flip the user string first and the fallback hands a
+> no-privilege role to every `asAdmin` path — Paddle webhook, user provisioning, e2e
+> cleanup — and all of them fail with `42501`. Setting both to the same `postgres` URL
+> now makes that ordering impossible to get wrong later.
+
+**This also gates type regeneration.** `drizzle-kit pull` runs in
+`../quicktalog-packages`, whose config reads `DB_ADMIN_CONNECTION_STRING`. Introspection
+reads `pg_catalog`, which `app_rls` cannot do, so after the switch that variable is the
+only way to regenerate `@quicktalog/common`.
+
+### The `app_rls` switch itself is not yet a step in this runbook
+
+TEST got it from `PLAN.md` step 8; PROD has no equivalent. It needs, in this order:
+
+1. `alter role app_rls with password '<generated>'` in the PROD SQL editor — out of band,
+   never committed, no `VALID UNTIL`. (On TEST this is already done: verified 2026-09-28,
+   `rolcanlogin=true`, `rolbypassrls=false`, connection limit 40, password set.)
+2. Vercel Production `DB_CONNECTION_STRING` → `app_rls.<prod-ref>`; redeploy.
+3. `forgotten-wrapper.test.ts` against PROD with `DB_RLS_CONNECTION_STRING` pointing at the
+   `app_rls` login — otherwise it falls back to `DB_CONNECTION_STRING` and the M08
+   assertions do not actually run.
+4. Watch `pg_stat_activity` by `usename` for the first minutes.
+
+**Unverified, and it blocks step 2:** `PLAN.md:2517` flags that "whether Supavisor
+authenticates a custom login role on each project" has never been confirmed. Postgres
+having the role and password proves nothing about the pooler's own credential mapping —
+that needs a real connection attempt as `app_rls.<test-ref>`, on TEST, before PROD.
 
 Already correct: `SUPABASE_SECRET_KEY`, `NEXT_PUBLIC_SUPABASE_URL`,
 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
@@ -270,6 +317,22 @@ so `getClaims()` verifies locally instead of calling out per request. Wait
 1h15m after promoting before revoking the legacy secret.
 
 ## A5. Database migrations
+
+> **⚠️ This section contradicts the rest of this document. Unresolved 2026-09-28.**
+>
+> The line below says PROD is at M08. **This runbook's own header says otherwise** —
+> "A0 was run for real on 2026-09-26. The tracker was wrong: **PROD is at migration 3 of
+> 16.** M00 — the perimeter migration — has never been applied, and neither has anything
+> after it." P0 agrees ("production has no `DB_CONNECTION_STRING`, so it cannot be using
+> Drizzle … M00 lands in A5"), and so does the audit in [`TO_DO.md`](TO_DO.md).
+>
+> Three places say migration 3; only this line says M08. It reads as a leftover from the
+> tracker the 2026-09-26 audit corrected, missed because A5 was not rewritten.
+>
+> **Resolve with `supabase migration list --project-ref uhfbapjuzvlyzyodxhqn` before
+> running anything in this section.** The difference is whether M00–M08 still need to
+> land — and pushing them against pre-Phase-0A code is exactly what P0 warns takes the
+> site down. Not checked here: querying PROD needs explicit sign-off.
 
 PROD is at M08 and needs **M10 then M09**.
 

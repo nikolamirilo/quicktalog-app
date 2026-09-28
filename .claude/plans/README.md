@@ -1,6 +1,6 @@
 # Plans
 
-Plans, analyses and investigations produced before implementing something. Human documentation of how the app works today lives in [`docs/`](../docs/README.md).
+Plans, analyses and investigations produced before implementing something. Human documentation of how the app works today lives in [`docs/`](../../docs/README.md).
 
 - New plans go in `active/YYYY-MM-DD-<slug>/` with a `PLAN.md` that starts with a status line (`Status: proposed | approved | in progress | done`). Supporting files (research, verification) go in the same folder.
 - When a plan is fully implemented or dropped, move it to `archive/`, update this index, and move any lasting knowledge into `docs/`.
@@ -9,16 +9,17 @@ Plans, analyses and investigations produced before implementing something. Human
 
 | Plan | Status |
 |---|---|
-| [2026-09-17-supabase-auth-migration](active/2026-09-17-supabase-auth-migration/README.md) | Approved, not started: Clerk to Supabase Auth, user-level RLS, DB access through Drizzle with private roles |
-| [ai-agent-plan-mode.md](active/ai-agent-plan-mode.md) | In progress: Part 1 (plan mode) built; Part 2 (credits) superseded by 2026-09-21-ai-credits |
-| [2026-09-21-ai-credits](active/2026-09-21-ai-credits/PLAN.md) | Proposed: `ai_prompts` becomes a priced credit balance, and the free plan gets credits |
-| [2026-09-25-content-blocks-expansion](active/2026-09-25-content-blocks-expansion/PLAN.md) | Proposed: block registry + server-side content gate first, then 6 new block types, a grouped picker, and catalogue-level GA4/Pixel tracking |
+| [supabase-auth-migration](active/supabase-auth-migration/README.md) | In progress: Clerk to Supabase Auth, user-level RLS, DB access through Drizzle with private roles. Rehearsed on TEST; PROD cutover pending |
+| [2026-09-21-ai-credits](active/2026-09-21-ai-credits/PLAN.md) | In progress: `ai_prompts` became a priced credit balance and the free plan got credits. Core shipped in `8799c61`; §5 rollout and §6 open questions unconfirmed |
+| [2026-09-25-content-blocks-expansion](active/2026-09-25-content-blocks-expansion/PLAN.md) | In progress: the `category`/`container` merge and the safe P0 fixes shipped 2026-09-26; the 6 new block types, grouped picker and GA4/Pixel tracking are not started |
+| [2026-09-27-repo-cleanup](active/2026-09-27-repo-cleanup/PLAN.md) | In progress: Tier 1 (dead code) and Tier 3 (structure) done — see [RESULTS.md](active/2026-09-27-repo-cleanup/RESULTS.md). Tier 2 (Clerk dual-path removal) blocked on the cutover |
 
 ## Archive
 
 | Plan | Status |
 |---|---|
 | [2026-09-22-auth-folder-refactor](archive/2026-09-22-auth-folder-refactor/PLAN.md) | Done: `components/auth/` split into `common/`/`forms/`/`session/`; sign-in and sign-up are one card with a mode toggle |
+| [ai-agent-plan-mode.md](archive/ai-agent-plan-mode.md) | Done/superseded: Part 1 (plan mode) built; Part 2 (credits) replaced by `2026-09-21-ai-credits` |
 | [articles-implementation-plan.md](archive/articles-implementation-plan.md) | Done: `/articles` exists |
 | [revalidation-analysis.md](archive/revalidation-analysis.md) | Done: codified in the `data-revalidation` skill |
 | [sentry-remediation-plan.md](archive/sentry-remediation-plan.md) | Archived 2026-09-17; whether every fix shipped is unconfirmed |

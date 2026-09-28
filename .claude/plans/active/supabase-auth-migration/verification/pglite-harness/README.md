@@ -1,35 +1,20 @@
-# PGlite verification harness
+# PGlite harness — evidence only
 
-Executes the SQL of `../../PLAN.md` Appendix A in PGlite (PostgreSQL 17.5 and 18.3 compiled to WebAssembly) against a Supabase stub whose roles, grants and ACLs were copied from the TEST project with read-only queries. No Docker, no network, no Supabase project is touched.
+The runnable harness lives in [`tests/db-pglite/`](../../../../../../tests/db-pglite/)
+(`npm run test:db`). It was ported from this folder (PLAN.md §652) and is the version CI
+runs; the copy that used to sit here was an older snapshot of the same scripts and was
+removed on 2026-09-27 to keep one harness, not two.
 
-## Run
+`plan-sql/` is not kept either — `tests/db-pglite/tools/extract-plan.mjs` regenerates it
+from `PLAN.md` Appendix A on every run.
 
-```sh
-npm install            # in this folder: PGlite 0.5.8 (PG18) and 0.3.16 as pglite17 (PG17)
-./run-final.sh         # 692 scenarios per engine against the SQL in PLAN.md Appendix A
-```
+What stays here is the input SQL of the **first** run, which the write-ups cite and which
+no longer exists anywhere else:
 
-The Drizzle app-layer scenarios import `drizzle-orm` and `@quicktalog/common` from the repo root `node_modules`, so run `npm install` at the root first. Results land in `results/` (git-ignored).
-
-Expected output (2026-09-17):
-
-```
-pg17 plan-sql: statementModeErrors=0 applyFailures=1 failed scenarios=0/692
-pg18 plan-sql: statementModeErrors=0 applyFailures=1 failed scenarios=0/692
-```
-
-The one apply failure is intentional: M04 applied without M00 must refuse to run.
-
-## Files
-
-| File | Purpose |
+| File | Cited by |
 |---|---|
-| `tools/extract-plan.mjs` | Extracts every `sql` block of PLAN.md Appendix A into `plan-sql/` (A.14 also split per migration) |
-| `final.mjs`, `final-lib.mjs`, `final-scen.mjs`, `final-gate-*.mjs` | Final run: migrations in phase order, gates A-I (perimeter, owner matrix, AI ledger, M07-M10, import, re-key, rollback, re-cutover, A.14 reverse, audits) |
-| `lib.mjs`, `base.mjs`, `apply.mjs` | Supabase stub and migration application (baseline = `supabase/migrations/*.sql` of the repo) |
-| `drizzle-app.mjs`, `drizzle-app-final.mjs` | Real drizzle-orm SQL for the converted call sites, run through the planned `withUser`/`withPublic` wrapper |
-| `run.mjs`, `run-all.sh`, `run-decision.mjs`, `rls.original.sql`, `rls.patched.sql`, `decision-sql.sql` | First run against the design drafts (see `../pglite-results.md`) |
+| `rls.original.sql` | `../pglite-results.md` — the SQL as first drafted |
+| `rls.patched.sql` | `../pglite-results.md` — the same SQL with PATCH P1–P5 applied |
+| `decision-sql.sql` | `../../decision/architecture-decision.md` — proposal B's SQL |
 
-## Limits
-
-PGlite runs one connection, so it cannot show lock races between connections, `statement_timeout` cancellation, Supavisor pooling, supautils, or live GoTrue/PostgREST behaviour. Those are covered by the integration tests planned in PLAN.md section 11. Phase 1 ports this harness to `tests/db-pglite/` and points it at the real migration files.
+To reproduce the final run (692 scenarios, PG 17 and 18), use `npm run test:db`.

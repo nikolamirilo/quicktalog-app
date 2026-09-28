@@ -9,40 +9,52 @@ Where things go and how they're shaped in this codebase. This is the project-spe
 
 ## Where code goes
 
+All application source lives under **`src/`** (moved there 2026-09-28). `public/`,
+`tests/`, `scripts/`, `supabase/` and `docs/` stay at the repo root. The `@/` alias maps
+to `src/`, so `@/lib/...` and `@/components/...` are unchanged; `@/scripts/*` is mapped
+separately and still resolves to the root `scripts/`.
+
+Next finds `src/app`, and `middleware.ts`, `instrumentation.ts`,
+`instrumentation-client.ts` and the two `sentry.*.config.ts` files live in `src/` too —
+Next looks for them beside the app directory.
+
+
 | Kind | Location | Notes |
 |---|---|---|
 | Feature components | `components/<feature>/` | Grouped by feature: `catalogue/`, `dashboard/`, `auth/`, `emails/`, `charts/` |
-| UI primitives | `components/ui/` | Radix/shadcn wrappers - reuse before building new |
+| UI primitives | `src/components/ui/` | Radix/shadcn wrappers - reuse before building new |
 | Server mutations (React) | `actions/<domain>.ts` | `"use server"`, Drizzle. See [[server-action-and-route]] |
 | HTTP endpoints / webhooks | `app/api/<name>/route.ts` | Only when a URL is needed |
 | Pages | `app/<route>/page.tsx` | App Router |
 | Custom hooks | `hooks/use<Thing>.ts(x)` | `use`-prefixed, one concern each |
 | Cross-cutting state | `context/<Name>Context.tsx` | See "State" below |
-| Pure helpers | `helpers/`, `utils/`, `lib/` | `helpers/server.ts` (server-only), `helpers/client.ts` (client) |
-| Types | `types/shared.ts`, `types/api.ts`, `types/components.ts` | See "Types" below |
-| Constants & schemas | `constants/` | `constants/schemas.ts` for Zod, `constants/index.ts` for the rest |
+| Domain logic | `lib/<domain>/` | Our own logic, grouped by domain: `auth/` `ai/` `catalogue/` `entitlements/` `themes/` `src/content/` `email/` `paddle/` `qr/` `users/` `format/` `html/` `http/` `images/` `cache/` `observability/` `ops/` `ui/` |
+| Third-party adapters | `utils/<vendor>/` | Our wrapper around someone else's SDK: `db/` `supabase/` `paddle/` `redis` `deepseek` `uploadthing` `ocr` `cookies` |
+| Types | `src/types/shared.ts`, `src/types/navigation.ts`, `src/types/ai.ts` | See "Types" below |
+| Constants & schemas | `src/constants/` | `src/constants/schemas.ts` for Zod, `src/constants/index.ts` for the rest |
 
 ## Types: `@quicktalog/common` is the source of truth
 
-Domain types (`Catalogue`, `ContentBlock`, `Item`, `User`, `UserData`, `Usage`, the Drizzle `schema`, helpers like `generateUniqueSlug`) live in the external **`@quicktalog/common`** package. [types/shared.ts](../../../types/shared.ts) **re-exports** them and adds app-local types (`DisplayItem`, etc.).
+Domain types (`Catalogue`, `ContentBlock`, `Item`, `User`, `UserData`, `Usage`, the Drizzle `schema`, helpers like `generateUniqueSlug`) live in the external **`@quicktalog/common`** package. [types/shared.ts](../../../src/types/shared.ts) **re-exports** them and adds app-local types (`DisplayItem`, etc.).
 
 - Need a domain type? Import from `@quicktalog/common` (or via `@/types/shared`), don't redefine it.
 - A domain type/schema change happens in `@quicktalog/common`, then flows here - see [[adding-new-content-block]] and the Drizzle workflow in [docs/guides/drizzle.md](../../../docs/guides/drizzle.md).
-- App-only prop/helper types → `types/components.ts` / `types/shared.ts`.
+- **Props belong with their component**, not in `src/types/`. A type used by exactly one component is declared in that component's file.
+- `src/types/` is only for types genuinely shared across modules (`DisplayItem`, `HeadingSize`, `ISocials`, `NewsletterSubscriber`, `CardProps`).
 
 ## State: React Context, not Redux/Zustand
 
-Cross-component state lives in [context/](../../../context/): `CatalogueContext` (builder), `UserContext` (auth + plan/usage), `QRContext`, `MainContext`. There is **no Redux/Zustand** - don't add one. Local state → `useState`; shared server data on the dashboard → SWR via [hooks/useDashboardData.ts](../../../hooks/useDashboardData.ts). Refreshing after a write → [[data-revalidation]].
+Cross-component state lives in [context/](../../../src/context/): `CatalogueContext` (builder), `UserContext` (auth + plan/usage), `QRContext`, `MainContext`. There is **no Redux/Zustand** - don't add one. Local state → `useState`; shared server data on the dashboard → SWR via [hooks/useDashboardData.ts](../../../src/hooks/useDashboardData.ts). Refreshing after a write → [[data-revalidation]].
 
 ## Component patterns
 
 - **Renderer / Input pairing** - a catalogue block is a pair: `sections/[Name].tsx` (display, view+edit) and `inputs/[Name]Input.tsx` (config form). Keep them split; don't merge display and form into one component (SRP). Full flow: [[adding-new-content-block]].
-- **Modals** use Radix `AlertDialog` (`components/ui/`), with `sonner` for toasts and Zod schemas from `constants/schemas.ts` for validation.
+- **Modals** use Radix `AlertDialog` (`src/components/ui/`), with `sonner` for toasts and Zod schemas from `src/constants/schemas.ts` for validation.
 - **One job per component/hook.** Data-fetching, presentation, and form state are separate units (this is SRP/ISP in practice - the patterns [docs/standards/solid-principles.md](../../../docs/standards/solid-principles.md) argues for).
 
 ## Mechanical conventions
 
-- **Imports use the `@/` alias** for anything outside the current folder: `import { withUser } from "@/utils/db"` (`@/*` → repo root, per `tsconfig.json`). Avoid `../../..` chains.
+- **Imports use the `@/` alias** for anything outside the current folder: `import { withUser } from "@/utils/db"` (`@/*` → `src/`, and `@/scripts/*` → the root `scripts/`, per `tsconfig.json`). A `../` import is a **Biome error** (`noRestrictedImports`); same-folder `./` is fine.
 - **Formatting/linting is Biome**, not Prettier/ESLint. Run `npm run format` (write), `npm run lint` (write), `npm run check`. Tabs, double quotes - let Biome decide; don't hand-format.
 - **Errors** are reported with `Sentry.captureException(err)` + `console.error(...)` in catches (see [[server-action-and-route]]).
 - **Branches**: develop on `test`, release via `main` - see [docs/guides/git-workflow.md](../../../docs/guides/git-workflow.md).
@@ -54,4 +66,5 @@ Cross-component state lives in [context/](../../../context/): `CatalogueContext`
 - **Relative `../../..` imports** - use `@/`.
 - **Hand-formatting / adding ESLint or Prettier config** - Biome owns this.
 - **God components** - fetch + render + form-state in one file. Split them; mirror the renderer/input pairing.
-- **New top-level folder** for something that fits an existing bucket (`helpers/`, `utils/`, `lib/`, `constants/`).
+- **New top-level folder** for something that fits an existing bucket (`src/lib/`, `src/utils/`, `src/constants/`). There is no `helpers/` - it was dissolved into `src/lib/` on 2026-09-27; our logic goes in `lib/<domain>/`, vendor wrappers in `src/utils/`.
+- **Parking a one-component prop type in `src/types/shared.ts`** - it is not shared, so it belongs in the component.

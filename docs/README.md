@@ -1,6 +1,6 @@
 # Documentation
 
-Human documentation of Quicktalog as it works today. Plans and analyses made before implementing something live in [`plans/`](../plans/README.md), not here.
+Human documentation of Quicktalog as it works today. Plans and analyses made before implementing something live in [`plans/`](../.claude/plans/README.md), not here.
 
 ## Guides
 

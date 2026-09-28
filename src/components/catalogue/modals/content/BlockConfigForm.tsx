@@ -1,0 +1,120 @@
+"use client";
+
+import BlockNameInput from "@/components/catalogue/inputs/BlockNameInput";
+import ContentInput from "@/components/catalogue/inputs/ContentInput";
+import CustomCodeInput from "@/components/catalogue/inputs/CustomCodeInput";
+import DividerInput from "@/components/catalogue/inputs/DividerInput";
+import EmbeddingInput from "@/components/catalogue/inputs/EmbeddingInput";
+import LimitsOverlay from "@/components/catalogue/inputs/sidebar/LimitsOverlay";
+import RichTextEditor from "@/components/catalogue/sections/common/RichTextEditor";
+
+type ContentOption = "items" | "text" | "embedding" | "custom_code" | "divider";
+
+interface BlockData {
+	name: string;
+	layout: string;
+	items: any[];
+	code: string;
+	content: string;
+	divider: {
+		spacing: number;
+		border: {
+			isEnabled: boolean;
+			style: string;
+			thickness: number;
+			color: string;
+			opacity: number;
+		};
+	};
+	showHeading: boolean;
+	isExpanded: boolean;
+}
+
+interface BlockConfigFormProps {
+	selectedOption: ContentOption;
+	blockData: BlockData;
+	setBlockData: (data: BlockData) => void;
+	locked: boolean;
+}
+
+const BlockConfigForm = ({
+	selectedOption,
+	blockData,
+	setBlockData,
+	locked,
+}: BlockConfigFormProps) => {
+	return (
+		<div className="flex-1 min-h-0 mt-4 pb-8 flex flex-col relative">
+			<div className="max-w-2xl w-full">
+				{locked && <LimitsOverlay size="sm" />}
+				<>
+					{selectedOption === "items" && (
+						<ContentInput
+							onChange={(val) => setBlockData({ ...blockData, ...val })}
+							value={blockData}
+						/>
+					)}
+
+					{selectedOption === "embedding" && (
+						<EmbeddingInput
+							onChange={(val) => setBlockData({ ...blockData, ...val })}
+							value={blockData}
+						/>
+					)}
+
+					{selectedOption === "custom_code" && (
+						<CustomCodeInput
+							onChange={(val) => setBlockData({ ...blockData, ...val })}
+							value={blockData}
+						/>
+					)}
+
+					{selectedOption === "text" && (
+						<div className="flex flex-col gap-6">
+							<BlockNameInput
+								onChange={(name) => setBlockData({ ...blockData, name })}
+								type="text"
+								value={blockData.name || ""}
+							/>
+							<div>
+								<label className="block text-sm font-medium mb-2 text-gray-700">
+									Content
+								</label>
+								<div style={{ fontFamily: "var(--catalogue-font-body)" }}>
+									<RichTextEditor
+										className="px-0.5 font-body"
+										content={blockData.content || "<p></p>"}
+										onChange={(val) =>
+											setBlockData({ ...blockData, content: val })
+										}
+									/>
+								</div>
+							</div>
+						</div>
+					)}
+
+					{selectedOption === "divider" && (
+						<div className="flex flex-col gap-6">
+							<BlockNameInput
+								onChange={(name) => setBlockData({ ...blockData, name })}
+								type="divider"
+								value={blockData.name || ""}
+							/>
+							<DividerInput
+								onChange={(val) =>
+									setBlockData({
+										...blockData,
+										divider: { ...blockData.divider, ...val } as any,
+									})
+								}
+								value={blockData.divider as any}
+							/>
+						</div>
+					)}
+				</>
+			</div>
+		</div>
+	);
+};
+
+export default BlockConfigForm;

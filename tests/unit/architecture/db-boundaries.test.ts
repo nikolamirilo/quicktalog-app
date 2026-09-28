@@ -18,21 +18,23 @@ import { describe, expect, it } from "vitest";
 const ROOT = resolve(fileURLToPath(new URL("../../../", import.meta.url)));
 
 const SOURCE_GLOBS = [
-	"actions/**/*.{ts,tsx}",
-	"agent/**/*.{ts,tsx}",
-	"app/**/*.{ts,tsx}",
-	"components/**/*.{ts,tsx}",
-	"context/**/*.{ts,tsx}",
-	"helpers/**/*.{ts,tsx}",
-	"hooks/**/*.{ts,tsx}",
-	"lib/**/*.{ts,tsx}",
-	"utils/**/*.{ts,tsx}",
+	"src/actions/**/*.{ts,tsx}",
+	"src/agent/**/*.{ts,tsx}",
+	"src/app/**/*.{ts,tsx}",
+	"src/components/**/*.{ts,tsx}",
+	"src/context/**/*.{ts,tsx}",
+	"src/hooks/**/*.{ts,tsx}",
+	"src/lib/**/*.{ts,tsx}",
+	"src/utils/**/*.{ts,tsx}",
 	"scripts/**/*.{ts,tsx}",
-	"middleware.ts",
-	"instrumentation.ts",
-	"instrumentation-client.ts",
-	"sentry.*.config.ts",
+	"src/middleware.ts",
+	"src/instrumentation.ts",
+	"src/instrumentation-client.ts",
+	"src/sentry.*.config.ts",
 ];
+
+// Rules below are written in `@/` terms, so both sides drop the `src/` prefix.
+const stripSrc = (p: string) => (p.startsWith("src/") ? p.slice(4) : p);
 
 type SourceFile = { path: string; text: string; imports: string[] };
 
@@ -51,22 +53,22 @@ function resolveSpecifier(fromFile: string, specifier: string): string {
 	if (specifier.startsWith("@/")) return specifier.slice(2);
 	if (specifier.startsWith(".")) {
 		const dir = join(fromFile, "..");
-		return relative(ROOT, resolve(ROOT, dir, specifier));
+		return stripSrc(relative(ROOT, resolve(ROOT, dir, specifier)));
 	}
 	return specifier;
 }
 
 const files: SourceFile[] = fg
 	.sync(SOURCE_GLOBS, { cwd: ROOT, dot: false })
-	.map((path) => {
-		const text = readFileSync(join(ROOT, path), "utf8");
+	.map((file) => {
+		const text = readFileSync(join(ROOT, file), "utf8");
 		const imports: string[] = [];
 		for (const match of text.matchAll(IMPORT_RE)) {
 			const statement = text.slice(match.index ?? 0, (match.index ?? 0) + 40);
 			if (TYPE_ONLY_RE.test(statement)) continue;
-			imports.push(resolveSpecifier(path, match[1]));
+			imports.push(resolveSpecifier(file, match[1]));
 		}
-		return { path, text, imports };
+		return { path: stripSrc(file), text, imports };
 	});
 
 const importsOf = new Map(files.map((f) => [f.path, f.imports]));

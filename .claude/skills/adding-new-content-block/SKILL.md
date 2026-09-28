@@ -23,13 +23,13 @@ components) or styling-only changes.
 ## The item-bearing block
 
 There is one block that holds items: `ItemsBlock` (`type: "items"`), rendered by
-[components/catalogue/sections/ItemsSection.tsx](../../../components/catalogue/sections/ItemsSection.tsx).
+[components/catalogue/sections/ItemsSection.tsx](../../../src/components/catalogue/sections/ItemsSection.tsx).
 `showHeading` decides whether it renders a heading (which is also the collapse
 toggle, so a headless section is always open).
 
 `category` and `container` are its **deprecated predecessors**. They remain in the
 `ContentBlock` union so old rows typecheck, and
-[helpers/contentBlocks.ts](../../../helpers/contentBlocks.ts) maps them to
+[lib/catalogue/content-blocks.ts](../../../src/lib/catalogue/content-blocks.ts) maps them to
 `items` on read. Never write them. Never match on `block.type === "category"`;
 use `isItemsBlock` / `asItemsBlock` from that helper.
 
@@ -38,16 +38,16 @@ use `isItemsBlock` / `asItemsBlock` from that helper.
 | # | Area | File(s) | What to do |
 |---|------|---------|------------|
 | 1 | Shared type | `@quicktalog/common` → `src/types/catalogue.ts` | Interface extends `BaseContentBlock`; add to the `ContentBlock` union. **Needs a package release.** |
-| 2 | Renderer | [components/catalogue/sections/](../../../components/catalogue/sections/)`[Name].tsx` | View + edit mode; `BlockControls` in edit mode |
-| 3 | Input | [components/catalogue/inputs/](../../../components/catalogue/inputs/)`[Name]Input.tsx` | The config form |
-| 4 | Picker option | [sections/common/ContentOptionsSelector.tsx](../../../components/catalogue/sections/common/ContentOptionsSelector.tsx) | `OptionKey`, `OPTIONS` entry, icon, `isLocked` case |
-| 5 | Modal state | [modals/AddContentModal.tsx](../../../components/catalogue/modals/AddContentModal.tsx) | `ContentOption`, `DEFAULT_BLOCK_DATA`, edit-hydration, `handleAdd`, `isFormValid`, `isLocked` |
-| 6 | Modal form + copy | [modals/content/BlockConfigForm.tsx](../../../components/catalogue/modals/content/BlockConfigForm.tsx), [BlockConfigHeader.tsx](../../../components/catalogue/modals/content/BlockConfigHeader.tsx) | Render branch; `LABELS` + `DESCRIPTIONS` entry |
-| 7 | Main renderer | [view/CatalogueContent.tsx](../../../components/catalogue/view/CatalogueContent.tsx) | Import + a `block.type` branch in the render loop |
-| 8 | AI section type | [types/ai.ts](../../../types/ai.ts) | Add to `AiSectionType`, plus any new op fields |
-| 9 | AI schema + gate | [agent/schemas.ts](../../../agent/schemas.ts) | `allowedSectionTypes` - gated types are pushed only on `=== true` |
-| 10 | AI builder | [helpers/catalogueOperations.ts](../../../helpers/catalogueOperations.ts) | `buildSection` case (the `default:` is an exhaustive `never` - a missing case is a **compile error**, by design), `isSectionTypeLocked`, `SECTION_TYPE_LABELS` |
-| 11 | AI tool schema | [agent/tools/sections.ts](../../../agent/tools/sections.ts) | Any new field on `addSection` / `updateSection` |
+| 2 | Renderer | [components/catalogue/sections/](../../../src/components/catalogue/sections/)`[Name].tsx` | View + edit mode; `BlockControls` in edit mode |
+| 3 | Input | [components/catalogue/inputs/](../../../src/components/catalogue/inputs/)`[Name]Input.tsx` | The config form |
+| 4 | Picker option | [sections/common/ContentOptionsSelector.tsx](../../../src/components/catalogue/sections/common/ContentOptionsSelector.tsx) | `OptionKey`, `OPTIONS` entry, icon, `isLocked` case |
+| 5 | Modal state | [modals/AddContentModal.tsx](../../../src/components/catalogue/modals/AddContentModal.tsx) | `ContentOption`, `DEFAULT_BLOCK_DATA`, edit-hydration, `handleAdd`, `isFormValid`, `isLocked` |
+| 6 | Modal form + copy | [modals/content/BlockConfigForm.tsx](../../../src/components/catalogue/modals/content/BlockConfigForm.tsx), [BlockConfigHeader.tsx](../../../src/components/catalogue/modals/content/BlockConfigHeader.tsx) | Render branch; `LABELS` + `DESCRIPTIONS` entry |
+| 7 | Main renderer | [view/CatalogueContent.tsx](../../../src/components/catalogue/view/CatalogueContent.tsx) | Import + a `block.type` branch in the render loop |
+| 8 | AI section type | [types/ai.ts](../../../src/types/ai.ts) | Add to `AiSectionType`, plus any new op fields |
+| 9 | AI schema + gate | [agent/schemas.ts](../../../src/agent/schemas.ts) | `allowedSectionTypes` - gated types are pushed only on `=== true` |
+| 10 | AI builder | [lib/catalogue/operations.ts](../../../src/lib/catalogue/operations.ts) | `buildSection` case (the `default:` is an exhaustive `never` - a missing case is a **compile error**, by design), `isSectionTypeLocked`, `SECTION_TYPE_LABELS` |
+| 11 | AI tool schema | [agent/tools/sections.ts](../../../src/agent/tools/sections.ts) | Any new field on `addSection` / `updateSection` |
 | 12 | Plan gating | `@quicktalog/common` → `src/constants/pricing.ts` | If gated: add the flag to `features.sections` **for every tier**, and to `AiSectionAccess` |
 
 ## Gating rules

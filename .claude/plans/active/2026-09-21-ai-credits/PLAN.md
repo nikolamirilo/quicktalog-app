@@ -1,9 +1,16 @@
 # Prompts to AI credits, with credits on the free plan
 
-Status: proposed
+Status: in progress
+
+> **Core shipped** (commit `8799c61`, "implementation of ai credits mechanism"):
+> `lib/ai/{pricing,limits,metering,turn}.ts`, migrations
+> `20260926120000_ai_credits_ledger.sql` and `20260926190000_ai_credit_limit_binding.sql`,
+> `components/catalogue/chat/CreditMeter.tsx`, and the write-up in
+> `docs/architecture/ai-credits.md`. Section 5 (rollout) and the section 6 open
+> questions are **not** confirmed - the owner should close them and then archive this.
 
 Written 2026-09-21 against `test` (`d9c8ce2`). Supersedes **Part 2** of
-[`../ai-agent-plan-mode.md`](../ai-agent-plan-mode.md), which sketched the same idea
+[`../ai-agent-plan-mode.md`](../../archive/ai-agent-plan-mode.md), which sketched the same idea
 before plan mode shipped and before the AI surfaces changed. Part 1 of that document
 (plan mode) is built and is assumed here.
 

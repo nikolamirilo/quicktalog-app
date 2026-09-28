@@ -24,9 +24,15 @@
 						"paths": {
 							"@/utils/drizzle": "Deleted. Use withUser/withPublic from @/utils/db, or asAdmin from @/utils/db/admin for system writes.",
 							"@/utils/db/pool": "Open connections only through @/utils/db (withUser/withPublic) or @/utils/db/admin.",
-							"postgres": "Only utils/db/pool.ts may create a client. Use @/utils/db.",
-							"drizzle-orm/postgres-js": "Only utils/db/pool.ts may create a client. Use @/utils/db."
-						}
+							"postgres": "Only src/utils/db/pool.ts may create a client. Use @/utils/db.",
+							"drizzle-orm/postgres-js": "Only src/utils/db/pool.ts may create a client. Use @/utils/db."
+						},
+						"patterns": [
+							{
+								"group": ["../**"],
+								"message": "Import across folders with the @/ alias, not a ../ chain (docs/standards + code-conventions)."
+							}
+						]
 					}
 				}
 			},
@@ -57,7 +63,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["utils/db/pool.ts", "scripts/**", "tests/**"],
+			"includes": ["src/utils/db/pool.ts", "scripts/**", "tests/**"],
 			"linter": {
 				"rules": {
 					"style": {

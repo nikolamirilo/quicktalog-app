@@ -1,4 +1,4 @@
-Status: proposed
+Status: in progress
 
 > **Implemented 2026-09-26** (ahead of the roadmap below, at the owner's request):
 > the `category`/`container` merge into a single `items` block with `showHeading`

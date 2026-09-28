@@ -1,6 +1,6 @@
 # AI Chat - Agent Flow
 
-> **Outdated (noted 2026-09-17):** parts of this document predate the current agent. For example, section 1 says the chat is not an agent loop, but `agent/index.ts` now builds a `ToolLoopAgent`, and plan mode has shipped. Check the code before relying on it, and refresh this document when the agent is next changed.
+> **Outdated (noted 2026-09-17):** parts of this document predate the current agent. For example, section 1 says the chat is not an agent loop, but `src/agent/index.ts` now builds a `ToolLoopAgent`, and plan mode has shipped. Check the code before relying on it, and refresh this document when the agent is next changed.
 >
 > **Metering is the exception and is current:** charging moved from a per-prompt row count to credits, taken in the database before any model call. See [ai-credits.md](./ai-credits.md) - that page, not this one, is the reference for what a turn costs.
 
@@ -91,7 +91,7 @@ flowchart TD
         E1["refreshUserData<br/>re-count monthly usage"]
         E2{"operations.length > 0?"}
         E3["context.applyOperations<br/>with plan limits"]
-        E4["applyCatalogueOperations<br/>non-mutating, id-addressed<br/>helpers/catalogueOperations.ts"]
+        E4["applyCatalogueOperations<br/>non-mutating, id-addressed<br/>lib/catalogue/operations.ts"]
         E5{"applied.length > 0?"}
         E6["Commit new catalogue<br/>catalogueRef + setCatalogue"]
         E7["Discard - draft unchanged"]
@@ -401,10 +401,12 @@ Return the discarded ops alongside the resolved ones and merge them into `skippe
 Right now the reply says *"Done"* while nothing happened. This is the fix with the
 highest ratio of user trust to lines of code.
 
-**H2 - Fix the monthly quota window.** *(server, `helpers/client.ts`)*
-`startOfMonth` and `endOfMonth` are module-level constants computed once at import.
-In a long-lived server process they never roll over, and they mix local-time
-boundaries with a UTC `timestamptz` column. Compute them per call.
+**H2 - Fix the monthly quota window.** *(resolved 2026-09-27)*
+`startOfMonth` and `endOfMonth` were module-level constants computed once at import,
+so in a long-lived server process they never rolled over and they mixed local-time
+boundaries with a UTC `timestamptz` column. Nothing read them by the time the repo
+cleanup ran, and they were deleted. Any future month window must be computed per
+call, in UTC.
 
 **H3 - Don't charge for turns that changed nothing.** *(server, `meter`)*
 Either meter only when `operations.length > 0`, or return the metering decision to
@@ -525,24 +527,24 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 
 | File | Role |
 |---|---|
-| `components/catalogue/chat/CatalogueChat.tsx` | Floating panel, suggestions, input, both limit modals |
-| `components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text, applied changes, skipped reasons |
-| `hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
-| `hooks/useAiAssist.ts` | Client quota gate, loading/error state, usage refresh |
-| `actions/ai.ts` | `chatEditCatalogue` + `authorize` + `meter`, and the item-description assist |
+| `src/components/catalogue/chat/CatalogueChat.tsx` | Floating panel, suggestions, input, both limit modals |
+| `src/components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text, applied changes, skipped reasons |
+| `src/hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
+| `src/hooks/useAiAssist.ts` | Client quota gate, loading/error state, usage refresh |
+| `src/actions/ai.ts` | `chatEditCatalogue` + `authorize` + `meter`, and the item-description assist |
 | `lib/ai/catalogueEditor.ts` | System prompt, snapshot, zod schema, index→id, image resolution |
-| `helpers/catalogueOperations.ts` | Pure operation applier with plan limits |
-| `context/CatalogueContext.tsx` | `applyOperations`, holds the unsaved draft |
-| `utils/deepseek.ts` | DeepSeek client, JSON mode, `DeepseekResponseError` |
-| `types/ai.ts` | `CatalogueOperation` union and result types |
+| `src/lib/catalogue/operations.ts` | Pure operation applier with plan limits |
+| `src/context/CatalogueContext.tsx` | `applyOperations`, holds the unsaved draft |
+| `src/utils/deepseek.ts` | DeepSeek client, JSON mode, `DeepseekResponseError` |
+| `src/types/ai.ts` | `CatalogueOperation` union and result types |
 | `lib/users/fetchUserData.ts` | Plan + monthly usage counts |
 | `tests/unit/actions/ai.test.ts` | Turn behaviour: metering, ownership, truncation |
 | `tests/unit/lib/ai/catalogueEditor.test.ts` | Snapshot, index→id, image resolution |
-| `tests/unit/helpers/catalogueOperations.test.ts` | Apply semantics and limit skips |
+| `tests/unit/lib/catalogue/operations.test.ts` | Apply semantics and limit skips |
 
 ### Sibling AI feature
 
-One other action lives in `actions/ai.ts` and shares `authorize` + `meter`
+One other action lives in `src/actions/ai.ts` and shares `authorize` + `meter`
 but not the operation pipeline. It is single-shot and returns plain data:
 
 - `writeItemDescription` - one string, temp 0.7

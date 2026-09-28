@@ -123,14 +123,15 @@ select is(
   '23514',
   'M06:16: prompts_plan_hash_format only accepts a 64-character lowercase hex digest');
 
--- M06:18 drops the M05 (text, integer, boolean) form; M06:20-25 creates the plan-bound one.
+-- M06:18 drops the M05 (text, integer, boolean) form; 20260926120000:12 drops M06's 5-arg
+-- form in turn, leaving only the credit-priced one from 20260926190000.
 select is(
   (select pg_catalog.string_agg(pg_catalog.pg_get_function_identity_arguments(p.oid), ' | ' order by p.oid)
      from pg_catalog.pg_proc p
      join pg_catalog.pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'private' and p.proname = 'begin_ai_turn'),
-  'p_catalogue text, p_limit integer, p_kind text, p_continuation_of uuid, p_plan_hash text',
-  'M06:18-25: the M05 boolean-continuation begin_ai_turn is dropped; only the plan-bound form remains');
+  'p_catalogue text, p_limit integer, p_kind text, p_continuation_of uuid, p_plan_hash text, p_credits integer, p_require_verified boolean',
+  'only the credit-priced begin_ai_turn remains; the M05 and M06 forms are both dropped');
 
 -- M06:176-180
 select ok(

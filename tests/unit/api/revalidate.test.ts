@@ -5,7 +5,7 @@ const mocks = vi.hoisted(() => ({
 	revalidateDashboard: vi.fn(),
 }));
 
-vi.mock("@/helpers/server", () => mocks);
+vi.mock("@/lib/cache/revalidate", () => mocks);
 
 import { POST } from "@/app/api/revalidate/route";
 

@@ -90,6 +90,17 @@ run) and all 3 users are still Clerk-keyed.
 
 ## Next actions — Nikola
 
+> **Added 2026-09-28.** Three items from the env/drizzle pass, in dependency order:
+> 1. Set `DB_ADMIN_CONNECTION_STRING` (same `postgres` pooler URL as `DB_CONNECTION_STRING`)
+>    on Vercel **Production and Preview**, and in the app's local `.env.local` — it is unset
+>    in all three. Doing it now makes the M08 ordering trap impossible; see
+>    [`PROD_RUNBOOK.md`](PROD_RUNBOOK.md) A2.
+> 2. Prove Supavisor authenticates `app_rls.<test-ref>` on TEST with a real connection
+>    (`PLAN.md:2517` is still "unverified"). This blocks the PROD switch.
+> 3. Settle the A5 migration-state contradiction with `supabase migration list` against PROD
+>    — P0 and the 2026-09-26 audit say M00–M08 are unapplied; A5's opening line says M08.
+
+
 In this order. 2 blocks 2.13; 4 is the one that may be hurting users today.
 
 | # | Task | Why now |
@@ -182,6 +193,20 @@ Confirmed against the `quicktalog` project. `test.quicktalog.app` runs on **prev
   that value is still `postgres` — so M08's fail-closed protection is not actually in effect on TEST, which was the
   whole point of 1.8 — or it is `app_rls` and every `asAdmin` call (Paddle webhook, Clerk provisioning) is failing
   with 42501. Whichever it is, it is not what 1.8 claims.
+
+  **Also blocks type regeneration (found 2026-09-28).** `drizzle-kit pull` runs in
+  `../quicktalog-packages`, whose `drizzle.config.ts` now reads `DB_ADMIN_CONNECTION_STRING`
+  (its `.env` has that key and no `DB_CONNECTION_STRING`). Introspection reads `pg_catalog`,
+  which `app_rls` cannot do — it holds no privileges. So once `DB_CONNECTION_STRING` becomes
+  `app_rls`, step 4 of [`docs/guides/drizzle.md`](../../../../docs/guides/drizzle.md) needs the
+  admin connection or it fails. The admin URL stays `postgres.<ref>` @ 6543 in both eras; only
+  the user string changes to `app_rls.<ref>`.
+
+  Verified on TEST 2026-09-28: `app_rls` exists (`rolcanlogin=true`, `rolbypassrls=false`,
+  `connection limit 40`) and **already has a password set**, no `VALID UNTIL` — so M08 step 8 is
+  done on TEST and the switch is one env change away. `PLAN.md:2517` still marks
+  "whether Supavisor authenticates a custom login role" as **unverified**: that needs a real
+  connection attempt as `app_rls.<test-ref>`, which no SQL query can prove.
 
 **Missing on production, and needed before the current branch is deployed there:**
 - `DB_CONNECTION_STRING` — production still has the old `DATABASE_URL`. 0A.6's rename reached preview only, so a

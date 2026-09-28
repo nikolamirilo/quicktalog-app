@@ -8,6 +8,13 @@ Drizzle is the app's query layer. It does not own the schema or migrations.
 |---|---|
 | Migrations (tables, RLS policies, grants, functions, triggers) | `supabase/migrations/*.sql`, managed with the Supabase CLI |
 | Drizzle schema and types used by the app | `@quicktalog/common` (`../quicktalog-packages/src/drizzle/migrations/schema.ts`), generated with `drizzle-kit pull` |
+| `drizzle-kit` and its config | **`../quicktalog-packages` only.** This repo has neither; it consumes the generated schema as an npm import |
+
+The app builds its own client in [`src/utils/db/pool.ts`](../../src/utils/db/pool.ts) from a connection
+string plus the `schema` import — it reads no Drizzle config file. Only the `drizzle-kit` CLI
+does, and that runs in the package repo. (This repo used to carry a `drizzle.config.ts` pointing
+at a non-existent `./drizzle/` folder, and without the package config's `schemaFilter`/`roles`
+guards; it was deleted on 2026-09-28.)
 
 ## Changing the database
 
@@ -16,8 +23,11 @@ Drizzle is the app's query layer. It does not own the schema or migrations.
    - `npm run test:db` applies every migration on an in-memory Postgres (17 and 18) and runs the RLS scenarios. It needs no Docker. When the migration belongs to the auth/RLS plan, add it to `PHASE_MIGRATIONS` in `tests/db-pglite/lib.mjs` (see that folder's README).
    - `supabase start` then `supabase test db` runs the pgTAP tests in `supabase/tests/database/` against the real Postgres image.
 3. Apply it to TEST first: `supabase link --project-ref imhinsgyzzyblghwnedk`, then `supabase db push`.
-4. Regenerate types in `../quicktalog-packages`: `npx drizzle-kit pull` (with `DB_CONNECTION_STRING` pointing at TEST), and review the diff.
-5. Release the package (`npm run release` in `../quicktalog-packages`) and bump `@quicktalog/common` in the app.
+4. Regenerate types in `../quicktalog-packages`: `npx drizzle-kit pull`, and review the diff.
+   That repo's config reads **`DB_ADMIN_CONNECTION_STRING`** (pointing at TEST). It must be the
+   `postgres` role: introspection reads `pg_catalog`, which the `app_rls` login cannot do once
+   M08 switches `DB_CONNECTION_STRING` over to it.
+5. Commit in `../quicktalog-packages` (its pre-commit hook bumps the minor version into that commit), release it with `npm run release`, and bump `@quicktalog/common` in the app.
 6. When the change is ready for production, repeat step 3 against PROD (`uhfbapjuzvlyzyodxhqn`).
 
 ## Never run

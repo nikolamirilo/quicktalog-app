@@ -10,7 +10,7 @@ const mocks = vi.hoisted(() => ({
 	revalidateDashboard: vi.fn(),
 }));
 
-vi.mock("@/helpers/server", () => ({
+vi.mock("@/lib/cache/revalidate", () => ({
 	revalidateCatalogue: mocks.revalidateCatalogue,
 	revalidateDashboard: mocks.revalidateDashboard,
 }));
