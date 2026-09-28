@@ -22,6 +22,35 @@ SUPABASE_ACCESS_TOKEN=sbp_...
 Use port **5432**, not 6543. The re-key holds a lock across several statements
 and needs a session connection.
 
+### Building that URL
+
+Copy the host from the Supabase dashboard: project, Connect, Session pooler. Do
+not type it from memory — the `aws-0` / `aws-1` prefix differs from project to
+project.
+
+The username is `<role>.<project-ref>`, one dot. The role replaces `postgres`;
+it never goes in front of it.
+
+```sh
+postgres.uhfbapjuzvlyzyodxhqn            # right
+app_rls.uhfbapjuzvlyzyodxhqn             # right
+app_rls.postgres.uhfbapjuzvlyzyodxhqn    # wrong: asks for the role "app_rls.postgres"
+```
+
+Supavisor splits the username at the last dot, so the wrong one looks up a role
+that does not exist and fails with `(EAUTHQUERY) user not found in the
+database`. That reads like a database problem. It is a typo.
+
+The password is the project's database password. If you do not have it, reset it
+in Settings, Database — that rotates it, so update Vercel, GitHub Actions and the
+worker in the same pass.
+
+Check the string before you need it:
+
+```sh
+psql "$MIGRATION_DATABASE_URL" -c "select current_user"
+```
+
 Then point every command at PROD:
 
 ```sh
