@@ -57,7 +57,7 @@ export default async function ArticlePage({
 			<article>
 				<ArticleHero meta={meta} />
 				<Container>
-					<ProseBody className="mx-auto mt-11" id="article-body">
+					<ProseBody className="mt-11 max-w-none" id="article-body">
 						<Body />
 					</ProseBody>
 					<AuthorBio author={meta.author} />

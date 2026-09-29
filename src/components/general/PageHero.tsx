@@ -6,7 +6,7 @@ import { cn } from "@/lib/ui/cn";
 
 type PageHeroProps = {
 	title: ReactNode;
-	/** Small pill above the title. */
+	/** Pill above the title, usually a `HeroKicker`. */
 	kicker?: ReactNode;
 	/** Small-caps label above the title, for pages without a pill kicker. */
 	eyebrow?: ReactNode;
@@ -40,7 +40,7 @@ export function PageHero({
 			<HeroBackdrop />
 			<Container className={cn(align === "center" && "text-center")}>
 				<div className={cn(align === "center" && "mx-auto max-w-[860px]")}>
-					{kicker && <HeroKicker>{kicker}</HeroKicker>}
+					{kicker}
 					{eyebrow && <Eyebrow className="mb-3 block">{eyebrow}</Eyebrow>}
 					<h1 className="text-balance text-display-lg">{title}</h1>
 					{lead && (

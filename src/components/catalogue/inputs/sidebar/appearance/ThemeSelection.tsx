@@ -20,6 +20,8 @@ interface ThemeSelectionProps {
 	savedThemes: SavedTheme[];
 	onSavedThemeSelect: (colors: CustomThemeColors) => void;
 	onDeleteSavedTheme: (id: string) => void;
+	/** Plans without custom themes see neither the "Custom" tile nor saved themes. */
+	allowCustom: boolean;
 }
 
 const CUSTOM_TILE_GRADIENT =
@@ -38,18 +40,20 @@ const ThemeSelection = ({
 	savedThemes,
 	onSavedThemeSelect,
 	onDeleteSavedTheme,
+	allowCustom,
 }: ThemeSelectionProps) => {
 	const [visibleCount, setVisibleCount] = useState(5);
 
 	const sortedThemes = [...themes].sort((a, b) => a.id - b.id);
 	// Saved custom themes are listed first, so the 5-tile default is shared
 	// between them and the standard themes instead of always showing 5 of each.
-	const visibleSavedThemes = savedThemes.slice(0, visibleCount);
+	const availableSavedThemes = allowCustom ? savedThemes : [];
+	const visibleSavedThemes = availableSavedThemes.slice(0, visibleCount);
 	const visibleThemes = sortedThemes.slice(
 		0,
 		Math.max(0, visibleCount - visibleSavedThemes.length),
 	);
-	const totalThemeCount = savedThemes.length + sortedThemes.length;
+	const totalThemeCount = availableSavedThemes.length + sortedThemes.length;
 
 	const activeSavedThemeId = isCustomActive
 		? savedThemes.find((saved) =>
@@ -64,30 +68,32 @@ const ThemeSelection = ({
 				aria-label="Themes"
 				className="grid grid-cols-[repeat(auto-fill,minmax(92px,1fr))] gap-2.5"
 			>
-				<li>
-					<button
-						aria-pressed={isCreatingCustom}
-						className={cn(
-							"flex h-24 w-full flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-product-border-strong bg-product-card p-3 text-product-foreground-accent transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-product-primary-accent",
-							isCreatingCustom && SELECTED_RING,
-							isCreatingCustom && "border-solid",
-						)}
-						onClick={onCustomSelect}
-						type="button"
-					>
-						<span
-							aria-hidden="true"
-							className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-sm"
-							style={{ background: CUSTOM_TILE_GRADIENT }}
+				{allowCustom && (
+					<li>
+						<button
+							aria-pressed={isCreatingCustom}
+							className={cn(
+								"flex h-24 w-full flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-product-border-strong bg-product-card p-3 text-product-foreground-accent transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-product-primary-accent",
+								isCreatingCustom && SELECTED_RING,
+								isCreatingCustom && "border-solid",
+							)}
+							onClick={onCustomSelect}
+							type="button"
 						>
-							<Plus
-								className="h-4 w-4 text-white drop-shadow"
-								strokeWidth={3}
-							/>
-						</span>
-						<span className="text-xs font-semibold">Custom</span>
-					</button>
-				</li>
+							<span
+								aria-hidden="true"
+								className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-sm"
+								style={{ background: CUSTOM_TILE_GRADIENT }}
+							>
+								<Plus
+									className="h-4 w-4 text-white drop-shadow"
+									strokeWidth={3}
+								/>
+							</span>
+							<span className="text-xs font-semibold">Custom</span>
+						</button>
+					</li>
+				)}
 
 				{visibleSavedThemes.map((saved) => {
 					const isSelected = saved.id === activeSavedThemeId;

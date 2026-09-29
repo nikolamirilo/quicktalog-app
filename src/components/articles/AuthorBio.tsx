@@ -8,7 +8,7 @@ export function AuthorBio({ author }: { author: string }) {
 	return (
 		<aside
 			aria-label="About the author"
-			className="mx-auto mt-12 flex max-w-[720px] flex-col items-start gap-3.5 rounded-product-card border border-product-border bg-product-card p-[22px] shadow-product md:flex-row md:items-center"
+			className="mt-12 flex flex-col items-start gap-3.5 rounded-product-card border border-product-border bg-product-card p-[22px] shadow-product md:flex-row md:items-center"
 		>
 			<span
 				aria-hidden="true"

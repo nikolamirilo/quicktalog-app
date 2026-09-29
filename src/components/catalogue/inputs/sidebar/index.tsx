@@ -111,9 +111,7 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 					actions.preview,
 					actions.publish,
 				]}
-				isChatOpen={isChatOpen}
 				isPanelOpen={isOpen}
-				onToggleChat={() => setIsChatOpen(!isChatOpen)}
 				onTogglePanel={() => setIsOpen(!isOpen)}
 				panelId={PANEL_ID}
 			/>

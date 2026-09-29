@@ -21,6 +21,11 @@ import {
 	Work_Sans,
 } from "next/font/google";
 
+// Only the product fonts and the catalogue's default (Lora regular) are
+// preloaded. The theme fonts are declared here so every catalogue theme can use
+// them, but preloading all of them put ~20 font downloads in front of every
+// page; they now load when a page actually uses one.
+//
 // Families with a wght axis omit `weight` so Next requests the variable font.
 // Asking for static cuts of a variable family makes Google generate instances and
 // serve them as extensionless /l/font?kit= URLs, which crashes next/font at build.
@@ -33,6 +38,7 @@ export const loraRegular = Lora({
 });
 
 export const loraSemiBold = Lora({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-lora-semibold",
 	display: "swap",
@@ -53,24 +59,28 @@ export const interTight = Inter_Tight({
 
 // Theme Fonts
 export const playfairDisplay = Playfair_Display({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-playfair-display",
 	display: "swap",
 });
 
 export const inter = Inter({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-inter",
 	display: "swap",
 });
 
 export const nunito = Nunito({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-nunito",
 	display: "swap",
 });
 
 export const crimsonText = Crimson_Text({
+	preload: false,
 	weight: ["400", "600", "700"],
 	subsets: ["latin"],
 	variable: "--font-crimson-text",
@@ -78,6 +88,7 @@ export const crimsonText = Crimson_Text({
 });
 
 export const poppins = Poppins({
+	preload: false,
 	weight: ["400", "500", "600", "700"],
 	subsets: ["latin"],
 	variable: "--font-poppins",
@@ -85,24 +96,28 @@ export const poppins = Poppins({
 });
 
 export const roboto = Roboto({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-roboto",
 	display: "swap",
 });
 
 export const openSans = Open_Sans({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-open-sans",
 	display: "swap",
 });
 
 export const montserrat = Montserrat({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-montserrat",
 	display: "swap",
 });
 
 export const lato = Lato({
+	preload: false,
 	weight: ["400", "700"],
 	subsets: ["latin"],
 	variable: "--font-lato",
@@ -110,48 +125,56 @@ export const lato = Lato({
 });
 
 export const raleway = Raleway({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-raleway",
 	display: "swap",
 });
 
 export const oswald = Oswald({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-oswald",
 	display: "swap",
 });
 
 export const merriweather = Merriweather({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-merriweather",
 	display: "swap",
 });
 
 export const robotoSlab = Roboto_Slab({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-roboto-slab",
 	display: "swap",
 });
 
 export const sourceSans3 = Source_Sans_3({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-source-sans",
 	display: "swap",
 });
 
 export const workSans = Work_Sans({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-work-sans",
 	display: "swap",
 });
 
 export const dmSans = DM_Sans({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-dm-sans",
 	display: "swap",
 });
 
 export const josefinSans = Josefin_Sans({
+	preload: false,
 	subsets: ["latin"],
 	variable: "--font-josefin-sans",
 	display: "swap",

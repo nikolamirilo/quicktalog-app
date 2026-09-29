@@ -1,18 +1,12 @@
 "use client";
+import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
 import type { CatalogueAgentUIMessage } from "@/agent";
 import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
 import { CONTINUE_PLAN_MARKER } from "@/agent/plan";
 import { isHiddenTool, runningLabel } from "@/agent/tools/display";
 import type { AgentToolResult } from "@/types/ai";
 import { isToolUIPart } from "ai";
-import {
-	AlertTriangle,
-	Check,
-	Globe,
-	Loader2,
-	ScanText,
-	Sparkles,
-} from "lucide-react";
+import { AlertTriangle, Check, Globe, Loader2, ScanText } from "lucide-react";
 import type { ReactNode } from "react";
 
 /**
@@ -82,13 +76,13 @@ const Skipped = ({ text }: { text: string }) => (
 	</li>
 );
 
-/** The assistant's mark beside its turns: amber sparkle on ink, as in the header. */
+/** The assistant's mark beside its turns: the Quick AI mark on ink, as in the header. */
 export const AssistantAvatar = () => (
 	<span
 		aria-hidden="true"
-		className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-product-foreground text-product-primary"
+		className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-product-foreground"
 	>
-		<Sparkles className="h-3.5 w-3.5" />
+		<QuickAiMark className="size-4" variant="gradient" />
 	</span>
 );
 

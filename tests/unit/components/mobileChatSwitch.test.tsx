@@ -144,7 +144,7 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 	});
 
 	/**
-	 * A colour of its own made Ask AI look like the selected tab on a bar where
+	 * A colour of its own made Quick AI look like the selected tab on a bar where
 	 * nothing is selected until it is tapped.
 	 */
 	it("gives no bar item a selected look before anything is tapped", () => {
@@ -155,13 +155,18 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 			screen.getByRole("toolbar", { name: "Builder actions" }),
 		);
 
-		for (const label of ["Ask AI", "Templates", "Save", "Publish or preview"]) {
+		for (const label of [
+			"Quick AI",
+			"Templates",
+			"Save",
+			"Publish or preview",
+		]) {
 			const item = bar.getByRole("button", { name: label });
 			expect(item.className).not.toMatch(/text-product-primary/);
 		}
 	});
 
-	it("puts Templates beside Ask AI, the editor in the middle, and publish/preview in one slot", () => {
+	it("puts Templates beside Quick AI, the editor in the middle, and publish/preview in one slot", () => {
 		setup();
 		const bar = screen.getByRole("toolbar", { name: "Builder actions" });
 
@@ -171,7 +176,7 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 		// The editor button is an item of the bar itself, between the two pairs,
 		// rather than a button floating over the bar and the catalogue.
 		expect(labels).toEqual([
-			"Ask AI",
+			"Quick AI",
 			"Templates",
 			"Editor",
 			"Save",
@@ -210,7 +215,7 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 		const { context } = setup();
 		act(() => context.current?.setIsSidebarOpen(true));
 
-		act(() => screen.getByLabelText("Ask AI").click());
+		act(() => screen.getByLabelText("Quick AI").click());
 
 		expect(context.current?.isChatOpen).toBe(true);
 		expect(context.current?.isSidebarOpen).toBe(false);

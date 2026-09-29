@@ -166,11 +166,11 @@ export const comparisonGroups: ComparisonGroup[] = [
 		],
 	},
 	{
-		title: "AI assistant",
+		title: "Quick AI",
 		rows: [
 			{
 				label: "AI credits per month",
-				hint: "AI assistant in the builder and description writer",
+				hint: "Quick AI in the builder and the description writer",
 				value: (tier) => tier.features.ai_credits,
 			},
 		],

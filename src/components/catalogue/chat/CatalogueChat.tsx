@@ -9,6 +9,7 @@ import ChatMessageBubble, {
 import CreditMeter from "@/components/catalogue/chat/CreditMeter";
 import PlanChecklist from "@/components/catalogue/chat/PlanChecklist";
 import { LimitsModal } from "@/components/modals/LimitsModal";
+import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
@@ -26,7 +27,6 @@ import {
 	ChevronDown,
 	CornerDownLeft,
 	RotateCcw,
-	Sparkles,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -82,10 +82,10 @@ const isNarrating = (message?: CatalogueAgentUIMessage): boolean => {
 };
 
 /**
- * AI assistant for the catalogue builder: a floating panel from `md`, a
+ * Quick AI, the assistant in the catalogue builder: a floating panel from `md`, a
  * full-height sheet on a phone. Edits land in `CatalogueContext` immediately;
- * the user still saves/publishes normally. It opens from the builder rail or
- * the phone bottom bar (`isChatOpen` in the context), not from a button here.
+ * the user still saves/publishes normally. On desktop it opens from the "Quick AI"
+ * pill bottom-left; on a phone from the bottom bar (`isChatOpen` in the context).
  * Pinned to the product font rather than inherited, since the builder writes
  * the catalogue's own theme font onto `documentElement` and this panel is
  * product chrome, not catalogue content.
@@ -203,6 +203,18 @@ const CatalogueChat = ({
 
 	return (
 		<>
+			<Button
+				aria-controls={isOpen ? CHAT_PANEL_ID : undefined}
+				aria-expanded={isOpen}
+				className={cn(
+					"fixed bottom-6 left-6 z-[1040] hidden font-product-body shadow-product-primary md:inline-flex",
+					isOpen && "md:invisible",
+				)}
+				onClick={() => setIsOpen?.(true)}
+			>
+				<QuickAiMark className="size-[1.2em]" />
+				Quick AI
+			</Button>
 			{isOpen && (
 				<>
 					{/* Phone only: the sheet covers the page, so a tap outside it minimizes. */}
@@ -239,16 +251,16 @@ const CatalogueChat = ({
 							<div className="flex min-w-0 items-center gap-3">
 								<span
 									aria-hidden="true"
-									className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-product-foreground text-product-primary"
+									className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-product-foreground"
 								>
-									<Sparkles className="h-[18px] w-[18px]" />
+									<QuickAiMark className="size-5" variant="gradient" />
 								</span>
 								<div className="min-w-0">
 									<h2
 										className="truncate font-product-heading text-[15px] font-bold leading-tight text-product-foreground"
 										id={`${CHAT_PANEL_ID}-title`}
 									>
-										AI assistant
+										Quick AI
 									</h2>
 									<p className="truncate text-xs leading-tight text-product-muted">
 										Ask for any change to this catalogue
@@ -275,7 +287,7 @@ const CatalogueChat = ({
 									</Button>
 								)}
 								<Button
-									aria-label="Minimize AI assistant"
+									aria-label="Minimize Quick AI"
 									className={headerButtonClass}
 									onClick={close}
 									size="icon"
@@ -382,7 +394,7 @@ const CatalogueChat = ({
 									onAttach={attachments.attach}
 								/>
 								<Textarea
-									aria-label="Message the AI assistant"
+									aria-label="Message Quick AI"
 									className="chat-scroll max-h-32 min-h-0 min-w-0 flex-1 resize-none overflow-y-auto rounded-none border-0 bg-transparent px-1.5 py-2.5 hover:border-0 focus-visible:border-0 focus-visible:ring-0 md:py-2.5"
 									disabled={loading}
 									onChange={(event) => setDraft(event.target.value)}

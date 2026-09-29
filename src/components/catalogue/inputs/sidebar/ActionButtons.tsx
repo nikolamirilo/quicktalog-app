@@ -1,4 +1,5 @@
 "use client";
+import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
 import type { BuilderAction } from "@/components/catalogue/builder/useBuilderActions";
 import { CHAT_PANEL_ID } from "@/components/catalogue/chat/CatalogueChat";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
@@ -10,7 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/ui/cn";
-import { ChevronUp, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import { ChevronUp, SlidersHorizontal, X } from "lucide-react";
 
 /**
  * A bar item: icon over label, at least 52px tall. Neutral ink until pressed,
@@ -22,7 +23,7 @@ const barItemClass =
 const barLabelClass = "max-w-full truncate text-[11px] font-semibold";
 
 /**
- * The phone bottom bar (below `md`). Ask AI and Templates, then the editor
+ * The phone bottom bar (below `md`). Quick AI and Templates, then the editor
  * button in the middle, then Save and a Publish slot whose menu also holds
  * Preview. The editor button sits in the bar rather than floating over it, so
  * it never covers the catalogue.
@@ -55,13 +56,13 @@ export const BuilderBottomBar = ({
 			<button
 				aria-controls={isChatOpen ? CHAT_PANEL_ID : undefined}
 				aria-expanded={isChatOpen}
-				aria-label="Ask AI"
+				aria-label="Quick AI"
 				className={barItemClass}
 				onClick={onAskAi}
 				type="button"
 			>
-				<Sparkles className="h-5 w-5" />
-				<span className={barLabelClass}>Ask AI</span>
+				<QuickAiMark className="h-5 w-5" />
+				<span className={barLabelClass}>Quick AI</span>
 			</button>
 
 			<button

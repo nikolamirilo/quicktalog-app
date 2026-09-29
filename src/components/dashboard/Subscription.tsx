@@ -15,33 +15,6 @@ type SubscriptionProps = {
 	currentPlan: PricingPlan;
 };
 
-/** Flattens the nested feature groups into one list of plan features. */
-function expandFeatures(
-	features: PricingPlan["features"],
-): Record<string, unknown> {
-	const result: Record<string, unknown> = {};
-	for (const [key, value] of Object.entries(features)) {
-		if (key === "sections" && typeof value === "object" && value !== null) {
-			const sections = value as Record<string, unknown>;
-			result.divider = sections.divider;
-			result.embedding = sections.embedding;
-			result.customCode = sections.customCode;
-		} else if (
-			key === "apperance" &&
-			typeof value === "object" &&
-			value !== null
-		) {
-			const appearance = value as Record<string, unknown>;
-			result.styles = appearance.styles;
-			result.standardThemes = appearance.standardThemes;
-			result.customThemes = appearance.customThemes;
-		} else {
-			result[key] = value;
-		}
-	}
-	return result;
-}
-
 export function Subscription({ currentPlan }: SubscriptionProps) {
 	const paddle = usePaddle();
 	const { prices, loading, unavailable } = usePaddlePrices(paddle, "US");
@@ -62,7 +35,7 @@ export function Subscription({ currentPlan }: SubscriptionProps) {
 				manageSubscriptionUrl={CUSTOMER_PORTAL_URL}
 			/>
 
-			<PlanFeatures features={expandFeatures(currentPlan.features)} />
+			<PlanFeatures features={currentPlan.features} />
 		</div>
 	);
 }

@@ -1,30 +1,75 @@
 import type { AreLimitesReached, UserData } from "@quicktalog/common";
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { getUserData } from "@/actions/users";
 import { CreateCatalogueProvider } from "@/components/catalogue/create/CreateCatalogueProvider";
 import { Dashboard } from "@/components/dashboard/Dashboard";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { FloatingActionMenu } from "@/components/dashboard/FloatingActionMenu";
 import { AppShell } from "@/components/navigation/AppShell";
 import { Button } from "@/components/ui/button";
+import { toDashboardTab } from "@/constants/dashboard";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { loadDashboardOverview } from "@/lib/dashboard/overview";
 
 export const dynamic = "force-dynamic";
 
-export default async function page() {
-	const userData: UserData = await getUserData();
+type PageProps = {
+	params: Promise<{ rest?: string[] }>;
+	searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+/**
+ * The frame renders at once and the data streams in behind a skeleton, so the
+ * navbar and dashboard frame stay on screen while the database answers.
+ */
+export default function page(props: PageProps) {
+	return (
+		<AppShell>
+			<Suspense fallback={<DashboardSkeleton />}>
+				<DashboardContent {...props} />
+			</Suspense>
+		</AppShell>
+	);
+}
+
+/**
+ * Same rule as `Dashboard`: a Clerk account sub-route without `?tab=` is the
+ * settings tab, otherwise `?tab=` decides.
+ */
+function opensOverview(rest: string[] | undefined, tab: string | null) {
+	if (tab === null && rest?.length) return false;
+	return toDashboardTab(tab) === "overview";
+}
+
+async function DashboardContent({ params, searchParams }: PageProps) {
+	const [{ rest }, query] = await Promise.all([params, searchParams]);
+	const tab = typeof query.tab === "string" ? query.tab : null;
+	const me = await getVerifiedIdentity();
+
+	// Two independent transactions side by side: the profile/plan/usage and, when
+	// the overview is the tab being opened, its lists. The browser would
+	// otherwise ask for the lists only after hydrating, a second round of
+	// cross-region queries after the first.
+	const [userData, initialOverview]: [
+		UserData,
+		Awaited<ReturnType<typeof loadDashboardOverview>>,
+	] = await Promise.all([
+		getUserData(),
+		me && opensOverview(rest, tab) ? loadDashboardOverview(me) : undefined,
+	]);
 
 	if (!userData) {
 		return (
-			<AppShell>
-				<div className="flex min-h-[50vh] flex-col items-center justify-center gap-5 text-center">
-					<p className="text-title-lg">
-						Something went wrong. Please try again later.
-					</p>
-					<Button asChild size="lg">
-						<Link href="/">Go to Home</Link>
-					</Button>
-				</div>
-			</AppShell>
+			<div className="flex min-h-[50vh] flex-col items-center justify-center gap-5 text-center">
+				<p className="text-title-lg">
+					Something went wrong. Please try again later.
+				</p>
+				<Button asChild size="lg">
+					<Link href="/">Go to Home</Link>
+				</Button>
+			</div>
 		);
 	}
 
@@ -37,11 +82,14 @@ export default async function page() {
 	};
 
 	return (
-		<AppShell>
-			<CreateCatalogueProvider>
-				<Dashboard currentPlan={currentPlan} usage={usage} user={user} />
-				<FloatingActionMenu areLimitsReached={areLimitesReached} />
-			</CreateCatalogueProvider>
-		</AppShell>
+		<CreateCatalogueProvider>
+			<Dashboard
+				currentPlan={currentPlan}
+				initialOverview={initialOverview}
+				usage={usage}
+				user={user}
+			/>
+			<FloatingActionMenu areLimitsReached={areLimitesReached} />
+		</CreateCatalogueProvider>
 	);
 }

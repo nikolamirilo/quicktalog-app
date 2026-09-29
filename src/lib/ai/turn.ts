@@ -57,7 +57,7 @@ export async function openAiTurn(
 	if (start.turn.outcome === "unverified") {
 		return {
 			ok: false,
-			error: "Confirm your email address to use the AI assistant.",
+			error: "Confirm your email address to use Quick AI.",
 			code: "unverified",
 		};
 	}

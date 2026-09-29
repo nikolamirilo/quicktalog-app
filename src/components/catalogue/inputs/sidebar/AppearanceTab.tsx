@@ -104,6 +104,7 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 				title="Themes"
 			>
 				<ThemeSelection
+					allowCustom={Boolean(hasCustomThemes)}
 					currentCustomColors={catalogue.appearance.theme.colors}
 					currentThemeName={currentThemeName}
 					isCustomActive={isCustomActive}

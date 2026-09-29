@@ -10,7 +10,7 @@ const replies = [
 /** A dark chat: the prompt, then the builder's replies. */
 export const aiCover: CoverDefinition = {
 	background: "bg-[radial-gradient(80%_90%_at_70%_20%,#3a3222_0%,#1a1711_70%)]",
-	chip: { icon: Sparkles, label: "Ask AI" },
+	chip: { icon: Sparkles, label: "Quick AI" },
 	dark: true,
 	Art: () => (
 		<div className="grid w-full max-w-[300px] gap-2 text-[12.5px] leading-[1.4]">

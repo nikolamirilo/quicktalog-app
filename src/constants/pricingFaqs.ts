@@ -23,8 +23,8 @@ export const pricingFaqs: IFAQ[] = [
 		answer: `Yes. ${starterTier.name} includes ${starter.catalogues} catalogue with up to ${starter.sections_per_catalogue} sections and ${starter.items_per_catalogue} items, ${starter.traffic_limit.toLocaleString("en-US")} page views a month, all ${themes.length} standard themes, the QR code editor and ${starter.support.toLowerCase()}, with no time limit. You don't need a credit card to sign up.`,
 	},
 	{
-		question: "Which plans include the AI assistant?",
-		answer: `Every plan comes with a monthly allowance of AI credits for the AI assistant in the builder and the item description writer: ${credits}. One AI-written item description costs 1 credit, and asking the assistant a question is free.`,
+		question: "Which plans include Quick AI?",
+		answer: `Every plan comes with a monthly allowance of AI credits for Quick AI in the builder and the item description writer: ${credits}. One AI-written item description costs 1 credit, and asking the assistant a question is free.`,
 	},
 	{
 		question: "What counts as a page view?",

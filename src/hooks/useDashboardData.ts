@@ -1,7 +1,9 @@
 "use client";
 import type { Catalogue, OverallAnalytics } from "@quicktalog/common";
+import { useEffect } from "react";
 import useSWR, { mutate } from "swr";
 
+import type { DashboardOverview } from "@/lib/dashboard/overview";
 import type { NewsletterSubscriber } from "@/types/shared";
 
 const KEYS = {
@@ -41,24 +43,47 @@ export async function refreshDashboardData(): Promise<void> {
 	await Promise.all(Object.values(KEYS).map((key) => mutate(key)));
 }
 
-/** The overview's data. Nothing is fetched while another tab is open. */
-export function useDashboardData(activeTab: string) {
+/**
+ * The overview's data. Nothing is fetched while another tab is open.
+ *
+ * `initial` is the overview the page already loaded on the server. It is shown
+ * straight away and written into the SWR cache (replacing whatever an earlier
+ * visit left there), so the browser does not ask the three routes again on
+ * mount. Without it the hook fetches as before.
+ */
+export function useDashboardData(
+	activeTab: string,
+	initial?: DashboardOverview,
+) {
 	const shouldFetch = activeTab === "overview";
+	const seeded = initial ? { revalidateOnMount: false } : {};
+
+	useEffect(() => {
+		if (!initial) return;
+		mutate(KEYS.analytics, initial.analytics, { revalidate: false });
+		mutate(KEYS.catalogues, initial.catalogues, { revalidate: false });
+		mutate(KEYS.newsletter, initial.newsletter, { revalidate: false });
+	}, [initial]);
 
 	const analytics = useSWR<OverallAnalytics>(
 		shouldFetch ? KEYS.analytics : null,
 		fetcher,
-		{ ...OPTIONS, refreshInterval: 300000 },
+		{
+			...OPTIONS,
+			...seeded,
+			refreshInterval: 300000,
+			fallbackData: initial?.analytics as OverallAnalytics | undefined,
+		},
 	);
 	const catalogues = useSWR<Catalogue[]>(
 		shouldFetch ? KEYS.catalogues : null,
 		fetcher,
-		OPTIONS,
+		{ ...OPTIONS, ...seeded, fallbackData: initial?.catalogues },
 	);
 	const newsletter = useSWR<NewsletterSubscriber[]>(
 		shouldFetch ? KEYS.newsletter : null,
 		fetcher,
-		OPTIONS,
+		{ ...OPTIONS, ...seeded, fallbackData: initial?.newsletter },
 	);
 
 	return {

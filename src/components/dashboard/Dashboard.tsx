@@ -3,6 +3,7 @@ import type { PricingPlan, Usage, User } from "@quicktalog/common";
 import { usePathname, useSearchParams } from "next/navigation";
 import { lazy, Suspense, useEffect, useState } from "react";
 
+import { TabSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { DashboardSidebar } from "@/components/dashboard/navigation/DashboardSidebar";
 import { DashboardTabBar } from "@/components/dashboard/navigation/DashboardTabBar";
 import { Overview } from "@/components/dashboard/Overview";
@@ -13,6 +14,7 @@ import {
 	toDashboardTab,
 } from "@/constants/dashboard";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import type { DashboardOverview } from "@/lib/dashboard/overview";
 
 const Subscription = lazy(() =>
 	import("@/components/dashboard/Subscription").then((m) => ({
@@ -39,18 +41,9 @@ type DashboardProps = {
 	user: User;
 	usage: Usage;
 	currentPlan: PricingPlan;
+	/** The overview as the page loaded it on the server, when it opened on that tab. */
+	initialOverview?: DashboardOverview;
 };
-
-/** Placeholder while a tab's data or code loads. */
-function TabSkeleton() {
-	return (
-		<div aria-busy="true" aria-label="Loading" className="space-y-4">
-			<div className="h-8 w-56 animate-pulse rounded-full bg-product-background-hero" />
-			<div className="h-40 animate-pulse rounded-product-card bg-product-background-hero" />
-			<div className="h-64 animate-pulse rounded-product-card bg-product-background-hero" />
-		</div>
-	);
-}
 
 function OverviewError({ onRetry }: { onRetry: () => void }) {
 	return (
@@ -77,7 +70,12 @@ function isAccountSubRoute(pathname: string) {
 	return pathname.startsWith(`${DASHBOARD_PATH}/`);
 }
 
-export function Dashboard({ user, usage, currentPlan }: DashboardProps) {
+export function Dashboard({
+	user,
+	usage,
+	currentPlan,
+	initialOverview,
+}: DashboardProps) {
 	// `?tab=settings` lets the account menu (and a bookmark) open a tab
 	// directly; anything unknown falls back to the overview.
 	const searchParams = useSearchParams();
@@ -119,7 +117,7 @@ export function Dashboard({ user, usage, currentPlan }: DashboardProps) {
 		loadingStates,
 		errors,
 		refreshAll,
-	} = useDashboardData(activeTab);
+	} = useDashboardData(activeTab, initialOverview);
 
 	const renderOverview = () => {
 		if (errors.overview) return <OverviewError onRetry={refreshAll} />;
