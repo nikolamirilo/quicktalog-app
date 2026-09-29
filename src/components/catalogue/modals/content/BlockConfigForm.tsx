@@ -1,14 +1,14 @@
 "use client";
 
 import BlockNameInput from "@/components/catalogue/inputs/BlockNameInput";
-import ContentInput from "@/components/catalogue/inputs/ContentInput";
 import CustomCodeInput from "@/components/catalogue/inputs/CustomCodeInput";
 import DividerInput from "@/components/catalogue/inputs/DividerInput";
 import EmbeddingInput from "@/components/catalogue/inputs/EmbeddingInput";
 import LimitsOverlay from "@/components/catalogue/inputs/sidebar/LimitsOverlay";
 import RichTextEditor from "@/components/catalogue/sections/common/RichTextEditor";
-
-type ContentOption = "items" | "text" | "embedding" | "custom_code" | "divider";
+import { cn } from "@/lib/ui/cn";
+import type { ContentOption } from "./BlockConfigHeader";
+import { ItemsBlockFields } from "./ItemsBlockFields";
 
 interface BlockData {
 	name: string;
@@ -44,15 +44,12 @@ const BlockConfigForm = ({
 	locked,
 }: BlockConfigFormProps) => {
 	return (
-		<div className="flex-1 min-h-0 mt-4 pb-8 flex flex-col relative">
-			<div className="max-w-2xl w-full">
+		<div className={cn("relative flex flex-col", locked && "min-h-[280px]")}>
+			<div className="w-full max-w-2xl">
 				{locked && <LimitsOverlay size="sm" />}
 				<>
 					{selectedOption === "items" && (
-						<ContentInput
-							onChange={(val) => setBlockData({ ...blockData, ...val })}
-							value={blockData}
-						/>
+						<ItemsBlockFields onChange={setBlockData} value={blockData} />
 					)}
 
 					{selectedOption === "embedding" && (
@@ -76,13 +73,14 @@ const BlockConfigForm = ({
 								type="text"
 								value={blockData.name || ""}
 							/>
-							<div>
-								<label className="block text-sm font-medium mb-2 text-gray-700">
+							<div className="flex flex-col gap-2">
+								<p className="text-[13.5px] font-semibold leading-none text-product-foreground">
 									Content
-								</label>
+								</p>
+								{/* The editor previews catalogue text, so it keeps the catalogue font. */}
 								<div style={{ fontFamily: "var(--catalogue-font-body)" }}>
 									<RichTextEditor
-										className="px-0.5 font-body"
+										className="px-0.5"
 										content={blockData.content || "<p></p>"}
 										onChange={(val) =>
 											setBlockData({ ...blockData, content: val })

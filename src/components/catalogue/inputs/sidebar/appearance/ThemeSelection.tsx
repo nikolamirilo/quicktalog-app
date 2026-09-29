@@ -2,17 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import {
 	customThemeColorsEqual,
 	DEFAULT_CUSTOM_COLORS,
 } from "@/lib/themes/custom-theme";
+import { cn } from "@/lib/ui/cn";
 import type { CustomThemeColors, SavedTheme } from "@quicktalog/common";
 import { themes } from "@quicktalog/common";
-import { Info, Palette, Plus, X } from "lucide-react";
+import { Palette, Plus, X } from "lucide-react";
 import { useState } from "react";
 
 interface ThemeSelectionProps {
@@ -28,6 +24,10 @@ interface ThemeSelectionProps {
 
 const CUSTOM_TILE_GRADIENT =
 	"conic-gradient(from 180deg, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #f97316)";
+
+/** Selection is shown outside the tile, so the tile keeps the theme's own look. */
+const SELECTED_RING =
+	"ring-[2.5px] ring-product-primary-accent ring-offset-2 ring-offset-product-card";
 
 const ThemeSelection = ({
 	currentThemeName,
@@ -59,37 +59,35 @@ const ThemeSelection = ({
 	const isCreatingCustom = isCustomActive && !activeSavedThemeId;
 
 	return (
-		<div className="space-y-4">
-			<div className="flex items-center gap-2">
-				<h3 className="text-lg font-bold">Themes</h3>
-				<Popover>
-					<PopoverTrigger type="button">
-						<Info className="h-4 w-4 text-muted-foreground" />
-					</PopoverTrigger>
-					<PopoverContent className="z-[2000] w-[200px] p-3 text-sm" side="top">
-						<p>Select the overall visual theme for your catalogue.</p>
-					</PopoverContent>
-				</Popover>
-			</div>
-
-			<div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-				<button
-					className={`flex flex-col items-center justify-center gap-2 p-3 w-full h-24 rounded-lg border-2 border-dashed transition-all duration-300 ease-in-out hover:scale-[1.02] ${
-						isCreatingCustom
-							? "border-product-primary border-solid shadow-md scale-[1.03]"
-							: "border-border hover:border-product-primary/50 hover:shadow-sm"
-					}`}
-					onClick={onCustomSelect}
-					type="button"
-				>
-					<div
-						className="w-8 h-8 rounded-full border-2 border-white shadow-sm flex items-center justify-center"
-						style={{ background: CUSTOM_TILE_GRADIENT }}
+		<div className="space-y-3">
+			<ul
+				aria-label="Themes"
+				className="grid grid-cols-[repeat(auto-fill,minmax(92px,1fr))] gap-2.5"
+			>
+				<li>
+					<button
+						aria-pressed={isCreatingCustom}
+						className={cn(
+							"flex h-24 w-full flex-col items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-product-border-strong bg-product-card p-3 text-product-foreground-accent transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-product-primary-accent",
+							isCreatingCustom && SELECTED_RING,
+							isCreatingCustom && "border-solid",
+						)}
+						onClick={onCustomSelect}
+						type="button"
 					>
-						<Plus className="w-4 h-4 text-white drop-shadow" strokeWidth={3} />
-					</div>
-					<span className="text-xs font-medium">Custom</span>
-				</button>
+						<span
+							aria-hidden="true"
+							className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow-sm"
+							style={{ background: CUSTOM_TILE_GRADIENT }}
+						>
+							<Plus
+								className="h-4 w-4 text-white drop-shadow"
+								strokeWidth={3}
+							/>
+						</span>
+						<span className="text-xs font-semibold">Custom</span>
+					</button>
+				</li>
 
 				{visibleSavedThemes.map((saved) => {
 					const isSelected = saved.id === activeSavedThemeId;
@@ -98,53 +96,43 @@ const ThemeSelection = ({
 					const heading = saved.colors.heading ?? DEFAULT_CUSTOM_COLORS.heading;
 					const primary = saved.colors.primary ?? DEFAULT_CUSTOM_COLORS.primary;
 					return (
-						<div
-							className={`group relative flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.02] ${
-								isSelected
-									? "shadow-md scale-[1.03] border-[3px]"
-									: "hover:shadow-sm border"
-							}`}
-							key={saved.id}
-							onClick={() => onSavedThemeSelect(saved.colors)}
-							onKeyDown={(e) => {
-								if (e.key === "Enter" || e.key === " ") {
-									e.preventDefault();
-									onSavedThemeSelect(saved.colors);
-								}
-							}}
-							role="button"
-							style={{
-								borderColor: isSelected ? "var(--product-primary)" : "#e5e7eb",
-								backgroundColor: background,
-								color: heading,
-							}}
-							tabIndex={0}
-						>
-							<span
-								className="absolute top-1 left-1 flex items-center justify-center w-5 h-5 rounded-full bg-black/70 text-white"
-								title="Custom theme"
+						<li className="group relative" key={saved.id}>
+							{/* The tile previews the saved colours, so they are inline. */}
+							<button
+								aria-label={`${saved.name} (saved custom theme)`}
+								aria-pressed={isSelected}
+								className={cn(
+									"flex h-24 w-full flex-col items-center justify-center rounded-2xl border border-product-border p-3 transition-[box-shadow,transform] hover:-translate-y-px",
+									isSelected && SELECTED_RING,
+								)}
+								onClick={() => onSavedThemeSelect(saved.colors)}
+								style={{ backgroundColor: background, color: heading }}
+								type="button"
 							>
-								<Palette className="w-3 h-3" />
+								<span
+									aria-hidden="true"
+									className="mb-2 h-8 w-8 rounded-full border-2"
+									style={{ backgroundColor: primary, borderColor: heading }}
+								/>
+								<span className="max-w-full truncate px-1 text-xs font-medium">
+									{saved.name}
+								</span>
+							</button>
+							<span
+								aria-hidden="true"
+								className="pointer-events-none absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-product-dark/75 text-white"
+							>
+								<Palette className="h-3 w-3" />
 							</span>
 							<button
 								aria-label={`Delete ${saved.name}`}
-								className="absolute top-1 right-1 hidden group-hover:flex items-center justify-center w-5 h-5 rounded-full bg-black/70 text-white hover:bg-destructive transition-colors"
-								onClick={(e) => {
-									e.stopPropagation();
-									onDeleteSavedTheme(saved.id);
-								}}
+								className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-product-dark/75 text-white transition-[opacity,background-color] before:absolute before:-inset-1.5 before:content-[''] hover:bg-product-error focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
+								onClick={() => onDeleteSavedTheme(saved.id)}
 								type="button"
 							>
-								<X className="w-3 h-3" />
+								<X aria-hidden="true" className="h-3.5 w-3.5" />
 							</button>
-							<div
-								className="w-8 h-8 mb-2 rounded-full border-2"
-								style={{ backgroundColor: primary, borderColor: heading }}
-							/>
-							<span className="text-xs font-medium truncate max-w-full px-1">
-								{saved.name}
-							</span>
-						</div>
+						</li>
 					);
 				})}
 
@@ -152,66 +140,70 @@ const ThemeSelection = ({
 					const isSelected =
 						!isCustomActive && currentThemeName === themeItem.key;
 					return (
-						<button
-							className={`flex flex-col items-center justify-center p-3 w-full h-24 rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.02] ${
-								themeItem.key
-							} ${
-								isSelected
-									? "border-product-primary shadow-md scale-[1.03] border-[3px]"
-									: "hover:shadow-sm border border-border"
-							}`}
-							key={themeItem.key}
-							onClick={() => onThemeSelect(themeItem.key)}
-							style={{
-								borderColor: isSelected
-									? "var(--product-primary)"
-									: "var(--catalogue-section-border)",
-								backgroundColor: "var(--catalogue-background)",
-								color: "var(--catalogue-foreground)",
-								fontFamily: "var(--catalogue-font-body)",
-							}}
-							type="button"
-						>
-							{/* Preview Circle */}
-							<div
-								className="w-8 h-8 mb-2 rounded-full border-2"
+						<li key={themeItem.key}>
+							{/* The theme class scopes the catalogue variables, so the tile
+							    previews the theme in its own colours and fonts. */}
+							<button
+								aria-pressed={isSelected}
+								className={cn(
+									"flex h-24 w-full flex-col items-center justify-center rounded-2xl border p-3 transition-[box-shadow,transform] hover:-translate-y-px",
+									themeItem.key,
+									isSelected && SELECTED_RING,
+								)}
+								onClick={() => onThemeSelect(themeItem.key)}
 								style={{
-									backgroundColor: "var(--catalogue-primary)",
-									borderColor: "var(--catalogue-foreground)",
+									borderColor: "var(--catalogue-section-border)",
+									backgroundColor: "var(--catalogue-background)",
+									color: "var(--catalogue-foreground)",
+									fontFamily: "var(--catalogue-font-body)",
 								}}
-							/>
-							<span
-								className="text-xs font-medium"
-								style={{
-									color: "var(--catalogue-heading)",
-									fontFamily: "var(--catalogue-font-heading)",
-									fontWeight: "var(--catalogue-weight-heading)",
-									letterSpacing: "var(--catalogue-spacing-heading)",
-								}}
+								type="button"
 							>
-								{themeItem.label}
-							</span>
-						</button>
+								<span
+									aria-hidden="true"
+									className="mb-2 h-8 w-8 rounded-full border-2"
+									style={{
+										backgroundColor: "var(--catalogue-primary)",
+										borderColor: "var(--catalogue-foreground)",
+									}}
+								/>
+								<span
+									className="max-w-full truncate text-xs font-medium"
+									style={{
+										color: "var(--catalogue-heading)",
+										fontFamily: "var(--catalogue-font-heading)",
+										fontWeight: "var(--catalogue-weight-heading)",
+										letterSpacing: "var(--catalogue-spacing-heading)",
+									}}
+								>
+									{themeItem.label}
+								</span>
+							</button>
+						</li>
 					);
 				})}
-			</div>
+			</ul>
 
 			{visibleCount < totalThemeCount && (
 				<Button
 					className="w-full"
 					onClick={() => setVisibleCount((prev) => prev + 6)}
+					size="sm"
+					type="button"
 					variant="outline"
 				>
-					Show more
+					Show more themes
 				</Button>
 			)}
 			{visibleCount > totalThemeCount && (
 				<Button
 					className="w-full"
 					onClick={() => setVisibleCount(5)}
+					size="sm"
+					type="button"
 					variant="outline"
 				>
-					Show less
+					Show fewer themes
 				</Button>
 			)}
 		</div>

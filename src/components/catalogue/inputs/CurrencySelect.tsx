@@ -13,21 +13,13 @@ const CurrencySelect = ({ disabled = false }: { disabled?: boolean }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
 	return (
 		<div className="space-y-2">
-			<Label
-				className="text-sm font-medium text-product-foreground"
-				htmlFor="currency"
-			>
-				Currency
-			</Label>
+			<Label htmlFor="currency">Currency</Label>
 			<Select
 				disabled={disabled}
 				onValueChange={(value) => updateCatalogue({ currency: value })}
 				value={catalogue.currency}
 			>
-				<SelectTrigger
-					className="border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
-					id="currency"
-				>
+				<SelectTrigger id="currency">
 					<SelectValue placeholder="Select currency" />
 				</SelectTrigger>
 				<SelectContent>

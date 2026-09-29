@@ -1,21 +1,26 @@
 "use client";
 import { LimitsModal } from "@/components/modals/LimitsModal";
-import {
-	AlertDialog,
-	AlertDialogContent,
-	AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { AppDialogContent } from "@/components/modals/AppDialog";
+import { AlertDialog, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { snakeToTitleCase } from "@/lib/format/text";
 import { ContentBlock, ItemsBlock, UserData } from "@quicktalog/common";
 import { normalizeBlock } from "@/lib/catalogue/content-blocks";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
-import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ContentOptionsSelector } from "@/components/catalogue/sections/common/ContentOptionsSelector";
+import { cn } from "@/lib/ui/cn";
 import BlockConfigForm from "./content/BlockConfigForm";
-import BlockConfigHeader from "./content/BlockConfigHeader";
+import BlockConfigHeader, {
+	type ContentOption,
+} from "./content/BlockConfigHeader";
+import {
+	BuilderDialogBody,
+	BuilderDialogClose,
+	BuilderDialogFooter,
+	builderDialogFrame,
+} from "./content/BuilderDialog";
+import { SectionTypePicker } from "./content/SectionTypePicker";
 
 interface AddContentModalProps {
 	isOpen: boolean;
@@ -25,8 +30,6 @@ interface AddContentModalProps {
 	blockIndex?: number | null;
 	userData: UserData;
 }
-
-type ContentOption = "items" | "text" | "embedding" | "custom_code" | "divider";
 
 const DEFAULT_BLOCK_DATA = {
 	name: "",
@@ -218,65 +221,52 @@ const AddContentModal = ({
 	return (
 		<>
 			<AlertDialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-				<AlertDialogContent className="w-[98vw] sm:w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-product-background border-none shadow-2xl flex flex-col md:flex-row max-h-[90dvh] md:h-[600px] lg:h-[650px] text-product-foreground [-webkit-overflow-scrolling:touch]">
-					<div className="w-full md:w-1/4 bg-gray-200/50 border-b md:border-b-0 md:border-r border-gray-300 flex flex-col">
-						<div className="p-6 pb-4 flex justify-between items-start">
-							<div>
-								<AlertDialogTitle className="text-xl text-product-foreground">
-									{editingBlock ? "Edit section" : "Select section type"}
-								</AlertDialogTitle>
-								<p className="text-sm text-gray-500 mt-1"></p>
-							</div>
-							<Button
-								className="md:hidden text-gray-400 hover:text-product-primary rounded-full hover:bg-gray-100 -mr-2 -mt-2"
-								onClick={onClose}
-								size="icon"
-								variant="ghost"
-							>
-								<X className="w-5 h-5" />
-							</Button>
+				<AppDialogContent
+					className={cn(
+						builderDialogFrame,
+						"max-w-5xl md:h-[min(660px,calc(100dvh-48px))] md:flex-row",
+					)}
+				>
+					{/* Section type: chips above the form on phones, a side list from md. */}
+					<div className="flex flex-none flex-col border-b border-product-border bg-product-background-hero px-5 pb-4 pt-5 sm:px-6 md:w-60 md:border-b-0 md:border-r md:px-4 md:pt-6">
+						<div className="flex items-start justify-between gap-3 md:px-1.5">
+							<AlertDialogTitle className="text-lg md:text-xl">
+								{editingBlock ? "Edit section" : "Add section"}
+							</AlertDialogTitle>
+							<BuilderDialogClose className="md:hidden" onClick={onClose} />
 						</div>
-						<ContentOptionsSelector
-							onSelect={setSelectedOption as any}
-							planFeatures={userData?.currentPlan?.features}
-							selectedOption={selectedOption as any}
+						<SectionTypePicker
+							className="mt-3 md:mt-5"
+							isLocked={isLocked}
+							onChange={setSelectedOption}
+							value={selectedOption}
 						/>
 					</div>
 
-					{/* Right Content - 3/4 width */}
-					<div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-y-auto p-4 md:p-6">
+					<div className="flex min-h-0 min-w-0 flex-1 flex-col">
 						<BlockConfigHeader
 							onClose={onClose}
 							selectedOption={selectedOption}
 						/>
-						<div className="mx-auto w-full border-t border-gray-300/70" />
-						<BlockConfigForm
-							blockData={blockData}
-							locked={locked}
-							selectedOption={selectedOption}
-							setBlockData={setBlockData}
-						/>
-
-						{/* Footer Actions */}
-						<div className="p-3 sm:p-6 border-t border-gray-100 flex justify-end gap-3 bg-white flex-shrink-0">
-							<Button
-								className="hover:text-product-primary hover:border-product-primary"
-								onClick={onClose}
-								variant="outline"
-							>
+						<BuilderDialogBody>
+							<BlockConfigForm
+								blockData={blockData}
+								locked={locked}
+								selectedOption={selectedOption}
+								setBlockData={setBlockData}
+							/>
+						</BuilderDialogBody>
+						<BuilderDialogFooter>
+							<Button onClick={onClose} variant="outline">
 								Cancel
 							</Button>
-							<Button
-								className="bg-product-primary text-secondary hover:bg-product-primary/90 disabled:opacity-50"
-								disabled={!isFormValid()}
-								onClick={handleAdd}
-							>
+							<Button disabled={!isFormValid()} onClick={handleAdd}>
 								{editingBlock ? "Update" : "Add"}{" "}
 								{snakeToTitleCase(selectedOption)}
 							</Button>
-						</div>
+						</BuilderDialogFooter>
 					</div>
-				</AlertDialogContent>
+				</AppDialogContent>
 			</AlertDialog>
 
 			<LimitsModal

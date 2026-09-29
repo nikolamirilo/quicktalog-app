@@ -11,7 +11,14 @@ import type { GaugeStatus } from "@/types/shared";
 const STATUS_RING_CLASS: Record<GaugeStatus, string> = {
 	normal: "text-product-secondary",
 	warning: "text-product-warning",
-	critical: "text-error",
+	critical: "text-product-error",
+};
+
+/** The note under the chart: amber-ink / error-ink text, since the bright status colours fail contrast at 11px. */
+const STATUS_NOTE_CLASS: Record<GaugeStatus, string> = {
+	normal: "",
+	warning: "bg-product-primary-soft text-product-primary-ink",
+	critical: "bg-product-error-soft text-product-error-ink",
 };
 
 const STATUS_NOTE: Record<GaugeStatus, string> = {
@@ -103,7 +110,7 @@ const CreditMeter = ({ used, limit }: { used: number; limit: number }) => {
 			<PopoverTrigger asChild>
 				<button
 					aria-label={`AI credits: ${used} of ${limit} used. Show details.`}
-					className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-black/5"
+					className="flex h-11 w-11 items-center justify-center rounded-full transition-colors hover:bg-product-background-hero md:h-9 md:w-9"
 					title={`${left} AI credit${left === 1 ? "" : "s"} left`}
 					type="button"
 				>
@@ -114,21 +121,21 @@ const CreditMeter = ({ used, limit }: { used: number; limit: number }) => {
 			<PopoverContent
 				align="end"
 				// Above the chat panel, which sits at z-[1050].
-				className="z-[1100] w-64 font-lora"
+				className="z-[1100] w-64 font-product-body"
 				sideOffset={8}
 			>
 				<div className="flex flex-col items-center gap-3 text-center">
 					<Ring percent={percent} size={96} status={status} strokeWidth={9}>
-						<span className="text-lg font-bold tabular-nums text-product-foreground">
+						<span className="font-product-heading text-xl font-extrabold tabular-nums text-product-foreground">
 							{left}
 						</span>
-						<span className="text-[10px] leading-none text-product-foreground-accent">
+						<span className="text-[11px] leading-none text-product-muted">
 							left
 						</span>
 					</Ring>
 
 					<div className="space-y-0.5">
-						<p className="font-lora-semibold text-sm font-bold text-product-foreground">
+						<p className="font-product-heading text-sm font-bold text-product-foreground">
 							AI credits
 						</p>
 						<p className="text-xs tabular-nums text-product-foreground-accent">
@@ -141,16 +148,14 @@ const CreditMeter = ({ used, limit }: { used: number; limit: number }) => {
 						<p
 							className={cn(
 								"rounded-full px-2.5 py-1 text-[11px] font-semibold",
-								status === "critical"
-									? "bg-error/10 text-error"
-									: "bg-product-warning/10 text-product-warning",
+								STATUS_NOTE_CLASS[status],
 							)}
 						>
 							{STATUS_NOTE[status]}
 						</p>
 					)}
 
-					<p className="text-[11px] leading-relaxed text-product-foreground-accent">
+					<p className="text-xs leading-relaxed text-product-foreground-accent">
 						A question is free. An item description costs {CREDITS.describe},
 						and a change costs {CREDITS.agentBase} plus one per extra task.
 						Resets at the start of each month.

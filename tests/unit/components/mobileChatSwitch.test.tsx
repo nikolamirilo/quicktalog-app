@@ -161,22 +161,30 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 		}
 	});
 
-	it("puts Templates beside Ask AI, and publish/preview in one slot", () => {
+	it("puts Templates beside Ask AI, the editor in the middle, and publish/preview in one slot", () => {
 		setup();
 		const bar = screen.getByRole("toolbar", { name: "Builder actions" });
 
 		const labels = [...bar.querySelectorAll("button")]
 			.map((b) => b.textContent?.trim())
 			.filter((text) => text);
-		expect(labels).toEqual(["Ask AI", "Templates", "Save", "Publish"]);
+		// The editor button is an item of the bar itself, between the two pairs,
+		// rather than a button floating over the bar and the catalogue.
+		expect(labels).toEqual([
+			"Ask AI",
+			"Templates",
+			"Editor",
+			"Save",
+			"Publish",
+		]);
 
 		// Preview moved into the grouped button's menu, which is closed.
 		expect(within(bar).queryByRole("button", { name: "Preview" })).toBeNull();
 	});
 
 	/**
-	 * Four items are what puts the editor button in the gap between the second
-	 * and the third rather than over an icon, so the count is load-bearing.
+	 * Four equal items, two either side of the fixed-width editor button, keep
+	 * the editor button centred in the bar, so the count is load-bearing.
 	 */
 	it("keeps the bar at four items either side of the editor button", () => {
 		setup();

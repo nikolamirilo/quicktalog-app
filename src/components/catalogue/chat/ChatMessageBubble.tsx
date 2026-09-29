@@ -13,6 +13,7 @@ import {
 	ScanText,
 	Sparkles,
 } from "lucide-react";
+import type { ReactNode } from "react";
 
 /**
  * The OCR that travelled with the turn. It is part of what the user said, so it
@@ -23,44 +24,72 @@ const ScannedText = ({ text }: { text: string }) => {
 	const count = text.match(/^--- Image \d+ ---$/gm)?.length ?? 0;
 
 	return (
-		<details className="rounded-lg bg-black/5 px-2.5 py-1.5">
-			<summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] font-bold">
-				<ScanText className="h-3 w-3 shrink-0" />
+		<details className="rounded-lg bg-product-on-dark/10 px-2.5 py-1.5">
+			<summary className="flex min-h-7 cursor-pointer list-none items-center gap-1.5 text-xs font-semibold">
+				<ScanText aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
 				Text read from {count} image{count === 1 ? "" : "s"}
 			</summary>
-			<pre className="mt-1.5 max-h-40 overflow-auto whitespace-pre-wrap break-words font-mono text-[10px] leading-snug opacity-80">
+			<pre className="mt-1.5 max-h-40 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-snug text-product-on-dark-muted">
 				{text.slice(SCANNED_TEXT_MARKER.length).trim()}
 			</pre>
 		</details>
 	);
 };
 
+/** The round mark in front of a change, read or skip line. */
+const LineMark = ({
+	className,
+	children,
+}: {
+	className: string;
+	children: ReactNode;
+}) => (
+	<span
+		aria-hidden="true"
+		className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full [&_svg]:h-2.5 [&_svg]:w-2.5 [&_svg]:stroke-[3] ${className}`}
+	>
+		{children}
+	</span>
+);
+
+const lineClass = "flex items-start gap-2 text-[13px] leading-relaxed";
+
 const Change = ({ text }: { text: string }) => (
-	<li className="flex items-start gap-2 text-xs leading-relaxed">
-		<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-			<Check className="h-2.5 w-2.5 text-emerald-700" />
-		</span>
-		<span className="text-product-foreground-accent">{text}</span>
+	<li className={lineClass}>
+		<LineMark className="bg-product-success-soft text-product-success">
+			<Check />
+		</LineMark>
+		<span className="text-product-foreground">{text}</span>
 	</li>
 );
 
 /** A page the agent read. Not a change, so it does not get the green tick. */
 const Read = ({ text }: { text: string }) => (
-	<li className="flex items-start gap-2 text-xs leading-relaxed">
-		<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-100">
-			<Globe className="h-2.5 w-2.5 text-sky-700" />
-		</span>
+	<li className={lineClass}>
+		<LineMark className="bg-product-info-soft text-product-info">
+			<Globe />
+		</LineMark>
 		<span className="text-product-foreground-accent">{text}</span>
 	</li>
 );
 
 const Skipped = ({ text }: { text: string }) => (
-	<li className="flex items-start gap-2 text-xs leading-relaxed">
-		<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-amber-100">
-			<AlertTriangle className="h-2.5 w-2.5 text-amber-600" />
-		</span>
+	<li className={lineClass}>
+		<LineMark className="bg-product-warning/15 text-product-warning">
+			<AlertTriangle />
+		</LineMark>
 		<span className="text-product-foreground-accent">{text}</span>
 	</li>
+);
+
+/** The assistant's mark beside its turns: amber sparkle on ink, as in the header. */
+export const AssistantAvatar = () => (
+	<span
+		aria-hidden="true"
+		className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-product-foreground text-product-primary"
+	>
+		<Sparkles className="h-3.5 w-3.5" />
+	</span>
 );
 
 /**
@@ -101,10 +130,13 @@ const ChatMessageBubble = ({
 		if (part.state === "input-streaming" || part.state === "input-available") {
 			return (
 				<p
-					className="flex items-center gap-1.5 text-xs text-product-foreground-accent"
+					className="flex items-center gap-1.5 text-[13px] text-product-foreground-accent"
 					key={key}
 				>
-					<Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-product-primary" />
+					<Loader2
+						aria-hidden="true"
+						className="h-3.5 w-3.5 shrink-0 animate-spin text-product-primary-ink motion-reduce:animate-none"
+					/>
 					{runningLabel(name)}…
 				</p>
 			);
@@ -139,7 +171,7 @@ const ChatMessageBubble = ({
 
 		return (
 			<ul
-				className="space-y-1.5 rounded-xl bg-product-background-hover px-2.5 py-2"
+				className="space-y-1.5 rounded-xl bg-product-background-hero px-2.5 py-2"
 				key={key}
 			>
 				<Change text={output.summary} />
@@ -159,8 +191,9 @@ const ChatMessageBubble = ({
 
 	if (isUser) {
 		return (
-			<div className="flex animate-in justify-end duration-200 fade-in slide-in-from-bottom-1">
-				<div className="max-w-[85%] space-y-2 rounded-2xl rounded-br-md bg-product-primary px-3.5 py-2.5 text-[13px] leading-relaxed text-product-foreground shadow-sm">
+			<div className="flex animate-in justify-end duration-200 fade-in slide-in-from-bottom-1 motion-reduce:animate-none">
+				<span className="sr-only">You said: </span>
+				<div className="max-w-[85%] space-y-2 break-words rounded-[18px] rounded-br-md bg-product-foreground px-3.5 py-2.5 text-sm leading-relaxed text-product-on-dark">
 					{body}
 				</div>
 			</div>
@@ -168,11 +201,10 @@ const ChatMessageBubble = ({
 	}
 
 	return (
-		<div className="flex animate-in items-start gap-2.5 duration-200 fade-in slide-in-from-bottom-1">
-			<span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-product-border bg-white shadow-sm">
-				<Sparkles className="h-3.5 w-3.5 text-product-primary" />
-			</span>
-			<div className="max-w-[85%] space-y-2 rounded-2xl rounded-tl-md border border-product-border bg-white px-3.5 py-2.5 text-[13px] leading-relaxed text-product-foreground shadow-sm">
+		<div className="flex animate-in items-start gap-2.5 duration-200 fade-in slide-in-from-bottom-1 motion-reduce:animate-none">
+			<AssistantAvatar />
+			<span className="sr-only">Assistant: </span>
+			<div className="min-w-0 max-w-[85%] space-y-2 break-words rounded-[18px] rounded-tl-md border border-product-border bg-product-card px-3.5 py-2.5 text-sm leading-relaxed text-product-foreground">
 				{body}
 			</div>
 		</div>

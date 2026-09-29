@@ -1,9 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { AlertDialogDescription } from "@/components/ui/alert-dialog";
+import { BuilderDialogClose, BuilderDialogHeader } from "./BuilderDialog";
 
-type ContentOption = "items" | "text" | "embedding" | "custom_code" | "divider";
+export type ContentOption =
+	| "items"
+	| "text"
+	| "embedding"
+	| "custom_code"
+	| "divider";
 
 interface BlockConfigHeaderProps {
 	selectedOption: ContentOption;
@@ -29,29 +34,26 @@ const DESCRIPTIONS: Record<ContentOption, string> = {
 		"Add a visual separator with customizable spacing and border styles.",
 };
 
+/**
+ * Name and description of the chosen section type. On phones the chips above
+ * already name it, so only the description shows; the close button shows from `md`.
+ */
 const BlockConfigHeader = ({
 	selectedOption,
 	onClose,
 }: BlockConfigHeaderProps) => {
 	return (
-		<div className="pt-0 pb-4 border-gray-100 flex justify-between items-start">
-			<div>
-				<h3 className="text-xl text-product-foreground font-semibold">
+		<BuilderDialogHeader className="py-3 md:pb-4 md:pt-6">
+			<div className="min-w-0">
+				<h3 className="hidden font-product-heading text-lg md:block font-bold leading-tight text-product-foreground">
 					{LABELS[selectedOption]}
 				</h3>
-				<p className="text-sm text-gray-700 mt-1">
+				<AlertDialogDescription className="text-sm leading-relaxed md:mt-1">
 					{DESCRIPTIONS[selectedOption]}
-				</p>
+				</AlertDialogDescription>
 			</div>
-			<Button
-				className="hidden md:inline-flex text-gray-400 hover:text-product-primary rounded-full hover:bg-gray-100"
-				onClick={onClose}
-				size="icon"
-				variant="ghost"
-			>
-				<X className="w-5 h-5" />
-			</Button>
-		</div>
+			<BuilderDialogClose className="hidden md:inline-flex" onClick={onClose} />
+		</BuilderDialogHeader>
 	);
 };
 

@@ -49,12 +49,16 @@ const ItemDetails = ({ value, onChange, categoryName }: ItemDetailsProps) => {
 			{/* Item Name */}
 			<div className="space-y-2">
 				<Label htmlFor="item-name">
-					Item Name <span className="text-red-500">*</span>
+					Item Name{" "}
+					<span aria-hidden="true" className="text-product-error">
+						*
+					</span>
 				</Label>
 				<Input
 					id="item-name"
 					onChange={(e) => onChange({ ...value, name: e.target.value })}
 					placeholder="e.g. Pancakes"
+					required
 					value={value.name}
 				/>
 			</div>
@@ -64,16 +68,16 @@ const ItemDetails = ({ value, onChange, categoryName }: ItemDetailsProps) => {
 				<div className="flex items-center justify-between">
 					<Label htmlFor="item-description">Item Description</Label>
 					<button
-						className="inline-flex min-h-7 items-center gap-1.5 rounded-full px-2 text-xs font-medium text-product-primary transition-colors hover:bg-product-primary/10 hover:text-product-primary active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+						className="inline-flex min-h-7 items-center gap-1.5 rounded-full px-2 text-xs font-semibold text-product-primary-ink transition-colors hover:bg-product-primary-soft active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
 						disabled={!canGenerate || loading}
 						onClick={handleGenerate}
 						title={canGenerate ? undefined : "Add an item name first to use AI"}
 						type="button"
 					>
 						{loading ? (
-							<Loader2 className="w-3.5 h-3.5 animate-spin" />
+							<Loader2 aria-hidden="true" className="size-3.5 animate-spin" />
 						) : (
-							<Sparkles className="w-3.5 h-3.5" />
+							<Sparkles aria-hidden="true" className="size-3.5" />
 						)}
 						{enhance ? "Enhance with AI" : "Generate with AI"}
 					</button>
@@ -85,7 +89,11 @@ const ItemDetails = ({ value, onChange, categoryName }: ItemDetailsProps) => {
 					placeholder="e.g. Pancakes with Nutella, cherries, and ice cream"
 					value={value.description}
 				/>
-				{error && <p className="text-xs text-red-500">{error}</p>}
+				{error && (
+					<p className="text-xs text-product-error" role="alert">
+						{error}
+					</p>
+				)}
 			</div>
 
 			<LimitsModal

@@ -2,7 +2,9 @@
 import { HtmlContent } from "@/components/general/HtmlContent";
 import type { TextBlock } from "@quicktalog/common";
 import { useState } from "react";
-import BlockControls from "@/components/catalogue/cards/common/BlockControls";
+import BlockControls, {
+	BLOCK_CONTROLS_GROUP,
+} from "@/components/catalogue/cards/common/BlockControls";
 import RichTextEditor from "./common/RichTextEditor";
 
 interface TextBlockProps {
@@ -41,13 +43,14 @@ const TextBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className={`mb-5 group relative min-h-[50px] rounded-lg border-2 border-transparent hover:border-dashed p-2 transition-all ${isEditing ? "border-dashed border-catalogue-card-border bg-catalogue-background/50" : "hover:border-catalogue-card-border"}`}
+			className={`mb-5 ${BLOCK_CONTROLS_GROUP} relative min-h-[50px] rounded-lg border-2 border-dashed p-2 transition-colors ${isEditing ? "border-product-primary" : "border-transparent hover:border-product-border-strong"}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
 			<BlockControls
 				isEditing={isEditing}
 				isFirst={isFirst}
 				isLast={isLast}
+				label="Text"
 				onDelete={onDelete}
 				onEdit={() => setIsEditing(!isEditing)}
 				onMoveDown={onMoveDown}
@@ -64,7 +67,7 @@ const TextBlockComponent = ({
 				/>
 			) : (
 				<div
-					className="cursor-pointer min-h-[30px]"
+					className="cursor-text min-h-[30px]"
 					onClick={() => setIsEditing(true)}
 				>
 					{block.content && <HtmlContent className="" html={block.content} />}

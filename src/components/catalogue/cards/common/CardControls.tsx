@@ -15,9 +15,9 @@ import { isItemsBlock } from "@/lib/catalogue/content-blocks";
 import {
 	ChevronDown,
 	ChevronUp,
-	Edit2,
 	FolderInput,
-	MoreVertical,
+	MoreHorizontal,
+	Pencil,
 	Trash2,
 } from "lucide-react";
 
@@ -31,6 +31,22 @@ interface CardControlsProps {
 	blockIndex?: number;
 	itemIndex?: number;
 }
+
+/**
+ * Positioning of the item menu trigger. It is a small pill in the card's
+ * top-right corner, no taller than the title line, and the card title that
+ * follows it (`#item-title-*`) gets right padding so the pill never covers
+ * text. Cards whose first full-width child is the image (`.w-full`, the
+ * top-image and carousel cards) have the pill over the image instead, so their
+ * title keeps its full width. This only renders in edit mode, so the published
+ * card is untouched.
+ */
+const wrapperClasses = [
+	"absolute right-1 top-1 z-20 font-product-body text-sm font-normal not-italic leading-none tracking-normal sm:right-2 sm:top-2",
+	"transition-opacity duration-200 focus-within:opacity-100 has-[[data-state=open]]:opacity-100 group-hover:opacity-100 [@media(hover:hover)]:opacity-0",
+	"[&~*_[id^=item-title-]]:pr-10 sm:[&~*_[id^=item-title-]]:pr-11",
+	"[&~.w-full~*_[id^=item-title-]]:pr-0 sm:[&~.w-full~*_[id^=item-title-]]:pr-0",
+].join(" ");
 
 const CardControls = ({
 	onEdit,
@@ -50,125 +66,98 @@ const CardControls = ({
 		.map((block, index) => ({ block, index }))
 		.filter(({ block, index }) => isItemsBlock(block) && index !== blockIndex);
 
+	const canMoveToSection =
+		availableSections.length > 0 &&
+		blockIndex !== undefined &&
+		itemIndex !== undefined &&
+		!!moveItemToBlock;
+
 	return (
 		<div
-			className="absolute top-2  right-2 flex gap-1 z-20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+			className={wrapperClasses}
 			onClick={(e) => e.stopPropagation()}
 			onPointerDown={(e) => e.stopPropagation()}
 		>
-			{onMoveUp && (
-				<button
-					className={`p-2 bg-white rounded-full shadow-md transition-colors ${
-						isFirst
-							? "text-gray-300 cursor-not-allowed"
-							: "text-gray-600 hover:bg-gray-50"
-					}`}
-					disabled={isFirst}
-					onClick={(e) => {
-						e.stopPropagation();
-						if (!isFirst) onMoveUp();
-					}}
-					title="Move Up"
-				>
-					<ChevronUp className="w-4 h-4" />
-				</button>
-			)}
-			{onMoveDown && (
-				<button
-					className={`p-2 bg-white rounded-full shadow-md transition-colors ${
-						isLast
-							? "text-gray-300 cursor-not-allowed"
-							: "text-gray-600 hover:bg-gray-50"
-					}`}
-					disabled={isLast}
-					onClick={(e) => {
-						e.stopPropagation();
-						if (!isLast) onMoveDown();
-					}}
-					title="Move Down"
-				>
-					<ChevronDown className="w-4 h-4" />
-				</button>
-			)}
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<button
-						className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 text-gray-600 transition-colors"
+						aria-label="More options"
+						className="relative flex h-[22px] w-8 items-center justify-center rounded-full border border-product-border bg-product-card text-product-foreground-accent shadow-product transition-colors before:absolute before:-inset-2.5 before:content-[''] hover:bg-product-background-hero hover:text-product-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary data-[state=open]:bg-product-background-hero sm:h-8 sm:before:-inset-1.5 [&_svg]:size-4"
 						onClick={(e) => e.stopPropagation()}
 						title="More options"
+						type="button"
 					>
-						<MoreVertical className="w-4 h-4" />
+						<MoreHorizontal aria-hidden="true" />
 					</button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
 					align="end"
-					className="bg-product-background border border-product-border rounded-xl shadow-lg"
+					className="min-w-[200px]"
+					// The menu is portaled, but React events still bubble to the card,
+					// whose click opens the item.
+					onClick={(e) => e.stopPropagation()}
 				>
-					<DropdownMenuItem
-						className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
-						onClick={(e) => {
-							e.stopPropagation();
-							onEdit();
-						}}
-					>
-						<span className="flex items-center gap-2">
-							<Edit2 className="w-4 h-4" />
-							Edit
-						</span>
+					<DropdownMenuItem onSelect={onEdit}>
+						<Pencil aria-hidden="true" />
+						Edit item
 					</DropdownMenuItem>
+					{onMoveUp && (
+						<DropdownMenuItem disabled={isFirst} onSelect={onMoveUp}>
+							<ChevronUp aria-hidden="true" />
+							Move up
+						</DropdownMenuItem>
+					)}
+					{onMoveDown && (
+						<DropdownMenuItem disabled={isLast} onSelect={onMoveDown}>
+							<ChevronDown aria-hidden="true" />
+							Move down
+						</DropdownMenuItem>
+					)}
+					{canMoveToSection && (
+						<DropdownMenuSub>
+							<DropdownMenuSubTrigger>
+								<FolderInput aria-hidden="true" />
+								Move to section
+							</DropdownMenuSubTrigger>
+							<DropdownMenuPortal>
+								<DropdownMenuSubContent
+									className="max-w-[260px] min-w-[200px]"
+									onClick={(e) => e.stopPropagation()}
+								>
+									{availableSections.map(({ block, index }) => (
+										<DropdownMenuItem
+											key={block.id}
+											onSelect={() =>
+												moveItemToBlock?.(
+													blockIndex as number,
+													itemIndex as number,
+													index,
+												)
+											}
+										>
+											<span className="min-w-0 flex-1 truncate">
+												{isItemsBlock(block) && block.name
+													? block.name
+													: "Untitled section"}
+											</span>
+										</DropdownMenuItem>
+									))}
+								</DropdownMenuSubContent>
+							</DropdownMenuPortal>
+						</DropdownMenuSub>
+					)}
+					<DropdownMenuSeparator />
 					<DropdownMenuItem
-						className="text-red-400 hover:bg-red-50 cursor-pointer"
-						onClick={(e) => {
-							e.stopPropagation();
+						className="text-product-error focus:bg-product-error-soft focus:text-product-error"
+						onSelect={() => {
 							if (confirm("Are you sure you want to delete this item?")) {
 								onDelete();
 							}
 						}}
 					>
-						<span className="flex items-center gap-2">
-							<Trash2 className="w-4 h-4" />
-							Delete
-						</span>
+						<Trash2 aria-hidden="true" />
+						Delete item
 					</DropdownMenuItem>
-					{availableSections.length > 0 &&
-						blockIndex !== undefined &&
-						itemIndex !== undefined &&
-						moveItemToBlock && (
-							<>
-								<DropdownMenuSeparator className="my-1" />
-								<DropdownMenuSub>
-									<DropdownMenuSubTrigger className="cursor-pointer text-product-foreground hover:bg-product-background-hover">
-										<span className="flex items-center gap-2">
-											<FolderInput className="w-4 h-4" />
-											Move to
-										</span>
-									</DropdownMenuSubTrigger>
-									<DropdownMenuPortal>
-										<DropdownMenuSubContent className="bg-product-background border border-product-border rounded-xl shadow-lg min-w-[200px]">
-											{availableSections.map(({ block, index }) => (
-												<DropdownMenuItem
-													className="text-product-foreground hover:bg-product-background-hover cursor-pointer"
-													key={block.id}
-													onClick={(e) => {
-														e.stopPropagation();
-														moveItemToBlock(blockIndex, itemIndex, index);
-													}}
-												>
-													<span className="flex items-center justify-between gap-3 w-full">
-														<span className="font-medium truncate flex-1">
-															{isItemsBlock(block) ? block.name : "Unnamed"}
-														</span>
-														<span className="text-xs text-gray-500 capitalize bg-gray-100 px-2 py-0.5 rounded-full flex-shrink-0">
-															{block.type}
-														</span>
-													</span>
-												</DropdownMenuItem>
-											))}
-										</DropdownMenuSubContent>
-									</DropdownMenuPortal>
-								</DropdownMenuSub>
-							</>
-						)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>

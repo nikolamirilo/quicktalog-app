@@ -2,7 +2,9 @@
 
 import type { DividerBlock } from "@quicktalog/common";
 import { useState } from "react";
-import BlockControls from "@/components/catalogue/cards/common/BlockControls";
+import BlockControls, {
+	BLOCK_CONTROLS_GROUP,
+} from "@/components/catalogue/cards/common/BlockControls";
 import DividerInput from "@/components/catalogue/inputs/DividerInput";
 
 interface DividerBlockProps {
@@ -52,13 +54,14 @@ const DividerBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className={`group relative rounded-lg border-2 border-transparent hover:border-dashed hover:border-gray-300 transition-all ${isEditing ? "border-dashed border-gray-300 bg-gray-50/50 p-4" : "p-2"}`}
+			className={`${BLOCK_CONTROLS_GROUP} relative rounded-lg border-2 border-dashed transition-colors ${isEditing ? "border-product-primary bg-product-card p-4 font-product-body text-sm text-product-foreground" : "border-transparent p-2 hover:border-product-border-strong"}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
 			<BlockControls
 				isEditing={isEditing}
 				isFirst={isFirst}
 				isLast={isLast}
+				label="Divider"
 				onDelete={onDelete}
 				onEdit={() => setIsEditing(!isEditing)}
 				onMoveDown={onMoveDown}

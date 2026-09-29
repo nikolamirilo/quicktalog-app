@@ -9,6 +9,7 @@ import {
 	Share2,
 } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/ui/cn";
 import BlockNameInput from "./BlockNameInput";
 
 interface EmbeddingInputProps {
@@ -58,50 +59,56 @@ const EmbeddingInput = ({ value, onChange }: EmbeddingInputProps) => {
 	const [activePreset, setActivePreset] = useState(PRESETS[0]);
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 font-product-body">
 			<BlockNameInput
 				onChange={(name) => onChange({ ...value, name })}
 				type="embedding"
 				value={value.name || ""}
 			/>
 
-			<div>
-				<Label className="text-sm font-medium text-product-foreground mb-3 block">
+			<fieldset className="space-y-3">
+				<legend className="mb-3 text-[13.5px] font-semibold leading-none text-product-foreground">
 					What would you like to embed?
-				</Label>
+				</legend>
 				<div className="flex flex-wrap gap-2">
 					{PRESETS.map((preset) => {
 						const Icon = preset.icon;
 						const isActive = activePreset.id === preset.id;
 						return (
 							<button
-								className={`flex items-center gap-2 px-3 py-2 text-sm border rounded-full transition-all ${
+								aria-pressed={isActive}
+								className={cn(
+									"flex min-h-11 items-center gap-2 rounded-full border-[1.5px] px-4 text-sm font-semibold transition-colors",
 									isActive
-										? "border-product-primary bg-product-primary/5 text-product-primary shadow-sm font-medium"
-										: "border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-800"
-								}`}
+										? "border-product-primary-accent bg-product-primary-soft text-product-foreground"
+										: "border-product-border bg-product-card text-product-foreground-accent hover:border-product-border-strong hover:text-product-foreground",
+								)}
 								key={preset.id}
 								onClick={() => setActivePreset(preset)}
 								type="button"
 							>
-								<Icon className="w-4 h-4" />
+								<Icon aria-hidden="true" className="h-4 w-4" />
 								<span>{preset.label}</span>
 							</button>
 						);
 					})}
 				</div>
-			</div>
+			</fieldset>
 
 			<div className="space-y-2">
-				<div className="flex items-end justify-between">
-					<Label className="text-sm font-medium text-product-foreground block">
-						Embed Code <span className="text-red-500">*</span>
-					</Label>
-				</div>
+				<Label htmlFor="embedding-code">
+					Embed code
+					<span aria-hidden="true" className="ml-1 text-product-error">
+						*
+					</span>
+				</Label>
 				<Textarea
-					className="min-h-[180px] placeholder:text-gray-600 font-mono text-xs focus-visible:ring-product-primary resize-y bg-gray-50/50"
+					className="min-h-[180px] resize-y font-mono text-xs md:text-xs"
+					id="embedding-code"
 					onChange={(e) => onChange({ ...value, code: e.target.value })}
 					placeholder={activePreset.placeholder}
+					required
+					spellCheck={false}
 					value={value.code || ""}
 				/>
 			</div>

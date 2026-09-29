@@ -1,15 +1,16 @@
 "use client";
 
-import { FileText, Home, Layout, Palette } from "lucide-react";
-import React from "react";
-import { LuChevronsLeft, LuChevronsRight } from "react-icons/lu";
-
-import { Button } from "@/components/ui/button";
+import { BuilderPanel } from "@/components/catalogue/builder/BuilderPanel";
+import { BuilderRail } from "@/components/catalogue/builder/BuilderRail";
+import { useBuilderActions } from "@/components/catalogue/builder/useBuilderActions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { UserData } from "@quicktalog/common";
-import ActionButtons from "./ActionButtons";
+import { cn } from "@/lib/ui/cn";
+import type { UserData } from "@quicktalog/common";
+import { FileText, Home, Layout, Palette } from "lucide-react";
+import type React from "react";
+import { BuilderActionModals, BuilderBottomBar } from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";
 import FooterTab from "./FooterTab";
 import GeneralTab from "./GeneralTab";
@@ -22,14 +23,32 @@ export type TabKey =
 	| "footer"
 	| "appearance";
 
-const tabTriggerClass =
-	"flex-1 data-[state=active]:bg-product-primary data-[state=active]:text-product-foreground data-[state=active]:shadow-sm hover:bg-product-primary/10 text-gray-600 font-medium transition-all rounded-md py-2 data-[state=active]:font-bold";
+const PANEL_ID = "builder-editor-panel";
 
+/**
+ * Icon over label in four equal columns, so all four fit at 360px without
+ * clipping. Active: amber tint with an amber border, not a solid amber fill.
+ */
+const tabTriggerClass =
+	"h-auto min-w-0 flex-col gap-1 rounded-xl border border-transparent px-1 py-2 text-xs font-semibold data-[state=active]:border-product-primary data-[state=active]:bg-product-primary-soft data-[state=active]:text-product-foreground data-[state=active]:shadow-none";
+
+/**
+ * The builder frame: the desktop rail and editor panel, and the phone bottom
+ * bar and editor sheet. The catalogue reserves room for it (see
+ * `builder/frame.ts`), so none of it covers the catalogue except the panel
+ * below 1280px, which overlays with a scrim.
+ */
 const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const context = useCatalogueContext();
 	const isOpen = context?.isSidebarOpen ?? false;
 	const setIsOpen = context?.setIsSidebarOpen ?? (() => {});
 	const isChatOpen = context?.isChatOpen ?? false;
+	const setIsChatOpen = context?.setIsChatOpen ?? (() => {});
+	const closePanel = () => setIsOpen(false);
+	const { actions, catalogueName, ...modals } = useBuilderActions({
+		closePanel,
+	});
+
 	const TABS: {
 		key: TabKey;
 		icon: React.ElementType;
@@ -64,133 +83,90 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 	return (
 		<aside
-			className={`!z-[1000] fixed bg-product-background shadow-xl
-    bottom-0 left-0 w-full flex-col-reverse
-    ${
-			/* One thumb zone, one panel: the chat sheet owns the bottom edge while
-          it is up, so this bar steps aside rather than covering its input.
-          Phone only - on desktop the two sit side by side, so the bar comes
-          back at md. */ ""
-		}
-    ${isChatOpen ? "hidden md:flex" : "flex"}
-    ${isOpen ? "h-[100dvh]" : "h-auto"}
-    md:right-0 md:top-0 md:h-screen md:flex-col md:left-auto md:w-auto
-    ${isOpen ? "md:w-fit md:max-w-[520px]" : "md:w-16"}
-    
-    transition-[width,max-width,height,transform]
-    duration-500
-    [transition-timing-function:cubic-bezier(0.4,0,0.2,1)]
-    [&]:md:[transition-duration:800ms,800ms,500ms,500ms]
-    
-    ${
-			isOpen
-				? "translate-y-0 md:translate-x-0"
-				: "translate-y-0 md:translate-x-0"
-		}
-  `}
+			aria-label="Catalogue builder"
+			className={cn(
+				"fixed inset-x-0 bottom-0 !z-[1000] flex-col font-product-body text-product-foreground",
+				// One thumb zone, one panel: the chat sheet owns the bottom edge while
+				// it is up, so the phone bar steps aside rather than covering its
+				// input. On desktop the two sit side by side, so it comes back at md.
+				isChatOpen ? "hidden md:flex" : "flex",
+				isOpen && "h-[100dvh]",
+				"md:inset-x-auto md:right-0 md:top-0 md:h-[100dvh] md:w-[72px]",
+			)}
 		>
 			{isOpen && (
+				// Below 1280px the panel overlays the catalogue; the scrim closes it.
+				// Keyboard users close it with Esc or the header button.
 				<div
-					className="md:hidden fixed inset-0 bg-black/20 backdrop-blur-sm -z-10 transition-opacity duration-300"
-					onClick={() => setIsOpen(false)}
-					style={{
-						animation: "fadeIn 0.3s ease-out",
-					}}
+					aria-hidden="true"
+					className="fixed inset-0 -z-10 hidden animate-in bg-product-dark/40 backdrop-blur-[2px] duration-300 fade-in motion-reduce:animate-none md:block min-[1280px]:hidden"
+					onClick={closePanel}
 				/>
 			)}
 
-			<div
-				className={`relative flex items-center pt-3 pb-3 px-2 sm:px-4 justify-around md:justify-around bg-product-background rounded-none shadow-[0_-8px_30px_-5px_rgba(0,0,0,0.12)] md:shadow-none border-t border-gray-100 md:border-t-0
-          w-full flex-row
-          ${isOpen ? "md:flex-row md:gap-2 md:py-3" : "md:flex-col md:gap-4 md:py-3"}
-          transition-all duration-300 ease-in-out
-        `}
-			>
-				{/* The mobile toggle lives in ActionButtons' own bottom bar, which is
-				    the element the user actually sees: positioned there, straddling
-				    its top edge is exact rather than guessed against this row. */}
-
-				<Button
-					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95 transition-transform duration-200"
-					onClick={() => setIsOpen(!isOpen)}
-					size={isOpen ? "sm" : "icon"}
-					variant="secondary"
-				>
-					<div className="hidden md:block">
-						{isOpen ? (
-							<LuChevronsRight size={25} />
-						) : (
-							<LuChevronsLeft size={25} />
-						)}
-					</div>
-				</Button>
-				<span
-					className={`border-gray-300/70 hidden md:block transition-all duration-300
-            ${isOpen ? "border-r h-6" : "border-b w-full"}
-          `}
-				></span>
-
-				<div className="flex md:contents w-full justify-around md:w-auto md:justify-start gap-1.5 sm:gap-2.5 items-center">
-					<ActionButtons isOpen={isOpen} setIsOpen={setIsOpen} />
-				</div>
-			</div>
-
-			<div
-				className={`mx-auto w-[95%] border-t border-gray-300/70 transition-opacity duration-300 ${!isOpen && "md:hidden"}`}
+			<BuilderRail
+				actions={[
+					actions.save,
+					actions.templates,
+					actions.preview,
+					actions.publish,
+				]}
+				isChatOpen={isChatOpen}
+				isPanelOpen={isOpen}
+				onToggleChat={() => setIsChatOpen(!isChatOpen)}
+				onTogglePanel={() => setIsOpen(!isOpen)}
+				panelId={PANEL_ID}
 			/>
-			{isOpen && (
-				<Tabs
-					className={`flex flex-col flex-1 overflow-hidden bg-product-background md:bg-gray-50/50
-            animate-in fade-in slide-in-from-bottom-4 md:slide-in-from-right-4 duration-500
-          `}
-					defaultValue="general"
-				>
-					<div
-						className="px-2 py-4 bg-product-background transition-all duration-300"
-						style={{
-							animation: "slideDown 0.4s ease-out 0.1s both",
-						}}
-					>
-						<TabsList className="w-full flex bg-gray-100 p-1 rounded-lg h-auto gap-1">
-							{TABS.map(({ key, icon: Icon, label }, index) => (
-								<TabsTrigger
-									className={tabTriggerClass}
-									key={key}
-									style={{
-										animation: `fadeInScale 0.3s ease-out ${0.1 + index * 0.05}s both`,
-									}}
-									value={key}
-								>
-									<Icon className="w-3 h-3 md:w-4 md:h-4 mr-[3px] md:mr-1.5" />
-									<span className="text-[0.65rem] md:text-xs">{label}</span>
-								</TabsTrigger>
-							))}
-						</TabsList>
-					</div>
-					<div
-						className={`mx-auto w-[95%] border-t border-gray-300/70 ${!isOpen && "md:hidden"}`}
-					/>
 
-					<ScrollArea className="flex-1">
-						<div
-							className="p-4"
-							style={{
-								animation: "fadeInUp 0.5s ease-out 0.2s both",
-							}}
-						>
-							{TABS.map(({ key, content }) => (
-								<TabsContent
-									className="mt-0 focus-visible:outline-none"
-									key={key}
-									value={key}
-								>
-									{content}
-								</TabsContent>
-							))}
+			{isOpen && (
+				<BuilderPanel
+					description="Name, header, footer and appearance"
+					id={PANEL_ID}
+					onClose={closePanel}
+					title="Edit catalogue"
+				>
+					<Tabs className="flex min-h-0 flex-1 flex-col" defaultValue="general">
+						<div className="shrink-0 border-b border-product-border bg-product-card px-3 py-3 md:px-4">
+							<TabsList className="grid h-auto w-full grid-cols-4 gap-1 rounded-2xl p-1">
+								{TABS.map(({ key, icon: Icon, label }) => (
+									<TabsTrigger
+										className={tabTriggerClass}
+										key={key}
+										value={key}
+									>
+										<Icon aria-hidden="true" />
+										<span className="max-w-full truncate">{label}</span>
+									</TabsTrigger>
+								))}
+							</TabsList>
 						</div>
-					</ScrollArea>
-				</Tabs>
+
+						<ScrollArea className="min-h-0 flex-1 [&>[data-radix-scroll-area-viewport]>div]:!block">
+							<div className="p-4">
+								{TABS.map(({ key, content }) => (
+									<TabsContent className="mt-0" key={key} value={key}>
+										{content}
+									</TabsContent>
+								))}
+							</div>
+						</ScrollArea>
+					</Tabs>
+				</BuilderPanel>
 			)}
+
+			<BuilderBottomBar
+				actions={actions}
+				isChatOpen={isChatOpen}
+				isPanelOpen={isOpen}
+				onAskAi={() => {
+					closePanel();
+					setIsChatOpen(true);
+				}}
+				onTogglePanel={() => setIsOpen(!isOpen)}
+				panelId={PANEL_ID}
+			/>
+
+			<BuilderActionModals catalogueName={catalogueName} {...modals} />
 		</aside>
 	);
 };

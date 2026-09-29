@@ -1,13 +1,12 @@
+import { Catalogue, PricingPlan } from "@quicktalog/common";
+import { Lock } from "lucide-react";
+import {
+	PanelSection,
+	SwitchField,
+} from "@/components/catalogue/inputs/sidebar/panel";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Switch } from "@/components/ui/switch";
-import { Catalogue, PricingPlan } from "@quicktalog/common";
-import { Info, Lock } from "lucide-react";
+import { cn } from "@/lib/ui/cn";
 
 interface InteractionSectionProps {
 	catalogue: Catalogue;
@@ -20,106 +19,69 @@ const InteractionSection = ({
 	handleChange,
 	plan,
 }: InteractionSectionProps) => {
+	const hasNewsletter = !!plan?.features?.newsletter;
 	return (
-		<div className="space-y-4">
-			<div className="flex items-center gap-2">
-				<h3 className="text-lg font-bold">Interaction</h3>
-				<Popover>
-					<PopoverTrigger type="button">
-						<Info className="h-4 w-4 text-muted-foreground" />
-					</PopoverTrigger>
-					<PopoverContent className="z-[2000] w-[200px] p-3 text-sm" side="top">
-						<p>Setup calls to action and newsletter signup.</p>
-					</PopoverContent>
-				</Popover>
-			</div>
+		<PanelSection
+			info="Set up calls to action and newsletter signup."
+			title="Interaction"
+		>
+			<SwitchField
+				checked={catalogue.footer?.cta?.isEnabled || false}
+				id="footer-cta-enabled"
+				info="Enable a call-to-action button in the footer."
+				label="Footer action link"
+				onCheckedChange={(checked) =>
+					handleChange("footer.cta.isEnabled", checked)
+				}
+			/>
 
-			<div className="space-y-4">
-				<div className="flex items-center justify-between">
-					<div className="flex items-center gap-2">
-						<Label className="text-base" htmlFor="footer-cta-enabled">
-							Footer Action Link
-						</Label>
-						<Popover>
-							<PopoverTrigger className="inline-flex" type="button">
-								<Info className="h-4 w-4 text-muted-foreground" />
-							</PopoverTrigger>
-							<PopoverContent
-								className="z-[2000] w-[200px] p-3 text-sm"
-								side="top"
-							>
-								<p>Enable a call-to-action button in the footer.</p>
-							</PopoverContent>
-						</Popover>
+			{catalogue.footer?.cta?.isEnabled && (
+				<div className="space-y-4 border-t border-product-border pt-4">
+					<div className="space-y-2">
+						<Label htmlFor="footer-cta-label">Button label</Label>
+						<Input
+							id="footer-cta-label"
+							onChange={(e) => handleChange("footer.cta.label", e.target.value)}
+							placeholder="e.g. Contact Us"
+							value={catalogue.footer?.cta?.label || ""}
+						/>
 					</div>
-					<Switch
-						checked={catalogue.footer?.cta?.isEnabled || false}
-						id="footer-cta-enabled"
-						onCheckedChange={(checked) =>
-							handleChange("footer.cta.isEnabled", checked)
-						}
-					/>
-				</div>
-
-				{catalogue.footer?.cta?.isEnabled && (
-					<>
-						<div className="space-y-2">
-							<Input
-								onChange={(e) =>
-									handleChange("footer.cta.label", e.target.value)
-								}
-								placeholder="Label (e.g. Contact Us)"
-								value={catalogue.footer?.cta?.label || ""}
-							/>
-						</div>
-						<div className="space-y-2">
-							<Input
-								onChange={(e) => handleChange("footer.cta.url", e.target.value)}
-								placeholder="URL (e.g. https://mywebsite.com/contact)"
-								value={catalogue.footer?.cta?.url || ""}
-							/>
-						</div>
-					</>
-				)}
-
-				<div className="relative w-full">
-					{!plan?.features?.newsletter && (
-						<div className="absolute inset-x-0 inset-y-[-10px] z-10 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px] rounded-lg">
-							<p className="text-sm font-bold text-foreground flex items-center gap-2">
-								<Lock className="w-4 h-4" /> Upgrade for Newsletter
-							</p>
-						</div>
-					)}
-					<div
-						className={`flex items-center justify-between ${!plan?.features?.newsletter ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
-					>
-						<div className="flex items-center gap-2">
-							<Label className="text-base" htmlFor="footer-newsletter">
-								Newsletter
-							</Label>
-							<Popover>
-								<PopoverTrigger className="inline-flex" type="button">
-									<Info className="h-4 w-4 text-muted-foreground" />
-								</PopoverTrigger>
-								<PopoverContent
-									className="z-[2000] w-[200px] p-3 text-sm"
-									side="top"
-								>
-									<p>Enable newsletter subscription form in the footer.</p>
-								</PopoverContent>
-							</Popover>
-						</div>
-						<Switch
-							checked={catalogue.footer?.newsletter || false}
-							id="footer-newsletter"
-							onCheckedChange={(checked) =>
-								handleChange("footer.newsletter", checked)
-							}
+					<div className="space-y-2">
+						<Label htmlFor="footer-cta-url">Button link</Label>
+						<Input
+							id="footer-cta-url"
+							inputMode="url"
+							onChange={(e) => handleChange("footer.cta.url", e.target.value)}
+							placeholder="e.g. https://mywebsite.com/contact"
+							value={catalogue.footer?.cta?.url || ""}
 						/>
 					</div>
 				</div>
+			)}
+
+			<div className="border-t border-product-border pt-2">
+				<div
+					className={cn(!hasNewsletter && "pointer-events-none opacity-40")}
+					inert={!hasNewsletter || undefined}
+				>
+					<SwitchField
+						checked={catalogue.footer?.newsletter || false}
+						id="footer-newsletter"
+						info="Enable newsletter subscription form in the footer."
+						label="Newsletter"
+						onCheckedChange={(checked) =>
+							handleChange("footer.newsletter", checked)
+						}
+					/>
+				</div>
+				{!hasNewsletter && (
+					<p className="mt-1 flex items-center gap-1.5 rounded-xl bg-product-primary-soft px-3 py-2 text-[12.5px] font-semibold text-product-primary-ink">
+						<Lock aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+						Upgrade your plan for the newsletter form.
+					</p>
+				)}
 			</div>
-		</div>
+		</PanelSection>
 	);
 };
 

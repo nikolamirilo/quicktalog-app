@@ -1,10 +1,28 @@
 "use client";
+import {
+	Check,
+	CheckCircle2,
+	Code,
+	Copy,
+	Download,
+	ExternalLink,
+	FileCode2,
+	LayoutDashboard,
+	Link as LinkIcon,
+	Pencil,
+	PartyPopper,
+	QrCode,
+} from "lucide-react";
+import Link from "next/link";
+import { QRCodeSVG } from "qrcode.react";
+import type * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import { AppDialogFooter, AppDialogIcon } from "@/components/modals/AppDialog";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
@@ -15,23 +33,7 @@ import {
 	handleDownloadHTML,
 	handleDownloadPng,
 } from "@/lib/catalogue/download";
-import {
-	Check,
-	Code,
-	Copy,
-	Download,
-	Edit,
-	Link as LinkIcon,
-	QrCode,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { QRCodeSVG } from "qrcode.react";
-import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-import { FaCode } from "react-icons/fa6";
-import { FiCheckCircle, FiHome } from "react-icons/fi";
-import { IoMdOpen } from "react-icons/io";
+import { cn } from "@/lib/ui/cn";
 
 export type SuccessModalProps = {
 	isOpen: boolean;
@@ -46,7 +48,6 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 	catalogueUrl,
 	type = "regular",
 }) => {
-	const router = useRouter();
 	const [fullURL, setFullURL] = useState("");
 	const [copied, setCopied] = useState(false);
 	const [linkCopied, setLinkCopied] = useState(false);
@@ -70,6 +71,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 		setFullURL(`${window.location.origin}${catalogueUrl}`);
 	}, [catalogueUrl]);
 
+	const slug = catalogueUrl.split("/")[2];
+	const panel =
+		"flex flex-col gap-4 rounded-product-card border border-product-border bg-product-background p-4 sm:p-5";
+
 	return (
 		<Dialog
 			onOpenChange={(open) => {
@@ -77,21 +82,15 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 			}}
 			open={isOpen}
 		>
-			<DialogContent className="max-h-[90vh] sm:max-h-[85vh] overflow-y-auto w-[95vw] max-w-[95vw] sm:max-w-[550px] !p-4 sm:!p-7 bg-white/95 border border-product-border shadow-product rounded-3xl">
-				<DialogHeader className="space-y-2 sm:space-y-3">
-					<div className="flex items-center justify-center gap-3">
-						<DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-product-foreground font-heading">
-							{type === "edit" ? (
-								<div className="flex items-center gap-2">
-									<FiCheckCircle className="w-6 h-6 text-green-500" />
-									Changes Saved!
-								</div>
-							) : (
-								"🎉 Congratulations!"
-							)}
-						</DialogTitle>
-					</div>
-					<DialogDescription className="text-center text-product-foreground-accent text-xs sm:text-sm md:text-base font-body">
+			<DialogContent className="flex max-h-[calc(100dvh-24px)] w-[calc(100vw-24px)] max-w-[560px] flex-col gap-5 p-5 sm:p-7">
+				<DialogHeader className="items-center space-y-3 pt-2 text-center sm:text-center">
+					<AppDialogIcon tone="green">
+						{type === "edit" ? <CheckCircle2 /> : <PartyPopper />}
+					</AppDialogIcon>
+					<DialogTitle className="text-xl sm:text-2xl">
+						{type === "edit" ? "Changes Saved!" : "Congratulations!"}
+					</DialogTitle>
+					<DialogDescription className="max-w-[420px] text-sm sm:text-[15px]">
 						{type === "edit"
 							? "Your catalogue has been successfully updated. All changes are now live and visible to your customers."
 							: type === "ai"
@@ -100,174 +99,158 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 					</DialogDescription>
 				</DialogHeader>
 
-				{/* Tabs Layout */}
-				<div className={type === "edit" ? "hidden" : "mt-4 font-lora"}>
+				{type !== "edit" && (
 					<Tabs className="w-full" defaultValue="share">
-						<TabsList className="grid w-full grid-cols-3 h-auto p-0 bg-transparent gap-2">
-							<TabsTrigger
-								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg rounded-b-none font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
-								value="share"
-							>
-								<LinkIcon className="w-4 h-4" />
+						<TabsList className="grid w-full grid-cols-3">
+							<TabsTrigger className="px-2" value="share">
+								<LinkIcon aria-hidden="true" />
 								Share
 							</TabsTrigger>
-							<TabsTrigger
-								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg rounded-b-none font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
-								value="qr"
-							>
-								<QrCode className="w-4 h-4" />
+							<TabsTrigger className="px-2" value="qr">
+								<QrCode aria-hidden="true" />
 								QR Code
 							</TabsTrigger>
-							<TabsTrigger
-								className="data-[state=active]:bg-[var(--product-primary)] data-[state=active]:text-white data-[state=active]:border-[var(--product-primary)] data-[state=active]:border-t data-[state=active]:border-l data-[state=active]:border-r data-[state=active]:border-b-[var(--product-primary)] data-[state=active]:shadow-md data-[state=active]:mb-[-1px] data-[state=active]:pb-[2px] bg-gray-50 hover:bg-gray-100 rounded-t-lg rounded-b-none font-medium text-sm transition-all border border-gray-300 border-b-gray-200 h-11 relative flex items-center justify-center gap-2"
-								value="embed"
-							>
-								<Code className="w-4 h-4" />
+							<TabsTrigger className="px-2" value="embed">
+								<Code aria-hidden="true" />
 								Embed
 							</TabsTrigger>
 						</TabsList>
 
-						<div className="border border-gray-200 rounded-b-lg bg-white shadow-product p-5">
-							<TabsContent className="space-y-4 mt-0" value="share">
-								<div className="flex flex-col gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
-									<div className="space-y-3">
-										<Label className="text-sm font-semibold">Direct Link</Label>
-										<div className="flex gap-2">
-											<Input
-												className="bg-white font-medium text-sm"
-												readOnly
-												value={fullURL}
-											/>
-											<Button
-												className="shrink-0"
-												onClick={handleCopyLink}
-												size="icon"
-												title={linkCopied ? "Copied!" : "Copy link"}
-												variant="outline"
-											>
-												{linkCopied ? (
-													<Check className="w-4 h-4 text-green-500" />
-												) : (
-													<Copy className="w-4 h-4" />
-												)}
-											</Button>
-										</div>
-									</div>
-									<p className="text-xs text-product-foreground-accent text-center px-4">
-										Share this link directly with your customers via email,
-										social media, or messaging apps.
-									</p>
-								</div>
-							</TabsContent>
-
-							<TabsContent className="space-y-4 mt-0" value="qr">
-								<div className="flex flex-col items-center gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
-									<div className="space-y-2 text-center">
-										<Label className="text-sm font-semibold">
-											Scan to View
-										</Label>
-										<div
-											className="p-3 bg-white rounded-xl shadow-sm border border-product-border mx-auto"
-											id="qr-code"
-										>
-											<QRCodeSVG
-												bgColor="white"
-												className="w-32 h-32 sm:w-40 sm:h-40"
-												fgColor="black"
-												size={160}
-												value={fullURL}
-											/>
-										</div>
-									</div>
-
-									<div className="grid grid-cols-2 gap-3 w-full">
+						<TabsContent value="share">
+							<div className={panel}>
+								<div className="space-y-2">
+									<Label htmlFor="success-link">Direct Link</Label>
+									<div className="flex gap-2">
+										<Input
+											className="min-w-0 flex-1 text-sm md:text-sm"
+											id="success-link"
+											readOnly
+											value={fullURL}
+										/>
 										<Button
-											className="w-full bg-white"
-											onClick={() =>
-												handleDownloadPng(catalogueUrl.split("/")[2])
-											}
+											aria-label={linkCopied ? "Link copied" : "Copy link"}
+											className="h-11 w-11 flex-none"
+											onClick={handleCopyLink}
+											size="icon"
+											title={linkCopied ? "Copied!" : "Copy link"}
 											variant="outline"
 										>
-											<Download className="w-4 h-4 mr-2" />
-											Download
+											{linkCopied ? (
+												<Check
+													aria-hidden="true"
+													className="text-product-success"
+												/>
+											) : (
+												<Copy aria-hidden="true" />
+											)}
 										</Button>
-										<Link
-											className="w-full"
-											href={`/admin/${catalogueUrl.split("/")[2]}/qr-editor`}
-											passHref
-										>
-											<Button className="w-full bg-white" variant="outline">
-												<Edit className="w-4 h-4 mr-2" />
-												Customize
-											</Button>
-										</Link>
 									</div>
 								</div>
-							</TabsContent>
+								<p className="text-center text-xs leading-relaxed text-product-foreground-accent">
+									Share this link directly with your customers via email, social
+									media, or messaging apps.
+								</p>
+							</div>
+						</TabsContent>
 
-							<TabsContent className="space-y-4 mt-0" value="embed">
-								<div className="flex flex-col gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
-									<div className="space-y-3">
-										<Label className="text-sm font-semibold">Embed Code</Label>
-										<div className="relative group">
-											<div
-												className="bg-gray-900 rounded-xl p-3 text-xs overflow-x-auto font-mono border border-gray-700 text-gray-300 leading-relaxed h-32 custom-scrollbar"
-												ref={codeRef}
-											>
-												<pre className="whitespace-pre-wrap break-all m-0">
-													{iframeCode}
-												</pre>
-											</div>
-											<Button
-												className={`absolute top-2 right-2 h-8 w-8 hover:bg-gray-800/80 transition-colors ${
-													copied
-														? "text-green-500 bg-gray-800/50"
-														: "text-gray-400 bg-gray-800/30"
-												}`}
-												onClick={handleCopyCode}
-												size="icon"
-												variant="ghost"
-											>
-												{copied ? (
-													<Check className="w-4 h-4" />
-												) : (
-													<Copy className="w-4 h-4" />
-												)}
-											</Button>
-										</div>
-									</div>
-
+						<TabsContent value="qr">
+							<div className={cn(panel, "items-center")}>
+								<p className="text-[13.5px] font-semibold text-product-foreground">
+									Scan to View
+								</p>
+								<div
+									className="rounded-[14px] border border-product-border bg-white p-3"
+									id="qr-code"
+								>
+									<QRCodeSVG
+										bgColor="white"
+										className="h-32 w-32 sm:h-40 sm:w-40"
+										fgColor="black"
+										size={160}
+										title="QR code for your catalogue"
+										value={fullURL}
+									/>
+								</div>
+								<div className="grid w-full grid-cols-1 gap-2 min-[420px]:grid-cols-2">
 									<Button
-										className="w-full bg-white"
-										onClick={() =>
-											handleDownloadHTML(catalogueUrl.split("/")[2], fullURL)
-										}
+										onClick={() => handleDownloadPng(slug)}
 										variant="outline"
 									>
-										<FaCode className="w-4 h-4 mr-2" /> Download HTML File
+										<Download aria-hidden="true" />
+										Download
+									</Button>
+									<Button asChild variant="outline">
+										<Link href={`/admin/${slug}/qr-editor`}>
+											<Pencil aria-hidden="true" />
+											Customize
+										</Link>
 									</Button>
 								</div>
-							</TabsContent>
-						</div>
-					</Tabs>
-				</div>
+							</div>
+						</TabsContent>
 
-				<DialogFooter className="flex gap-2 sm:gap-3 pt-3 sm:pt-4 md:pt-5 border-t border-product-border">
+						<TabsContent value="embed">
+							<div className={panel}>
+								<div className="space-y-2">
+									<p className="text-[13.5px] font-semibold text-product-foreground">
+										Embed Code
+									</p>
+									<div className="relative">
+										<div
+											className="custom-scrollbar h-32 overflow-auto rounded-[14px] bg-product-dark p-3 pr-12 font-mono text-xs leading-relaxed text-product-on-dark-muted"
+											ref={codeRef}
+										>
+											<pre className="m-0 whitespace-pre-wrap break-all">
+												{iframeCode}
+											</pre>
+										</div>
+										<Button
+											aria-label={
+												copied ? "Embed code copied" : "Copy embed code"
+											}
+											className={cn(
+												"absolute right-2 top-2 h-8 w-8 text-product-on-dark-muted hover:bg-product-dark-raised hover:text-product-on-dark",
+												copied && "text-product-success-on-dark",
+											)}
+											onClick={handleCopyCode}
+											size="icon"
+											variant="ghost"
+										>
+											{copied ? (
+												<Check aria-hidden="true" />
+											) : (
+												<Copy aria-hidden="true" />
+											)}
+										</Button>
+									</div>
+								</div>
+								<Button
+									onClick={() => handleDownloadHTML(slug, fullURL)}
+									variant="outline"
+								>
+									<FileCode2 aria-hidden="true" />
+									Download HTML File
+								</Button>
+							</div>
+						</TabsContent>
+					</Tabs>
+				)}
+
+				<AppDialogFooter className="mt-0 border-t border-product-border pt-4">
 					<Button
-						className="flex-1 w-full md:w-fit text-xs bg-product-background sm:text-sm"
-						onClick={() => (window.location.href = "/admin/dashboard")}
+						onClick={() => {
+							window.location.href = "/admin/dashboard";
+						}}
 						variant="outline"
 					>
-						<FiHome className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+						<LayoutDashboard aria-hidden="true" />
 						Return to Dashboard
 					</Button>
-					<Button
-						className="flex-1 w-full md:w-fit text-xs sm:text-sm"
-						onClick={() => window.open(fullURL, "_blank")}
-					>
-						<IoMdOpen className="w-3 h-3 sm:w-4 sm:h-4 mr-2" /> View Catalogue
+					<Button onClick={() => window.open(fullURL, "_blank")}>
+						<ExternalLink aria-hidden="true" />
+						View Catalogue
 					</Button>
-				</DialogFooter>
+				</AppDialogFooter>
 			</DialogContent>
 		</Dialog>
 	);

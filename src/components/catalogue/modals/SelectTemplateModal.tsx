@@ -1,7 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
@@ -59,31 +61,31 @@ const SelectTemplateModal = ({
 	return (
 		<Dialog onOpenChange={(open) => !open && handleClose()} open={isOpen}>
 			<DialogContent
-				className="fixed w-[98vw] sm:w-[95vw] max-h-[92dvh] sm:max-h-[90dvh] left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] sm:max-w-[95vw] md:max-w-5xl p-0 overflow-hidden bg-white border-none shadow-2xl flex flex-col [-webkit-overflow-scrolling:touch]"
+				className="flex max-h-[calc(100dvh-24px)] w-[calc(100vw-24px)] max-w-5xl flex-col gap-0 overflow-hidden p-0"
 				showClose={false}
 			>
-				{/* Dismiss button - show if externally controlled or if we want to allow dismissal */}
-				{(externalIsOpen !== undefined || internalIsOpen) && (
-					<button
-						className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors z-[60]"
-						onClick={handleClose}
-					>
-						<X className="w-5 h-5 text-gray-500" />
-					</button>
-				)}
-
-				<div className="p-2 sm:p-4 md:p-6 pb-2 sm:pb-0 text-center flex-shrink-0 pt-10 sm:pt-6">
-					<DialogHeader className="mb-1 sm:mb-2">
-						<DialogTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-center w-full">
+				<div className="flex flex-none items-start justify-between gap-3 px-5 pb-4 pt-5 sm:px-6 md:pt-6">
+					<DialogHeader className="min-w-0 space-y-1 text-left sm:text-left">
+						<DialogTitle className="text-xl sm:text-2xl">
 							Choose a Template
 						</DialogTitle>
-						<DialogDescription className="text-center w-full text-xs sm:text-sm md:text-base">
+						<DialogDescription className="text-sm sm:text-[15px]">
 							Start with a pre-made layout or build from scratch
 						</DialogDescription>
 					</DialogHeader>
+					<DialogClose asChild>
+						<Button
+							aria-label="Close"
+							className="-mr-2 -mt-1 flex-none"
+							size="icon"
+							variant="ghost"
+						>
+							<X aria-hidden="true" className="!size-5" />
+						</Button>
+					</DialogClose>
 				</div>
 
-				<div className="flex-1 min-h-0 overflow-y-auto pb-2 sm:pb-4 [-webkit-overflow-scrolling:touch]">
+				<div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4 pt-1 sm:pb-6 [-webkit-overflow-scrolling:touch]">
 					<TemplatesInput onComplete={handleComplete} />
 				</div>
 			</DialogContent>

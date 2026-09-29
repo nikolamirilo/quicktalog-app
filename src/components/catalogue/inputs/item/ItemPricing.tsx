@@ -137,14 +137,15 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 	return (
 		<>
 			{/* Price Row */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-end">
+			<div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-6">
 				<div className="space-y-2">
 					<Label htmlFor="item-price">Item Price ({currency})</Label>
 					<div className="flex gap-2">
 						<Input
-							className="flex-1 min-w-0 h-10"
+							className="min-w-0 flex-1"
 							disabled={value.isFree}
 							id="item-price"
+							inputMode="decimal"
 							onBlur={handlePriceBlur}
 							onChange={(e) => handlePriceStringChange(e.target.value)}
 							type="text"
@@ -160,7 +161,10 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 							}
 							value={value.denominator || "none"}
 						>
-							<SelectTrigger className="w-[90px] sm:w-[100px] flex-shrink-0">
+							<SelectTrigger
+								aria-label="Price unit"
+								className="w-[132px] flex-none"
+							>
 								<SelectValue placeholder="Unit" />
 							</SelectTrigger>
 							<SelectContent>
@@ -174,8 +178,8 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 					</div>
 				</div>
 
-				<div className="flex h-10 items-center gap-4 sm:gap-6">
-					<div className="flex items-center space-x-2">
+				<div className="flex h-11 items-center gap-6">
+					<div className="flex items-center gap-2">
 						<Checkbox
 							checked={value.isFree}
 							id="is-free"
@@ -187,19 +191,19 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 								})
 							}
 						/>
-						<Label className="font-normal cursor-pointer" htmlFor="is-free">
+						<Label className="cursor-pointer font-medium" htmlFor="is-free">
 							Free
 						</Label>
 					</div>
 
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center gap-2">
 						<Checkbox
 							checked={!!value.discount?.isOnDiscount}
 							disabled={value.isFree}
 							id="discount"
 							onCheckedChange={(checked) => toggleDiscount(checked as boolean)}
 						/>
-						<Label className="font-normal cursor-pointer" htmlFor="discount">
+						<Label className="cursor-pointer font-medium" htmlFor="discount">
 							Discount
 						</Label>
 					</div>
@@ -208,13 +212,17 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 
 			{/* Sale Fields */}
 			{value.discount?.isOnDiscount && !value.isFree && (
-				<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+				<div className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2 sm:gap-6">
 					<div className="space-y-2">
 						<Label htmlFor="sale-price">
-							Sale Price ({currency}) <span className="text-red-500">*</span>
+							Sale Price ({currency}){" "}
+							<span aria-hidden="true" className="text-product-error">
+								*
+							</span>
 						</Label>
 						<Input
 							id="sale-price"
+							inputMode="decimal"
 							onBlur={handleDiscountBlur}
 							onChange={(e) => handleDiscountPriceStringChange(e.target.value)}
 							type="text"
@@ -223,11 +231,16 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 					</div>
 					<div className="space-y-2">
 						<Label htmlFor="sale-percentage">
-							Percentage <span className="text-red-500">*</span>
+							Percentage{" "}
+							<span aria-hidden="true" className="text-product-error">
+								*
+							</span>
 						</Label>
 						<div className="relative">
 							<Input
+								className="pr-9"
 								id="sale-percentage"
+								inputMode="numeric"
 								onBlur={handleDiscountBlur}
 								onChange={(e) =>
 									handleDiscountChange("discountPercentage", e.target.value)
@@ -235,7 +248,10 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 								type="text"
 								value={value.discount.discountPercentage}
 							/>
-							<span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+							<span
+								aria-hidden="true"
+								className="absolute right-4 top-1/2 -translate-y-1/2 text-product-muted"
+							>
 								%
 							</span>
 						</div>

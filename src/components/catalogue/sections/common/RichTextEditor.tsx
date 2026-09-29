@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import {
-	MdFormatAlignCenter,
-	MdFormatAlignLeft,
-	MdFormatAlignRight,
-	MdFormatBold,
-	MdFormatItalic,
-	MdFormatListBulleted,
-	MdFormatListNumbered,
-	MdFormatUnderlined,
-} from "react-icons/md";
+	AlignCenter,
+	AlignLeft,
+	AlignRight,
+	Bold,
+	Italic,
+	List,
+	ListOrdered,
+	Underline,
+} from "lucide-react";
 
 interface RichTextEditorProps {
 	content: string;
@@ -25,22 +25,13 @@ export default function RichTextEditor({
 	className = "",
 	themeMode = "light",
 }: RichTextEditorProps) {
+	// The toolbar is product chrome in both modes. In "catalogue" mode the
+	// writing surface keeps the catalogue's colours so the text reads as it will
+	// be published; in "light" mode (dialogs) it is a product field.
 	const isCatalogue = themeMode === "catalogue";
-	const toolbarBg = isCatalogue ? "bg-catalogue-background" : "bg-gray-50";
-	const editorBg = isCatalogue ? "bg-catalogue-card-background" : "bg-white";
-	const borderColor = isCatalogue
-		? "border-catalogue-card-border"
-		: "border-gray-300";
-	const textColor = isCatalogue ? "text-catalogue-card-text" : "text-gray-900";
-	const selectHover = isCatalogue
-		? "hover:bg-catalogue-background"
-		: "hover:bg-gray-100";
-	const btnHover = isCatalogue
-		? "hover:bg-catalogue-card-background"
-		: "hover:bg-gray-100";
-	const btnActive = isCatalogue ? "bg-catalogue-card-border" : "bg-gray-200";
-	const btnIdle = isCatalogue ? "bg-transparent" : "bg-white";
-	const dividerColor = isCatalogue ? "bg-catalogue-card-border" : "bg-gray-300";
+	const editorSurface = isCatalogue
+		? "bg-catalogue-card-background text-catalogue-card-text border-catalogue-card-border"
+		: "bg-product-card text-product-foreground border-product-border hover:border-product-border-hover";
 
 	const editorRef = useRef<HTMLDivElement>(null);
 	const [isFocused, setIsFocused] = useState(false);
@@ -149,7 +140,13 @@ export default function RichTextEditor({
 
 		return (
 			<button
-				className={`px-3 py-1.5 border ${borderColor} ${btnHover} transition-colors text-sm font-medium flex items-center justify-center ${textColor} ${isActive ? btnActive : btnIdle}`}
+				aria-label={title}
+				aria-pressed={command ? isActive : undefined}
+				className={`inline-flex h-9 w-9 items-center justify-center rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary [&_svg]:size-[18px] ${
+					isActive
+						? "bg-product-primary-soft text-product-primary-ink"
+						: "text-product-foreground-accent hover:bg-product-background-hero hover:text-product-foreground"
+				}`}
 				onClick={onClick}
 				onMouseDown={handleMouseDown}
 				title={title}
@@ -164,14 +161,16 @@ export default function RichTextEditor({
 		<div className={className}>
 			{editable && (
 				<div
-					className={`flex flex-wrap gap-1 mb-2 p-2 ${toolbarBg} border ${borderColor} rounded ${textColor}`}
+					aria-label="Text formatting"
+					className="mb-2 flex flex-wrap items-center gap-0.5 rounded-xl border border-product-border bg-product-card p-1 font-product-body text-sm font-normal not-italic leading-none tracking-normal text-product-foreground shadow-product"
+					role="toolbar"
 				>
 					<ToolbarButton
 						command="bold"
 						onClick={() => execCommand("bold")}
 						title="Bold"
 					>
-						<MdFormatBold className="w-4 h-4" />
+						<Bold aria-hidden="true" />
 					</ToolbarButton>
 
 					<ToolbarButton
@@ -179,7 +178,7 @@ export default function RichTextEditor({
 						onClick={() => execCommand("italic")}
 						title="Italic"
 					>
-						<MdFormatItalic className="w-4 h-4" />
+						<Italic aria-hidden="true" />
 					</ToolbarButton>
 
 					<ToolbarButton
@@ -187,17 +186,17 @@ export default function RichTextEditor({
 						onClick={() => execCommand("underline")}
 						title="Underline"
 					>
-						<MdFormatUnderlined className="w-4 h-4" />
+						<Underline aria-hidden="true" />
 					</ToolbarButton>
 
-					<div className={`w-px ${dividerColor} mx-1`} />
+					<div aria-hidden="true" className="mx-1 h-5 w-px bg-product-border" />
 
 					<ToolbarButton
 						command="insertUnorderedList"
 						onClick={() => execCommand("insertUnorderedList")}
 						title="Bullet List"
 					>
-						<MdFormatListBulleted className="w-4 h-4" />
+						<List aria-hidden="true" />
 					</ToolbarButton>
 
 					<ToolbarButton
@@ -205,17 +204,17 @@ export default function RichTextEditor({
 						onClick={() => execCommand("insertOrderedList")}
 						title="Numbered List"
 					>
-						<MdFormatListNumbered className="w-4 h-4" />
+						<ListOrdered aria-hidden="true" />
 					</ToolbarButton>
 
-					<div className={`w-px ${dividerColor} mx-1`} />
+					<div aria-hidden="true" className="mx-1 h-5 w-px bg-product-border" />
 
 					<ToolbarButton
 						command="justifyLeft"
 						onClick={() => execCommand("justifyLeft")}
 						title="Align Left"
 					>
-						<MdFormatAlignLeft className="w-4 h-4" />
+						<AlignLeft aria-hidden="true" />
 					</ToolbarButton>
 
 					<ToolbarButton
@@ -223,7 +222,7 @@ export default function RichTextEditor({
 						onClick={() => execCommand("justifyCenter")}
 						title="Align Center"
 					>
-						<MdFormatAlignCenter className="w-4 h-4" />
+						<AlignCenter aria-hidden="true" />
 					</ToolbarButton>
 
 					<ToolbarButton
@@ -231,13 +230,14 @@ export default function RichTextEditor({
 						onClick={() => execCommand("justifyRight")}
 						title="Align Right"
 					>
-						<MdFormatAlignRight className="w-4 h-4" />
+						<AlignRight aria-hidden="true" />
 					</ToolbarButton>
 
-					<div className={`w-px ${dividerColor} mx-1`} />
+					<div aria-hidden="true" className="mx-1 h-5 w-px bg-product-border" />
 
 					<select
-						className={`px-2 py-1 border ${borderColor} rounded text-sm ${editorBg} ${selectHover} cursor-pointer ${textColor}`}
+						aria-label="Text size"
+						className="h-9 cursor-pointer rounded-lg border border-product-border bg-product-card px-2 text-sm text-product-foreground hover:border-product-border-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary"
 						onChange={(e) => {
 							const value = e.target.value;
 							execCommand("fontSize", value);
@@ -255,13 +255,16 @@ export default function RichTextEditor({
 			)}
 
 			<div
-				className={`min-h-[200px] max-h-[300px] rich-text-content p-4 border ${borderColor} rounded focus:outline-none focus:ring-1 focus:ring-product-primary focus:border-transparent ${editorBg} ${textColor}`}
+				aria-label="Text content"
+				aria-multiline="true"
+				className={`min-h-[200px] max-h-[300px] rich-text-content p-4 border rounded-xl transition-colors focus:outline-none focus:border-product-primary focus:ring-2 focus:ring-product-primary/30 ${editorSurface}`}
 				contentEditable={editable}
 				onBlur={() => setIsFocused(false)}
 				onFocus={() => setIsFocused(true)}
 				onInput={handleInput}
 				onPaste={handlePaste}
 				ref={editorRef}
+				role="textbox"
 				style={{
 					resize: "vertical",
 					overflow: "auto",

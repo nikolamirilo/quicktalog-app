@@ -19,13 +19,12 @@ import {
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
 import { themes } from "@quicktalog/common";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Overlay } from "@/components/general/Overlay";
 import CatalogueChat from "@/components/catalogue/chat/CatalogueChat";
 import ContentBlockButton from "@/components/catalogue/inputs/ContentBlockButton";
 import BuilderSidebar from "@/components/catalogue/inputs/sidebar";
+import { builderFramePadding } from "@/components/catalogue/builder/frame";
 import AddContentModal from "@/components/catalogue/modals/AddContentModal";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
 import CatalogueContent from "./CatalogueContent";
@@ -42,7 +41,7 @@ const Catalogue = ({
 	type?: "edit" | "view" | "demo";
 	userData?: UserData;
 }) => {
-	const { catalogue } = useCatalogueContext() || {};
+	const { catalogue, isSidebarOpen = false } = useCatalogueContext() || {};
 	const activeData = catalogue?.name ? catalogue : item;
 
 	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
@@ -166,13 +165,6 @@ const Catalogue = ({
 				<>
 					<BuilderSidebar userData={userData} />
 					<CatalogueChat userData={userData} />
-					<Link
-						className="hidden fixed lg:flex bottom-36 left-4 lg:bottom-20 lg:left-6 z-[49] items-center gap-2 bg-white/90 backdrop-blur-sm text-gray-700 border border-gray-200 shadow-lg rounded-full pl-3 pr-4 py-2.5 text-sm font-medium hover:bg-white hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
-						href="/admin/dashboard"
-					>
-						<ArrowLeft className="w-4 h-4 shrink-0" />
-						<span>Dashboard</span>
-					</Link>
 					<style
 						dangerouslySetInnerHTML={{
 							__html: `
@@ -191,7 +183,7 @@ const Catalogue = ({
 			)}
 			<div
 				aria-label={`${item.heading} Catalogue`}
-				className={`catalogue-root ${item.appearance.theme.name || "theme-monochrome"} bg-background text-foreground min-h-screen flex flex-col`}
+				className={`catalogue-root ${item.appearance.theme.name || "theme-monochrome"} bg-background text-foreground min-h-screen flex flex-col${type === "edit" ? ` ${builderFramePadding(isSidebarOpen)}` : ""}`}
 				role="application"
 				style={
 					{

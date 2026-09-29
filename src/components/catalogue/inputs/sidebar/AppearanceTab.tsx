@@ -1,10 +1,5 @@
 "use client";
 
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import {
 	customThemeColorsEqual,
@@ -13,12 +8,12 @@ import {
 } from "@/lib/themes/custom-theme";
 import { useSavedThemes } from "@/hooks/useSavedThemes";
 import { PricingPlan } from "@quicktalog/common";
-import { Info } from "lucide-react";
-import LimitsOverlay from "./LimitsOverlay";
 import CustomThemeConfiguration from "./appearance/CustomThemeConfiguration";
 import OverlayConfiguration from "./appearance/OverlayConfiguration";
 import StyleConfiguration from "./appearance/StyleConfiguration";
 import ThemeSelection from "./appearance/ThemeSelection";
+import { LockedGroup, PANEL_TAB_ROOT, PanelSection } from "./panel";
+import { cn } from "@/lib/ui/cn";
 import { toast } from "sonner";
 
 const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
@@ -103,66 +98,64 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	return (
-		<div className="space-y-4 p-2">
-			<ThemeSelection
-				currentCustomColors={catalogue.appearance.theme.colors}
-				currentThemeName={currentThemeName}
-				isCustomActive={isCustomActive}
-				onCustomSelect={handleCustomSelect}
-				onDeleteSavedTheme={handleDeleteSavedTheme}
-				onSavedThemeSelect={updateThemeColors}
-				onThemeSelect={handleThemeSelect}
-				savedThemes={savedThemes}
-			/>
+		<div className={cn("space-y-4", PANEL_TAB_ROOT)}>
+			<PanelSection
+				info="Select the overall visual theme for your catalogue."
+				title="Themes"
+			>
+				<ThemeSelection
+					currentCustomColors={catalogue.appearance.theme.colors}
+					currentThemeName={currentThemeName}
+					isCustomActive={isCustomActive}
+					onCustomSelect={handleCustomSelect}
+					onDeleteSavedTheme={handleDeleteSavedTheme}
+					onSavedThemeSelect={updateThemeColors}
+					onThemeSelect={handleThemeSelect}
+					savedThemes={savedThemes}
+				/>
+			</PanelSection>
 
 			{isCustomActive && (
-				<div className="relative w-full" id="custom-theme-panel">
-					{!hasCustomThemes && <LimitsOverlay />}
-					<div
-						className={`space-y-4 ${!hasCustomThemes ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
-					>
-						<h3 className="text-lg font-bold">Custom colors</h3>
+				<PanelSection
+					className="scroll-mt-4"
+					id="custom-theme-panel"
+					info="Pick each colour of your theme, then save it to reuse it on other catalogues."
+					title="Custom colours"
+				>
+					<LockedGroup locked={!hasCustomThemes} overlaySize="default">
 						<CustomThemeConfiguration
 							activeSavedThemeName={activeSavedTheme?.name}
 							colors={catalogue.appearance.theme.colors || {}}
 							onColorsChange={updateThemeColors}
 							onSave={saveTheme}
 						/>
-					</div>
-				</div>
+					</LockedGroup>
+				</PanelSection>
 			)}
 
-			<div className="relative w-full">
-				{!hasStyles && <LimitsOverlay />}
-				<div
-					className={`space-y-4 ${!hasStyles ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
-				>
-					<div className="flex items-center gap-2">
-						<h3 className="text-lg font-bold">Style</h3>
-						<Popover>
-							<PopoverTrigger type="button">
-								<Info className="h-4 w-4 text-muted-foreground" />
-							</PopoverTrigger>
-							<PopoverContent
-								className="z-[2000] w-[200px] p-3 text-sm"
-								side="top"
-							>
-								<p>Customize fonts, rounded corners, shadows, and overlay.</p>
-							</PopoverContent>
-						</Popover>
-					</div>
-
+			<PanelSection
+				info="Customize fonts, rounded corners and shadows."
+				title="Style"
+			>
+				<LockedGroup locked={!hasStyles} overlaySize="default">
 					<StyleConfiguration
 						currentStyle={currentStyle}
 						onStyleChange={handleStyleChange}
 					/>
+				</LockedGroup>
+			</PanelSection>
 
+			<PanelSection
+				info="Add a floating icon overlay to your catalogue."
+				title="Overlay"
+			>
+				<LockedGroup locked={!hasStyles}>
 					<OverlayConfiguration
 						currentOverlay={currentOverlay}
 						onOverlayChange={handleOverlayChange}
 					/>
-				</div>
-			</div>
+				</LockedGroup>
+			</PanelSection>
 		</div>
 	);
 };

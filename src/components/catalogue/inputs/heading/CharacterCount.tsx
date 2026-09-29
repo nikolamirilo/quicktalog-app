@@ -15,7 +15,8 @@ const CharacterCount = ({
 
 	return (
 		<span
-			className={`text-xs mt-1 transition-colors ${charCount >= charLimit ? "text-red-500" : "text-foreground/40"}`}
+			aria-live="polite"
+			className={`mt-2 rounded-full bg-product-card px-2 py-1 font-product-body text-xs font-medium leading-none tabular-nums transition-colors ${charCount >= charLimit ? "text-product-error" : "text-product-muted"}`}
 		>
 			{charCount}/{charLimit}
 		</span>

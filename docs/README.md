@@ -29,6 +29,7 @@ How parts of the app work.
 | [architecture/data-access.md](architecture/data-access.md) | How the app talks to Postgres: the three query blocks, RLS, and what fails without them |
 | [architecture/ai-chat-flow.md](architecture/ai-chat-flow.md) | Builder AI assistant flow (partly outdated, see its note) |
 | [architecture/catalogue-html-safety.md](architecture/catalogue-html-safety.md) | Where author HTML reaches a published catalogue and what filters it |
+| [architecture/builder.md](architecture/builder.md) | Builder frame (rail, panel push/overlay, phone sheet and bottom bar), edit controls inside the catalogue, builder dialogs |
 | [architecture/product-theme.md](architecture/product-theme.md) | Product theme tokens, primitives, page frames, and how the published catalogue stays independent of them |
 | [architecture/analytics.md](architecture/analytics.md) | Catalogue analytics: the range, periods and deltas, the two PostHog queries, UTC days and ownership |
 | [architecture/qr-codes.md](architecture/qr-codes.md) | QR editor: the stored design, URL pinning, validation and size limits, export composition and the unsaved-changes guard |

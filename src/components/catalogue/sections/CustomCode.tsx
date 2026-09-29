@@ -2,7 +2,9 @@
 
 import type { CustomCodeBlock } from "@quicktalog/common";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import BlockControls from "@/components/catalogue/cards/common/BlockControls";
+import BlockControls, {
+	BLOCK_CONTROLS_GROUP,
+} from "@/components/catalogue/cards/common/BlockControls";
 
 /**
  * Height the frame starts at, before the widget has reported its own. Small
@@ -175,13 +177,14 @@ const CustomCodeBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className="mb-5 group relative bg-transparent"
+			className={`mb-5 group relative bg-transparent${mode === "edit" ? ` ${BLOCK_CONTROLS_GROUP}` : ""}`}
 			id={`${slug}-${block.order}`}
 		>
 			{mode === "edit" && (
 				<BlockControls
 					isFirst={isFirst}
 					isLast={isLast}
+					label="Custom code"
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}

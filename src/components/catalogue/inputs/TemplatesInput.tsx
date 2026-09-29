@@ -11,12 +11,14 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	placeholderTemplate,
 	standardTemplate,
 } from "@/constants/catalogueTemplates";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { useRadioKeys } from "@/hooks/useRadioKeys";
 import { cn } from "@/lib/ui/cn";
 import { ContentBlock, defaultCatalogueData } from "@quicktalog/common";
 import { Layout, Plus, Zap } from "lucide-react";
@@ -70,6 +72,11 @@ export default function TemplatesInput({
 	const [selectedId, setSelectedId] = useState<string>("quick-start");
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
 	const [pendingTemplate, setPendingTemplate] = useState<any>(null);
+	const { onKeyDown, itemProps } = useRadioKeys(
+		templates.map((t) => t.id),
+		selectedId,
+		setSelectedId,
+	);
 
 	const executeSelect = (templateToUse: any) => {
 		updateCatalogue({
@@ -93,146 +100,104 @@ export default function TemplatesInput({
 	};
 
 	return (
-		<div className="w-[90%] md:w-[85%] mx-auto flex flex-col items-end gap-2 sm:gap-4 md:gap-6 pb-16 sm:pb-0">
+		<div className="mx-auto flex w-full flex-col gap-4 px-5 font-product-body sm:px-6 md:gap-6">
 			<div
+				aria-label="Templates"
 				className={cn(
-					"grid gap-2 w-full",
+					"grid w-full gap-3",
 					direction === "column" ? "grid-cols-1" : "grid-cols-1 md:grid-cols-3",
 				)}
+				onKeyDown={onKeyDown}
+				role="radiogroup"
 			>
-				{templates.map((template) => {
+				{templates.map((template, index) => {
 					const isSelected = selectedId === template.id;
 					const isScratch = template.id === "scratch";
 
 					return (
-						<div
+						<button
+							{...itemProps(template.id, index)}
 							className={cn(
-								"group relative p-3 sm:p-4 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2 touch-manipulation",
+								"group relative flex h-full w-full touch-manipulation items-center gap-4 rounded-product-card border-[1.5px] bg-product-card p-3 text-left transition-[border-color,box-shadow,transform] sm:p-4 md:flex-col md:justify-between md:gap-4 md:p-6 md:text-center",
 								isSelected
-									? "border-product-primary bg-product-primary/5 shadow-product ring-1 ring-product-primary"
-									: "border-product-border bg-product-background hover:border-product-primary/50 hover:shadow-lg hover:scale-[1.01]",
-								isScratch && !isSelected && "border-dashed border-gray-300",
+									? "border-product-primary-accent shadow-[0_0_0_3px_rgb(var(--product-primary-rgb)/0.25)]"
+									: "border-product-border hover:-translate-y-px hover:border-product-border-strong hover:shadow-product",
+								isScratch &&
+									!isSelected &&
+									"border-dashed border-product-border-strong",
 							)}
 							key={template.id}
-							onClick={() => setSelectedId(template.id)}
-							onTouchEnd={(e) => {
-								// Prevent ghost click on iOS
-								e.preventDefault();
-								setSelectedId(template.id);
-							}}
 						>
 							{template.badge && (
-								<span className="bg-product-primary text-catalogue-button-text text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full shadow-sm absolute top-2 right-2 sm:top-3 sm:right-3 z-20">
+								<Badge
+									className="absolute right-3 top-3 z-20"
+									variant="primary"
+								>
 									{template.badge}
-								</span>
+								</Badge>
 							)}
 
-							{/* Desktop Layout */}
-							<div className="hidden md:flex flex-col gap-4 w-full h-full items-center justify-center">
-								{/* Header */}
-								<div className="flex justify-between items-start z-10 w-full pt-4">
-									<h3 className="font-bold text-lg text-product-foreground w-full text-center">
-										{isScratch ? "" : template.title}
-									</h3>
-								</div>
+							<span className="hidden font-product-heading text-lg font-bold text-product-foreground md:block md:pt-4">
+								{isScratch ? "" : template.title}
+							</span>
 
-								{/* Visual/Icon */}
-								<div className="flex-grow flex items-center justify-center z-0 w-full h-fit">
-									{isScratch ? (
-										<div className="flex flex-col items-center justify-center gap-1 text-gray-400 group-hover:text-product-primary transition-colors h-full">
-											<Plus className="w-16 h-16" />
-											<span className="font-bold text-lg text-gray-700 group-hover:text-product-foreground transition-colors">
-												{template.title}
+							<span
+								aria-hidden="true"
+								className="flex w-[28%] flex-shrink-0 items-center justify-center sm:w-[32%] md:w-10/12 md:flex-grow"
+							>
+								{isScratch ? (
+									<span className="flex flex-col items-center justify-center gap-1 text-product-muted transition-colors group-hover:text-product-primary-ink">
+										<Plus className="h-12 w-12 md:h-16 md:w-16" />
+									</span>
+								) : (
+									<img alt="" className="object-contain" src={template.image} />
+								)}
+							</span>
+
+							<span className="flex min-w-0 flex-1 flex-col justify-center gap-1 py-1 md:flex-none md:gap-3">
+								<span
+									className={cn(
+										"font-product-heading text-sm font-bold text-product-foreground sm:text-base md:text-lg",
+										!isScratch && "md:hidden",
+										template.badge && "pr-24 md:pr-0",
+									)}
+								>
+									{template.title}
+								</span>
+								<span className="text-xs font-medium leading-snug text-product-foreground-accent sm:text-sm md:leading-relaxed">
+									{template.description}
+								</span>
+								{template.details.length > 0 && (
+									<span className="flex flex-wrap items-center gap-2 text-[11px] font-semibold text-product-muted sm:text-xs md:justify-center">
+										{template.details.map((detail, detailIndex) => (
+											<span className="flex items-center gap-2" key={detail}>
+												{detailIndex > 0 && (
+													<span
+														aria-hidden="true"
+														className="h-1 w-1 rounded-full bg-product-border-strong"
+													/>
+												)}
+												{detail}
 											</span>
-										</div>
-									) : (
-										<div className="relative w-10/12 h-full flex items-center justify-center">
-											<img
-												alt={template.title}
-												className="object-contain"
-												src={template?.image}
-											/>
-										</div>
-									)}
-								</div>
-
-								{/* Description */}
-								<div className="text-center space-y-4 mt-auto">
-									<p className="text-sm text-product-foreground-accent font-medium leading-relaxed">
-										{template.description}
-									</p>
-									{template.details.length > 0 && (
-										<div className="flex items-center justify-center gap-3 text-xs text-gray-500 font-semibold">
-											{template.details.map((detail, index) => (
-												<div className="flex items-center gap-1" key={index}>
-													{index > 0 && (
-														<span className="w-1 h-1 rounded-full bg-gray-300 mr-2" />
-													)}
-													{detail}
-												</div>
-											))}
-										</div>
-									)}
-								</div>
-							</div>
-
-							{/* Mobile Layout */}
-							<div className="flex md:hidden flex-row gap-3 sm:gap-6 items-center w-full h-full">
-								<div className="w-[28%] sm:w-[35%] flex-shrink-0 flex items-center justify-center h-full">
-									{isScratch ? (
-										<div className="flex flex-col items-center justify-center text-gray-400 group-hover:text-product-primary transition-colors">
-											<Plus className="w-12 h-12 sm:w-16 sm:h-16" />
-										</div>
-									) : (
-										<div className="relative w-full flex items-center justify-center">
-											<img
-												alt={template.title}
-												className="object-contain"
-												src={template?.image}
-											/>
-										</div>
-									)}
-								</div>
-								<div className="w-[65%] flex flex-col justify-center text-left py-2">
-									<h3 className="font-bold text-sm sm:text-base text-product-foreground w-full mb-1 pr-16 sm:pr-20">
-										{template.title}
-									</h3>
-									<p className="text-xs sm:text-sm text-product-foreground-accent font-medium leading-snug mb-2 pr-2">
-										{template.description}
-									</p>
-									{template.details.length > 0 && (
-										<div className="flex flex-wrap items-center justify-start gap-2 text-[10px] sm:text-xs text-gray-500 font-semibold w-full">
-											{template.details.map((detail, index) => (
-												<div className="flex items-center gap-1" key={index}>
-													{index > 0 && (
-														<span className="w-1 h-1 rounded-full bg-gray-300 mr-1 sm:mr-2" />
-													)}
-													{detail}
-												</div>
-											))}
-										</div>
-									)}
-								</div>
-							</div>
-						</div>
+										))}
+									</span>
+								)}
+							</span>
+						</button>
 					);
 				})}
 			</div>
 
-			<div className="fixed sm:static bottom-0 left-0 right-0 sm:bottom-auto sm:left-auto sm:right-auto bg-white sm:bg-transparent border-t sm:border-t-0 border-gray-100 p-3 sm:p-0 z-50 sm:z-auto">
-				<Button
-					className="w-full sm:w-auto mx-auto md:mx-0 sm:my-4"
-					onClick={handleSelect}
-					size="lg"
-				>
-					Select Template
+			<div className="sticky bottom-0 -mx-5 flex justify-end border-t border-product-border bg-product-card px-5 py-3 sm:static sm:mx-0 sm:border-t-0 sm:bg-transparent sm:p-0">
+				<Button className="w-full sm:w-auto" onClick={handleSelect} size="lg">
+					Select template
 				</Button>
 			</div>
 
 			<AlertDialog onOpenChange={setShowConfirmModal} open={showConfirmModal}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Change Template?</AlertDialogTitle>
+						<AlertDialogTitle>Change template?</AlertDialogTitle>
 						<AlertDialogDescription>
 							This will change your existing content. Please save it first to
 							not lose progress.
@@ -241,14 +206,14 @@ export default function TemplatesInput({
 					<AlertDialogFooter>
 						<AlertDialogCancel>Cancel</AlertDialogCancel>
 						<AlertDialogAction
-							className="bg-red-600 hover:bg-red-700 text-white hover:text-white"
+							className={buttonVariants({ variant: "destructive" })}
 							onClick={async () => {
 								const res = await updateCatalogueAction(catalogue);
 								if (res.success && pendingTemplate)
 									executeSelect(pendingTemplate);
 							}}
 						>
-							Save & Continue
+							Save & continue
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

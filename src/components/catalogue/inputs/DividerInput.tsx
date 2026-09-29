@@ -1,5 +1,6 @@
 "use client";
 
+import { SliderField } from "@/components/catalogue/inputs/sidebar/panel";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import type { DividerBlock } from "@quicktalog/common";
 
 interface DividerInputProps {
@@ -37,24 +37,23 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 		});
 	};
 
-	return (
-		<div className="space-y-6">
-			{/* Spacing */}
-			<div className="space-y-3">
-				<div className="flex items-center justify-between">
-					<Label>Vertical Spacing ({spacing}rem)</Label>
-				</div>
-				<Slider
-					max={10}
-					min={0}
-					onValueChange={([val]) => onChange({ spacing: val })}
-					step={0.5}
-					value={[spacing]}
-				/>
-			</div>
+	const opacity = border.opacity ?? 100;
+	const thickness = border.thickness || 1;
 
-			<div className="space-y-4 pt-4 border-t border-gray-100">
-				<div className="flex items-center space-x-2">
+	return (
+		<div className="space-y-6 font-product-body">
+			<SliderField
+				label="Vertical spacing"
+				max={10}
+				min={0}
+				onValueChange={(val) => onChange({ spacing: val })}
+				step={0.5}
+				value={spacing}
+				valueText={`${spacing}rem`}
+			/>
+
+			<div className="space-y-4 border-t border-product-border pt-4">
+				<div className="flex min-h-11 items-center gap-3">
 					<Checkbox
 						checked={border.isEnabled}
 						id="enable-border"
@@ -62,80 +61,80 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 							handleBorderChange({ isEnabled: checked as boolean })
 						}
 					/>
-					<Label htmlFor="enable-border">Enable Border Line</Label>
+					<Label className="cursor-pointer" htmlFor="enable-border">
+						Show a border line
+					</Label>
 				</div>
 
 				{border.isEnabled && (
-					<div className="space-y-4 pl-6">
-						{/* Border Style */}
-						<div className="grid grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<Label>Style</Label>
-								<Select
-									onValueChange={(val: any) =>
-										handleBorderChange({ style: val })
-									}
-									value={border.style}
-								>
-									<SelectTrigger>
-										<SelectValue />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="solid">Solid</SelectItem>
-										<SelectItem value="dashed">Dashed</SelectItem>
-										<SelectItem value="dotted">Dotted</SelectItem>
-									</SelectContent>
-								</Select>
-							</div>
-
-							<div className="space-y-2">
-								<Label>Thickness ({border.thickness}px)</Label>
-								<Slider
-									className="pt-4"
-									max={10}
-									min={1}
-									onValueChange={([val]) =>
-										handleBorderChange({ thickness: val })
-									}
-									step={1}
-									value={[border.thickness || 1]}
-								/>
-							</div>
+					<div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+						<div className="space-y-2">
+							<Label htmlFor="divider-style">Style</Label>
+							<Select
+								onValueChange={(val: any) => handleBorderChange({ style: val })}
+								value={border.style}
+							>
+								<SelectTrigger id="divider-style">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="solid">Solid</SelectItem>
+									<SelectItem value="dashed">Dashed</SelectItem>
+									<SelectItem value="dotted">Dotted</SelectItem>
+								</SelectContent>
+							</Select>
 						</div>
 
-						{/* Color & Opacity */}
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div className="space-y-2">
-								<Label>Color</Label>
-								<div className="flex gap-2 items-center">
-									<Input
-										className="w-12 h-10 p-1 cursor-pointer"
+						<SliderField
+							label="Thickness"
+							max={10}
+							min={1}
+							onValueChange={(val) => handleBorderChange({ thickness: val })}
+							step={1}
+							value={thickness}
+							valueText={`${thickness}px`}
+						/>
+
+						<div className="space-y-2">
+							<Label htmlFor="divider-color">Colour</Label>
+							<div className="flex items-center gap-2">
+								<span
+									className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-product-border-strong shadow-sm"
+									style={{ backgroundColor: border.color }}
+								>
+									<input
+										aria-label="Border colour picker"
+										className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
 										onChange={(e) =>
 											handleBorderChange({ color: e.target.value })
 										}
 										type="color"
 										value={border.color}
 									/>
-									<span className="text-sm text-gray-500 uppercase">
-										{border.color}
-									</span>
-								</div>
-							</div>
-
-							<div className="space-y-2">
-								<Label>Opacity ({border.opacity}%)</Label>
-								<Slider
-									className="pt-4"
-									max={100}
-									min={0}
-									onValueChange={([val]) =>
-										handleBorderChange({ opacity: val })
+								</span>
+								<Input
+									autoComplete="off"
+									className="h-11 w-[104px] px-3 font-mono text-sm uppercase md:text-sm"
+									id="divider-color"
+									maxLength={7}
+									onChange={(e) =>
+										handleBorderChange({ color: e.target.value })
 									}
-									step={10}
-									value={[border.opacity ?? 100]}
+									spellCheck={false}
+									value={border.color}
 								/>
 							</div>
 						</div>
+
+						<SliderField
+							label="Opacity"
+							max={100}
+							min={0}
+							onValueChange={(val) => handleBorderChange({ opacity: val })}
+							step={10}
+							value={opacity}
+							valueText={`${opacity}%`}
+						/>
 					</div>
 				)}
 			</div>

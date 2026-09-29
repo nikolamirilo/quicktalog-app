@@ -3,7 +3,9 @@ import { getDisplayItems } from "@/lib/catalogue/items";
 import type { ItemsBlock } from "@quicktalog/common";
 import "swiper/css";
 import "swiper/css/pagination";
-import BlockControls from "@/components/catalogue/cards/common/BlockControls";
+import BlockControls, {
+	BLOCK_CONTROLS_GROUP,
+} from "@/components/catalogue/cards/common/BlockControls";
 import Items from "./common/Items";
 import SectionHeader from "./common/SectionHeader";
 
@@ -97,8 +99,10 @@ const ItemsSection = ({
 	return (
 		<section
 			className={`mb-5 ${
-				!showHeading && mode === "edit"
-					? "relative group/container border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg p-4 transition-all"
+				mode === "edit"
+					? showHeading
+						? BLOCK_CONTROLS_GROUP
+						: `${BLOCK_CONTROLS_GROUP} relative rounded-lg border-2 border-dashed border-product-border-strong p-2 sm:p-4 transition-colors hover:border-product-muted`
 					: ""
 			}`}
 			id={code}
@@ -128,6 +132,7 @@ const ItemsSection = ({
 						currentLayout={currentLayout}
 						isFirst={isFirst}
 						isLast={isLast}
+						label="Items"
 						onDelete={onDelete}
 						onEdit={onEdit}
 						onLayoutChange={(layout) =>

@@ -40,6 +40,19 @@ const SectionHeader = ({
 	const showContent = mode === "edit" || isExpanded;
 	return (
 		<div className="relative group/header">
+			{/* Edit tools get their own row above the header so they never cover the title. */}
+			{mode === "edit" && (
+				<BlockControls
+					currentLayout={currentLayout}
+					isFirst={isFirst}
+					isLast={isLast}
+					onDelete={onDelete}
+					onEdit={onEdit}
+					onLayoutChange={onLayoutChange}
+					onMoveDown={onMoveDown}
+					onMoveUp={onMoveUp}
+				/>
+			)}
 			<button
 				aria-controls={contentId}
 				aria-expanded={showContent}
@@ -107,19 +120,6 @@ const SectionHeader = ({
 					</div>
 				)}
 			</button>
-
-			{mode === "edit" && (
-				<BlockControls
-					currentLayout={currentLayout}
-					isFirst={isFirst}
-					isLast={isLast}
-					onDelete={onDelete}
-					onEdit={onEdit}
-					onLayoutChange={onLayoutChange}
-					onMoveDown={onMoveDown}
-					onMoveUp={onMoveUp}
-				/>
-			)}
 		</div>
 	);
 };

@@ -2,9 +2,28 @@
 import { loadImage, processImage } from "@/lib/images/processing";
 import { UploadDropzone } from "@/utils/uploadthing";
 import * as Sentry from "@sentry/nextjs";
+import { UploadCloud, X } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { FiUploadCloud } from "react-icons/fi";
-import { IoClose } from "react-icons/io5";
+import { toast } from "sonner";
+import { cn } from "@/lib/ui/cn";
+
+/** Largest file we accept before resizing it in the browser. */
+const MAX_INPUT_MB = 50;
+
+/**
+ * What the dropzone accepts, as enforced below: any raster image the browser
+ * can decode, up to MAX_INPUT_MB. SVG is refused. The file is resized and
+ * compressed before upload, so the upload route's own limit is never reached.
+ */
+const ALLOWED_TEXT = `PNG, JPG or WebP, up to ${MAX_INPUT_MB} MB. We resize it for you.`;
+
+const Spinner = () => (
+	<span
+		aria-label="Uploading"
+		className="h-12 w-12 animate-spin rounded-full border-4 border-product-border-strong border-t-product-primary"
+		role="status"
+	/>
+);
 
 export interface ImageDropzoneProps {
 	type?: "default" | "logo" | "qr-editor" | "icon";
@@ -47,7 +66,7 @@ export const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					throw new Error("Please select a valid image file");
 				}
 
-				if (file.size > 50 * 1024 * 1024) {
+				if (file.size > MAX_INPUT_MB * 1024 * 1024) {
 					throw new Error("File is too large. Please select a smaller image");
 				}
 
@@ -92,7 +111,7 @@ export const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 							: new Error("Unknown error occurred"),
 					);
 				} else {
-					alert(
+					toast.error(
 						error instanceof Error ? error.message : "Failed to process image",
 					);
 				}
@@ -145,14 +164,24 @@ export const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 	);
 
 	return (
-		<div className="notranslate" translate="no">
-			{image && type != "qr-editor" ? (
+		<div className="notranslate font-product-body" translate="no">
+			{image && type !== "qr-editor" ? (
 				<div
-					className={`relative mt-2 ${type === "default" ? "w-48 h-48" : "w-fit h-fit"} rounded-lg overflow-hidden bg-product-background shadow-product`}
+					className={cn(
+						"relative mt-1 overflow-hidden rounded-2xl border border-product-border bg-product-card shadow-product",
+						type === "default" ? "h-48 w-48" : "inline-flex max-w-full p-2",
+					)}
 				>
 					<img
 						alt="Uploaded image preview"
-						className={`${type === "default" ? "w-full h-full object-cover" : type === "icon" ? "max-h-32 h-auto w-auto my-auto max-w-40" : "!w-auto max-h-48 !h-auto max-w-96 my-auto"} opacity-0 transition-opacity duration-500 ease-in-out border-none`}
+						className={cn(
+							"border-none opacity-0 transition-opacity duration-500 ease-in-out",
+							type === "default"
+								? "h-full w-full object-cover"
+								: type === "icon"
+									? "my-auto h-auto max-h-32 w-auto max-w-40 rounded-lg"
+									: "my-auto h-auto max-h-48 w-auto max-w-full rounded-lg",
+						)}
 						onLoad={(e) => {
 							e.currentTarget.classList.remove("opacity-0");
 						}}
@@ -160,61 +189,65 @@ export const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					/>
 					<button
 						aria-label="Remove image"
-						className="absolute top-1 right-1 z-10 bg-product-error text-product-card rounded-full cursor-pointer hover:bg-product-error-ink transition-colors duration-200 shadow-lg"
+						className="absolute right-1.5 top-1.5 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-product-dark/80 text-white shadow-product transition-colors duration-200 before:absolute before:-inset-1.5 before:content-[''] hover:bg-product-error"
 						onClick={removeImage}
 						translate="no"
 						type="button"
 					>
-						<IoClose size={25} />
+						<X aria-hidden="true" className="h-4 w-4" />
 					</button>
 				</div>
 			) : (
-				<div className="relative cursor-pointer">
+				<div className="relative">
 					<UploadDropzone
 						appearance={{
 							button: "hidden",
+							container:
+								"m-0 h-40 w-full cursor-pointer gap-1 rounded-2xl border-[1.5px] border-dashed border-product-border-strong bg-product-card px-4 py-6 transition-colors hover:border-product-primary-accent hover:bg-product-primary/5 ut-uploading:cursor-wait focus-within:border-product-primary-accent",
+							uploadIcon: "h-auto w-auto",
 							label:
-								"text-product-foreground-accent hover:text-product-primary-ink",
-							container: type === "icon" ? `h-48 w-full` : `h-48 w-full`,
+								"mt-2 w-auto text-sm font-semibold leading-snug text-product-foreground hover:text-product-primary-ink",
+							allowedContent:
+								"h-auto text-[12.5px] leading-snug text-product-muted",
 						}}
 						className={className}
-						config={{ mode: "auto" }}
+						config={{ mode: "auto", cn }}
 						content={{
 							label: ({ ready, isUploading }) => {
 								if (ready && !isUploading)
 									return (
 										<span className="notranslate" translate="no">
-											Choose a file or Drag & Drop
+											Choose a file or drag it here
 										</span>
 									);
 								if (isUploading)
 									return (
-										<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center bg-product-background/90">
-											<span className="animate-spin rounded-full h-14 w-14 border-4 border-product-border-strong border-t-product-primary z-10"></span>
+										<div className="absolute inset-0 flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-product-card/90">
+											<Spinner />
 										</div>
 									);
 								return (
 									<div className="absolute inset-0 flex items-center justify-center">
-										<span className="animate-spin rounded-full h-14 w-14 border-4 border-product-border-strong border-t-product-primary"></span>
+										<Spinner />
 									</div>
 								);
 							},
 							uploadIcon: ({ ready, isUploading }) => {
 								if (ready && !isUploading)
 									return (
-										<FiUploadCloud className="text-product-primary" size={40} />
+										<span className="flex h-11 w-11 items-center justify-center rounded-full bg-product-primary-soft text-product-primary-ink">
+											<UploadCloud aria-hidden="true" className="h-5 w-5" />
+										</span>
 									);
-								if (isUploading) return "";
 								return "";
 							},
 							allowedContent: ({ ready, isUploading }) => {
 								if (ready && !isUploading)
 									return (
 										<span className="notranslate" translate="no">
-											Image (PNG, JPG, SVG, etc.)
+											{ALLOWED_TEXT}
 										</span>
 									);
-								if (isUploading) return "";
 								return "";
 							},
 						}}
@@ -228,8 +261,8 @@ export const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 						onUploadError={handleUploadError}
 					/>
 					{isBusy && (
-						<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center bg-product-background/90 z-50 pointer-events-auto">
-							<span className="animate-spin rounded-full h-14 w-14 border-4 border-product-border-strong border-t-product-primary"></span>
+						<div className="pointer-events-auto absolute inset-0 z-50 flex h-full w-full items-center justify-center overflow-hidden rounded-2xl bg-product-card/90">
+							<Spinner />
 						</div>
 					)}
 				</div>

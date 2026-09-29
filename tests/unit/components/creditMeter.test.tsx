@@ -35,13 +35,13 @@ describe("CreditMeter", () => {
 
 	it("turns red once the limit is reached", () => {
 		const { container } = render(<CreditMeter limit={15} used={15} />);
-		expect(arcClass(container)).toContain("text-error");
+		expect(arcClass(container)).toContain("text-product-error");
 	});
 
 	it("warns before it turns red", () => {
 		const { container } = render(<CreditMeter limit={20} used={15} />);
 		expect(arcClass(container)).toContain("text-product-warning");
-		expect(arcClass(container)).not.toContain("text-error");
+		expect(arcClass(container)).not.toContain("text-product-error");
 	});
 
 	it("never reports a negative balance after an overshoot", () => {

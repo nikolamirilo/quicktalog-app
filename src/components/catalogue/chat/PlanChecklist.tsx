@@ -29,22 +29,28 @@ const Marker = ({
 }) => {
 	if (status === "done") {
 		return (
-			<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100">
-				<Check className="h-2.5 w-2.5 text-emerald-700" />
+			<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-product-success-soft text-product-success">
+				<Check aria-hidden="true" className="h-2.5 w-2.5 stroke-[3]" />
+				<span className="sr-only">Done:</span>
 			</span>
 		);
 	}
 	if (status === "skipped") {
 		return (
-			<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-amber-100">
-				<AlertTriangle className="h-2.5 w-2.5 text-amber-600" />
+			<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-product-warning/15 text-product-warning">
+				<AlertTriangle aria-hidden="true" className="h-2.5 w-2.5 stroke-[3]" />
+				<span className="sr-only">Skipped:</span>
 			</span>
 		);
 	}
 	if (active) {
 		return (
 			<span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center">
-				<Loader2 className="h-3.5 w-3.5 animate-spin text-product-primary" />
+				<Loader2
+					aria-hidden="true"
+					className="h-3.5 w-3.5 animate-spin text-product-primary-ink motion-reduce:animate-none"
+				/>
+				<span className="sr-only">In progress:</span>
 			</span>
 		);
 	}
@@ -76,17 +82,20 @@ const PlanChecklist = ({
 	const finished = isPlanFinished(plan);
 
 	return (
-		<div className="animate-in space-y-2.5 rounded-2xl border border-product-border bg-white px-3.5 py-3 shadow-sm duration-200 fade-in slide-in-from-bottom-1">
+		<div className="animate-in space-y-2.5 rounded-[18px] border border-product-border bg-product-card px-3.5 py-3 duration-200 fade-in slide-in-from-bottom-1 motion-reduce:animate-none">
 			<div className="flex items-center justify-between gap-3">
-				<p className="flex min-w-0 items-center gap-2 font-lora-semibold text-[13px] font-bold text-product-foreground">
-					<ListChecks className="h-4 w-4 shrink-0 text-product-primary" />
+				<p className="flex min-w-0 items-center gap-2 font-product-heading text-[13px] font-bold text-product-foreground">
+					<ListChecks
+						aria-hidden="true"
+						className="h-4 w-4 shrink-0 text-product-primary-ink"
+					/>
 					<span className="truncate">
 						{finished
 							? "All done"
 							: `Working through ${plan.tasks.length} things · about ${estimatePlanCredits(plan.tasks.length)} credits`}
 					</span>
 				</p>
-				<span className="shrink-0 text-[11px] font-bold tabular-nums text-product-foreground-accent">
+				<span className="shrink-0 text-xs font-semibold tabular-nums text-product-muted">
 					{settled} / {plan.tasks.length}
 				</span>
 			</div>
@@ -94,7 +103,7 @@ const PlanChecklist = ({
 			<ul className="space-y-1.5">
 				{plan.tasks.map((task, index) => (
 					<li
-						className="flex items-start gap-2 text-xs leading-relaxed"
+						className="flex items-start gap-2 text-[13px] leading-relaxed"
 						// Titles can repeat across a plan, so the position is the identity.
 						key={`${index}-${task.title}`}
 					>
@@ -110,7 +119,7 @@ const PlanChecklist = ({
 								{task.title}
 							</span>
 							{task.note && (
-								<span className="block text-[11px] leading-snug text-product-foreground-accent">
+								<span className="block text-xs leading-snug text-product-muted">
 									{task.note}
 								</span>
 							)}
@@ -120,8 +129,11 @@ const PlanChecklist = ({
 			</ul>
 
 			{halt && (
-				<p className="flex items-start gap-2 rounded-xl bg-amber-50 px-2.5 py-2 text-[11px] leading-relaxed text-amber-700">
-					<AlertTriangle className="mt-px h-3.5 w-3.5 shrink-0" />
+				<p className="flex items-start gap-2 rounded-xl bg-product-primary-soft px-2.5 py-2 text-xs leading-relaxed text-product-primary-ink">
+					<AlertTriangle
+						aria-hidden="true"
+						className="mt-px h-3.5 w-3.5 shrink-0"
+					/>
 					{HALT_NOTICES[halt]}
 				</p>
 			)}

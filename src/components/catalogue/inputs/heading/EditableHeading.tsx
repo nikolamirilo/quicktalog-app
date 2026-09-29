@@ -38,12 +38,13 @@ const EditableHeading = ({
 }: EditableHeadingProps) => {
 	return (
 		<div
+			aria-label="Catalogue heading"
 			className={`
 				text-center ${headingSizeMap[headingSize]}
 				text-heading font-heading font-normal
-				border-2 border-dashed border-[var(--catalogue-text)]/20 rounded-lg
+				border-2 border-dashed border-product-border-strong rounded-product-card hover:border-product-muted
 				px-4 sm:px-6 py-2
-				bg-transparent focus:border-primary outline-none
+				bg-transparent focus:border-product-primary focus:border-solid outline-none
 				w-fit
 				max-w-[94%] md:max-w-[80%] lg:max-w-[70%] xl:max-w-[60%] 2xl:max-w-[50%]
 				min-w-[80%] sm:min-w-[70%] md:min-w-[50%] lg:min-w-[40%] xl:min-w-[30%]
@@ -66,6 +67,7 @@ const EditableHeading = ({
 			onPaste={onPaste}
 			onSelect={onSelect}
 			ref={editorRef}
+			role="textbox"
 			style={
 				{
 					WebkitUserSelect: "text",

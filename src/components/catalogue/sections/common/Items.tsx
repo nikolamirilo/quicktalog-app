@@ -28,6 +28,35 @@ const getGridStyle = (variant: string): string => {
 	}
 };
 
+/**
+ * The edit-only "Add New Item" tile. Product chrome inside `.catalogue-root`,
+ * so type is set explicitly, and the label sits on a card-coloured chip so it
+ * stays readable on light and dark catalogue themes.
+ */
+const AddItemTile = ({
+	className,
+	onClick,
+}: {
+	className: string;
+	onClick: () => void;
+}) => (
+	<button
+		className={`group/add flex flex-col items-center justify-center gap-3 rounded-product-card border-2 border-dashed border-product-border-strong bg-transparent p-4 font-product-body font-normal not-italic tracking-normal transition-colors hover:border-product-primary hover:bg-product-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary ${className}`}
+		onClick={onClick}
+		type="button"
+	>
+		<span
+			aria-hidden="true"
+			className="flex h-11 w-11 items-center justify-center rounded-full border border-product-border bg-product-card text-product-foreground shadow-product transition-colors group-hover/add:border-product-primary group-hover/add:bg-product-primary"
+		>
+			<Plus className="h-5 w-5" />
+		</span>
+		<span className="rounded-full bg-product-card px-3 py-1.5 text-sm font-semibold leading-none text-product-foreground-accent">
+			Add New Item
+		</span>
+	</button>
+);
+
 const contentVariants = {
 	hidden: { height: 0, opacity: 0, marginTop: 0 },
 	visible: { height: "auto", opacity: 1, marginTop: 16 },
@@ -149,18 +178,10 @@ const Items = ({
 								))}
 								{mode === "edit" && onAddItem && (
 									<SwiperSlide className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto">
-										<button
-											className="h-full min-h-[300px] w-full border-2 border-dashed border-[var(--catalogue-text)]/20 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 flex flex-col items-center justify-center p-6 group cursor-pointer"
+										<AddItemTile
+											className="h-full min-h-[300px] w-full"
 											onClick={() => onAddItem(blockIndex)}
-											style={{ borderRadius: "var(--border-radius)" }}
-										>
-											<div className="h-12 w-12 rounded-full bg-[var(--catalogue-card-background)] border border-[var(--catalogue-card-border)] flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--catalogue-primary)] transition-colors">
-												<Plus className="w-6 h-6 text-[var(--catalogue-text)]/70 group-hover:text-[var(--catalogue-primary)] transition-colors" />
-											</div>
-											<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
-												Add New Item
-											</span>
-										</button>
+										/>
 									</SwiperSlide>
 								)}
 							</Swiper>
@@ -203,20 +224,10 @@ const Items = ({
 								))}
 
 								{mode === "edit" && onAddItem && (
-									<button
-										className={`group relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-catalogue-text/20 bg-[var(--catalogue-card-background)]/50 hover:bg-[var(--catalogue-section-background)] hover:border-[var(--catalogue-primary)] hover:scale-[1.01] transition-all duration-200 cursor-pointer
-												${addCardSize}
-											`}
+									<AddItemTile
+										className={addCardSize}
 										onClick={() => onAddItem(blockIndex)}
-										style={{ borderRadius: "var(--border-radius)" }}
-									>
-										<div className="h-12 w-12 rounded-full bg-[var(--catalogue-card-background)] border border-[var(--catalogue-card-border)] flex items-center justify-center mb-3 shadow-sm group-hover:border-[var(--catalogue-primary)] transition-colors">
-											<Plus className="w-6 h-6 text-[var(--catalogue-text)]/70 group-hover:text-[var(--catalogue-primary)] transition-colors" />
-										</div>
-										<span className="text-xl font-medium font-lora text-[var(--catalogue-text)] group-hover:text-[var(--catalogue-heading)] ">
-											Add New Item
-										</span>
-									</button>
+									/>
 								)}
 							</div>
 						</div>

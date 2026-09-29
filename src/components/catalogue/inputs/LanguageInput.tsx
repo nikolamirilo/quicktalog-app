@@ -13,21 +13,13 @@ const LanguageInput = ({ disabled = false }: { disabled?: boolean }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
 	return (
 		<div className="space-y-2">
-			<Label
-				className="text-sm font-medium text-product-foreground"
-				htmlFor="language"
-			>
-				Language
-			</Label>
+			<Label htmlFor="language">Language</Label>
 			<Select
 				disabled={disabled}
 				onValueChange={(value) => updateCatalogue({ language: value })}
 				value={catalogue.language}
 			>
-				<SelectTrigger
-					className="bg-product-background border-product-border text-product-foreground focus:border-product-primary focus:ring-product-primary"
-					id="language"
-				>
+				<SelectTrigger id="language">
 					<SelectValue placeholder="Select language" />
 				</SelectTrigger>
 				<SelectContent>

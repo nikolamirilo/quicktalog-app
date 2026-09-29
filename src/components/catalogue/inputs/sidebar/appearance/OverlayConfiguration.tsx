@@ -1,82 +1,61 @@
 "use client";
 
+import { SwitchField } from "@/components/catalogue/inputs/sidebar/panel";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Switch } from "@/components/ui/switch";
-import { Info } from "lucide-react";
 
 interface OverlayConfigurationProps {
 	currentOverlay: Record<string, any>;
 	onOverlayChange: (field: string, value: any) => void;
 }
 
+const EMOJI = /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u;
+const ONLY_EMOJI = /^(\p{Emoji_Presentation}|\p{Extended_Pictographic})*$/u;
+const MAX_EMOJIS = 3;
+
+/** Emoji count, not string length: one emoji can be several code units. */
+const countEmojis = (value: string) =>
+	[...value].filter((char) => EMOJI.test(char)).length;
+
 const OverlayConfiguration = ({
 	currentOverlay,
 	onOverlayChange,
 }: OverlayConfigurationProps) => {
+	const icon: string = currentOverlay.icon || "";
 	return (
-		<div className="space-y-4 pt-2">
-			<div className="flex items-center gap-2">
-				<Label className="text-base font-semibold">Overlay</Label>
-				<Popover>
-					<PopoverTrigger type="button">
-						<Info className="h-4 w-4 text-muted-foreground" />
-					</PopoverTrigger>
-					<PopoverContent className="z-[2000] w-[200px] p-3 text-sm" side="top">
-						<p>Add a floating icon overlay to your catalogue.</p>
-					</PopoverContent>
-				</Popover>
-			</div>
+		<div className="space-y-3">
+			<SwitchField
+				checked={currentOverlay.isEnabled || false}
+				id="appearance-overlay-enabled"
+				label="Enable overlay"
+				onCheckedChange={(checked) => onOverlayChange("isEnabled", checked)}
+			/>
 
-			<div className="space-y-4">
-				<div className="flex items-center justify-between">
-					<Label>Enable Overlay</Label>
-					<Switch
-						checked={currentOverlay.isEnabled || false}
-						onCheckedChange={(checked) => onOverlayChange("isEnabled", checked)}
-					/>
-				</div>
-
-				{currentOverlay.isEnabled && (
-					<div className="space-y-2">
-						<Label>Overlay Icon</Label>
-						<Input
-							onChange={(e) => {
-								const value = e.target.value;
-								const emojiRegex =
-									/^(\p{Emoji_Presentation}|\p{Extended_Pictographic})*$/u;
-								if (value === "" || emojiRegex.test(value)) {
-									// Count emoji characters (not string length, since emojis can be multi-byte)
-									const emojiCount = [...value].filter((char) =>
-										/\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(
-											char,
-										),
-									).length;
-									if (emojiCount <= 3) {
-										onOverlayChange("icon", value);
-									}
+			{currentOverlay.isEnabled && (
+				<div className="space-y-2 border-t border-product-border pt-4">
+					<Label htmlFor="appearance-overlay-icon">Overlay icon</Label>
+					<Input
+						aria-describedby="appearance-overlay-icon-hint"
+						id="appearance-overlay-icon"
+						onChange={(e) => {
+							const value = e.target.value;
+							if (value === "" || ONLY_EMOJI.test(value)) {
+								if (countEmojis(value) <= MAX_EMOJIS) {
+									onOverlayChange("icon", value);
 								}
-							}}
-							placeholder="e.g. 🎁"
-							value={currentOverlay.icon || ""}
-						/>
-						<p className="text-xs text-muted-foreground">
-							Emojis only ·{" "}
-							{
-								[...(currentOverlay.icon || "")].filter((c) =>
-									/\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(c),
-								).length
 							}
-							/3
-						</p>
-					</div>
-				)}
-			</div>
+						}}
+						placeholder="e.g. 🎁"
+						value={icon}
+					/>
+					<p
+						className="text-[12.5px] text-product-muted"
+						id="appearance-overlay-icon-hint"
+					>
+						Emojis only · {countEmojis(icon)}/{MAX_EMOJIS}
+					</p>
+				</div>
+			)}
 		</div>
 	);
 };

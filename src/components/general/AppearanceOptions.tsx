@@ -5,6 +5,18 @@ import { themes } from "@quicktalog/common";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
+const LAYOUT_OPTIONS = [
+	{ key: "variant_1", label: "Side Image" },
+	{ key: "variant_2", label: "Top Image" },
+	{ key: "variant_3", label: "Text Only" },
+	{ key: "variant_4", label: "Carousel" },
+];
+
+/**
+ * The demo page's layout and theme switcher. It is drawn in the catalogue
+ * theme it switches (the `--catalogue-*` variables), so it previews the look;
+ * only accessible names are added on the product side.
+ */
 export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	const context = useMainContext();
 	if (!context) return null;
@@ -20,12 +32,7 @@ export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	}, [theme]);
 
 	useEffect(() => {
-		const currentIndex = [
-			{ key: "variant_1", label: "Side Image" },
-			{ key: "variant_2", label: "Top Image" },
-			{ key: "variant_3", label: "Text Only" },
-			{ key: "variant_4", label: "Carousel" },
-		].findIndex((l) => l.key === layout);
+		const currentIndex = LAYOUT_OPTIONS.findIndex((l) => l.key === layout);
 		if (currentIndex !== -1) {
 			setActiveLayoutIndex(currentIndex);
 		}
@@ -46,12 +53,7 @@ export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	};
 
 	const handlePreviousLayout = () => {
-		const layouts = [
-			{ key: "variant_1", label: "Side Image" },
-			{ key: "variant_2", label: "Top Image" },
-			{ key: "variant_3", label: "Text Only" },
-			{ key: "variant_4", label: "Carousel" },
-		];
+		const layouts = LAYOUT_OPTIONS;
 		const currentIndex = layouts.findIndex((l) => l.key === layout);
 		const newIndex = currentIndex > 0 ? currentIndex - 1 : layouts.length - 1;
 		setActiveLayoutIndex(newIndex);
@@ -59,12 +61,7 @@ export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	};
 
 	const handleNextLayout = () => {
-		const layouts = [
-			{ key: "variant_1", label: "Side Image" },
-			{ key: "variant_2", label: "Top Image" },
-			{ key: "variant_3", label: "Text Only" },
-			{ key: "variant_4", label: "Carousel" },
-		];
+		const layouts = LAYOUT_OPTIONS;
 		const currentIndex = layouts.findIndex((l) => l.key === layout);
 		const newIndex = currentIndex < layouts.length - 1 ? currentIndex + 1 : 0;
 		setActiveLayoutIndex(newIndex);
@@ -92,6 +89,7 @@ export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 						{/* Navigation Arrows with Layout Info */}
 						<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product border border-catalogue-section-border mb-4">
 							<Button
+								aria-label="Previous layout"
 								className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 								onClick={handlePreviousLayout}
 								size="sm"
@@ -115,16 +113,12 @@ export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 										fontWeight: "var(--catalogue-weight-heading)",
 									}}
 								>
-									{[
-										{ key: "variant_1", label: "Side Image" },
-										{ key: "variant_2", label: "Top Image" },
-										{ key: "variant_3", label: "Text Only" },
-										{ key: "variant_4", label: "Carousel" },
-									][activeLayoutIndex]?.label || "Side Image"}
+									{LAYOUT_OPTIONS[activeLayoutIndex]?.label || "Side Image"}
 								</div>
 							</div>
 
 							<Button
+								aria-label="Next layout"
 								className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 								onClick={handleNextLayout}
 								size="sm"
@@ -161,6 +155,7 @@ export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 					{/* Navigation Arrows with Theme Info */}
 					<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product border border-catalogue-section-border mb-4">
 						<Button
+							aria-label="Previous theme"
 							className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 							onClick={handlePreviousTheme}
 							size="sm"
@@ -201,6 +196,7 @@ export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 						</div>
 
 						<Button
+							aria-label="Next theme"
 							className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 							onClick={handleNextTheme}
 							size="sm"

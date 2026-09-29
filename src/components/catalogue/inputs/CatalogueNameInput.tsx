@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useCatalogueName } from "@/hooks/useCatalogueName";
+import { cn } from "@/lib/ui/cn";
 import { AlertCircle, CheckCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -41,57 +42,85 @@ const CatalogueNameInput = ({
 		}
 	}, [errors.name, nameExists, onErrorChange]);
 
+	const showStatus = !disabled && !!catalogue.name?.trim() && touched?.name;
+	const hasError = !!errors?.name || nameExists;
+	const isAvailable = showStatus && !hasError;
+
 	return (
 		<div className="space-y-2">
-			<Label
-				className="text-sm font-medium text-product-foreground"
-				htmlFor="catalogName"
-			>
-				Catalogue Name<span className="text-red-500 ml-1">*</span>
+			<Label htmlFor="catalogName">
+				Catalogue name
+				{!disabled && (
+					<span aria-hidden="true" className="ml-1 text-product-error">
+						*
+					</span>
+				)}
 			</Label>
 			<div className="relative">
 				<Input
-					className={`bg-product-background border-product-border text-product-foreground placeholder:text-product-foreground-accent/50 focus:border-product-primary focus:ring-product-primary pr-10 ${
-						!disabled && errors?.name
-							? "border-red-500 focus:border-red-500"
-							: catalogue.name?.trim() &&
-									!nameExists &&
-									touched?.name &&
-									!disabled
-								? "border-green-500 focus:border-green-500"
-								: ""
-					}`}
+					aria-describedby={
+						disabled
+							? "catalogName-hint"
+							: showStatus
+								? "catalogName-status"
+								: undefined
+					}
+					aria-invalid={
+						!disabled && touched?.name && hasError ? true : undefined
+					}
+					className={cn(
+						"pr-10",
+						isAvailable &&
+							"border-product-success focus-visible:border-product-success focus-visible:ring-product-success/20",
+					)}
 					disabled={disabled}
 					id="catalogName"
 					onChange={disabled ? undefined : handleNameChange}
 					placeholder="e.g. Burger House"
+					required={!disabled}
 					type="text"
 					value={catalogue.name}
 				/>
-				{!disabled && catalogue.name?.trim() && touched?.name && (
-					<div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-						{errors?.name || nameExists ? (
-							<AlertCircle className="h-4 w-4 text-red-500" />
+				{showStatus && (
+					<div className="absolute right-3 top-1/2 -translate-y-1/2">
+						{hasError ? (
+							<AlertCircle
+								aria-hidden="true"
+								className="h-4 w-4 text-product-error"
+							/>
 						) : (
-							<CheckCircle className="h-4 w-4 text-green-500" />
+							<CheckCircle
+								aria-hidden="true"
+								className="h-4 w-4 text-product-success"
+							/>
 						)}
 					</div>
 				)}
 			</div>
-			{!disabled &&
-				catalogue.name?.trim() &&
-				!errors?.name &&
-				touched?.name &&
-				!nameExists && (
-					<div className="text-green-600 text-xs mt-2 p-2 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-						Great! This name is available.
-					</div>
-				)}
-			{!disabled && touched?.name && (errors?.name || nameExists) && (
-				<div className="text-red-500 text-xs mt-2 p-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+			{disabled && (
+				<p className="text-[12.5px] text-product-muted" id="catalogName-hint">
+					The name is part of your catalogue's link, so it can't be changed
+					here.
+				</p>
+			)}
+			{isAvailable && (
+				<p
+					className="flex items-center gap-2 rounded-xl border border-product-success/30 bg-product-success-soft p-2 text-xs font-medium text-product-success"
+					id="catalogName-status"
+					role="status"
+				>
+					Great! This name is available.
+				</p>
+			)}
+			{!disabled && touched?.name && hasError && (
+				<p
+					className="flex items-center gap-2 rounded-xl border border-product-error/30 bg-product-error-soft p-2 text-xs font-medium text-product-error-ink"
+					id="catalogName-status"
+					role="alert"
+				>
 					{errors?.name ||
 						"This name is already in use. Please choose a different name."}
-				</div>
+				</p>
 			)}
 		</div>
 	);

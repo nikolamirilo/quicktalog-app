@@ -19,20 +19,19 @@ interface BlockNameInputProps {
  * block in the builder and to the AI assistant.
  */
 const BlockNameInput = ({ type, value, onChange }: BlockNameInputProps) => (
-	<div className="flex flex-col gap-1.5 max-w-md">
-		<Label
-			className="text-product-foreground font-medium"
-			htmlFor={`${type}-name-input`}
-		>
-			Section Name
-		</Label>
+	<div className="flex max-w-md flex-col gap-2 font-product-body">
+		<Label htmlFor={`${type}-name-input`}>Section name</Label>
 		<Input
+			aria-describedby={`${type}-name-hint`}
 			id={`${type}-name-input`}
 			onChange={(e) => onChange(e.target.value)}
 			placeholder="e.g. Summer sale banner"
 			value={value}
 		/>
-		<span className="text-xs text-gray-500 -mt-0.5">
+		<span
+			className="text-[12.5px] leading-snug text-product-muted"
+			id={`${type}-name-hint`}
+		>
 			Describes this section for screen readers and identifies it in the
 			builder. Not shown on the page.
 		</span>

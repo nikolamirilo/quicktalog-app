@@ -1,5 +1,6 @@
 "use client";
 import { updateCatalogue } from "@/actions/catalogue";
+import { IconTile } from "@/components/general/IconTile";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { Lock } from "lucide-react";
@@ -18,8 +19,7 @@ const LimitsOverlay = ({
 		size === "sm" ? "text-sm" : size === "default" ? "text-base" : "text-lg";
 	const headingSize =
 		size === "sm" ? "text-base" : size === "default" ? "text-lg" : "text-xl";
-	const lockSize =
-		size === "sm" ? "w-8 h-8" : size === "default" ? "w-10 h-10" : "w-12 h-12";
+	const tileSize = size === "sm" ? "sm" : size === "default" ? "md" : "lg";
 	const gapSize =
 		size === "sm" ? "gap-2" : size === "default" ? "gap-3" : "gap-4";
 	const router = useRouter();
@@ -28,7 +28,7 @@ const LimitsOverlay = ({
 		toast.promise(promise, {
 			loading: "Saving changes...",
 			success: "Changes saved successfully",
-			error: (err) => "Error occured" + err,
+			error: "Could not save your changes",
 			finally: () => {
 				router.push("/pricing");
 			},
@@ -36,14 +36,18 @@ const LimitsOverlay = ({
 	}
 	return (
 		<div
-			className={`absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/40 backdrop-blur-[2px] rounded-lg p-6 ${gapSize}`}
+			className={`absolute inset-0 z-10 flex flex-col items-center justify-center rounded-[inherit] bg-product-card/75 p-6 font-product-body backdrop-blur-[2px] ${gapSize}`}
 		>
-			<Lock className={`${lockSize} text-muted-foreground`} />
-			<h3 className={`font-bold text-center text-foreground ${headingSize}`}>
-				Upgrade Required
+			<IconTile size={tileSize}>
+				<Lock />
+			</IconTile>
+			<h3
+				className={`text-center font-product-heading font-bold text-product-foreground ${headingSize}`}
+			>
+				Upgrade required
 			</h3>
 			<p
-				className={`text-muted-foreground text-center w-full max-w-[400px] ${paragraphSize}`}
+				className={`w-full max-w-[400px] text-center text-product-foreground-accent ${paragraphSize}`}
 			>
 				{type === "branding" ? (
 					<>
@@ -56,7 +60,7 @@ const LimitsOverlay = ({
 				)}
 			</p>
 			<Button onClick={handleUpgrade} size={size}>
-				Upgrade Now
+				Upgrade now
 			</Button>
 		</div>
 	);

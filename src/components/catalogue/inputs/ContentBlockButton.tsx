@@ -1,54 +1,36 @@
+import { Plus } from "lucide-react";
+
+/**
+ * The "Add Section" tile under the catalogue in the builder. It is a builder
+ * control drawn inside `.catalogue-root`, so it sets the product typography
+ * and colours itself instead of inheriting the catalogue's.
+ */
 const ContentBlockButton = ({
 	setIsAddContentOpen,
 }: {
 	setIsAddContentOpen: (open: boolean) => void;
 }) => {
 	return (
-		<div className="max-w-6xl mx-auto px-4 block">
+		<div className="mx-auto block max-w-6xl px-4">
 			<button
-				className="
-					mt-4 w-full group font-lora
-					border-2 border-dashed border-border
-					bg-background rounded-xl
-					flex flex-col items-center justify-center gap-3
-					cursor-pointer relative overflow-hidden
-					transition-all duration-300 ease-out
-					py-14
-					hover:border-primary hover:bg-catalogue-section-background
-					hover:-translate-y-0.5 hover:shadow-lg
-					active:translate-y-0 active:shadow-sm
-				"
+				className="group mt-4 flex w-full flex-col items-center justify-center gap-3 rounded-product-card border-2 border-dashed border-product-border-strong bg-product-card/80 px-4 py-10 font-product-body text-product-foreground transition-[border-color,background-color,transform] duration-200 hover:-translate-y-0.5 hover:border-product-primary-accent hover:bg-product-primary/5"
 				onClick={() => setIsAddContentOpen(true)}
+				type="button"
 			>
-				{/* Subtle radial glow on hover */}
 				<span
 					aria-hidden="true"
-					className="
-						pointer-events-none absolute inset-0 opacity-0
-						group-hover:opacity-100 transition-opacity duration-300
-						bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,hsl(var(--catalogue-primary)/0.07),transparent)]
-					"
-				/>
-
-				<img
-					alt=""
-					aria-hidden="true"
-					className="
-						w-[180px] h-[180px] relative z-10
-						transition-transform duration-300 ease-out
-						group-hover:-translate-y-1 group-hover:scale-105
-					"
-					src="/images/builder/content.svg"
-				/>
-
-				<div className="relative z-10 flex flex-col items-center gap-1">
-					<span className="text-xl font-medium text-foreground transition-colors duration-200 group-hover:text-primary">
+					className="flex h-12 w-12 items-center justify-center rounded-full bg-product-primary text-product-foreground shadow-product-primary transition-transform duration-200 group-hover:scale-105"
+				>
+					<Plus className="h-6 w-6" strokeWidth={2.5} />
+				</span>
+				<span className="flex flex-col items-center gap-1">
+					<span className="font-product-heading text-lg font-bold leading-tight">
 						Add Section
 					</span>
-					<span className="text-sm text-muted-foreground opacity-0 -translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-						Click to choose a section type
+					<span className="text-sm leading-snug text-product-muted">
+						Items, text, a divider, an embed or custom code
 					</span>
-				</div>
+				</span>
 			</button>
 		</div>
 	);

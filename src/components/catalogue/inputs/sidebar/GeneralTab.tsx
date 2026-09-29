@@ -1,24 +1,19 @@
-import { ImageDropzone } from "@/components/general/ImageDropzone";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Textarea } from "@/components/ui/textarea";
-import { useCatalogueContext } from "@/context/CatalogueContext";
 import { PricingPlan } from "@quicktalog/common";
-import { Info } from "lucide-react";
 import { useState } from "react";
 import CatalogueNameInput from "@/components/catalogue/inputs/CatalogueNameInput";
 import CurrencySelect from "@/components/catalogue/inputs/CurrencySelect";
 import LanguageInput from "@/components/catalogue/inputs/LanguageInput";
-import LimitsOverlay from "./LimitsOverlay";
+import { ImageDropzone } from "@/components/general/ImageDropzone";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useCatalogueContext } from "@/context/CatalogueContext";
+import { LockedGroup, PANEL_TAB_ROOT, PanelSection } from "./panel";
+import { cn } from "@/lib/ui/cn";
 
 const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
-	const hasBranding = plan?.features?.branding;
+	const hasBranding = !!plan?.features?.branding;
 	const [_isUploading, setIsUploading] = useState(false);
 
 	if (!catalogue || !updateCatalogue) return null;
@@ -46,100 +41,69 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	return (
-		<div className="space-y-4 p-2 relative">
-			{/* Logo Section */}
-			<div className="space-y-2">
-				<div className="flex items-center gap-2">
-					<h3 className="text-lg font-bold">General Information</h3>
-					<Popover>
-						<PopoverTrigger type="button">
-							<Info className="h-4 w-4 text-muted-foreground" />
-						</PopoverTrigger>
-						<PopoverContent
-							className="z-[2000] w-[200px] p-3 text-sm"
-							side="top"
-						>
-							<p>Basic settings for your catalogue.</p>
-						</PopoverContent>
-					</Popover>
-				</div>
+		<div className={cn("space-y-4", PANEL_TAB_ROOT)}>
+			<PanelSection
+				info="Basic settings for your catalogue."
+				title="General information"
+			>
 				<CatalogueNameInput disabled={true} />
 				<LanguageInput />
 				<CurrencySelect />
-				<div className="w-full relative">
-					{!hasBranding && <LimitsOverlay size="sm" />}
-					<div
-						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
-					>
-						<div className="flex items-center gap-2">
-							<Label className="text-base">Logo</Label>
-						</div>
+			</PanelSection>
 
-						<ImageDropzone
-							className="w-full aspect-video bg-transparent"
-							image={catalogue.logo}
-							onUploadComplete={(url) => handleChange("logo", url)}
-							removeImage={() => handleChange("logo", "")}
-							setIsUploading={setIsUploading}
-							targetSizeKB={400}
-							type="icon"
-						/>
-					</div>
-				</div>
-			</div>
+			<PanelSection
+				description="Shown in your catalogue's header and footer."
+				title="Logo"
+			>
+				<LockedGroup locked={!hasBranding}>
+					<ImageDropzone
+						className="w-full"
+						image={catalogue.logo}
+						onUploadComplete={(url) => handleChange("logo", url)}
+						removeImage={() => handleChange("logo", "")}
+						setIsUploading={setIsUploading}
+						targetSizeKB={400}
+						type="icon"
+					/>
+				</LockedGroup>
+			</PanelSection>
 
-			{/* Contact Information Section */}
-			<div className="space-y-4">
-				<div className="flex items-center gap-2">
-					<h3 className="text-lg font-bold">Contact Information</h3>
-					<Popover>
-						<PopoverTrigger type="button">
-							<Info className="h-4 w-4 text-muted-foreground" />
-						</PopoverTrigger>
-						<PopoverContent
-							className="z-[2000] w-[200px] p-3 text-sm"
-							side="top"
-						>
-							<p>Contact details displayed to your customers.</p>
-						</PopoverContent>
-					</Popover>
-				</div>
-
-				<div className="space-y-4 relative">
-					{!hasBranding && <LimitsOverlay size="sm" />}
-					<div
-						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
-					>
+			<PanelSection
+				info="Contact details displayed to your customers."
+				title="Contact information"
+			>
+				<LockedGroup locked={!hasBranding}>
+					<div className="space-y-4">
 						<div className="space-y-2">
-							<div className="flex items-center gap-2">
-								<Label htmlFor="contact-phone">Phone Number</Label>
-							</div>
+							<Label htmlFor="contact-phone">Phone number</Label>
 							<Input
+								autoComplete="tel"
 								id="contact-phone"
+								inputMode="tel"
 								onChange={(e) => handleChange("contact.phone", e.target.value)}
 								placeholder="e.g. +1 123 456 7890"
+								type="tel"
 								value={catalogue.contact?.phone || ""}
 							/>
 						</div>
-
 						<div className="space-y-2">
-							<div className="flex items-center gap-2">
-								<Label htmlFor="contact-email">Email</Label>
-							</div>
+							<Label htmlFor="contact-email">Email</Label>
 							<Input
+								autoComplete="email"
 								id="contact-email"
+								inputMode="email"
 								onChange={(e) => handleChange("contact.email", e.target.value)}
 								placeholder="e.g. example@gmail.com"
+								type="email"
 								value={catalogue.contact?.email || ""}
 							/>
 						</div>
-
 						<div className="space-y-2">
-							<div className="flex items-center gap-2">
-								<Label htmlFor="contact-website">Website</Label>
-							</div>
+							<Label htmlFor="contact-website">Website</Label>
 							<Input
+								autoComplete="url"
 								id="contact-website"
+								inputMode="url"
 								onChange={(e) =>
 									handleChange("contact.website", e.target.value)
 								}
@@ -148,35 +112,15 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 							/>
 						</div>
 					</div>
-				</div>
-			</div>
+				</LockedGroup>
+			</PanelSection>
 
-			{/* Metadata Section */}
-			<div className="space-y-4">
-				<div className="flex items-center gap-2">
-					<h3 className="text-lg font-bold">Metadata</h3>
-					<Popover>
-						<PopoverTrigger type="button">
-							<Info className="h-4 w-4 text-muted-foreground" />
-						</PopoverTrigger>
-						<PopoverContent
-							className="z-[2000] w-[200px] p-3 text-sm"
-							side="top"
-						>
-							<p>
-								Metadata enhances your catalogue's appearance when shared on
-								social media or found in search engines. The icon will be
-								displayed in the browser tab when visitors view your catalogue.
-							</p>
-						</PopoverContent>
-					</Popover>
-				</div>
-
-				<div className="relative w-full">
-					{!hasBranding && <LimitsOverlay size="sm" />}
-					<div
-						className={`space-y-2 ${!hasBranding ? "opacity-30 pointer-events-none select-none blur-[1px]" : ""}`}
-					>
+			<PanelSection
+				info="Metadata enhances your catalogue's appearance when shared on social media or found in search engines. The icon is shown in the browser tab when visitors view your catalogue."
+				title="Search and sharing"
+			>
+				<LockedGroup locked={!hasBranding}>
+					<div className="space-y-4">
 						<div className="space-y-2">
 							<Label htmlFor="meta-title">Title</Label>
 							<Input
@@ -186,11 +130,10 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 								value={catalogue.metadata?.title || ""}
 							/>
 						</div>
-
 						<div className="space-y-2">
 							<Label htmlFor="meta-description">Description</Label>
 							<Textarea
-								className="resize-none min-h-[100px]"
+								className="min-h-[100px] resize-none"
 								id="meta-description"
 								onChange={(e) =>
 									handleChange("metadata.description", e.target.value)
@@ -199,11 +142,15 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 								value={catalogue.metadata?.description || ""}
 							/>
 						</div>
-
 						<div className="space-y-2">
-							<Label htmlFor="meta-icon">Browser Tab Icon</Label>
+							<p className="text-[13.5px] font-semibold leading-none text-product-foreground">
+								Browser tab icon
+							</p>
+							<p className="text-[12.5px] leading-snug text-product-muted">
+								A square image works best.
+							</p>
 							<ImageDropzone
-								className="w-full aspect-video bg-transparent"
+								className="w-full"
 								image={catalogue.metadata?.icon || ""}
 								onUploadComplete={(url) => handleChange("metadata.icon", url)}
 								removeImage={() => handleChange("metadata.icon", "")}
@@ -212,8 +159,8 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 							/>
 						</div>
 					</div>
-				</div>
-			</div>
+				</LockedGroup>
+			</PanelSection>
 		</div>
 	);
 };

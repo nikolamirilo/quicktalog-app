@@ -4,8 +4,8 @@ import { Palette, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { ColorPicker } from "@/components/ui/color-picker";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
 	CUSTOM_COLOR_KEYS,
 	DEFAULT_CUSTOM_COLORS,
@@ -72,47 +72,88 @@ const CustomThemeConfiguration = ({
 
 	return (
 		<div className="space-y-4">
-			<div className="flex items-center gap-2 text-sm text-muted-foreground">
+			<p className="flex items-center gap-2 rounded-xl bg-product-background-hero px-3 py-2 text-[13px] text-product-foreground-accent">
 				{activeSavedThemeName ? (
 					<>
-						<Palette className="h-4 w-4 shrink-0" />
+						<Palette aria-hidden="true" className="h-4 w-4 shrink-0" />
 						<span>
 							Editing{" "}
-							<strong className="text-foreground">
+							<strong className="font-semibold text-product-foreground">
 								{activeSavedThemeName}
 							</strong>
 						</span>
 					</>
 				) : (
 					<>
-						<Sparkles className="h-4 w-4 shrink-0" />
-						<span>New custom theme - save it below to reuse it later.</span>
+						<Sparkles aria-hidden="true" className="h-4 w-4 shrink-0" />
+						<span>New custom theme. Save it below to reuse it later.</span>
 					</>
 				)}
-			</div>
+			</p>
 
-			<div className="space-y-1">
-				{CUSTOM_COLOR_KEYS.map((key) => (
-					<ColorPicker
-						key={key}
-						label={COLOR_LABELS[key]}
-						onChange={(value) => handleColorChange(key, value)}
-						value={colors[key] ?? DEFAULT_CUSTOM_COLORS[key]}
+			<ul className="divide-y divide-product-border">
+				{CUSTOM_COLOR_KEYS.map((key) => {
+					const value = colors[key] ?? DEFAULT_CUSTOM_COLORS[key];
+					const inputId = `custom-color-${key}`;
+					return (
+						<li
+							className="flex min-h-12 items-center justify-between gap-3 py-1"
+							key={key}
+						>
+							<Label className="min-w-0 truncate" htmlFor={inputId}>
+								{COLOR_LABELS[key]}
+							</Label>
+							<div className="flex shrink-0 items-center gap-2">
+								{/* The swatch is the native picker, sized as a 44px target. */}
+								<span
+									className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-product-border-strong shadow-sm"
+									style={{ backgroundColor: value }}
+								>
+									<input
+										aria-label={`${COLOR_LABELS[key]} colour picker`}
+										className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+										onChange={(e) => handleColorChange(key, e.target.value)}
+										type="color"
+										value={value}
+									/>
+								</span>
+								<Input
+									autoComplete="off"
+									className="h-11 w-[104px] px-3 font-mono text-sm uppercase md:text-sm"
+									id={inputId}
+									maxLength={7}
+									onChange={(e) => handleColorChange(key, e.target.value)}
+									spellCheck={false}
+									value={value}
+								/>
+							</div>
+						</li>
+					);
+				})}
+			</ul>
+
+			<form
+				className="space-y-2 border-t border-product-border pt-4"
+				onSubmit={(e) => {
+					e.preventDefault();
+					handleSave();
+				}}
+			>
+				<Label htmlFor="custom-theme-name">Theme name</Label>
+				<div className="flex gap-2">
+					<Input
+						className="min-w-0 flex-1"
+						disabled={isSaving}
+						id="custom-theme-name"
+						onChange={(e) => setNewThemeName(e.target.value)}
+						placeholder="e.g. Summer menu"
+						value={newThemeName}
 					/>
-				))}
-			</div>
-
-			<div className="flex gap-2">
-				<Input
-					disabled={isSaving}
-					onChange={(e) => setNewThemeName(e.target.value)}
-					placeholder="Theme name"
-					value={newThemeName}
-				/>
-				<Button disabled={isSaving} onClick={handleSave} type="button">
-					{activeSavedThemeName ? "Update" : "Save"}
-				</Button>
-			</div>
+					<Button className="shrink-0" disabled={isSaving} type="submit">
+						{activeSavedThemeName ? "Update" : "Save"}
+					</Button>
+				</div>
+			</form>
 		</div>
 	);
 };

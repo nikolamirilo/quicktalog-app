@@ -1,15 +1,12 @@
+import { Catalogue } from "@quicktalog/common";
+import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { PanelSection } from "@/components/catalogue/inputs/sidebar/panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
 import { MAX_SOCIALS } from "@/constants";
 import { extractDomain } from "@/lib/http/domain";
-import { Catalogue } from "@quicktalog/common";
-import { Info, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
 
 interface SocialLinksSectionProps {
 	catalogue: Catalogue;
@@ -57,70 +54,86 @@ const SocialLinksSection = ({
 		});
 	};
 
+	const socials = catalogue.contact?.socials || [];
+	const canAdd = newSocialUrl.trim() && newSocialUrl.includes(".");
+
 	return (
-		<div className="space-y-4">
-			<div className="flex items-center gap-2">
-				<h3 className="text-lg font-bold">Social Media Links</h3>
-				<Popover>
-					<PopoverTrigger type="button">
-						<Info className="h-4 w-4 text-muted-foreground" />
-					</PopoverTrigger>
-					<PopoverContent className="z-[2000] w-[200px] p-3 text-sm" side="top">
-						<p>Add links to your social media profiles.</p>
-					</PopoverContent>
-				</Popover>
-			</div>
-
-			<div className="space-y-4">
-				{catalogue.contact?.socials?.map((url, index) => (
-					<div className="flex gap-2 items-center" key={index}>
-						<div className="p-2 rounded-full flex items-center justify-center flex-shrink-0 bg-catalogue-card-background text-catalogue-card-heading border border-gray-400 overflow-hidden">
-							<img
-								alt={`Social Icon`}
-								className="w-5 h-5 rounded-sm object-cover"
-								src={`https://img.logo.dev/${extractDomain(url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
+		<PanelSection
+			info="Add links to your social media profiles."
+			title="Social media links"
+		>
+			{socials.length > 0 && (
+				<ul className="space-y-2">
+					{socials.map((url, index) => (
+						<li className="flex items-center gap-2" key={index}>
+							<span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-product-border bg-product-card">
+								<img
+									alt=""
+									className="h-5 w-5 rounded-sm object-cover"
+									src={`https://img.logo.dev/${extractDomain(url)}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN}`}
+								/>
+							</span>
+							<Input
+								aria-label={`Social link ${index + 1}`}
+								className="min-w-0 flex-1"
+								inputMode="url"
+								onChange={(e) => updateSocial(index, e.target.value)}
+								placeholder="https://"
+								value={url}
 							/>
-						</div>
-						<Input
-							onChange={(e) => updateSocial(index, e.target.value)}
-							placeholder="https://"
-							value={url}
-						/>
-						<Button
-							className="flex-shrink-0"
-							onClick={() => removeSocial(index)}
-							size="icon"
-							variant="ghost"
-						>
-							<Trash2 className="h-4 w-4 text-destructive" />
-						</Button>
-					</div>
-				))}
+							<Button
+								aria-label={`Remove social link ${index + 1}`}
+								className="h-11 w-11 shrink-0 text-product-error hover:bg-product-error-soft hover:text-product-error-ink"
+								onClick={() => removeSocial(index)}
+								size="icon"
+								type="button"
+								variant="ghost"
+							>
+								<Trash2 aria-hidden="true" className="h-4 w-4" />
+							</Button>
+						</li>
+					))}
+				</ul>
+			)}
 
-				{(!catalogue.contact?.socials ||
-					catalogue.contact.socials.length < MAX_SOCIALS) && (
-					<div className="space-y-2">
+			{socials.length < MAX_SOCIALS ? (
+				<form
+					className="space-y-2"
+					onSubmit={(e) => {
+						e.preventDefault();
+						addSocial();
+					}}
+				>
+					<Label htmlFor="footer-new-social">Add a profile link</Label>
+					<div className="flex gap-2">
 						<Input
+							className="min-w-0 flex-1"
+							id="footer-new-social"
+							inputMode="url"
 							onChange={(e) => setNewSocialUrl(e.target.value)}
 							placeholder="e.g. www.instagram.com/quicktalog"
 							value={newSocialUrl}
 						/>
 						<Button
-							className="w-full bg-product-primary text-product-foreground"
-							disabled={!newSocialUrl.trim() || !newSocialUrl.includes(".")}
-							onClick={addSocial}
+							aria-label="Add social link"
+							className="h-11 w-11 shrink-0"
+							disabled={!canAdd}
+							size="icon"
+							type="submit"
 						>
-							<Plus className="h-4 w-4 mr-2" /> Add Social Media
+							<Plus aria-hidden="true" className="h-4 w-4" />
 						</Button>
 					</div>
-				)}
-				{catalogue.contact?.socials?.length === MAX_SOCIALS && (
-					<p className="text-sm text-muted-foreground text-center">
-						Maximum of {MAX_SOCIALS} social links reached.
+					<p className="text-[12.5px] text-product-muted">
+						{socials.length} of {MAX_SOCIALS} links added.
 					</p>
-				)}
-			</div>
-		</div>
+				</form>
+			) : (
+				<p className="text-[13px] text-product-muted">
+					Maximum of {MAX_SOCIALS} social links reached.
+				</p>
+			)}
+		</PanelSection>
 	);
 };
 

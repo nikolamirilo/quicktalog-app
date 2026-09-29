@@ -1,6 +1,6 @@
 ---
 name: adding-new-content-block
-description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. VideoBlock, GalleryBlock) - covers the type definition, renderer + input components, AddContentModal wiring, ContentOptionsSelector option, CatalogueContent render branch, and the AI-agent and plan-gating paths that are easy to miss.
+description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. VideoBlock, GalleryBlock) - covers the type definition, renderer + input components, AddContentModal wiring, SectionTypePicker option, CatalogueContent render branch, and the AI-agent and plan-gating paths that are easy to miss.
 ---
 
 # Adding a New Content Block
@@ -40,7 +40,7 @@ use `isItemsBlock` / `asItemsBlock` from that helper.
 | 1 | Shared type | `@quicktalog/common` → `src/types/catalogue.ts` | Interface extends `BaseContentBlock`; add to the `ContentBlock` union. **Needs a package release.** |
 | 2 | Renderer | [components/catalogue/sections/](../../../src/components/catalogue/sections/)`[Name].tsx` | View + edit mode; `BlockControls` in edit mode |
 | 3 | Input | [components/catalogue/inputs/](../../../src/components/catalogue/inputs/)`[Name]Input.tsx` | The config form |
-| 4 | Picker option | [sections/common/ContentOptionsSelector.tsx](../../../src/components/catalogue/sections/common/ContentOptionsSelector.tsx) | `OptionKey`, `OPTIONS` entry, icon, `isLocked` case |
+| 4 | Picker option | [modals/content/SectionTypePicker.tsx](../../../src/components/catalogue/modals/content/SectionTypePicker.tsx) + `ContentOption` in [BlockConfigHeader.tsx](../../../src/components/catalogue/modals/content/BlockConfigHeader.tsx) | `OPTIONS` entry (key, label, lucide icon); the `isLocked` case lives with the plan gate in `AddContentModal` |
 | 5 | Modal state | [modals/AddContentModal.tsx](../../../src/components/catalogue/modals/AddContentModal.tsx) | `ContentOption`, `DEFAULT_BLOCK_DATA`, edit-hydration, `handleAdd`, `isFormValid`, `isLocked` |
 | 6 | Modal form + copy | [modals/content/BlockConfigForm.tsx](../../../src/components/catalogue/modals/content/BlockConfigForm.tsx), [BlockConfigHeader.tsx](../../../src/components/catalogue/modals/content/BlockConfigHeader.tsx) | Render branch; `LABELS` + `DESCRIPTIONS` entry |
 | 7 | Main renderer | [view/CatalogueContent.tsx](../../../src/components/catalogue/view/CatalogueContent.tsx) | Import + a `block.type` branch in the render loop |

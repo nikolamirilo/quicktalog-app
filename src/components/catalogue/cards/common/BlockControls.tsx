@@ -1,20 +1,69 @@
+"use client";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/ui/cn";
 import { layouts } from "@quicktalog/common";
-import { useEffect, useRef, useState } from "react";
-import { FaRegEdit } from "react-icons/fa";
-import { FiChevronDown, FiChevronUp, FiLayout, FiTrash2 } from "react-icons/fi";
-import { IoMdCheckmark } from "react-icons/io";
+import {
+	Check,
+	ChevronDown,
+	ChevronUp,
+	LayoutGrid,
+	Pencil,
+	Trash2,
+} from "lucide-react";
+import type { ReactNode } from "react";
 
-const BlockControls = ({
-	onMoveDown,
-	onMoveUp,
-	isFirst,
-	isLast,
-	onDelete,
-	currentLayout,
-	onLayoutChange,
-	onEdit,
-	isEditing,
+/**
+ * The hover group a block's edit toolbar listens to. Renderers put it on their
+ * outer element in edit mode only, so view-mode markup is unchanged.
+ */
+export const BLOCK_CONTROLS_GROUP = "group/block";
+
+/**
+ * Edit-only product chrome inside `.catalogue-root`: the catalogue pins Lora at
+ * 18px there and product focus rules are excluded, so type and focus are set
+ * explicitly here.
+ */
+const toolButtonClasses =
+	"relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-product-foreground-accent transition-colors hover:bg-product-background-hero hover:text-product-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent data-[state=open]:bg-product-background-hero [@media(hover:hover)]:h-9 [@media(hover:hover)]:w-9 [&_svg]:size-[18px]";
+
+const ToolButton = ({
+	label,
+	onClick,
+	disabled,
+	className,
+	children,
 }: {
+	label: string;
+	onClick: () => void;
+	disabled?: boolean;
+	className?: string;
+	children: ReactNode;
+}) => (
+	<button
+		aria-label={label}
+		className={cn(toolButtonClasses, className)}
+		disabled={disabled}
+		onClick={(e) => {
+			e.stopPropagation();
+			if (!disabled) onClick();
+		}}
+		title={label}
+		type="button"
+	>
+		{children}
+	</button>
+);
+
+interface BlockControlsProps {
+	/** Short name of the block type, shown at the start of the toolbar. */
+	label?: string;
 	onMoveDown?: () => void;
 	onMoveUp?: () => void;
 	isFirst?: boolean;
@@ -24,143 +73,114 @@ const BlockControls = ({
 	onLayoutChange?: (layout: string) => void;
 	onEdit?: () => void;
 	isEditing?: boolean;
-}) => {
-	const [isLayoutOpen, setIsLayoutOpen] = useState(false);
-	const layoutRef = useRef<HTMLDivElement>(null);
+}
 
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				layoutRef.current &&
-				!layoutRef.current.contains(event.target as Node)
-			) {
-				setIsLayoutOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, []);
-
+/**
+ * The edit toolbar of a catalogue block. It sits in its own row above the
+ * block, never on top of it, so it cannot cover a title at any width. On
+ * devices that hover it fades in when the block is hovered or focused; on
+ * touch it is always shown.
+ */
+const BlockControls = ({
+	label,
+	onMoveDown,
+	onMoveUp,
+	isFirst,
+	isLast,
+	onDelete,
+	currentLayout,
+	onLayoutChange,
+	onEdit,
+	isEditing,
+}: BlockControlsProps) => {
 	return (
-		<div className="absolute right-2 top-2 z-20 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-hover/container:opacity-100 md:group-hover/header:opacity-100 transition-all duration-200">
-			{onEdit && (
-				<button
-					aria-label={isEditing ? "Finish editing" : "Edit content"}
-					className={`p-2 rounded-full shadow-sm transition-all duration-200 ${
-						isEditing
-							? "bg-product-primary text-white hover:bg-product-primary/90"
-							: "bg-white/80 text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
-					onClick={(e) => {
-						e.stopPropagation();
-						onEdit();
-					}}
-					title={isEditing ? "Finish editing" : "Edit content"}
-					type="button"
-				>
-					{isEditing ? (
-						<IoMdCheckmark className="w-5 h-5" />
-					) : (
-						<FaRegEdit className="w-5 h-5" />
-					)}
-				</button>
+		<div
+			className={cn(
+				"relative z-20 mb-2 flex justify-end font-product-body text-sm font-normal not-italic leading-none tracking-normal transition-opacity duration-200",
+				"focus-within:opacity-100 has-[[data-state=open]]:opacity-100 group-hover/block:opacity-100 [@media(hover:hover)]:opacity-0",
+				isEditing && "[@media(hover:hover)]:opacity-100",
 			)}
-			{onLayoutChange && (
-				<div className="relative" ref={layoutRef}>
-					<button
-						aria-label="Change layout"
-						className="p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-						onClick={(e) => {
-							e.stopPropagation();
-							setIsLayoutOpen(!isLayoutOpen);
-						}}
-						title="Change layout"
-						type="button"
+			onClick={(e) => e.stopPropagation()}
+			onPointerDown={(e) => e.stopPropagation()}
+		>
+			<div
+				aria-label={label ? `${label} tools` : "Block tools"}
+				className="flex max-w-full items-center gap-0.5 rounded-full border border-product-border bg-product-card p-1 shadow-product"
+				role="toolbar"
+			>
+				{label && (
+					<span className="min-w-0 truncate px-2.5 text-xs font-semibold text-product-muted">
+						{label}
+					</span>
+				)}
+				{onEdit && (
+					<ToolButton
+						className={cn(
+							isEditing &&
+								"bg-product-primary text-product-foreground hover:bg-product-primary-accent",
+						)}
+						label={isEditing ? "Finish editing" : "Edit content"}
+						onClick={onEdit}
 					>
-						<FiLayout className="w-5 h-5" />
-					</button>
-					{isLayoutOpen && (
-						<div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 overflow-hidden">
-							{layouts.map((layout) => (
-								<button
-									className={`w-full text-left px-4 py-2 text-sm hover:bg-product-background-hover flex items-center justify-between ${
-										currentLayout === layout.key
-											? "text-product-primary bg-product-background-hover"
-											: "text-product-foreground"
-									}`}
-									key={layout.key}
-									onClick={(e) => {
-										e.stopPropagation();
-										onLayoutChange(layout.key);
-										setIsLayoutOpen(false);
-									}}
-								>
-									{layout.label}
-									{currentLayout === layout.key && (
-										<div className="w-2 h-2 rounded-full bg-product-primary" />
-									)}
-								</button>
-							))}
-						</div>
-					)}
-				</div>
-			)}
-			{onMoveUp && (
-				<button
-					aria-label="Move container up"
-					className={`p-2 bg-white/80 rounded-full shadow-sm transition-all duration-200 ${
-						isFirst
-							? "text-gray-300 cursor-not-allowed"
-							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
-					disabled={isFirst}
-					onClick={(e) => {
-						e.stopPropagation();
-						if (!isFirst) onMoveUp();
-					}}
-					title="Move up"
-					type="button"
-				>
-					<FiChevronUp className="w-5 h-5" />
-				</button>
-			)}
-			{onMoveDown && (
-				<button
-					aria-label="Move container down"
-					className={`p-2 bg-white/80 text-gray-600 rounded-full shadow-sm transition-all duration-200 ${
-						isLast
-							? "text-gray-300 cursor-not-allowed"
-							: "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-					}`}
-					disabled={isLast}
-					onClick={(e) => {
-						e.stopPropagation();
-						if (!isLast) onMoveDown();
-					}}
-					title="Move down"
-					type="button"
-				>
-					<FiChevronDown className="w-5 h-5" />
-				</button>
-			)}
-			{onDelete && (
-				<button
-					aria-label="Delete container"
-					className="p-2 text-red-500 bg-white/80 hover:bg-red-50 rounded-full shadow-sm transition-all duration-200"
-					onClick={(e) => {
-						e.stopPropagation();
-						if (confirm("Are you sure you want to delete this container?")) {
-							onDelete();
-						}
-					}}
-					title="Delete container"
-					type="button"
-				>
-					<FiTrash2 className="w-5 h-5" />
-				</button>
-			)}
+						{isEditing ? <Check /> : <Pencil />}
+					</ToolButton>
+				)}
+				{onLayoutChange && (
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<button
+								aria-label="Change layout"
+								className={toolButtonClasses}
+								onClick={(e) => e.stopPropagation()}
+								title="Change layout"
+								type="button"
+							>
+								<LayoutGrid />
+							</button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent
+							align="end"
+							className="w-52"
+							onClick={(e) => e.stopPropagation()}
+						>
+							<DropdownMenuLabel>Layout</DropdownMenuLabel>
+							<DropdownMenuRadioGroup
+								onValueChange={onLayoutChange}
+								value={currentLayout}
+							>
+								{layouts.map((layout) => (
+									<DropdownMenuRadioItem key={layout.key} value={layout.key}>
+										{layout.label}
+									</DropdownMenuRadioItem>
+								))}
+							</DropdownMenuRadioGroup>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)}
+				{onMoveUp && (
+					<ToolButton disabled={isFirst} label="Move up" onClick={onMoveUp}>
+						<ChevronUp />
+					</ToolButton>
+				)}
+				{onMoveDown && (
+					<ToolButton disabled={isLast} label="Move down" onClick={onMoveDown}>
+						<ChevronDown />
+					</ToolButton>
+				)}
+				{onDelete && (
+					<ToolButton
+						className="text-product-error hover:bg-product-error-soft hover:text-product-error"
+						label="Delete section"
+						onClick={() => {
+							if (confirm("Are you sure you want to delete this section?")) {
+								onDelete();
+							}
+						}}
+					>
+						<Trash2 />
+					</ToolButton>
+				)}
+			</div>
 		</div>
 	);
 };

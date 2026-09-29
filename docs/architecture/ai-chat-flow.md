@@ -527,7 +527,7 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 
 | File | Role |
 |---|---|
-| `src/components/catalogue/chat/CatalogueChat.tsx` | Floating panel, suggestions, input, both limit modals |
+| `src/components/catalogue/chat/CatalogueChat.tsx` | Floating panel from `md`, full-height sheet on a phone (kept above the keyboard by `useVisualViewport`); opened from the builder rail or phone bar through `isChatOpen`, not a button of its own. Suggestions, input, both limit modals |
 | `src/components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text, applied changes, skipped reasons |
 | `src/hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
 | `src/hooks/useAiAssist.ts` | Client quota gate, loading/error state, usage refresh |

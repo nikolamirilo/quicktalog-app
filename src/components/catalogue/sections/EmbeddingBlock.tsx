@@ -3,7 +3,9 @@
 import type { EmbeddingBlock } from "@quicktalog/common";
 import { useEffect, useRef } from "react";
 import { HtmlContent } from "@/components/general/HtmlContent";
-import BlockControls from "@/components/catalogue/cards/common/BlockControls";
+import BlockControls, {
+	BLOCK_CONTROLS_GROUP,
+} from "@/components/catalogue/cards/common/BlockControls";
 
 type EmbedType =
 	| "maps"
@@ -179,7 +181,7 @@ const EmbeddingBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className="mb-5 group relative"
+			className={`mb-5 group relative${mode === "edit" ? ` ${BLOCK_CONTROLS_GROUP}` : ""}`}
 			id={`${slug}-${block.order}`}
 			ref={containerRef}
 		>
@@ -187,6 +189,7 @@ const EmbeddingBlockComponent = ({
 				<BlockControls
 					isFirst={isFirst}
 					isLast={isLast}
+					label="Embed"
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}
