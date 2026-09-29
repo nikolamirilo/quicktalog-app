@@ -18,7 +18,7 @@ import { ChevronUp, SlidersHorizontal, X } from "lucide-react";
  * so nothing looks selected before it is tapped.
  */
 const barItemClass =
-	"flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-end gap-1 rounded-xl pb-1 px-1 text-product-foreground-accent transition-colors duration-200 hover:text-product-foreground active:bg-product-background-hero disabled:pointer-events-none disabled:opacity-40 [-webkit-tap-highlight-color:transparent]";
+	"flex min-h-[52px] min-w-0 flex-1 flex-col items-center justify-end gap-1 rounded-xl pb-2.5 px-1 text-product-foreground-accent transition-colors duration-200 hover:text-product-foreground active:bg-product-background-hero disabled:pointer-events-none disabled:opacity-40 [-webkit-tap-highlight-color:transparent]";
 
 const barLabelClass = "max-w-full truncate text-[11px] font-semibold";
 
@@ -50,7 +50,7 @@ export const BuilderBottomBar = ({
 	return (
 		<div
 			aria-label="Builder actions"
-			className="flex shrink-0 items-stretch gap-0.5 border-t border-product-border bg-product-card px-1 pt-1 pb-[max(0.25rem,env(safe-area-inset-bottom))] font-product-body shadow-[0_-8px_24px_-12px_rgb(var(--product-dark-rgb)/0.18)] md:hidden"
+			className="flex shrink-0 items-stretch gap-0.5 border-t border-product-border bg-product-card px-1 pt-5 pb-[max(0.25rem,env(safe-area-inset-bottom))] font-product-body shadow-[0_-8px_24px_-12px_rgb(var(--product-dark-rgb)/0.18)] md:hidden"
 			role="toolbar"
 		>
 			<button
@@ -79,22 +79,22 @@ export const BuilderBottomBar = ({
 				aria-controls={isPanelOpen ? panelId : undefined}
 				aria-expanded={isPanelOpen}
 				aria-label={isPanelOpen ? "Close editor panel" : "Open editor panel"}
-				className="flex min-h-[52px] w-16 shrink-0 flex-col items-center justify-end gap-1 rounded-xl pb-1 text-product-foreground [-webkit-tap-highlight-color:transparent]"
+				className="relative flex min-h-[52px] w-16 shrink-0 flex-col items-center justify-end pb-2.5 text-product-foreground [-webkit-tap-highlight-color:transparent]"
 				onClick={onTogglePanel}
 				type="button"
 			>
 				<span
 					className={cn(
-						"flex h-8 w-11 items-center justify-center rounded-full transition-colors",
+						"absolute -top-10 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full shadow-[0_14px_28px_-6px_rgb(var(--product-primary-accent-rgb)/0.6),0_3px_6px_rgb(var(--product-dark-rgb)/0.12)] transition-colors",
 						isPanelOpen
 							? "bg-product-dark text-product-on-dark"
 							: "bg-product-primary text-product-foreground",
 					)}
 				>
 					{isPanelOpen ? (
-						<X className="h-5 w-5" />
+						<X className="h-7 w-7" />
 					) : (
-						<SlidersHorizontal className="h-5 w-5" />
+						<SlidersHorizontal className="h-7 w-7" />
 					)}
 				</span>
 				<span className={barLabelClass}>

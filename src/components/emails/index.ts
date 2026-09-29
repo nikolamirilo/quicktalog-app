@@ -1,4 +1,9 @@
-export { default as EmailShell } from "./EmailShell";
-export { default as CancellationEmail } from "./CancelationEmail";
-export { default as InformationEmail } from "./InformationEmail";
-export { default as WelcomeEmail } from "./WelcomeEmail";
+export {
+	ConfirmationEmail,
+	EmailChangeEmail,
+	RecoveryEmail,
+} from "./AuthEmails";
+export { CancellationEmail } from "./CancelationEmail";
+export { EmailShell } from "./EmailShell";
+export { InformationEmail } from "./InformationEmail";
+export { WelcomeEmail } from "./WelcomeEmail";

@@ -1,9 +1,22 @@
 # Supabase Auth email templates
 
+**Generated - do not edit by hand.** The source is
+`src/components/emails/AuthEmails.tsx`, on the same `EmailShell` as every other
+Quicktalog email. After changing an email, regenerate:
+
+```
+npx tsx --tsconfig tsconfig.scripts.json scripts/supabase/render-email-templates.ts
+```
+
+`tests/unit/lib/email/auth-templates.test.ts` fails when these files and their
+source disagree.
+
 Applied by `scripts/supabase/auth-config.ts`, which resolves the
 `"file:supabase/templates/…"` values in `auth-config.<env>.json`. The files hold
 only what the recipient sees - no comments, because GoTrue sends the body
-verbatim and anything in here ends up inside a customer's email.
+verbatim and anything in here ends up inside a customer's email. The generator
+strips React's comment markers and only breaks lines between block tags, so a
+`{{ .Placeholder }}` never wraps.
 
 ## Why the links do not use `{{ .ConfirmationURL }}`
 

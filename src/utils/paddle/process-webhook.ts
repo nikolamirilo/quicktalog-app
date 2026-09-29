@@ -217,6 +217,7 @@ export class ProcessWebhook {
 				await sendSubscriptionCancelationEmail({
 					email: outcome.user.email,
 					name: outcome.user.name ?? "",
+					unpublished: outcome.deactivated,
 				});
 			}
 		}

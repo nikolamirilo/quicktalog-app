@@ -1,147 +1,114 @@
-import {
-	Body,
-	Container,
-	Head,
-	Hr,
-	Html,
-	Link,
-	Preview,
-	Section,
-	Text,
-} from "@react-email/components";
+import { Body, Head, Html, Preview } from "@react-email/components";
 import type { ReactNode } from "react";
-import {
-	brandBar,
-	brandMark,
-	brandMarkDot,
-	card,
-	divider,
-	footer,
-	footerCopyright,
-	footerDot,
-	footerLink,
-	footerLinksRow,
-	footerText,
-	hero,
-	heroStyles,
-	main,
-} from "./style";
+import * as s from "./style";
+
+export const DEFAULT_SITE_URL =
+	process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.quicktalog.app";
+
+export const SUPPORT_EMAIL = "quicktalog@outlook.com";
 
 type EmailShellProps = {
-	/** Inbox preview text (also used by `Preview`). */
+	/** Inbox preview text shown after the subject. */
 	preview: string;
-	/** Small uppercase eyebrow above the hero title (e.g. "WELCOME"). */
-	eyebrow?: string;
-	/** Big hero title rendered on the dark band. */
-	heroTitle: string;
-	/** Optional supporting line under the hero title. */
-	heroSubtitle?: string;
-	/** Custom hero replacement (e.g. for the support / contact email). */
-	heroSlot?: ReactNode;
-	/** Body content. */
 	children: ReactNode;
-	/** Optional secondary CTA block shown above the footer. */
-	bottomSlot?: ReactNode;
-	/** Page-relative footer links. */
-	footerLinks?: { label: string; href: string }[];
+	/** Origin for the logo and footer links; auth templates pass `{{ .SiteURL }}`. */
+	siteUrl?: string;
 };
 
-/**
- * Shared layout for every Quicktalog transactional email.
- *
- * Renders:
- *   - Brand-styled dark hero band (or a custom replacement slot)
- *   - White card body
- *   - Brand bar with the wordmark
- *   - Consistent footer with privacy / terms links
- */
-export default function EmailShell({
-	preview,
-	eyebrow,
-	heroTitle,
-	heroSubtitle,
-	heroSlot,
-	children,
-	bottomSlot,
-	footerLinks,
-}: EmailShellProps) {
-	const baseUrl =
-		process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.quicktalog.app";
-	const links = footerLinks ?? [
-		{ label: "Website", href: baseUrl },
-		{ label: "Privacy Policy", href: `${baseUrl}/privacy-policy` },
-		{ label: "Terms of Service", href: `${baseUrl}/terms-and-conditions` },
-	];
+const table = {
+	role: "presentation",
+	cellPadding: 0,
+	cellSpacing: 0,
+	border: 0,
+} as const;
 
+/** Layout shared by every Quicktalog email: logo, white card, footer. */
+export function EmailShell({
+	preview,
+	children,
+	siteUrl = DEFAULT_SITE_URL,
+}: EmailShellProps) {
 	return (
 		<Html lang="en">
 			<Head>
-				<link href="https://fonts.googleapis.com" rel="preconnect" />
-				<link href="https://fonts.gstatic.com" rel="preconnect" />
+				<meta content="light" name="color-scheme" />
+				<meta content="light" name="supported-color-schemes" />
 				<link
-					crossOrigin="anonymous"
-					href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter+Tight:wght@400;500;600;700&display=swap"
+					href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Inter+Tight:wght@400;500;600&display=swap"
 					rel="stylesheet"
 				/>
+				<style>{s.responsiveCss}</style>
 			</Head>
 			<Preview>{preview}</Preview>
-
-			<Body style={main}>
-				<Container style={card}>
-					{heroSlot ? (
-						heroSlot
-					) : (
-						<Section style={hero}>
-							{eyebrow && <Text style={heroStyles.eyebrow}>{eyebrow}</Text>}
-							<Text style={heroStyles.title}>{heroTitle}</Text>
-							{heroSubtitle && (
-								<Text style={heroStyles.subtitle}>{heroSubtitle}</Text>
-							)}
-						</Section>
-					)}
-
-					{/* Brand bar */}
-					<Section style={brandBar}>
-						<Link href={baseUrl} style={brandMark}>
-							<span style={brandMarkDot} />
-							Quicktalog
-						</Link>
-					</Section>
-
-					{/* Body */}
-					{children}
-
-					{bottomSlot}
-
-					<Hr style={divider} />
-
-					{/* Footer */}
-					<Section style={footer}>
-						<Text style={footerText}>
-							Need help? Reach us at{" "}
-							<Link
-								href="mailto:quicktalog@outlook.com"
-								style={{ ...footerLink, margin: 0 }}
-							>
-								quicktalog@outlook.com
-							</Link>
-							.
-						</Text>
-						<div style={footerLinksRow}>
-							{links.map((l, i) => (
-								<span key={l.href}>
-									<Link href={l.href} style={footerLink}>
-										{l.label}
-									</Link>
-									{i < links.length - 1 && <span style={footerDot}>•</span>}
-								</span>
-							))}
-						</div>
-						<Text style={footerCopyright}>
-							© {new Date().getFullYear()} Quicktalog. All rights reserved.
-						</Text>
-					</Section>
-				</Container>
+			<Body style={s.body}>
+				<table
+					{...table}
+					style={{ backgroundColor: s.brand.background }}
+					width="100%"
+				>
+					<tbody>
+						<tr>
+							<td align="center" className="qt-outer" style={s.outer}>
+								<table {...table} style={s.column} width="600">
+									<tbody>
+										<tr>
+											<td style={s.logoCell}>
+												<a href={siteUrl}>
+													<img
+														alt="Quicktalog"
+														height="43"
+														src={`${siteUrl}/images/brand/email-logo@2x.png`}
+														style={s.logo}
+														width="118"
+													/>
+												</a>
+											</td>
+										</tr>
+										<tr>
+											<td className="qt-card" style={s.card}>
+												{children}
+											</td>
+										</tr>
+										<tr>
+											<td style={s.footerCell}>
+												<p style={s.footerText}>
+													Need help? Write to{" "}
+													<a
+														href={`mailto:${SUPPORT_EMAIL}`}
+														style={s.footerLink}
+													>
+														{SUPPORT_EMAIL}
+													</a>
+													.
+												</p>
+												<p style={{ ...s.footerText, margin: 0 }}>
+													<a href={siteUrl} style={s.footerLink}>
+														quicktalog.app
+													</a>
+													{" · "}
+													<a
+														href={`${siteUrl}/privacy-policy`}
+														style={s.footerLink}
+													>
+														Privacy
+													</a>
+													{" · "}
+													<a
+														href={`${siteUrl}/terms-and-conditions`}
+														style={s.footerLink}
+													>
+														Terms
+													</a>
+													{" · © Quicktalog"}
+												</p>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</Body>
 		</Html>
 	);

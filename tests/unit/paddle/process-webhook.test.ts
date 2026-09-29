@@ -92,6 +92,7 @@ describe("ProcessWebhook", () => {
 		expect(mocks.sendSubscriptionCancelationEmail).toHaveBeenCalledWith({
 			email: "ana@example.com",
 			name: "Ana",
+			unpublished: ["lux-watches"],
 		});
 		expect(mocks.revalidateCatalogue).toHaveBeenCalledWith("lux-watches");
 	});

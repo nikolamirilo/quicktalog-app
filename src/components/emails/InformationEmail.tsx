@@ -1,19 +1,16 @@
-import { Link, Section, Text } from "@react-email/components";
-import EmailShell from "./EmailShell";
+import { EmailShell } from "./EmailShell";
 import {
-	ctaButton,
-	ctaWrapper,
-	fieldCard,
-	fieldLabel,
-	fieldLink,
-	fieldValue,
-	messageBlock,
-	paragraph,
-	paragraphLast,
-	section,
-} from "./style";
+	Badge,
+	Buttons,
+	DetailRows,
+	FinePrint,
+	MessageBox,
+	TextLink,
+	Title,
+} from "./parts";
 
-function InformationEmail({
+/** Contact-form message, sent to the support inbox with `replyTo` set to the sender. */
+export function InformationEmail({
 	email,
 	name,
 	message,
@@ -24,58 +21,27 @@ function InformationEmail({
 	message: string;
 	subject: string;
 }) {
+	const heading = subject || "Contact form message";
+	const replyHref = `mailto:${email}?subject=${encodeURIComponent(`Re: ${heading}`)}`;
+
 	return (
-		<EmailShell
-			bottomSlot={
-				<Section style={ctaWrapper}>
-					<Link
-						href={`mailto:${email}?subject=${encodeURIComponent(
-							`Re: ${subject || "Contact Form Message"}`,
-						)}`}
-						style={ctaButton}
-					>
-						Reply to {name} →
-					</Link>
-				</Section>
-			}
-			eyebrow="New contact message"
-			heroSubtitle="A new message just arrived through the Quicktalog contact form. Reply directly from your inbox."
-			heroTitle="Someone reached out from your site"
-			preview={`New contact message: ${subject || "Contact form"} - ${name}`}
-		>
-			<Section style={section}>
-				<Section style={fieldCard}>
-					<Text style={fieldLabel}>From</Text>
-					<Text style={fieldValue}>{name}</Text>
-				</Section>
-
-				<Section style={fieldCard}>
-					<Text style={fieldLabel}>Email address</Text>
-					<Link href={`mailto:${email}`} style={fieldLink}>
-						{email}
-					</Link>
-				</Section>
-
-				{subject && (
-					<Section style={fieldCard}>
-						<Text style={fieldLabel}>Subject</Text>
-						<Text style={fieldValue}>{subject}</Text>
-					</Section>
-				)}
-
-				<Section style={fieldCard}>
-					<Text style={fieldLabel}>Message</Text>
-					<Text style={messageBlock}>{message}</Text>
-				</Section>
-
-				<Text style={paragraph}>
-					This message was sent through the Quicktalog contact form. Hit "Reply"
-					in your email client, or use the button above, to respond directly.
-				</Text>
-				<Text style={paragraphLast}>- Quicktalog notifications</Text>
-			</Section>
+		<EmailShell preview={`New contact message from ${name}: ${heading}`}>
+			<Badge tone="neutral">Contact form</Badge>
+			<Title>{heading}</Title>
+			<DetailRows
+				rows={[
+					{ label: "From", value: name },
+					{
+						label: "Email",
+						value: <TextLink href={`mailto:${email}`}>{email}</TextLink>,
+					},
+				]}
+			/>
+			<MessageBox>{message}</MessageBox>
+			<Buttons buttons={[{ label: `Reply to ${name}`, href: replyHref }]} />
+			<FinePrint>
+				Hitting Reply in your mail app also goes straight to {name}.
+			</FinePrint>
 		</EmailShell>
 	);
 }
-
-export default InformationEmail;

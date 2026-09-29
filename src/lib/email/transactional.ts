@@ -89,8 +89,7 @@ export async function sendWelcomeEmail(
 		const res = await getResend().emails.send({
 			from: FROM,
 			to: email,
-			subject:
-				"Welcome to Quicktalog - your first catalog is one click away 🎉",
+			subject: "Welcome to Quicktalog, your account is ready",
 			react: WelcomeEmail({ name }) as React.ReactElement,
 		});
 		return res.error == null;
@@ -101,15 +100,17 @@ export async function sendWelcomeEmail(
 }
 
 export async function sendSubscriptionCancelationEmail(
-	contactData: Omit<ContactData, "message" | "subject">,
+	contactData: Omit<ContactData, "message" | "subject"> & {
+		unpublished: string[];
+	},
 ): Promise<boolean> {
-	const { email, name } = contactData;
+	const { email, name, unpublished } = contactData;
 	try {
 		const res = await getResend().emails.send({
 			from: FROM,
 			to: email,
-			subject: "Your Quicktalog subscription has been canceled",
-			react: CancellationEmail({ name }) as React.ReactElement,
+			subject: "Your Quicktalog subscription has ended",
+			react: CancellationEmail({ name, unpublished }) as React.ReactElement,
 		});
 		return res.error == null;
 	} catch (error) {

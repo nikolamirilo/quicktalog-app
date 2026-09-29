@@ -131,17 +131,19 @@ function buildEmails(): EmailSpec[] {
 		{
 			id: "welcome",
 			label: "Welcome (new sign-up)",
-			subject:
-				"Welcome to Quicktalog - your first catalog is one click away 🎉",
+			subject: "Welcome to Quicktalog, your account is ready",
 			from: TRANSACTIONAL_FROM,
 			body: () => renderReact(WelcomeEmail({ name: sampleName })),
 		},
 		{
 			id: "cancellation",
 			label: "Subscription canceled",
-			subject: "Your Quicktalog subscription has been canceled",
+			subject: "Your Quicktalog subscription has ended",
 			from: TRANSACTIONAL_FROM,
-			body: () => renderReact(CancellationEmail({ name: sampleName })),
+			body: () =>
+				renderReact(
+					CancellationEmail({ name: sampleName, unpublished: ["lux-watches"] }),
+				),
 		},
 		{
 			id: "contact",

@@ -1,123 +1,84 @@
-import { Link, Section, Text } from "@react-email/components";
-import EmailShell from "./EmailShell";
+import { DEFAULT_SITE_URL, EmailShell, SUPPORT_EMAIL } from "./EmailShell";
 import {
-	ctaButton,
-	ctaWrapper,
-	helpItem,
-	helpLabel,
-	helpLink,
-	helpText,
-	leadText,
-	paragraph,
-	paragraphLast,
-	section,
-	stepBadge,
-	stepBody,
-	stepDescription,
-	stepItem,
-	stepTitle,
-	stepsList,
-} from "./style";
+	Badge,
+	Buttons,
+	DetailRows,
+	Heading,
+	Lead,
+	Paragraph,
+	Steps,
+	TextLink,
+	Title,
+} from "./parts";
 
-type Step = { title: string; description: string };
-
-const DEFAULT_STEPS: Step[] = [
+const STEPS = [
 	{
-		title: "Create your first catalog",
+		title: "Create your catalogue",
 		description:
-			"Spin up a digital catalog in minutes. Add your items, descriptions, prices and photos with our intuitive editor.",
+			"Add your items, descriptions, prices and photos in the editor.",
 	},
 	{
-		title: "Customize the design",
+		title: "Make it look like you",
 		description:
-			"Choose from beautiful themes and tweak colors, fonts and layouts so the catalog looks like your brand.",
+			"Pick a theme and adjust colours, fonts and layout to match your brand.",
 	},
 	{
-		title: "Share with your customers",
+		title: "Share it",
 		description:
-			"Publish and instantly get a QR code and a shareable link - your catalog is ready for any device, anywhere.",
+			"Publish and get a link and a QR code. It opens on any phone, no app needed.",
 	},
 ];
 
-const WelcomeEmail = ({
-	name,
-	steps = DEFAULT_STEPS,
-}: {
-	name?: string;
-	steps?: Step[];
-}) => {
-	const greetingName = name && name !== "Unknown User" ? name : "there";
-	const baseUrl =
-		process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.quicktalog.app";
+export function WelcomeEmail({ name }: { name?: string }) {
+	const firstName = name && name !== "Unknown User" ? name : null;
 
 	return (
-		<EmailShell
-			eyebrow="Welcome"
-			heroSubtitle="Your Quicktalog account is ready. Here's how to publish your first catalog and start sharing it with customers today."
-			heroTitle={`Welcome aboard, ${greetingName}`}
-			preview="Welcome to Quicktalog - your digital catalog journey starts here."
-		>
-			<Section style={section}>
-				<Text style={leadText}>
-					Thanks for signing up! We're excited to help you turn your menu,
-					product list or service catalog into a beautiful, shareable digital
-					experience.
-				</Text>
-
-				<Section>
-					<ul style={stepsList}>
-						{steps.map((step, idx) => (
-							<li key={step.title} style={{ ...stepItem, listStyle: "none" }}>
-								<Text style={stepBadge}>{idx + 1}</Text>
-								<div style={stepBody}>
-									<Text style={stepTitle}>{step.title}</Text>
-									<Text style={stepDescription}>{step.description}</Text>
-								</div>
-							</li>
-						))}
-					</ul>
-				</Section>
-			</Section>
-
-			<Section style={ctaWrapper}>
-				<Link href={`${baseUrl}/admin/create`} style={ctaButton}>
-					Create your first catalog →
-				</Link>
-			</Section>
-
-			<Section style={section}>
-				<Text style={paragraph}>
-					Have questions, feature ideas, or just want to say hi? We're here to
-					help you make the most of Quicktalog.
-				</Text>
-
-				<ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
-					<li style={helpItem}>
-						<Text style={helpLabel}>Email support</Text>
-						<Link href="mailto:quicktalog@outlook.com" style={helpLink}>
-							quicktalog@outlook.com
-						</Link>
-						<Text style={helpText}>We reply within one business day.</Text>
-					</li>
-					<li style={helpItem}>
-						<Text style={helpLabel}>Help center</Text>
-						<Link href={`${baseUrl}/help`} style={helpLink}>
-							Visit our Help Center
-						</Link>
-						<Text style={helpText}>
-							Guides, FAQs and step-by-step tutorials.
-						</Text>
-					</li>
-				</ul>
-
-				<Text style={paragraphLast}>
-					Welcome to Quicktalog - happy cataloging!
-					<br />
-					The Quicktalog team
-				</Text>
-			</Section>
+		<EmailShell preview="Your account is ready. Here's how to publish your first catalogue.">
+			<Badge>Account ready</Badge>
+			<Title>
+				{firstName
+					? `Welcome to Quicktalog, ${firstName}`
+					: "Welcome to Quicktalog"}
+			</Title>
+			<Lead>
+				Your account is set up. Here's how to get your first catalogue in front
+				of customers today.
+			</Lead>
+			<Steps steps={STEPS} />
+			<Buttons
+				buttons={[
+					{
+						label: "Create your first catalogue",
+						href: `${DEFAULT_SITE_URL}/admin/dashboard`,
+					},
+				]}
+			/>
+			<Heading>Need a hand?</Heading>
+			<DetailRows
+				rows={[
+					{
+						label: "Help center",
+						value: (
+							<TextLink href={`${DEFAULT_SITE_URL}/help`}>
+								Step-by-step guides and FAQs
+							</TextLink>
+						),
+					},
+					{
+						label: "Email support, we reply within one business day",
+						value: (
+							<TextLink href={`mailto:${SUPPORT_EMAIL}`}>
+								{SUPPORT_EMAIL}
+							</TextLink>
+						),
+					},
+				]}
+			/>
+			<Paragraph last>
+				Happy building,
+				<br />
+				The Quicktalog team
+			</Paragraph>
 		</EmailShell>
 	);
-};
-
-export default WelcomeEmail;
+}
