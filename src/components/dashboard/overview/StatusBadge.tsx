@@ -18,7 +18,7 @@ const STATUS_STYLE: Record<Status, { label: string; className: string }> = {
 		className:
 			"border-product-border bg-product-background-hero text-product-muted",
 	},
-	"in preparation": {
+	in_preparation: {
 		label: "In preparation",
 		className: "bg-product-info-soft text-product-info",
 	},

@@ -78,7 +78,7 @@ select c.relname as table, c.relrowsecurity as rls
 \echo '--- constraints on the re-keyed tables (the six ON UPDATE CASCADE FKs, users_id_is_uuid) ---'
 select conrelid::regclass as table, conname, contype, pg_get_constraintdef(oid) as definition
   from pg_constraint
- where conrelid in ('public.prompts'::regclass,
+ where conrelid in ('public.ai_credits'::regclass,
                     'public.catalogues'::regclass, 'public.users'::regclass)
  order by 1, 2;
 
@@ -96,20 +96,15 @@ select t.tgrelid::regclass as table, t.tgname, t.tgenabled
 
 select status, count(*) from public.catalogues group by 1 order by 1;
 
-select count(*) filter (where user_id is null) as prompts_null_user from public.prompts;
+select count(*) filter (where user_id is null) as ai_credits_null_user from public.ai_credits;
 
 \echo '--- duplicates that a unique index would reject ---'
 select catalogue_id, lower(email) as email, count(*)
-  from public.newsletter group by 1, 2 having count(*) > 1 order by 3 desc;
+  from public.catalogue_subscribers group by 1, 2 having count(*) > 1 order by 3 desc;
 select lower(email) as email, count(*)
-  from public.product_newsletter group by 1 having count(*) > 1 order by 2 desc;
-select catalogue, count(*)
+  from public.newsletter_subscribers group by 1 having count(*) > 1 order by 2 desc;
+select catalogue_id, count(*)
   from public.qr_configs group by 1 having count(*) > 1 order by 2 desc;
-
-\echo '--- newsletter rows whose owner is not the catalogue owner (forged ownerId) ---'
-select count(*) as forged_newsletter_owner
-  from public.newsletter n join public.catalogues c on c.id = n.catalogue_id
- where c.created_by is distinct from n.owner_id;
 
 \echo '--- catalogue names outside the slug shape M03 enforces ---'
 select name from public.catalogues
@@ -147,7 +142,7 @@ select exists (select 1 from public.plans where id = 'pri_01k27ajepm199twd1x77rp
 \echo '=== 5. V6 baselines (verify.sql compares against these) ==================='
 
 select (select count(*) from public.catalogues)                        as catalogues,
-       (select coalesce(sum(pageview_count), 0) from public.analytics) as pageviews,
+       (select coalesce(sum(pageviews), 0) from public.analytics) as pageviews,
        (select count(*) from public.subscriptions)                     as subscriptions,
        (select count(*) from public.users where customer_id is not null) as users_with_customer,
        (select count(*) from auth.users)                               as auth_users;

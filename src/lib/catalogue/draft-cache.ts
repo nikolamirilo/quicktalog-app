@@ -26,7 +26,7 @@ export async function loadOwnedCatalogue(
 	const [row] = await tx
 		.select()
 		.from(c)
-		.where(and(eq(c.name, name), eq(c.createdBy, me.userId)))
+		.where(and(eq(c.name, name), eq(c.userId, me.userId)))
 		.limit(1);
 	return (row as Catalogue | undefined) ?? null;
 }
@@ -65,17 +65,17 @@ export async function readOwnedDraft(
 		name: row.name,
 		status: row.status,
 		source: row.source,
-		createdBy: row.createdBy,
+		userId: row.userId,
 		createdAt: row.createdAt,
 		updatedAt: row.updatedAt,
 	};
 }
 
-/** Call only after a `withUser` statement proved ownership. Never stores `createdBy`. */
+/** Call only after a `withUser` statement proved ownership. Never stores `userId`. */
 export async function writeOwnedDraft(
 	row: Partial<Catalogue> & { id: string },
 ): Promise<void> {
-	const { createdBy: _owner, ...rest } = row;
+	const { userId: _owner, ...rest } = row;
 	await getRedis().set(draftKey(row.id), JSON.stringify(rest), {
 		ex: TTL_SECONDS,
 	});

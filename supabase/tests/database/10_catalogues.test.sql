@@ -35,8 +35,8 @@ insert into public.users (id, email, plan_id)
 values ('4a1f0c62-1e5b-4b9a-9c3d-0a1b2c3d4e5f', 'owner-a@example.com', 'pgtap_plan'),
        ('7b2e9d41-3c6a-4f8b-8d2e-1f2a3b4c5d6e', 'owner-b@example.com', 'pgtap_plan');
 
--- Names must satisfy catalogues_name_slug (M07) and tags is NOT NULL with no default.
-insert into public.catalogues (name, status, created_by, tags)
+-- Names must satisfy catalogues_name_slug (M07); tags is NOT NULL (default '{}' since 20260929120000).
+insert into public.catalogues (name, status, user_id, tags)
 values ('owner-a-active', 'active', '4a1f0c62-1e5b-4b9a-9c3d-0a1b2c3d4e5f', '{}'),
        ('owner-a-draft',  'draft',  '4a1f0c62-1e5b-4b9a-9c3d-0a1b2c3d4e5f', '{}'),
        ('owner-b-active', 'active', '7b2e9d41-3c6a-4f8b-8d2e-1f2a3b4c5d6e', '{}'),
@@ -64,17 +64,18 @@ select set_eq(
   'app_public sees only catalogues whose status is active'
 );
 
--- M04:60: created_by is deliberately left out of the app_public column grant.
+-- M04:60: the owner column (created_by, renamed user_id by 20260929120000) is
+-- deliberately left out of the app_public column grant.
 select throws_ok(
-  $q$ select created_by from public.catalogues $q$,
+  $q$ select user_id from public.catalogues $q$,
   '42501'::char(5), null::text,
-  'app_public cannot read catalogues.created_by'
+  'app_public cannot read catalogues.user_id'
 );
 
 -- M04:54: insert/update/delete are granted to app_user only.
 select throws_ok(
   $q$
-    insert into public.catalogues (name, status, created_by, tags)
+    insert into public.catalogues (name, status, user_id, tags)
     values ('public-insert', 'draft', '4a1f0c62-1e5b-4b9a-9c3d-0a1b2c3d4e5f', '{}')
   $q$,
   '42501'::char(5), null::text,
@@ -135,7 +136,7 @@ select set_eq(
 
 -- M04:70-73: a new row must belong to the caller and start unpublished.
 with i as (
-  insert into public.catalogues (name, status, created_by, tags)
+  insert into public.catalogues (name, status, user_id, tags)
   values ('owner-a-new', 'draft', '4a1f0c62-1e5b-4b9a-9c3d-0a1b2c3d4e5f', '{}')
   returning 1
 )
@@ -143,7 +144,7 @@ insert into t_res select 'insert_own_draft', count(*) from i;
 
 select throws_ok(
   $q$
-    insert into public.catalogues (name, status, created_by, tags)
+    insert into public.catalogues (name, status, user_id, tags)
     values ('owner-a-forged', 'draft', '7b2e9d41-3c6a-4f8b-8d2e-1f2a3b4c5d6e', '{}')
   $q$,
   '42501'::char(5), null::text,
@@ -152,7 +153,7 @@ select throws_ok(
 
 select throws_ok(
   $q$
-    insert into public.catalogues (name, status, created_by, tags)
+    insert into public.catalogues (name, status, user_id, tags)
     values ('owner-a-born-live', 'active', '4a1f0c62-1e5b-4b9a-9c3d-0a1b2c3d4e5f', '{}')
   $q$,
   '42501'::char(5), null::text,
@@ -161,7 +162,7 @@ select throws_ok(
 
 -- M04:132-146: the BEFORE INSERT trigger overwrites a client-chosen id.
 with i as (
-  insert into public.catalogues (id, name, status, created_by, tags)
+  insert into public.catalogues (id, name, status, user_id, tags)
   values ('00000000-0000-4000-8000-000000000001', 'owner-a-pinned', 'draft',
           '4a1f0c62-1e5b-4b9a-9c3d-0a1b2c3d4e5f', '{}')
   returning id
@@ -182,7 +183,7 @@ with u as (
 )
 insert into t_res select 'publish_own', count(*) from u;
 
--- M04:57: id, name, created_by, created_at and source are NOT in the grant.
+-- M04:57: id, name, user_id, created_at and source are NOT in the grant.
 select throws_ok(
   $q$ update public.catalogues set name = 'owner-a-renamed' where name = 'owner-a-active' $q$,
   '42501'::char(5), null::text,
@@ -192,11 +193,11 @@ select throws_ok(
 select throws_ok(
   $q$
     update public.catalogues
-       set created_by = '7b2e9d41-3c6a-4f8b-8d2e-1f2a3b4c5d6e'
+       set user_id = '7b2e9d41-3c6a-4f8b-8d2e-1f2a3b4c5d6e'
      where name = 'owner-a-active'
   $q$,
   '42501'::char(5), null::text,
-  'app_user cannot change catalogues.created_by'
+  'app_user cannot change catalogues.user_id'
 );
 
 select throws_ok(

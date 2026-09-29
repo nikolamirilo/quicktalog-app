@@ -9,14 +9,14 @@ Every query runs inside one of three blocks from `utils/db`:
 | Block | For | Database role | Sees |
 |---|---|---|---|
 | `withUser(me, tx => …)` | a signed-in user's own work | `app_user` | only rows that belong to them |
-| `withPublic(tx => …)` | visitors, ISR, sitemap, public signups | `app_public` | only active catalogues, and never `created_by` |
+| `withPublic(tx => …)` | visitors, ISR, sitemap, public signups | `app_public` | only active catalogues, and never `user_id` |
 | `asAdmin(op, tx => …)` | webhooks, provisioning, scripts | `postgres` | everything; **bypasses RLS** |
 
 A query outside these blocks runs as a role that holds no privileges and fails with `42501`. That is the design: forgetting the wrapper is a loud error, not a silent data leak.
 
 ## Why roles and not just careful code
 
-The app used to connect as `postgres`, which ignores row level security, so every `where created_by = …` was the only thing standing between one merchant's catalogue and another's. `src/utils/db/rls.ts` switches the transaction into `app_user` or `app_public` and sets the verified user id as a transaction-local claim:
+The app used to connect as `postgres`, which ignores row level security, so every `where user_id = …` was the only thing standing between one merchant's catalogue and another's. `src/utils/db/rls.ts` switches the transaction into `app_user` or `app_public` and sets the verified user id as a transaction-local claim:
 
 ```sql
 select

@@ -140,7 +140,7 @@ async function main(): Promise<void> {
 				inserted++;
 				if (withCatalogues) {
 					await rail.sql`
-						insert into public.catalogues (name, created_by, status, tags, footer, content)
+						insert into public.catalogues (name, user_id, status, tags, footer, content)
 						values (${`rehearsal-${user.id.slice(-8).toLowerCase()}`}, ${user.id},
 						        'draft', '{}', '{}', '[]')`;
 				}

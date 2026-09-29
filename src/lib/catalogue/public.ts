@@ -7,7 +7,7 @@ const c = schema.catalogues;
 
 /**
  * Visitor-facing reads. They run as `app_public`, which RLS limits to active
- * catalogues, and they never select `createdBy`, so an owner id cannot reach a
+ * catalogues, and they never select `userId`, so an owner id cannot reach a
  * public page, an API response or the ISR cache.
  *
  * None of these read cookies or identity: their results are cached and shared

@@ -25,7 +25,7 @@ export async function getOwnedCatalogue(
 		.select({ id: catalogues.id, status: catalogues.status })
 		.from(catalogues)
 		.where(
-			and(eq(catalogues.name, catalogue), eq(catalogues.createdBy, me.userId)),
+			and(eq(catalogues.name, catalogue), eq(catalogues.userId, me.userId)),
 		)
 		.limit(1);
 	return row;
@@ -48,7 +48,7 @@ export async function listOwnedCatalogues(
 	const rows = await tx
 		.select({ name: catalogues.name })
 		.from(catalogues)
-		.where(eq(catalogues.createdBy, me.userId))
+		.where(eq(catalogues.userId, me.userId))
 		.orderBy(desc(catalogues.createdAt));
 	return rows.map((row) => row.name);
 }

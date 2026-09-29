@@ -309,8 +309,8 @@ into the map with `origin='rollback_push'`.
 
 - **`purge-dark-test-users.ts` with `DRY_RUN=0`.** Deleting an auth user
   cascades through the M10 delete trigger to `public.users` and from there to
-  that user's catalogues, analytics, newsletter subscribers, OCR jobs, prompts
-  and themes. There is no undo and no soft delete.
+  that user's catalogues, analytics, newsletter subscribers, AI credit
+  charges and themes. There is no undo and no soft delete.
 - **`migrate-clerk-to-supabase.ts --allow-delete`.** Same cascade, for
   identities whose Clerk user is gone.
 - **Claiming a uuid.** Once a `clerk_user_id` is in the map, the sign-up trigger

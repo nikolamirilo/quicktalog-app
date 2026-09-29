@@ -77,7 +77,7 @@ async function DashboardContent({ params, searchParams }: PageProps) {
 	const areLimitesReached: AreLimitesReached = {
 		catalogues:
 			usage.catalogues >= currentPlan.features.catalogues ||
-			usage.traffic.pageview_count >= currentPlan.features.traffic_limit,
+			usage.traffic.pageviews >= currentPlan.features.traffic_limit,
 		credits: usage.credits >= currentPlan.features.ai_credits,
 	};
 

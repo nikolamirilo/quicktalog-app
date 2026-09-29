@@ -32,7 +32,7 @@ change anything:
 | Property | Where it comes from |
 |---|---|
 | The AI sees **unsaved** builder state | The whole client `catalogue` object travels with every message |
-| Ownership can't be spoofed by the client | `authorize()` re-reads `createdBy` from the DB, ignoring the payload |
+| Ownership can't be spoofed by the client | `authorize()` re-reads `userId` from the DB, ignoring the payload |
 | A bad model reply can't corrupt the draft | Zod validates before anything is applied |
 | A batch is order-independent* | Positions become stable ids server-side, before the client applies them |
 | The model can't invent image URLs | It only emits a search term; the server resolves it |
@@ -64,7 +64,7 @@ flowchart TD
         B2["authorize(catalogueName)"]
         B3{"Clerk currentUser"}
         B4{"Catalogue row exists?"}
-        B5{"createdBy === user.id?"}
+        B5{"userId === user.id?"}
         B5a{"fetchUserData ok?"}
         B5b["FAILS OPEN<br/>no quota cap, and every<br/>section type advertised"]
         B6{"private.begin_ai_turn<br/>sum(credits) < plan.ai_credits?"}
@@ -351,7 +351,7 @@ flowchart TD
     S3["Usage / plan<br/>UserContext, refetched after each call"]
     S4["Postgres catalogues row"]
     S5["Redis published cache"]
-    S6["Postgres prompts table<br/>one row per successful AI call"]
+    S6["Postgres ai_credits table<br/>one row per charged AI turn"]
 
     S1 -->|"last 8 messages, text only"| M[Model request]
     S2 -->|"whole object, every turn"| M

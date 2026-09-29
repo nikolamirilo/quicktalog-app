@@ -1,7 +1,8 @@
 -- 40_ai_ledger.test.sql
 --
--- The AI turn ledger: the shape `public.prompts` gets in M03 (section 3.7) and the
--- server-authoritative metering entry points it exists for.
+-- The AI turn ledger: the shape `public.prompts` gets in M03 (section 3.7), renamed `public.ai_credits`
+-- by 20260929120000 (datetime -> created_at, the catalogue slug -> catalogue_id uuid, prompts_* ->
+-- ai_credits_*), and the server-authoritative metering entry points it exists for.
 --
 -- Note on signatures: M05 5.5 defined private.begin_ai_turn(text, integer, boolean), M06 line 18
 -- dropped it for a 5-arg form, and 20260926120000:12 dropped that one in turn. At the end of the
@@ -71,65 +72,69 @@ insert into public.users (id, name, email, plan_id)
 values ('11111111-1111-4111-8111-111111111111', 'Owner A', 'pgtap-owner-a@example.com', 'pri_pgtap_ai_ledger'),
        ('22222222-2222-4222-8222-222222222222', 'Owner B', 'pgtap-owner-b@example.com', 'pri_pgtap_ai_ledger');
 
-insert into public.catalogues (name, created_by, status, tags)
+insert into public.catalogues (name, user_id, status, tags)
 values ('pgtap-ledger-a', '11111111-1111-4111-8111-111111111111', 'draft', '{}'::text[]),
        ('pgtap-ledger-b', '22222222-2222-4222-8222-222222222222', 'draft', '{}'::text[]);
 
 -- ===========================================================================
--- 1. The ledger shape M03 3.7 gives public.prompts
+-- 1. The ledger shape M03 3.7 gives public.prompts (now public.ai_credits)
 -- ===========================================================================
 
 -- M03:143-145 - null-user rows are moved to the backup table and user_id becomes NOT NULL,
 -- so a charge can never silently fall out of the monthly count.
 select col_not_null(
-  'public', 'prompts', 'user_id',
-  'M03 3.7c: prompts.user_id is NOT NULL, so no charge can be booked against nobody');
+  'public', 'ai_credits', 'user_id',
+  'M03 3.7c: ai_credits.user_id is NOT NULL, so no charge can be booked against nobody');
 
--- M03:138 - the catalogue FK becomes ON DELETE SET NULL, which requires a nullable column.
+-- M03:138 - the catalogue FK becomes ON DELETE SET NULL, which requires a nullable column
+-- (kept by 20260929120000 section 2 on the new catalogue_id).
 select col_is_null(
-  'public', 'prompts', 'catalogue',
-  'M03 3.7b: prompts.catalogue is nullable, so deleting a catalogue cannot delete its charges');
+  'public', 'ai_credits', 'catalogue_id',
+  'M03 3.7b: ai_credits.catalogue_id is nullable, so deleting a catalogue cannot delete its charges');
 
 -- M03:151-154 - turn_id is backfilled, defaulted and made NOT NULL.
 select col_not_null(
-  'public', 'prompts', 'turn_id',
-  'M03 3.7d: prompts.turn_id is NOT NULL, so every ledger row is addressable for refunds');
+  'public', 'ai_credits', 'turn_id',
+  'M03 3.7d: ai_credits.turn_id is NOT NULL, so every ledger row is addressable for refunds');
 
--- M03:157
+-- M03:157 (prompts_turn_id_key, renamed by 20260929120000 section 2)
 select ok(
   exists (
     select 1
       from pg_catalog.pg_index i
       join pg_catalog.pg_class ic on ic.oid = i.indexrelid
-     where i.indrelid = 'public.prompts'::regclass
-       and ic.relname = 'prompts_turn_id_key'
+     where i.indrelid = 'public.ai_credits'::regclass
+       and ic.relname = 'ai_credits_turn_id_key'
        and i.indisunique
   ),
-  'M03 3.7d: prompts_turn_id_key makes turn_id unique, so one turn is charged at most once');
+  'M03 3.7d: ai_credits_turn_id_key makes turn_id unique, so one turn is charged at most once');
 
 -- M03:139-141 - ON DELETE SET NULL (confdeltype = ''n''), never CASCADE, so deleting a catalogue
--- cannot reset the monthly quota behind RLS.
+-- cannot reset the monthly quota behind RLS. 20260929120000 section 2 re-creates it on catalogue_id
+-- as ai_credits_catalogue_id_fkey.
 select is(
   (select c.confdeltype
      from pg_catalog.pg_constraint c
-    where c.conrelid = 'public.prompts'::regclass
+    where c.conrelid = 'public.ai_credits'::regclass
       and c.contype = 'f'
+      and c.conname = 'ai_credits_catalogue_id_fkey'
       and c.confrelid = 'public.catalogues'::regclass),
   'n'::"char",
-  'M03 3.7b: prompts -> catalogues is ON DELETE SET NULL, so deleting a catalogue keeps its charges');
+  'M03 3.7b: ai_credits -> catalogues is ON DELETE SET NULL, so deleting a catalogue keeps its charges');
 
--- M03:121-136 - the UNIQUE(catalogue) that made every charge after the first per catalogue fail is gone.
+-- M03:121-136 - the UNIQUE(catalogue) that made every charge after the first per catalogue fail is gone,
+-- and catalogue_id did not bring one back.
 select is(
   (select count(*)::int
      from pg_catalog.pg_constraint c
-    where c.conrelid = 'public.prompts'::regclass
+    where c.conrelid = 'public.ai_credits'::regclass
       and c.contype = 'u'
       and c.conkey = array[(select a.attnum
                               from pg_catalog.pg_attribute a
-                             where a.attrelid = 'public.prompts'::regclass
-                               and a.attname = 'catalogue')]::int2[]),
+                             where a.attrelid = 'public.ai_credits'::regclass
+                               and a.attname = 'catalogue_id')]::int2[]),
   0,
-  'M03 3.7a: no UNIQUE constraint on prompts(catalogue) survives, so charges can repeat per catalogue');
+  'M03 3.7a: no UNIQUE constraint on ai_credits(catalogue_id), so charges can repeat per catalogue');
 
 -- ===========================================================================
 -- 2. The ledger is writable only through the entry points
@@ -146,19 +151,19 @@ select ok(
     'app_user', 'private.refund_ai_turn(uuid)'::regprocedure, 'EXECUTE'),
   'M06 grants: app_user may execute private.refund_ai_turn');
 
--- M04:115 - app_user gets SELECT on public.prompts and nothing else; quota rows are written only by
+-- M04:115 - app_user gets SELECT on public.prompts (now ai_credits) and nothing else; quota rows are written only by
 -- the definer entry points or by the worker under service_role.
 select ok(
-  not pg_catalog.has_any_column_privilege('app_user', 'public.prompts'::regclass, 'INSERT'),
-  'M04 4.5: app_user holds no INSERT privilege on public.prompts, not even column-level');
+  not pg_catalog.has_any_column_privilege('app_user', 'public.ai_credits'::regclass, 'INSERT'),
+  'M04 4.5: app_user holds no INSERT privilege on public.ai_credits, not even column-level');
 
 select ok(
-  not pg_catalog.has_any_column_privilege('app_user', 'public.prompts'::regclass, 'UPDATE'),
-  'M04 4.5: app_user holds no UPDATE privilege on public.prompts, not even column-level');
+  not pg_catalog.has_any_column_privilege('app_user', 'public.ai_credits'::regclass, 'UPDATE'),
+  'M04 4.5: app_user holds no UPDATE privilege on public.ai_credits, not even column-level');
 
 select ok(
-  not pg_catalog.has_table_privilege('app_user', 'public.prompts'::regclass, 'DELETE'),
-  'M04 4.5: app_user holds no DELETE privilege on public.prompts (the ledger is append-only)');
+  not pg_catalog.has_table_privilege('app_user', 'public.ai_credits'::regclass, 'DELETE'),
+  'M04 4.5: app_user holds no DELETE privilege on public.ai_credits (the ledger is append-only)');
 
 -- The same thing proved by running it: a signed-in caller cannot write its own charge.
 do $$ begin perform set_config('request.jwt.claims',
@@ -166,24 +171,25 @@ do $$ begin perform set_config('request.jwt.claims',
 set local role app_user;
 insert into pgtap_fixtures.obs (label, code)
 values ('direct_insert', pgtap_fixtures.errcode($sql$
-  insert into public.prompts (user_id, catalogue)
-  values ('11111111-1111-4111-8111-111111111111', 'pgtap-ledger-a')
+  insert into public.ai_credits (user_id, catalogue_id)
+  values ('11111111-1111-4111-8111-111111111111',
+          (select c.id from public.catalogues c where c.name = 'pgtap-ledger-a'))
 $sql$));
 insert into pgtap_fixtures.obs (label, code)
 values ('direct_update', pgtap_fixtures.errcode($sql$
-  update public.prompts set refunded_at = pg_catalog.now()
+  update public.ai_credits set refunded_at = pg_catalog.now()
 $sql$));
 reset role;
 
 select is(
   (select code from pgtap_fixtures.obs where label = 'direct_insert'),
   '42501',
-  'M04 4.5: app_user inserting straight into public.prompts is denied (42501)');
+  'M04 4.5: app_user inserting straight into public.ai_credits is denied (42501)');
 
 select is(
   (select code from pgtap_fixtures.obs where label = 'direct_update'),
   '42501',
-  'M04 4.5: app_user refunding itself by UPDATE on public.prompts is denied (42501)');
+  'M04 4.5: app_user refunding itself by UPDATE on public.ai_credits is denied (42501)');
 
 -- ===========================================================================
 -- 3. A charge is written before any model work
@@ -207,10 +213,10 @@ select is(
 select ok(
   exists (
     select 1
-      from public.prompts p
+      from public.ai_credits p
      where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'a1')
        and p.user_id = '11111111-1111-4111-8111-111111111111'
-       and p.catalogue = 'pgtap-ledger-a'
+       and p.catalogue_id = (select c.id from public.catalogues c where c.name = 'pgtap-ledger-a')
        and p.kind = 'agent'
        and p.continuations = 0
        and p.refunded_at is null
@@ -275,7 +281,7 @@ select ok(
   'M06:156-164: the owner can refund its own fresh, un-continued, un-refunded turn');
 
 select ok(
-  exists (select 1 from public.prompts p
+  exists (select 1 from public.ai_credits p
            where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'a1')
              and p.refunded_at is not null),
   'M06:157: the refund flags the existing row (append-only ledger), it does not delete it');
@@ -302,7 +308,7 @@ select ok(
   'M06:159: a caller cannot refund another user''s turn');
 
 select ok(
-  exists (select 1 from public.prompts p
+  exists (select 1 from public.ai_credits p
            where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'a2')
              and p.refunded_at is null),
   'M06:159: the other user''s charge is still on the ledger after the forged refund attempt');

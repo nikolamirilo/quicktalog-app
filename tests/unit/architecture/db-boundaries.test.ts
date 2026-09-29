@@ -206,7 +206,7 @@ describe("database boundaries", () => {
 			if (!/^["']use server["']/m.test(f.text)) continue;
 			const signature = /export\s+async\s+function\s+\w+\s*\(\s*(\w+)\s*:/g;
 			for (const match of f.text.matchAll(signature)) {
-				if (["userId", "ownerId", "createdBy"].includes(match[1])) {
+				if (match[1] === "userId") {
 					offenders.push(`${f.path}:${match[1]}`);
 				}
 			}
@@ -253,7 +253,7 @@ describe("database boundaries", () => {
 			lines.forEach((line, index) => {
 				if (!/\btx\s*\n?\s*\.(update|delete)\(/.test(line)) return;
 				const window = lines.slice(index, index + 20).join("\n");
-				if (!/createdBy|userId|ownerId|me\.userId/.test(window)) {
+				if (!/userId/.test(window)) {
 					offenders.push(`${f.path}:${index + 1}`);
 				}
 			});

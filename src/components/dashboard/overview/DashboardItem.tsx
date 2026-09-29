@@ -180,7 +180,7 @@ export function DashboardItem({
 						Error occurred. Please delete the catalogue and retry.
 					</p>
 				)}
-				{catalogue.status === "in preparation" && (
+				{catalogue.status === "in_preparation" && (
 					<p className="flex h-9 items-center text-product-info">
 						<Settings
 							aria-hidden="true"

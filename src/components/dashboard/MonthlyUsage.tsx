@@ -69,7 +69,7 @@ export const MonthlyUsage = ({
 	const meters: UsageMeter[] = [
 		{
 			title: "Traffic",
-			used: usage.traffic.pageview_count,
+			used: usage.traffic.pageviews,
 			limit: currentPlan.features.traffic_limit,
 			unit: "views",
 			icon: <Eye />,

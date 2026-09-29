@@ -44,7 +44,7 @@ export async function countCatalogues(
 	const [row] = await tx
 		.select({ total: count() })
 		.from(catalogues)
-		.where(eq(catalogues.createdBy, me.userId));
+		.where(eq(catalogues.userId, me.userId));
 	return row?.total ?? 0;
 }
 

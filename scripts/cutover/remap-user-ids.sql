@@ -11,7 +11,7 @@ set local application_name = 'cutover:remap';
 -- 1. CHANGE C12 + W9: strongest lock first, BEFORE the precondition reads (they would otherwise take ACCESS SHARE on
 -- public.users and turn this into a lock upgrade, and a webhook could change a checked row before the lock).
 lock table public.users in access exclusive mode;
-lock table public.catalogues, public.analytics, public.newsletter, public.prompts, public.user_themes
+lock table public.catalogues, public.analytics, public.catalogue_subscribers, public.ai_credits, public.user_themes
   in share row exclusive mode;
 
 -- 0. Preconditions
@@ -58,11 +58,11 @@ alter table public.user_themes disable trigger user_themes_touch_updated_at;
 drop table if exists migration.pre_remap_counts;
 create table migration.pre_remap_counts as
 select u.id as old_id, u.plan_id, u.customer_id,
-       (select count(*) from public.catalogues  c where c.created_by = u.id) as catalogues,
+       (select count(*) from public.catalogues  c where c.user_id    = u.id) as catalogues,
        (select count(*) from public.analytics   a where a.user_id    = u.id) as analytics,
-       (select coalesce(sum(a.pageview_count), 0) from public.analytics a where a.user_id = u.id) as pageviews,
-       (select count(*) from public.newsletter  n where n.owner_id   = u.id) as newsletter,
-       (select count(*) from public.prompts     p where p.user_id    = u.id) as prompts,
+       (select coalesce(sum(a.pageviews), 0) from public.analytics a where a.user_id = u.id) as pageviews,
+       (select count(*) from public.catalogue_subscribers n join public.catalogues c on c.id = n.catalogue_id where c.user_id = u.id) as newsletter,
+       (select count(*) from public.ai_credits  p where p.user_id    = u.id) as ai_credits,
        (select count(*) from public.user_themes t where t.user_id    = u.id) as themes
   from public.users u;
 
@@ -122,11 +122,11 @@ begin
       join public.users u on u.id = m.supabase_user_id::text
      where b.plan_id is distinct from u.plan_id
         or b.customer_id is distinct from u.customer_id
-        or b.catalogues <> (select count(*) from public.catalogues  c where c.created_by = u.id)
+        or b.catalogues <> (select count(*) from public.catalogues  c where c.user_id    = u.id)
         or b.analytics  <> (select count(*) from public.analytics   a where a.user_id    = u.id)
-        or b.pageviews  <> (select coalesce(sum(a.pageview_count), 0) from public.analytics a where a.user_id = u.id)
-        or b.newsletter <> (select count(*) from public.newsletter  n where n.owner_id   = u.id)
-        or b.prompts    <> (select count(*) from public.prompts     p where p.user_id    = u.id)
+        or b.pageviews  <> (select coalesce(sum(a.pageviews), 0) from public.analytics a where a.user_id = u.id)
+        or b.newsletter <> (select count(*) from public.catalogue_subscribers n join public.catalogues c on c.id = n.catalogue_id where c.user_id = u.id)
+        or b.ai_credits <> (select count(*) from public.ai_credits  p where p.user_id    = u.id)
         or b.themes     <> (select count(*) from public.user_themes t where t.user_id    = u.id)
   ) then
     raise exception 'ownership, plan, customer or counters changed during re-key';

@@ -90,7 +90,7 @@ export async function loadInTx(
 			currentPlan: { ...pricingPlan, billing_period: billingPeriod || "year" },
 			usage: {
 				traffic: {
-					pageview_count: asNumber(usage?.pageviews),
+					pageviews: asNumber(usage?.pageviews),
 					unique_visitors: asNumber(usage?.unique_visitors),
 				},
 				credits: asNumber(usage?.credits),

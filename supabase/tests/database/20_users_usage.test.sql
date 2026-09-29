@@ -32,26 +32,32 @@ insert into public.users (id, name, email, plan_id) values
   ('22222222-2222-2222-2222-222222222222', 'Bob',   'bob@example.com',   'pri_pgtap_starter');
 
 -- Alice owns 2 catalogues, Bob 1. Names are slugs (catalogues_name_slug, M07).
-insert into public.catalogues (id, name, created_by, status, tags) values
+insert into public.catalogues (id, name, user_id, status, tags) values
   ('c0000000-0000-0000-0000-000000000001', 'alice-one', '11111111-1111-1111-1111-111111111111', 'active', '{}'),
   ('c0000000-0000-0000-0000-000000000002', 'alice-two', '11111111-1111-1111-1111-111111111111', 'draft',  '{}'),
   ('c0000000-0000-0000-0000-000000000003', 'bob-one',   '22222222-2222-2222-2222-222222222222', 'active', '{}');
 
 -- AI ledger: my_usage() sums this month's unrefunded credits only. The credits differ
 -- per row on purpose, so a regression to count(*) fails here instead of passing quietly.
-insert into public.prompts (user_id, catalogue, datetime, refunded_at, credits) values
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', now(), null, 2),                                      -- counted
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', now(), now(), 9),                                     -- refunded
-  ('11111111-1111-1111-1111-111111111111', 'alice-two', now(), null, 3),                                      -- counted
-  ('11111111-1111-1111-1111-111111111111', 'alice-one', date_trunc('month', now(), 'UTC') - interval '1 second', null, 7), -- last month
-  ('22222222-2222-2222-2222-222222222222', 'bob-one',   now(), null, 4);
+insert into public.ai_credits (user_id, catalogue_id, created_at, refunded_at, credits) values
+  ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001', now(), null, 2),   -- counted
+  ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001', now(), now(), 9),  -- refunded
+  ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000002', now(), null, 3),   -- counted
+  ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001',
+                                           date_trunc('month', now(), 'UTC') - interval '1 second', null, 7), -- last month
+  ('22222222-2222-2222-2222-222222222222', 'c0000000-0000-0000-0000-000000000003', now(), null, 4);
 
-insert into public.analytics (user_id, date, current_url, pageview_count, unique_visitors) values
-  ('11111111-1111-1111-1111-111111111111', now(), 'https://quicktalog.app/catalogues/alice-one', 10, 4),
-  ('11111111-1111-1111-1111-111111111111', now(), 'https://quicktalog.app/catalogues/alice-two',  5, 2),
-  ('11111111-1111-1111-1111-111111111111', date_trunc('month', now(), 'UTC') - interval '1 second',
-                                                  'https://quicktalog.app/catalogues/last-month', 99, 99),
-  ('22222222-2222-2222-2222-222222222222', now(), 'https://quicktalog.app/catalogues/bob-one',  100, 50);
+-- One row per catalogue per day (analytics_catalogue_id_day_key); day is a UTC date. The last-month
+-- row has no catalogue (a deleted one keeps user_id and a null catalogue_id) and must not count.
+insert into public.analytics (user_id, catalogue_id, day, pageviews, unique_visitors) values
+  ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001',
+                                           (now() at time zone 'UTC')::date, 10, 4),
+  ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000002',
+                                           (now() at time zone 'UTC')::date,  5, 2),
+  ('11111111-1111-1111-1111-111111111111', null,
+   ((date_trunc('month', now(), 'UTC') - interval '1 second') at time zone 'UTC')::date, 99, 99),
+  ('22222222-2222-2222-2222-222222222222', 'c0000000-0000-0000-0000-000000000003',
+                                           (now() at time zone 'UTC')::date, 100, 50);
 
 -- ---------------------------------------------------------------------------------------------------------
 -- Alice, signed in. Roles are entered exactly the way utils/db/rls.ts withUser() enters them (PLAN B.3):

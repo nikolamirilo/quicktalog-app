@@ -46,7 +46,7 @@ export async function applyPlanDowngrade(
 			         order by updated_at desc nulls last, created_at desc
 			       ) as rn
 			  from public.catalogues
-			 where created_by = ${userId}
+			 where user_id = ${userId}
 			   and status = 'active'
 		)
 		update public.catalogues c
@@ -62,7 +62,7 @@ export async function applyPlanDowngrade(
 			update public.catalogues
 			   set header = jsonb_set(header, '{type}', '"default"'),
 			       footer = jsonb_set(footer, '{type}', '"default"')
-			 where created_by = ${userId}
+			 where user_id = ${userId}
 		`);
 	}
 
@@ -70,7 +70,7 @@ export async function applyPlanDowngrade(
 		await tx.execute(sql`
 			update public.catalogues
 			   set footer = jsonb_set(footer, '{newsletter}', 'false')
-			 where created_by = ${userId}
+			 where user_id = ${userId}
 		`);
 	}
 

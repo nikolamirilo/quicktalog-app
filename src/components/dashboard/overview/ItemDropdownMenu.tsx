@@ -74,7 +74,7 @@ const STATUS_LABELS: Partial<Record<Status, string>> = {
 const DELETE_LOCK_MS = 10 * 60 * 1000;
 
 function isDeleteLocked(catalogue: Catalogue, now: number) {
-	if (catalogue.status !== "in preparation") return false;
+	if (catalogue.status !== "in_preparation") return false;
 	const created = parseTimestamp(catalogue.createdAt);
 	return !Number.isNaN(created) && now - created < DELETE_LOCK_MS;
 }
@@ -99,7 +99,7 @@ export function ItemDropdownMenu({
 	const { copied, copy } = useCopyLink();
 
 	const atTrafficLimit =
-		usage.traffic.pageview_count >= currentPlan.features.traffic_limit;
+		usage.traffic.pageviews >= currentPlan.features.traffic_limit;
 	const atCatalogueLimit = usage.catalogues >= currentPlan.features.catalogues;
 	const duplicate = useDuplicateCatalogue({
 		catalogueId: catalogue.id,

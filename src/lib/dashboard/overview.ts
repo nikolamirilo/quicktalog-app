@@ -5,12 +5,12 @@ import {
 	type OverallAnalytics,
 	schema,
 } from "@quicktalog/common";
-import { and, count, eq, sum } from "drizzle-orm";
+import { count, eq, sum } from "drizzle-orm";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
 import type { NewsletterSubscriber } from "@/types/shared";
 import { type Tx, withUser } from "@/utils/db";
 
-const { analytics, catalogues, newsletter } = schema;
+const { analytics, catalogues, catalogueSubscribers } = schema;
 
 /** The overview totals; the catalogue count is added on the client from the list. */
 export type DashboardAnalytics = Omit<
@@ -32,7 +32,7 @@ export async function selectDashboardAnalytics(
 ): Promise<DashboardAnalytics> {
 	const [traffic] = await tx
 		.select({
-			pageViews: sum(analytics.pageviewCount),
+			pageViews: sum(analytics.pageviews),
 			uniqueVisitors: sum(analytics.uniqueVisitors),
 		})
 		.from(analytics)
@@ -40,8 +40,9 @@ export async function selectDashboardAnalytics(
 
 	const [subscribers] = await tx
 		.select({ total: count() })
-		.from(newsletter)
-		.where(eq(newsletter.ownerId, me.userId));
+		.from(catalogueSubscribers)
+		.innerJoin(catalogues, eq(catalogues.id, catalogueSubscribers.catalogueId))
+		.where(eq(catalogues.userId, me.userId));
 
 	return {
 		totalPageViews: Number(traffic?.pageViews ?? 0),
@@ -52,35 +53,22 @@ export async function selectDashboardAnalytics(
 
 /** The caller's catalogues. */
 export function selectMyCatalogues(tx: Tx, me: VerifiedIdentity) {
-	return tx
-		.select()
-		.from(catalogues)
-		.where(eq(catalogues.createdBy, me.userId));
+	return tx.select().from(catalogues).where(eq(catalogues.userId, me.userId));
 }
 
-/**
- * The caller's newsletter subscribers. The catalogue name is joined in, and the
- * join itself is owner-filtered: a subscriber row pointing at someone else's
- * catalogue reports no name instead of leaking it.
- */
+/** The subscribers of the caller's catalogues, with each catalogue's name. */
 export function selectMyNewsletterSubscribers(tx: Tx, me: VerifiedIdentity) {
 	return tx
 		.select({
-			id: newsletter.id,
-			email: newsletter.email,
+			id: catalogueSubscribers.id,
+			email: catalogueSubscribers.email,
 			catalogueName: catalogues.name,
-			catalogueId: newsletter.catalogueId,
-			createdAt: newsletter.createdAt,
+			catalogueId: catalogueSubscribers.catalogueId,
+			createdAt: catalogueSubscribers.createdAt,
 		})
-		.from(newsletter)
-		.leftJoin(
-			catalogues,
-			and(
-				eq(catalogues.id, newsletter.catalogueId),
-				eq(catalogues.createdBy, me.userId),
-			),
-		)
-		.where(eq(newsletter.ownerId, me.userId));
+		.from(catalogueSubscribers)
+		.innerJoin(catalogues, eq(catalogues.id, catalogueSubscribers.catalogueId))
+		.where(eq(catalogues.userId, me.userId));
 }
 
 /**

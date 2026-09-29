@@ -99,7 +99,7 @@ export async function loadUserFootprint(
 		const owned = await tx
 			.select({ id: catalogues.id, name: catalogues.name })
 			.from(catalogues)
-			.where(eq(catalogues.createdBy, userId));
+			.where(eq(catalogues.userId, userId));
 
 		if (!user?.customerId) {
 			return {

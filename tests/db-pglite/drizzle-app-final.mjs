@@ -1,5 +1,6 @@
 // App-layer emulation: the P1 call sites from the app-changes draft s.2.3-2.6 written with the REAL drizzle-orm 0.45.2
-// query builder and the REAL @quicktalog/common 1.54.0 schema, loaded read-only from the quicktalog-app node_modules.
+// query builder (from the quicktalog-app node_modules) and the @quicktalog/common 1.61.0 schema, vendored in
+// vendor/: it matches the phase chain this suite builds, which later migrations (schema_consistency) change.
 // Queries are executed on PGlite through drizzle's pg-proxy driver (same PgDialect SQL generation as postgres-js).
 // Transactions are emulated with BEGIN/COMMIT on the single PGlite connection (pg-proxy has no transaction API);
 // nested tx.transaction() is emulated with SAVEPOINT exactly as drizzle's postgres-js driver does.
@@ -8,7 +9,7 @@ const { drizzle } = await import(`${APP}/drizzle-orm/pg-proxy/index.js`);
 const orm = await import(`${APP}/drizzle-orm/index.js`);
 const pgCore = await import(`${APP}/drizzle-orm/pg-core/index.js`);
 export const schema = await import(
-	`${APP}/@quicktalog/common/dist/drizzle/migrations/schema.js`
+	new URL("./vendor/quicktalog-common-1.61.0-schema.mjs", import.meta.url).href
 );
 const { eq, and, inArray, desc, asc, count, sql } = orm;
 const { catalogues, users, userThemes, qrConfigs, newsletter, analytics } =

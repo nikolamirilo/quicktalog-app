@@ -4,7 +4,7 @@ import { schema } from "@quicktalog/common";
 const { catalogues } = schema;
 
 /**
- * Catalogue columns that may be shown publicly. `createdBy` is left out so owner
+ * Catalogue columns that may be shown publicly. `userId` is left out so owner
  * ids never reach public pages, API responses or the ISR cache.
  */
 export const PUBLIC_CATALOGUE_COLUMNS = {
@@ -31,7 +31,7 @@ export const PUBLIC_CATALOGUE_COLUMNS = {
 };
 
 /**
- * Catalogue fields a client may change. `id`, `name`, `createdBy`, `status`,
+ * Catalogue fields a client may change. `id`, `name`, `userId`, `status`,
  * `source` and the timestamps are server-owned: the client sends them back in
  * the full `Catalogue` object, and they must never reach an UPDATE.
  */

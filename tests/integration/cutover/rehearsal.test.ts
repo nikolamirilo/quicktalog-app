@@ -185,7 +185,7 @@ async function resetAndSeed(): Promise<void> {
 			values (${user.id}, ${user.email}, 'Test Person', ${plan.id}, ${user.customerId})`;
 		for (let index = 0; index < user.catalogues; index++) {
 			await sql`
-				insert into public.catalogues (name, created_by, status, tags, footer, content)
+				insert into public.catalogues (name, user_id, status, tags, footer, content)
 				values (${`${user.id.slice(-8)}-${index}`.toLowerCase()}, ${user.id},
 				        'draft', '{}', '{}', '[]')`;
 		}
@@ -351,7 +351,7 @@ describe.skipIf(!enabled)("cutover rehearsal against local fixtures", () => {
 	it("carries every catalogue across with its owner", async () => {
 		const [row] = await sql<{ orphaned: number }[]>`
 			select count(*)::int as orphaned from public.catalogues c
-			 where not exists (select 1 from public.users u where u.id = c.created_by)`;
+			 where not exists (select 1 from public.users u where u.id = c.user_id)`;
 		expect(row.orphaned).toBe(0);
 	});
 

@@ -531,7 +531,7 @@ async function loadOwnership(
 		select u.id,
 		       u.customer_id is not null as billed,
 		       (u.customer_id is not null
-		        or exists (select 1 from public.catalogues c where c.created_by = u.id)) as owns
+		        or exists (select 1 from public.catalogues c where c.user_id = u.id)) as owns
 		  from public.users u
 		 where u.id like 'user\\_%'`;
 	return new Map(

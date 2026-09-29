@@ -20,7 +20,16 @@ The page `/admin/[name]/analytics` shows how many people opened one published ca
 2. One `withUser` block checks `ownsCatalogue` and, only if it passes, reads `listOwnedCatalogues` for the switcher. A catalogue that is not the caller's is a 404.
 3. The block closes, then PostHog is called. A database connection is never held across the network round trip (see [data-access.md](data-access.md)).
 
-Both helpers keep the explicit `created_by = me` predicate even though RLS enforces it too.
+Both helpers keep the explicit `user_id = me` predicate even though RLS enforces it too.
+
+## The `analytics` table
+
+This page reads PostHog live. The `analytics` table is a daily rollup kept for the dashboard totals and the monthly traffic limit:
+
+- **Rows.** One row per catalogue per UTC day: `catalogue_id`, `day`, `pageviews`, `unique_visitors`, and the owner's `user_id`. Unique on `(catalogue_id, day)`.
+- **Writer.** The Cloudflare worker's daily job (`quicktalog-backend`, `analyticsProcessingJob`) queries PostHog, maps each `/catalogues/<slug>` URL to its catalogue, and sums URL variants (query strings, trailing slash) into that catalogue's day. Summed visitors are therefore an upper bound.
+- **Deleted catalogues.** When a catalogue is deleted its rows keep `user_id` and get a null `catalogue_id`, so the month's traffic still counts against the limit.
+- **Readers.** `private.my_usage()` (the usage meters) and the worker's plan-limit check both sum `pageviews` by `user_id` over the UTC month.
 
 ## Range, periods and deltas
 

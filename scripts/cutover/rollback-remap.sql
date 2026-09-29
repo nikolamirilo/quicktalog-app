@@ -3,7 +3,7 @@ begin;
 set local lock_timeout = '5s';
 set local application_name = 'cutover:rollback-remap';
 lock table public.users in access exclusive mode;   -- W9: before the check
-lock table public.catalogues, public.analytics, public.newsletter, public.prompts, public.user_themes
+lock table public.catalogues, public.analytics, public.catalogue_subscribers, public.ai_credits, public.user_themes
   in share row exclusive mode;
 
 -- Supabase-only users must already have Clerk ids written into the map (origin rollback_push).

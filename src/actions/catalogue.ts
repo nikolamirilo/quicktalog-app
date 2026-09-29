@@ -59,9 +59,7 @@ export async function deleteItem(name: string): Promise<boolean> {
 		const deleted = await withUser(me, (tx) =>
 			tx
 				.delete(catalogues)
-				.where(
-					and(eq(catalogues.name, name), eq(catalogues.createdBy, me.userId)),
-				)
+				.where(and(eq(catalogues.name, name), eq(catalogues.userId, me.userId)))
 				.returning({ id: catalogues.id, name: catalogues.name }),
 		);
 		if (deleted.length === 0) return false;
@@ -96,7 +94,7 @@ export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 			const rows = await tx
 				.delete(catalogues)
 				.where(
-					and(inArray(catalogues.id, ids), eq(catalogues.createdBy, me.userId)),
+					and(inArray(catalogues.id, ids), eq(catalogues.userId, me.userId)),
 				)
 				.returning({ id: catalogues.id, name: catalogues.name });
 			if (rows.length !== ids.length) {
@@ -150,9 +148,7 @@ export async function updateItemStatus(
 						status,
 						...applyPlanToCatalogue({} as Partial<Catalogue>, tier),
 					})
-					.where(
-						and(eq(catalogues.id, id), eq(catalogues.createdBy, me.userId)),
-					)
+					.where(and(eq(catalogues.id, id), eq(catalogues.userId, me.userId)))
 					.returning({ id: catalogues.id, name: catalogues.name });
 				return reactivated
 					? { ok: true as const, row: reactivated }
@@ -162,7 +158,7 @@ export async function updateItemStatus(
 			const [updated] = await tx
 				.update(catalogues)
 				.set({ status })
-				.where(and(eq(catalogues.id, id), eq(catalogues.createdBy, me.userId)))
+				.where(and(eq(catalogues.id, id), eq(catalogues.userId, me.userId)))
 				.returning({ id: catalogues.id, name: catalogues.name });
 			return updated
 				? { ok: true as const, row: updated }
@@ -190,7 +186,7 @@ export async function duplicateItem(id: string, name?: string) {
 			const [source] = await tx
 				.select()
 				.from(catalogues)
-				.where(and(eq(catalogues.id, id), eq(catalogues.createdBy, me.userId)))
+				.where(and(eq(catalogues.id, id), eq(catalogues.userId, me.userId)))
 				.limit(1);
 			if (!source) return null;
 
@@ -221,7 +217,7 @@ export async function duplicateItem(id: string, name?: string) {
 							tags: values.tags ?? [],
 							name: candidate,
 							status: "draft",
-							createdBy: me.userId,
+							userId: me.userId,
 						})
 						.returning();
 					await tx.execute(sql`release savepoint duplicate_attempt`);
@@ -288,7 +284,7 @@ export async function createCatalogue(
 					tags: shaped.tags ?? [],
 					name: slug,
 					status: "draft",
-					createdBy: me.userId,
+					userId: me.userId,
 				})
 				.returning();
 
@@ -448,10 +444,7 @@ export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 					updatedAt: new Date().toISOString(),
 				})
 				.where(
-					and(
-						eq(catalogues.id, current.id),
-						eq(catalogues.createdBy, me.userId),
-					),
+					and(eq(catalogues.id, current.id), eq(catalogues.userId, me.userId)),
 				)
 				.returning();
 			return row ?? null;

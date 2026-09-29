@@ -12,7 +12,7 @@ export function LimitCTAs({ currentPlan, usage }: LimitCTAsProps) {
 	const isAtCatalogueLimit =
 		usage.catalogues >= currentPlan.features.catalogues;
 	const isAtTrafficLimit =
-		usage.traffic.pageview_count >= currentPlan.features.traffic_limit;
+		usage.traffic.pageviews >= currentPlan.features.traffic_limit;
 
 	return (
 		<>

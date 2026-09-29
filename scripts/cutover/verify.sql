@@ -74,10 +74,9 @@ v4 as (
 -- V5: child rows still pointing at a Clerk id.
 v5 as (
   select (
-      (select count(*) from public.catalogues  where created_by like 'user\_%') +
+      (select count(*) from public.catalogues  where user_id    like 'user\_%') +
       (select count(*) from public.analytics   where user_id    like 'user\_%') +
-      (select count(*) from public.newsletter  where owner_id   like 'user\_%') +
-      (select count(*) from public.prompts     where user_id    like 'user\_%') +
+      (select count(*) from public.ai_credits  where user_id    like 'user\_%') +
       (select count(*) from public.user_themes where user_id    like 'user\_%')
     )::bigint as value
 ),
@@ -87,7 +86,7 @@ v6 as (
   select
     (select count(*) from public.catalogues)::bigint as catalogues_now,
     (select coalesce(sum(catalogues), 0) from migration.pre_remap_counts)::bigint as catalogues_before,
-    (select coalesce(sum(pageview_count), 0) from public.analytics)::bigint as pageviews_now,
+    (select coalesce(sum(pageviews), 0) from public.analytics)::bigint as pageviews_now,
     (select coalesce(sum(pageviews), 0) from migration.pre_remap_counts)::bigint as pageviews_before,
     (select count(*) from public.users where customer_id is not null)::bigint as billed_now,
     (select count(*) from migration.pre_remap_counts where customer_id is not null)::bigint as billed_before,

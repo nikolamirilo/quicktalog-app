@@ -62,7 +62,7 @@ export async function updateThing(data: SomeType): Promise<boolean> {
       tx
         .update(catalogues)
         .set({ /* only client-editable fields; see pickEditable */ })
-        .where(and(eq(catalogues.name, data.name), eq(catalogues.createdBy, me.userId)))
+        .where(and(eq(catalogues.name, data.name), eq(catalogues.userId, me.userId)))
         .returning({ id: catalogues.id, name: catalogues.name }),
     );
     if (!row) return false;   // not theirs, or gone
@@ -85,8 +85,8 @@ export async function updateThing(data: SomeType): Promise<boolean> {
 
 ## The required steps
 
-1. **Identity** — `const me = await getVerifiedIdentity(); if (!me) return <fail>;`. Never accept `userId`, `ownerId` or `createdBy` as a parameter of an action; helpers that take one live in `server-only` modules under `src/lib/`.
-2. **Owner predicate** — keep `eq(table.createdBy, me.userId)` (or `userId`/`ownerId`) in the statement even though RLS enforces it too. Two locks, and the predicate is what a reviewer can see.
+1. **Identity** — `const me = await getVerifiedIdentity(); if (!me) return <fail>;`. Never accept `userId` as a parameter of an action; helpers that take one live in `server-only` modules under `src/lib/`.
+2. **Owner predicate** — keep `eq(table.userId, me.userId)` in the statement (the owning user is always `user_id`) even though RLS enforces it too. Two locks, and the predicate is what a reviewer can see.
 3. **Check what came back** — `returning(...)` and treat zero rows as "not found". A blocked row is not an error, it is simply not returned.
 4. **Trust nothing from the client** — status, plan flags and ids are decided by the server. Use `pickEditable()` for catalogue payloads and the helpers in `src/lib/entitlements/` for plan limits.
 5. **Keep the transaction short** — no `fetch`, Redis, `revalidate*`, model call or streaming inside a block. It pins a pooled connection.

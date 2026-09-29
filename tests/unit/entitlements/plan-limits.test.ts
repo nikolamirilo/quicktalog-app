@@ -12,7 +12,7 @@ describe("pickEditable", () => {
 		const picked = pickEditable({
 			id: "cat_1",
 			name: "lux-watches",
-			createdBy: "user_a",
+			userId: "user_a",
 			status: "active",
 			source: "builder",
 			createdAt: "2026-01-01",
@@ -25,7 +25,7 @@ describe("pickEditable", () => {
 	});
 
 	it("never lists a server-owned column", () => {
-		for (const field of ["id", "name", "createdBy", "status", "source"]) {
+		for (const field of ["id", "name", "userId", "status", "source"]) {
 			expect(CATALOGUE_EDITABLE_FIELDS).not.toContain(field);
 		}
 	});

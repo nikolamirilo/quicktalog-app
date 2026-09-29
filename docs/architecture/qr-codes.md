@@ -22,7 +22,7 @@ The page `/admin/[name]/qr-editor` designs the QR code for one catalogue, saves 
 
 ## The stored design
 
-`qr_configs.config` (jsonb, one row per catalogue, unique on `catalogue`) holds qr-code-styling's own `Options` plus two app fields:
+`qr_configs.config` (jsonb, one row per catalogue, unique on `catalogue_id`) holds qr-code-styling's own `Options` plus two app fields:
 
 | Field | Meaning |
 |---|---|

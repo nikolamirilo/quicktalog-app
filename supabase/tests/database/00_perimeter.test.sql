@@ -45,11 +45,11 @@ select set_eq(
        and c.relrowsecurity
   $q$,
   $q$
-    values ('users'), ('catalogues'), ('analytics'), ('newsletter'),
-           ('subscriptions'), ('job_logs'), ('prompts'),
-           ('qr_configs'), ('user_themes'), ('product_newsletter'), ('plans')
+    values ('users'), ('catalogues'), ('analytics'), ('catalogue_subscribers'),
+           ('subscriptions'), ('job_logs'), ('ai_credits'),
+           ('qr_configs'), ('user_themes'), ('newsletter_subscribers'), ('plans')
   $q$,
-  'RLS is enabled on exactly the 11 public tables listed in M00'
+  'RLS is enabled on exactly the 11 public tables listed in M00 (under their 20260929120000 names)'
 );
 
 -- ---------------------------------------------------------------------------

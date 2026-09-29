@@ -1,6 +1,6 @@
 import "server-only";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
-import { ownsCatalogue } from "@/lib/catalogue/ownership";
+import { getOwnedCatalogue } from "@/lib/catalogue/ownership";
 import type { Tx } from "@/utils/db";
 import { schema } from "@quicktalog/common";
 import { and, eq } from "drizzle-orm";
@@ -11,7 +11,7 @@ const { catalogues, qrConfigs } = schema;
 /**
  * The saved QR design of a catalogue owned by `me`, or undefined. Call inside
  * the page's `withUser` block. `qr_configs` has no owner column, so ownership
- * is spelled out as a join on `catalogues.created_by`; the `qr_configs_owner`
+ * is spelled out as a join on `catalogues.user_id`; the `qr_configs_owner`
  * policy enforces the same thing again.
  */
 export async function getOwnedQrConfig(
@@ -22,12 +22,9 @@ export async function getOwnedQrConfig(
 	const [row] = await tx
 		.select({ config: qrConfigs.config })
 		.from(qrConfigs)
-		.innerJoin(catalogues, eq(catalogues.name, qrConfigs.catalogue))
+		.innerJoin(catalogues, eq(catalogues.id, qrConfigs.catalogueId))
 		.where(
-			and(
-				eq(qrConfigs.catalogue, catalogue),
-				eq(catalogues.createdBy, me.userId),
-			),
+			and(eq(catalogues.name, catalogue), eq(catalogues.userId, me.userId)),
 		)
 		.limit(1);
 	return row?.config as QrConfig | undefined;
@@ -37,7 +34,7 @@ export async function getOwnedQrConfig(
  * Saves the QR design of a catalogue owned by `me`, in the caller's
  * transaction. Returns false when the catalogue is not theirs.
  *
- * One statement on the `qr_configs_catalogue_key` unique index, so two saves of
+ * One statement on the `qr_configs_catalogue_id_key` unique index, so two saves of
  * the same catalogue cannot race into a duplicate row. Ownership is proven in
  * the same transaction, so it cannot change between the check and the write,
  * and `app_user` only holds `update (config, updated_at)`: `updated_at` is left
@@ -52,15 +49,16 @@ export async function upsertOwnedQrConfig(
 	catalogue: string,
 	config: QrConfig,
 ): Promise<boolean> {
-	if (!(await ownsCatalogue(tx, me, catalogue))) return false;
+	const owned = await getOwnedCatalogue(tx, me, catalogue);
+	if (!owned) return false;
 
 	const [row] = await tx
 		.insert(qrConfigs)
-		.values({ catalogue, config })
+		.values({ catalogueId: owned.id, config })
 		.onConflictDoUpdate({
-			target: qrConfigs.catalogue,
+			target: qrConfigs.catalogueId,
 			set: { config },
-			setWhere: eq(qrConfigs.catalogue, catalogue),
+			setWhere: eq(qrConfigs.catalogueId, owned.id),
 		})
 		.returning({ id: qrConfigs.id });
 

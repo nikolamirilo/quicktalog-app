@@ -157,10 +157,11 @@ blocklist, and a global monthly ceiling on free-tier spend with a kill switch.
 
 ## 7. Schema
 
-`public.prompts` is the ledger; one row is one charge.
+`public.ai_credits` is the ledger; one row is one charge.
 
 | Column | Meaning |
 |---|---|
+| `catalogue_id` | the catalogue the turn ran on; set to null when the catalogue is deleted, so the charge still counts |
 | `credits` | the price of this turn, 0-100 |
 | `turn_id` | what a continuation binds to |
 | `continuations` | continuations spent against `plan_budget` |

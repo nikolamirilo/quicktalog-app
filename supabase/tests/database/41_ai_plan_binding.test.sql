@@ -4,6 +4,8 @@
 -- under, so a continuation is free only when the client presents the turn id it was given and
 -- the hash of the plan it is resuming, and the DB still holds that user's open plan on that
 -- catalogue. Everything the caller sends is a claim; every limit is read from the database.
+-- The ledger is public.ai_credits (public.prompts until 20260929120000, which also renamed its
+-- prompts_* constraints to ai_credits_* and replaced the catalogue slug with catalogue_id).
 --
 -- Fixtures use uuid-shaped user ids (plan section 11.3), never Clerk `user_...` ids.
 -- Everything runs inside one transaction that is rolled back.
@@ -51,7 +53,7 @@ end;
 $fn$;
 grant execute on function pgtap_fixtures.errcode(text) to app_user, app_public;
 
--- Two 64-hex plan hashes in the shape prompts_plan_hash_format demands (M06:16).
+-- Two 64-hex plan hashes in the shape ai_credits_plan_hash_format demands (M06:16).
 create table pgtap_fixtures.hashes (label text primary key, value text);
 insert into pgtap_fixtures.hashes (label, value)
 values ('h1', pg_catalog.repeat('a', 64)),
@@ -70,58 +72,63 @@ values ('33333333-3333-4333-8333-333333333333', 'Owner C', 'pgtap-owner-c@exampl
        ('44444444-4444-4444-8444-444444444444', 'Owner D', 'pgtap-owner-d@example.com', 'pri_pgtap_plan_binding'),
        ('55555555-5555-4555-8555-555555555555', 'Owner E', 'pgtap-owner-e@example.com', 'pri_pgtap_plan_binding');
 
-insert into public.catalogues (name, created_by, status, tags)
+insert into public.catalogues (name, user_id, status, tags)
 values ('pgtap-plan-c', '33333333-3333-4333-8333-333333333333', 'draft', '{}'::text[]),
        ('pgtap-plan-d', '44444444-4444-4444-8444-444444444444', 'draft', '{}'::text[]),
        ('pgtap-plan-e', '55555555-5555-4555-8555-555555555555', 'draft', '{}'::text[]);
 
 -- Owner E already has two charged turns this month; the limit tests read them back out of the DB.
-insert into public.prompts (user_id, catalogue, turn_id)
-values ('55555555-5555-4555-8555-555555555555', 'pgtap-plan-e', '5e000000-0000-4000-8000-000000000001'::uuid),
-       ('55555555-5555-4555-8555-555555555555', 'pgtap-plan-e', '5e000000-0000-4000-8000-000000000002'::uuid);
+insert into public.ai_credits (user_id, catalogue_id, turn_id)
+values ('55555555-5555-4555-8555-555555555555', (select id from public.catalogues where name = 'pgtap-plan-e'),
+        '5e000000-0000-4000-8000-000000000001'::uuid),
+       ('55555555-5555-4555-8555-555555555555', (select id from public.catalogues where name = 'pgtap-plan-e'),
+        '5e000000-0000-4000-8000-000000000002'::uuid);
 
 -- ===========================================================================
 -- 1. The columns and constraints the binding is made of (M06:9-16)
 -- ===========================================================================
 
-select col_not_null('public', 'prompts', 'kind',
-  'M06:10: prompts.kind is NOT NULL (agent turns and describe turns are metered apart)');
+select col_not_null('public', 'ai_credits', 'kind',
+  'M06:10: ai_credits.kind is NOT NULL (agent turns and describe turns are metered apart)');
 
-select col_not_null('public', 'prompts', 'plan_open',
-  'M06:11: prompts.plan_open is NOT NULL, so "is there an open plan" is never unknown');
+select col_not_null('public', 'ai_credits', 'plan_open',
+  'M06:11: ai_credits.plan_open is NOT NULL, so "is there an open plan" is never unknown');
 
-select col_not_null('public', 'prompts', 'plan_budget',
-  'M06:12: prompts.plan_budget is NOT NULL, so the free-continuation budget is never unknown');
+select col_not_null('public', 'ai_credits', 'plan_budget',
+  'M06:12: ai_credits.plan_budget is NOT NULL, so the free-continuation budget is never unknown');
 
-select has_column('public', 'prompts', 'plan_hash',
-  'M06:13: prompts.plan_hash stores the hash of the plan the turn was started under');
+select has_column('public', 'ai_credits', 'plan_hash',
+  'M06:13: ai_credits.plan_hash stores the hash of the plan the turn was started under');
 
 -- M06:14
 select is(
   pgtap_fixtures.errcode($sql$
-    insert into public.prompts (user_id, catalogue, kind)
-    values ('33333333-3333-4333-8333-333333333333', 'pgtap-plan-c', 'bogus')
+    insert into public.ai_credits (user_id, catalogue_id, kind)
+    values ('33333333-3333-4333-8333-333333333333',
+            (select id from public.catalogues where name = 'pgtap-plan-c'), 'bogus')
   $sql$),
   '23514',
-  'M06:14: prompts_kind_check rejects a kind outside (agent, describe)');
+  'M06:14: ai_credits_kind_check rejects a kind outside (agent, describe)');
 
 -- M06:15
 select is(
   pgtap_fixtures.errcode($sql$
-    insert into public.prompts (user_id, catalogue, plan_budget)
-    values ('33333333-3333-4333-8333-333333333333', 'pgtap-plan-c', 9)
+    insert into public.ai_credits (user_id, catalogue_id, plan_budget)
+    values ('33333333-3333-4333-8333-333333333333',
+            (select id from public.catalogues where name = 'pgtap-plan-c'), 9)
   $sql$),
   '23514',
-  'M06:15: prompts_plan_budget_range caps the stored budget at 8 (MAX_PLAN_CONTINUATIONS)');
+  'M06:15: ai_credits_plan_budget_range caps the stored budget at 8 (MAX_PLAN_CONTINUATIONS)');
 
 -- M06:16
 select is(
   pgtap_fixtures.errcode($sql$
-    insert into public.prompts (user_id, catalogue, plan_hash)
-    values ('33333333-3333-4333-8333-333333333333', 'pgtap-plan-c', 'not-a-sha256')
+    insert into public.ai_credits (user_id, catalogue_id, plan_hash)
+    values ('33333333-3333-4333-8333-333333333333',
+            (select id from public.catalogues where name = 'pgtap-plan-c'), 'not-a-sha256')
   $sql$),
   '23514',
-  'M06:16: prompts_plan_hash_format only accepts a 64-character lowercase hex digest');
+  'M06:16: ai_credits_plan_hash_format only accepts a 64-character lowercase hex digest');
 
 -- M06:18 drops the M05 (text, integer, boolean) form; 20260926120000:12 drops M06's 5-arg
 -- form in turn, leaving only the credit-priced one from 20260926190000.
@@ -172,7 +179,7 @@ select ok(
   'M06:112-125: set_plan_state opens the plan on the caller''s own fresh turn');
 
 select ok(
-  exists (select 1 from public.prompts p
+  exists (select 1 from public.ai_credits p
            where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c1')
              and p.plan_open
              and p.plan_budget = 3
@@ -194,7 +201,7 @@ select ok(
   'M06:121: another user cannot rebind someone else''s turn to a different plan');
 
 select ok(
-  exists (select 1 from public.prompts p
+  exists (select 1 from public.ai_credits p
            where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c1')
              and p.plan_budget = 3
              and p.plan_hash = (select value from pgtap_fixtures.hashes where label = 'h1')),
@@ -225,7 +232,7 @@ select ok(
   'M06:68: a continuation returns the root turn id it was charged under');
 
 select is(
-  (select p.continuations from public.prompts p
+  (select p.continuations from public.ai_credits p
     where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c1')),
   1,
   'M06:58: the free continuation is counted against the root turn');
@@ -252,7 +259,7 @@ select ok(
   'M06:86-88: the forged continuation gets a brand new, separately charged turn id');
 
 select is(
-  (select p.continuations from public.prompts p
+  (select p.continuations from public.ai_credits p
     where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c1')),
   1,
   'M06:64: the forged continuation did not consume the root turn''s free budget');
@@ -274,7 +281,7 @@ select is(
   'M06:60: another user replaying a captured turn id and plan hash is charged, not continued');
 
 select is(
-  (select p.continuations from public.prompts p
+  (select p.continuations from public.ai_credits p
     where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c1')),
   1,
   'M06:60: the victim''s free budget is untouched by the replay');
@@ -302,13 +309,13 @@ values ('c2_open', private.set_plan_state(
 reset role;
 
 select is(
-  (select p.plan_budget from public.prompts p
+  (select p.plan_budget from public.ai_credits p
     where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c1')),
   3,
   'M06:114-118: the budget is fixed at the first open and never grows on a later set_plan_state');
 
 select is(
-  (select p.plan_budget from public.prompts p
+  (select p.plan_budget from public.ai_credits p
     where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c2')),
   8,
   'M06:116: a caller claiming 50 pending tasks gets the DB ceiling of 8, not what it asked for');
@@ -341,7 +348,7 @@ select is(
   'M06:67: the continuation past plan_budget is charged instead of being free');
 
 select is(
-  (select p.continuations from public.prompts p
+  (select p.continuations from public.ai_credits p
     where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c1')),
   3,
   'M06:67: free continuations stop at the stored plan_budget (3)');
@@ -350,7 +357,7 @@ select is(
 -- 5. The monthly limit is counted in the database
 -- ===========================================================================
 -- p_limit comes from `tiers` via users.plan_id read in the same transaction (M05 5.5 header);
--- the usage it is compared against is counted from public.prompts, not supplied by the caller.
+-- the usage it is compared against is counted from public.ai_credits, not supplied by the caller.
 
 do $$ begin perform set_config('request.jwt.claims',
   '{"sub":"55555555-5555-4555-8555-555555555555","role":"app_user"}', true); end $$;
@@ -381,7 +388,7 @@ reset role;
 select is(
   (select outcome from pgtap_fixtures.obs where label = 'e_at_limit'),
   'limit',
-  'M06:76-84: usage is counted from public.prompts in the DB, so two charged rows exhaust a limit of 2');
+  'M06:76-84: usage is counted from public.ai_credits in the DB, so two charged rows exhaust a limit of 2');
 
 select ok(
   (select flag from pgtap_fixtures.obs where label = 'e_refund'),
@@ -425,7 +432,7 @@ select 'c2_cont_closed', t.outcome, t.ai_turn_id
 reset role;
 
 select ok(
-  exists (select 1 from public.prompts p
+  exists (select 1 from public.ai_credits p
            where p.turn_id = (select turn_id from pgtap_fixtures.obs where label = 'c2')
              and not p.plan_open
              and p.plan_hash is null),

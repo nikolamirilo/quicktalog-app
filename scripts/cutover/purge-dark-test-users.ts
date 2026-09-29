@@ -17,7 +17,7 @@
  *
  * Deleting an auth user cascades: the M10 delete trigger removes the
  * `public.users` row, and the foreign keys remove that user's catalogues,
- * analytics, newsletter subscribers, OCR jobs, prompts and themes. There is no
+ * analytics, newsletter subscribers, AI credit charges and themes. There is no
  * undo.
  */
 
@@ -108,9 +108,9 @@ async function main(): Promise<void> {
 			}[]
 		>`
 			select u.id,
-			       (select count(*)::int from public.catalogues  c where c.created_by = u.id) as catalogues,
+			       (select count(*)::int from public.catalogues  c where c.user_id    = u.id) as catalogues,
 			       (select count(*)::int from public.analytics   a where a.user_id    = u.id) as analytics,
-			       (select count(*)::int from public.newsletter  n where n.owner_id   = u.id) as newsletter,
+			       (select count(*)::int from public.catalogue_subscribers n join public.catalogues c on c.id = n.catalogue_id where c.user_id = u.id) as newsletter,
 			       (select count(*)::int from public.user_themes t where t.user_id    = u.id) as themes
 			  from public.users u
 			 where u.id = any(${candidates.map((candidate) => candidate.id)}::text[])`;
