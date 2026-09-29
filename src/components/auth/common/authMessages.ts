@@ -1,5 +1,5 @@
-import type { AuthError } from "@supabase/supabase-js";
 import type { ConfirmResult } from "@/actions/auth-confirm";
+import type { AuthError } from "@supabase/supabase-js";
 
 /**
  * Every user-facing auth string, in one place.
@@ -18,7 +18,7 @@ export function authErrorMessage(error: AuthError): string {
 		case "invalid_credentials":
 			return "That email and password do not match an account.";
 		case "email_not_confirmed":
-			return "Confirm your email address first — the link is in your inbox.";
+			return "Confirm your email address first - the link is in your inbox.";
 		case "captcha_failed":
 			return "The anti-bot check did not pass. Try again.";
 		case "over_request_rate_limit":
@@ -45,7 +45,7 @@ export const LANDING_ERRORS: Record<string, string> = {
 	oauth:
 		"Google sign-in did not finish. Try again, or use your email and password.",
 	recovery:
-		"Open the reset link from your email again — this page needs the session it creates.",
+		"Open the reset link from your email again - this page needs the session it creates.",
 	config:
 		"Sign-in is misconfigured on our side, not yours. We have been alerted; please try again shortly.",
 };
@@ -73,6 +73,6 @@ export const CONFIRM_MESSAGES: Record<
 	},
 	config: {
 		title: "Something is wrong on our side",
-		body: "Sign-in is misconfigured, and a new link will not help. We have been alerted — please try again shortly.",
+		body: "Sign-in is misconfigured, and a new link will not help. We have been alerted - please try again shortly.",
 	},
 };

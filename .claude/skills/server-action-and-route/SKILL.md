@@ -85,13 +85,13 @@ export async function updateThing(data: SomeType): Promise<boolean> {
 
 ## The required steps
 
-1. **Identity** — `const me = await getVerifiedIdentity(); if (!me) return <fail>;`. Never accept `userId` as a parameter of an action; helpers that take one live in `server-only` modules under `src/lib/`.
-2. **Owner predicate** — keep `eq(table.userId, me.userId)` in the statement (the owning user is always `user_id`) even though RLS enforces it too. Two locks, and the predicate is what a reviewer can see.
-3. **Check what came back** — `returning(...)` and treat zero rows as "not found". A blocked row is not an error, it is simply not returned.
-4. **Trust nothing from the client** — status, plan flags and ids are decided by the server. Use `pickEditable()` for catalogue payloads and the helpers in `src/lib/entitlements/` for plan limits.
-5. **Keep the transaction short** — no `fetch`, Redis, `revalidate*`, model call or streaming inside a block. It pins a pooled connection.
-6. **Revalidate** — `revalidateCatalogue(name)` and/or `revalidateDashboard()`. See [[data-revalidation]].
-7. **Catch** — wrap the body in `try/catch` with `Sentry.captureException(err, { tags: { op } })` + `console.error(...)`.
+1. **Identity** - `const me = await getVerifiedIdentity(); if (!me) return <fail>;`. Never accept `userId` as a parameter of an action; helpers that take one live in `server-only` modules under `src/lib/`.
+2. **Owner predicate** - keep `eq(table.userId, me.userId)` in the statement (the owning user is always `user_id`) even though RLS enforces it too. Two locks, and the predicate is what a reviewer can see.
+3. **Check what came back** - `returning(...)` and treat zero rows as "not found". A blocked row is not an error, it is simply not returned.
+4. **Trust nothing from the client** - status, plan flags and ids are decided by the server. Use `pickEditable()` for catalogue payloads and the helpers in `src/lib/entitlements/` for plan limits.
+5. **Keep the transaction short** - no `fetch`, Redis, `revalidate*`, model call or streaming inside a block. It pins a pooled connection.
+6. **Revalidate** - `revalidateCatalogue(name)` and/or `revalidateDashboard()`. See [[data-revalidation]].
+7. **Catch** - wrap the body in `try/catch` with `Sentry.captureException(err, { tags: { op } })` + `console.error(...)`.
 
 ## Return-shape conventions
 
@@ -103,7 +103,7 @@ export async function updateThing(data: SomeType): Promise<boolean> {
 
 Export named `GET`/`POST`/`PATCH`, add `export const dynamic = "force-dynamic"` where the response must not be cached, and `Sentry.captureException` in every catch (500 for database errors, 400 for request errors, 404 for not-found).
 
-- **Signed-in routes** do their own identity check and answer 401 — middleware is not enough.
+- **Signed-in routes** do their own identity check and answer 401 - middleware is not enough.
 - **Public routes** (`/api/items*`) use the helpers in `src/lib/catalogue/public.ts` and never read cookies or identity, so their output is the same for every visitor.
 - **Webhooks** (`/api/clerk`, `/api/paddle`) verify their signature, use `asAdmin`, and let errors reach the caller as 5xx so the sender retries.
 

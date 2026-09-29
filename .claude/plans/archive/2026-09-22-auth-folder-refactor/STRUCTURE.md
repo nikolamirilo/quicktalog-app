@@ -1,7 +1,7 @@
 # Auth folder structure: before and after
 
 Companion to [PLAN.md](PLAN.md). Derived from how the rest of `components/` is already
-organised — the conventions and their evidence are listed first, then the tree that follows them.
+organised - the conventions and their evidence are listed first, then the tree that follows them.
 
 ## Conventions this project already follows
 
@@ -9,10 +9,10 @@ Surveyed across all 18 folders in `components/`.
 
 | # | Convention | Evidence |
 |---|---|---|
-| 1 | **Subfolder names are lowercase**, kebab-case when multiword | `catalogue/{builder,cards,chat,inputs,modals,sections,view}`, `catalogue/inputs/custom-code`, `dashboard/{account,components,overview,subscription}`, `qr-editor/controls`, `modals/limits`. Only `home/{Benefits,Pricing,Showcases}` is PascalCase — the lone outlier |
+| 1 | **Subfolder names are lowercase**, kebab-case when multiword | `catalogue/{builder,cards,chat,inputs,modals,sections,view}`, `catalogue/inputs/custom-code`, `dashboard/{account,components,overview,subscription}`, `qr-editor/controls`, `modals/limits`. Only `home/{Benefits,Pricing,Showcases}` is PascalCase - the lone outlier |
 | 2 | **The feature root holds whole screens, flat; subfolders hold their parts** | `dashboard/` keeps `Dashboard.tsx`, `Overview.tsx`, `Settings.tsx`, `Subscription.tsx`, `Support.tsx` flat and pushes the pieces into `overview/`, `subscription/`, `account/`. `qr-editor/` keeps `QrEditor.tsx`, `QrControls.tsx`, `QrPreview.tsx` flat, parts in `controls/` |
 | 3 | **Shared pieces within a group go in `common/`** | `catalogue/sections/common/` (7 files), `catalogue/cards/common/` (4 files) |
-| 4 | **Provider variants sit side by side, distinguished by a `Clerk*` / `Supabase*` filename prefix — never by folder** | `dashboard/account/{ClerkAccount.tsx, SupabaseAccount.tsx}`. All six provider-variant files in the repo follow this; none is in a provider-named folder |
+| 4 | **Provider variants sit side by side, distinguished by a `Clerk*` / `Supabase*` filename prefix - never by folder** | `dashboard/account/{ClerkAccount.tsx, SupabaseAccount.tsx}`. All six provider-variant files in the repo follow this; none is in a provider-named folder |
 | 5 | **A hook used by one feature is co-located with it** | `catalogue/inputs/heading/useHeadingEditor.ts` lives beside its components, not in `hooks/` |
 | 6 | **Copy and content tables are co-located as `.ts` beside the components** | `modals/limits/limitContent.ts` |
 | 7 | **`index.ts` barrels are optional and rare** | Only `navigation/index.ts`, `emails/index.ts`, `catalogue/inputs/heading/index.ts`. Not proposed here |
@@ -67,23 +67,23 @@ Root = whole screens (convention 2). Subfolders = their parts.
 components/auth/
 ├── Auth.tsx                     /auth entry: consent gate + provider switch
 ├── AuthProvider.tsx             session provider switch
-├── SupabaseAuthForms.tsx        /auth screen, Supabase — picks sign-in / sign-up / reset
+├── SupabaseAuthForms.tsx        /auth screen, Supabase - picks sign-in / sign-up / reset
 ├── ClerkAuthForms.tsx           /auth screen, Clerk
 ├── UpdatePasswordForm.tsx       /auth/update-password screen
 ├── ConfirmContinue.tsx          /auth/confirm/continue screen
 │
-├── common/                      shared parts — no supabase-js import
+├── common/                      shared parts - no supabase-js import
 │   ├── AuthLayout.tsx           page frame: centring, navbar clearance
 │   ├── AuthCard.tsx             card shell + centred title/subtitle
 │   ├── AuthField.tsx            label + input + optional label-row action
 │   ├── AuthNotice.tsx           error / info block (today's AuthError)
 │   ├── AuthDivider.tsx
 │   ├── AuthFooter.tsx
-│   ├── AuthModeTabs.tsx         NEW — option C's segmented control
-│   ├── SubmitButton.tsx         NEW — today's SUBMIT constant + busy label
+│   ├── AuthModeTabs.tsx         NEW - option C's segmented control
+│   ├── SubmitButton.tsx         NEW - today's SUBMIT constant + busy label
 │   ├── GoogleButton.tsx         shared OAuth control
 │   ├── useTurnstile.ts          NEW home for useCaptcha
-│   └── authMessages.ts          NEW — every user-facing auth string
+│   └── authMessages.ts          NEW - every user-facing auth string
 │
 ├── forms/                       the three screens behind /auth
 │   ├── SignInForm.tsx
@@ -128,12 +128,12 @@ Unchanged: `Auth`, `AuthProvider`, `UpdatePasswordForm`, `ConfirmContinue` impor
 `app/auth/[[...rest]]/page.tsx`, the two pages above, and `components/wrappers/PageWrapperClient.tsx`.
 No test imports a component from this folder.
 
-## Untouched — already one concern per file
+## Untouched - already one concern per file
 
 Listed so the whole auth surface is visible in one place. No changes proposed here.
 
 ```
-lib/auth/                               262 lines, 6 modules — auth mechanics
+lib/auth/                               262 lines, 6 modules - auth mechanics
 ├── identity.ts                         127   server-side verified identity
 ├── redirects.ts                         45   safeNext()
 ├── terms.ts                             34   current terms version

@@ -1,8 +1,8 @@
 # Clerk to Supabase Auth + RLS: To Do
 
-**TEST rehearsal (do this first): [`TEST_REHEARSAL.md`](TEST_REHEARSAL.md)** — the migration has never been run end to end anywhere.
+**TEST rehearsal (do this first): [`TEST_REHEARSAL.md`](TEST_REHEARSAL.md)** - the migration has never been run end to end anywhere.
 
-**PROD cutover sequence: [`PROD_RUNBOOK.md`](PROD_RUNBOOK.md)** — every step, in order, with the four traps TEST hit.
+**PROD cutover sequence: [`PROD_RUNBOOK.md`](PROD_RUNBOOK.md)** - every step, in order, with the four traps TEST hit.
 
 High-level task list for [`PLAN.md`](PLAN.md) (section 5 has the detailed steps). Every task runs on TEST first, then PROD.
 
@@ -59,7 +59,7 @@ Phases: **0A** close open database access · **0B** integrity and billing harden
 | 2.12 | Tests: auth triggers, sign-up integration, Playwright Supabase setup, CI matrix `clerk`/`supabase` | Claude | Done |
 | 2.13 | Test all auth flows on a TEST preview with `AUTH_PROVIDER=supabase`; PROD stays on `clerk` for 72h | Nikola | To Do |
 | 3.1 | Fixture rehearsal in CI (import, re-key, verify, reverse, re-key) | Claude | In Progress |
-| 3.2 | Full TEST dress rehearsal: cutover, rollback, re-cutover; time every step | Nikola | **To Do — see `TEST_REHEARSAL.md`. TEST's Clerk-keyed rows are gone; step 1 rebuilds them** |
+| 3.2 | Full TEST dress rehearsal: cutover, rollback, re-cutover; time every step | Nikola | **To Do - see `TEST_REHEARSAL.md`. TEST's Clerk-keyed rows are gone; step 1 rebuilds them** |
 | 3.3 | Optional: PROD data rehearsal on a local copy | Nikola | To Do |
 | 3.4 | Clerk freeze at T-3 (account changes paused notice) | Claude / Nikola | In Progress |
 | 3.5 | PROD dark import at T-3; reconcile and decide on every conflict | Nikola | To Do |
@@ -84,21 +84,21 @@ triggers exist, the `migration` schema tables are there, `users_id_is_uuid` is a
 run) and all 3 users are still Clerk-keyed.
 
 **Not applied anywhere:** M12 and M13. They live in `supabase/phase5/`, deliberately outside the
-`supabase db push` path — see the note under 5.4 below.
+`supabase db push` path - see the note under 5.4 below.
 
 **Applied on PROD:** unknown beyond M00–M08 (1.9). M09 and M10 are not.
 
-## Next actions — Nikola
+## Next actions - Nikola
 
 > **Added 2026-09-28.** Three items from the env/drizzle pass, in dependency order:
 > 1. Set `DB_ADMIN_CONNECTION_STRING` (same `postgres` pooler URL as `DB_CONNECTION_STRING`)
->    on Vercel **Production and Preview**, and in the app's local `.env.local` — it is unset
+>    on Vercel **Production and Preview**, and in the app's local `.env.local` - it is unset
 >    in all three. Doing it now makes the M08 ordering trap impossible; see
 >    [`PROD_RUNBOOK.md`](PROD_RUNBOOK.md) A2.
 > 2. Prove Supavisor authenticates `app_rls.<test-ref>` on TEST with a real connection
 >    (`PLAN.md:2517` is still "unverified"). This blocks the PROD switch.
 > 3. Settle the A5 migration-state contradiction with `supabase migration list` against PROD
->    — P0 and the 2026-09-26 audit say M00–M08 are unapplied; A5's opening line says M08.
+>    - P0 and the 2026-09-26 audit say M00–M08 are unapplied; A5's opening line says M08.
 
 
 In this order. 2 blocks 2.13; 4 is the one that may be hurting users today.
@@ -116,19 +116,19 @@ In this order. 2 blocks 2.13; 4 is the one that may be hurting users today.
 
 Later, in phase order: 3.2 (TEST dress rehearsal), 3.5, then Phase 4.
 
-## Next actions — Claude
+## Next actions - Claude
 
 | # | Task | Blocked on |
 |---|---|---|
 | 1 | Fix whatever the first CI run turns up in the rehearsal and sign-up tests | Nikola action 1 |
 | 2 | Add the `x-webhook-secret` check and `verify_jwt = false` to the four edge functions | Nikola action 5 |
-| 3 | Wire `banner()` to the UI (see open items) | nothing — say the word |
+| 3 | Wire `banner()` to the UI (see open items) | nothing - say the word |
 | 4 | 5.1, 5.5, 5.6 | the cutover |
 
 ## Open questions and decisions
 
 - **Decided (Nikola, 2026-09-22): the edge-function integrations are PROD-only.** TEST does not need them, so TEST's
-  state is correct and final — `edge_functions_base_url` unset, no functions deployed,
+  state is correct and final - `edge_functions_base_url` unset, no functions deployed,
   `call_edge_function_with_vault_secret()` returning at its first check without posting. Leave the three triggers in
   place: they are cheap no-ops and `remap-user-ids.sql` already disables the Brevo one for the re-key. **Do not
   "fix" TEST.** All Track K edge work is PROD-only.
@@ -142,7 +142,7 @@ Later, in phase order: 3.2 (TEST dress rehearsal), 3.5, then Phase 4.
 ## Corrections to earlier "Done" marks
 
 - **K.3 was never done.** There is no edge-function source in any of the three repos: `grep -r x-webhook-secret`
-  matches only the plan documents and `supabase/functions/` does not exist. Plan 10.6 says as much — "sources in no
+  matches only the plan documents and `supabase/functions/` does not exist. Plan 10.6 says as much - "sources in no
   repo". The four functions (`create-brevo-contact`, `create-crm-contact`, `discord-subscription-alert`,
   `sync-available-plans`) live only in the PROD dashboard.
 - **0A.13's "check edge functions" needs confirming.** The same evidence suggests the Phase 0A download-and-grep step
@@ -154,21 +154,21 @@ Later, in phase order: 3.2 (TEST dress rehearsal), 3.5, then Phase 4.
 
 ## Notes on specific tasks
 
-- **5.4 — M12 and M13 are written but must not be pushed.** They live in `supabase/phase5/` because anything in
+- **5.4 - M12 and M13 are written but must not be pushed.** They live in `supabase/phase5/` because anything in
   `supabase/migrations/` is applied by the next `supabase db push`, and those two are only correct at T+30, after the
   cutover and orphan triage. A `supabase db push` on 2026-09-22 proved the point: M12 refused, correctly, because
   `users_id_is_uuid` does not exist yet. Move a file into `supabase/migrations/` when it is time to apply it; see
   `supabase/phase5/README.md`. Both are still covered by `npm run test:db` on PG17 and PG18.
-- **3.1 — written, never executed.** The rehearsal drives the real scripts against a real Postgres and GoTrue, but
+- **3.1 - written, never executed.** The rehearsal drives the real scripts against a real Postgres and GoTrue, but
   there is no Docker or `psql` on the dev machine, so its first run is in CI. Expect fixes.
-- **3.4 — the notice is built, the freeze is not applied.** `ClerkAccount.tsx` shows "Account changes are paused" when
+- **3.4 - the notice is built, the freeze is not applied.** `ClerkAccount.tsx` shows "Account changes are paused" when
   the `clerk_frozen_<env>` Global Config key is true (env fallback `CLERK_FROZEN=1`); the runtime-switches table in
   `docs/guides/vercel-env.md` documents all three switches. At T-3, flip the key and do the Clerk dashboard half.
-- **2.3/2.4 — the welcome email now works on the Supabase path.** M10 created `private.claim_welcome_email()` but
+- **2.3/2.4 - the welcome email now works on the Supabase path.** M10 created `private.claim_welcome_email()` but
   nothing called it, so under `AUTH_PROVIDER=supabase` new users got no welcome email at all (smoke test S13).
   `getUserData()` now claims and sends it through `next/server`'s `after()`. Imported users are unaffected:
   `remap-user-ids.sql` backfills `welcome_email_sent_at` during the re-key.
-- **2.13 — set `terms_version` first** (Nikola action 2), or it tests the wrong consent behaviour.
+- **2.13 - set `terms_version` first** (Nikola action 2), or it tests the wrong consent behaviour.
 - **e2e was broken in four ways, now fixed** (2026-09-22). `globalSetup` called `clerkSetup()` on both legs, so the
   Supabase leg died before any test ran; `auth.supabase.setup.ts` opened the magic link and went straight to the
   dashboard, but `/auth/confirm` only parks the token and the interstitial has to be *pressed* twice, so no session was
@@ -186,41 +186,41 @@ Later, in phase order: 3.2 (TEST dress rehearsal), 3.5, then Phase 4.
 Confirmed against the `quicktalog` project. `test.quicktalog.app` runs on **preview**.
 
 **Missing on preview (TEST):**
-- `SUPABASE_SECRET_KEY` — production only. Breaks `/auth/callback` and `/auth/confirm`; nothing else, because
+- `SUPABASE_SECRET_KEY` - production only. Breaks `/auth/callback` and `/auth/confirm`; nothing else, because
   `createMiddlewareAuthClient` falls back to the publishable key. **This is the 2.13 blocker.**
-- `DB_ADMIN_CONNECTION_STRING` — absent everywhere. 1.8 ("add separate user/admin connection strings") is marked Done
+- `DB_ADMIN_CONNECTION_STRING` - absent everywhere. 1.8 ("add separate user/admin connection strings") is marked Done
   but was never applied to Vercel. `getAdminDb()` therefore falls back to `DB_CONNECTION_STRING`, which means either
-  that value is still `postgres` — so M08's fail-closed protection is not actually in effect on TEST, which was the
-  whole point of 1.8 — or it is `app_rls` and every `asAdmin` call (Paddle webhook, Clerk provisioning) is failing
+  that value is still `postgres` - so M08's fail-closed protection is not actually in effect on TEST, which was the
+  whole point of 1.8 - or it is `app_rls` and every `asAdmin` call (Paddle webhook, Clerk provisioning) is failing
   with 42501. Whichever it is, it is not what 1.8 claims.
 
   **Also blocks type regeneration (found 2026-09-28).** `drizzle-kit pull` runs in
   `../quicktalog-packages`, whose `drizzle.config.ts` now reads `DB_ADMIN_CONNECTION_STRING`
   (its `.env` has that key and no `DB_CONNECTION_STRING`). Introspection reads `pg_catalog`,
-  which `app_rls` cannot do — it holds no privileges. So once `DB_CONNECTION_STRING` becomes
+  which `app_rls` cannot do - it holds no privileges. So once `DB_CONNECTION_STRING` becomes
   `app_rls`, step 4 of [`docs/guides/drizzle.md`](../../../../docs/guides/drizzle.md) needs the
   admin connection or it fails. The admin URL stays `postgres.<ref>` @ 6543 in both eras; only
   the user string changes to `app_rls.<ref>`.
 
   Verified on TEST 2026-09-28: `app_rls` exists (`rolcanlogin=true`, `rolbypassrls=false`,
-  `connection limit 40`) and **already has a password set**, no `VALID UNTIL` — so M08 step 8 is
+  `connection limit 40`) and **already has a password set**, no `VALID UNTIL` - so M08 step 8 is
   done on TEST and the switch is one env change away. `PLAN.md:2517` still marks
   "whether Supavisor authenticates a custom login role" as **unverified**: that needs a real
   connection attempt as `app_rls.<test-ref>`, which no SQL query can prove.
 
 **Missing on production, and needed before the current branch is deployed there:**
-- `DB_CONNECTION_STRING` — production still has the old `DATABASE_URL`. 0A.6's rename reached preview only, so a
+- `DB_CONNECTION_STRING` - production still has the old `DATABASE_URL`. 0A.6's rename reached preview only, so a
   deploy of `main` today would leave `getUserDb()` with no connection string at all.
-- `AUTH_PROVIDER` — absent, so it defaults to `clerk`. Correct for now; required at 4.3.
-- `REVALIDATE_SECRET` — absent, so the worker's revalidation calls would be rejected.
-- `REDIS_KEY_PREFIX` — absent, so `draftKey()` falls back to `"dev"` and PROD drafts would share a keyspace with
+- `AUTH_PROVIDER` - absent, so it defaults to `clerk`. Correct for now; required at 4.3.
+- `REVALIDATE_SECRET` - absent, so the worker's revalidation calls would be rejected.
+- `REDIS_KEY_PREFIX` - absent, so `draftKey()` falls back to `"dev"` and PROD drafts would share a keyspace with
   local development.
 
 **Dead on production:** `SUPABASE_ANON_KEY` and `SUPABASE_URL` (legacy names; the anon key is disabled since K.5),
-`DATABASE_URL` once the rename lands. Also `POSTHGOG_API_KEY` sits alongside `POSTHOG_API_KEY` on both targets — a
+`DATABASE_URL` once the rename lands. Also `POSTHGOG_API_KEY` sits alongside `POSTHOG_API_KEY` on both targets - a
 typo'd duplicate worth deleting.
 
-## Auth config and email templates (2.6 / 2.9) — TEST done 2026-09-22
+## Auth config and email templates (2.6 / 2.9) - TEST done 2026-09-22
 
 `auth-config.ts --apply` now reports zero drift on TEST and the go/no-go passes:
 confirm-email on, secure email change on, anonymous off, captcha on, reauthentication on.
@@ -228,7 +228,7 @@ confirm-email on, secure email change on, anonymous off, captcha on, reauthentic
 Done along the way:
 - **Email templates exist** (`supabase/templates/{confirmation,recovery,email-change}.html`, with a README
   explaining the reasoning). They point at `{{ .RedirectTo }}/auth/confirm?token_hash={{ .TokenHash }}&type=…`,
-  not `{{ .ConfirmationURL }}` — GoTrue's verify endpoint spends the token when the link is *fetched*, so a mail
+  not `{{ .ConfirmationURL }}` - GoTrue's verify endpoint spends the token when the link is *fetched*, so a mail
   scanner following it burns the token. The previous TEST templates had exactly that flaw.
 - **`auth-config.ts` resolves `"file:supabase/templates/x.html"`** so HTML lives in .html files, and truncates long
   values in the drift output. It also takes `--only` / `--skip` for staged applies, and a staged apply still prints
@@ -244,19 +244,19 @@ plus whatever else has never been set there.
 The 2200 PROD users keep their existing passwords and Google logins. No mass password reset, no fresh start.
 
 **That makes the Clerk password digests a hard dependency.** They exist only in the dashboard CSV export
-(Settings → User exports) — the Backend API never returns them. If that export is not available on the production
+(Settings → User exports) - the Backend API never returns them. If that export is not available on the production
 instance, a support request to Clerk is the only other route and is a multi-day lead time, so it is the long pole.
 
 Everything else can proceed without it, including the full TEST rehearsal: the dev-instance CSV (3 users) is already
 in hand.
 
-## ⚠️ PROD audit, 2026-09-26 — the tracker was wrong
+## ⚠️ PROD audit, 2026-09-26 - the tracker was wrong
 
 Run read-only against `uhfbapjuzvlyzyodxhqn` with the Supabase connector.
 
 **PROD is at migration 3 of 16.** Applied: `remote_schema`, `add_user_themes`,
 `lockdown_privileges_and_schema_fixes`. Everything from `fix_newsletter_catalogue_fk_cascade`
-onward — including **M00** — has never been applied.
+onward - including **M00** - has never been applied.
 
 Consequences, live in production right now:
 
@@ -268,7 +268,7 @@ Consequences, live in production right now:
 - **2171 users, 72 paying.** Supabase's advisor flags this ERROR / EXTERNAL.
 
 This is R1 in `PLAN.md`, rated critical. Remediation sequence is **P0** in
-[`PROD_RUNBOOK.md`](PROD_RUNBOOK.md) — note that `supabase db push` is *not* the answer, because
+[`PROD_RUNBOOK.md`](PROD_RUNBOOK.md) - note that `supabase db push` is *not* the answer, because
 PROD still runs pre-Phase-0A code that reads through PostgREST.
 
 Statuses corrected above: 0A.13, 1.9 and the PROD half of 0B.7 were marked Done and are not.

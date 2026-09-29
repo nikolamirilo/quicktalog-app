@@ -259,7 +259,7 @@ SET
 -----+---------+------------------+-------+------+------------
 (0 rows)
 
-(terminate with: select pg_terminate_backend(<pid>); — not from this script)
+(terminate with: select pg_terminate_backend(<pid>); - not from this script)
 
 === 8. Cutover gates (Phase 3/4; needs M10) ===============================
   status  | origin | count 

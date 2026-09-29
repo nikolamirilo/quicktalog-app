@@ -10,7 +10,7 @@ const FLEXIBLE_MIN_WIDTH = 300;
 
 /**
  * One captcha widget per form. The token is single-use, so every submit resets
- * it — a second attempt with a spent token is rejected by GoTrue.
+ * it - a second attempt with a spent token is rejected by GoTrue.
  *
  * With no site key configured the widget is absent and `pending` is false, so
  * local development is not blocked by it.

@@ -1,7 +1,7 @@
 -- M12 (plan A.12): validate the uuid check on public.users.
 --
 -- The re-key added `users_id_is_uuid` as NOT VALID, so the rows that were left
--- behind on Clerk ids — the accepted orphans of 12.6 — could stay without
+-- behind on Clerk ids - the accepted orphans of 12.6 - could stay without
 -- blocking the cutover. NOT VALID means new and updated rows are checked but
 -- existing ones are not, which is exactly the property that lets a stale Clerk
 -- id fail loudly while the orphans sit still.

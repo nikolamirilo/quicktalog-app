@@ -18,8 +18,8 @@
  * report file goes through `mask*` or `redact()` first.
  */
 
-import { createInterface } from "node:readline/promises";
 import { createClient } from "@supabase/supabase-js";
+import { createInterface } from "node:readline/promises";
 import postgres from "postgres";
 import { applyConfigDefaults, PROJECT_REFS } from "../cutover/config";
 
@@ -135,7 +135,7 @@ export function environmentForRef(ref: string | null): Environment {
 	return "unknown";
 }
 
-/** `aws-1-eu-central-1.pooler.supabase.com:5432/postgres` — host only, no credentials. */
+/** `aws-1-eu-central-1.pooler.supabase.com:5432/postgres` - host only, no credentials. */
 function describeDatabase(url: string): string {
 	try {
 		const parsed = new URL(url);
@@ -192,7 +192,7 @@ function isTruthy(value: string | undefined): boolean {
 
 /**
  * Asks for confirmation on the terminal, and on a non-interactive machine
- * accepts `CONFIRM_REF=<ref>` instead — the same amount of typing, and still
+ * accepts `CONFIRM_REF=<ref>` instead - the same amount of typing, and still
  * impossible to satisfy by accident with the wrong project.
  */
 async function confirmTarget(
@@ -260,7 +260,7 @@ export async function guard(options: GuardOptions): Promise<Guard> {
 	// 2. The accident that matters: two environments in one run.
 	if (databaseRef !== projectRef) {
 		throw new GuardError(
-			`the database (${databaseEnv}, ref ${databaseRef}) and the Supabase project (${projectEnv}, ref ${projectRef}) are different projects — refusing`,
+			`the database (${databaseEnv}, ref ${databaseRef}) and the Supabase project (${projectEnv}, ref ${projectRef}) are different projects - refusing`,
 		);
 	}
 	if (projectEnv === "unknown" && !isTruthy(process.env.ALLOW_UNKNOWN_REF)) {
@@ -273,7 +273,7 @@ export async function guard(options: GuardOptions): Promise<Guard> {
 	if (projectEnv === "prod") {
 		if (options.prodForbidden) {
 			throw new GuardError(
-				`${options.script} must never run against PROD — there is no flag for this`,
+				`${options.script} must never run against PROD - there is no flag for this`,
 			);
 		}
 		if (!isTruthy(process.env.ALLOW_PROD)) {
@@ -301,7 +301,7 @@ export async function guard(options: GuardOptions): Promise<Guard> {
 	console.log(`  project      ${projectRef} (${supabaseUrl})`);
 	console.log(`  database     ${databaseLabel}`);
 	console.log(
-		`  mode         ${dryRun ? "DRY RUN — nothing will be written" : "LIVE — this run writes"}`,
+		`  mode         ${dryRun ? "DRY RUN - nothing will be written" : "LIVE - this run writes"}`,
 	);
 	for (const line of options.details ?? []) console.log(`  ${line}`);
 	console.log("  ────────────────────────────────────────────────────────────");
@@ -348,7 +348,7 @@ export async function guard(options: GuardOptions): Promise<Guard> {
 /**
  * The cutover rewrites other people's rows, so the connection has to be an
  * admin one. `MIGRATION_DATABASE_URL` can fall back to the app's own URLs, and
- * after M08 `DB_CONNECTION_STRING` is the fail-closed `app_rls` login — which
+ * after M08 `DB_CONNECTION_STRING` is the fail-closed `app_rls` login - which
  * would get several statements into a re-key before dying on a permission
  * error that looks like a bug in the script.
  */
@@ -358,7 +358,7 @@ async function assertAdminRole(sql: Sql): Promise<void> {
 		       pg_catalog.has_table_privilege(current_user, 'public.users', 'UPDATE') as superuser`;
 	if (!row.superuser) {
 		throw new GuardError(
-			`connected as "${row.me}", which cannot update public.users — set MIGRATION_DATABASE_URL to the postgres login (the app's DB_CONNECTION_STRING is app_rls after M08)`,
+			`connected as "${row.me}", which cannot update public.users - set MIGRATION_DATABASE_URL to the postgres login (the app's DB_CONNECTION_STRING is app_rls after M08)`,
 		);
 	}
 	if (row.me !== "postgres") {
@@ -388,7 +388,7 @@ async function assertSameInstance(
 	if (!sample) {
 		if (row.total > 0) {
 			throw new GuardError(
-				`the Auth API reports no users but the database holds ${row.total} — the key and the connection string are not the same project`,
+				`the Auth API reports no users but the database holds ${row.total} - the key and the connection string are not the same project`,
 			);
 		}
 		console.log(
@@ -400,7 +400,7 @@ async function assertSameInstance(
 		select exists (select 1 from auth.users where id = ${sample.id}::uuid) as present`;
 	if (!match.present) {
 		throw new GuardError(
-			"a user from the Auth API does not exist in the connected database — the secret key and MIGRATION_DATABASE_URL point at different projects",
+			"a user from the Auth API does not exist in the connected database - the secret key and MIGRATION_DATABASE_URL point at different projects",
 		);
 	}
 	console.log(

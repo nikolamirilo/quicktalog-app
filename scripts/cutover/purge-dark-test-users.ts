@@ -12,7 +12,7 @@
  *
  * This script can never run against PROD. `ALLOW_PROD=1` does not unlock it,
  * because on PROD the same query selects real people who signed up during the
- * window — those are handled by the rollback push (12.5 step 3), not by a
+ * window - those are handled by the rollback push (12.5 step 3), not by a
  * delete.
  *
  * Deleting an auth user cascades: the M10 delete trigger removes the
@@ -161,7 +161,7 @@ async function main(): Promise<void> {
 		console.log(`  deleted ${deleted} of ${candidates.length} auth user(s)`);
 		if (leftovers.length > 0) {
 			console.log(
-				`  WARNING: ${leftovers.length} public.users row(s) survived the delete — the M10 delete trigger is not doing its job`,
+				`  WARNING: ${leftovers.length} public.users row(s) survived the delete - the M10 delete trigger is not doing its job`,
 			);
 			for (const row of leftovers) console.log(`    ${row.id}`);
 		}

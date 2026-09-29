@@ -34,7 +34,7 @@ html {
 }
 
 /* react-remove-scroll offsets the body by the scrollbar width, which the gutter
-   above already reserves — together they shifted the page on every dialog and
+   above already reserves - together they shifted the page on every dialog and
    select. `html` prefix outranks its own !important rule. */
 html body[data-scroll-locked] {
 	padding-right: 0 !important;
@@ -65,12 +65,12 @@ html body[data-scroll-locked] {
 	border-radius: 1px;
 }
 
-.table-scroll > div::-webkit-scrollbar {
+.table-scroll>div::-webkit-scrollbar {
 	width: 0 !important;
 	height: 4px !important;
 }
 
-.table-scroll > div::-webkit-scrollbar-thumb {
+.table-scroll>div::-webkit-scrollbar-thumb {
 	background: var(--product-primary);
 	border-radius: 1rem;
 }

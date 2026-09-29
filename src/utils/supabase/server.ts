@@ -1,12 +1,12 @@
-import "server-only";
+import { COOKIE_OPTIONS } from "@/lib/auth/cookie-options";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { COOKIE_OPTIONS } from "@/lib/auth/cookie-options";
+import "server-only";
 
 /**
  * Server-side Supabase client for **auth only**: reading the session's claims
  * and, in a route handler, writing refreshed cookies. Data never goes through
- * it — see `utils/db` for that.
+ * it - see `utils/db` for that.
  *
  * In a Server Component the cookie jar is read-only, so `setAll` throws; that
  * is expected and ignored, because middleware is what refreshes the session.

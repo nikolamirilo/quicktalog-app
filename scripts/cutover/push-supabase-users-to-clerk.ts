@@ -3,8 +3,8 @@
  *
  * `rollback-remap.sql` re-keys `public.users` from uuids back to Clerk ids by
  * following `migration.clerk_user_map`. Anyone who signed up *during* the
- * cutover window has no row in that map — there was never a Clerk user to map
- * them to — so the re-key refuses to start until this script has created one
+ * cutover window has no row in that map - there was never a Clerk user to map
+ * them to - so the re-key refuses to start until this script has created one
  * and written it into the map with `origin='rollback_push'`.
  *
  * It does four things, in this order:
@@ -12,7 +12,7 @@
  *   1. **Push.** Every confirmed, unbanned `auth.users` row outside the map
  *      gets a Clerk user (`externalId` = the uuid) and a `migrated` map row.
  *      Their bcrypt digest is carried across, so their password still works.
- *   2. **Drop.** Unconfirmed or banned sign-ups are *not* pushed — an
+ *   2. **Drop.** Unconfirmed or banned sign-ups are *not* pushed - an
  *      unconfirmed address is unproven, and pushing a banned account would
  *      quietly unban it. They are listed so the operator can email them.
  *   3. **Erase.** Anyone in `migration.auth_user_deletions` who has a Clerk id
@@ -35,13 +35,13 @@ import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-	fail,
-	type Guard,
-	guard,
-	mapWithConcurrency,
-	maskEmail,
-	redact,
-	would,
+    fail,
+    type Guard,
+    guard,
+    mapWithConcurrency,
+    maskEmail,
+    redact,
+    would,
 } from "../lib/guard";
 
 /* -------------------------------------------------------------------------- */
@@ -438,12 +438,12 @@ async function main(): Promise<void> {
 		if (!clerkKey) throw new Error("CLERK_SECRET_KEY is not set");
 		if (clerkKey.startsWith("sk_live_") && rail.environment !== "prod") {
 			throw new Error(
-				"a live Clerk key with a non-PROD Supabase project — refusing",
+				"a live Clerk key with a non-PROD Supabase project - refusing",
 			);
 		}
 		if (clerkKey.startsWith("sk_test_") && rail.environment === "prod") {
 			throw new Error(
-				"a Clerk development key with the PROD Supabase project — refusing",
+				"a Clerk development key with the PROD Supabase project - refusing",
 			);
 		}
 
@@ -565,7 +565,7 @@ async function main(): Promise<void> {
 		}
 		if (!rail.dryRun && blocking > 0) {
 			throw new Error(
-				`${blocking} uuid-keyed user(s) still have no migrated map row — rollback-remap.sql will refuse to run`,
+				`${blocking} uuid-keyed user(s) still have no migrated map row - rollback-remap.sql will refuse to run`,
 			);
 		}
 

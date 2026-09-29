@@ -16,7 +16,7 @@ Plans, analyses and investigations produced before implementing something. Human
 | [2026-09-28-app-redesign](active/2026-09-28-app-redesign/PLAN.md) | In progress: implemented (theme, all product screens, cleanup); signed-in screens, PostHog queries and e2e still to verify. See [RESULTS.md](active/2026-09-28-app-redesign/RESULTS.md) |
 | [2026-09-29-db-consistency](active/2026-09-29-db-consistency/PLAN.md) | In progress: schema audit; batch 1 (all "Do" items) is one migration plus package, app, worker, scripts and tests, verified locally. Not applied to TEST |
 | [2026-09-28-tailwind-v4-migration](active/2026-09-28-tailwind-v4-migration/PLAN.md) | Proposed: Tailwind 3 → 4. Behaviour-neutral: inline the hidden `withMT` theme first (proven by an empty CSS diff), then upgrade with `@theme inline`. Gated on browser share and sequenced after the redesign |
-| [2026-09-27-repo-cleanup](active/2026-09-27-repo-cleanup/PLAN.md) | In progress: Tier 1 (dead code) and Tier 3 (structure) done — see [RESULTS.md](active/2026-09-27-repo-cleanup/RESULTS.md). Tier 2 (Clerk dual-path removal) blocked on the cutover |
+| [2026-09-27-repo-cleanup](active/2026-09-27-repo-cleanup/PLAN.md) | In progress: Tier 1 (dead code) and Tier 3 (structure) done - see [RESULTS.md](active/2026-09-27-repo-cleanup/RESULTS.md). Tier 2 (Clerk dual-path removal) blocked on the cutover |
 
 ## Archive
 

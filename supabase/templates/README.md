@@ -2,7 +2,7 @@
 
 Applied by `scripts/supabase/auth-config.ts`, which resolves the
 `"file:supabase/templates/…"` values in `auth-config.<env>.json`. The files hold
-only what the recipient sees — no comments, because GoTrue sends the body
+only what the recipient sees - no comments, because GoTrue sends the body
 verbatim and anything in here ends up inside a customer's email.
 
 ## Why the links do not use `{{ .ConfirmationURL }}`
@@ -41,5 +41,5 @@ in the redirect allow list.
 ## Tracking must stay off
 
 Resend's click and open tracking rewrites every link in the body. A rewritten
-one-time token URL is exactly the scanner problem above, reintroduced — so
+one-time token URL is exactly the scanner problem above, reintroduced - so
 tracking is disabled for the auth sending domain.

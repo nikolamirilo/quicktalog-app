@@ -182,7 +182,7 @@ select distinct a.pid, a.usename, a.application_name, a.state, l.mode,
  where l.relation = 'public.users'::regclass and a.pid <> pg_backend_pid()
  order by 1;
 
-\echo '(terminate with: select pg_terminate_backend(<pid>); — not from this script)'
+\echo '(terminate with: select pg_terminate_backend(<pid>); - not from this script)'
 
 \echo ''
 \echo '=== 8. Cutover gates (Phase 3/4; needs M10) ==============================='

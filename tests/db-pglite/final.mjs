@@ -1,31 +1,19 @@
 // Executes the FINAL_PLAN.md Appendix A SQL in the plan's real phase order and runs scenarios at every gate.
 // usage: node final.mjs <sql dir> <17|18> <out.json> [groups comma list]
 import fs from "node:fs";
+import { makeApp, pgError } from "./drizzle-app-final.mjs";
 import {
-	Env,
-	IDS,
-	applyTx,
-	applyStatements,
-	psql,
-	run,
-	runMany,
-	inRole,
-	U,
-	P,
-	REST,
-	admin,
-	as,
-	gotrue,
-	gotrueCreate,
-	isErr,
-	rowsJson,
-	col,
-	eqArr,
-	summarize,
-	T,
-	WRAPPER_SQL,
+    admin,
+    applyStatements,
+    applyTx,
+    Env,
+    IDS,
+    isErr,
+    REST,
+    run,
+    summarize,
+    T
 } from "./final-lib.mjs";
-import { makeApp, pgError, isUniqueViolation } from "./drizzle-app-final.mjs";
 
 const DIR = process.argv[2];
 const VER = process.argv[3] ?? "17";
@@ -313,7 +301,7 @@ group = "A gate 0A: baseline + M00";
 	// Drizzle names EVERY column of a table in an INSERT, filling the ones the
 	// caller omitted with `default`. The installed @quicktalog/common schema is
 	// pulled from a post-M10 database, so every insert into `users` names
-	// `welcome_email_sent_at` — and fails on a database that has not had M10.
+	// `welcome_email_sent_at` - and fails on a database that has not had M10.
 	//
 	// That makes M10 a hard precondition for deploying this app, not a migration
 	// that can follow the deploy the way M00 did. This check is here so the

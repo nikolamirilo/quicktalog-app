@@ -12,7 +12,7 @@ sequence.** `scripts/README.md` documents every script in detail.
 > ## ⚠️ PROD is wide open. Read this before anything else.
 >
 > A0 was run for real on **2026-09-26**. The tracker was wrong: **PROD is at
-> migration 3 of 16.** M00 — the perimeter migration — has never been applied,
+> migration 3 of 16.** M00 - the perimeter migration - has never been applied,
 > and neither has anything after it.
 >
 > **All 12 public tables have RLS disabled**, and the `anon` role holds:
@@ -29,7 +29,7 @@ sequence.** `scripts/README.md` documents every script in detail.
 > Both the legacy `anon` JWT and the `sb_publishable_` key are **enabled**
 > (`disabled: false`). A publishable key ships in the browser bundle by design,
 > so anyone who views source on the site can reach `/rest/v1/users` and read,
-> alter or delete any of **2171 users, 72 of them paying** — including changing
+> alter or delete any of **2171 users, 72 of them paying** - including changing
 > `plan_id`. Supabase's own advisor reports this at ERROR level, EXTERNAL
 > facing.
 >
@@ -38,12 +38,12 @@ sequence.** `scripts/README.md` documents every script in detail.
 
 ---
 
-## P0 — the open perimeter
+## P0 - the open perimeter
 
 There is no one-command fix, and that is why Phase 0A was sequenced the way it
 was: **M00 can only land once the app has stopped using PostgREST.** PROD's
-deployed code predates Phase 0A — production has no `DB_CONNECTION_STRING`, so
-it cannot be using Drizzle — and the logs confirm it is serving real traffic
+deployed code predates Phase 0A - production has no `DB_CONNECTION_STRING`, so
+it cannot be using Drizzle - and the logs confirm it is serving real traffic
 through `/rest/v1`. Enabling RLS underneath it would take the site down.
 
 ### What the logs actually show (24h to 2026-09-26)
@@ -70,7 +70,7 @@ on it.
 > **The one anomaly: `POST /rest/v1/subscriptions` as `anon`, returning 200.**
 > A browser key writing to the billing table. That is exactly the forged-
 > subscription vector exposure audit E2 exists to find. Identify that request
-> before revoking the grant — and treat a forged row as plausible until the
+> before revoking the grant - and treat a forged row as plausible until the
 > reconciliation against Paddle says otherwise.
 
 ### The remediation, in order
@@ -100,7 +100,7 @@ on it.
    run E1/E3/E4/E5 while you are there. The hole has been open for the whole
    history of the project; the audit is how you find out whether it was used.
 
-4. **Then run Part A properly** — it is the rest of the fix, and M00 lands in A5.
+4. **Then run Part A properly** - it is the rest of the fix, and M00 lands in A5.
 
 Do not simply `supabase db push`: that applies 13 migrations at once, including
 M01–M08, against code that has never been deployed to PROD.
@@ -135,14 +135,14 @@ They will recur on PROD unless the order below is followed.
 
 ---
 
-# Part A — Preparation
+# Part A - Preparation
 
 Nothing here changes what a user sees. PROD keeps running on Clerk throughout.
 A1 is the long pole; start it first and do the rest while you wait.
 
 ## A0. Establish where PROD actually is
 
-Read-only. Do not skip — the tracker has been wrong twice already.
+Read-only. Do not skip - the tracker has been wrong twice already.
 
 ```sh
 supabase migration list --project-ref uhfbapjuzvlyzyodxhqn   # expect M00-M08
@@ -166,7 +166,7 @@ npx tsx scripts/supabase/auth-config.ts --project prod --check
 
 Expect drift similar to TEST's fifteen settings. **Do not apply yet.**
 
-## A1. The Clerk export (long lead — start first)
+## A1. The Clerk export (long lead - start first)
 
 Clerk dashboard → **production instance** → Settings → **User exports**.
 
@@ -190,11 +190,11 @@ Adding variables changes nothing until a deploy, so this is safe now.
 | `REDIS_KEY_PREFIX` | `prod` | Unset falls back to `"dev"`, sharing a keyspace with local development |
 | `AUTH_PROVIDER` | `clerk` | Set now; C3 flips it |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Turnstile **site** key | A3 |
-| `NEXT_PUBLIC_APP_URL` | `https://www.quicktalog.app` | Falls back to `quicktalog.com` — wrong TLD — in QR codes |
+| `NEXT_PUBLIC_APP_URL` | `https://www.quicktalog.app` | Falls back to `quicktalog.com` - wrong TLD - in QR codes |
 
 ### The two database URLs, and the order they must be set in
 
-Both are Supavisor **transaction-pooler** URLs on port 6543 — the app sets
+Both are Supavisor **transaction-pooler** URLs on port 6543 - the app sets
 `prepare: false` for that mode, and a 5432 session-mode URL would silently defeat it.
 Only the **username** differs, and only after M08. The `.<ref>` suffix is pooler tenant
 routing, not part of the role name.
@@ -212,8 +212,8 @@ DB_ADMIN_CONNECTION_STRING=postgresql://postgres.<prod-ref>:<db-password>@aws-0-
 > **Set `DB_ADMIN_CONNECTION_STRING` before `DB_CONNECTION_STRING` ever becomes
 > `app_rls`.** `getAdminDb()` falls back to `DB_CONNECTION_STRING`
 > (`src/utils/db/pool.ts:51`). Flip the user string first and the fallback hands a
-> no-privilege role to every `asAdmin` path — Paddle webhook, user provisioning, e2e
-> cleanup — and all of them fail with `42501`. Setting both to the same `postgres` URL
+> no-privilege role to every `asAdmin` path - Paddle webhook, user provisioning, e2e
+> cleanup - and all of them fail with `42501`. Setting both to the same `postgres` URL
 > now makes that ordering impossible to get wrong later.
 
 **This also gates type regeneration.** `drizzle-kit pull` runs in
@@ -225,31 +225,31 @@ only way to regenerate `@quicktalog/common`.
 
 TEST got it from `PLAN.md` step 8; PROD has no equivalent. It needs, in this order:
 
-1. `alter role app_rls with password '<generated>'` in the PROD SQL editor — out of band,
+1. `alter role app_rls with password '<generated>'` in the PROD SQL editor - out of band,
    never committed, no `VALID UNTIL`. (On TEST this is already done: verified 2026-09-28,
    `rolcanlogin=true`, `rolbypassrls=false`, connection limit 40, password set.)
 2. Vercel Production `DB_CONNECTION_STRING` → `app_rls.<prod-ref>`; redeploy.
 3. `forgotten-wrapper.test.ts` against PROD with `DB_RLS_CONNECTION_STRING` pointing at the
-   `app_rls` login — otherwise it falls back to `DB_CONNECTION_STRING` and the M08
+   `app_rls` login - otherwise it falls back to `DB_CONNECTION_STRING` and the M08
    assertions do not actually run.
 4. Watch `pg_stat_activity` by `usename` for the first minutes.
 
 **Unverified, and it blocks step 2:** `PLAN.md:2517` flags that "whether Supavisor
 authenticates a custom login role on each project" has never been confirmed. Postgres
-having the role and password proves nothing about the pooler's own credential mapping —
+having the role and password proves nothing about the pooler's own credential mapping -
 that needs a real connection attempt as `app_rls.<test-ref>`, on TEST, before PROD.
 
 Already correct: `SUPABASE_SECRET_KEY`, `NEXT_PUBLIC_SUPABASE_URL`,
 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 
-Check `NODE_ENV` too — it is set explicitly on all three environments, and
+Check `NODE_ENV` too - it is set explicitly on all three environments, and
 anything but `production` disables Sentry and stops session cookies being
 `Secure`.
 
 Remove once the rename lands: `SUPABASE_URL`, `SUPABASE_ANON_KEY` (disabled
 since K.5), `DATABASE_URL`, and the typo'd `POSTHGOG_API_KEY`.
 
-## A3. Turnstile — before any captcha setting
+## A3. Turnstile - before any captcha setting
 
 1. Cloudflare → Turnstile. Domains must include `www.quicktalog.app` and
    `quicktalog.app`.
@@ -260,7 +260,7 @@ since K.5), `DATABASE_URL`, and the typo'd `POSTHGOG_API_KEY`.
 Site key → app. Secret key → Supabase. Both start `0x4AAAAAAA`.
 
 > On PROD the widget only renders once `AUTH_PROVIDER=supabase`, so nothing is
-> visible yet. Do it anyway — A4 depends on it.
+> visible yet. Do it anyway - A4 depends on it.
 
 ## A4. Supabase Auth configuration
 
@@ -272,7 +272,7 @@ All of it is inert while `AUTH_PROVIDER=clerk`: nobody reaches Supabase Auth.
 https://uhfbapjuzvlyzyodxhqn.supabase.co/auth/v1/callback
 ```
 
-**Leave Clerk's existing URI in place** — both must work until T+30.
+**Leave Clerk's existing URI in place** - both must work until T+30.
 JavaScript origins: `https://www.quicktalog.app`.
 
 **A4.2 SMTP.** Verify the sending domain in Resend, **turn click and open
@@ -291,7 +291,7 @@ Without custom SMTP you are capped at two emails per hour.
 
 **A4.3 Redirect URLs.** `auth-config.prod.json` allows only
 `https://www.quicktalog.app/**`. **If the bare apex is reachable, sign-in from
-it will fail** — the return URL is built from `window.location.origin`. Either
+it will fail** - the return URL is built from `window.location.origin`. Either
 redirect apex → www at the edge, or add `https://quicktalog.app/**`.
 
 **A4.4 Apply.**
@@ -320,9 +320,9 @@ so `getClaims()` verifies locally instead of calling out per request. Wait
 
 > **⚠️ This section contradicts the rest of this document. Unresolved 2026-09-28.**
 >
-> The line below says PROD is at M08. **This runbook's own header says otherwise** —
+> The line below says PROD is at M08. **This runbook's own header says otherwise** -
 > "A0 was run for real on 2026-09-26. The tracker was wrong: **PROD is at migration 3 of
-> 16.** M00 — the perimeter migration — has never been applied, and neither has anything
+> 16.** M00 - the perimeter migration - has never been applied, and neither has anything
 > after it." P0 agrees ("production has no `DB_CONNECTION_STRING`, so it cannot be using
 > Drizzle … M00 lands in A5"), and so does the audit in [`TO_DO.md`](TO_DO.md).
 >
@@ -331,7 +331,7 @@ so `getClaims()` verifies locally instead of calling out per request. Wait
 >
 > **Resolve with `supabase migration list --project-ref uhfbapjuzvlyzyodxhqn` before
 > running anything in this section.** The difference is whether M00–M08 still need to
-> land — and pushing them against pre-Phase-0A code is exactly what P0 warns takes the
+> land - and pushing them against pre-Phase-0A code is exactly what P0 warns takes the
 > site down. Not checked here: querying PROD needs explicit sign-off.
 
 PROD is at M08 and needs **M10 then M09**.
@@ -357,7 +357,7 @@ values ('terms_version', '<your terms version>')
 on conflict (key) do update set value = excluded.value;
 ```
 
-**Without it the sign-up form disables itself** — `currentTermsVersion()`
+**Without it the sign-up form disables itself** - `currentTermsVersion()`
 returns null and the form refuses to render rather than record a consent it
 cannot honour.
 
@@ -386,13 +386,13 @@ select vault.create_secret('<long random value>', 'edge_webhook_secret');
 ```
 
 M09's function prefers `edge_webhook_secret` over `service_role_key`, so the
-switch happens the moment the secret exists — deploy the functions first.
+switch happens the moment the secret exists - deploy the functions first.
 
 > TEST deliberately has none of this; the integrations are PROD-only.
 
 ---
 
-# Part B — Deployment
+# Part B - Deployment
 
 ## B1. Ship the code
 
@@ -400,7 +400,7 @@ switch happens the moment the secret exists — deploy the functions first.
 every Drizzle query on `users`; deploying first takes out the dashboard, the
 Paddle webhook and Clerk provisioning.
 
-Merge to `main`, deploy, and **tag the commit** — rollback is a tagged-commit
+Merge to `main`, deploy, and **tag the commit** - rollback is a tagged-commit
 redeploy, not Vercel's Instant Rollback, which only reaches the previous
 deployment.
 
@@ -413,14 +413,14 @@ live but dormant; this is the window to notice anything that is not.
 
 ---
 
-# Part C — Migration
+# Part C - Migration
 
 ## C1. Rehearse (never skip)
 
 Do not let PROD be the first real run.
 
 - **3.2, TEST dress rehearsal:** purge, import, re-key, `verify.sql`, rollback,
-  re-key again — **every step timed**. Those timings size the PROD window.
+  re-key again - **every step timed**. Those timings size the PROD window.
 - **3.3, local rehearsal on real data.** At 2200 users, worth the afternoon:
   `pg_dump --data-only --schema=public` to an encrypted volume, restore into a
   local stack at the same migration level, import with the PROD CSV, re-key,
@@ -428,7 +428,7 @@ Do not let PROD be the first real run.
 
 ## C2. T-3: freeze and dark import
 
-**C2.1 Clerk freeze.** Global Config `clerk_frozen_prod` = `true` — the account
+**C2.1 Clerk freeze.** Global Config `clerk_frozen_prod` = `true` - the account
 page then shows "Account changes are paused". Disable password reset and profile
 edits in Clerk's Account Portal where the settings allow. Sign-up stays public.
 
@@ -442,7 +442,7 @@ psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 \
      -f scripts/cutover/preflight.sql > preflight-t3.txt
 ```
 
-Every `pass` must be `t`. G2 — a paying user with no migrated map row — is a
+Every `pass` must be `t`. G2 - a paying user with no migrated map row - is a
 hard stop.
 
 **C2.3 Import.** Operator machine only. Never CI, never Vercel.
@@ -450,7 +450,7 @@ hard stop.
 ```sh
 export NEXT_PUBLIC_SUPABASE_URL=https://uhfbapjuzvlyzyodxhqn.supabase.co
 export SUPABASE_SECRET_KEY=<PROD sb_secret_>
-export MIGRATION_DATABASE_URL=<postgres, session pooler 5432 or direct — NOT 6543>
+export MIGRATION_DATABASE_URL=<postgres, session pooler 5432 or direct - NOT 6543>
 export CLERK_SECRET_KEY=sk_live_...
 export CLERK_CSV=/Volumes/cutover/users.csv
 export EXPORTED_AT=<UTC ISO time of the export>
@@ -470,7 +470,7 @@ can use them while `AUTH_PROVIDER=clerk`.
 **C2.4 Reconcile.** Every row in `conflicts.csv`, `skipped.csv` and
 `errors.csv` needs a written decision. Unverified addresses on accounts that own
 data get contacted to verify in Clerk, then re-imported. `needs-reset.csv` is
-whose password could not be carried — decide now whether they get an email.
+whose password could not be carried - decide now whether they get an email.
 
 ## C3. T-0: the cutover window
 
@@ -478,7 +478,7 @@ The only irreversible, user-visible part. A low-traffic weekday, at least 90
 minutes clear of the 03:00 UTC worker cron.
 
 1. Global Config `maintenance_prod` = `true`. **Wait 15 seconds**, then confirm
-   from two separate requests — propagation takes up to ~10s.
+   from two separate requests - propagation takes up to ~10s.
 2. Worker: Cloudflare `JOBS_PAUSED` = `true`.
 3. Freeze Clerk sign-ups; disable the Clerk webhook.
 4. Second Clerk CSV export; note the new `EXPORTED_AT`.
@@ -496,7 +496,7 @@ minutes clear of the 03:00 UTC worker cron.
         -f scripts/cutover/remap-user-ids.sql
    ```
    On a lock timeout, terminate the blockers and retry **once**. Any other
-   exception rolls back completely and no user is affected — stop and diagnose.
+   exception rolls back completely and no user is affected - stop and diagnose.
 9. Verify:
    ```sh
    psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 \
@@ -530,7 +530,7 @@ and fix rows through the map. Never restore over a live database.
 
 ---
 
-# Part D — After the cutover
+# Part D - After the cutover
 
 | When | Do |
 |---|---|

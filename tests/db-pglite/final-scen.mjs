@@ -1,20 +1,19 @@
 // Reusable scenario blocks (ported from wf2 run.mjs, adapted to the final object names and M06 signatures).
+import { isUniqueViolation, makeApp, pgError } from "./drizzle-app-final.mjs";
 import {
-	IDS,
-	applyTx,
-	run,
-	inRole,
-	U,
-	P,
-	REST,
-	admin,
-	isErr,
-	rowsJson,
-	col,
-	eqArr,
-	summarize,
+    IDS,
+    P,
+    U,
+    admin,
+    applyTx,
+    col,
+    eqArr,
+    inRole,
+    isErr,
+    rowsJson,
+    run,
+    summarize
 } from "./final-lib.mjs";
-import { makeApp, pgError, isUniqueViolation } from "./drizzle-app-final.mjs";
 
 export async function ownerMatrix(
 	{ env, check },
@@ -796,7 +795,7 @@ export async function appLayer(
 	// a post-M10 database: every Drizzle statement on `users` names
 	// `welcome_email_sent_at`. Running it against a pre-M10 snapshot tests a
 	// combination that can never be deployed, so bring the snapshot up to M10
-	// first. Snapshots that already have it are left alone — M10 rewrites the
+	// first. Snapshots that already have it are left alone - M10 rewrites the
 	// legacy consent marker and must not run twice.
 	{
 		const prev = db.session;

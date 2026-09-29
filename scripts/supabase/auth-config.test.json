@@ -25,7 +25,7 @@
 	"mailer_templates_confirmation_content": "file:supabase/templates/confirmation.html",
 	"mailer_templates_recovery_content": "file:supabase/templates/recovery.html",
 	"mailer_templates_email_change_content": "file:supabase/templates/email-change.html",
-	"mailer_subjects_confirmation": "Confirm your email address",
+	"mailer_subjects_confirmation": "Confirm your Quicktalog email",
 	"mailer_subjects_recovery": "Reset your Quicktalog password",
-	"mailer_subjects_email_change": "Confirm your new email address"
+	"mailer_subjects_email_change": "Confirm your new Quicktalog email"
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import { createBrowserClient } from "@supabase/ssr";
 import { COOKIE_OPTIONS } from "@/lib/auth/cookie-options";
+import { createBrowserClient } from "@supabase/ssr";
 
 /**
  * The browser client. Used for sign-in, sign-up, password reset, OAuth start
- * and credential changes — never for data: every table is closed to the
+ * and credential changes - never for data: every table is closed to the
  * publishable key, so a `.from()` here would only ever return a permission
  * error.
  *

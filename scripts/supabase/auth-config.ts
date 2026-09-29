@@ -43,8 +43,8 @@ usage: npx tsx scripts/supabase/auth-config.ts --project <test|prod> [--check|--
   --skip  apply (or report) everything except these
 
 Use them to land a change in stages. Some settings are only safe once
-something else is in place — captcha needs the site key deployed in the app
-first, or every sign-in is rejected — and the Management API applies the whole
+something else is in place - captcha needs the site key deployed in the app
+first, or every sign-in is rejected - and the Management API applies the whole
 batch or none of it, so one unsafe field blocks the rest.`);
 	process.exit(2);
 }
@@ -82,8 +82,8 @@ function parseArgs() {
  *
  * Email templates are HTML and belong in .html files where they can be read and
  * diffed, not escaped into a single JSON string. They are also the one setting
- * with a security argument attached — they must point at the app's own
- * /auth/confirm rather than GoTrue's verify endpoint — so they need to be
+ * with a security argument attached - they must point at the app's own
+ * /auth/confirm rather than GoTrue's verify endpoint - so they need to be
  * reviewable.
  */
 async function resolveFileRefs(config: AuthConfig): Promise<AuthConfig> {

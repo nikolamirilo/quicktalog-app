@@ -1,147 +1,73 @@
+import { Link, Section, Text } from "@react-email/components";
+import EmailShell from "./EmailShell";
 import {
-	Body,
-	Column,
-	Container,
-	Head,
-	Hr,
-	Html,
-	Img,
-	Link,
-	Preview,
-	Row,
-	Section,
-	Text,
-} from "@react-email/components";
-import {
-	container,
-	contentText,
 	ctaButton,
-	ctaSection,
-	divider,
-	footer,
-	footerCopyright,
-	footerLink,
-	footerLinks,
-	footerSeparator,
-	footerText,
-	header,
-	logo,
-	main,
-	sectionTitle,
-	welcomeSection,
-	welcomeText,
-	welcomeTitle,
+	ctaWrapper,
+	heading,
+	leadText,
+	paragraph,
+	section,
 } from "./style";
 
-const CancellationEmail = ({ name }: { name: string }) => (
-	<Html>
-		<Head>
-			<link href="https://fonts.googleapis.com" rel="preconnect" />
-			<link href="https://fonts.gstatic.com" rel="preconnect" />
-			<link
-				href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-				rel="stylesheet"
-			/>
-		</Head>
+const CancellationEmail = ({ name }: { name?: string }) => {
+	const greetingName = name && name !== "Unknown User" ? name : "there";
 
-		<Preview>We are sorry to see you go - Help us improve Quicktalog</Preview>
+	return (
+		<EmailShell
+			eyebrow="Subscription canceled"
+			heroSubtitle="Your Quicktalog subscription has been canceled. Your account stays active until the end of the billing period."
+			heroTitle={`We're sorry to see you go, ${greetingName}`}
+			preview="Your Quicktalog subscription has been canceled - help us improve."
+		>
+			<Section style={section}>
+				<Text style={leadText}>
+					Thank you for trying Quicktalog. We're sorry it didn't fully fit your
+					needs - your experience matters to us, and we'd appreciate a moment of
+					your time to understand how we can improve.
+				</Text>
+			</Section>
 
-		<Body style={main}>
-			<Container style={container}>
-				{/* Header */}
-				<Section style={header}>
-					<Row>
-						<Column align="center">
-							<Img
-								alt="Quicktalog Logo"
-								height="40"
-								src="https://www.quicktalog.app/images/brand/logo.svg"
-								style={logo}
-								width="120"
-							/>
-						</Column>
-					</Row>
-				</Section>
+			{/* Help us improve - offboarding survey */}
+			<Section style={section}>
+				<Text style={heading}>Help us improve</Text>
+				<Text style={paragraph}>
+					Please fill out our short offboarding form. Your answers directly help
+					us build a better product and possibly bring back the features you
+					needed.
+				</Text>
+				<Link
+					href="https://forms.office.com/r/nxYghvYAEx"
+					style={{ ...ctaButton, display: "inline-block" }}
+				>
+					Leave feedback →
+				</Link>
+			</Section>
 
-				{/* Title */}
-				<Section style={welcomeSection}>
-					<Text style={welcomeTitle}>
-						We are sorry to see you go
-						{name && name !== "Unknown User" ? `, ${name}` : ""}.
-					</Text>
-					<Text style={welcomeText}>
-						We are sorry that Quicktalog did not fully meet your needs. Your
-						experience matters to us, and we’d appreciate a moment of your time
-						to understand how we can improve.
-					</Text>
-				</Section>
+			{/* Want to talk? */}
+			<Section style={section}>
+				<Text style={heading}>Want to talk?</Text>
+				<Text style={paragraph}>
+					If you'd like, schedule a short call with our team. We'd be happy to
+					hear your feedback in person or discuss options like a custom plan or
+					a discounted offer that better fits your needs.
+				</Text>
+				<Link
+					href="https://calendly.com/quicktalog/customer-support"
+					style={{ ...ctaButton, display: "inline-block" }}
+				>
+					Schedule a call →
+				</Link>
+			</Section>
 
-				{/* Offboarding Form */}
-				<Section style={ctaSection}>
-					<Text style={sectionTitle}>Help Us Improve</Text>
-					<Text style={contentText}>
-						Please fill out our short offboarding form. Your answers directly
-						help us build a better product and possibly bring back the features
-						you needed.
-					</Text>
-					<Link href="https://forms.office.com/r/nxYghvYAEx" style={ctaButton}>
-						Leave Feedback
-					</Link>
-				</Section>
-
-				{/* Schedule Call / Retention */}
-				<Section style={ctaSection}>
-					<Text style={sectionTitle}>Want to Talk?</Text>
-					<Text style={contentText}>
-						If you'd like, you can schedule a short call with our team. We’d be
-						happy to hear your feedback in person or discuss options like a
-						custom plan or a discounted offer that better fits your needs.
-					</Text>
-
-					<Link
-						href="https://calendly.com/quicktalog/customer-support"
-						style={ctaButton}
-					>
-						Schedule a Call
-					</Link>
-				</Section>
-
-				<Hr style={divider} />
-
-				{/* Footer */}
-				<Section style={footer}>
-					<Text style={footerText}>
-						Thank you for giving Quicktalog a try. We hope to see you again in
-						the future.
-					</Text>
-
-					<div style={footerLinks}>
-						<Link href={process.env.NEXT_PUBLIC_BASE_URL} style={footerLink}>
-							Website
-						</Link>
-						<span style={footerSeparator}>•</span>
-						<Link
-							href={`${process.env.NEXT_PUBLIC_BASE_URL}/privacy-policy`}
-							style={footerLink}
-						>
-							Privacy Policy
-						</Link>
-						<span style={footerSeparator}>•</span>
-						<Link
-							href={`${process.env.NEXT_PUBLIC_BASE_URL}/terms-and-conditions`}
-							style={footerLink}
-						>
-							Terms of Service
-						</Link>
-					</div>
-
-					<Text style={footerCopyright}>
-						© {new Date().getFullYear()} Quicktalog. All rights reserved.
-					</Text>
-				</Section>
-			</Container>
-		</Body>
-	</Html>
-);
+			<Section style={ctaWrapper}>
+				<Text style={paragraph}>
+					Whatever you decide, thank you for being part of Quicktalog.
+					<br />
+					The Quicktalog team
+				</Text>
+			</Section>
+		</EmailShell>
+	);
+};
 
 export default CancellationEmail;

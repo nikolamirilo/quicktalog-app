@@ -359,7 +359,7 @@ Three input families share the same look (white, `--line-strong` border, amber f
 - Dark CTA "Launch your first interactive catalog today" (kicker "Free forever plan available"; buttons "Create free catalog" and "See demo").
 - Articles have **no sidebar or TOC**.
 
-**Prose components** (`.g2-prose`): lead paragraph `.g2-lead-p`, h2 with `scroll-margin-top:104px`, amber-dot bullet lists, `.g2-takeaways` (flag icon, "Key takeaways", amber check bullets), `.g2-stats` (3 columns at 560+; big number + caption), `.g2-steps`, `.g2-callout--tip/note/warning`, `.g2-quote` (4px amber left border, 800-weight head-font quote, "— caption"), `.g2-bars` (horizontal bar comparison; `.hl` row amber with a dot), `.g2-pc-grid` (pros card with amber border / cons card dashed grey), `.g2-table-wrap`, `.g2-midcta`, `.g2-mock` (illustration figure + caption).
+**Prose components** (`.g2-prose`): lead paragraph `.g2-lead-p`, h2 with `scroll-margin-top:104px`, amber-dot bullet lists, `.g2-takeaways` (flag icon, "Key takeaways", amber check bullets), `.g2-stats` (3 columns at 560+; big number + caption), `.g2-steps`, `.g2-callout--tip/note/warning`, `.g2-quote` (4px amber left border, 800-weight head-font quote, "- caption"), `.g2-bars` (horizontal bar comparison; `.hl` row amber with a dot), `.g2-pc-grid` (pros card with amber border / cons card dashed grey), `.g2-table-wrap`, `.g2-midcta`, `.g2-mock` (illustration figure + caption).
 
 **Legal page** (`.g3-legal`):
 - `.g3-lhero`: legal tabs (Terms / Privacy / Refund), eyebrow "Legal", h1, meta pills (clock "Last updated {date}", book "{n} min read", list "{n} sections").
@@ -517,7 +517,7 @@ The JS and CSS support a "subscribe to releases" form (`.g2-sub`, `#release-note
 Card: tabs (Sign in active); "Welcome back" / "Sign in to your Quicktalog account."; "Continue with Google" (48h pill with the full-colour G logo; busy text "Opening Google…"); "OR" divider; alert slot; Email; Password with a "Forgot password?" link in the label row and an eye toggle; "Sign in" submit (busy "Signing in…"); shield line "Protected by Cloudflare Turnstile against bots."
 Done view: "You're signed in" / "Welcome back, {email}. Taking you to your dashboard." / "Go to dashboard".
 Switch: "New to Quicktalog? Create a free account".
-Server error strings the prototype shows: "Confirm your email address first — the link is in your inbox."; "That email and password do not match an account."
+Server error strings the prototype shows: "Confirm your email address first - the link is in your inbox."; "That email and password do not match an account."
 Field errors: "Enter your email address." / "Enter a valid email address, like name@company.com." / "Enter your password.".
 
 ### 4.13 `signup` (Account)

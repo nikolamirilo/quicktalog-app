@@ -10,7 +10,7 @@
  * The one ordering rule that everything else hangs off: **the uuid is claimed
  * in `migration.clerk_user_map` before `auth.admin.createUser` is called**. The
  * sign-up trigger (M10, PATCH P5) skips a user that is already in the map, and
- * GoTrue only writes `app_metadata` in a later UPDATE — so if the row were
+ * GoTrue only writes `app_metadata` in a later UPDATE - so if the row were
  * written after the create, the trigger would have already given the imported
  * user a second, empty `public.users` row.
  *
@@ -25,18 +25,18 @@
  * of the database. Emails are masked everywhere except in the map table.
  */
 
+import { parse } from "csv-parse/sync";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { parse } from "csv-parse/sync";
 import {
-	fail,
-	type Guard,
-	guard,
-	mapWithConcurrency,
-	maskEmail,
-	maskSub,
-	redact,
+    fail,
+    type Guard,
+    guard,
+    mapWithConcurrency,
+    maskEmail,
+    maskSub,
+    redact,
 } from "../lib/guard";
 
 /* -------------------------------------------------------------------------- */
@@ -106,7 +106,7 @@ const REQUIRED_CSV_COLUMNS = [
 
 /**
  * Columns that are MFA secret material. They are dropped the moment the file is
- * parsed so that nothing downstream — a report, an error, a JSON dump — can
+ * parsed so that nothing downstream - a report, an error, a JSON dump - can
  * carry them.
  */
 const DROPPED_CSV_COLUMNS = ["totp_secret", "backup_codes", "web3_wallets"];
@@ -343,7 +343,7 @@ async function loadFromClerk(secretKey: string): Promise<ClerkSnapshot> {
 	// A partial list must never look like a set of deletions.
 	if (profiles.length !== totalCount) {
 		throw new Error(
-			`Clerk returned ${profiles.length} users but reports totalCount ${totalCount} — refusing to act on a partial list`,
+			`Clerk returned ${profiles.length} users but reports totalCount ${totalCount} - refusing to act on a partial list`,
 		);
 	}
 	return { profiles, totalCount };
@@ -426,7 +426,7 @@ function buildPlan(
 	);
 
 	// 6.3 step 2: an unverified email on an account that owns catalogues or is
-	// billed is the one case that must not be imported — a later Google sign-in
+	// billed is the one case that must not be imported - a later Google sign-in
 	// could otherwise claim the migrated data through GoTrue's handling of an
 	// unconfirmed identity.
 	let skip: string | null = null;
@@ -648,7 +648,7 @@ async function importUser(context: Context, plan: Plan): Promise<Outcome> {
 		supabaseUserId: null,
 	};
 
-	// 1. Claim first, always — even for a skip, so the row has a terminal status.
+	// 1. Claim first, always - even for a skip, so the row has a terminal status.
 	let uuid: string;
 	if (rail.dryRun) {
 		const [existing] = await db<{ supabase_user_id: string }[]>`
@@ -681,7 +681,7 @@ async function importUser(context: Context, plan: Plan): Promise<Outcome> {
 			: ((await rail.auth.getUserById(uuid)).data?.user ?? null);
 
 	if (existing && !options.delta) {
-		actions.push("auth user already exists — left untouched");
+		actions.push("auth user already exists - left untouched");
 	} else if (existing && options.delta) {
 		const changed = await syncExistingUser(
 			context,
@@ -723,7 +723,7 @@ async function importUser(context: Context, plan: Plan): Promise<Outcome> {
 				${
 					// db.json, not JSON.stringify: the driver encodes a string parameter
 					// as a JSON string, and GoTrue then fails to scan identity_data into
-					// its JSONMap — "cannot unmarshal string into Go value".
+					// its JSONMap - "cannot unmarshal string into Go value".
 					db.json({
 						email: account.email ?? plan.email,
 						email_verified: true,
@@ -908,7 +908,7 @@ async function cleanupDeletedClerkUsers(
 	const cap = Math.max(3, Math.ceil(knownClerkIds.size * 0.01));
 	if (gone.length > cap) {
 		throw new Error(
-			`${gone.length} mapped users are missing from the Clerk list, over the safety cap of ${cap} — investigate before deleting anything`,
+			`${gone.length} mapped users are missing from the Clerk list, over the safety cap of ${cap} - investigate before deleting anything`,
 		);
 	}
 
@@ -1125,12 +1125,12 @@ async function main(): Promise<void> {
 		const clerkKey = process.env.CLERK_SECRET_KEY;
 		if (clerkKey?.startsWith("sk_live_") && rail.environment !== "prod") {
 			throw new Error(
-				"a live Clerk key with a non-PROD Supabase project — refusing",
+				"a live Clerk key with a non-PROD Supabase project - refusing",
 			);
 		}
 		if (clerkKey?.startsWith("sk_test_") && rail.environment === "prod") {
 			throw new Error(
-				"a Clerk development key with the PROD Supabase project — refusing",
+				"a Clerk development key with the PROD Supabase project - refusing",
 			);
 		}
 
@@ -1191,7 +1191,7 @@ async function main(): Promise<void> {
 		// 6.3 delta: `raw` must be present, never assumed absent.
 		if (options.delta && snapshot.profiles.some((profile) => !profile.hasRaw)) {
 			throw new Error(
-				"some Clerk users came back without a raw payload, so password_last_updated_at cannot be read — refusing the delta run",
+				"some Clerk users came back without a raw payload, so password_last_updated_at cannot be read - refusing the delta run",
 			);
 		}
 
@@ -1300,7 +1300,7 @@ async function main(): Promise<void> {
 		if (billedOrphans.length > 0) {
 			console.log("");
 			console.log(
-				`  BLOCKER: ${billedOrphans.length} unmapped public.users row(s) carry a Paddle customer_id — remap-user-ids.sql will refuse to run (6.5, 12.6)`,
+				`  BLOCKER: ${billedOrphans.length} unmapped public.users row(s) carry a Paddle customer_id - remap-user-ids.sql will refuse to run (6.5, 12.6)`,
 			);
 		}
 		if (rail.dryRun) {

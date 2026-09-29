@@ -192,7 +192,7 @@ describe.skipIf(!enabled)("sign-up against a real GoTrue", () => {
 				// `id`, not `user_id`: GoTrue silently ignores an unknown field and
 				// allocates its own uuid, which is what this test caught the first
 				// time it ran. `migrate-clerk-to-supabase.ts` uses `id` too, and it
-				// has to — a generated uuid would not match the claimed map row and
+				// has to - a generated uuid would not match the claimed map row and
 				// the imported user would get a second, empty public.users row.
 				id: uuid,
 				password: PASSWORD,

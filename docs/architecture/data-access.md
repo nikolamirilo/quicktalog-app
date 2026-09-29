@@ -55,7 +55,7 @@ silent full-table read, and it is what
 
 ## Rules that follow from this
 
-1. **Never hold a block open across slow work** — no `fetch`, Redis, `revalidate*`, model call or streaming inside it. Each block pins a pooled connection.
+1. **Never hold a block open across slow work** - no `fetch`, Redis, `revalidate*`, model call or streaming inside it. Each block pins a pooled connection.
 2. **Identity is derived, never passed.** A server action calls `getVerifiedIdentity()` itself. Helpers that take a user id live in `server-only` modules under `src/lib/`, so they cannot be called from a browser.
 3. **Keep the owner predicate** even though RLS enforces it, and check what `returning(...)` gave back: zero rows means "not yours or gone", not an error.
 4. **The client decides nothing that matters.** Status, plan flags, ids and owners come from the database. `pickEditable()` filters catalogue payloads down to the fields a client may set; `src/lib/entitlements/` decides what a plan allows.
@@ -76,8 +76,8 @@ silent full-table read, and it is what
 
 ## Verifying a change
 
-- `npm run test:db` — applies `supabase/migrations` on an in-memory Postgres (17 and 18) and runs the RLS scenarios. No Docker.
-- `supabase start && supabase test db` — the pgTAP suite in `supabase/tests/database/` against the real Postgres image.
-- `npm test` — includes the architecture boundaries above.
+- `npm run test:db` - applies `supabase/migrations` on an in-memory Postgres (17 and 18) and runs the RLS scenarios. No Docker.
+- `supabase start && supabase test db` - the pgTAP suite in `supabase/tests/database/` against the real Postgres image.
+- `npm test` - includes the architecture boundaries above.
 
 See [the Drizzle guide](../guides/drizzle.md) for how a schema change flows from a migration to the app's types.

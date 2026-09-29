@@ -1,8 +1,11 @@
 import "server-only";
 import * as Sentry from "@sentry/nextjs";
 import type React from "react";
-import { InformationEmail, WelcomeEmail } from "@/components/emails";
-import CancellationEmail from "@/components/emails/CancelationEmail";
+import {
+	CancellationEmail,
+	InformationEmail,
+	WelcomeEmail,
+} from "@/components/emails";
 import { MAX_RETRIES, RETRY_DELAY } from "@/constants/users";
 import { validateEmail } from "@/lib/users/syncFromClerk";
 import { isUniqueViolation } from "@/utils/db/errors";
@@ -86,7 +89,8 @@ export async function sendWelcomeEmail(
 		const res = await getResend().emails.send({
 			from: FROM,
 			to: email,
-			subject: "[Quicktalog] Welcome to Quicktalog! 🎉",
+			subject:
+				"Welcome to Quicktalog - your first catalog is one click away 🎉",
 			react: WelcomeEmail({ name }) as React.ReactElement,
 		});
 		return res.error == null;
@@ -104,7 +108,7 @@ export async function sendSubscriptionCancelationEmail(
 		const res = await getResend().emails.send({
 			from: FROM,
 			to: email,
-			subject: "[Quicktalog] We are Sorry to See You Go",
+			subject: "Your Quicktalog subscription has been canceled",
 			react: CancellationEmail({ name }) as React.ReactElement,
 		});
 		return res.error == null;

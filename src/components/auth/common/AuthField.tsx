@@ -1,20 +1,20 @@
 "use client";
 
-import { Eye, EyeOff } from "lucide-react";
-import {
-	type InputHTMLAttributes,
-	type ReactNode,
-	type Ref,
-	useState,
-} from "react";
 import { PasswordMeter } from "@/components/auth/common/PasswordMeter";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/ui/cn";
+import { Eye, EyeOff } from "lucide-react";
+import {
+    type InputHTMLAttributes,
+    type ReactNode,
+    type Ref,
+    useState,
+} from "react";
 
 /**
  * A labelled input. `action` is the optional link that sits opposite the label
- * — "Forgot password?" belongs beside the field it is about, not below the
+ * - "Forgot password?" belongs beside the field it is about, not below the
  * form. Password fields get a show/hide toggle; `meter` adds the strength bars
  * under them, which are a visual aid only and never block a submit.
  */

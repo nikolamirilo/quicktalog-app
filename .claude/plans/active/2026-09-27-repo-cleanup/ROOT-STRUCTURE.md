@@ -1,4 +1,4 @@
-# Root directory structure — analysis and proposal
+# Root directory structure - analysis and proposal
 
 Status: **all steps done 2026-09-28**, including Step D (the `src/` move). See RESULTS-SRC below.
 
@@ -23,21 +23,21 @@ conventional (`docs/`, `tests/`, `public/`) or unavoidable.
 
 ## Root files, by whether they can move
 
-Verified against the installed `next@15.5.26`, not from memory — the relevant resolution
+Verified against the installed `next@15.5.26`, not from memory - the relevant resolution
 code is quoted under "Evidence" at the bottom.
 
 | File | Can it move? |
 |---|---|
-| `package.json` · `package-lock.json` · `tsconfig.json` · `next.config.ts` · `.gitignore` · `.env.example` · `README.md` · `vercel.json` · `next-env.d.ts` | **No** — npm, TypeScript, Next and Vercel all require the project root |
-| `postcss.config.mjs` | **No** — Next loads PostCSS config from the project root |
-| `middleware.ts` · `instrumentation.ts` | **Only alongside `app/`** — Next computes `rootDir = dirname(appDir)`, so these live wherever `app/` lives |
-| `instrumentation-client.ts` | **Yes** — Next probes `src/instrumentation-client` *before* the root one |
-| `sentry.server.config.ts` · `sentry.edge.config.ts` | **Yes** — they are plain relative imports from `instrumentation.ts`, no magic path |
+| `package.json` · `package-lock.json` · `tsconfig.json` · `next.config.ts` · `.gitignore` · `.env.example` · `README.md` · `vercel.json` · `next-env.d.ts` | **No** - npm, TypeScript, Next and Vercel all require the project root |
+| `postcss.config.mjs` | **No** - Next loads PostCSS config from the project root |
+| `middleware.ts` · `instrumentation.ts` | **Only alongside `app/`** - Next computes `rootDir = dirname(appDir)`, so these live wherever `app/` lives |
+| `instrumentation-client.ts` | **Yes** - Next probes `src/instrumentation-client` *before* the root one |
+| `sentry.server.config.ts` · `sentry.edge.config.ts` | **Yes** - they are plain relative imports from `instrumentation.ts`, no magic path |
 | `tailwind.config.ts` · `biome.json` · `components.json` · `playwright.config.ts` · `vitest.config.ts` · `vitest.integration.config.ts` | Technically yes, but every one of these is conventionally root and moving them buys little. **Leave them** |
 | `CODEOWNERS` | **Yes** → `.github/CODEOWNERS`. GitHub reads root, `.github/` or `docs/` |
-| `drizzle.config.ts` | **Delete** — see below |
+| `drizzle.config.ts` | **Delete** - see below |
 
-## Remove: `drizzle.config.ts` — but move one thing out of it first
+## Remove: `drizzle.config.ts` - but move one thing out of it first
 
 Corrected 2026-09-28 after the owner asked how Drizzle keeps working without it. The
 answer is that **it never worked through it**, but the file is not purely inert: it holds
@@ -76,8 +76,8 @@ Compare the two configs:
 
 | | app (this repo) | `../quicktalog-packages` |
 |---|---|---|
-| `out` | `./drizzle/migrations` — **does not exist** | `./src/drizzle/migrations` — exists, holds the generated `schema.ts` |
-| `schema` | `./drizzle/schema.ts` — **does not exist** | `./src/drizzle/schema.ts` |
+| `out` | `./drizzle/migrations` - **does not exist** | `./src/drizzle/migrations` - exists, holds the generated `schema.ts` |
+| `schema` | `./drizzle/schema.ts` - **does not exist** | `./src/drizzle/schema.ts` |
 | `schemaFilter` | **absent** | `["public"]` |
 | `entities.roles` | **absent** | `false` |
 
@@ -86,10 +86,10 @@ The packages config carries a comment explaining those last two: the app only qu
 by the Supabase CLI migrations, "so they must not be introspected into this package."
 
 The app's config has neither guard. A `drizzle-kit pull` from the app root would therefore
-introspect `private` **and** the roles and policies — exactly what `CLAUDE.md` forbids. It
+introspect `private` **and** the roles and policies - exactly what `CLAUDE.md` forbids. It
 is defused today only because the output lands in a folder nobody reads.
 
-### The one thing worth keeping — and it belongs in the other repo
+### The one thing worth keeping - and it belongs in the other repo
 
 ```ts
 // Introspection reads the catalog, which the fail-closed `app_rls` login
@@ -97,13 +97,13 @@ is defused today only because the output lands in a folder nobody reads.
 url: (process.env.DB_ADMIN_CONNECTION_STRING ?? process.env.DB_CONNECTION_STRING)!,
 ```
 
-`docs/architecture/data-access.md:45` agrees — it lists `drizzle-kit pull` as a
+`docs/architecture/data-access.md:45` agrees - it lists `drizzle-kit pull` as a
 **`DB_ADMIN_CONNECTION_STRING`** consumer, because after M08 `DB_CONNECTION_STRING` becomes
 the fail-closed `app_rls` login that owns no privileges and cannot read the catalog.
 
 **`../quicktalog-packages/drizzle.config.ts` uses plain `DB_CONNECTION_STRING` with no
 fallback.** So once M08 lands, step 4 of our own Drizzle guide breaks: `drizzle-kit pull`
-in the packages repo will fail to introspect. The fix already exists — in the wrong repo,
+in the packages repo will fail to introspect. The fix already exists - in the wrong repo,
 in the file we are deleting.
 
 This is a real finding independent of the cleanup, and it must be recorded where the
@@ -112,13 +112,13 @@ migration will see it (`supabase-auth-migration/TO_DO.md`).
 ### Order matters
 
 1. Add the `DB_ADMIN_CONNECTION_STRING ?? DB_CONNECTION_STRING` fallback (with the comment)
-   to `../quicktalog-packages/drizzle.config.ts`. **Separate repo — needs a release.**
+   to `../quicktalog-packages/drizzle.config.ts`. **Separate repo - needs a release.**
 2. Note the post-M08 `pull` dependency in the auth migration's `TO_DO.md`.
 3. Only then delete the app's `drizzle.config.ts`, drop the `drizzle-kit` devDependency,
    and touch the comment naming it at `.github/workflows/ci.yaml:127`.
 
 Doing 3 before 1 loses the insight. If touching the packages repo is unwelcome right now,
-**leave the app config in place** — it is inert, and premature deletion is the worse
+**leave the app config in place** - it is inert, and premature deletion is the worse
 outcome.
 
 ## Clean up: four dead `include` entries in `tsconfig.json`
@@ -131,7 +131,7 @@ outcome.
 ```
 
 All four are gone, and `"**/*.ts"` / `"**/*.tsx"` already cover everything in-repo. The
-fourth is the odd one — it reaches into a sibling repository for a file named
+fourth is the odd one - it reaches into a sibling repository for a file named
 `drizzle.config copy.ts`. Delete all four.
 
 ---
@@ -174,11 +174,11 @@ would have broken 61 imports across 34 files. It is a genuinely good moment to d
 | `components.json`: `"css": "src/app/globals.css"` | one line |
 | `biome.json` `overrides.includes`: `utils/db/pool.ts` → `src/utils/db/pool.ts` | one line |
 | `tests/unit/architecture/db-boundaries.test.ts`: prefix its 13 `SOURCE_GLOBS` with `src/` (keep `scripts/**` at root) | 13 lines |
-| `.github/workflows/*` | **none** — checked all 6; the only mention is a comment at `ci.yaml:127` |
-| `tests/**` imports | **none** — they all use `@/` |
+| `.github/workflows/*` | **none** - checked all 6; the only mention is a comment at `ci.yaml:127` |
+| `tests/**` imports | **none** - they all use `@/` |
 
 The architecture guard deserves a note, because it looks worse than it is. It expands the
-alias by string — `if (specifier.startsWith("@/")) return specifier.slice(2)` — so its ~25
+alias by string - `if (specifier.startsWith("@/")) return specifier.slice(2)` - so its ~25
 **rule** paths (`utils/db/pool`, `app/api/paddle/**`, `lib/users/provision`, …) compare
 against the *alias* text, which does not change when the files move. Only its 13
 filesystem `SOURCE_GLOBS` need the `src/` prefix.
@@ -189,11 +189,11 @@ breaks if the two are split, so they must move in the same step.
 
 ### What must NOT move into `src/`
 
-- **`public/`** — Next serves static assets from the project root only.
-- **`tests/`** — conventionally outside the source tree; `vitest.config.ts` and
+- **`public/`** - Next serves static assets from the project root only.
+- **`tests/`** - conventionally outside the source tree; `vitest.config.ts` and
   `playwright.config.ts` point at `tests/**` and `./tests/e2e`.
-- **`supabase/`** — the Supabase CLI expects `supabase/` at the repo root.
-- **`docs/`**, **`scripts/`**, **`.claude/`** — not application source.
+- **`supabase/`** - the Supabase CLI expects `supabase/` at the repo root.
+- **`docs/`**, **`scripts/`**, **`.claude/`** - not application source.
 
 ### The honest cost
 
@@ -203,17 +203,17 @@ breaks if the two are split, so they must move in the same step.
 - **Do it on a quiet branch**, as a single commit that contains *only* the move plus the
   config edits, so the rename detection is clean and the commit is trivially reviewable.
 - The auth migration is mid-flight. If `scripts/cutover/**` or a PROD runbook step is
-  about to run, **do this after the cutover**, not before — a cutover under a moved tree
+  about to run, **do this after the cutover**, not before - a cutover under a moved tree
   is an avoidable risk.
 
 ### If you would rather not
 
 The smaller subset, still worth doing on its own:
 
-1. Delete the 4 dead `tsconfig.json` `include` entries. **Zero risk** — all four paths are
+1. Delete the 4 dead `tsconfig.json` `include` entries. **Zero risk** - all four paths are
    missing files.
 2. Move `CODEOWNERS` → `.github/CODEOWNERS`. **Zero risk.**
-3. The `drizzle.config.ts` removal, in the 3-step order above — the only step that reaches
+3. The `drizzle.config.ts` removal, in the 3-step order above - the only step that reaches
    outside this repo.
 
 That takes the root from 22 files to 19. It does **not** fix the 12-source-directory
@@ -232,11 +232,11 @@ Two leftovers from the Tier 3 refactor, both found while reading configs for thi
    in `SOURCE_GLOBS`. Harmless (it matched nothing) but misleading in the file that
    documents the source perimeter. Removed; the test still passes, 14/14.
 
-## Implementation checklist — status
+## Implementation checklist - status
 
 **A, B and C are done (2026-09-28).** D is deferred. Each step was independently revertible.
 
-### Step A — tsconfig include ✅ done
+### Step A - tsconfig include ✅ done
 
 Remove 4 entries from `tsconfig.json` `include`; `**/*.ts` already covers the tree.
 
@@ -249,12 +249,12 @@ Remove 4 entries from `tsconfig.json` `include`; `**/*.ts` already covers the tr
 
 Gate: `npx tsc --noEmit` must stay clean, and the file count it checks must not drop.
 
-### Step B — CODEOWNERS ✅ done
+### Step B - CODEOWNERS ✅ done
 
 `CODEOWNERS` → `.github/CODEOWNERS`, content unchanged (`* @nikolamirilo`). GitHub reads
 root, `.github/` or `docs/`; nothing in the repo references the path.
 
-### Step C — drizzle ✅ done
+### Step C - drizzle ✅ done
 
 | | Where | Change |
 |---|---|---|
@@ -264,15 +264,15 @@ root, `.github/` or `docs/`; nothing in the repo references the path.
 | C4 | `docs/guides/drizzle.md` | state that the config lives in `../quicktalog-packages`, not here |
 
 Gate after C3: `npx tsc --noEmit`, `npm test`, `npm run build`. None of them touch
-`drizzle-kit`, so all three should be unchanged — if any moves, stop.
+`drizzle-kit`, so all three should be unchanged - if any moves, stop.
 
 **C3 must not land before C1.** C1 was done by the owner directly, as a straight swap to
-`DB_ADMIN_CONNECTION_STRING` rather than the `??` fallback originally proposed — which is
+`DB_ADMIN_CONNECTION_STRING` rather than the `??` fallback originally proposed - which is
 correct, and better: `../quicktalog-packages/.env` holds `DB_ADMIN_CONNECTION_STRING` and no
 `DB_CONNECTION_STRING`, so the old config was reading a variable that does not exist there. No
 fallback is needed, and the swap fixes a latent break. C3 followed.
 
-### Step D — the `src/` move ✅ done 2026-09-28
+### Step D - the `src/` move ✅ done 2026-09-28
 
 Executed at the owner's request. 478 files moved, byte-identical (sha256-verified before and
 after). Route surface, middleware size and generated CSS all unchanged.
@@ -299,7 +299,7 @@ source file moved, so open branches will conflict broadly.
 ## Noticed, not structural
 
 `.husky/pre-commit` runs `npm run format` **and `npm run build`**. A full production build
-on every commit is a heavy hook — `npm run check && npm test` is the usual split, with the
+on every commit is a heavy hook - `npm run check && npm test` is the usual split, with the
 build left to CI (`.github/workflows/ci.yaml` already runs it). Your call; it is a
 workflow preference, not a correctness issue.
 
@@ -318,7 +318,7 @@ function findDir(dir, name) {
 }
 ```
 
-From `node_modules/next/dist/build/index.js` — middleware and instrumentation are found as
+From `node_modules/next/dist/build/index.js` - middleware and instrumentation are found as
 siblings of the app directory, which is why they must travel with it:
 
 ```js
@@ -326,7 +326,7 @@ const rootDir = path.join(pagesDir || appDir, '..');
 const includes = [middlewareDetectionRegExp, instrumentationHookDetectionRegExp];
 ```
 
-From `node_modules/next/dist/build/create-compiler-aliases.js` — `src/` wins for the
+From `node_modules/next/dist/build/create-compiler-aliases.js` - `src/` wins for the
 client instrumentation hook:
 
 ```js

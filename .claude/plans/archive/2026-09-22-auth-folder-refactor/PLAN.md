@@ -42,38 +42,38 @@ Those are already one-concern-per-file.
 Derived from a survey of all 18 folders in `components/`. The conventions, their evidence, and
 the full before/after trees are in [STRUCTURE.md](STRUCTURE.md); the four that shape this are:
 
-1. **Subfolder names are lowercase** — `catalogue/{builder,cards,chat,inputs,modals,sections,view}`,
+1. **Subfolder names are lowercase** - `catalogue/{builder,cards,chat,inputs,modals,sections,view}`,
    `dashboard/{account,components,overview,subscription}`, `qr-editor/controls`. (`home/` is the
    lone PascalCase outlier.)
-2. **The feature root holds whole screens, flat; subfolders hold their parts** — `dashboard/`
+2. **The feature root holds whole screens, flat; subfolders hold their parts** - `dashboard/`
    keeps `Dashboard.tsx`, `Overview.tsx`, `Settings.tsx` flat and pushes pieces into
    `overview/`, `subscription/`, `account/`.
-3. **Shared pieces within a group go in `common/`** — `catalogue/sections/common/`,
+3. **Shared pieces within a group go in `common/`** - `catalogue/sections/common/`,
    `catalogue/cards/common/`.
 4. **Provider variants sit side by side under a `Clerk*` / `Supabase*` filename prefix, never in
-   a provider-named folder** — `dashboard/account/{ClerkAccount.tsx, SupabaseAccount.tsx}`.
+   a provider-named folder** - `dashboard/account/{ClerkAccount.tsx, SupabaseAccount.tsx}`.
 
 ```
 components/auth/
   Auth.tsx                    /auth entry: consent gate + provider switch
   AuthProvider.tsx            session provider switch
-  SupabaseAuthForms.tsx       /auth screen, Supabase — picks sign-in / sign-up / reset
+  SupabaseAuthForms.tsx       /auth screen, Supabase - picks sign-in / sign-up / reset
   ClerkAuthForms.tsx          /auth screen, Clerk
   UpdatePasswordForm.tsx      /auth/update-password screen
   ConfirmContinue.tsx         /auth/confirm/continue screen
 
-  common/                     shared parts — no supabase-js import
+  common/                     shared parts - no supabase-js import
     AuthLayout.tsx            page frame: centring, navbar clearance
     AuthCard.tsx              card shell + centred title/subtitle
     AuthField.tsx             label + input + optional label-row action
     AuthNotice.tsx            error / info block (today's AuthError)
     AuthDivider.tsx
     AuthFooter.tsx
-    AuthModeTabs.tsx          NEW — option C's segmented control
-    SubmitButton.tsx          NEW — today's SUBMIT constant + busy-label handling
+    AuthModeTabs.tsx          NEW - option C's segmented control
+    SubmitButton.tsx          NEW - today's SUBMIT constant + busy-label handling
     GoogleButton.tsx          shared OAuth control
     useTurnstile.ts           NEW home for useCaptcha
-    authMessages.ts           NEW — every user-facing auth string
+    authMessages.ts           NEW - every user-facing auth string
 
   forms/                      the three screens behind /auth
     SignInForm.tsx
@@ -87,9 +87,9 @@ components/auth/
 
 Nothing leaves `components/auth/`. Two co-locations that an earlier draft had sending elsewhere:
 
-- **`common/useTurnstile.ts`**, not `hooks/useTurnstile.ts` — `catalogue/inputs/heading/useHeadingEditor.ts`
+- **`common/useTurnstile.ts`**, not `hooks/useTurnstile.ts` - `catalogue/inputs/heading/useHeadingEditor.ts`
   is the precedent for a single-feature hook living beside its components.
-- **`common/authMessages.ts`**, not `lib/auth/messages.ts` — `lib/auth/*` is auth *mechanics*
+- **`common/authMessages.ts`**, not `lib/auth/messages.ts` - `lib/auth/*` is auth *mechanics*
   (identity, redirects, cookies, terms). User-facing copy is `modals/limits/limitContent.ts`'s
   kind of file. Plain exported objects either way, so `tests/unit/` can still import it.
 
@@ -116,7 +116,7 @@ Nothing over ~150; today's peak is 512.
 Everything else keeps its import path, because the screens stay at the folder root:
 `Auth`, `AuthProvider`, `UpdatePasswordForm`, `ConfirmContinue` are imported by
 `app/auth/[[...rest]]/page.tsx`, the two pages above, and
-`components/wrappers/PageWrapperClient.tsx` — all unchanged.
+`components/wrappers/PageWrapperClient.tsx` - all unchanged.
 
 No test imports a component from `components/auth/`, so the unit and integration suites are
 unaffected by the moves. `tests/e2e/auth.supabase.setup.ts` drives the real page and will catch
@@ -126,7 +126,7 @@ anything that breaks.
 
 Option C moves the mode from the URL into React state, which collides with the consent gate in
 `Auth.tsx`. Today it reads `?mode=signup` on mount, checks `localStorage.consent`, and blocks
-rendering behind a `useEffect` — which is also why the card is missing from the server HTML and
+rendering behind a `useEffect` - which is also why the card is missing from the server HTML and
 flashes in on hydration.
 
 With a tab toggle there is no page load to hang that check on. Proposal: extract
@@ -139,11 +139,11 @@ stops being the source of truth.
 
 ## Sequence
 
-1. **Moves and extractions only** — no behaviour change. `npx tsc --noEmit`, `npm run check`,
+1. **Moves and extractions only** - no behaviour change. `npx tsc --noEmit`, `npm run check`,
    `npm test` green, `/auth`, `/auth?mode=signup`, `/auth/update-password`,
    `/auth/confirm/continue` render unchanged. One commit, easy to review as pure motion.
-2. **Consent gate** — `useSignupConsent`, server-rendered sign-in screen.
-3. **Option C** — `AuthModeTabs`, state-driven mode, tinted page ground. The navbar stays
+2. **Consent gate** - `useSignupConsent`, server-rendered sign-in screen.
+3. **Option C** - `AuthModeTabs`, state-driven mode, tinted page ground. The navbar stays
    (it carries the logo, so the card needs no logo of its own).
 
 Steps 2 and 3 are where behaviour changes and where review effort belongs. Keeping step 1
@@ -153,10 +153,10 @@ separate is the point of doing it first.
 
 Does the Clerk leg still need to work while this lands?
 
-*How* Clerk is arranged is settled by convention — `Clerk*` / `Supabase*` filename prefixes side
+*How* Clerk is arranged is settled by convention - `Clerk*` / `Supabase*` filename prefixes side
 by side, as in `dashboard/account/`. Phase 5.1 ("remove Clerk code, packages, provider switch and
 e2e leg") is then a matter of deleting the four `Clerk*`-prefixed files and the `AUTH_PROVIDER`
-branch, which a filename grep already finds — the same way the rest of the codebase would handle
+branch, which a filename grep already finds - the same way the rest of the codebase would handle
 it. No quarantine folder is needed, and inventing one here would make `components/auth/` the only
 place in the repo that does it differently.
 

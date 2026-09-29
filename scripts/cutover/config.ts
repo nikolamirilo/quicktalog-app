@@ -1,7 +1,7 @@
 /**
  * Every setting the cutover scripts take.
  *
- * Non-secret values are written out literally below — edit this file rather
+ * Non-secret values are written out literally below - edit this file rather
  * than exporting variables, and a run needs no environment at all. The scripts
  * keep reading `process.env` by name; `applyConfigDefaults()` puts these there
  * on import, without overwriting anything already set, so an inline override
@@ -12,10 +12,10 @@
  * `.env.cutover` at the repo root, or failing that `.env.local`.
  */
 
+import { config as loadEnvFile } from "dotenv";
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
-import { config as loadEnvFile } from "dotenv";
 
 export type ProjectName = "test" | "prod";
 
@@ -175,7 +175,7 @@ export const APP_ENV_FILE = resolve(
  *
  * `.env.local` is the *app's* configuration and carries its own
  * `NEXT_PUBLIC_SUPABASE_URL`. Letting that through would override
- * `CUTOVER_PROJECT` — a `prod` run would take PROD's CSV path and TEST's
+ * `CUTOVER_PROJECT` - a `prod` run would take PROD's CSV path and TEST's
  * project, and try to import production users into the wrong database.
  * Everything public comes from this file; the env files supply credentials.
  */

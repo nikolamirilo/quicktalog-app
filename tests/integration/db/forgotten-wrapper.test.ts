@@ -15,7 +15,7 @@ import { describe, expect, it } from "vitest";
 /**
  * Prefer a connection that is actually the `app_rls` login. CI points
  * `DB_CONNECTION_STRING` at `postgres` because the other integration tests read
- * `auth`, `migration` and `private` — so without this the assertions below
+ * `auth`, `migration` and `private` - so without this the assertions below
  * skipped themselves on every run and M08's guarantee was never checked
  * anywhere.
  */

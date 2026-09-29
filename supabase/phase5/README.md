@@ -10,7 +10,7 @@ cutover is done and the orphan triage of plan 12.6 has finished (T+30).
 | `20260922090012_validate_users_id_uuid.sql` | M12 (A.12) | after the re-key, once no `public.users` row carries a non-uuid id |
 | `20260922090013_post_cutover_cleanup.sql` | M13 (A.13) | after the agreed retention period; export `migration.cutover_log` first |
 
-M12 refuses to run before its time — it checks that `users_id_is_uuid` exists
+M12 refuses to run before its time - it checks that `users_id_is_uuid` exists
 and that no Clerk-keyed rows are left, and raises P0001 naming the count if
 not. That refusal is the safety net, not the plan: **move the file into
 `supabase/migrations/` only when you are ready to apply it.**

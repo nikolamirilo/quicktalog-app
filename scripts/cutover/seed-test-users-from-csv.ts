@@ -1,7 +1,7 @@
 /**
  * Recreates `public.users` on TEST from a Clerk CSV export, keyed by Clerk id.
  *
- * PROD never needs this — its rows have always been there. TEST lost its
+ * PROD never needs this - its rows have always been there. TEST lost its
  * Clerk-era rows during Phase 2 testing, and without them a re-key rehearsal
  * has nothing to re-key, so the whole drill proves nothing. This puts TEST back
  * into the shape PROD is in today.
@@ -16,12 +16,12 @@
  *   DRY_RUN=0 npx tsx scripts/cutover/seed-test-users-from-csv.ts --catalogues
  *
  * Env: `CLERK_CSV`, plus the usual `NEXT_PUBLIC_SUPABASE_URL` /
- * `MIGRATION_DATABASE_URL` the guard requires. No Clerk API key needed — names
+ * `MIGRATION_DATABASE_URL` the guard requires. No Clerk API key needed - names
  * come from the CSV.
  */
 
-import { readFileSync } from "node:fs";
 import { parse } from "csv-parse/sync";
+import { readFileSync } from "node:fs";
 import { fail, guard, maskEmail } from "../lib/guard";
 import { config } from "./config";
 import { loadCsv } from "./migrate-clerk-to-supabase";

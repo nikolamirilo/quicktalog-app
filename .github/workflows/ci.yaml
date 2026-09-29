@@ -83,7 +83,7 @@ jobs:
 
       # Plan 3.1: the cutover rehearsal runs the real import, re-key, verify and
       # rollback scripts against this stack. It rewrites every user, so it runs
-      # after the other integration tests, and it needs sign-ups off — the
+      # after the other integration tests, and it needs sign-ups off - the
       # import refuses to run while a real person could claim a pre-claimed
       # email. GoTrue reads that flag at boot, hence the restart.
       - name: Turn sign-ups off for the rehearsal

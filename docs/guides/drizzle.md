@@ -11,7 +11,7 @@ Drizzle is the app's query layer. It does not own the schema or migrations.
 | `drizzle-kit` and its config | **`../quicktalog-packages` only.** This repo has neither; it consumes the generated schema as an npm import |
 
 The app builds its own client in [`src/utils/db/pool.ts`](../../src/utils/db/pool.ts) from a connection
-string plus the `schema` import — it reads no Drizzle config file. Only the `drizzle-kit` CLI
+string plus the `schema` import - it reads no Drizzle config file. Only the `drizzle-kit` CLI
 does, and that runs in the package repo. (This repo used to carry a `drizzle.config.ts` pointing
 at a non-existent `./drizzle/` folder, and without the package config's `schemaFilter`/`roles`
 guards; it was deleted on 2026-09-28.)

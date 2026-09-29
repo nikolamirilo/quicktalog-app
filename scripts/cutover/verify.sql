@@ -1,4 +1,4 @@
--- scripts/cutover/verify.sql — V1-V12 from PLAN section 6.7, runbook step 11.
+-- scripts/cutover/verify.sql - V1-V12 from PLAN section 6.7, runbook step 11.
 --
 --   psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/cutover/verify.sql > verify-t0.txt
 --

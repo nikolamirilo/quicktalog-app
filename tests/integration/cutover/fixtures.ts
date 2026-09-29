@@ -1,5 +1,5 @@
-import { mkdtempSync, writeFileSync } from "node:fs";
 import { hashSync } from "bcryptjs";
+import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -53,7 +53,7 @@ export const FIXTURES: Fixture[] = [
 		hasher: "bcrypt",
 		id: "user_2rehearsalpassword0001",
 		mfa: false,
-		note: "the happy path: bcrypt digest, verified, owns data — must be able to sign in afterwards",
+		note: "the happy path: bcrypt digest, verified, owns data - must be able to sign in afterwards",
 		ownsRow: true,
 		verified: true,
 	},
@@ -67,7 +67,7 @@ export const FIXTURES: Fixture[] = [
 		hasher: "bcrypt",
 		id: "user_2rehearsalunverified02",
 		mfa: false,
-		note: "unverified address on an account that owns catalogues — skipped, verify-in-clerk",
+		note: "unverified address on an account that owns catalogues - skipped, verify-in-clerk",
 		ownsRow: true,
 		verified: false,
 	},
@@ -81,7 +81,7 @@ export const FIXTURES: Fixture[] = [
 		hasher: "scrypt",
 		id: "user_2rehearsalscrypt000003",
 		mfa: false,
-		note: "a hasher Supabase cannot take — imported without a password, needs a reset",
+		note: "a hasher Supabase cannot take - imported without a password, needs a reset",
 		ownsRow: true,
 		verified: true,
 	},
@@ -109,7 +109,7 @@ export const FIXTURES: Fixture[] = [
 		hasher: "bcrypt",
 		id: "user_2rehearsalbanned000005",
 		mfa: false,
-		note: "banned in Clerk — the ban must survive the import",
+		note: "banned in Clerk - the ban must survive the import",
 		ownsRow: true,
 		verified: true,
 	},
@@ -123,7 +123,7 @@ export const FIXTURES: Fixture[] = [
 		hasher: "bcrypt",
 		id: "user_2rehearsalmfa0000000006",
 		mfa: true,
-		note: "MFA enabled — the password is deliberately not imported (the second factor would be lost)",
+		note: "MFA enabled - the password is deliberately not imported (the second factor would be lost)",
 		ownsRow: true,
 		verified: true,
 	},
@@ -137,7 +137,7 @@ export const FIXTURES: Fixture[] = [
 		hasher: "bcrypt",
 		id: "user_2rehearsalnorow00000007",
 		mfa: false,
-		note: "a Clerk user that never got a public.users row — the re-key must not invent one",
+		note: "a Clerk user that never got a public.users row - the re-key must not invent one",
 		ownsRow: false,
 		verified: true,
 	},
@@ -151,7 +151,7 @@ export const FIXTURES: Fixture[] = [
 		hasher: "bcrypt",
 		id: "user_2rehearsalpaying0000008",
 		mfa: false,
-		note: "carries a Paddle customer_id — the re-key must refuse while this one is unmapped",
+		note: "carries a Paddle customer_id - the re-key must refuse while this one is unmapped",
 		ownsRow: true,
 		verified: true,
 	},

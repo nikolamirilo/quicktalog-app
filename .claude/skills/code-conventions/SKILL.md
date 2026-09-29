@@ -15,7 +15,7 @@ to `src/`, so `@/lib/...` and `@/components/...` are unchanged; `@/scripts/*` is
 separately and still resolves to the root `scripts/`.
 
 Next finds `src/app`, and `middleware.ts`, `instrumentation.ts`,
-`instrumentation-client.ts` and the two `sentry.*.config.ts` files live in `src/` too —
+`instrumentation-client.ts` and the two `sentry.*.config.ts` files live in `src/` too -
 Next looks for them beside the app directory.
 
 

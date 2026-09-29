@@ -17,7 +17,7 @@ export function PullQuote({
 			</blockquote>
 			{cite && (
 				<figcaption className="mt-2.5 text-sm text-product-muted">
-					<span aria-hidden="true">— </span>
+					<span aria-hidden="true">- </span>
 					{cite}
 				</figcaption>
 			)}

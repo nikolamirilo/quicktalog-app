@@ -18,8 +18,8 @@ as any user and write any row. Read this file before running any of them.
   `DRY_RUN=0` is the only way to write.
 - **PROD needs `ALLOW_PROD=1`** and, on top of that, typing the project ref at
   the prompt (or `CONFIRM_REF=<ref>` when there is no terminal).
-- **One environment per run.** The environment is derived twice — from
-  `NEXT_PUBLIC_SUPABASE_URL` and from `MIGRATION_DATABASE_URL` — and the run is
+- **One environment per run.** The environment is derived twice - from
+  `NEXT_PUBLIC_SUPABASE_URL` and from `MIGRATION_DATABASE_URL` - and the run is
   refused unless both say the same project. `assertSameInstance()` then proves
   it against live data: a user the Auth API can see must exist in the connected
   database. A TEST database with PROD auth credentials is the accident this
@@ -42,7 +42,7 @@ falling through to the TEST export. Credentials and `DRY_RUN` stay out of the
 file: it is committed, and a `DRY_RUN=0` in git would make every run write.
 
 Credentials can live in a gitignored **`.env.cutover`** at the repo root instead
-of shell exports — `config.ts` loads it on import, and anything already exported
+of shell exports - `config.ts` loads it on import, and anything already exported
 still wins:
 
 ```sh
@@ -53,8 +53,8 @@ SUPABASE_ACCESS_TOKEN=sbp_...
 ```
 
 It is a dedicated file rather than `.env.local` on purpose. The app's
-`DB_CONNECTION_STRING` is the `app_rls` login after M08 — it owns nothing and
-cannot do admin work — so a run that silently adopted it would fail mid-re-key
+`DB_CONNECTION_STRING` is the `app_rls` login after M08 - it owns nothing and
+cannot do admin work - so a run that silently adopted it would fail mid-re-key
 with a permissions error. No name is mapped onto another: `MIGRATION_DATABASE_URL`
 is spelled out, and it must be `postgres`.
 
@@ -88,12 +88,12 @@ line is what makes every write a deliberate one.
 | 5 | T-0 step 8 | `cutover/preflight.sql` | nothing (read-only) |
 | 6 | T-0 step 9 | `cutover/remap-user-ids.sql` | re-keys `public.users` and everything it owns |
 | 7 | T-0 step 11 | `cutover/verify.sql` | nothing (read-only) |
-| — | rollback R1/R2 step 3 | `cutover/push-supabase-users-to-clerk.ts` | Clerk users; `migration.clerk_user_map` |
-| — | rollback R1/R2 step 4 | `cutover/rollback-remap.sql` | re-keys `public.users` back to Clerk ids |
+| - | rollback R1/R2 step 3 | `cutover/push-supabase-users-to-clerk.ts` | Clerk users; `migration.clerk_user_map` |
+| - | rollback R1/R2 step 4 | `cutover/rollback-remap.sql` | re-keys `public.users` back to Clerk ids |
 
 ### 1. `cutover/purge-dark-test-users.ts`
 
-Deletes auth users that are **not** in `migration.clerk_user_map` — on a TEST
+Deletes auth users that are **not** in `migration.clerk_user_map` - on a TEST
 project during Phase 2 those can only be the dark build's own sign-up tests, and
 the re-key refuses to start while any of them exist.
 
@@ -102,7 +102,7 @@ DRY_RUN=1 npx tsx scripts/cutover/purge-dark-test-users.ts
 DRY_RUN=0 npx tsx scripts/cutover/purge-dark-test-users.ts
 ```
 
-It **refuses PROD outright** — `ALLOW_PROD=1` does not unlock it. On PROD the
+It **refuses PROD outright** - `ALLOW_PROD=1` does not unlock it. On PROD the
 same query would select the real people who signed up during the cutover window;
 those are carried back to Clerk by the rollback push (12.5 step 3), never
 deleted. It also refuses when more than `MAX_DELETIONS` (default 50) users match,
@@ -122,7 +122,7 @@ psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 \
 ```
 
 Run it at T-3 and again at T-0 step 8, and keep both files. **The T-0 output is
-the baseline `verify.sql` V6 is compared against** — catalogues, pageviews,
+the baseline `verify.sql` V6 is compared against** - catalogues, pageviews,
 subscriptions and users with a `customer_id`.
 
 It prints the perimeter (private roles, `anon`/`authenticated` grants, default
@@ -135,10 +135,10 @@ command to do it by hand.
 
 Two summaries close it:
 
-- **Cutover gates G1-G3** — auth users outside the map, paying users with no
+- **Cutover gates G1-G3** - auth users outside the map, paying users with no
   `migrated` map row, map rows still `claimed`. These need M10; before it, the
   section says so instead of failing.
-- **Go / no-go P1-P8** — server version, the `anon`/`authenticated` perimeter,
+- **Go / no-go P1-P8** - server version, the `anon`/`authenticated` perimeter,
   RLS coverage, `analytics_upsert_trigger`, the default plan, duplicate emails
   and sessions holding a lock on `public.users`.
 
@@ -171,7 +171,7 @@ no Google identities, no consents, no `created_at` fidelity), `--allow-delete`
 **It aborts before any write** when: the Clerk key and the Supabase project are
 from different environments (`sk_live_` with a non-PROD project, or the reverse);
 `migration.clerk_user_map` is missing; `private.handle_auth_user_created` does
-not consult the map (M10 missing or outdated — every imported user would get a
+not consult the map (M10 missing or outdated - every imported user would get a
 second `public.users` row); the project still accepts sign-ups
 (`disable_signup` is not `true`); the CSV is missing a required column;
 `EXPORTED_AT` does not parse, is in the future, or is over 24h old for
@@ -191,7 +191,7 @@ skipped when that uuid already exists in `auth.users`; Google identities are
 inserted `on conflict (provider_id, provider) do nothing`. A re-run repairs
 missing pieces and rewrites the reports. Once the re-key has happened the script
 detects **post-cutover mode** (a mapped uuid owns rows in `public.users`) and
-will not delete or recreate anyone — it only fills in what is missing.
+will not delete or recreate anyone - it only fills in what is missing.
 
 Outcomes per user follow 6.3 and 6.5: no usable email → `skipped`; an unverified
 email on an account that owns catalogues or is billed → `skipped`
@@ -269,7 +269,7 @@ It runs four steps, in order:
    across, so the password still works; anything else means
    `skipPasswordRequirement` and a reset.
 2. **Drop.** Unconfirmed, banned, soft-deleted and address-less accounts are
-   *not* pushed — an unconfirmed address is one nobody has proven they own, and
+   *not* pushed - an unconfirmed address is one nobody has proven they own, and
    pushing a banned account would quietly unban it. They are listed in
    `rollback-dropped.csv` and need an email; the report holds uuids and masked
    addresses, and prints the query for the real ones.
@@ -301,7 +301,7 @@ Appendix A.R2, copied unchanged. Step 4 of the R1/R2 rollback: re-keys
 `users_id_is_uuid` constraint.
 
 It refuses to run while a uuid-keyed user has no `migrated` map row, which is
-the case for anyone who signed up during the window — run
+the case for anyone who signed up during the window - run
 `push-supabase-users-to-clerk.ts` first so those users get a Clerk id written
 into the map with `origin='rollback_push'`.
 

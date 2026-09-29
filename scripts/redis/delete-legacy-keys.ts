@@ -5,7 +5,7 @@
  * shared one keyspace. Phase 1 moved to
  * `${REDIS_KEY_PREFIX}:catalogue:${catalogueId}`, leaving the old keys behind.
  *
- * **Run it once, after every environment is on Phase 1 code** — on a shared
+ * **Run it once, after every environment is on Phase 1 code** - on a shared
  * Redis that means after PROD, not after TEST. A legacy key deleted while an
  * old deployment is still reading it loses that user's unsaved draft.
  *
@@ -19,12 +19,12 @@
  * What it will not touch: anything namespaced (`prod:`, `test:`, `ci:`,
  * `dev:`…), which covers every key the current code writes, including the rate
  * limiter's. A key is only a candidate when it looks like a catalogue slug
- * *and* holds a JSON object — both have to be true, because the cost of being
+ * *and* holds a JSON object - both have to be true, because the cost of being
  * wrong is somebody's unsaved work.
  */
 
-import { createInterface } from "node:readline/promises";
 import { Redis } from "@upstash/redis";
+import { createInterface } from "node:readline/promises";
 
 /** The shape `public.catalogues.name` is constrained to (M03). */
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -110,7 +110,7 @@ async function main(): Promise<void> {
 	console.log(`  redis        ${new URL(url).hostname}`);
 	console.log(`  prefix now   ${process.env.REDIS_KEY_PREFIX ?? "(unset)"}`);
 	console.log(
-		`  mode         ${dryRun ? "DRY RUN — nothing will be deleted" : "LIVE — this run deletes"}`,
+		`  mode         ${dryRun ? "DRY RUN - nothing will be deleted" : "LIVE - this run deletes"}`,
 	);
 	console.log("  ────────────────────────────────────────────────────────────");
 	console.log("");
@@ -149,7 +149,7 @@ async function main(): Promise<void> {
 	}
 	if (candidates.length > maxDeletions) {
 		throw new Error(
-			`${candidates.length} keys matched, over the ${maxDeletions} cap — check the list, then re-run with MAX_DELETIONS set higher if it is right`,
+			`${candidates.length} keys matched, over the ${maxDeletions} cap - check the list, then re-run with MAX_DELETIONS set higher if it is right`,
 		);
 	}
 	if (dryRun) {
