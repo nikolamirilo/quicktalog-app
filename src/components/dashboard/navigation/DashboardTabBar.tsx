@@ -10,7 +10,11 @@ import {
  * Horizontally scrollable pill tabs shown below 720px. The active pill is kept
  * centred so a tab picked off-screen (or opened by `?tab=`) stays visible.
  */
-export function DashboardTabBar({ activeTab, onSelect }: DashboardTabNavProps) {
+export function DashboardTabBar({
+	activeTab,
+	onSelect,
+	disabled,
+}: DashboardTabNavProps) {
 	const listRef = useRef<HTMLElement>(null);
 
 	useEffect(() => {
@@ -32,6 +36,7 @@ export function DashboardTabBar({ activeTab, onSelect }: DashboardTabNavProps) {
 		>
 			<DashboardTabButtons
 				activeTab={activeTab}
+				disabled={disabled}
 				onSelect={onSelect}
 				variant="bar"
 			/>

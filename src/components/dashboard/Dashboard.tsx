@@ -9,8 +9,9 @@ import { DashboardTabBar } from "@/components/dashboard/navigation/DashboardTabB
 import { Overview } from "@/components/dashboard/Overview";
 import { Button } from "@/components/ui/button";
 import {
-	DASHBOARD_PATH,
 	type DashboardTab,
+	dashboardTabFromUrl,
+	isAccountSubRoute,
 	toDashboardTab,
 } from "@/constants/dashboard";
 import { useDashboardData } from "@/hooks/useDashboardData";
@@ -61,15 +62,6 @@ function OverviewError({ onRetry }: { onRetry: () => void }) {
 	);
 }
 
-/**
- * Below `/admin/dashboard/` Clerk's `<UserProfile/>` routes its own pages
- * (e.g. `/admin/dashboard/security`) without a `?tab=`; those belong to the
- * settings tab.
- */
-function isAccountSubRoute(pathname: string) {
-	return pathname.startsWith(`${DASHBOARD_PATH}/`);
-}
-
 export function Dashboard({
 	user,
 	usage,
@@ -83,7 +75,7 @@ export function Dashboard({
 	const tabParam = searchParams.get("tab");
 	const onSubRoute = isAccountSubRoute(pathname);
 	const [activeTab, setActiveTab] = useState<DashboardTab>(() =>
-		tabParam === null && onSubRoute ? "settings" : toDashboardTab(tabParam),
+		dashboardTabFromUrl(tabParam, pathname),
 	);
 
 	// A link to `?tab=` while the dashboard is already open (the account menu)

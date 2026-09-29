@@ -7,6 +7,7 @@ import {
 export function DashboardSidebar({
 	activeTab,
 	onSelect,
+	disabled,
 }: DashboardTabNavProps) {
 	return (
 		<aside
@@ -16,6 +17,7 @@ export function DashboardSidebar({
 			<nav aria-label="Dashboard tabs" className="flex flex-col gap-1.5">
 				<DashboardTabButtons
 					activeTab={activeTab}
+					disabled={disabled}
 					onSelect={onSelect}
 					variant="sidebar"
 				/>

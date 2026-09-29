@@ -4,6 +4,8 @@ import { cn } from "@/lib/ui/cn";
 export type DashboardTabNavProps = {
 	activeTab: DashboardTab;
 	onSelect: (tab: DashboardTab) => void;
+	/** While the dashboard data loads the tabs show but cannot be picked. */
+	disabled?: boolean;
 };
 
 const VARIANTS = {
@@ -28,6 +30,7 @@ const VARIANTS = {
 export function DashboardTabButtons({
 	activeTab,
 	onSelect,
+	disabled,
 	variant,
 }: DashboardTabNavProps & { variant: keyof typeof VARIANTS }) {
 	const styles = VARIANTS[variant];
@@ -38,7 +41,12 @@ export function DashboardTabButtons({
 				return (
 					<button
 						aria-pressed={isActive}
-						className={cn(styles.base, isActive && styles.active)}
+						className={cn(
+							styles.base,
+							isActive && styles.active,
+							"disabled:pointer-events-none",
+						)}
+						disabled={disabled}
 						key={tab.value}
 						onClick={() => onSelect(tab.value)}
 						type="button"

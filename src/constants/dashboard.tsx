@@ -25,3 +25,20 @@ export function toDashboardTab(value: string | null): DashboardTab {
 		? (value as DashboardTab)
 		: "overview";
 }
+
+/**
+ * The tab a dashboard URL opens. Below `/admin/dashboard/` Clerk's
+ * `<UserProfile/>` routes its own pages without a `?tab=`; those belong to
+ * the settings tab.
+ */
+export function dashboardTabFromUrl(
+	tabParam: string | null,
+	pathname: string,
+): DashboardTab {
+	if (tabParam === null && isAccountSubRoute(pathname)) return "settings";
+	return toDashboardTab(tabParam);
+}
+
+export function isAccountSubRoute(pathname: string) {
+	return pathname.startsWith(`${DASHBOARD_PATH}/`);
+}
