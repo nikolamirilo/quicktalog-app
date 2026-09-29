@@ -1,10 +1,10 @@
 import { CatalogueSession } from "@/agent/session";
 import {
-    activeSkills,
-    loadedSkillsFromMessages,
-    renderAlwaysOn,
-    renderIndex,
-    SKILLS,
+	activeSkills,
+	loadedSkillsFromMessages,
+	renderAlwaysOn,
+	renderIndex,
+	SKILLS,
 } from "@/agent/skills";
 import type { AiSectionAccess, AiSectionType } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";

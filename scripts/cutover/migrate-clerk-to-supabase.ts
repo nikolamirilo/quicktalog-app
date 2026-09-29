@@ -30,13 +30,13 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-    fail,
-    type Guard,
-    guard,
-    mapWithConcurrency,
-    maskEmail,
-    maskSub,
-    redact,
+	fail,
+	type Guard,
+	guard,
+	mapWithConcurrency,
+	maskEmail,
+	maskSub,
+	redact,
 } from "../lib/guard";
 
 /* -------------------------------------------------------------------------- */

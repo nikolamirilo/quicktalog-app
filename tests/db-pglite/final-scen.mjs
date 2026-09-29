@@ -1,18 +1,18 @@
 // Reusable scenario blocks (ported from wf2 run.mjs, adapted to the final object names and M06 signatures).
 import { isUniqueViolation, makeApp, pgError } from "./drizzle-app-final.mjs";
 import {
-    IDS,
-    P,
-    U,
-    admin,
-    applyTx,
-    col,
-    eqArr,
-    inRole,
-    isErr,
-    rowsJson,
-    run,
-    summarize
+	IDS,
+	P,
+	U,
+	admin,
+	applyTx,
+	col,
+	eqArr,
+	inRole,
+	isErr,
+	rowsJson,
+	run,
+	summarize,
 } from "./final-lib.mjs";
 
 export async function ownerMatrix(

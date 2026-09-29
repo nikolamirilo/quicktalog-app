@@ -3,16 +3,16 @@
 import fs from "node:fs";
 import { makeApp, pgError } from "./drizzle-app-final.mjs";
 import {
-    admin,
-    applyStatements,
-    applyTx,
-    Env,
-    IDS,
-    isErr,
-    REST,
-    run,
-    summarize,
-    T
+	admin,
+	applyStatements,
+	applyTx,
+	Env,
+	IDS,
+	isErr,
+	REST,
+	run,
+	summarize,
+	T,
 } from "./final-lib.mjs";
 
 const DIR = process.argv[2];

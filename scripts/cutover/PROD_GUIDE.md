@@ -198,7 +198,83 @@ anyone in.
 
 ---
 
-## Step 9: sign in yourself, before anyone else can
+## Step 9: check the emails
+
+Every Supabase Auth message (confirm signup, password reset, email change)
+plus every Resend message (welcome, cancellation, contact form) comes from a
+template committed to the repo. The moment sign-ups reopen, real users start
+receiving these. If the templates on PROD drift from the files in the repo,
+people get the old GoTrue defaults. Check first, then eyeball each one.
+
+### 9a. Drift check
+
+`scripts/supabase/auth-config.ts` reads the desired templates from
+`scripts/supabase/auth-config.prod.json` (which references the files in
+`supabase/templates/`) and compares them to the live project. A non-empty
+list means PROD has drifted from git and needs to be brought back in line.
+
+```sh
+npx tsx scripts/supabase/auth-config.ts --project prod --check
+```
+
+For a focused report on just the email-related settings:
+
+```sh
+npx tsx scripts/supabase/auth-config.ts --project prod --check \
+  --only mailer_templates_confirmation_content,mailer_templates_recovery_content,mailer_templates_email_change_content,mailer_subjects_confirmation,mailer_subjects_recovery,mailer_subjects_email_change
+```
+
+If anything is reported as different, take it back to the desired state:
+
+```sh
+npx tsx scripts/supabase/auth-config.ts --project prod --apply \
+  --only mailer_templates_confirmation_content,mailer_templates_recovery_content,mailer_templates_email_change_content,mailer_subjects_confirmation,mailer_subjects_recovery,mailer_subjects_email_change
+```
+
+A drift of just the Resend templates (welcome, cancellation, contact) cannot
+happen through this script - those are React components in `src/components/emails/`
+shipped with the Next.js build, so a redeploy of the right commit is enough.
+
+### 9b. Visual preview
+
+The Supabase templates are managed by the Management API, but the React Email
+templates are part of the Next.js bundle, so the only way to be sure both
+sources look right is to send each one to your own inbox and read it.
+
+`scripts/test-emails.ts` renders all six messages and sends them to
+`quicktalog@outlook.com` (override with `TEST_EMAIL`). The React templates go
+through `@react-email/render`; the GoTrue templates get the same
+`{{ .SiteURL }}` / `{{ .RedirectTo }}` / `{{ .TokenHash }}` substitution that
+the Management API would do at send time.
+
+```sh
+export RESEND_API_KEY=re_xxx
+export PREVIEW_BASE_URL=https://www.quicktalog.app   # or https://test.quicktalog.app
+npx tsx --tsconfig tsconfig.scripts.json scripts/test-emails.ts
+```
+
+For just the Supabase ones:
+
+```sh
+npx tsx --tsconfig tsconfig.scripts.json scripts/test-emails.ts confirmation recovery email-change
+```
+
+Read each one in your inbox before continuing. Pay particular attention to:
+
+- **confirmation** - hero, "Confirm my email" button, fallback link, footer
+- **recovery** - "Choose a new password" button and the 1-hour expiry copy
+- **email-change** - the From / To cards show `{{ .Email }}` and `{{ .NewEmail }}`
+  filled in with the sample address, not as literal placeholder text
+- **welcome / cancellation / contact** - the brand bar dot, hero eyebrow, amber
+  CTA, footer links all render; no unstyled HTML sneaking through
+
+If any of the six look wrong, fix the source (one of
+`src/components/emails/*.tsx` or `supabase/templates/*.html`) and redeploy or
+re-apply. Do not move on until every message reads cleanly.
+
+---
+
+## Step 10: sign in yourself, before anyone else can
 
 SQL passing is not the same as sign-in working. On the TEST rehearsal every
 check passed while Google sign-in was broken, and only clicking the button
@@ -213,7 +289,7 @@ Test all three:
 
 ---
 
-## Step 10: open up
+## Step 11: open up
 
 ```sh
 npx tsx scripts/cutover/signups.ts --on

@@ -65,12 +65,12 @@ html body[data-scroll-locked] {
 	border-radius: 1px;
 }
 
-.table-scroll>div::-webkit-scrollbar {
+.table-scroll > div::-webkit-scrollbar {
 	width: 0 !important;
 	height: 4px !important;
 }
 
-.table-scroll>div::-webkit-scrollbar-thumb {
+.table-scroll > div::-webkit-scrollbar-thumb {
 	background: var(--product-primary);
 	border-radius: 1rem;
 }
