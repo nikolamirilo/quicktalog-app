@@ -1,7 +1,12 @@
 import { LimitType, PricingPlan } from "@quicktalog/common";
-import { FolderTree, Layers, Lock, Sparkles } from "lucide-react";
-import { IoSearch } from "react-icons/io5";
-import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import {
+	ChartColumn,
+	FolderTree,
+	Layers,
+	Lock,
+	Search,
+	Sparkles,
+} from "lucide-react";
 
 export interface LimitContentData {
 	feature: string;
@@ -27,9 +32,9 @@ export const getIcon = (type: LimitType) => {
 		case "sections":
 			return FolderTree;
 		case "notFound":
-			return IoSearch;
+			return Search;
 		case "traffic":
-			return TbBrandGoogleAnalytics;
+			return ChartColumn;
 		case "ai":
 			return Sparkles;
 		default:

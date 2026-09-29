@@ -70,9 +70,7 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 			/* One thumb zone, one panel: the chat sheet owns the bottom edge while
           it is up, so this bar steps aside rather than covering its input.
           Phone only - on desktop the two sit side by side, so the bar comes
-          back at md. Written as "hidden + md:flex" rather than "max-md:hidden"
-          because withMT (material-tailwind) replaces Tailwind's screens and
-          no max-* variant compiles in this project. */ ""
+          back at md. */ ""
 		}
     ${isChatOpen ? "hidden md:flex" : "flex"}
     ${isOpen ? "h-[100dvh]" : "h-auto"}
@@ -116,7 +114,7 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 					className="ml-auto md:ml-0 md:flex hidden hover:scale-105 active:scale-95 transition-transform duration-200"
 					onClick={() => setIsOpen(!isOpen)}
 					size={isOpen ? "sm" : "icon"}
-					variant="grayed"
+					variant="secondary"
 				>
 					<div className="hidden md:block">
 						{isOpen ? (

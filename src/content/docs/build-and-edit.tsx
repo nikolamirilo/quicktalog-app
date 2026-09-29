@@ -1,9 +1,9 @@
 import { FiEdit3 } from "react-icons/fi";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
+import { Stepper } from "@/components/resources/Stepper";
 import type { DocEntry } from "./_types";
 
 const meta = {
@@ -23,16 +23,15 @@ const meta = {
 		"add products",
 	],
 	relatedSlugs: ["customize-design", "share-your-catalogue"],
-	coverImage: "/images/documentation/build-edit-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/images/documentation/build-edit-cover.svg"
 				alt="The Quicktalog builder showing a live catalogue preview alongside the settings panel"
 				priority
+				src="/images/documentation/build-edit-cover.svg"
 			/>
 
 			<Prose>
@@ -85,9 +84,9 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/images/documentation/build-edit-item-anatomy.svg"
 				alt="Anatomy of a catalogue item: name, price, photo, and description fields in the builder"
 				maxWidth="640px"
+				src="/images/documentation/build-edit-item-anatomy.svg"
 			/>
 
 			<Prose>
@@ -101,9 +100,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/build-edit-categories.svg"
 				alt="Category management in the Quicktalog builder showing grouped items under named sections"
 				maxWidth="640px"
+				src="/images/documentation/build-edit-categories.svg"
 			/>
 
 			<Prose>
@@ -118,9 +117,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/build-edit-content-blocks.svg"
 				alt="Content blocks panel in the builder showing text, divider, and embed block options"
 				maxWidth="640px"
+				src="/images/documentation/build-edit-content-blocks.svg"
 			/>
 
 			<Prose>
@@ -135,8 +134,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/build-edit-settings-tabs.svg"
 				alt="The four builder settings tabs: General, Header, Footer, and Appearance"
+				src="/images/documentation/build-edit-settings-tabs.svg"
 			/>
 
 			<Callout title="Edit live, publish when ready" variant="note">

@@ -1,4 +1,4 @@
-import PartnerBadge from "@/components/general/PartnerBadge";
+import { PartnerBadge } from "@/components/general/PartnerBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

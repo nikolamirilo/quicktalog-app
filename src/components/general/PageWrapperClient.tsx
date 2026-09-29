@@ -4,8 +4,7 @@ import { CatalogueContextProvider } from "@/context/CatalogueContext";
 import { MainContextProvider } from "@/context/MainContext";
 import { UserContextProvider } from "@/context/UserContext";
 import { AuthProvider } from "@/components/auth/AuthProvider";
-import CookieBanner from "@/components/general/CookieBanner";
-import { Toaster } from "@/components/ui/toaster";
+import { CookieBanner } from "@/components/general/CookieBanner";
 
 export const PageWrapperClient = ({
 	children,
@@ -22,7 +21,6 @@ export const PageWrapperClient = ({
 				    from the user's own row through UserContext. */}
 				<CookieBanner />
 			</UserContextProvider>
-			<Toaster />
 			<SonnerToaster />
 		</AuthProvider>
 	);

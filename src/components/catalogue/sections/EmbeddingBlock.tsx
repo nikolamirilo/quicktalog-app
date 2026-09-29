@@ -2,7 +2,7 @@
 
 import type { EmbeddingBlock } from "@quicktalog/common";
 import { useEffect, useRef } from "react";
-import HtmlContent from "@/components/general/HtmlContent";
+import { HtmlContent } from "@/components/general/HtmlContent";
 import BlockControls from "@/components/catalogue/cards/common/BlockControls";
 
 type EmbedType =

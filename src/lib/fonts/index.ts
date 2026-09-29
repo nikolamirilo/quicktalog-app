@@ -2,6 +2,7 @@ import {
 	Crimson_Text,
 	DM_Sans,
 	Inter,
+	Inter_Tight,
 	Josefin_Sans,
 	Lato,
 	Lora,
@@ -11,6 +12,7 @@ import {
 	Open_Sans,
 	Oswald,
 	Playfair_Display,
+	Plus_Jakarta_Sans,
 	Poppins,
 	Raleway,
 	Roboto,
@@ -33,6 +35,19 @@ export const loraRegular = Lora({
 export const loraSemiBold = Lora({
 	subsets: ["latin"],
 	variable: "--font-lora-semibold",
+	display: "swap",
+});
+
+// Product UI fonts
+export const plusJakartaSans = Plus_Jakarta_Sans({
+	subsets: ["latin"],
+	variable: "--font-plus-jakarta-sans",
+	display: "swap",
+});
+
+export const interTight = Inter_Tight({
+	subsets: ["latin"],
+	variable: "--font-inter-tight",
 	display: "swap",
 });
 

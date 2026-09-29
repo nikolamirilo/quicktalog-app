@@ -1,141 +1,168 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import Loader from "@/components/navigation/Loader";
-import { useDashboardData } from "@/hooks/useDashboardData";
-import { DashboardProps } from "@/types/shared";
-import { lazy, Suspense, useState } from "react";
-import Overview from "./Overview";
+import type { PricingPlan, Usage, User } from "@quicktalog/common";
+import { usePathname, useSearchParams } from "next/navigation";
+import { lazy, Suspense, useEffect, useState } from "react";
 
-const Subscription = lazy(() => import("./Subscription"));
-const MonthlyUsage = lazy(() => import("./MonthlyUsage"));
-const Settings = lazy(() => import("./Settings"));
-const Support = lazy(() => import("./Support"));
-const MobileTabBar = lazy(() => import("@/components/navigation/MobileTabBar"));
-const SidebarContent = lazy(
-	() => import("@/components/navigation/SidebarContent"),
+import { DashboardSidebar } from "@/components/dashboard/navigation/DashboardSidebar";
+import { DashboardTabBar } from "@/components/dashboard/navigation/DashboardTabBar";
+import { Overview } from "@/components/dashboard/Overview";
+import { Button } from "@/components/ui/button";
+import {
+	DASHBOARD_PATH,
+	type DashboardTab,
+	toDashboardTab,
+} from "@/constants/dashboard";
+import { useDashboardData } from "@/hooks/useDashboardData";
+
+const Subscription = lazy(() =>
+	import("@/components/dashboard/Subscription").then((m) => ({
+		default: m.Subscription,
+	})),
+);
+const MonthlyUsage = lazy(() =>
+	import("@/components/dashboard/MonthlyUsage").then((m) => ({
+		default: m.MonthlyUsage,
+	})),
+);
+const Settings = lazy(() =>
+	import("@/components/dashboard/Settings").then((m) => ({
+		default: m.Settings,
+	})),
+);
+const Support = lazy(() =>
+	import("@/components/dashboard/Support").then((m) => ({
+		default: m.Support,
+	})),
 );
 
-interface ImprovedDashboardProps {
-	user: DashboardProps["user"];
-	usage: DashboardProps["usage"];
-	pricingPlan: DashboardProps["pricingPlan"];
+type DashboardProps = {
+	user: User;
+	usage: Usage;
+	currentPlan: PricingPlan;
+};
+
+/** Placeholder while a tab's data or code loads. */
+function TabSkeleton() {
+	return (
+		<div aria-busy="true" aria-label="Loading" className="space-y-4">
+			<div className="h-8 w-56 animate-pulse rounded-full bg-product-background-hero" />
+			<div className="h-40 animate-pulse rounded-product-card bg-product-background-hero" />
+			<div className="h-64 animate-pulse rounded-product-card bg-product-background-hero" />
+		</div>
+	);
 }
 
-const DASHBOARD_TABS = [
-	"overview",
-	"subscription",
-	"usage",
-	"settings",
-	"support",
-];
+function OverviewError({ onRetry }: { onRetry: () => void }) {
+	return (
+		<div
+			className="flex flex-col items-center gap-4 rounded-product-card border border-product-border bg-product-card px-6 py-12 text-center"
+			role="alert"
+		>
+			<p className="text-[15px] text-product-foreground-accent">
+				We couldn't load your dashboard. Please try again.
+			</p>
+			<Button onClick={onRetry} size="sm" variant="outline">
+				Try again
+			</Button>
+		</div>
+	);
+}
 
-export default function Dashboard({
-	user,
-	usage,
-	pricingPlan,
-}: ImprovedDashboardProps) {
+/**
+ * Below `/admin/dashboard/` Clerk's `<UserProfile/>` routes its own pages
+ * (e.g. `/admin/dashboard/security`) without a `?tab=`; those belong to the
+ * settings tab.
+ */
+function isAccountSubRoute(pathname: string) {
+	return pathname.startsWith(`${DASHBOARD_PATH}/`);
+}
+
+export function Dashboard({ user, usage, currentPlan }: DashboardProps) {
 	// `?tab=settings` lets the account menu (and a bookmark) open a tab
 	// directly; anything unknown falls back to the overview.
 	const searchParams = useSearchParams();
-	const requestedTab = searchParams.get("tab") ?? "";
-	const [activeTab, setActiveTab] = useState(
-		DASHBOARD_TABS.includes(requestedTab) ? requestedTab : "overview",
+	const pathname = usePathname();
+	const tabParam = searchParams.get("tab");
+	const onSubRoute = isAccountSubRoute(pathname);
+	const [activeTab, setActiveTab] = useState<DashboardTab>(() =>
+		tabParam === null && onSubRoute ? "settings" : toDashboardTab(tabParam),
 	);
+
+	// A link to `?tab=` while the dashboard is already open (the account menu)
+	// changes the URL without remounting; follow it. A URL without `?tab=` on a
+	// Clerk sub-route is Clerk navigating inside Settings, not a tab change.
+	useEffect(() => {
+		if (tabParam === null && onSubRoute) return;
+		setActiveTab(toDashboardTab(tabParam));
+	}, [tabParam, onSubRoute]);
+
+	const selectTab = (tab: DashboardTab) => {
+		setActiveTab(tab);
+		// The History API rather than router.replace: Next keeps
+		// useSearchParams in sync with it, and it skips a server round trip
+		// (this page is force-dynamic) just to switch a client-side tab.
+		// Other query params and the hash are kept.
+		const url = new URL(window.location.href);
+		if (tab === "overview") url.searchParams.delete("tab");
+		else url.searchParams.set("tab", tab);
+		window.history.replaceState(
+			null,
+			"",
+			`${url.pathname}${url.search}${url.hash}`,
+		);
+	};
 
 	const {
 		analytics,
 		catalogues,
 		newsletterSubscribers,
 		loadingStates,
+		errors,
 		refreshAll,
 	} = useDashboardData(activeTab);
 
-	function getSidebarButtonClass(isActive: boolean) {
-		return isActive
-			? "font-bold !bg-product-background-hover !text-product-nav-active !border !border-product-primary shadow-sm hover:scale-[1.03] hover:transform"
-			: "font-medium";
-	}
+	const renderOverview = () => {
+		if (errors.overview) return <OverviewError onRetry={refreshAll} />;
+		if (loadingStates.analytics || loadingStates.catalogues || !analytics) {
+			return <TabSkeleton />;
+		}
+		return (
+			<Overview
+				catalogues={catalogues}
+				currentPlan={currentPlan}
+				newsletterError={Boolean(errors.newsletter)}
+				newsletterSubscribers={newsletterSubscribers}
+				overallAnalytics={{
+					...analytics,
+					totalServiceCatalogues: catalogues.length,
+				}}
+				refreshAll={refreshAll}
+				usage={usage}
+				user={user}
+			/>
+		);
+	};
 
 	return (
-		<>
-			<div className="w-full min-h-screen px-4 sm:px-4 relative md:px-6 lg:px-8 pt-32 pb-12 bg-gradient-to-br from-product-background to-product-background-hero animate-fade-in">
-				<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8">
-					<Suspense
-						fallback={
-							<div className="w-64 h-96 bg-gray-100 animate-pulse rounded-lg" />
-						}
-					>
-						<SidebarContent
-							activeTab={activeTab}
-							getSidebarButtonClass={getSidebarButtonClass}
-							setActiveTab={setActiveTab}
-						/>
-					</Suspense>
+		<div className="flex items-start gap-6 lg:gap-7">
+			<DashboardSidebar activeTab={activeTab} onSelect={selectTab} />
 
-					<section className="flex-1 min-w-0 bg-product-background/95 border border-product-border shadow-md rounded-3xl p-3 sm:p-4 md:p-6 lg:p-8 xl:p-10 relative z-10 text-xs sm:text-sm md:text-base lg:text-lg">
-						<Suspense fallback={null}>
-							<MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
-						</Suspense>
+			<div className="relative z-[1] min-w-0 flex-1 rounded-product-panel border border-product-border bg-product-card/70 p-4 shadow-product md:p-7 lg:p-9">
+				<DashboardTabBar activeTab={activeTab} onSelect={selectTab} />
 
-						{activeTab === "overview" ? (
-							<>
-								{loadingStates.analytics || loadingStates.analytics ? (
-									<div className="text-center py-8">
-										<Loader type="dashboard" />
-									</div>
-								) : (
-									<section className="animate-fade-in">
-										<Overview
-											catalogues={catalogues || []}
-											newsletterSubscribers={newsletterSubscribers || []}
-											overallAnalytics={{
-												...analytics,
-												totalServiceCatalogues: catalogues?.length || 0,
-											}}
-											planId={pricingPlan.id}
-											refreshAll={refreshAll}
-											usage={usage}
-											user={user}
-										/>
-									</section>
-								)}
-							</>
-						) : null}
+				{activeTab === "overview" && renderOverview()}
 
-						<Suspense
-							fallback={
-								<div className="text-center py-4">
-									<Loader type="dashboard" />
-								</div>
-							}
-						>
-							{activeTab === "subscription" ? (
-								<section className="animate-fade-in">
-									<Subscription pricingPlan={pricingPlan} />
-								</section>
-							) : null}
-
-							{activeTab === "usage" ? (
-								<section className="animate-fade-in">
-									<MonthlyUsage data={usage} pricingPlan={pricingPlan} />
-								</section>
-							) : null}
-
-							{activeTab === "settings" ? (
-								<section className="animate-fade-in">
-									<Settings />
-								</section>
-							) : null}
-
-							{activeTab === "support" ? (
-								<section className="animate-fade-in">
-									<Support />
-								</section>
-							) : null}
-						</Suspense>
-					</section>
-				</div>
+				<Suspense fallback={<TabSkeleton />}>
+					{activeTab === "subscription" && (
+						<Subscription currentPlan={currentPlan} />
+					)}
+					{activeTab === "usage" && (
+						<MonthlyUsage currentPlan={currentPlan} usage={usage} />
+					)}
+					{activeTab === "settings" && <Settings />}
+					{activeTab === "support" && <Support />}
+				</Suspense>
 			</div>
-		</>
+		</div>
 	);
 }

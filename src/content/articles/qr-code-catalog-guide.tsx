@@ -1,13 +1,14 @@
-import ArticleCTA from "@/components/articles/ArticleCTA";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import ProsCons from "@/components/articles/ProsCons";
-import Prose from "@/components/articles/Prose";
-import PullQuote from "@/components/articles/PullQuote";
-import StatHighlights from "@/components/articles/StatHighlights";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleCTA } from "@/components/resources/ArticleCTA";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { ProsCons } from "@/components/articles/ProsCons";
+import { Prose } from "@/components/resources/Prose";
+import { PullQuote } from "@/components/articles/PullQuote";
+import { StatHighlights } from "@/components/articles/StatHighlights";
+import { Stepper } from "@/components/resources/Stepper";
 import type { Article } from "./_types";
+import { TextLink } from "@/components/general/TextLink";
 
 const meta = {
 	slug: "qr-code-catalog-guide",
@@ -26,7 +27,7 @@ const meta = {
 	heroImage:
 		"https://images.unsplash.com/photo-1600147131759-880e94a6185f?auto=format&fit=crop&w=1600&q=80",
 	heroImageAlt: "A diner holding up a QR code card at a restaurant table",
-	heroCredit: { name: "Unsplash", url: "https://unsplash.com" },
+	cover: "qr",
 	publishedAt: "2026-06-16",
 	readingTimeMinutes: 7,
 	author: "The Quicktalog Team",
@@ -184,7 +185,7 @@ function Body() {
 				before you commit to a run.
 			</Callout>
 
-			<ArticleCTA variant="mid" />
+			<ArticleCTA />
 
 			<Prose>
 				<h2>Where to place it</h2>
@@ -195,11 +196,13 @@ function Body() {
 					window pulls in passers-by and the counter catches people while they
 					wait. On packaging and receipts, the code turns a one-time visit into
 					a way back to you, which works as well for a printed{" "}
-					<a href="/articles/digital-menu-for-restaurants">restaurant menu</a>{" "}
+					<TextLink href="/articles/digital-menu-for-restaurants">
+						restaurant menu
+					</TextLink>{" "}
 					as it does for a{" "}
-					<a href="/articles/digital-service-menu-salons-spas">
+					<TextLink href="/articles/digital-service-menu-salons-spas">
 						salon or spa service list
-					</a>
+					</TextLink>
 					. Online, the same link belongs in your Instagram bio and your Google
 					Business profile, so the code and the link reinforce each other.
 				</p>

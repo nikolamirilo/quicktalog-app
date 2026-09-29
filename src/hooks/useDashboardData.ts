@@ -1,98 +1,81 @@
-import type { OverallAnalytics } from "@quicktalog/common";
-import { Catalogue } from "@quicktalog/common";
-import useSWR from "swr";
+"use client";
+import type { Catalogue, OverallAnalytics } from "@quicktalog/common";
+import useSWR, { mutate } from "swr";
+
 import type { NewsletterSubscriber } from "@/types/shared";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const KEYS = {
+	analytics: "/api/dashboard/analytics",
+	catalogues: "/api/dashboard/catalogues",
+	newsletter: "/api/dashboard/newsletter",
+} as const;
 
-function useAnalytics(shouldFetch: boolean) {
-	const { data, error, isLoading, mutate } = useSWR(
-		shouldFetch ? "/api/dashboard/analytics" : null,
-		fetcher,
-		{
-			revalidateOnFocus: false,
-			revalidateOnReconnect: false,
-			dedupingInterval: 60000,
-			refreshInterval: 300000,
-		},
-	);
-
-	return {
-		analytics: data as OverallAnalytics | undefined,
-		loading: isLoading,
-		error,
-		refresh: mutate,
-	};
+/** Thrown for a non-2xx answer, so SWR reports an error instead of storing the body. */
+export class DashboardFetchError extends Error {
+	constructor(
+		readonly url: string,
+		readonly status: number,
+	) {
+		super(`GET ${url} failed with ${status}`);
+		this.name = "DashboardFetchError";
+	}
 }
 
-function useCatalogues(shouldFetch: boolean) {
-	const { data, error, isLoading, mutate } = useSWR(
-		shouldFetch ? "/api/dashboard/catalogues" : null,
-		fetcher,
-		{
-			revalidateOnFocus: false,
-			revalidateOnReconnect: false,
-			dedupingInterval: 60000,
-		},
-	);
-
-	return {
-		catalogues: (data || []) as Catalogue[],
-		loading: isLoading,
-		error,
-		refresh: mutate,
-	};
+async function fetcher<T>(url: string): Promise<T> {
+	const res = await fetch(url);
+	if (!res.ok) throw new DashboardFetchError(url, res.status);
+	return res.json() as Promise<T>;
 }
 
-function useNewsletter(shouldFetch: boolean) {
-	const { data, error, isLoading, mutate } = useSWR(
-		shouldFetch ? "/api/dashboard/newsletter" : null,
-		fetcher,
-		{
-			revalidateOnFocus: false,
-			revalidateOnReconnect: false,
-			dedupingInterval: 60000,
-		},
-	);
+const OPTIONS = {
+	revalidateOnFocus: false,
+	revalidateOnReconnect: false,
+	dedupingInterval: 60000,
+};
 
-	return {
-		newsletterSubscribers: (data || []) as NewsletterSubscriber[],
-		loading: isLoading,
-		error,
-		refresh: mutate,
-	};
+/**
+ * Re-fetches the overview's three lists by SWR key. Needs no hook instance, so
+ * a catalogue card or the builder can call it without subscribing to the data.
+ */
+export async function refreshDashboardData(): Promise<void> {
+	await Promise.all(Object.values(KEYS).map((key) => mutate(key)));
 }
 
+/** The overview's data. Nothing is fetched while another tab is open. */
 export function useDashboardData(activeTab: string) {
-	const shouldFetchOverviewData = activeTab === "overview";
+	const shouldFetch = activeTab === "overview";
 
-	const analyticsData = useAnalytics(shouldFetchOverviewData);
-	const cataloguesData = useCatalogues(shouldFetchOverviewData);
-	const newsletterData = useNewsletter(shouldFetchOverviewData);
-
-	const refreshAll = async () => {
-		await Promise.all([
-			analyticsData.refresh(),
-			cataloguesData.refresh(),
-			newsletterData.refresh(),
-		]);
-	};
+	const analytics = useSWR<OverallAnalytics>(
+		shouldFetch ? KEYS.analytics : null,
+		fetcher,
+		{ ...OPTIONS, refreshInterval: 300000 },
+	);
+	const catalogues = useSWR<Catalogue[]>(
+		shouldFetch ? KEYS.catalogues : null,
+		fetcher,
+		OPTIONS,
+	);
+	const newsletter = useSWR<NewsletterSubscriber[]>(
+		shouldFetch ? KEYS.newsletter : null,
+		fetcher,
+		OPTIONS,
+	);
 
 	return {
-		analytics: analyticsData.analytics,
-		catalogues: cataloguesData.catalogues,
-		newsletterSubscribers: newsletterData.newsletterSubscribers,
+		analytics: analytics.data,
+		catalogues: Array.isArray(catalogues.data) ? catalogues.data : [],
+		newsletterSubscribers: Array.isArray(newsletter.data)
+			? newsletter.data
+			: [],
 		loadingStates: {
-			analytics: analyticsData.loading,
-			catalogues: cataloguesData.loading,
+			analytics: analytics.isLoading,
+			catalogues: catalogues.isLoading,
 		},
 		errors: {
-			analytics: analyticsData.error,
-			catalogues: cataloguesData.error,
+			/** The overview cannot render without these two. */
+			overview: analytics.error ?? catalogues.error,
+			newsletter: newsletter.error,
 		},
-		refreshAll,
-		refreshAnalytics: analyticsData.refresh,
-		refreshCatalogues: cataloguesData.refresh,
-		refreshNewsletter: newsletterData.refresh,
+		refreshAll: refreshDashboardData,
 	};
 }

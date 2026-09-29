@@ -1,120 +1,99 @@
-"use client";
-import { Button } from "@/components/ui/button";
+import { Clock, DollarSign, Play, Smartphone, Zap } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import {
-	FiCheck,
-	FiClock,
-	FiDollarSign,
-	FiPlay,
-	FiSmartphone,
-} from "react-icons/fi";
-import CreateCatalogueButton from "@/components/dashboard/components/CreateCatalogueButton";
+
+import { CreateCatalogueButton } from "@/components/catalogue/create/CreateCatalogueButton";
+import { CheckList } from "@/components/general/CheckList";
+import { LottiePlayer } from "@/components/general/LottiePlayer";
+import { HeroBackdrop, HeroKicker } from "@/components/general/PageHero";
+import { Button } from "@/components/ui/button";
+import { signupAssurances } from "@/constants/marketing";
 
 const valuePropositions = [
-	{ icon: FiClock, text: "Go live in under 5 minutes" },
-	{ icon: FiSmartphone, text: "Works on any device" },
-	{ icon: FiDollarSign, text: "Free online catalog maker" },
+	{ icon: Clock, text: "Go live in under 5 minutes" },
+	{ icon: Smartphone, text: "Works on any device" },
+	{ icon: DollarSign, text: "Free online catalog maker" },
 ];
 
-const trustIndicators = [
-	{ icon: FiCheck, text: "No credit card required" },
-	{ icon: FiCheck, text: "Start with our free plan" },
-];
-
-const IconText: React.FC<{ icon: React.ElementType; text: string }> = ({
-	icon: Icon,
-	text,
-}) => (
-	<div className="flex items-center gap-2">
-		<Icon className="h-4 w-4 text-product-primary" />
-		<span className="font-medium">{text}</span>
-	</div>
-);
-
-const Hero: React.FC = () => {
+export function Hero() {
 	return (
 		<section
-			className="relative w-full min-h-[90vh] overflow-hidden px-4 pt-32 pb-32 md:pt-40 md:pb-40"
+			aria-label="Hero"
+			className="relative isolate flex min-h-[90vh] items-center overflow-hidden px-5 pb-10 pt-32 lg:pb-14 lg:pt-[150px]"
 			id="hero"
-			role="banner"
 		>
-			{/* Background Grid */}
-			<div className="absolute inset-0 -z-10 bg-product-background-hero bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]" />
-
-			{/* Ambient color blob behind the image */}
-			<div
-				aria-hidden="true"
-				className="pointer-events-none absolute -z-10 right-[-8%] top-1/3 h-[520px] w-[520px] rounded-full bg-product-primary/15 blur-[120px]"
-			/>
-
-			{/* Smooth bottom fade into next section */}
-			<div className="pointer-events-none absolute bottom-0 left-0 right-0 h-80 bg-[linear-gradient(to_bottom,transparent_0%,rgba(233,238,255,0.2)_30%,rgba(218,224,243,0.5)_65%,rgba(202,208,230,0.8)_100%)]" />
-
-			<div className="relative z-10 grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8 lg:gap-10 w-full max-w-7xl mx-auto items-center">
-				{/* Left: Content */}
-				<div className="w-full text-center">
-					<h1 className="text-4xl font-bold text-product-foreground md:text-5xl lg:text-6xl lg:leading-tight">
+			<HeroBackdrop />
+			<div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 items-center gap-10 lg:grid-cols-2">
+				<div className="text-center">
+					<HeroKicker
+						icon={
+							<LottiePlayer
+								animation="sparkle"
+								className="h-4 w-4"
+								fallback={<Zap />}
+								restFrame={30}
+							/>
+						}
+					>
+						Easy. Quick. Affordable. Everywhere.
+					</HeroKicker>
+					<h1 className="text-balance text-display-xl">
 						Create a Stunning Digital Catalogue in Minutes
 					</h1>
-					<p className="mt-4 text-lg text-product-foreground-accent md:text-xl">
+					<p className="mx-auto mt-5 max-w-[620px] text-lead text-product-foreground-accent">
 						The best free online catalog maker for businesses. Turn your
 						services, menus, or products into an interactive, mobile-friendly
 						digital catalog or price list. No code or design skills required.
 					</p>
 
-					{/* Value Propositions */}
-					<div className="mt-6 flex flex-col items-center justify-center gap-4 text-sm text-product-foreground-accent sm:flex-row sm:flex-wrap">
-						{valuePropositions.map(({ icon, text }, index) => (
-							<IconText icon={icon} key={`value-${index}`} text={text} />
+					<ul className="mt-[26px] flex flex-col items-center justify-center gap-x-6 gap-y-3 text-[14.5px] font-medium text-product-foreground-accent sm:flex-row sm:flex-wrap">
+						{valuePropositions.map(({ icon: Icon, text }) => (
+							<li className="flex items-center gap-2" key={text}>
+								<Icon
+									aria-hidden="true"
+									className="h-4 w-4 text-product-primary-ink"
+								/>
+								{text}
+							</li>
 						))}
-					</div>
+					</ul>
 
-					{/* CTA Buttons */}
-					<div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-						<CreateCatalogueButton type="home" />
-						<Link href="/demo">
-							<Button
-								aria-label="Try the catalog demo"
-								className="h-[50px] px-7 py-3.5 text-base min-w-[200px] sm:h-14 sm:px-8 sm:py-4 sm:text-lg sm:min-w-56 border-2 border-product-primary text-wrap w-fit"
-								variant="outline"
-							>
-								<FiPlay className="mr-2 h-5 w-5" />
+					<div className="mt-8 flex flex-col items-center justify-center gap-3.5 sm:flex-row">
+						<CreateCatalogueButton size="hero" />
+						<Button
+							asChild
+							className="min-w-[200px] sm:min-w-56"
+							size="lg"
+							variant="outline"
+						>
+							<Link href="/demo">
+								<Play aria-hidden="true" />
 								Try Demo
-							</Button>
-						</Link>
+							</Link>
+						</Button>
 					</div>
 
-					{/* Trust Indicators */}
-					<div className="mt-6 flex flex-wrap items-center justify-center gap-6 text-sm text-product-foreground-accent">
-						{trustIndicators.map(({ icon, text }, index) => (
-							<IconText icon={icon} key={`trust-${index}`} text={text} />
-						))}
-					</div>
+					<CheckList
+						className="mt-6 items-center gap-x-6 gap-y-2.5 font-medium text-product-foreground-accent"
+						iconClassName="h-4 w-4"
+						items={signupAssurances}
+					/>
 				</div>
 
-				{/* Right: Image */}
-				<div className="relative w-full flex justify-center lg:justify-end">
-					{/* Soft glow halo directly behind the image */}
+				<div className="relative flex justify-center lg:justify-end">
 					<div
 						aria-hidden="true"
-						className="pointer-events-none absolute inset-0 flex items-center justify-center"
-					>
-						<div className="h-[75%] w-[75%] rounded-full bg-product-primary/25 blur-[90px]" />
-					</div>
-
+						className="pointer-events-none absolute inset-[12%] rounded-full bg-product-primary/[0.26] blur-[80px]"
+					/>
 					<img
 						alt="Interactive digital catalog"
-						className="relative z-10 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl h-auto drop-shadow-2xl lg:-mr-10 xl:-mr-20"
+						className="relative w-full max-w-[720px] drop-shadow-[0_30px_40px_rgb(var(--product-foreground-rgb)/0.18)] lg:-mr-10 lg:max-w-[760px] xl:-mr-20"
 						fetchPriority="high"
-						height={340 * 1.6}
-						sizes="(max-width: 1024px) 90vw, 900px"
-						src="/images/marketing/hero.png"
+						height={768}
+						src="/images/marketing/hero.webp"
+						width={1100}
 					/>
 				</div>
 			</div>
 		</section>
 	);
-};
-
-export default React.memo(Hero);
+}

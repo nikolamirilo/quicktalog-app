@@ -1,6 +1,6 @@
 "use client";
-import AppearanceOptions from "@/components/general/AppearanceOptions";
-import LimitsModal from "@/components/modals/LimitsModal";
+import { AppearanceOptions } from "@/components/general/AppearanceOptions";
+import { LimitsModal } from "@/components/modals/LimitsModal";
 import {
 	contentFontSizeMap,
 	fontFamilyMap,
@@ -22,7 +22,7 @@ import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import Overlay from "@/components/general/Overlay";
+import { Overlay } from "@/components/general/Overlay";
 import CatalogueChat from "@/components/catalogue/chat/CatalogueChat";
 import ContentBlockButton from "@/components/catalogue/inputs/ContentBlockButton";
 import BuilderSidebar from "@/components/catalogue/inputs/sidebar";
@@ -191,7 +191,7 @@ const Catalogue = ({
 			)}
 			<div
 				aria-label={`${item.heading} Catalogue`}
-				className={`${item.appearance.theme.name || "theme-monochrome"} bg-background text-foreground min-h-screen flex flex-col`}
+				className={`catalogue-root ${item.appearance.theme.name || "theme-monochrome"} bg-background text-foreground min-h-screen flex flex-col`}
 				role="application"
 				style={
 					{

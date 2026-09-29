@@ -22,7 +22,11 @@ Next looks for them beside the app directory.
 | Kind | Location | Notes |
 |---|---|---|
 | Feature components | `components/<feature>/` | Grouped by feature: `catalogue/`, `dashboard/`, `auth/`, `emails/`, `charts/` |
-| UI primitives | `src/components/ui/` | Radix/shadcn wrappers - reuse before building new |
+| UI primitives | `src/components/ui/` | Radix/shadcn wrappers styled with product tokens - reuse before building new |
+| Shared page blocks | `src/components/general/` | Sections, heroes, CTA band, FAQ, Lottie, `Rise`, `Container`, `TextLink`, `FilterChip` - see Styling below |
+| Resource pages | `src/components/resources/` | Pieces shared by articles, docs, help and release notes (prose, TOC, CTA, meta line) |
+| Status pages | `src/components/status/` | 404 / error screen content |
+| Create catalogue | `src/components/catalogue/create/` | `CreateCatalogueProvider` (mount once per page), button, dialog |
 | Server mutations (React) | `actions/<domain>.ts` | `"use server"`, Drizzle. See [[server-action-and-route]] |
 | HTTP endpoints / webhooks | `app/api/<name>/route.ts` | Only when a URL is needed |
 | Pages | `app/<route>/page.tsx` | App Router |
@@ -51,6 +55,18 @@ Cross-component state lives in [context/](../../../src/context/): `CatalogueCont
 - **Renderer / Input pairing** - a catalogue block is a pair: `sections/[Name].tsx` (display, view+edit) and `inputs/[Name]Input.tsx` (config form). Keep them split; don't merge display and form into one component (SRP). Full flow: [[adding-new-content-block]].
 - **Modals** use Radix `AlertDialog` (`src/components/ui/`), with `sonner` for toasts and Zod schemas from `src/constants/schemas.ts` for validation.
 - **One job per component/hook.** Data-fetching, presentation, and form state are separate units (this is SRP/ISP in practice - the patterns [docs/standards/solid-principles.md](../../../docs/standards/solid-principles.md) argues for).
+
+## Styling
+
+The product UI has one theme: `--product-*` tokens in `src/styles/product.css` → Tailwind `product-*` names → `src/components/ui/*` → shared blocks in `src/components/general/` (`Section`, `SectionHeading`, `PageHero`, `CtaBand`, `IconTile`, `Eyebrow`, `FaqAccordion`, `LottiePlayer`). See [docs/architecture/product-theme.md](../../../docs/architecture/product-theme.md).
+
+- Restyle by changing a token or primitive, not by adding a parallel component or hard-coded colours.
+- Use `product-*` colours (opacity modifiers like `bg-product-primary/10` work); never the generic `primary`/`background`/`card`/`border` names (those are catalogue theme variables). No hand-written `rgba(...)`/hex for colours a token covers.
+- Merge classes with `cn()`; when you add a custom Tailwind name (size, shadow, radius, gradient), register it in `lib/ui/cn.ts`.
+- Shared helpers: `Container` and `TextLink` (`components/general`), `formatIsoDay` (`lib/format/date.ts`), `formatPrice` (`lib/format/price.ts`); hooks live in `src/hooks/`, not inside component files; data and copy that isn't component logic lives in `src/constants/`.
+- Components use **named exports**; only Next special files (`page`, `layout`, `loading`, `error`, `not-found`, `global-error`) use default exports.
+- Never let product styling reach the published catalogue: it uses `.catalogue-root`, `CatalogueButton` and `CatalogueDialog`, not `ui/button`/`ui/dialog`. Check a published catalogue after changing anything shared.
+- Public pages sit under `app/(site)` layouts (no per-page `Navbar`/`Footer`/`<main>`); app pages wrap in `AppShell`.
 
 ## Mechanical conventions
 

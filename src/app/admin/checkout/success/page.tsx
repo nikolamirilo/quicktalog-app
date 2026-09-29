@@ -1,51 +1,74 @@
-import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { SuccessMark } from "@/components/dashboard/checkout/SuccessMark";
+import { Button } from "@/components/ui/button";
+import { footerDetails } from "@/constants/details";
+
+/** Bare frame: no navbar or footer, just the confirmation card. */
 const page = () => {
 	return (
-		<div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-product-background to-product-background-hero">
-			<div className="w-full max-w-2xl py-8 sm:py-12 px-4 sm:px-6 mx-4 text-center transition-all transform bg-product-background border border-product-border shadow-md rounded-3xl hover:shadow-product-shadow-hover">
-				<div className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6 sm:mb-8 bg-green-100 rounded-full border border-green-200">
-					<svg
-						className="w-8 h-8 sm:w-12 sm:h-12 text-green-600"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-					>
-						<path
-							d="M5 13l4 4L19 7"
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-						></path>
-					</svg>
-				</div>
+		<main
+			className="relative isolate flex min-h-svh flex-col items-center px-4 pb-12 pt-5 sm:px-6 sm:pb-14 sm:pt-7"
+			id="main"
+		>
+			<div
+				aria-hidden="true"
+				className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-product-background"
+			>
+				<span className="absolute inset-0 bg-[linear-gradient(to_right,rgb(var(--product-foreground-rgb)/0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgb(var(--product-foreground-rgb)/0.05)_1px,transparent_1px)] bg-[length:44px_44px] [mask-image:radial-gradient(ellipse_55%_50%_at_50%_45%,#000,transparent)]" />
+				<span className="absolute left-1/2 top-[42%] h-[620px] w-[620px] max-w-[130vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-product-primary/25 blur-[110px]" />
+			</div>
 
-				<h1 className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl font-bold text-product-foreground font-heading">
+			<Link
+				aria-label="Quicktalog home"
+				className="inline-flex rounded-full p-1"
+				href="/"
+			>
+				<img
+					alt=""
+					className="h-[30px] w-auto"
+					height={30}
+					src="/images/brand/logo.svg"
+					width={83}
+				/>
+			</Link>
+
+			<section
+				aria-labelledby="checkout-success-h"
+				className="m-auto flex w-full max-w-[440px] flex-col items-center rounded-product-panel border border-product-border bg-product-card px-7 pb-8 pt-10 text-center shadow-product sm:px-11 sm:pb-9 sm:pt-12"
+			>
+				<SuccessMark />
+				<h1
+					className="text-[clamp(30px,5vw,38px)] font-extrabold leading-[1.08] tracking-[-0.035em]"
+					id="checkout-success-h"
+				>
 					Payment Successful!
 				</h1>
-
-				<p className="mb-6 sm:mb-8 text-base sm:text-lg md:text-xl text-product-foreground-accent font-body">
+				<p className="mt-2.5 text-[17px] text-product-foreground-accent">
 					Thank you for your purchase.
 				</p>
-
-				<div className="pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-product-border">
-					<p className="text-base sm:text-lg text-product-foreground-accent font-body">
-						Have questions? Contact us at:
-					</p>
-					<a
-						className="inline-block mt-2 text-lg sm:text-xl font-medium text-product-primary hover:text-product-primary-accent transition-colors duration-200"
-						href="mailto:quicktalog@outlook.com"
-					>
-						quicktalog@outlook.com
-					</a>
-				</div>
-
-				<Button className="mt-8 sm:mt-12" size="lg" variant="cta">
-					<Link href="/admin/dashboard">Return to Dashboard</Link>
+				<Button asChild className="group mt-7 w-full" size="lg">
+					<Link href="/admin/dashboard">
+						Return to Dashboard
+						<ArrowRight
+							aria-hidden="true"
+							className="transition-transform group-hover:translate-x-0.5"
+						/>
+					</Link>
 				</Button>
-			</div>
-		</div>
+				<p className="mt-5 text-sm leading-normal text-product-muted">
+					Have questions? Contact us at:
+					<br />
+					<a
+						className="font-semibold text-product-primary-ink underline decoration-product-primary-ink/35 underline-offset-[3px] hover:decoration-current"
+						href={`mailto:${footerDetails.email}`}
+					>
+						{footerDetails.email}
+					</a>
+				</p>
+			</section>
+		</main>
 	);
 };
 

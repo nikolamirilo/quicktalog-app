@@ -1,315 +1,317 @@
 "use client";
+
+import {
+	AlertCircle,
+	ChevronDown,
+	Loader2,
+	Mail,
+	MessageSquare,
+	Send,
+	User,
+} from "lucide-react";
+import { type FormEvent, useEffect, useId, useRef, useState } from "react";
+
+import { ContactField } from "@/components/contact/ContactField";
+import { TextLink } from "@/components/general/TextLink";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { contactSubjects } from "@/constants/details";
+import {
+	CONTACT_LIMITS,
+	type ContactField as ContactFieldName,
+	type ContactValues,
+	getContactErrors,
+} from "@/constants/schemas";
+import { cn } from "@/lib/ui/cn";
 
-interface ContactFormProps {
-	name: string;
-	setName: (value: string) => void;
-	company: string;
-	setCompany: (value: string) => void;
-	email: string;
-	setEmail: (value: string) => void;
-	subject: string;
-	setSubject: (value: string) => void;
-	message: string;
-	setMessage: (value: string) => void;
-	isLoading: boolean;
-	handleSubmit: (e: React.MouseEvent) => void;
-}
+type ValidatedField = "name" | "email" | "message";
+type Errors = Partial<Record<ValidatedField, string>>;
 
-export const subjectOptions = [
-	"Custom Plan",
-	"Pricing Questions",
-	"Technical Support",
-	"Feature Request",
-	"Partnership",
-	"General Inquiry",
-	"Other",
-];
+const validatedFields: ValidatedField[] = ["name", "email", "message"];
 
-const isValidEmail = (email: string) =>
-	/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const DEFAULT_SUBJECT = {
+	page: "Custom Plan",
+	support: "Technical Support",
+} as const;
 
-const ContactForm = ({
-	name,
-	setName,
-	company,
-	setCompany,
-	email,
-	setEmail,
-	subject,
-	setSubject,
-	message,
-	setMessage,
-	isLoading,
-	handleSubmit,
-}: ContactFormProps) => {
-	return (
-		<div className="bg-product-background rounded-3xl shadow-md p-8 md:p-12 border border-product-border">
-			<div className="space-y-8">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-					{/* Name Field */}
-					<div className="space-y-2">
-						<label
-							className="block text-sm font-semibold text-product-foreground mb-2"
-							htmlFor="name"
-						>
-							Full name
-						</label>
-						<div className="relative">
-							<input
-								className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover"
-								id="name"
-								onChange={(e) => setName(e.target.value)}
-								placeholder="Jane Doe"
-								required
-								type="text"
-								value={name}
-							/>
-							<div className="absolute inset-y-0 right-4 flex items-center">
-								<svg
-									className="w-5 h-5 text-product-icon"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-									/>
-								</svg>
-							</div>
-						</div>
-					</div>
-
-					{/* Company Field */}
-					<div className="space-y-2">
-						<label
-							className="block text-sm font-semibold text-product-foreground mb-2"
-							htmlFor="company"
-						>
-							Company (optional)
-						</label>
-						<div className="relative">
-							<input
-								className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover"
-								id="company"
-								onChange={(e) => setCompany(e.target.value)}
-								placeholder="Your Company"
-								type="text"
-								value={company}
-							/>
-							<div className="absolute inset-y-0 right-4 flex items-center">
-								<svg
-									className="w-5 h-5 text-product-icon"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-									/>
-								</svg>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-					{/* Email Field */}
-					<div className="space-y-2">
-						<label
-							className="block text-sm font-semibold text-product-foreground mb-2"
-							htmlFor="email"
-						>
-							Email
-						</label>
-						<div className="relative">
-							<input
-								className={`w-full px-4 py-4 bg-product-background border-2 rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover ${email && !isValidEmail(email) ? "border-red-500" : "border-product-border"}`}
-								id="email"
-								onChange={(e) => setEmail(e.target.value)}
-								placeholder="name@company.com"
-								required
-								type="email"
-								value={email}
-							/>
-							<div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
-								<svg
-									className="w-5 h-5 text-product-icon"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-									/>
-								</svg>
-							</div>
-						</div>
-						<div style={{ minHeight: "1.25rem" }}>
-							{email && !isValidEmail(email) && (
-								<p className="text-xs text-red-500 mt-1 ml-1">
-									Enter a valid work email (for example, name@company.com).
-								</p>
-							)}
-						</div>
-					</div>
-
-					{/* Subject Field */}
-					<div className="space-y-2">
-						<label
-							className="block text-sm font-semibold text-product-foreground mb-2"
-							htmlFor="subject"
-						>
-							Subject
-						</label>
-						<div className="relative">
-							<select
-								className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover appearance-none cursor-pointer"
-								id="subject"
-								onChange={(e) => setSubject(e.target.value)}
-								required
-								value={subject}
-							>
-								{subjectOptions.map((option) => (
-									<option key={option} value={option}>
-										{option}
-									</option>
-								))}
-							</select>
-							<div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-								<svg
-									className="w-5 h-5 text-product-icon"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M19 9l-7 7-7-7"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-									/>
-								</svg>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* Message Field */}
-				<div className="space-y-2">
-					<label
-						className="block text-sm font-semibold text-product-foreground mb-2"
-						htmlFor="message"
-					>
-						How can we help?
-					</label>
-					<div className="relative">
-						<textarea
-							className="w-full px-4 py-4 bg-product-background border-2 border-product-border rounded-xl text-product-foreground placeholder-product-foreground-accent/60 focus:outline-none focus:border-product-primary focus:bg-product-background-hover transition-all duration-300 shadow-product-shadow hover:shadow-product-shadow-hover resize-none"
-							id="message"
-							onChange={(e) => setMessage(e.target.value)}
-							placeholder="Tell us about your business, goals, or any questions you have."
-							required
-							rows={6}
-							value={message}
-						/>
-						<div className="absolute top-4 right-4">
-							<svg
-								className="w-5 h-5 text-product-icon"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								<path
-									d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth={2}
-								/>
-							</svg>
-						</div>
-					</div>
-				</div>
-
-				{/* Submit Button */}
-				<div className="flex justify-center pt-4">
-					<Button
-						disabled={
-							isLoading ||
-							!name.trim() ||
-							!email.trim() ||
-							!message.trim() ||
-							!isValidEmail(email)
-						}
-						type="submit"
-						variant="contact"
-					>
-						{isLoading ? (
-							<div className="flex items-center justify-center">
-								<svg
-									className="animate-spin -ml-1 mr-3 h-5 w-5 text-product-foreground"
-									fill="none"
-									viewBox="0 0 24 24"
-								>
-									<circle
-										className="opacity-25"
-										cx="12"
-										cy="12"
-										r="10"
-										stroke="currentColor"
-										strokeWidth="4"
-									></circle>
-									<path
-										className="opacity-75"
-										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-										fill="currentColor"
-									></path>
-								</svg>
-								Sending…
-							</div>
-						) : (
-							<div
-								className="flex items-center justify-center"
-								onClick={handleSubmit}
-							>
-								Send message
-								<svg
-									className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-									/>
-								</svg>
-							</div>
-						)}
-					</Button>
-				</div>
-				<p className="text-xs text-product-foreground-accent text-center mt-3">
-					By submitting, you agree to our
-					<Link className="underline ml-2" href="/privacy-policy">
-						Privacy Policy
-					</Link>
-					.
-				</p>
-			</div>
-		</div>
-	);
+type ContactFormProps = {
+	/** Resolves to true when the message was sent. */
+	onSubmit: (values: ContactValues) => Promise<boolean>;
+	/** Prefill, e.g. the signed-in user's name and email. Filled into empty fields only. */
+	defaultValues?: Partial<ContactValues>;
+	/**
+	 * `page`: the public contact page, with its own heading and large fields.
+	 * `support`: the dashboard support card (compact, no heading, Technical Support).
+	 */
+	variant?: "page" | "support";
 };
 
-export default ContactForm;
+/**
+ * The contact / support message form. Field errors come from the shared
+ * contact schema, the same one the server action parses with.
+ */
+export function ContactForm({
+	onSubmit,
+	defaultValues,
+	variant = "page",
+}: ContactFormProps) {
+	const compact = variant === "support";
+	const idBase = useId();
+	const id = (field: string) => `contact-${field}${compact ? idBase : ""}`;
+	const [values, setValues] = useState<ContactValues>({
+		name: defaultValues?.name ?? "",
+		email: defaultValues?.email ?? "",
+		subject: defaultValues?.subject ?? DEFAULT_SUBJECT[variant],
+		message: defaultValues?.message ?? "",
+	});
+	const [errors, setErrors] = useState<Errors>({});
+	const [touched, setTouched] = useState<
+		Partial<Record<ValidatedField, boolean>>
+	>({});
+	const [isLoading, setIsLoading] = useState(false);
+	const [sendError, setSendError] = useState(false);
+	const refs = {
+		name: useRef<HTMLInputElement>(null),
+		email: useRef<HTMLInputElement>(null),
+		message: useRef<HTMLTextAreaElement>(null),
+	};
+
+	// The session may arrive after the first render; fill only empty fields.
+	const defaultName = defaultValues?.name;
+	const defaultEmail = defaultValues?.email;
+	useEffect(() => {
+		setValues((current) => ({
+			...current,
+			name: current.name || defaultName || "",
+			email: current.email || defaultEmail || "",
+		}));
+	}, [defaultName, defaultEmail]);
+
+	const errorFor = (field: ValidatedField, next: ContactValues) =>
+		getContactErrors(next)[field] ?? "";
+
+	const update = (field: ContactFieldName, value: string) => {
+		const next = { ...values, [field]: value };
+		setValues(next);
+		// Re-check as the visitor types, but only once a field has been left.
+		if (field !== "subject" && touched[field]) {
+			setErrors((current) => ({ ...current, [field]: errorFor(field, next) }));
+		}
+	};
+
+	const blur = (field: ValidatedField) => {
+		setTouched((current) => ({ ...current, [field]: true }));
+		setErrors((current) => ({ ...current, [field]: errorFor(field, values) }));
+	};
+
+	const handleSubmit = async (event: FormEvent) => {
+		event.preventDefault();
+		const allErrors = getContactErrors(values);
+		const nextErrors: Errors = {};
+		for (const field of validatedFields) nextErrors[field] = allErrors[field];
+		setErrors(nextErrors);
+		setTouched({ name: true, email: true, message: true });
+		const firstInvalid = validatedFields.find((field) => nextErrors[field]);
+		if (firstInvalid) {
+			refs[firstInvalid].current?.focus();
+			return;
+		}
+
+		setIsLoading(true);
+		setSendError(false);
+		try {
+			const sent = await onSubmit(values);
+			if (!sent) setSendError(true);
+		} catch {
+			setSendError(true);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const describedBy = (field: ValidatedField, extra?: string) =>
+		[errors[field] ? `${id(field)}-error` : null, extra]
+			.filter(Boolean)
+			.join(" ") || undefined;
+
+	const inputClass = compact ? "pr-[46px]" : "h-[52px] pr-[46px] text-base";
+
+	return (
+		<form noValidate onSubmit={handleSubmit}>
+			{compact ? (
+				<p className="text-[13px] text-product-muted">
+					Fields marked <span aria-hidden="true">*</span>
+					<span className="sr-only">with an asterisk</span> are required.
+				</p>
+			) : (
+				<div>
+					<h2 className="text-title-lg">Send us a message</h2>
+					<p className="mt-1.5 text-sm text-product-muted">
+						Fields marked <span aria-hidden="true">*</span>
+						<span className="sr-only">with an asterisk</span> are required.
+					</p>
+				</div>
+			)}
+
+			<div
+				className={cn(
+					"grid grid-cols-1 sm:grid-cols-2",
+					compact
+						? "mt-3.5 gap-x-3.5 gap-y-3.5"
+						: "mt-[22px] gap-x-[18px] gap-y-4",
+				)}
+			>
+				<ContactField
+					compact={compact}
+					error={errors.name}
+					icon={<User />}
+					id={id("name")}
+					label="Full name"
+					required
+				>
+					<Input
+						aria-describedby={describedBy("name")}
+						aria-invalid={Boolean(errors.name)}
+						aria-required="true"
+						autoComplete="name"
+						className={inputClass}
+						id={id("name")}
+						maxLength={CONTACT_LIMITS.name}
+						onBlur={() => blur("name")}
+						onChange={(e) => update("name", e.target.value)}
+						placeholder="Jane Doe"
+						ref={refs.name}
+						type="text"
+						value={values.name}
+					/>
+				</ContactField>
+
+				<ContactField
+					compact={compact}
+					error={errors.email}
+					icon={<Mail />}
+					id={id("email")}
+					label="Email"
+					required
+				>
+					<Input
+						aria-describedby={describedBy("email")}
+						aria-invalid={Boolean(errors.email)}
+						aria-required="true"
+						autoComplete="email"
+						className={inputClass}
+						id={id("email")}
+						inputMode="email"
+						maxLength={CONTACT_LIMITS.email}
+						onBlur={() => blur("email")}
+						onChange={(e) => update("email", e.target.value)}
+						placeholder="name@company.com"
+						ref={refs.email}
+						type="email"
+						value={values.email}
+					/>
+				</ContactField>
+
+				<ContactField
+					compact={compact}
+					full
+					icon={<ChevronDown />}
+					id={id("subject")}
+					label="Subject"
+				>
+					<select
+						className={cn(
+							"flex w-full cursor-pointer appearance-none rounded-[14px] border-[1.5px] border-product-border-strong bg-product-card pl-4 pr-[46px] text-base text-product-foreground transition-[border-color,box-shadow] hover:border-product-border-hover focus-visible:border-product-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-product-primary/25",
+							compact ? "h-11 md:text-[15px]" : "h-[52px]",
+						)}
+						id={id("subject")}
+						onChange={(e) => update("subject", e.target.value)}
+						value={values.subject}
+					>
+						{contactSubjects.map((option) => (
+							<option key={option} value={option}>
+								{option}
+							</option>
+						))}
+					</select>
+				</ContactField>
+
+				<ContactField
+					compact={compact}
+					error={errors.message}
+					footer={
+						<span
+							className="ml-auto mt-1.5 text-[12.5px] tabular-nums text-product-muted"
+							id={`${id("message")}-count`}
+						>
+							{values.message.length} / {CONTACT_LIMITS.message}
+						</span>
+					}
+					full
+					icon={<MessageSquare />}
+					id={id("message")}
+					label="How can we help?"
+					required
+				>
+					<Textarea
+						aria-describedby={describedBy("message", `${id("message")}-count`)}
+						aria-invalid={Boolean(errors.message)}
+						aria-required="true"
+						className={cn(
+							"resize-y py-3.5 pr-[46px] text-base leading-[1.55]",
+							compact ? "min-h-[130px]" : "min-h-[150px]",
+						)}
+						id={id("message")}
+						maxLength={CONTACT_LIMITS.message}
+						onBlur={() => blur("message")}
+						onChange={(e) => update("message", e.target.value)}
+						placeholder="Tell us about your business, goals, or any questions you have."
+						ref={refs.message}
+						rows={6}
+						value={values.message}
+					/>
+				</ContactField>
+			</div>
+
+			{sendError && (
+				<p
+					className="mt-[18px] flex items-start gap-2.5 rounded-[14px] bg-product-error-soft px-4 py-3 text-sm font-medium text-product-error-ink"
+					role="alert"
+				>
+					<AlertCircle
+						aria-hidden="true"
+						className="mt-0.5 h-4 w-4 flex-none text-product-error"
+					/>
+					We couldn't send your message. Please try again in a moment.
+				</p>
+			)}
+
+			<div
+				className={cn(
+					"flex flex-col-reverse items-stretch gap-3.5 sm:flex-row sm:items-center sm:justify-between",
+					compact ? "mt-4" : "mt-[22px]",
+				)}
+			>
+				<p className="text-center text-[13.5px] text-product-muted sm:text-left">
+					By submitting, you agree to our{" "}
+					<TextLink href="/privacy-policy">Privacy Policy</TextLink>.
+				</p>
+				<Button
+					aria-busy={isLoading}
+					className="w-full sm:w-auto"
+					disabled={isLoading}
+					size={compact ? "default" : "lg"}
+					type="submit"
+				>
+					{isLoading ? (
+						<Loader2 aria-hidden="true" className="animate-spin" />
+					) : (
+						<Send aria-hidden="true" />
+					)}
+					{isLoading ? "Sending…" : "Send message"}
+				</Button>
+			</div>
+		</form>
+	);
+}

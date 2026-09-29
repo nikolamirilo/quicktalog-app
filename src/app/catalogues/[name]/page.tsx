@@ -1,5 +1,5 @@
 import Catalogue from "@/components/catalogue/view/Catalogue";
-import LimitsModal from "@/components/modals/LimitsModal";
+import { LimitsModal } from "@/components/modals/LimitsModal";
 import { FAVICON } from "@/constants";
 import { generateCatalogueMetadata } from "@/constants/metadata";
 import { kebabToTitle } from "@/lib/format/text";

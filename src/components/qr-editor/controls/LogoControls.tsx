@@ -1,116 +1,129 @@
 "use client";
 
-import ImageDropzone from "@/components/general/ImageDropzone";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { Image as ImageIcon } from "lucide-react";
-import React, { useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
-import { LuCircleMinus } from "react-icons/lu";
+import { Check, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { ImageDropzone } from "@/components/general/ImageDropzone";
+import { PanelHeading } from "@/components/qr-editor/controls/PanelHeading";
+import {
+	Rows,
+	SliderRow,
+	ToggleRow,
+} from "@/components/qr-editor/controls/rows";
 
-export interface LogoControlsProps {
-	image: string;
-	imageSize: number;
-	hideBackgroundDots: boolean;
-	onImageChange: (url: string) => void;
-	onImageSizeChange: (size: number) => void;
-	onHideBackgroundDotsChange: (checked: boolean) => void;
-}
-
-export default function LogoControls({
+export function LogoControls({
 	image,
+	showLogo,
 	imageSize,
 	hideBackgroundDots,
 	onImageChange,
+	onShowLogoChange,
 	onImageSizeChange,
 	onHideBackgroundDotsChange,
-}: LogoControlsProps) {
+}: {
+	image: string;
+	showLogo: boolean;
+	imageSize: number;
+	hideBackgroundDots: boolean;
+	onImageChange: (url: string) => void;
+	onShowLogoChange: (show: boolean) => void;
+	onImageSizeChange: (size: number) => void;
+	onHideBackgroundDotsChange: (hide: boolean) => void;
+}) {
 	const [isUploading, setIsUploading] = useState(false);
+	const noLogo = !image;
 
 	return (
-		<Card className="shadow-product-shadow hover:shadow-product-shadow-hover transition-shadow overflow-hidden">
-			<CardHeader className="pb-4">
-				<CardTitle className="text-base font-semibold flex items-center gap-2">
-					<ImageIcon className="w-4 h-4 text-[var(--product-primary)]" />
-					Logo Upload
-				</CardTitle>
-				<p className="text-xs text-muted-foreground mt-1">
-					Add your brand logo to the center of your QR code
-				</p>
-			</CardHeader>
-			<CardContent className="space-y-5 pt-5">
-				{image == "" ? (
+		<>
+			<PanelHeading
+				description="Add your brand logo to the center of your QR code."
+				title="Logo upload"
+			/>
+
+			{noLogo ? (
+				<div aria-busy={isUploading}>
 					<ImageDropzone
-						image={image || ""}
+						className="rounded-[18px] border-[1.5px] border-dashed border-product-border-strong bg-product-background transition-colors hover:border-product-primary-accent hover:bg-product-primary-soft"
+						image=""
 						maxDim={512}
-						onError={(error) => console.error("Upload error:", error)}
-						onUploadComplete={(url) => onImageChange(url)}
+						onError={(error) =>
+							toast.error(error.message || "Logo upload failed.")
+						}
+						onUploadComplete={(url) => {
+							onImageChange(url);
+							toast.success("Logo uploaded successfully");
+						}}
 						removeImage={() => onImageChange("")}
 						setIsUploading={setIsUploading}
 						targetSizeKB={200}
 						type="qr-editor"
 					/>
-				) : (
-					<div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-xl">
-						<span className="text-green-700 flex flex-row gap-2 text-sm items-center font-medium">
-							<FaCheckCircle size={18} />
+					<p className="mt-2 text-center text-[12.5px] text-product-muted">
+						PNG or JPG · resized to max 512 px and 200 KB
+					</p>
+				</div>
+			) : (
+				<div className="flex items-center gap-3 rounded-2xl border border-product-success/25 bg-product-success-soft p-2.5">
+					<img
+						alt="Your logo"
+						className="h-12 w-12 shrink-0 rounded-xl bg-product-card object-contain shadow-[inset_0_0_0_1px_var(--product-border)]"
+						src={image}
+					/>
+					<span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+						<b className="flex items-center gap-1.5 text-[13.5px] font-semibold leading-tight text-product-success">
+							<Check
+								aria-hidden="true"
+								className="h-[15px] w-[15px]"
+								strokeWidth={3}
+							/>
 							Logo uploaded successfully
-						</span>
-						<Button
-							className="text-red-600 hover:text-red-700 hover:bg-red-50"
-							onClick={() => onImageChange("")}
-							size="sm"
-							variant="outline"
-						>
-							<LuCircleMinus className="mr-1.5" size={16} />
-							Remove
-						</Button>
-					</div>
-				)}
+						</b>
+						<small className="truncate text-[12.5px] text-product-muted">
+							Shown in the centre of your code
+						</small>
+					</span>
+					<button
+						className="inline-flex h-[34px] shrink-0 items-center gap-1.5 rounded-[10px] border border-product-border-strong bg-product-card px-3 text-[13px] font-semibold text-product-error transition-colors hover:border-product-error/30 hover:bg-product-error-soft"
+						onClick={() => onImageChange("")}
+						type="button"
+					>
+						<Trash2 aria-hidden="true" className="h-[15px] w-[15px]" />
+						Remove
+					</button>
+				</div>
+			)}
 
-				{image && (
-					<>
-						<div className="space-y-3 p-4 bg-gray-50 rounded-xl">
-							<div className="flex items-center justify-between">
-								<Label className="text-sm font-medium">Logo Size</Label>
-								<span className="text-base font-bold text-[var(--product-primary)] bg-white px-3 py-1 rounded-md">
-									{imageSize.toFixed(1)}x
-								</span>
-							</div>
-							<Slider
-								className="cursor-pointer"
-								max={1}
-								min={0.1}
-								onValueChange={([val]) => onImageSizeChange(val)}
-								step={0.1}
-								value={[imageSize]}
-							/>
-						</div>
-
-						<div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-							<div>
-								<Label
-									className="text-sm font-medium cursor-pointer"
-									htmlFor="hide-dots"
-								>
-									Hide Dots Behind Logo
-								</Label>
-								<p className="text-xs text-muted-foreground mt-1">
-									Clean background for better visibility
-								</p>
-							</div>
-							<Switch
-								checked={hideBackgroundDots}
-								id="hide-dots"
-								onCheckedChange={onHideBackgroundDotsChange}
-							/>
-						</div>
-					</>
-				)}
-			</CardContent>
-		</Card>
+			<Rows>
+				<ToggleRow
+					checked={!noLogo && showLogo}
+					disabled={noLogo}
+					hint={
+						noLogo
+							? "Upload a logo to show it in the code."
+							: "Turn off to keep the logo without printing it."
+					}
+					onCheckedChange={onShowLogoChange}
+					title="Show logo"
+				/>
+				<SliderRow
+					disabled={noLogo}
+					format={(v) => `${v.toFixed(2).replace(/0$/, "")}×`}
+					hint="From 0.1× to 1.0×"
+					max={1}
+					min={0.1}
+					onChange={onImageSizeChange}
+					step={0.05}
+					title="Logo size"
+					value={imageSize}
+				/>
+				<ToggleRow
+					checked={hideBackgroundDots}
+					disabled={noLogo}
+					hint="Clean background for better visibility."
+					onCheckedChange={onHideBackgroundDotsChange}
+					title="Hide dots behind logo"
+				/>
+			</Rows>
+		</>
 	);
 }

@@ -1,106 +1,97 @@
 import { cn } from "@/lib/ui/cn";
-import { GaugeStatus } from "@/types/shared";
+import type { GaugeStatus } from "@/types/shared";
 
 export type GaugeChartProps = {
 	used: number;
 	limit: number;
 	unit: string;
+	/** Accessible name of the meter, e.g. "Traffic". */
+	label: string;
 };
 
-const RADIUS = 95;
-const HALF_CIRCUMFERENCE = Math.PI * RADIUS;
-const ARC_PATH = "M25,140 A95,95 0 0 1 215,140";
+/** Semicircle drawn left to right; `pathLength=100` makes the dash a percent. */
+const ARC_PATH = "M10 60a50 50 0 0 1 100 0";
 
-const STATUS_ARC_CLASS: Record<GaugeStatus, string> = {
-	normal: "text-product-secondary",
-	warning: "text-product-warning",
-	critical: "text-error",
-};
-
-const STATUS_CHIP_CLASS: Record<GaugeStatus, string> = {
-	normal: "",
-	warning: "bg-product-warning/10 text-product-warning",
-	critical: "bg-error/10 text-error",
-};
-
-const STATUS_LABEL: Record<GaugeStatus, string> = {
-	normal: "",
-	warning: "Near limit",
-	critical: "Limit reached",
-};
-
-function getStatus(percent: number): GaugeStatus {
-	if (percent >= 100) return "critical";
-	if (percent >= 75) return "warning";
+/**
+ * Judged on the raw numbers, not the rounded percent: 995 of 1000 is close,
+ * not "limit reached". A limit of 0 is reached by any use at all.
+ */
+export function getGaugeStatus(used: number, limit: number): GaugeStatus {
+	if (limit <= 0) return used > 0 ? "critical" : "normal";
+	if (used >= limit) return "critical";
+	if (used / limit >= 0.8) return "warning";
 	return "normal";
 }
 
-export default function GaugeChart({ used, limit, unit }: GaugeChartProps) {
-	const percent = limit > 0 ? Math.round((used / limit) * 100) : 0;
-	const status = getStatus(percent);
+/** Percent shown to the user, rounded down so it reads 100% only at the limit. */
+export function gaugePercent(used: number, limit: number) {
+	if (limit <= 0) return used > 0 ? 100 : 0;
+	return Math.floor((used / limit) * 100);
+}
+
+const ARC_TONE: Record<GaugeStatus, string> = {
+	normal: "stroke-product-foreground",
+	warning: "stroke-product-primary",
+	critical: "stroke-product-error",
+};
+
+/** Usage arc meter (`.as-arc`): percent in the middle, "used / limit" below. */
+export function GaugeChart({ used, limit, unit, label }: GaugeChartProps) {
+	const percent = gaugePercent(used, limit);
+	const status = getGaugeStatus(used, limit);
+	const over = used > limit;
+	// The arc stops at 100%; the number does not, so an overage stays visible.
 	const arcPercent = Math.min(Math.max(percent, 0), 100);
-	const offset = HALF_CIRCUMFERENCE * (1 - arcPercent / 100);
-	const overBy = percent > 100 ? percent - 100 : 0;
+	const usedText = used.toLocaleString("en-US");
+	const limitText = limit.toLocaleString("en-US");
 
 	return (
-		<div className="flex flex-col items-center gap-4">
-			<div className="relative">
+		<>
+			<div
+				aria-label={label}
+				aria-valuemax={limit}
+				aria-valuemin={0}
+				aria-valuenow={Math.min(used, limit)}
+				aria-valuetext={`${usedText} of ${limitText} ${unit}, ${percent}%`}
+				className="relative mx-auto mt-3 w-[180px] max-w-full"
+				role="meter"
+			>
 				<svg
-					aria-label={`${percent}% of ${unit} limit used: ${used.toLocaleString("en-US")} of ${limit.toLocaleString("en-US")}`}
-					height="170"
-					role="img"
-					viewBox="0 0 240 170"
-					width="240"
+					aria-hidden="true"
+					className="block h-auto w-full overflow-visible"
+					viewBox="0 0 120 66"
 				>
 					<path
-						className="text-product-border"
+						className="fill-none stroke-product-background-hero"
 						d={ARC_PATH}
-						fill="none"
-						stroke="currentColor"
+						pathLength={100}
 						strokeLinecap="round"
-						strokeWidth="20"
+						strokeWidth={11}
 					/>
-					<path
-						className={STATUS_ARC_CLASS[status]}
-						d={ARC_PATH}
-						fill="none"
-						stroke="currentColor"
-						strokeDasharray={HALF_CIRCUMFERENCE}
-						strokeDashoffset={offset}
-						strokeLinecap="round"
-						strokeWidth="20"
-					/>
+					{arcPercent > 0 && (
+						<path
+							className={cn("fill-none", ARC_TONE[status])}
+							d={ARC_PATH}
+							pathLength={100}
+							strokeDasharray={`${arcPercent} 100`}
+							strokeLinecap="round"
+							strokeWidth={11}
+						/>
+					)}
 				</svg>
-				<div className="absolute inset-x-0 top-[58%] flex -translate-y-1/2 flex-col items-center">
-					{/* The arc clamps at 100%, the number must not: "capped" read as
-					    though the overage had been prevented, when it had not. */}
-					<span className="text-4xl font-bold text-product-foreground tabular-nums">
+				<p className="absolute inset-x-0 bottom-0 flex flex-col items-center leading-none">
+					<b className="font-product-heading text-[30px] font-extrabold tracking-[-0.03em] tabular-nums">
 						{percent}%
-					</span>
-					<span className="text-sm text-product-foreground-accent">
-						{overBy > 0 ? "over limit" : "of limit"}
-					</span>
-				</div>
+					</b>
+					<small className="mt-1 text-xs text-product-muted">
+						{over ? "over limit" : "of limit"}
+					</small>
+				</p>
 			</div>
-			<div className="flex flex-col items-center gap-2">
-				<span className="text-base text-product-foreground-accent tabular-nums">
-					{used.toLocaleString("en-US")} / {limit.toLocaleString("en-US")}{" "}
-					{unit}
-				</span>
-				{status !== "normal" ? (
-					<span
-						className={cn(
-							"inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
-							STATUS_CHIP_CLASS[status],
-						)}
-					>
-						<span className="h-1.5 w-1.5 rounded-full bg-current" />
-						{overBy > 0
-							? `${(used - limit).toLocaleString("en-US")} ${unit} over`
-							: STATUS_LABEL[status]}
-					</span>
-				) : null}
-			</div>
-		</div>
+			<p className="mt-2 text-sm text-product-foreground-accent tabular-nums">
+				<b className="text-base text-product-foreground">{usedText}</b> /{" "}
+				{limitText} {unit}
+			</p>
+		</>
 	);
 }

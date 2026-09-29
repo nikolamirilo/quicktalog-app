@@ -1,37 +1,43 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-/** End-of-article author card with a short blurb and a soft call to action. */
-export default function AuthorBio({ author }: { author: string }) {
-	const initial = author.trim().charAt(0).toUpperCase();
+import { Button } from "@/components/ui/button";
 
+/** End-of-article author card with a short blurb and a soft call to action. */
+export function AuthorBio({ author }: { author: string }) {
 	return (
-		<aside className="mt-16 flex flex-col items-start gap-5 rounded-2xl border border-product-border bg-product-background-hero p-6 sm:flex-row sm:items-center sm:p-8">
+		<aside
+			aria-label="About the author"
+			className="mx-auto mt-12 flex max-w-[720px] flex-col items-start gap-3.5 rounded-product-card border border-product-border bg-product-card p-[22px] shadow-product md:flex-row md:items-center"
+		>
 			<span
-				aria-hidden
-				className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-product-secondary font-lora-semibold text-xl font-bold text-white"
+				aria-hidden="true"
+				className="grid h-14 w-14 flex-none place-items-center rounded-full bg-product-primary font-product-heading text-[22px] font-extrabold leading-none text-product-foreground shadow-product-primary"
 			>
-				{initial}
+				Q
 			</span>
-			<div className="flex-1">
-				<p className="text-xs font-semibold uppercase tracking-[0.2em] text-product-secondary">
+			<div className="md:flex-1">
+				<small className="text-[12.5px] font-bold uppercase tracking-[0.08em] text-product-muted">
 					Written by
-				</p>
-				<p className="mt-1 font-lora text-lg font-bold text-product-foreground">
+				</small>
+				<b className="mt-0.5 block font-product-heading text-lg font-extrabold leading-[1.3] text-product-foreground">
 					{author}
-				</p>
-				<p className="mt-1 text-product-foreground-accent">
+				</b>
+				<p className="mt-1.5 text-[15px] leading-[1.6] text-product-foreground-accent">
 					We build Quicktalog, the fastest way to turn a menu, service list, or
 					product range into an interactive digital catalog. We write about
 					doing it well.
 				</p>
 			</div>
-			<Link
-				className="inline-flex flex-shrink-0 items-center gap-1.5 font-semibold text-product-secondary transition-all hover:gap-2.5"
-				href="/auth?mode=signup"
-			>
-				Try Quicktalog <ArrowRight className="h-4 w-4" />
-			</Link>
+			<Button asChild className="group flex-none" variant="outline">
+				<Link href="/auth?mode=signup">
+					Try Quicktalog
+					<ArrowRight
+						aria-hidden="true"
+						className="transition-transform group-hover:translate-x-[3px]"
+					/>
+				</Link>
+			</Button>
 		</aside>
 	);
 }

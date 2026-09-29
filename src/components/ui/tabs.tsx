@@ -1,6 +1,5 @@
 "use client";
 
-//@ts-nocheck
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import * as React from "react";
 
@@ -13,11 +12,11 @@ const TabsList = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
 >(({ className, ...props }, ref) => (
 	<TabsPrimitive.List
-		ref={ref}
 		className={cn(
-			"inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+			"inline-flex h-11 items-center justify-center gap-1 rounded-full border border-product-border bg-product-background-hero p-1 text-product-foreground-accent",
 			className,
 		)}
+		ref={ref}
 		{...props}
 	/>
 ));
@@ -28,11 +27,11 @@ const TabsTrigger = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
 >(({ className, ...props }, ref) => (
 	<TabsPrimitive.Trigger
-		ref={ref}
 		className={cn(
-			"inline-flex items-center rounded-lg justify-center whitespace-nowrap px-3 py-1.5 text-base font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=inactive]:bg-background data-[state=inactive]:text-foreground data-[state=inactive]:shadow-sm",
+			"inline-flex h-full items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-all hover:text-product-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-product-card data-[state=active]:text-product-foreground data-[state=active]:shadow-product [&_svg]:size-4",
 			className,
 		)}
+		ref={ref}
 		{...props}
 	/>
 ));
@@ -43,11 +42,8 @@ const TabsContent = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
 >(({ className, ...props }, ref) => (
 	<TabsPrimitive.Content
+		className={cn("mt-3", className)}
 		ref={ref}
-		className={cn(
-			"mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-			className,
-		)}
 		{...props}
 	/>
 ));

@@ -1,44 +1,48 @@
 "use client";
-import { statusOrder } from "@/constants/sort";
-import type { Catalogue, Status, Usage } from "@quicktalog/common";
+import type { Catalogue, PricingPlan, Status, Usage } from "@quicktalog/common";
 import { useState } from "react";
-import DashboardItem from "@/components/dashboard/components/DashboardItem";
 
-export interface CatalogueGridProps {
+import { DashboardItem } from "@/components/dashboard/overview/DashboardItem";
+import { parseTimestamp } from "@/components/dashboard/overview/timestamps";
+import { Button } from "@/components/ui/button";
+import { statusOrder } from "@/constants/sort";
+
+type CatalogueGridProps = {
 	catalogues: Catalogue[];
-	duplicatingId: string | null;
-	handleDeleteItem: (name: string) => void;
-	handleDuplicateCatalogue: (id: string, name: string) => void;
-	handleUpdateItemStatus: (id: string, status: Status, name?: string) => void;
-	isLinkCopied: boolean;
-	isModalOpen: boolean;
-	matchedTier: any;
-	setIsLinkCopied: (value: boolean) => void;
-	statusColors: Record<string, string>;
+	currentPlan: PricingPlan;
 	usage: Usage;
-}
+	deleteDialogOpen: boolean;
+	statusBusyId: string | null;
+	onDelete: (name: string) => void;
+	onStatusChange: (id: string, status: Status) => void;
+	/** Refresh after a change that leaves the plan usage as it is (publish). */
+	onChanged: () => Promise<void>;
+	/** Refresh after a copy was made (plan usage changed). */
+	onDuplicated: () => Promise<void>;
+};
 
 const INITIAL_VISIBLE = 8;
 
-export default function CatalogueGrid({
+export function CatalogueGrid({
 	catalogues,
-	duplicatingId,
-	handleDeleteItem,
-	handleDuplicateCatalogue,
-	handleUpdateItemStatus,
-	isLinkCopied,
-	isModalOpen,
-	matchedTier,
-	setIsLinkCopied,
-	statusColors,
-	usage,
+	...cardProps
 }: CatalogueGridProps) {
 	const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
-	const sorted = [...catalogues].sort((a: Catalogue, b: Catalogue) => {
+	if (catalogues.length === 0) {
+		return (
+			<p className="rounded-product-card border-[1.5px] border-dashed border-product-border-strong bg-product-card/60 px-4 py-7 text-center text-[15px] text-product-foreground-accent">
+				No catalogues created yet.
+			</p>
+		);
+	}
+
+	const sorted = [...catalogues].sort((a, b) => {
 		const statusDiff = statusOrder[a.status] - statusOrder[b.status];
 		if (statusDiff !== 0) return statusDiff;
-		return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+		return (
+			(parseTimestamp(b.updatedAt) || 0) - (parseTimestamp(a.updatedAt) || 0)
+		);
 	});
 
 	const visible = sorted.slice(0, visibleCount);
@@ -46,39 +50,25 @@ export default function CatalogueGrid({
 
 	return (
 		<>
-			<div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
-				{catalogues.length === 0 && (
-					<div className="col-span-full text-product-foreground-accent text-base sm:text-lg">
-						No catalogues created yet.
-					</div>
-				)}
-
-				{visible.map((catalogue: Catalogue, index: number) => (
+			<div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 min-[1200px]:grid-cols-3">
+				{visible.map((catalogue) => (
 					<DashboardItem
 						catalogue={catalogue}
-						duplicatingId={duplicatingId}
-						handleDeleteItem={handleDeleteItem}
-						handleDuplicateCatalogue={handleDuplicateCatalogue}
-						handleUpdateItemStatus={handleUpdateItemStatus}
-						isLinkCopied={isLinkCopied}
-						isModalOpen={isModalOpen}
-						key={`dashboard-item-${index}`}
-						matchedTier={matchedTier}
-						setIsLinkCopied={setIsLinkCopied}
-						statusColors={statusColors}
-						usage={usage}
+						key={catalogue.id}
+						{...cardProps}
 					/>
 				))}
 			</div>
 
 			{remaining > 0 && (
 				<div className="mt-4 flex justify-center">
-					<button
-						className="px-6 py-2 rounded-lg border border-product-border text-product-foreground hover:bg-product-background-hover transition-colors duration-200 text-sm font-medium"
+					<Button
 						onClick={() => setVisibleCount(sorted.length)}
+						size="sm"
+						variant="outline"
 					>
 						Show More ({remaining} more)
-					</button>
+					</Button>
 				</div>
 			)}
 		</>

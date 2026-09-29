@@ -1,115 +1,172 @@
 "use client";
+import {
+	NavLink,
+	navPillBase,
+	navPillSizes,
+} from "@/components/navigation/NavLink";
+import { UserAvatar, UserMenu } from "@/components/navigation/UserMenu";
 import { Button } from "@/components/ui/button";
+import { authLinks } from "@/constants/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { UserMenu } from "./UserMenu";
+import { useSignOut } from "@/hooks/useSignOut";
+import { cn } from "@/lib/ui/cn";
+import { LayoutDashboard, LogOut, User, UserPlus } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import { FiUser, FiUserPlus } from "react-icons/fi";
-import { MdOutlineDashboard } from "react-icons/md";
-import { MobileNavLink, NavLink } from "./NavLink";
 
-interface AuthLinksProps {
-	isMobile?: boolean;
+type AuthLinksProps = {
+	/**
+	 * `desktop`: Log In / Start free, or Dashboard + avatar menu.
+	 * `mobile-cta`: the single "Start free" button beside the burger.
+	 * `sheet`: the auth block at the bottom of the mobile sheet.
+	 */
+	variant?: "desktop" | "mobile-cta" | "sheet";
 	onLinkClick?: () => void;
-}
+};
 
-const AuthLinks: React.FC<AuthLinksProps> = ({ isMobile, onLinkClick }) => {
-	const { isSignedIn, user, isLoaded } = useAuth();
+/**
+ * The auth corner of the navbar. It reads the client-side auth state only, so
+ * public and ISR pages never touch cookies; until that state is known it holds
+ * the logged-out width so the bar does not jump.
+ */
+export const AuthLinks = ({
+	variant = "desktop",
+	onLinkClick,
+}: AuthLinksProps) => {
+	const { isSignedIn, user, isLoaded, accountHref } = useAuth();
+	const { signingOut, handleSignOut } = useSignOut();
 
-	if (!isLoaded) {
-		if (isMobile) {
+	if (variant === "mobile-cta") {
+		if (isLoaded && isSignedIn) return null;
+		return (
+			<Button
+				asChild
+				className={cn("h-10 px-4 text-sm", !isLoaded && "invisible")}
+				tabIndex={isLoaded ? undefined : -1}
+			>
+				<Link href={authLinks.signup} onClick={onLinkClick}>
+					Start free
+				</Link>
+			</Button>
+		);
+	}
+
+	if (variant === "sheet") {
+		if (!isLoaded) {
 			return (
-				<div className="border-t border-product-border pt-3 sm:pt-4 mt-3 sm:mt-4">
-					<div className="w-full h-10 bg-product-background-hover animate-pulse rounded mb-2"></div>
-					<div className="w-full h-10 bg-product-background-hover animate-pulse rounded"></div>
+				<div
+					aria-hidden="true"
+					className="mt-1.5 grid grid-cols-2 gap-2 border-t border-product-border pt-3"
+				>
+					<div className="h-[46px] animate-pulse rounded-full bg-product-background-hero" />
+					<div className="h-[46px] animate-pulse rounded-full bg-product-background-hero" />
 				</div>
 			);
 		}
+
+		if (isSignedIn && user) {
+			return (
+				<div className="mt-1.5 flex flex-col gap-1 border-t border-product-border pt-2.5">
+					<NavLink
+						href={authLinks.dashboard}
+						icon={LayoutDashboard}
+						onClick={onLinkClick}
+						variant="sheet"
+					>
+						Dashboard
+					</NavLink>
+					<div className="flex items-center gap-3 px-4 py-2">
+						<UserAvatar user={user} />
+						<span className="min-w-0">
+							<span className="block truncate font-product-heading text-[15px] font-bold leading-[1.3]">
+								{user.name}
+							</span>
+							{user.email && (
+								<span className="block truncate text-[13px] text-product-muted">
+									{user.email}
+								</span>
+							)}
+						</span>
+					</div>
+					<NavLink
+						href={accountHref}
+						icon={User}
+						onClick={onLinkClick}
+						variant="sheet"
+					>
+						Account
+					</NavLink>
+					<button
+						className={cn(
+							navPillBase,
+							navPillSizes.sheet,
+							"cursor-pointer disabled:opacity-50",
+						)}
+						disabled={signingOut}
+						onClick={async () => {
+							onLinkClick?.();
+							await handleSignOut();
+						}}
+						type="button"
+					>
+						<LogOut aria-hidden="true" className="h-4 w-4" />
+						{signingOut ? "Signing out…" : "Sign out"}
+					</button>
+				</div>
+			);
+		}
+
 		return (
-			<div className="ml-3 flex items-center gap-2">
-				<div className="w-20 h-9 bg-product-background-hover animate-pulse rounded"></div>
-				<div className="w-20 h-9 bg-product-background-hover animate-pulse rounded"></div>
+			<div className="mt-1.5 grid grid-cols-2 gap-2 border-t border-product-border pt-3">
+				<Button asChild className="h-[46px] px-4" variant="outline">
+					<Link href={authLinks.login} onClick={onLinkClick}>
+						<User aria-hidden="true" />
+						Log In
+					</Link>
+				</Button>
+				<Button asChild className="h-[46px] px-4">
+					<Link href={authLinks.signup} onClick={onLinkClick}>
+						<UserPlus aria-hidden="true" />
+						Start free
+					</Link>
+				</Button>
 			</div>
 		);
 	}
 
-	if (isMobile) {
+	if (!isLoaded) {
+		// Same footprint as the logged-out buttons (the common case on public pages).
+		return <div aria-hidden="true" className="ml-2.5 h-[42px] w-[236px]" />;
+	}
+
+	if (isSignedIn) {
 		return (
-			<>
-				{isSignedIn ? (
-					<>
-						<div className="border-t border-product-border pt-3 sm:pt-4 mt-3 sm:mt-4">
-							<MobileNavLink
-								href="/admin/dashboard"
-								icon={MdOutlineDashboard}
-								onClick={onLinkClick}
-							>
-								Dashboard
-							</MobileNavLink>
-							<div className="w-full flex items-center gap-3 p-2.5 sm:p-3 rounded-lg text-left border border-transparent">
-								<FiUser
-									className="text-product-foreground-accent sm:w-5 sm:h-5 flex-shrink-0"
-									size={18}
-								/>
-								<span className="text-product-foreground font-medium text-sm sm:text-base flex-1 text-left">
-									{user?.name ?? "Account"}
-								</span>
-								<div className="flex-shrink-0">
-									<UserMenu onNavigate={onLinkClick} />
-								</div>
-							</div>
-						</div>
-					</>
-				) : (
-					<>
-						<div className="border-t border-product-border pt-3 sm:pt-4 mt-3 sm:mt-4">
-							<Link href="/auth" onClick={onLinkClick}>
-								<Button className="w-full bg-product-background text-product-foreground border-2 border-product-primary hover:bg-product-primary hover:text-white hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9 mb-2 sm:mb-3">
-									<FiUser className="w-4 h-4" />
-									Log In
-								</Button>
-							</Link>
-							<Link href="/auth?mode=signup" onClick={onLinkClick}>
-								<Button className="w-full bg-product-primary text-product-foreground  hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
-									<FiUserPlus className="w-4 h-4" />
-									Start free
-								</Button>
-							</Link>
-						</div>
-					</>
-				)}
-			</>
+			<div className="ml-2.5 flex items-center gap-1.5">
+				<NavLink href={authLinks.dashboard} icon={LayoutDashboard}>
+					Dashboard
+				</NavLink>
+				<UserMenu />
+			</div>
 		);
 	}
+
 	return (
-		<div className="ml-3 flex items-center gap-2">
-			{isSignedIn ? (
-				<>
-					<NavLink href="/admin/dashboard" icon={MdOutlineDashboard}>
-						Dashboard
-					</NavLink>
-					<div className="ml-2 flex items-center gap-1">
-						<UserMenu />
-					</div>
-				</>
-			) : (
-				<>
-					<Link href="/auth">
-						<Button className="bg-product-background text-product-foreground border-2 border-product-primary hover:bg-product-primary hover:text-white hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
-							<FiUser className="w-4 h-4" />
-							Log In
-						</Button>
-					</Link>
-					<Link href="/auth?mode=signup">
-						<Button className="bg-product-primary text-product-foreground  hover:shadow-lg hover:scale-[1.03] hover:transform hover:-translate-y-[2px] transition-all duration-200 font-semibold text-sm px-3 py-2 h-9">
-							<FiUserPlus className="w-4 h-4" />
-							Start free
-						</Button>
-					</Link>
-				</>
-			)}
+		<div className="ml-2.5 flex items-center gap-2">
+			<Button
+				asChild
+				className="h-[42px] px-[18px] text-[14.5px]"
+				variant="outline"
+			>
+				<Link href={authLinks.login}>
+					<User aria-hidden="true" />
+					Log In
+				</Link>
+			</Button>
+			<Button asChild className="h-[42px] px-[18px] text-[14.5px]">
+				<Link href={authLinks.signup}>
+					<UserPlus aria-hidden="true" />
+					Start free
+				</Link>
+			</Button>
 		</div>
 	);
 };
-
-export default AuthLinks;

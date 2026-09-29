@@ -27,7 +27,7 @@ const OverlayConfiguration = ({
 					<PopoverTrigger type="button">
 						<Info className="h-4 w-4 text-muted-foreground" />
 					</PopoverTrigger>
-					<PopoverContent side="top" className="z-[2000] w-[200px] p-3 text-sm">
+					<PopoverContent className="z-[2000] w-[200px] p-3 text-sm" side="top">
 						<p>Add a floating icon overlay to your catalogue.</p>
 					</PopoverContent>
 				</Popover>

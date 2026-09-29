@@ -50,12 +50,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange }) => {
 				}`}
 			>
 				<Editor
-					height="100%"
-					width="100%"
 					defaultLanguage="html"
-					value={code}
+					height="100%"
 					onChange={(v) => onChange(v || "")}
-					theme="vs-dark"
 					options={{
 						minimap: { enabled: false },
 						fontSize: 14,
@@ -63,6 +60,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange }) => {
 						automaticLayout: true,
 						scrollBeyondLastLine: false,
 					}}
+					theme="vs-dark"
+					value={code}
+					width="100%"
 				/>
 			</div>
 			<p className="text-xs text-gray-500">

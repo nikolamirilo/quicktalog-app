@@ -1,6 +1,6 @@
 "use client";
 import { writeItemDescription } from "@/actions/ai";
-import LimitsModal from "@/components/modals/LimitsModal";
+import { LimitsModal } from "@/components/modals/LimitsModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";

@@ -2,6 +2,15 @@ import type { ReactNode } from "react";
 
 type ArticleCategory = "Use cases" | "Guides" | "Comparisons" | "Product";
 
+/** The CSS illustration drawn on the article's card and page header. */
+export type ArticleCoverName =
+	| "restaurants"
+	| "salons"
+	| "ai"
+	| "qr"
+	| "alternatives"
+	| "businesses";
+
 export interface ArticleMeta {
 	/** URL segment, e.g. "digital-menu-for-restaurants" */
 	slug: string;
@@ -15,8 +24,8 @@ export interface ArticleMeta {
 	/** /public path or remote https URL */
 	heroImage: string;
 	heroImageAlt: string;
-	/** Optional credit for stock photos */
-	heroCredit?: { name: string; url: string };
+	/** Illustration on the card and header; the plain amber cover when unset. */
+	cover?: ArticleCoverName;
 	/** ISO date, e.g. "2026-06-19" */
 	publishedAt: string;
 	/** ISO date */

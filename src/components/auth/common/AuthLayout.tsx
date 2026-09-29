@@ -1,23 +1,28 @@
 import type { ReactNode } from "react";
 
+import { Container } from "@/components/general/Container";
+
 /**
- * Centres an auth card between the fixed navbar and the footer, on the tinted
- * ground so the white card reads as a distinct surface.
+ * The auth shell: a full-height section with a faint grid and a centred amber
+ * glow, holding one centred column (card, then the line under it).
  *
- * One `min-h-screen` box, not two: the previous `mt-[5vh] min-h-screen` inside
- * another `min-h-screen` made the page 105vh of mostly empty space and pushed
- * the card below the fold. `py-28` clears the fixed navbar at the top and keeps
- * the footer off the card at the bottom.
- *
- * The tint sits on the inner element because `.product` sets its own background
- * on the element that carries the class.
+ * The navbar is fixed, so the top padding clears it. The navbar, footer and
+ * `<main>` come from the `(site)` layouts, never from here.
  */
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export function AuthLayout({ children }: { children: ReactNode }) {
 	return (
-		<div className="product font-lora">
-			<div className="flex min-h-screen items-center justify-center bg-product-background-hero px-4 py-28">
-				<div className="w-full max-w-[27rem]">{children}</div>
-			</div>
-		</div>
+		<section className="relative isolate flex items-center overflow-hidden pb-[72px] pt-[120px] lg:min-h-screen lg:pb-[88px] lg:pt-[132px]">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(22,20,15,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(22,20,15,0.035)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_55%_50%_at_50%_45%,#000_30%,transparent_100%)]"
+			/>
+			<div
+				aria-hidden="true"
+				className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[min(720px,120vw)] w-[min(820px,140vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,176,32,0.24),rgba(255,176,32,0.08)_55%,transparent)]"
+			/>
+			<Container className="flex min-w-0 flex-col items-center">
+				{children}
+			</Container>
+		</section>
 	);
 }

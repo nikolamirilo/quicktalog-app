@@ -1,150 +1,172 @@
+import { Container } from "@/components/general/Container";
+import { NewsletterForm } from "@/components/navigation/NewsletterForm";
 import { footerDetails, siteDetails } from "@/constants/details";
+import {
+	footerContactLink,
+	footerLegalLinks,
+	footerLinkColumns,
+} from "@/constants/navigation";
 import { getPlatformIconByName } from "@/constants/ui";
-import { ILinkItem } from "@/types/shared";
+import type { ILinkItem } from "@/types/shared";
+import { Globe, Linkedin, Mail } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import { FiExternalLink, FiGlobe, FiMail } from "react-icons/fi";
-import NewsletterForm from "./NewsletterForm";
+import type { ReactNode } from "react";
 
-const FooterLinkColumn: React.FC<{ title: string; links: ILinkItem[] }> = ({
+const socialTileClass =
+	"grid h-11 w-11 place-items-center rounded-[14px] border border-product-border bg-product-card text-product-foreground-accent transition-[transform,color,box-shadow] duration-200 hover:-translate-y-[3px] hover:text-product-secondary hover:shadow-product [&_svg]:h-[21px] [&_svg]:w-[21px]";
+
+const socialIcon = (platform: string): ReactNode =>
+	platform === "linkedin" ? (
+		<Linkedin aria-hidden="true" />
+	) : (
+		getPlatformIconByName(platform)
+	);
+
+/** Internal links go through next/link; files like the sitemap load directly. */
+const FooterLink = ({
+	link,
+	className,
+}: {
+	link: ILinkItem;
+	className: string;
+}) =>
+	link.url.endsWith(".xml") ? (
+		<a className={className} href={link.url}>
+			{link.text}
+		</a>
+	) : (
+		<Link className={className} href={link.url}>
+			{link.text}
+		</Link>
+	);
+
+const FooterLinkColumn = ({
 	title,
 	links,
+}: {
+	title: string;
+	links: ILinkItem[];
 }) => (
-	<div className="space-y-4">
-		<h4 className="text-lg font-semibold text-product-foreground">{title}</h4>
-		<ul className="space-y-3">
+	<div>
+		<h2 className="mb-4 text-[17px] font-bold tracking-[-0.01em]">{title}</h2>
+		<ul className="flex flex-col gap-3">
 			{links.map((link) => (
 				<li key={link.url}>
-					<Link
-						className="text-product-foreground-accent hover:text-product-primary transition-colors duration-200 flex items-center gap-2 group"
-						href={link.url}
-					>
-						<span>{link.text}</span>
-						<FiExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-					</Link>
+					<FooterLink
+						className="rounded-md text-product-foreground-accent transition-colors duration-200 hover:text-product-secondary"
+						link={link}
+					/>
 				</li>
 			))}
 		</ul>
 	</div>
 );
 
-const Footer: React.FC = () => {
+export const Footer = () => {
 	const year = new Date().getFullYear();
 
 	return (
-		<footer className="bg-product-background-hero text-product-foreground py-16 border-t border-product-border">
-			<div className="max-w-7xl w-full mx-auto px-6">
-				{/* Main footer content */}
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-					{/* Brand section */}
-					<div className="space-y-4">
-						<Link className="flex items-center gap-3 group" href="/">
+		<footer className="mt-12 border-t border-product-border bg-product-background-hero pb-[calc(32px+env(safe-area-inset-bottom))] pt-16 text-product-foreground">
+			<Container>
+				<div className="mb-12 grid grid-cols-2 gap-x-5 gap-y-9 md:grid-cols-[1.2fr_1fr_1fr_1.3fr] md:gap-10">
+					{/* Brand */}
+					<div className="col-span-full md:col-span-1">
+						<Link className="inline-block rounded-full" href="/">
 							<img
 								alt="Quicktalog Logo"
-								className="w-auto h-12 rounded-full object-cover group-hover:scale-105 transition-transform duration-200"
-								height={140}
+								className="h-11 w-auto"
+								height={44}
+								loading="lazy"
 								src="/images/brand/logo.svg"
-								width={140}
+								width={121}
 							/>
 						</Link>
-						<p className="text-product-foreground-accent leading-relaxed max-w-sm">
+						<p className="mt-4 max-w-[320px] text-[16.5px] text-product-foreground-accent">
 							{footerDetails.subheading}
 						</p>
-
-						<div className="flex items-center gap-4 pt-2">
-							{footerDetails.socials &&
-								Object.keys(footerDetails.socials).map((platformName) => {
-									if (platformName && footerDetails.socials[platformName]) {
-										return (
-											<Link
-												aria-label={platformName}
-												className="p-2 rounded-lg bg-white text-gray-600 border border-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-3 group"
-												href={footerDetails.socials[platformName]}
-												key={platformName}
-											>
-												<div className="group-hover:text-product-primary transition-colors duration-300">
-													{getPlatformIconByName(platformName)}
-												</div>
-											</Link>
-										);
-									}
-								})}
-
+						<div className="mt-5 flex gap-3">
+							{Object.entries(footerDetails.socials ?? {}).map(
+								([platform, href]) =>
+									href ? (
+										<a
+											aria-label={platform}
+											className={socialTileClass}
+											href={href}
+											key={platform}
+											rel="noopener noreferrer"
+											target="_blank"
+										>
+											{socialIcon(platform)}
+										</a>
+									) : null,
+							)}
 							<a
 								aria-label="Email us"
-								className="p-2 rounded-lg bg-white text-gray-600 border border-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-3 group"
+								className={socialTileClass}
 								href={`mailto:${footerDetails.email}`}
 							>
-								<div className="group-hover:text-product-primary transition-colors duration-300">
-									<FiMail className="min-w-fit" size={24} />
-								</div>
+								<Mail aria-hidden="true" />
 							</a>
-
 							<a
 								aria-label="Visit our website"
-								className="p-2 rounded-lg bg-white text-gray-600 border border-gray-200 transition-all duration-300 hover:scale-110 hover:rotate-3 group"
+								className={socialTileClass}
 								href={siteDetails.siteUrl}
 								rel="noopener noreferrer"
 								target="_blank"
 							>
-								<div className="group-hover:text-product-primary transition-colors duration-300">
-									<FiGlobe className="min-w-fit" size={24} />
-								</div>
+								<Globe aria-hidden="true" />
 							</a>
 						</div>
 					</div>
 
-					<FooterLinkColumn
-						links={footerDetails.productLinks}
-						title="Product"
-					/>
-					<FooterLinkColumn
-						links={footerDetails.resourceLinks}
-						title="Resources"
-					/>
+					{footerLinkColumns.map((column) => (
+						<FooterLinkColumn
+							key={column.title}
+							links={column.links}
+							title={column.title}
+						/>
+					))}
 
-					{/* Newsletter Subscription */}
-					<div className="space-y-4">
-						<h4 className="text-lg font-semibold text-product-foreground">
+					{/* Newsletter */}
+					<div className="col-span-full md:col-span-1">
+						<h2 className="mb-4 text-[17px] font-bold tracking-[-0.01em]">
 							Stay Updated
-						</h4>
-						<p className="text-sm text-product-foreground-accent">
+						</h2>
+						<p className="mb-3.5 text-[14.5px] text-product-foreground-accent">
 							Subscribe to our newsletter for the latest updates and features.
 						</p>
 						<NewsletterForm />
 						<Link
-							className="text-product-foreground-accent hover:text-product-primary transition-colors duration-200 flex items-center gap-2 group"
-							href={footerDetails.contactLink.url}
+							className="mt-4 inline-flex items-center gap-2 border-b-2 border-product-primary/70 pb-0.5 font-semibold text-product-foreground transition-colors hover:text-product-primary-ink"
+							href={footerContactLink.url}
 						>
-							<span>{footerDetails.contactLink.text}</span>
-							<FiExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+							<Mail
+								aria-hidden="true"
+								className="h-4 w-4 text-product-primary-ink"
+							/>
+							{footerContactLink.text}
 						</Link>
 					</div>
 				</div>
 
-				{/* Copyright */}
-				<div className="pt-8 border-t border-product-border">
-					<div className="flex flex-col md:flex-row items-center justify-between gap-4">
-						<p className="text-product-foreground-accent text-sm">
-							Copyright &copy; {year} {siteDetails.siteName}. All rights
-							reserved.
-						</p>
-						<div className="flex flex-row items-center gap-2 md:gap-6 text-sm text-product-foreground-accent">
-							{footerDetails.legalLinks.map((link) => (
-								<Link
-									className="hover:text-product-primary transition-colors duration-200"
-									href={link.url}
-									key={link.url}
-								>
-									{link.text}
-								</Link>
+				<div className="flex flex-col items-center gap-3.5 border-t border-product-border-strong pt-7 text-center text-sm text-product-foreground-accent md:flex-row md:justify-between md:text-left">
+					<p>
+						Copyright &copy; {year} {siteDetails.siteName}. All rights reserved.
+					</p>
+					<nav aria-label="Legal">
+						<ul className="flex flex-wrap justify-center gap-x-[22px] gap-y-2">
+							{footerLegalLinks.map((link) => (
+								<li key={link.url}>
+									<FooterLink
+										className="transition-colors hover:text-product-secondary"
+										link={link}
+									/>
+								</li>
 							))}
-						</div>
-					</div>
+						</ul>
+					</nav>
 				</div>
-			</div>
+			</Container>
 		</footer>
 	);
 };
-
-export default Footer;

@@ -1,12 +1,12 @@
 "use client";
 import { OptimizedImage } from "@/components/general/OptimizedImage";
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+	CatalogueDialog,
+	CatalogueDialogContent,
+	CatalogueDialogDescription,
+	CatalogueDialogHeader,
+	CatalogueDialogTitle,
+} from "@/components/catalogue/modals/CatalogueDialog";
 import { DisplayItem } from "@/types/shared";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { ZoomIn } from "lucide-react";
@@ -33,9 +33,12 @@ export default function ItemDetailModal({
 
 	return (
 		<>
-			<Dialog onOpenChange={(open) => !open && onClose()} open={isOpen}>
-				<DialogContent
-					className={`text-catalogue-card-text font-body max-w-sm w-[98vw] sm:w-full sm:max-w-md p-0 bg-catalogue-card-background border border-catalogue-card-border shadow-lg overflow-hidden fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90dvh] flex flex-col ${theme || ""}`}
+			<CatalogueDialog
+				onOpenChange={(open) => !open && onClose()}
+				open={isOpen}
+			>
+				<CatalogueDialogContent
+					className={`text-catalogue-card-text font-body max-w-sm w-[98vw] sm:w-full sm:max-w-md p-0 bg-catalogue-card-background border border-catalogue-card-border shadow-lg overflow-hidden fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[90dvh] flex flex-col catalogue-root ${theme || ""}`}
 				>
 					{/* Image Section - Only show for variants that have images */}
 					{item.image && variant !== "variant_3" && (
@@ -63,14 +66,14 @@ export default function ItemDetailModal({
 					{/* Content Section */}
 					<div className="flex-1 min-h-0 overflow-y-auto">
 						<div className="p-4 sm:p-6">
-							<DialogHeader className="space-y-4 text-left mb-6">
-								<DialogTitle className="text-xl sm:text-2xl font-bold text-catalogue-card-heading font-heading leading-tight">
+							<CatalogueDialogHeader className="space-y-4 text-left mb-6">
+								<CatalogueDialogTitle className="text-xl sm:text-2xl font-bold text-catalogue-card-heading font-heading leading-tight">
 									{item.name}
-								</DialogTitle>
-								<DialogDescription className="text-catalogue-card-description text-sm sm:text-base leading-relaxed">
+								</CatalogueDialogTitle>
+								<CatalogueDialogDescription className="text-catalogue-card-description text-sm sm:text-base leading-relaxed">
 									{item.description}
-								</DialogDescription>
-							</DialogHeader>
+								</CatalogueDialogDescription>
+							</CatalogueDialogHeader>
 
 							{/* Price Section */}
 							<div className="mt-6 pt-4 border-t border-catalogue-card-border">
@@ -87,14 +90,14 @@ export default function ItemDetailModal({
 							</div>
 						</div>
 					</div>
-				</DialogContent>
-			</Dialog>
+				</CatalogueDialogContent>
+			</CatalogueDialog>
 
 			{/* Full screen image modal */}
-			<Dialog onOpenChange={setIsImageZoomed} open={isImageZoomed}>
-				<DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-[95vh] p-0 bg-black/90 border-none rounded-none">
+			<CatalogueDialog onOpenChange={setIsImageZoomed} open={isImageZoomed}>
+				<CatalogueDialogContent className="max-w-[95vw] max-h-[95vh] w-full h-[95vh] p-0 bg-black/90 border-none rounded-none">
 					<VisuallyHidden>
-						<DialogTitle>Full screen image view</DialogTitle>
+						<CatalogueDialogTitle>Full screen image view</CatalogueDialogTitle>
 					</VisuallyHidden>
 					<div className="relative w-full h-full flex items-center justify-center border-none">
 						{item?.image && (
@@ -107,8 +110,8 @@ export default function ItemDetailModal({
 							/>
 						)}
 					</div>
-				</DialogContent>
-			</Dialog>
+				</CatalogueDialogContent>
+			</CatalogueDialog>
 		</>
 	);
 }

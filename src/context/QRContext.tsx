@@ -1,50 +1,28 @@
 "use client";
 
-import type { Options } from "qr-code-styling";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import type QRCodeStyling from "qr-code-styling";
+import type React from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useMemo,
+	useState,
+} from "react";
+import { designKey, mergeQrConfig, type QrConfig } from "@/lib/qr/design";
 
 interface QrContextType {
-	options: Options;
-	setOptions: React.Dispatch<React.SetStateAction<Options>>;
-	updateOptions: (newOptions: Partial<Options>) => void;
-	qrCodeInstance: any;
-	setQrCodeInstance: (instance: any) => void;
+	options: QrConfig;
+	setOptions: React.Dispatch<React.SetStateAction<QrConfig>>;
+	/** Shallow-merges each option group, so callers pass only what changed. */
+	updateOptions: (newOptions: Partial<QrConfig>) => void;
+	/** True while the design differs from the last saved one. */
+	isDirty: boolean;
+	/** Records the current design as saved. */
+	markSaved: (saved: QrConfig) => void;
+	qrCodeInstance: QRCodeStyling | null;
+	setQrCodeInstance: (instance: QRCodeStyling | null) => void;
 }
-
-const defaultOptions: Options = {
-	width: 300,
-	height: 300,
-	type: "svg",
-	data: process.env.NEXT_PUBLIC_APP_URL || "https://quicktalog.com",
-	image: "",
-	margin: 0,
-	qrOptions: {
-		typeNumber: 0,
-		mode: "Byte",
-		errorCorrectionLevel: "Q",
-	},
-	imageOptions: {
-		hideBackgroundDots: false,
-		imageSize: 0.5,
-		margin: 0,
-		crossOrigin: "anonymous",
-	},
-	dotsOptions: {
-		color: "#000000",
-		type: "square",
-	},
-	backgroundOptions: {
-		color: "#ffffff",
-	},
-	cornersSquareOptions: {
-		color: "#000000",
-		type: "square",
-	},
-	cornersDotOptions: {
-		color: "#000000",
-		type: "square",
-	},
-};
 
 const QrContext = createContext<QrContextType | undefined>(undefined);
 
@@ -53,48 +31,43 @@ export function QrProvider({
 	initialOptions,
 }: {
 	children: React.ReactNode;
-	initialOptions?: Options;
+	/** The design to start from: the saved one, or the defaults. */
+	initialOptions: QrConfig;
 }) {
-	const [options, setOptions] = useState<Options>(
-		initialOptions || defaultOptions,
+	const [options, setOptions] = useState<QrConfig>(initialOptions);
+	const [savedKey, setSavedKey] = useState(() => designKey(initialOptions));
+	const [qrCodeInstance, setQrCodeInstance] = useState<QRCodeStyling | null>(
+		null,
 	);
-	const [qrCodeInstance, setQrCodeInstance] = useState<any>(null);
 
-	const updateOptions = (newOptions: Partial<Options>) => {
-		setOptions((prev) => ({
-			...prev,
-			...newOptions,
-			qrOptions: { ...prev.qrOptions, ...newOptions.qrOptions },
-			imageOptions: { ...prev.imageOptions, ...newOptions.imageOptions },
-			dotsOptions: { ...prev.dotsOptions, ...newOptions.dotsOptions },
-			backgroundOptions: {
-				...prev.backgroundOptions,
-				...newOptions.backgroundOptions,
-			},
-			cornersSquareOptions: {
-				...prev.cornersSquareOptions,
-				...newOptions.cornersSquareOptions,
-			},
-			cornersDotOptions: {
-				...prev.cornersDotOptions,
-				...newOptions.cornersDotOptions,
-			},
-		}));
-	};
+	const updateOptions = useCallback((newOptions: Partial<QrConfig>) => {
+		setOptions((prev) => mergeQrConfig(prev, newOptions));
+	}, []);
 
-	return (
-		<QrContext.Provider
-			value={{
-				options,
-				setOptions,
-				updateOptions,
-				qrCodeInstance,
-				setQrCodeInstance,
-			}}
-		>
-			{children}
-		</QrContext.Provider>
+	const markSaved = useCallback(
+		(saved: QrConfig) => setSavedKey(designKey(saved)),
+		[],
 	);
+
+	const isDirty = useMemo(
+		() => designKey(options) !== savedKey,
+		[options, savedKey],
+	);
+
+	const value = useMemo<QrContextType>(
+		() => ({
+			options,
+			setOptions,
+			updateOptions,
+			isDirty,
+			markSaved,
+			qrCodeInstance,
+			setQrCodeInstance,
+		}),
+		[options, updateOptions, isDirty, markSaved, qrCodeInstance],
+	);
+
+	return <QrContext.Provider value={value}>{children}</QrContext.Provider>;
 }
 
 export function useQr() {

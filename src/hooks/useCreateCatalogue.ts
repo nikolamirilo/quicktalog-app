@@ -7,6 +7,13 @@ import { createCatalogue } from "@/actions/catalogue";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 
+const SIGN_UP_PATH = "/auth?mode=signup";
+
+/**
+ * Opening and submitting the "Create a Catalog" dialog. The form values live
+ * in CatalogueContext; the server re-derives the slug, checks the plan limit
+ * and decides whether the name is free.
+ */
 export const useCreateCatalogue = (disabled = false) => {
 	const router = useRouter();
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,41 +22,39 @@ export const useCreateCatalogue = (disabled = false) => {
 	const { catalogue, resetCatalogue } = useCatalogueContext();
 	const { userData, refreshUserData } = useUserContext();
 
-	const handleCreateCatalogue = async () => {
+	/** Resolves to true when the catalogue was created and the builder opens. */
+	const handleCreateCatalogue = async (): Promise<boolean> => {
+		if (!userData) {
+			router.push(SIGN_UP_PATH);
+			return false;
+		}
+
 		setLoading(true);
-		if (userData) {
-			try {
-				const result = await createCatalogue(catalogue);
-
-				if (result.success) {
-					toast.success(
-						`Catalogue "${result.data.name}" created successfully!`,
-					);
-					setIsModalOpen(false);
-
-					resetCatalogue();
-					await refreshUserData();
-					router.refresh();
-
-					setTimeout(() => {
-						router.push(`/admin/${result.data.name}/builder`);
-					}, 200);
-				} else {
-					toast.error(result.error || "Failed to create catalogue");
-				}
-			} catch (_error) {
-				toast.error("An unexpected error occurred");
-			} finally {
-				setLoading(false);
+		try {
+			const result = await createCatalogue(catalogue);
+			if (!result.success || !result.data) {
+				toast.error(result.error || "Failed to create catalogue");
+				return false;
 			}
-		} else {
-			router.push("/auth?mode=signup");
+
+			toast.success(`Catalogue "${result.data.name}" created successfully!`);
+			// The values stay in the context while the dialog animates out; the
+			// builder replaces them, and the next opening resets them.
+			setIsModalOpen(false);
+			await refreshUserData();
+			router.push(`/admin/${result.data.name}/builder`);
+			return true;
+		} catch (_error) {
+			toast.error("An unexpected error occurred");
+			return false;
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const handleButtonClick = () => {
 		if (!userData) {
-			router.push("/auth?mode=signup");
+			router.push(SIGN_UP_PATH);
 			return;
 		}
 		if (userData.usage.catalogues >= userData.currentPlan.features.catalogues) {

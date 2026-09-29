@@ -1,31 +1,22 @@
-const GetStartedCTA = () => {
+import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+
+/** Slim "ready to start?" bar with sign-up and pricing links. */
+export function GetStartedCTA() {
 	return (
-		<div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-product-background border-t border-product-border">
-			<div className="max-w-4xl mx-auto">
-				<div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-					<div className="text-center sm:text-left">
-						<p className="text-sm text-product-foreground font-medium">
-							Ready to create your own catalogue?
-						</p>
-					</div>
-					<div className="flex gap-2">
-						<a
-							className="bg-product-primary text-product-foreground px-4 py-2 rounded-lg text-sm font-medium  transition-colors duration-200 shadow-product-shadow"
-							href="/auth?mode=signup"
-						>
-							Get Started
-						</a>
-						<a
-							className="text-product-secondary border border-product-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-product-primary hover:text-product-foreground transition-all duration-200"
-							href="/pricing"
-						>
-							Pricing
-						</a>
-					</div>
-				</div>
+		<div className="mx-auto mt-7 flex max-w-[1152px] flex-col items-center gap-4 rounded-product-card border border-product-border bg-product-card px-6 py-[22px] text-center shadow-product md:flex-row md:justify-between md:px-7 md:text-left">
+			<h2 className="text-[clamp(19px,2vw,22px)] font-bold leading-[1.25] tracking-[-0.02em]">
+				Ready to create your own catalogue?
+			</h2>
+			<div className="flex flex-wrap justify-center gap-2.5">
+				<Button asChild>
+					<Link href="/auth?mode=signup">Get Started</Link>
+				</Button>
+				<Button asChild variant="outline">
+					<Link href="/pricing">Pricing</Link>
+				</Button>
 			</div>
 		</div>
 	);
-};
-
-export default GetStartedCTA;
+}

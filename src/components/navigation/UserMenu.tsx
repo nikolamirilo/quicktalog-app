@@ -1,9 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { FiGrid, FiLogOut, FiUser } from "react-icons/fi";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -12,98 +8,106 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/context/AuthContext";
+import { authLinks } from "@/constants/navigation";
+import { type AuthUser, useAuth } from "@/context/AuthContext";
+import { useSignOut } from "@/hooks/useSignOut";
+import { cn } from "@/lib/ui/cn";
 import { initialsFrom } from "@/lib/users/initials";
+import { LayoutDashboard, LogOut, User } from "lucide-react";
+import Link from "next/link";
+
+/** 42px amber avatar: the user's photo, or their initials. */
+export function UserAvatar({
+	user,
+	className,
+}: {
+	user: AuthUser;
+	className?: string;
+}) {
+	return (
+		<span
+			aria-hidden="true"
+			className={cn(
+				"grid h-[42px] w-[42px] flex-none place-items-center overflow-hidden rounded-full border-2 border-product-primary bg-product-primary-soft font-product-heading text-sm font-extrabold leading-none tracking-[0.02em] text-product-foreground transition-colors",
+				className,
+			)}
+		>
+			{user.imageUrl ? (
+				<img
+					alt=""
+					className="h-full w-full object-cover"
+					referrerPolicy="no-referrer"
+					src={user.imageUrl}
+				/>
+			) : (
+				initialsFrom(user.name)
+			)}
+		</span>
+	);
+}
+
+const itemClass =
+	"h-10 min-h-10 gap-2.5 rounded-[12px] px-3 text-[14.5px] font-medium text-product-foreground-accent focus:bg-product-background-hero focus:text-product-foreground [&_svg]:size-4";
 
 /**
  * The signed-in user's menu. Replaces Clerk's `<UserButton/>`, which could only
  * ever render Clerk's own account UI and would have had to be swapped during
  * the cutover; this reads `useAuth()` and works with whichever provider is live.
  */
-export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
-	const { user, accountHref, signOut } = useAuth();
-	const router = useRouter();
-	const [signingOut, setSigningOut] = useState(false);
+export function UserMenu() {
+	const { user, accountHref } = useAuth();
+	const { signingOut, handleSignOut } = useSignOut();
 
 	if (!user) return null;
-
-	const initials = initialsFrom(user.name);
-
-	const handleSignOut = async () => {
-		setSigningOut(true);
-		try {
-			await signOut();
-			router.push("/");
-		} finally {
-			setSigningOut(false);
-		}
-	};
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				aria-label="Account menu"
-				className="flex items-center justify-center w-9 h-9 rounded-full ring-2 ring-product-primary ring-offset-2 ring-offset-product-background bg-product-background-hover text-product-foreground text-xs font-semibold overflow-hidden cursor-pointer hover:ring-product-primary-accent hover:shadow-md transition-all duration-200"
+				aria-label={`Account menu, ${user.name}`}
+				className="group grid cursor-pointer place-items-center rounded-full"
 			>
-				{user.imageUrl ? (
-					<img
-						alt=""
-						className="w-full h-full object-cover"
-						referrerPolicy="no-referrer"
-						src={user.imageUrl}
-					/>
-				) : (
-					initials
-				)}
+				<UserAvatar
+					className="group-hover:bg-product-primary group-data-[state=open]:bg-product-primary"
+					user={user}
+				/>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				align="end"
-				className="bg-product-background border border-product-border rounded-xl shadow-lg min-w-52 p-1 text-sm"
-				sideOffset={8}
+				className="z-[52] w-[250px] rounded-[20px] p-2"
+				sideOffset={12}
 			>
-				<DropdownMenuLabel className="px-2 py-1.5 text-product-foreground">
-					<span className="block truncate text-sm font-semibold leading-tight">
+				<DropdownMenuLabel className="px-3 pb-2.5 pt-2 font-normal">
+					<span className="block truncate font-product-heading text-[15px] font-bold leading-[1.3] text-product-foreground">
 						{user.name}
 					</span>
 					{user.email && (
-						<span className="mt-0.5 block truncate text-xs font-normal text-product-foreground-accent">
+						<span className="block truncate text-[13px] text-product-muted">
 							{user.email}
 						</span>
 					)}
 				</DropdownMenuLabel>
-				<DropdownMenuSeparator className="my-1" />
-				<DropdownMenuItem asChild>
-					<Link
-						className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm"
-						href="/admin/dashboard"
-						onClick={onNavigate}
-					>
-						<FiGrid className="shrink-0 opacity-70" size={15} />
+				<DropdownMenuItem asChild className={itemClass}>
+					<Link href={authLinks.dashboard}>
+						<LayoutDashboard aria-hidden="true" />
 						Dashboard
 					</Link>
 				</DropdownMenuItem>
-				<DropdownMenuItem asChild>
-					<Link
-						className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm"
-						href={accountHref}
-						onClick={onNavigate}
-					>
-						<FiUser className="shrink-0 opacity-70" size={15} />
+				<DropdownMenuItem asChild className={itemClass}>
+					<Link href={accountHref}>
+						<User aria-hidden="true" />
 						Account
 					</Link>
 				</DropdownMenuItem>
-				<DropdownMenuSeparator className="my-1" />
+				<DropdownMenuSeparator className="mx-1 my-1.5 bg-product-border" />
 				<DropdownMenuItem
-					className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm"
+					className={itemClass}
 					disabled={signingOut}
-					onClick={handleSignOut}
+					onSelect={handleSignOut}
 				>
-					<FiLogOut className="shrink-0 opacity-70" size={15} />
+					<LogOut aria-hidden="true" />
 					{signingOut ? "Signing out…" : "Sign out"}
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
 }
-
-export default UserMenu;

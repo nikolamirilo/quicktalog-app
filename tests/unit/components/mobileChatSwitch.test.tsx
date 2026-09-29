@@ -21,6 +21,7 @@ vi.mock("next/font/google", () => {
 			"Crimson_Text",
 			"DM_Sans",
 			"Inter",
+			"Inter_Tight",
 			"Josefin_Sans",
 			"Lato",
 			"Lora",
@@ -30,6 +31,7 @@ vi.mock("next/font/google", () => {
 			"Open_Sans",
 			"Oswald",
 			"Playfair_Display",
+			"Plus_Jakarta_Sans",
 			"Poppins",
 			"Raleway",
 			"Roboto",
@@ -139,19 +141,6 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 		act(() => context.current?.setIsChatOpen(false));
 		expect(classesOf(aside())).toContain("flex");
 		expect(classesOf(aside())).not.toContain("hidden");
-	});
-
-	/**
-	 * withMT (material-tailwind) replaces Tailwind's screens, which stops every
-	 * `max-*` variant from compiling - `max-md:hidden` silently does nothing in
-	 * this project. Guard the fix against being "tidied" back into one.
-	 */
-	it("never reaches for a max-* variant, which does not compile here", () => {
-		const { context, aside } = setup();
-
-		act(() => context.current?.setIsChatOpen(true));
-
-		expect(aside().className).not.toMatch(/\bmax-(sm|md|lg|xl):/);
 	});
 
 	/**

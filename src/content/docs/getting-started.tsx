@@ -1,9 +1,9 @@
 import { FiFlag } from "react-icons/fi";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
+import { Stepper } from "@/components/resources/Stepper";
 import type { DocEntry } from "./_types";
 
 const meta = {
@@ -22,17 +22,16 @@ const meta = {
 		"create digital catalogue",
 	],
 	relatedSlugs: ["create-a-catalogue", "build-and-edit"],
-	coverImage: "/images/documentation/getting-started-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/images/documentation/getting-started-cover.svg"
 				alt="Overview of the Quicktalog platform showing a digital catalogue on multiple devices"
 				maxWidth="640px"
 				priority
+				src="/images/documentation/getting-started-cover.svg"
 			/>
 
 			<Prose>
@@ -71,9 +70,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/getting-started-account-setup.svg"
 				alt="Quicktalog account setup screen showing the sign-up form and plan selection"
 				maxWidth="640px"
+				src="/images/documentation/getting-started-account-setup.svg"
 			/>
 
 			<Prose>
@@ -87,8 +86,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/getting-started-dashboard.svg"
 				alt="Quicktalog dashboard showing a list of catalogues with their status and quick actions"
+				src="/images/documentation/getting-started-dashboard.svg"
 			/>
 
 			<Stepper
@@ -129,8 +128,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/getting-started-workflow.svg"
 				alt="Quicktalog workflow diagram: create a draft, build it in the builder, share with a link or QR code, then track performance"
+				src="/images/documentation/getting-started-workflow.svg"
 			/>
 		</>
 	);

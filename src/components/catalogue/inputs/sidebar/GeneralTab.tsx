@@ -1,4 +1,4 @@
-import ImageDropzone from "@/components/general/ImageDropzone";
+import { ImageDropzone } from "@/components/general/ImageDropzone";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -66,7 +66,6 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 				<CatalogueNameInput disabled={true} />
 				<LanguageInput />
 				<CurrencySelect />
-				{/* <BusinessType /> */}
 				<div className="w-full relative">
 					{!hasBranding && <LimitsOverlay size="sm" />}
 					<div

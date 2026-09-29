@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 /** Large editorial pull quote that breaks up long stretches of body text. */
-export default function PullQuote({
+export function PullQuote({
 	children,
 	cite,
 }: {
@@ -9,14 +9,15 @@ export default function PullQuote({
 	cite?: string;
 }) {
 	return (
-		<figure className="my-10">
-			<blockquote className="border-l-4 border-product-primary pl-6">
-				<p className="font-lora text-2xl font-bold leading-snug text-product-foreground sm:text-[1.75rem]">
+		<figure className="!my-8 border-l-4 border-product-primary py-1.5 pl-[22px]">
+			<blockquote>
+				<p className="text-balance font-product-heading text-[clamp(21px,2.3vw,26px)] font-extrabold leading-[1.3] tracking-[-0.02em] text-product-foreground">
 					{children}
 				</p>
 			</blockquote>
 			{cite && (
-				<figcaption className="mt-3 pl-6 text-sm text-product-foreground-accent">
+				<figcaption className="mt-2.5 text-sm text-product-muted">
+					<span aria-hidden="true">— </span>
 					{cite}
 				</figcaption>
 			)}

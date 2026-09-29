@@ -1,25 +1,29 @@
+import { ArticleCard } from "@/components/articles/ArticleCard";
+import { Container } from "@/components/general/Container";
+import { SectionHeading } from "@/components/general/SectionHeading";
 import type { Article } from "@/content/articles/_types";
-import ArticleCard from "./ArticleCard";
 
-/** Two to three related posts shown at the foot of an article. */
-export default function RelatedArticles({ articles }: { articles: Article[] }) {
+/** Related posts shown at the foot of an article. */
+export function RelatedArticles({ articles }: { articles: Article[] }) {
 	if (!articles.length) return null;
 
 	return (
-		<section className="mx-auto mt-20 max-w-5xl px-4">
-			<div className="mb-8">
-				<span className="text-xs font-semibold uppercase tracking-[0.2em] text-product-secondary">
-					Keep reading
-				</span>
-				<h2 className="mt-2 font-lora text-3xl font-bold text-product-foreground">
-					More guides for you
-				</h2>
-			</div>
-			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-				{articles.map((article) => (
-					<ArticleCard key={article.meta.slug} meta={article.meta} />
-				))}
-			</div>
+		<section aria-labelledby="related-articles-heading" className="pb-6 pt-16">
+			<Container>
+				<SectionHeading
+					align="left"
+					className="mb-[22px]"
+					eyebrow="Keep reading"
+					id="related-articles-heading"
+					size="sm"
+					title="More guides for you"
+				/>
+				<div className="grid grid-cols-1 gap-[18px] md:grid-cols-2 lg:grid-cols-3 lg:gap-[22px]">
+					{articles.map((article) => (
+						<ArticleCard key={article.meta.slug} meta={article.meta} />
+					))}
+				</div>
+			</Container>
 		</section>
 	);
 }

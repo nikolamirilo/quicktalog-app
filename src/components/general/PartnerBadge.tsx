@@ -1,9 +1,9 @@
 "use client";
 import { extractDomain } from "@/lib/http/domain";
 import { useState } from "react";
-import SmartLink from "./SmartLink";
+import { SmartLink } from "@/components/general/SmartLink";
 
-export default function PartnerBadge({
+export function PartnerBadge({
 	partner,
 }: {
 	partner: {

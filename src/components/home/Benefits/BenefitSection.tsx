@@ -1,115 +1,56 @@
-//@ts-nocheck
-"use client";
+import {
+	type LottieAnimation,
+	LottiePlayer,
+} from "@/components/general/LottiePlayer";
+import { Rise } from "@/components/general/Rise";
+import {
+	BenefitBullet,
+	type BenefitBulletData,
+} from "@/components/home/Benefits/BenefitBullet";
 
-import { IBenefit } from "@/types/shared";
-import clsx from "clsx";
-import { motion, Variants } from "framer-motion";
-import SectionTitle from "@/components/home/SectionTitle";
-import BenefitBullet from "./BenefitBullet";
-
-interface Props {
-	benefit: IBenefit;
-	imageAtRight?: boolean;
-}
-
-const containerVariants: Variants = {
-	offscreen: {
-		opacity: 0,
-		y: 100,
-	},
-	onscreen: {
-		opacity: 1,
-		y: 0,
-		transition: {
-			type: "spring",
-			bounce: 0.2,
-			duration: 0.9,
-			delayChildren: 0.2,
-			staggerChildren: 0.1,
-		},
-	},
+export type BenefitData = {
+	title: string;
+	description: string;
+	bullets: BenefitBulletData[];
+	image: { src: string; width: number; height: number };
+	animation: LottieAnimation;
+	restFrame: number;
 };
 
-export const childVariants = {
-	offscreen: {
-		opacity: 0,
-		x: -50,
-	},
-	onscreen: {
-		opacity: 1,
-		x: 0,
-		transition: {
-			type: "spring",
-			bounce: 0.2,
-			duration: 1,
-		},
-	},
-};
-
-const BenefitSection: React.FC<Props> = ({ benefit, imageAtRight }: Props) => {
-	const { title, description, imageSrc, bullets } = benefit;
+/** Text with three bullets beside an illustration; the image sits left from `lg`. */
+export function BenefitSection({ benefit }: { benefit: BenefitData }) {
+	const { title, description, bullets, image, animation, restFrame } = benefit;
 
 	return (
-		<section className="benefit-section">
-			<motion.div
-				className="flex flex-wrap flex-col items-center justify-center gap-2 lg:flex-row lg:gap-20 lg:flex-nowrap mt-24 mb-24"
-				initial="offscreen"
-				variants={containerVariants}
-				viewport={{ once: true }}
-				whileInView="onscreen"
-			>
-				<div
-					className={clsx("flex flex-wrap items-center w-full max-w-lg", {
-						"justify-start": imageAtRight,
-						"lg:order-1 justify-end": !imageAtRight,
-					})}
-				>
-					<div className="w-full  text-center lg:text-left ">
-						<motion.div
-							className="flex flex-col w-full"
-							variants={childVariants}
-						>
-							<SectionTitle>
-								<h3 className="lg:max-w-2xl">{title}</h3>
-							</SectionTitle>
-
-							<p className="mt-1.5 mx-auto lg:ml-0 leading-normal text-product-foreground-accent">
-								{description}
-							</p>
-						</motion.div>
-
-						<div className="mx-auto lg:ml-0 w-full">
-							{bullets.map((item, index) => (
-								<BenefitBullet
-									description={item.description}
-									icon={item.icon}
-									key={`benefit-item-${index}`}
-									title={item.title}
-								/>
-							))}
-						</div>
-					</div>
-				</div>
-
-				<div className={clsx("mt-5 lg:mt-0", { "lg:order-2": imageAtRight })}>
-					<div
-						className={clsx("w-fit flex", {
-							"justify-start": imageAtRight,
-							"justify-end": !imageAtRight,
-						})}
-					>
-						<img
-							alt="title"
-							className="lg:ml-0"
-							height="762"
-							src={imageSrc}
-							width="384"
-						/>
-					</div>
-				</div>
-			</motion.div>
+		<section className="flex flex-col items-center gap-7 py-10 lg:flex-row lg:justify-center lg:gap-20 lg:py-[72px]">
+			<Rise className="w-full max-w-[520px] text-center lg:order-1 lg:text-left">
+				<h3 className="text-[clamp(30px,3.6vw,46px)] font-extrabold tracking-[-0.03em]">
+					{title}
+				</h3>
+				<p className="mt-3.5 text-[17px] text-product-foreground-accent">
+					{description}
+				</p>
+				<ul className="mt-3">
+					{bullets.map((bullet) => (
+						<BenefitBullet key={bullet.title} {...bullet} />
+					))}
+				</ul>
+			</Rise>
+			<LottiePlayer
+				animation={animation}
+				className="aspect-[480/340] w-full max-w-[460px]"
+				fallback={
+					<img
+						alt=""
+						className="h-full w-full object-contain"
+						height={image.height}
+						loading="lazy"
+						src={image.src}
+						width={image.width}
+					/>
+				}
+				restFrame={restFrame}
+			/>
 		</section>
 	);
-};
-
-export default BenefitSection;
+}

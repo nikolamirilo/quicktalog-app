@@ -1,14 +1,15 @@
-import ArticleCTA from "@/components/articles/ArticleCTA";
-import ArticleImage from "@/components/articles/ArticleImage";
-import BarCompare from "@/components/articles/BarCompare";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import ProsCons from "@/components/articles/ProsCons";
-import Prose from "@/components/articles/Prose";
-import PullQuote from "@/components/articles/PullQuote";
-import StatHighlights from "@/components/articles/StatHighlights";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleCTA } from "@/components/resources/ArticleCTA";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { BarCompare } from "@/components/articles/BarCompare";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { ProsCons } from "@/components/articles/ProsCons";
+import { Prose } from "@/components/resources/Prose";
+import { PullQuote } from "@/components/articles/PullQuote";
+import { StatHighlights } from "@/components/articles/StatHighlights";
+import { Stepper } from "@/components/resources/Stepper";
 import type { Article } from "./_types";
+import { TextLink } from "@/components/general/TextLink";
 
 const meta = {
 	slug: "create-catalog-with-ai",
@@ -28,7 +29,7 @@ const meta = {
 		"https://images.unsplash.com/photo-1633114128174-2f8aa49759b0?auto=format&fit=crop&w=1600&q=80",
 	heroImageAlt:
 		"Two people building something together on a laptop, seen from above",
-	heroCredit: { name: "Unsplash", url: "https://unsplash.com" },
+	cover: "ai",
 	publishedAt: "2026-06-17",
 	readingTimeMinutes: 6,
 	author: "The Quicktalog Team",
@@ -165,7 +166,7 @@ function Body() {
 				then let the other route fill the gaps.
 			</Callout>
 
-			<ArticleCTA variant="mid" />
+			<ArticleCTA />
 
 			<Prose>
 				<h2>How the two routes compare on effort</h2>
@@ -208,7 +209,9 @@ function Body() {
 				<p>
 					If you run a restaurant or a service business, the same draft and edit
 					flow applies to a{" "}
-					<a href="/articles/digital-menu-for-restaurants">full digital menu</a>
+					<TextLink href="/articles/digital-menu-for-restaurants">
+						full digital menu
+					</TextLink>
 					, so the work you do here carries straight over.
 				</p>
 
@@ -219,8 +222,10 @@ function Body() {
 					space. Because the catalog lives online, you can come back and change
 					anything later without starting over. If you plan to print the code on
 					a table card or a poster, the{" "}
-					<a href="/articles/qr-code-catalog-guide">QR code guide</a> covers how
-					to make one that still scans.
+					<TextLink href="/articles/qr-code-catalog-guide">
+						QR code guide
+					</TextLink>{" "}
+					covers how to make one that still scans.
 				</p>
 			</Prose>
 

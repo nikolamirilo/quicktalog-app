@@ -1,22 +1,21 @@
-//@ts-nocheck
-//@ts-nocheck
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 import { cn } from "@/lib/ui/cn";
 
 const badgeVariants = cva(
-	"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+	"inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-transparent px-2.5 text-[11.5px] font-bold uppercase tracking-[0.04em] [&_svg]:size-3",
 	{
 		variants: {
 			variant: {
-				default:
-					"border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-				secondary:
-					"border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-				destructive:
-					"border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-				outline: "text-foreground",
+				default: "bg-product-primary-soft text-product-primary-ink",
+				primary: "bg-product-primary text-product-foreground",
+				secondary: "bg-product-background-hero text-product-foreground-accent",
+				success: "bg-product-success-soft text-product-success",
+				info: "bg-product-info-soft text-product-info",
+				destructive: "bg-product-error-soft text-product-error",
+				outline:
+					"border-product-border bg-product-card text-product-foreground-accent",
 			},
 		},
 		defaultVariants: {

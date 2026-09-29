@@ -21,7 +21,6 @@ body {
 	   so descendant `position: sticky` (docs sidebar + TOC) keeps working.
 	   `overflow-x: hidden` here would force overflow-y to auto and break it. */
 	overflow-x: clip;
-	font-family: var(--font-lora-regular);
 	@apply scroll-smooth;
 }
 
@@ -160,10 +159,6 @@ a.selected:after {
 @layer base {
 	* {
 		@apply border-border;
-	}
-
-	body {
-		@apply bg-product-background text-product-foreground;
 	}
 }
 

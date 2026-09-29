@@ -1,36 +1,25 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { formatPrice } from "@/lib/format/price";
-import { tiers, type PricingPlan } from "@quicktalog/common";
+import { type PricingPlan, tiers } from "@quicktalog/common";
 import {
-	Calendar,
-	CheckCircle,
-	Clock,
 	CreditCard,
-	DollarSign,
+	ExternalLink,
+	Settings,
 	Shield,
 	Star,
 	Zap,
 } from "lucide-react";
-import { MdOutlineSettings } from "react-icons/md";
+import Link from "next/link";
 
-export interface PlanDetailsProps {
-	pricingPlan: PricingPlan;
-	subscriptionStartDate?: string;
-	subscriptionUpdatedDate?: string;
+import { UpgradePlanCTA } from "@/components/general/UpgradePlanCTA";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/format/price";
+
+type PlanDetailsProps = {
+	currentPlan: PricingPlan;
 	currentPrice: string | undefined;
 	loading: boolean;
-	onManageSubscription: () => void;
-	onUpgrade: () => void;
-}
-
-const formatDate = (dateString: string) => {
-	return new Date(dateString).toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
+	/** Paddle's customer portal: billing details, invoices, cancellation. */
+	manageSubscriptionUrl: string;
 };
 
 const getPlanIcon = (planName: string) => {
@@ -41,14 +30,9 @@ const getPlanIcon = (planName: string) => {
 		name?.includes("growth") ||
 		name?.includes("custom")
 	)
-		return <Star className="w-5 h-5" />;
-	if (name?.includes("enterprise")) return <Shield className="w-5 h-5" />;
-	return <Zap className="w-5 h-5" />;
-};
-
-const getPlanColor = (planName: string) => {
-	const name = planName?.toLowerCase();
-	return "bg-product-primary";
+		return <Star />;
+	if (name?.includes("enterprise")) return <Shield />;
+	return <Zap />;
 };
 
 const highestStandardTierId = Math.max(
@@ -58,175 +42,126 @@ const highestStandardTierId = Math.max(
 const canUpgrade = (pricingPlan: PricingPlan) =>
 	pricingPlan.type === "standard" && pricingPlan.id < highestStandardTierId;
 
-export default function PlanDetails({
-	pricingPlan,
-	subscriptionStartDate,
-	subscriptionUpdatedDate,
+/**
+ * The current plan card. Subscription start and renewal dates are not shown:
+ * they live in `subscriptions`, which the app role cannot read.
+ */
+export function PlanDetails({
+	currentPlan: pricingPlan,
 	currentPrice,
 	loading,
-	onManageSubscription,
-	onUpgrade,
+	manageSubscriptionUrl,
 }: PlanDetailsProps) {
-	const defaultDate = new Date().toISOString();
-
 	if (!pricingPlan) {
 		return (
-			<div className="max-w-4xl mx-auto p-6">
-				<Card
-					className="border-product-border border-2 border-dashed"
-					style={{ boxShadow: "var(--product-shadow)" }}
-				>
-					<CardContent className="flex flex-col items-center justify-center py-12">
-						<CreditCard className="w-16 h-16 text-product-foreground-accent mb-4" />
-						<h3 className="text-xl font-semibold text-product-foreground mb-2">
-							No Subscription Plan Found
-						</h3>
-						<p className="text-product-foreground-accent text-center mb-6">
-							You haven't selected a Subscription plan yet. Choose a plan to get
-							started.
-						</p>
-						<Button className="bg-product-primary text-product-foreground ">
-							View Available Plans
-						</Button>
-					</CardContent>
-				</Card>
+			<div className="flex flex-col items-center gap-3 rounded-product-card border-[1.5px] border-dashed border-product-border-strong bg-product-card px-6 py-12 text-center">
+				<CreditCard aria-hidden="true" className="size-12 text-product-muted" />
+				<h2 className="text-xl font-bold">No Subscription Plan Found</h2>
+				<p className="max-w-md text-product-foreground-accent">
+					You haven't selected a Subscription plan yet. Choose a plan to get
+					started.
+				</p>
+				<Button asChild>
+					<Link href="/pricing">View Available Plans</Link>
+				</Button>
 			</div>
 		);
 	}
 
+	const details = [
+		{
+			label: "Price",
+			value: loading ? "…" : currentPrice ? formatPrice(currentPrice) : "–",
+		},
+		{
+			label: "Subscription Cycle",
+			value: pricingPlan.billing_period
+				? `${pricingPlan.billing_period}ly`
+				: "-",
+		},
+	];
+
 	return (
 		<>
-			{/* Upgrade plan */}
 			{canUpgrade(pricingPlan) && (
-				<div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl p-6 shadow-lg">
-					<div className="text-center sm:text-left">
-						<h2 className="text-xl font-bold text-product-foreground flex items-center gap-2">
-							<Star className="w-5 h-5 text-product-primary" />
-							Upgrade your plan
-						</h2>
-						<p className="text-product-foreground-accent text-sm mt-1">
-							Get more features, higher limits, and premium support.
-						</p>
-					</div>
-					<Button
-						className="w-fit min-w-56 bg-product-primary  shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-						onClick={onUpgrade}
-						variant="default"
-					>
-						<Star className="w-4 h-4" />
-						Upgrade plan
-					</Button>
-				</div>
+				<UpgradePlanCTA
+					ctaLabel="Upgrade plan"
+					href="/pricing"
+					subtitle="Get more features, higher limits, and premium support."
+					title="Upgrade your plan"
+				/>
 			)}
 
-			{/* Main Plan Card */}
-			<Card
-				className="overflow-hidden border-product-border"
-				style={{ boxShadow: "var(--product-shadow)" }}
+			<section
+				aria-labelledby="plan-name-h"
+				className="mb-[18px] flex flex-col gap-4 rounded-product-card border border-product-border bg-product-card p-5 shadow-product md:p-6"
 			>
-				<div
-					className={`${getPlanColor(pricingPlan.name)} p-6 text-product-foreground`}
-				>
-					<div className="flex items-center justify-between">
-						<div className="flex items-center space-x-3">
-							{getPlanIcon(pricingPlan.name)}
-							<div>
-								<CardTitle className="text-2xl font-bold text-product-foreground">
-									{pricingPlan.name}
-								</CardTitle>
-								<p className="text-product-foreground-accent mt-1">
-									{pricingPlan.description}
-								</p>
-							</div>
-						</div>
-						<Badge className="bg-product-background" variant="default">
-							Active
-						</Badge>
+				<div className="flex flex-wrap items-start gap-x-3.5 gap-y-3">
+					<span
+						aria-hidden="true"
+						className="grid h-12 w-12 flex-none place-items-center rounded-[15px] bg-product-primary text-product-foreground shadow-product-primary [&_svg]:size-[22px]"
+					>
+						{getPlanIcon(pricingPlan.name)}
+					</span>
+					<div className="min-w-0 flex-[1_1_200px]">
+						<h2
+							className="text-xl font-bold leading-tight tracking-[-0.02em]"
+							id="plan-name-h"
+						>
+							{pricingPlan.name}
+						</h2>
+						<p className="text-sm text-product-foreground-accent">
+							{pricingPlan.description}
+						</p>
 					</div>
+					<Badge variant="success">Active</Badge>
 				</div>
 
-				<CardContent className="p-6 bg-product-background">
-					<div className="grid md:grid-cols-2 gap-6">
-						{/* Pricing Info */}
-						<div className="space-y-4">
-							<div className="flex items-center space-x-3">
-								<DollarSign className="w-5 h-5 text-product-icon" />
-								<div>
-									<p className="text-sm text-product-foreground-accent">
-										Price
-									</p>
-									<p className="text-2xl font-bold text-product-foreground">
-										{!loading ? formatPrice(currentPrice) : 0}
-									</p>
-								</div>
-							</div>
-
-							<div className="flex items-center space-x-3">
-								<Calendar className="w-5 h-5 text-product-icon" />
-								<div>
-									<p className="text-sm text-product-foreground-accent">
-										Subscription Cycle
-									</p>
-									<p className="font-semibold text-product-foreground capitalize">
-										{pricingPlan.billing_period}ly
-									</p>
-								</div>
-							</div>
+				<dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-product-border bg-product-border">
+					{details.map((detail) => (
+						<div
+							className="min-w-0 bg-product-card px-3.5 py-3"
+							key={detail.label}
+						>
+							<dt className="text-[12.5px] font-semibold text-product-muted">
+								{detail.label}
+							</dt>
+							<dd className="mt-0.5 font-product-heading text-[15px] font-bold capitalize leading-snug">
+								{detail.value}
+							</dd>
 						</div>
+					))}
+				</dl>
 
-						{/* Dates */}
-						<div className="space-y-4">
-							<div className="flex items-center space-x-3">
-								<Clock className="w-5 h-5 text-product-icon" />
-								<div>
-									<p className="text-sm text-product-foreground-accent">
-										Started
-									</p>
-									<p className="font-semibold text-product-foreground">
-										{formatDate(subscriptionStartDate || defaultDate)}
-									</p>
-								</div>
-							</div>
-
-							<div className="flex items-center space-x-3">
-								<CheckCircle className="w-5 h-5 text-product-icon" />
-								<div>
-									<p className="text-sm text-product-foreground-accent">
-										Last Updated
-									</p>
-									<p className="font-semibold text-product-foreground">
-										{formatDate(subscriptionUpdatedDate || defaultDate)}
-									</p>
-								</div>
-							</div>
-						</div>
+				<div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-product-border bg-product-background px-4 py-3.5">
+					<div className="flex-[1_1_240px]">
+						<p className="text-[15px] font-bold">Manage your subscription</p>
+						<p className="text-sm text-product-foreground-accent">
+							Update billing details, check transactions or cancel subscription.
+						</p>
 					</div>
-
-					{/* Manage subscription */}
-					<div className="mt-6 pt-6 border-t border-product-border">
-						<div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-							<div className="text-center sm:text-left">
-								<h3 className="text-lg font-semibold text-product-foreground">
-									Manage your subscription
-								</h3>
-								<p className="text-product-foreground-accent text-sm mt-1">
-									Update billing details, check transactions or cancel
-									subscription.
-								</p>
-							</div>
-							<Button
-								className="w-fit min-w-56"
-								disabled={pricingPlan.id === 0}
-								onClick={onManageSubscription}
-								variant="default"
+					{pricingPlan.id === 0 ? (
+						// The free plan has no Paddle subscription to manage.
+						<Button disabled size="sm" variant="outline">
+							<Settings aria-hidden="true" />
+							Manage subscription
+						</Button>
+					) : (
+						<Button asChild size="sm" variant="outline">
+							<a
+								href={manageSubscriptionUrl}
+								rel="noopener noreferrer"
+								target="_blank"
 							>
-								<MdOutlineSettings className="w-4 h-4" />
+								<Settings aria-hidden="true" />
 								Manage subscription
-							</Button>
-						</div>
-					</div>
-				</CardContent>
-			</Card>
+								<ExternalLink aria-hidden="true" />
+								<span className="sr-only">(opens in a new tab)</span>
+							</a>
+						</Button>
+					)}
+				</div>
+			</section>
 		</>
 	);
 }

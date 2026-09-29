@@ -1,5 +1,12 @@
 import type { ArticleMeta } from "@/content/articles/_types";
 import type { DocMeta } from "@/content/docs/_types";
+import { z } from "zod";
+import {
+	FRAME_TEXT_MAX,
+	HEX_COLOR,
+	isUploadedLogoUrl,
+	LOGO_URL_MAX,
+} from "@/lib/qr/design";
 import { faqs } from "./details";
 
 const organizationSchema = {
@@ -365,3 +372,156 @@ export function getPageSchema(page: string) {
 
 	return schemas[page as keyof typeof schemas] || websiteSchema;
 }
+
+export const CONTACT_LIMITS = {
+	name: 100,
+	email: 254,
+	subject: 150,
+	message: 5000,
+} as const;
+
+/**
+ * The contact / support message. `sendContactEmail` parses with this same
+ * schema on the server (authoritative); the form uses it for field errors.
+ */
+export const contactSchema = z.object({
+	name: z
+		.string()
+		.trim()
+		.min(1, "Please enter your name.")
+		.max(
+			CONTACT_LIMITS.name,
+			`Please keep your name under ${CONTACT_LIMITS.name} characters.`,
+		),
+	email: z
+		.string()
+		.trim()
+		.toLowerCase()
+		.min(1, "Please enter your email address.")
+		.email("Enter a valid email address, for example name@company.com.")
+		.max(CONTACT_LIMITS.email, "This email address is too long."),
+	subject: z
+		.string()
+		.trim()
+		.min(1, "Please choose a subject.")
+		.max(CONTACT_LIMITS.subject, "This subject is too long."),
+	message: z
+		.string()
+		.trim()
+		.min(1, "Please tell us how we can help.")
+		.max(
+			CONTACT_LIMITS.message,
+			`Please keep your message under ${CONTACT_LIMITS.message} characters.`,
+		),
+});
+
+export type ContactValues = z.input<typeof contactSchema>;
+export type ContactField = keyof ContactValues;
+
+/** The first error message per field, or an empty object when the values are valid. */
+export function getContactErrors(
+	values: ContactValues,
+): Partial<Record<ContactField, string>> {
+	const result = contactSchema.safeParse(values);
+	if (result.success) return {};
+	const errors: Partial<Record<ContactField, string>> = {};
+	for (const issue of result.error.issues) {
+		const field = issue.path[0] as ContactField;
+		errors[field] ??= issue.message;
+	}
+	return errors;
+}
+
+/* ------------------------------------------------------------------------ */
+/* QR code designs (`qr_configs.config`)                                      */
+/* ------------------------------------------------------------------------ */
+
+const DOT_TYPES = [
+	"square",
+	"dots",
+	"rounded",
+	"extra-rounded",
+	"classy",
+	"classy-rounded",
+] as const;
+
+const hexColor = z.string().regex(HEX_COLOR, "Use a 6-digit hex colour");
+
+/**
+ * What the QR editor may store. Only qr-code-styling's known option groups and
+ * the two app fields survive: unknown keys are stripped at every level
+ * (`z.object` strips by default), gradients and node-only options are not
+ * accepted, colours are `#RRGGBB`, sizes are bounded, and the logo must be ""
+ * or an UploadThing URL (never a data: URL). `data` is accepted but the
+ * server always replaces it with the catalogue's own URL.
+ */
+export const qrConfigSchema = z.object({
+	type: z.enum(["svg", "canvas"]).optional(),
+	shape: z.enum(["square", "circle"]).optional(),
+	width: z.number().int().min(100).max(2000).optional(),
+	height: z.number().int().min(100).max(2000).optional(),
+	margin: z.number().int().min(0).max(100).optional(),
+	data: z.string().max(2048).optional(),
+	image: z
+		.string()
+		.max(LOGO_URL_MAX)
+		.refine((value) => value === "" || isUploadedLogoUrl(value), {
+			message: "Upload the logo with the editor",
+		})
+		.optional(),
+	qrOptions: z
+		.object({
+			typeNumber: z.number().int().min(0).max(40).optional(),
+			mode: z.enum(["Numeric", "Alphanumeric", "Byte", "Kanji"]).optional(),
+			errorCorrectionLevel: z.enum(["L", "M", "Q", "H"]).optional(),
+		})
+		.optional(),
+	imageOptions: z
+		.object({
+			hideBackgroundDots: z.boolean().optional(),
+			imageSize: z.number().min(0.1).max(1).optional(),
+			margin: z.number().int().min(0).max(50).optional(),
+			crossOrigin: z.literal("anonymous").optional(),
+		})
+		.optional(),
+	dotsOptions: z
+		.object({
+			type: z.enum(DOT_TYPES).optional(),
+			color: hexColor.optional(),
+			roundSize: z.boolean().optional(),
+		})
+		.optional(),
+	cornersSquareOptions: z
+		.object({
+			type: z.enum(["dot", ...DOT_TYPES]).optional(),
+			color: hexColor.optional(),
+		})
+		.optional(),
+	cornersDotOptions: z
+		.object({
+			type: z.enum(["dot", ...DOT_TYPES]).optional(),
+			color: hexColor.optional(),
+		})
+		.optional(),
+	backgroundOptions: z
+		.object({
+			color: hexColor.optional(),
+			round: z.number().min(0).max(1).optional(),
+		})
+		.optional(),
+	frameText: z
+		.object({
+			show: z.boolean(),
+			text: z.string().max(FRAME_TEXT_MAX),
+		})
+		.optional(),
+	showLogo: z.boolean().optional(),
+});
+
+export type QrConfigInput = z.infer<typeof qrConfigSchema>;
+
+/**
+ * Byte budget for one stored design (UTF-8 JSON). Far above anything the
+ * editor produces, and under the `qr_configs_config_size` constraint (64 KB).
+ */
+export const QR_CONFIG_MAX_BYTES = 16 * 1024;

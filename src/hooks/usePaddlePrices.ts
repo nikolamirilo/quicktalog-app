@@ -1,4 +1,6 @@
-import {
+"use client";
+
+import type {
 	Paddle,
 	PricePreviewParams,
 	PricePreviewResponse,
@@ -8,6 +10,9 @@ import * as Sentry from "@sentry/nextjs";
 import { useEffect, useState } from "react";
 
 export type PaddlePrices = Record<string, string>;
+
+/** How long to wait for Paddle.js and the price preview before giving up. */
+const PRICE_TIMEOUT_MS = 8000;
 
 function getLineItems(): PricePreviewParams["items"] {
 	const priceId = tiers.map((tier) => [tier.priceId.month, tier.priceId.year]);
@@ -21,12 +26,25 @@ function getPriceAmounts(prices: PricePreviewResponse) {
 	}, {} as PaddlePrices);
 }
 
+/**
+ * Localised plan prices from Paddle. `loading` is true until a preview
+ * settles; `unavailable` turns true when Paddle is blocked, fails, or has not
+ * answered within a few seconds, so callers can stop showing a loading state.
+ */
 export function usePaddlePrices(
 	paddle: Paddle | undefined,
 	country: string,
-): { prices: PaddlePrices; loading: boolean } {
+): { prices: PaddlePrices; loading: boolean; unavailable: boolean } {
 	const [prices, setPrices] = useState<PaddlePrices>({});
 	const [loading, setLoading] = useState<boolean>(true);
+	const [failed, setFailed] = useState(false);
+	const [timedOut, setTimedOut] = useState(false);
+
+	// Paddle.js may never load (ad blockers, offline); don't wait forever.
+	useEffect(() => {
+		const timer = setTimeout(() => setTimedOut(true), PRICE_TIMEOUT_MS);
+		return () => clearTimeout(timer);
+	}, []);
 
 	useEffect(() => {
 		if (!paddle) return;
@@ -38,6 +56,7 @@ export function usePaddlePrices(
 
 		let cancelled = false;
 		setLoading(true);
+		setFailed(false);
 
 		(async () => {
 			try {
@@ -50,6 +69,7 @@ export function usePaddlePrices(
 					...getPriceAmounts(response),
 				}));
 			} catch (err: any) {
+				if (!cancelled) setFailed(true);
 				const isNetworkError =
 					err?.error?.type === "network_error" ||
 					err?.error?.code === "network_error";
@@ -67,5 +87,11 @@ export function usePaddlePrices(
 			cancelled = true;
 		};
 	}, [country, paddle]);
-	return { prices, loading };
+
+	const hasPrices = Object.keys(prices).length > 0;
+	return {
+		prices,
+		loading,
+		unavailable: !hasPrices && (failed || (timedOut && loading)),
+	};
 }

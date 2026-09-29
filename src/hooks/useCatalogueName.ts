@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { checkCatalogueName } from "@/actions/catalogue";
 
 interface UseCatalogueNameProps {
@@ -12,13 +13,31 @@ interface UseCatalogueNameProps {
 interface UseCatalogueNameReturn {
 	handleNameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	nameExists: boolean;
+	/** True while the availability check for the current name is pending. */
+	checking: boolean;
 }
 
 export const NAME_TAKEN_ERROR =
 	"This name is already in use. Please choose a different name.";
 
 const VALID_NAME = /^[a-zA-Z0-9\s]*$/;
-const CHECK_DELAY_MS = 400;
+
+/** Pause after the last keystroke before the server is asked. */
+export const NAME_CHECK_DELAY_MS = 400;
+
+/**
+ * The format rule for a catalogue name, checked in the browser before the
+ * server is asked whether it is free. Returns the message, or undefined.
+ */
+export function catalogueNameFormatError(name: string): string | undefined {
+	if (name.length > 0 && name.trim().length === 0) {
+		return "Name cannot be just spaces.";
+	}
+	if (!VALID_NAME.test(name)) {
+		return "Name must only contain letters, numbers, and spaces (no special characters).";
+	}
+	return undefined;
+}
 
 export const useCatalogueName = ({
 	initialName,
@@ -28,6 +47,7 @@ export const useCatalogueName = ({
 	setTouched,
 }: UseCatalogueNameProps): UseCatalogueNameReturn => {
 	const [nameExists, setNameExists] = useState(false);
+	const [checking, setChecking] = useState(false);
 
 	// Ask the server whether the name is free once the user pauses typing.
 	useEffect(() => {
@@ -35,10 +55,12 @@ export const useCatalogueName = ({
 		const name = initialName?.trim() ?? "";
 		if (!name || !VALID_NAME.test(name)) {
 			setNameExists(false);
+			setChecking(false);
 			return;
 		}
 
 		let cancelled = false;
+		setChecking(true);
 		const timer = setTimeout(async () => {
 			try {
 				const result = await checkCatalogueName(name);
@@ -53,8 +75,10 @@ export const useCatalogueName = ({
 				});
 			} catch (error) {
 				console.error("Failed to check catalogue name:", error);
+			} finally {
+				if (!cancelled) setChecking(false);
 			}
-		}, CHECK_DELAY_MS);
+		}, NAME_CHECK_DELAY_MS);
 
 		return () => {
 			cancelled = true;
@@ -71,16 +95,9 @@ export const useCatalogueName = ({
 			setTouched((prev: any) => ({ ...prev, name: true }));
 		}
 
-		const isValidFormat = VALID_NAME.test(newName);
-		const isJustSpaces = newName.length > 0 && newName.trim().length === 0;
-
-		if ((!isValidFormat || isJustSpaces) && setErrors) {
-			setErrors((prev: any) => ({
-				...prev,
-				name: isJustSpaces
-					? "Name cannot be just spaces."
-					: "Name must only contain letters, numbers, and spaces (no special characters).",
-			}));
+		const formatError = catalogueNameFormatError(newName);
+		if (formatError && setErrors) {
+			setErrors((prev: any) => ({ ...prev, name: formatError }));
 			return;
 		}
 
@@ -94,5 +111,5 @@ export const useCatalogueName = ({
 		}
 	};
 
-	return { handleNameChange, nameExists };
+	return { handleNameChange, nameExists, checking };
 };

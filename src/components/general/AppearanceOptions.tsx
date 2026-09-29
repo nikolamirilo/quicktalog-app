@@ -5,7 +5,7 @@ import { themes } from "@quicktalog/common";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
+export const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 	const context = useMainContext();
 	if (!context) return null;
 	const { setLayout, layout, theme, setTheme } = context;
@@ -90,7 +90,7 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 
 					<div className="w-full max-w-xs">
 						{/* Navigation Arrows with Layout Info */}
-						<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product-shadow border border-catalogue-section-border mb-4">
+						<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product border border-catalogue-section-border mb-4">
 							<Button
 								className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 								onClick={handlePreviousLayout}
@@ -159,7 +159,7 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 
 				<div className="w-full max-w-xs">
 					{/* Navigation Arrows with Theme Info */}
-					<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product-shadow border border-catalogue-section-border mb-4">
+					<div className="flex items-center justify-between p-3 rounded-2xl bg-catalogue-section-background shadow-product border border-catalogue-section-border mb-4">
 						<Button
 							className="w-10 h-10 p-0 rounded-full border-2 hover:scale-105 transition-all duration-200"
 							onClick={handlePreviousTheme}
@@ -220,5 +220,3 @@ const AppearanceOptions = ({ type = "home" }: { type?: string }) => {
 		</div>
 	);
 };
-
-export default AppearanceOptions;

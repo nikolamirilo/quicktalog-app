@@ -1,5 +1,5 @@
 "use client";
-import HtmlContent from "@/components/general/HtmlContent";
+import { HtmlContent } from "@/components/general/HtmlContent";
 import type { TextBlock } from "@quicktalog/common";
 import { useState } from "react";
 import BlockControls from "@/components/catalogue/cards/common/BlockControls";

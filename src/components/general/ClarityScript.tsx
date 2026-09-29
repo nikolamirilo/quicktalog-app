@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 
-export default function ClarityScript() {
+export function ClarityScript() {
 	if (process.env.NODE_ENV !== "production") return null;
 	return (
 		<Script id="ms-clarity" strategy="afterInteractive">

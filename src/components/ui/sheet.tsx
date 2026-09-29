@@ -22,7 +22,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<SheetPrimitive.Overlay
 		className={cn(
-			"fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 notranslate",
+			"catalogue-root fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 notranslate",
 			className,
 		)}
 		translate="no"
@@ -64,8 +64,8 @@ const SheetContent = React.forwardRef<
 	<SheetPortal>
 		<SheetOverlay />
 		<SheetPrimitive.Content
-			ref={ref}
 			className={cn(sheetVariants({ side }), "notranslate", className)}
+			ref={ref}
 			translate="no"
 			{...props}
 		>
@@ -119,15 +119,15 @@ const SheetTitle = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
 >(({ className, ...props }, ref) => (
 	<SheetPrimitive.Title
-		ref={ref}
 		className={cn(
 			"text-lg font-semibold text-foreground notranslate",
 			className,
 		)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
-		<span translate="no" className="notranslate">
+		<span className="notranslate" translate="no">
 			{props.children}
 		</span>
 	</SheetPrimitive.Title>
@@ -139,12 +139,12 @@ const SheetDescription = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
 >(({ className, ...props }, ref) => (
 	<SheetPrimitive.Description
-		ref={ref}
 		className={cn("text-sm text-muted-foreground notranslate", className)}
+		ref={ref}
 		translate="no"
 		{...props}
 	>
-		<span translate="no" className="notranslate">
+		<span className="notranslate" translate="no">
 			{props.children}
 		</span>
 	</SheetPrimitive.Description>

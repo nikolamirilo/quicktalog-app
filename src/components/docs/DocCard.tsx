@@ -1,115 +1,80 @@
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+
+import { CategoryTag } from "@/components/resources/CategoryTag";
+import { MetaLine } from "@/components/resources/MetaLine";
+import { MiniCataloguePage } from "@/components/resources/MiniCataloguePage";
+import { ReadMore } from "@/components/resources/ReadMore";
+import { IconTile } from "@/components/general/IconTile";
 import type { DocMeta } from "@/content/docs/_types";
+import { cn } from "@/lib/ui/cn";
 
 interface Props {
 	meta: DocMeta;
+	/** Number of docs, for "Part N of M". */
+	total: number;
+	/** Wide amber card with a sample catalogue illustration (from 860px). */
 	featured?: boolean;
-	/** Small label shown above the title, overrides the topic tag. */
-	eyebrow?: string;
 }
 
-export default function DocCard({ meta, featured = false, eyebrow }: Props) {
-	const href = `/docs/${meta.slug}`;
+export function DocCard({ meta, total, featured = false }: Props) {
 	const Icon = meta.icon;
-	const label = eyebrow ?? meta.tag;
-
-	if (featured) {
-		return (
-			<Link
-				className="group grid overflow-hidden rounded-xl border border-product-border bg-product-background transition-all duration-200 hover:-translate-y-0.5 hover:border-product-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-product-primary focus-visible:ring-offset-2 md:grid-cols-2"
-				href={href}
-			>
-				<div className="flex items-center justify-center overflow-hidden bg-product-background-hover md:h-full">
-					{meta.coverImage ? (
-						<Image
-							alt=""
-							aria-hidden
-							height={0}
-							sizes="(max-width: 768px) 100vw, 400px"
-							src={meta.coverImage}
-							style={{ height: "100%", objectFit: "cover", width: "100%" }}
-							width={0}
-						/>
-					) : (
-						<div className="p-10">
-							<span className="flex h-20 w-20 items-center justify-center rounded-xl bg-product-primary text-product-secondary shadow-sm transition-transform duration-200 group-hover:scale-105">
-								<Icon aria-hidden className="h-9 w-9" />
-							</span>
-						</div>
-					)}
-				</div>
-				<div className="flex flex-col justify-center p-6 md:p-8">
-					<span className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-product-secondary">
-						{label}
-					</span>
-					<h3 className="font-lora text-2xl font-bold leading-snug text-product-foreground transition-colors group-hover:text-product-secondary md:text-3xl">
-						{meta.title}
-					</h3>
-					<p className="mt-3 line-clamp-3 text-product-foreground-accent">
-						{meta.description}
-					</p>
-					<div className="mt-5 flex items-center justify-between border-t border-product-border pt-4">
-						<span className="text-xs font-medium uppercase tracking-wide text-product-foreground-accent">
-							{meta.readingTimeMinutes} min read
-						</span>
-						<span className="inline-flex items-center gap-1 text-sm font-semibold text-product-secondary transition-all duration-200 group-hover:gap-2">
-							Read <ArrowRight aria-hidden className="h-4 w-4" />
-						</span>
-					</div>
-				</div>
-			</Link>
-		);
-	}
 
 	return (
 		<Link
-			className="group flex h-full flex-col overflow-hidden rounded-xl border border-product-border bg-product-background transition-all duration-200 hover:-translate-y-0.5 hover:border-product-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-product-primary focus-visible:ring-offset-2"
-			href={href}
-		>
-			{meta.coverImage ? (
-				<div className="relative aspect-[16/9] overflow-hidden bg-product-background-hover">
-					<Image
-						alt=""
-						aria-hidden
-						className="object-cover transition-transform duration-300 group-hover:scale-105"
-						fill
-						sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-						src={meta.coverImage}
-					/>
-				</div>
-			) : (
-				<div className="flex items-center justify-center bg-product-background-hover p-6">
-					<span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg text-product-primary">
-						<Icon aria-hidden className="h-5 w-5" />
-					</span>
-				</div>
+			className={cn(
+				"group flex flex-col overflow-hidden rounded-product-card border text-product-foreground shadow-product transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-product-hover",
+				featured
+					? "border-product-primary/60 bg-product-amber-panel min-[860px]:flex-row min-[860px]:items-stretch"
+					: "border-product-border bg-product-card",
 			)}
-			<div className="flex flex-1 flex-col p-5 sm:p-6">
-				<div className="mb-3 flex items-center gap-3">
-					<span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md bg-product-background-hover text-product-primary transition-colors group-hover:bg-product-primary group-hover:text-product-secondary">
-						<Icon aria-hidden className="h-4 w-4" />
-					</span>
-					<span className="text-xs font-semibold uppercase tracking-[0.2em] text-product-secondary">
-						{label}
-					</span>
-				</div>
-				<h3 className="font-lora text-xl font-bold leading-snug text-product-foreground transition-colors group-hover:text-product-secondary">
+			href={`/docs/${meta.slug}`}
+		>
+			<div
+				className={cn(
+					"flex flex-1 flex-col gap-3 px-[22px] pb-5 pt-[22px]",
+					featured && "min-[860px]:px-9 min-[860px]:py-[34px]",
+				)}
+			>
+				<span className="flex items-center justify-between gap-2.5">
+					<IconTile className="group-hover:border-product-primary group-hover:bg-product-primary group-hover:text-product-foreground">
+						<Icon />
+					</IconTile>
+					<CategoryTag className="self-center">{meta.tag}</CategoryTag>
+				</span>
+				<h3
+					className={cn(
+						"text-product-foreground",
+						featured
+							? "text-[clamp(22px,2.6vw,30px)] font-extrabold leading-[1.2] tracking-[-0.025em]"
+							: "text-[19px] font-bold leading-[1.25] tracking-[-0.015em]",
+					)}
+				>
 					{meta.title}
 				</h3>
-				<p className="mt-2 line-clamp-2 text-[0.95rem] leading-relaxed text-product-foreground-accent">
+				<p
+					className={cn(
+						"leading-[1.6] text-product-foreground-accent",
+						featured ? "max-w-[52ch] text-base" : "text-[15px]",
+					)}
+				>
 					{meta.description}
 				</p>
-				<div className="mt-auto flex items-center justify-between border-t border-product-border pt-4">
-					<span className="text-xs font-medium uppercase tracking-wide text-product-foreground-accent">
-						{meta.readingTimeMinutes} min read
-					</span>
-					<span className="inline-flex items-center gap-1 text-sm font-semibold text-product-secondary transition-all duration-200 group-hover:gap-2">
-						Read <ArrowRight aria-hidden className="h-4 w-4" />
-					</span>
-				</div>
+				<span className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-1.5">
+					<MetaLine
+						part={{ order: meta.order, total }}
+						readingTimeMinutes={meta.readingTimeMinutes}
+					/>
+					<ReadMore />
+				</span>
 			</div>
+			{featured && (
+				<div
+					aria-hidden="true"
+					className="hidden flex-[0_0_38%] items-center justify-center py-[26px] pl-0 pr-[30px] min-[860px]:flex"
+				>
+					<MiniCataloguePage className="w-full max-w-[340px] rotate-[1.5deg] text-[13px] shadow-product-hover" />
+				</div>
+			)}
 		</Link>
 	);
 }

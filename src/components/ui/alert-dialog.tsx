@@ -1,4 +1,3 @@
-//@ts-nocheck
 "use client";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import * as React from "react";
@@ -16,7 +15,7 @@ const AlertDialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<AlertDialogPrimitive.Overlay
 		className={cn(
-			"fixed inset-0 z-[1150] bg-black/40  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 notranslate",
+			"z-[1150] fixed inset-0 bg-[rgba(22,20,15,0.42)] backdrop-blur-[4px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 notranslate",
 			className,
 		)}
 		ref={ref}
@@ -34,7 +33,7 @@ const AlertDialogContent = React.forwardRef<
 		<AlertDialogOverlay />
 		<AlertDialogPrimitive.Content
 			className={cn(
-				"!z-[1200] fixed left-[50%] top-[40dvh] md:top-[50%] bg-product-background grid w-[80%] sm:w-full max-w-lg translate-x-[-50%] translate-y-[-40%] md:translate-y-[-50%] max-md:max-h-[85dvh] max-md:overflow-y-auto gap-4 border-none p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-lg sm:rounded-xl notranslate mx-auto",
+				"!z-[1200] fixed left-[50%] top-[40dvh] md:top-[50%] grid w-[calc(100%-32px)] sm:w-full max-w-lg translate-x-[-50%] translate-y-[-40%] md:translate-y-[-50%] max-md:max-h-[85dvh] max-md:overflow-y-auto gap-4 border border-product-border bg-product-card p-6 text-product-foreground shadow-product-hover rounded-product-panel duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] notranslate mx-auto",
 				"[-webkit-overflow-scrolling:touch]",
 				className,
 			)}
@@ -91,7 +90,10 @@ const AlertDialogTitle = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
 >(({ className, children, ...props }, ref) => (
 	<AlertDialogPrimitive.Title
-		className={cn("text-lg font-semibold notranslate", className)}
+		className={cn(
+			"font-product-heading text-xl font-bold leading-tight tracking-[-0.02em] text-product-foreground notranslate",
+			className,
+		)}
 		ref={ref}
 		translate="no"
 		{...props}
@@ -108,7 +110,10 @@ const AlertDialogDescription = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, children, ...props }, ref) => (
 	<AlertDialogPrimitive.Description
-		className={cn("text-sm text-muted-foreground notranslate", className)}
+		className={cn(
+			"text-[15px] leading-relaxed text-product-foreground-accent notranslate",
+			className,
+		)}
 		ref={ref}
 		translate="no"
 		{...props}

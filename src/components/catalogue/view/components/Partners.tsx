@@ -1,4 +1,4 @@
-import PartnerBadge from "@/components/general/PartnerBadge";
+import { PartnerBadge } from "@/components/general/PartnerBadge";
 
 const Partners = ({ activeData }: { activeData: any }) => {
 	if (

@@ -1,5 +1,5 @@
 "use client";
-import LimitsModal from "@/components/modals/LimitsModal";
+import { LimitsModal } from "@/components/modals/LimitsModal";
 import {
 	AlertDialog,
 	AlertDialogContent,

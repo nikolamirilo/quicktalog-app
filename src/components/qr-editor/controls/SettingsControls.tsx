@@ -1,88 +1,134 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import type { ErrorCorrectionLevel } from "qr-code-styling";
+import { useId } from "react";
+import { PanelHeading } from "@/components/qr-editor/controls/PanelHeading";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Info, Settings } from "lucide-react";
-import React from "react";
+	Rows,
+	SliderRow,
+	ToggleRow,
+} from "@/components/qr-editor/controls/rows";
+import { useRadioKeys } from "@/hooks/useRadioKeys";
+import { ERROR_CORRECTION, FRAME_TEXT_MAX } from "@/lib/qr/design";
+import { cn } from "@/lib/ui/cn";
 
-export interface SettingsControlsProps {
-	errorCorrectionLevel: string;
-	margin: number;
-	onErrorCorrectionChange: (val: string) => void;
-	onMarginChange: (val: number) => void;
-}
-
-export default function SettingsControls({
+export function SettingsControls({
 	errorCorrectionLevel,
 	margin,
+	frameText,
 	onErrorCorrectionChange,
 	onMarginChange,
-}: SettingsControlsProps) {
-	return (
-		<Card className="shadow-product-shadow hover:shadow-product-shadow-hover transition-shadow overflow-hidden">
-			<CardHeader className="pb-4">
-				<CardTitle className="text-base font-semibold flex items-center gap-2">
-					<Settings className="w-4 h-4 text-[var(--product-primary)]" />
-					Advanced Settings
-				</CardTitle>
-				<p className="text-xs text-muted-foreground mt-1">
-					Fine-tune your QR code's technical properties
-				</p>
-			</CardHeader>
-			<CardContent className="space-y-5 pt-5">
-				<div className="space-y-3">
-					<Label className="text-sm font-medium">Error Correction Level</Label>
-					<Select
-						onValueChange={onErrorCorrectionChange}
-						value={errorCorrectionLevel}
-					>
-						<SelectTrigger className="h-10 font-medium">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="L">Low (7%)</SelectItem>
-							<SelectItem value="M">Medium (15%)</SelectItem>
-							<SelectItem value="Q">Quartile (25%)</SelectItem>
-							<SelectItem value="H">High (30%)</SelectItem>
-						</SelectContent>
-					</Select>
-					<div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
-						<Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-						<p className="text-xs text-blue-700">
-							Higher correction levels allow the QR code to be scanned even if
-							partially damaged or obscured
-						</p>
-					</div>
-				</div>
+	onFrameTextChange,
+}: {
+	errorCorrectionLevel: ErrorCorrectionLevel;
+	margin: number;
+	frameText: { show: boolean; text: string };
+	onErrorCorrectionChange: (level: ErrorCorrectionLevel) => void;
+	onMarginChange: (margin: number) => void;
+	onFrameTextChange: (frameText: { show: boolean; text: string }) => void;
+}) {
+	const labelId = useId();
+	const textId = useId();
+	const { onKeyDown, itemProps } = useRadioKeys(
+		ERROR_CORRECTION.map((l) => l.value),
+		errorCorrectionLevel,
+		onErrorCorrectionChange,
+	);
 
-				<div className="space-y-3 p-4 bg-gray-50 rounded-xl">
-					<div className="flex items-center justify-between">
-						<Label className="text-sm font-medium">Margin (Padding)</Label>
-						<span className="text-base font-bold text-[var(--product-primary)] bg-white px-3 py-1 rounded-md">
-							{margin}px
-						</span>
-					</div>
-					<Slider
-						className="cursor-pointer"
-						max={50}
-						min={0}
-						onValueChange={([val]) => onMarginChange(val)}
-						step={1}
-						value={[margin]}
+	return (
+		<>
+			<PanelHeading
+				description="Fine-tune your QR code's technical properties."
+				title="Advanced settings"
+			/>
+			<p
+				className="mb-2 text-[13.5px] font-semibold leading-tight text-product-foreground-accent"
+				id={labelId}
+			>
+				Error correction level
+			</p>
+			<div
+				aria-labelledby={labelId}
+				className="grid grid-cols-4 gap-1 rounded-[15px] border border-product-border bg-product-background-hero p-1"
+				onKeyDown={onKeyDown}
+				role="radiogroup"
+			>
+				{ERROR_CORRECTION.map((level, i) => {
+					const checked = level.value === errorCorrectionLevel;
+					return (
+						<button
+							{...itemProps(level.value, i)}
+							className={cn(
+								"flex min-w-0 flex-col items-center gap-1 rounded-[11px] px-1 py-[9px] text-product-foreground-accent transition-[background-color,color,box-shadow] hover:text-product-foreground",
+								checked &&
+									"bg-product-card text-product-foreground shadow-[0_1px_2px_rgb(var(--product-foreground-rgb)/0.08),0_4px_10px_-2px_rgb(var(--product-foreground-rgb)/0.08),inset_0_-3px_0_var(--product-primary)]",
+							)}
+							key={level.value}
+						>
+							<b className="font-product-heading text-base font-extrabold leading-none">
+								{level.value}
+							</b>
+							<small className="max-w-full truncate text-[10.5px] font-medium leading-tight text-product-muted sm:text-[11.5px]">
+								{level.name} · {level.percent}%
+							</small>
+						</button>
+					);
+				})}
+			</div>
+			<p className="mt-2 text-[12.5px] leading-snug text-product-muted">
+				Higher correction levels allow the QR code to be scanned even if
+				partially damaged or obscured.
+			</p>
+
+			<Rows>
+				<SliderRow
+					format={(v) => `${v}px`}
+					hint="Add space around the QR code for better scanning."
+					max={50}
+					min={0}
+					onChange={onMarginChange}
+					step={1}
+					title="Margin (padding)"
+					value={margin}
+				/>
+			</Rows>
+
+			<PanelHeading
+				badge={
+					<span className="inline-flex h-5 items-center rounded-full border border-product-secondary/[0.18] bg-product-secondary-soft px-2 text-[11px] font-bold tracking-[0.04em] text-product-secondary">
+						New
+					</span>
+				}
+				className="mt-6"
+				description="A short label printed under the code, so people know what they are scanning."
+				title="Frame text"
+			/>
+			<Rows>
+				<ToggleRow
+					checked={frameText.show}
+					onCheckedChange={(show) => onFrameTextChange({ ...frameText, show })}
+					title="Show frame text"
+				/>
+				<div className="flex flex-wrap items-center gap-3.5 bg-product-card p-3.5">
+					<label
+						className="shrink-0 text-sm font-semibold text-product-foreground"
+						htmlFor={textId}
+					>
+						Text
+					</label>
+					<input
+						className="h-10 min-w-0 flex-[1_1_200px] rounded-xl border border-product-border-strong bg-product-background px-3 text-sm font-medium text-product-foreground focus:border-product-primary-accent focus:bg-product-card focus:shadow-[0_0_0_4px_rgb(var(--product-primary-rgb)/0.2)] focus:outline-none disabled:opacity-60"
+						disabled={!frameText.show}
+						id={textId}
+						maxLength={FRAME_TEXT_MAX}
+						onChange={(e) =>
+							onFrameTextChange({ ...frameText, text: e.target.value })
+						}
+						type="text"
+						value={frameText.text}
 					/>
-					<p className="text-xs text-muted-foreground">
-						Add space around the QR code for better scanning
-					</p>
 				</div>
-			</CardContent>
-		</Card>
+			</Rows>
+		</>
 	);
 }

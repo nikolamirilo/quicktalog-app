@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import ConsentModal from "@/components/modals/ConsentModal";
+import { ConsentModal } from "@/components/modals/ConsentModal";
 
 const STORAGE_KEY = "consent";
 
@@ -28,7 +28,7 @@ function remember() {
  * runs it on accept. `localStorage` is only touched inside a handler, never
  * during render, so the server and first client render agree.
  */
-export default function useSignupConsent(onGranted: () => void) {
+export function useSignupConsent(onGranted: () => void) {
 	const [isOpen, setIsOpen] = useState(false);
 
 	const request = useCallback(() => {

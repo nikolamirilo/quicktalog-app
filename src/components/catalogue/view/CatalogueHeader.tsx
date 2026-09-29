@@ -1,6 +1,6 @@
 "use client";
-import SmartLink from "@/components/general/SmartLink";
-import { Button } from "@/components/ui/button";
+import { SmartLink } from "@/components/general/SmartLink";
+import { CatalogueButton } from "@/components/catalogue/view/components/CatalogueButton";
 import {
 	contentFontSizeMap,
 	fontFamilyMap,
@@ -207,11 +207,9 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						)}
 
 						{ctaProps && (
-							<Button
+							<CatalogueButton
 								asChild
 								className="font-heading hover:!bg-primary/10 hover:!text-primary !bg-catalogue-card-background !text-foreground !border-primary tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button"
-								size="default"
-								variant="outline"
 							>
 								<SmartLink
 									aria-label={ctaProps.ariaLabel}
@@ -221,7 +219,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 									{ctaProps.icon}
 									<span>{ctaProps.label}</span>
 								</SmartLink>
-							</Button>
+							</CatalogueButton>
 						)}
 					</nav>
 

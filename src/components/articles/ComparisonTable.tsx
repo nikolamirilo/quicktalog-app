@@ -1,4 +1,6 @@
-import { Check, Minus } from "lucide-react";
+import { Check } from "lucide-react";
+
+import { cn } from "@/lib/ui/cn";
 
 interface ComparisonRow {
 	label: string;
@@ -13,86 +15,84 @@ interface Props {
 	highlightIndex?: number;
 }
 
-/** Responsive feature comparison table. The centerpiece of the comparison article. */
-export default function ComparisonTable({
-	columns,
-	rows,
-	highlightIndex = 0,
-}: Props) {
+const cell =
+	"border-b border-product-border px-3.5 py-3 text-left align-middle";
+
+/** Feature comparison table that scrolls sideways on small screens. */
+export function ComparisonTable({ columns, rows, highlightIndex = 0 }: Props) {
 	return (
-		<div className="my-10 overflow-x-auto rounded-2xl border border-product-border">
-			<table className="w-full border-collapse text-left text-sm sm:text-base">
+		<div
+			aria-label="Feature comparison"
+			className="min-w-0 max-w-full overflow-x-auto rounded-[18px] border border-product-border bg-product-card shadow-[0_1px_2px_rgba(22,20,15,0.04)] [contain:paint]"
+			role="region"
+			tabIndex={0}
+		>
+			<table className="w-full min-w-[560px] border-collapse text-[14.5px] leading-[1.4]">
 				<thead>
 					<tr>
-						<th className="sticky left-0 z-10 bg-product-background-hero p-3 font-semibold text-product-foreground sm:p-4">
+						<th
+							className={cn(
+								cell,
+								"whitespace-nowrap bg-product-background-hero text-[12.5px] font-bold uppercase tracking-[0.06em] text-product-muted",
+							)}
+							scope="col"
+						>
 							Feature
 						</th>
 						{columns.map((col, i) => (
 							<th
-								className={`p-3 text-center align-bottom font-semibold sm:p-4 ${
+								className={cn(
+									cell,
+									"whitespace-nowrap text-[12.5px] font-bold uppercase tracking-[0.06em]",
 									i === highlightIndex
-										? "rounded-t-xl bg-product-primary text-product-foreground"
-										: "bg-product-background-hero text-product-secondary"
-								}`}
-								key={col}
-							>
-								{i === highlightIndex && (
-									<span className="mb-1 block text-[0.65rem] font-bold uppercase tracking-wider text-product-foreground/70">
-										Best fit
-									</span>
+										? "bg-product-primary/25 text-product-primary-ink"
+										: "bg-product-background-hero text-product-muted",
 								)}
+								key={col}
+								scope="col"
+							>
 								{col}
 							</th>
 						))}
 					</tr>
 				</thead>
-				<tbody>
-					{rows.map((row, r) => (
-						<tr
-							className={
-								r % 2 === 1
-									? "bg-product-background-hover"
-									: "bg-product-background"
-							}
-							key={row.label}
-						>
+				<tbody className="[&>tr:last-child>*]:border-b-0">
+					{rows.map((row) => (
+						<tr key={row.label}>
 							<th
-								className={`sticky left-0 z-10 p-3 font-medium text-product-foreground sm:p-4 ${
-									r % 2 === 1
-										? "bg-product-background-hover"
-										: "bg-product-background"
-								}`}
+								className={cn(cell, "font-semibold text-product-foreground")}
 								scope="row"
 							>
 								{row.label}
 							</th>
 							{row.values.map((value, i) => (
 								<td
-									className={`p-3 text-center sm:p-4 ${
-										i === highlightIndex ? "bg-product-background-hover" : ""
-									}`}
+									className={cn(
+										cell,
+										i === highlightIndex
+											? "bg-product-primary-soft font-semibold text-product-foreground"
+											: "text-product-foreground-accent",
+									)}
 									key={`${row.label}-${columns[i]}`}
 								>
 									{typeof value === "boolean" ? (
 										value ? (
-											<span className="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-green-100">
+											<span className="inline-grid h-[22px] w-[22px] place-items-center rounded-full bg-product-primary text-product-foreground">
 												<Check
-													aria-label="Yes"
-													className="h-4 w-4 text-green-600"
+													aria-hidden="true"
+													className="h-3 w-3"
+													strokeWidth={3}
 												/>
+												<span className="sr-only">Yes</span>
 											</span>
 										) : (
-											<span className="mx-auto flex h-6 w-6 items-center justify-center rounded-full bg-product-background-hero">
-												<Minus
-													aria-label="No"
-													className="h-4 w-4 text-product-foreground-accent"
-												/>
+											<span className="text-product-muted">
+												<span aria-hidden="true">–</span>
+												<span className="sr-only">No</span>
 											</span>
 										)
 									) : (
-										<span className="text-product-foreground-accent">
-											{value}
-										</span>
+										value
 									)}
 								</td>
 							))}

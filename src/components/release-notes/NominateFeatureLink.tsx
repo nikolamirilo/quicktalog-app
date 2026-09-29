@@ -1,21 +1,19 @@
 import { Lightbulb } from "lucide-react";
-import Link from "next/link";
 
-interface Props {
-	className?: string;
-}
+import { TextLink } from "@/components/general/TextLink";
+import { cn } from "@/lib/ui/cn";
 
-export default function NominateFeatureLink({ className = "" }: Props) {
+export function NominateFeatureLink({ className }: { className?: string }) {
 	return (
-		<Link
-			className={`inline-flex items-center gap-1.5 text-sm font-semibold text-product-secondary border-b border-transparent hover:border-product-secondary transition-colors ${className}`}
+		<TextLink
+			className={cn("inline-flex items-center gap-[7px]", className)}
 			href="/contact?subject=feature-request"
 		>
 			<Lightbulb
-				aria-hidden
-				className="h-3.5 w-3.5 flex-shrink-0 text-product-primary-accent"
+				aria-hidden="true"
+				className="h-[15px] w-[15px] text-product-primary-ink"
 			/>
 			Nominate a feature
-		</Link>
+		</TextLink>
 	);
 }

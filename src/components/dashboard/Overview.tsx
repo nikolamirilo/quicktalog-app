@@ -1,203 +1,220 @@
 "use client";
+import type {
+	Catalogue,
+	OverallAnalytics as OverallAnalyticsData,
+	PricingPlan,
+	Status,
+	Usage,
+	User,
+} from "@quicktalog/common";
+import { FileChartColumn, Info, LayoutGrid, Mail, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import {
 	deleteItem,
 	deleteMultipleItems,
-	duplicateItem,
 	updateItemStatus,
 } from "@/actions/catalogue";
-import DeleteMultipleItemsModal from "@/components/modals/DeleteMultipleItemsModal";
+import { AppSectionTitle } from "@/components/dashboard/common/AppHeadings";
+import { CatalogueGrid } from "@/components/dashboard/overview/CatalogueGrid";
+import { DeleteMultipleItemsModal } from "@/components/dashboard/overview/DeleteMultipleItemsModal";
+import { LimitCTAs } from "@/components/dashboard/overview/LimitCTAs";
+import { NewsletterTable } from "@/components/dashboard/overview/NewsletterTable";
+import {
+	OverallAnalytics,
+	STAT_EXPLAINERS,
+	type StatMetric,
+} from "@/components/dashboard/overview/OverallAnalytics";
+import { UserProfile } from "@/components/dashboard/overview/UserProfile";
+import { InformModal } from "@/components/modals/InformModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
-import { OverviewProps } from "@/types/shared";
-import { Status, tiers } from "@quicktalog/common";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { LuSquareMenu } from "react-icons/lu";
-import { MdOutlineEmail } from "react-icons/md";
-import { TbFileAnalytics } from "react-icons/tb";
-import InformModal from "@/components/modals/InformModal";
-import OverallAnalytics from "./components/OverallAnalytics";
-import UserProfile from "./components/UserProfile";
-import CatalogueGrid from "./overview/CatalogueGrid";
-import LimitCTAs from "./overview/LimitCTAs";
-import NewsletterTable from "./overview/NewsletterTable";
+import type { NewsletterSubscriber } from "@/types/shared";
 
-const Overview = ({
+type OverviewProps = {
+	user: User;
+	overallAnalytics: OverallAnalyticsData;
+	catalogues: Catalogue[];
+	newsletterSubscribers: NewsletterSubscriber[];
+	newsletterError: boolean;
+	currentPlan: PricingPlan;
+	usage: Usage;
+	refreshAll: () => Promise<void>;
+};
+
+export function Overview({
 	user,
 	overallAnalytics,
 	catalogues,
-	refreshAll,
-	planId,
-	usage,
 	newsletterSubscribers,
-}: OverviewProps) => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-	const [currentMetric, setCurrentMetric] = useState("");
-	const [itemToDelete, setItemToDelete] = useState<string | null>(null);
-	const [isDeleteMultipleModalOpen, setIsDeleteMultipleModalOpen] =
-		useState(false);
-	const [isLinkCopied, setIsLinkCopied] = useState(false);
-	const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+	newsletterError,
+	currentPlan,
+	usage,
+	refreshAll,
+}: OverviewProps) {
 	const router = useRouter();
-	const matchedTier = tiers.find((tier) => tier.id == planId);
-	const maxAllowedCatalogues = matchedTier?.features.catalogues || 0;
-	const hasExcessCatalogues = catalogues.length > maxAllowedCatalogues;
 	const { resetCatalogue } = useCatalogueContext();
 	const { refreshUserData } = useUserContext();
 
-	async function handleDeleteItem(name: string) {
-		setItemToDelete(name);
-		setIsModalOpen(true);
+	const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+	const [isDeleting, setIsDeleting] = useState(false);
+	const [isDeleteMultipleOpen, setIsDeleteMultipleOpen] = useState(false);
+	const [statusBusyId, setStatusBusyId] = useState<string | null>(null);
+	// The metric outlives `infoOpen`, so the dialog keeps its text while it
+	// animates closed.
+	const [infoMetric, setInfoMetric] = useState<StatMetric | null>(null);
+	const [infoOpen, setInfoOpen] = useState(false);
+
+	const maxAllowedCatalogues = currentPlan.features.catalogues;
+	const hasExcessCatalogues = catalogues.length > maxAllowedCatalogues;
+
+	useEffect(() => {
+		if (hasExcessCatalogues) setIsDeleteMultipleOpen(true);
+	}, [hasExcessCatalogues]);
+
+	/** After a create, duplicate or delete: the plan usage changed too. */
+	async function refreshAfterUsageChange() {
+		await refreshAll();
+		resetCatalogue();
+		await refreshUserData();
+		router.refresh();
 	}
 
 	async function confirmDelete() {
-		if (itemToDelete) {
+		if (!itemToDelete) return;
+		setIsDeleting(true);
+		try {
 			const success = await deleteItem(itemToDelete);
 			if (success) {
-				await refreshAll();
-				resetCatalogue();
-				await refreshUserData();
-				router.refresh();
+				await refreshAfterUsageChange();
 			} else {
-				alert("Failed to delete catalogue. Please try again.");
+				toast.error("Failed to delete catalogue. Please try again.");
 			}
+		} finally {
+			setIsDeleting(false);
 			setItemToDelete(null);
-			setIsModalOpen(false);
 		}
 	}
 
-	const statusColors: Record<string, string> = {
-		active: "text-white bg-[#00875A]",
-		inactive: "text-white bg-product-secondary",
-		draft: "text-white bg-product-primary",
-		"in preparation": "text-white bg-blue-600",
-		error: "text-white bg-red-600",
-	};
-
-	async function handleDuplicateCatalogue(id: string, name: string) {
-		setDuplicatingId(id);
-		try {
-			await duplicateItem(id, name);
-			await refreshAll();
-			resetCatalogue();
-			await refreshUserData();
-			router.refresh();
-		} catch (error) {
-			console.error("Error duplicating item:", error);
-			alert("Failed to duplicate item.");
-		} finally {
-			setDuplicatingId(null);
-		}
+	function cancelDelete() {
+		if (!isDeleting) setItemToDelete(null);
 	}
 
 	async function handleUpdateItemStatus(id: string, status: Status) {
+		setStatusBusyId(id);
 		try {
-			await updateItemStatus(id, status);
+			const success = await updateItemStatus(id, status);
+			if (!success) {
+				// Activating is a plan decision the server can refuse.
+				toast.error(
+					status === "active"
+						? "Could not activate this catalogue. Your plan's limits may not allow it."
+						: "Failed to update status. Please try again.",
+				);
+				return;
+			}
 			await refreshAll();
 			await refreshUserData();
 			router.refresh();
 		} catch (error) {
 			console.error("Error updating item status:", error);
-			alert("Failed to update status.");
+			toast.error("Failed to update status.");
 		} finally {
-			setDuplicatingId(null);
+			setStatusBusyId(null);
 		}
-	}
-
-	function cancelDelete() {
-		setItemToDelete(null);
-		setIsModalOpen(false);
 	}
 
 	async function handleDeleteMultipleCatalogues(selectedIds: string[]) {
 		try {
 			const success = await deleteMultipleItems(selectedIds);
 			if (success) {
-				await refreshAll();
-				resetCatalogue();
-				await refreshUserData();
-				router.refresh();
-				setIsDeleteMultipleModalOpen(false);
+				await refreshAfterUsageChange();
+				setIsDeleteMultipleOpen(false);
 			} else {
-				alert("Failed to delete some catalogues. Please try again.");
+				toast.error("Failed to delete some catalogues. Please try again.");
 			}
 		} catch (error) {
 			console.error("Error deleting multiple catalogues:", error);
-			alert("Failed to delete catalogues. Please try again.");
+			toast.error("Failed to delete catalogues. Please try again.");
 		}
 	}
 
-	useEffect(() => {
-		if (hasExcessCatalogues) {
-			setIsDeleteMultipleModalOpen(true);
-		}
-	}, [hasExcessCatalogues]);
+	function openInfo(metric: StatMetric) {
+		setInfoMetric(metric);
+		setInfoOpen(true);
+	}
 
-	useEffect(() => {
-		refreshAll();
-	}, []);
+	const explainer = infoMetric ? STAT_EXPLAINERS[infoMetric] : null;
 
 	return (
-		<div className="max-w-5xl space-y-6">
+		<div>
 			<UserProfile user={user} />
 
-			<section className="mb-8 sm:mb-12 animate-fade-in">
-				<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
-					<TbFileAnalytics className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" />{" "}
+			<section aria-labelledby="dash-stats-h" className="mt-9">
+				<AppSectionTitle
+					className="mb-4"
+					icon={<FileChartColumn />}
+					id="dash-stats-h"
+				>
 					Dashboard
-				</h2>
+				</AppSectionTitle>
 				<OverallAnalytics
+					onInfo={openInfo}
 					overallAnalytics={overallAnalytics}
-					setCurrentMetric={setCurrentMetric}
-					setIsInfoModalOpen={setIsInfoModalOpen}
 				/>
 			</section>
 
-			{/* Catalogues */}
-			<section className="mb-8 sm:mb-12 animate-fade-in">
-				<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
-					<LuSquareMenu className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" />
+			<section aria-labelledby="dash-cats-h" className="mt-9">
+				<AppSectionTitle
+					className="mb-4"
+					icon={<LayoutGrid />}
+					id="dash-cats-h"
+				>
 					Catalogues
-				</h2>
+				</AppSectionTitle>
 
-				<LimitCTAs matchedTier={matchedTier} usage={usage} />
+				<LimitCTAs currentPlan={currentPlan} usage={usage} />
 
 				<CatalogueGrid
 					catalogues={catalogues}
-					duplicatingId={duplicatingId}
-					handleDeleteItem={handleDeleteItem}
-					handleDuplicateCatalogue={handleDuplicateCatalogue}
-					handleUpdateItemStatus={handleUpdateItemStatus}
-					isLinkCopied={isLinkCopied}
-					isModalOpen={isModalOpen}
-					matchedTier={matchedTier}
-					setIsLinkCopied={setIsLinkCopied}
-					statusColors={statusColors}
+					currentPlan={currentPlan}
+					deleteDialogOpen={itemToDelete !== null}
+					onChanged={refreshAll}
+					onDelete={setItemToDelete}
+					onDuplicated={refreshAfterUsageChange}
+					onStatusChange={handleUpdateItemStatus}
+					statusBusyId={statusBusyId}
 					usage={usage}
 				/>
 			</section>
 
-			{/* Newsletter Subscribers */}
-			<section className="mb-4 sm:mb-6 animate-fade-in">
-				<h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3 font-heading">
-					<MdOutlineEmail className="text-product-primary w-6 h-6 sm:w-8 sm:h-8" />
+			<section aria-labelledby="dash-news-h" className="mt-9">
+				<AppSectionTitle className="mb-4" icon={<Mail />} id="dash-news-h">
 					Newsletter Subscribers
-				</h2>
-				<NewsletterTable subscribers={newsletterSubscribers} />
+				</AppSectionTitle>
+				<NewsletterTable
+					error={newsletterError}
+					subscribers={newsletterSubscribers}
+				/>
 			</section>
 
 			<InformModal
-				isOpen={isModalOpen}
+				icon={<Trash2 />}
+				isOpen={itemToDelete !== null}
+				keepOpenOnConfirm
+				loading={isDeleting}
 				message="Are you sure you want to delete this catalogue? This action cannot be undone."
 				onCancel={cancelDelete}
 				onConfirm={confirmDelete}
 				title="Delete Catalogue"
+				tone="red"
 			/>
 
 			<DeleteMultipleItemsModal
 				catalogues={catalogues}
-				isOpen={isDeleteMultipleModalOpen}
+				isOpen={isDeleteMultipleOpen}
 				maxAllowed={maxAllowedCatalogues}
 				onConfirm={handleDeleteMultipleCatalogues}
 			/>
@@ -205,23 +222,13 @@ const Overview = ({
 			<InformModal
 				cancelText=""
 				confirmText="Got it!"
-				isOpen={isInfoModalOpen}
-				message={
-					currentMetric === "Total Views"
-						? "This shows the total number of times your catalogues have been viewed by visitors. It includes all page visits across all your catalogues."
-						: currentMetric === "Total Visitors"
-							? "This represents the number of individuals who have visited your catalogues. Each person is counted only once per day, regardless of how many times they visit your catalogue on that day."
-							: currentMetric === "Total Items"
-								? "This displays the total number of catalogues you have created. Each catalogue represents a different business or service offering."
-								: currentMetric === "Newsletter"
-									? "This shows how many people have subscribed to your newsletter service. These are users who have opted in to receive updates from you."
-									: "Select a metric to see its explanation."
-				}
-				onConfirm={() => setIsInfoModalOpen(false)}
-				title={`${currentMetric} Explained`}
+				icon={<Info />}
+				isOpen={infoOpen}
+				message={explainer?.text ?? ""}
+				onCancel={() => setInfoOpen(false)}
+				onConfirm={() => setInfoOpen(false)}
+				title={explainer ? `${explainer.title} Explained` : ""}
 			/>
 		</div>
 	);
-};
-
-export default Overview;
+}

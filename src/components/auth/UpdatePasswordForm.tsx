@@ -1,19 +1,20 @@
 "use client";
 
+import { LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
-import AuthCard from "@/components/auth/common/AuthCard";
-import AuthField from "@/components/auth/common/AuthField";
+import { AuthCard, AuthHeader } from "@/components/auth/common/AuthCard";
+import { AuthField } from "@/components/auth/common/AuthField";
 import { authErrorMessage } from "@/components/auth/common/authMessages";
-import AuthNotice from "@/components/auth/common/AuthNotice";
-import SubmitButton from "@/components/auth/common/SubmitButton";
+import { AuthNotice } from "@/components/auth/common/AuthNotice";
+import { SubmitButton } from "@/components/auth/common/SubmitButton";
 import { createClient } from "@/utils/supabase/client";
 
 /**
  * Sets a new password for the recovery session the confirm interstitial just
  * created. `updateUser` is not captcha-gated, so there is no widget here.
  */
-export default function UpdatePasswordForm() {
+export function UpdatePasswordForm() {
 	const router = useRouter();
 	const [password, setPassword] = useState("");
 	const [confirmation, setConfirmation] = useState("");
@@ -46,15 +47,20 @@ export default function UpdatePasswordForm() {
 	};
 
 	return (
-		<AuthCard
-			subtitle="You will stay signed in here. Every other device is signed out."
-			title="Choose a new password"
-		>
-			<form className="space-y-4" onSubmit={submit}>
+		<AuthCard>
+			<AuthHeader
+				badge={<LockKeyhole />}
+				subtitle="You will stay signed in here. Every other device is signed out."
+				title="Choose a new password"
+			/>
+			<form className="mt-6 grid gap-[18px]" onSubmit={submit}>
+				<AuthNotice message={error} />
 				<AuthField
 					autoComplete="new-password"
+					hint="Use at least 8 characters. Longer is stronger."
 					id="password"
 					label="New password"
+					meter
 					minLength={8}
 					onChange={(e) => setPassword(e.target.value)}
 					placeholder="At least 8 characters"
@@ -68,13 +74,17 @@ export default function UpdatePasswordForm() {
 					label="Repeat new password"
 					minLength={8}
 					onChange={(e) => setConfirmation(e.target.value)}
-					placeholder="At least 8 characters"
+					placeholder="Type it again"
 					required
 					type="password"
 					value={confirmation}
 				/>
-				<AuthNotice message={error} />
-				<SubmitButton busy={busy} busyLabel="Saving…" type="submit">
+				<SubmitButton
+					busy={busy}
+					busyLabel="Saving…"
+					className="mt-1"
+					type="submit"
+				>
 					Save password
 				</SubmitButton>
 			</form>

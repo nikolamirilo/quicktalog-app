@@ -1,12 +1,12 @@
-import { getUserData } from "@/actions/users";
-import FloatingActionMenu from "@/components/dashboard/components/FloatingActionMenu";
-import Dashboard from "@/components/dashboard/Dashboard";
-import Footer from "@/components/navigation/Footer";
-import Navbar from "@/components/navigation/Navbar";
-import { Button } from "@/components/ui/button";
-import type { AreLimitesReached } from "@quicktalog/common";
-import { UserData } from "@quicktalog/common";
+import type { AreLimitesReached, UserData } from "@quicktalog/common";
 import Link from "next/link";
+
+import { getUserData } from "@/actions/users";
+import { CreateCatalogueProvider } from "@/components/catalogue/create/CreateCatalogueProvider";
+import { Dashboard } from "@/components/dashboard/Dashboard";
+import { FloatingActionMenu } from "@/components/dashboard/FloatingActionMenu";
+import { AppShell } from "@/components/navigation/AppShell";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -15,15 +15,16 @@ export default async function page() {
 
 	if (!userData) {
 		return (
-			<div className="product font-lora min-h-screen">
-				<Navbar />
-				<div className="text-center text-black text-2xl h-screen flex flex-col gap-5 items-center justify-center">
-					<p>Something went wrong. Please try again later.</p>
-					<Button size="lg">
+			<AppShell>
+				<div className="flex min-h-[50vh] flex-col items-center justify-center gap-5 text-center">
+					<p className="text-title-lg">
+						Something went wrong. Please try again later.
+					</p>
+					<Button asChild size="lg">
 						<Link href="/">Go to Home</Link>
 					</Button>
 				</div>
-			</div>
+			</AppShell>
 		);
 	}
 
@@ -36,12 +37,11 @@ export default async function page() {
 	};
 
 	return (
-		<div className="product font-lora min-h-screen">
-			<Navbar />
-			<Dashboard pricingPlan={currentPlan} usage={usage} user={user} />
-
-			<FloatingActionMenu areLimitsReached={areLimitesReached} />
-			<Footer />
-		</div>
+		<AppShell>
+			<CreateCatalogueProvider>
+				<Dashboard currentPlan={currentPlan} usage={usage} user={user} />
+				<FloatingActionMenu areLimitsReached={areLimitesReached} />
+			</CreateCatalogueProvider>
+		</AppShell>
 	);
 }

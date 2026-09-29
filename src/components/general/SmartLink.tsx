@@ -25,7 +25,7 @@ function normalizeHref(raw: string): string {
 	return `https://${raw}`;
 }
 
-const SmartLink: React.FC<SmartLinkProps> = ({
+export const SmartLink: React.FC<SmartLinkProps> = ({
 	href,
 	children,
 	className,
@@ -40,11 +40,11 @@ const SmartLink: React.FC<SmartLinkProps> = ({
 	if (isExternalUrl(trimmed)) {
 		return (
 			<a
-				href={normalizeHref(trimmed)}
-				target="_blank"
-				rel="noopener noreferrer"
-				className={className}
 				aria-label={ariaLabel}
+				className={className}
+				href={normalizeHref(trimmed)}
+				rel="noopener noreferrer"
+				target="_blank"
 			>
 				{children}
 			</a>
@@ -57,5 +57,3 @@ const SmartLink: React.FC<SmartLinkProps> = ({
 		</Link>
 	);
 };
-
-export default SmartLink;

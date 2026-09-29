@@ -1,10 +1,10 @@
 "use client";
 import { newsletterSignup } from "@/actions/newsletter";
-import { Button } from "@/components/ui/button";
+import { CatalogueButton } from "@/components/catalogue/view/components/CatalogueButton";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import React, { useState } from "react";
 import { FiExternalLink } from "react-icons/fi";
-import SmartLink from "@/components/general/SmartLink";
+import { SmartLink } from "@/components/general/SmartLink";
 import Brand from "./components/Brand";
 import CompanyInfo from "./components/CompanyInfo";
 import Contact from "./components/Contact";
@@ -159,11 +159,9 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 						{type === "custom" &&
 							activeData?.footer?.cta?.isEnabled &&
 							activeData?.footer?.cta?.url && (
-								<Button
+								<CatalogueButton
 									asChild
 									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary flex items-center gap-2"
-									size="default"
-									variant="outline"
 								>
 									<SmartLink
 										aria-label={activeData?.footer?.cta?.label}
@@ -172,7 +170,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 										<FiExternalLink className="w-4 h-4" />
 										{activeData?.footer?.cta?.label}
 									</SmartLink>
-								</Button>
+								</CatalogueButton>
 							)}
 					</div>
 				</div>

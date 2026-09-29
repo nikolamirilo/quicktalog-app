@@ -1,19 +1,32 @@
 "use client";
 
+import { Inbox } from "lucide-react";
 import Link from "next/link";
-import { type FormEvent, type ReactNode, useState } from "react";
-import AuthCard from "@/components/auth/common/AuthCard";
-import AuthDivider from "@/components/auth/common/AuthDivider";
-import AuthField from "@/components/auth/common/AuthField";
+import {
+	type FormEvent,
+	type ReactNode,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import {
+	AuthCard,
+	AuthEmphasis,
+	AuthHeader,
+} from "@/components/auth/common/AuthCard";
+import { AuthDivider } from "@/components/auth/common/AuthDivider";
+import { AuthDone } from "@/components/auth/common/AuthDone";
+import { AuthField } from "@/components/auth/common/AuthField";
+import { AuthFine } from "@/components/auth/common/AuthFine";
 import { authErrorMessage } from "@/components/auth/common/authMessages";
-import AuthNotice from "@/components/auth/common/AuthNotice";
-import { AUTH_LINK } from "@/components/auth/common/authStyles";
-import GoogleButton from "@/components/auth/common/GoogleButton";
-import SubmitButton from "@/components/auth/common/SubmitButton";
-import useTurnstile from "@/components/auth/common/useTurnstile";
+import { AuthNotice } from "@/components/auth/common/AuthNotice";
+import { GoogleButton } from "@/components/auth/common/GoogleButton";
+import { SubmitButton } from "@/components/auth/common/SubmitButton";
+import { useTurnstile } from "@/components/auth/common/useTurnstile";
 import { createClient } from "@/utils/supabase/client";
+import { textLinkClass } from "@/components/general/TextLink";
 
-export default function SignUpForm({
+export function SignUpForm({
 	next,
 	tabs,
 	termsVersion,
@@ -30,6 +43,16 @@ export default function SignUpForm({
 	const [error, setError] = useState<string | null>(null);
 	const [busy, setBusy] = useState(false);
 	const [sent, setSent] = useState(false);
+	const emailRef = useRef<HTMLInputElement>(null);
+	// "Start again" brings the form back; focus then goes to the email field.
+	const refocusEmail = useRef(false);
+
+	useEffect(() => {
+		if (!sent && refocusEmail.current) {
+			refocusEmail.current = false;
+			emailRef.current?.focus();
+		}
+	}, [sent]);
 
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -60,24 +83,60 @@ export default function SignUpForm({
 		setSent(true);
 	};
 
+	/** "Wrong address?": back to the form with the address and password cleared. */
+	const startAgain = () => {
+		refocusEmail.current = true;
+		setEmail("");
+		setPassword("");
+		setError(null);
+		setSent(false);
+	};
+
 	if (sent) {
 		return (
-			<AuthCard
-				subtitle={`We sent a confirmation link to ${email.trim()}. Open it to finish creating your account.`}
-				title="Check your inbox"
-			/>
+			<AuthCard tabs={tabs}>
+				<AuthDone
+					icon={<Inbox />}
+					subtitle={
+						<>
+							We sent a confirmation link to{" "}
+							<AuthEmphasis>{email.trim()}</AuthEmphasis>. Open it to finish
+							creating your account.
+						</>
+					}
+					title="Check your inbox"
+				>
+					<AuthFine>
+						Wrong address?{" "}
+						<button
+							className={textLinkClass}
+							onClick={startAgain}
+							type="button"
+						>
+							Start again
+						</button>
+					</AuthFine>
+				</AuthDone>
+			</AuthCard>
 		);
 	}
 
 	return (
-		<AuthCard
-			subtitle="Build your first catalogue in minutes."
-			tabs={tabs}
-			title="Create your account"
-		>
-			<GoogleButton next={next} />
+		<AuthCard tabs={tabs}>
+			<AuthHeader
+				subtitle="Build your first catalogue in minutes."
+				title="Create your account"
+			/>
+			<GoogleButton className="mt-6" next={next} />
 			<AuthDivider />
-			<form className="space-y-4" onSubmit={submit}>
+			<form className="grid gap-[18px]" onSubmit={submit}>
+				<AuthNotice
+					message={
+						termsVersion
+							? error
+							: "Sign-up is briefly unavailable. Please try again in a minute."
+					}
+				/>
 				<AuthField
 					autoComplete="name"
 					id="name"
@@ -92,6 +151,8 @@ export default function SignUpForm({
 				<AuthField
 					autoComplete="username"
 					id="email"
+					inputMode="email"
+					inputRef={emailRef}
 					label="Email"
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="name@company.com"
@@ -101,8 +162,10 @@ export default function SignUpForm({
 				/>
 				<AuthField
 					autoComplete="new-password"
+					hint="Use at least 8 characters."
 					id="password"
 					label="Password"
+					meter
 					minLength={8}
 					onChange={(e) => setPassword(e.target.value)}
 					placeholder="At least 8 characters"
@@ -111,12 +174,12 @@ export default function SignUpForm({
 					value={password}
 				/>
 				<label
-					className="flex items-start gap-2.5 text-sm leading-relaxed text-product-foreground-accent"
+					className="flex items-start gap-2.5 text-[13.5px] leading-normal text-product-foreground-accent"
 					htmlFor="terms"
 				>
 					<input
 						checked={acceptedTerms}
-						className="mt-0.5 size-4 shrink-0 accent-product-primary"
+						className="mt-0.5 size-[18px] shrink-0 accent-product-primary"
 						id="terms"
 						onChange={(e) => setAcceptedTerms(e.target.checked)}
 						required
@@ -125,27 +188,24 @@ export default function SignUpForm({
 					<span>
 						I agree to the{" "}
 						<Link
-							className={AUTH_LINK}
-							href="/terms-of-service"
+							className={textLinkClass}
+							href="/terms-and-conditions"
 							target="_blank"
 						>
-							Terms of Service
+							Terms and Conditions
 						</Link>{" "}
 						and{" "}
-						<Link className={AUTH_LINK} href="/privacy-policy" target="_blank">
+						<Link
+							className={textLinkClass}
+							href="/privacy-policy"
+							target="_blank"
+						>
 							Privacy Policy
 						</Link>
 						{termsVersion ? ` (version ${termsVersion})` : ""}.
 					</span>
 				</label>
 				{captcha.element}
-				<AuthNotice
-					message={
-						termsVersion
-							? error
-							: "Sign-up is briefly unavailable. Please try again in a minute."
-					}
-				/>
 				<SubmitButton
 					busy={busy}
 					busyLabel="Creating your account…"

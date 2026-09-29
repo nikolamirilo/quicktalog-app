@@ -2,7 +2,7 @@
 
 import { type HtmlProfile, sanitizeCatalogueHtml } from "@/lib/html/sanitize";
 
-export default function HtmlContent({
+export function HtmlContent({
 	html,
 	className,
 	unstyled,

@@ -1,10 +1,11 @@
-import ClarityScript from "@/components/general/ClarityScript";
+import { ClarityScript } from "@/components/general/ClarityScript";
 import { PageWrapperClient } from "@/components/general/PageWrapperClient";
 import { generatePageMetadata } from "@/constants/metadata";
 import {
 	crimsonText,
 	dmSans,
 	inter,
+	interTight,
 	josefinSans,
 	lato,
 	loraRegular,
@@ -15,6 +16,7 @@ import {
 	openSans,
 	oswald,
 	playfairDisplay,
+	plusJakartaSans,
 	poppins,
 	raleway,
 	roboto,
@@ -38,7 +40,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html
-			className={`${loraRegular.variable} ${loraSemiBold.variable} ${playfairDisplay.variable} ${inter.variable} ${nunito.variable} ${crimsonText.variable} ${poppins.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${lato.variable} ${raleway.variable} ${oswald.variable} ${merriweather.variable} ${robotoSlab.variable} ${sourceSans3.variable} ${workSans.variable} ${dmSans.variable} ${josefinSans.variable} antialiased`}
+			className={`${plusJakartaSans.variable} ${interTight.variable} ${loraRegular.variable} ${loraSemiBold.variable} ${playfairDisplay.variable} ${inter.variable} ${nunito.variable} ${crimsonText.variable} ${poppins.variable} ${roboto.variable} ${openSans.variable} ${montserrat.variable} ${lato.variable} ${raleway.variable} ${oswald.variable} ${merriweather.variable} ${robotoSlab.variable} ${sourceSans3.variable} ${workSans.variable} ${dmSans.variable} ${josefinSans.variable} antialiased`}
 			lang="en"
 		>
 			<head>

@@ -1,7 +1,7 @@
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
 import { FiSmartphone } from "react-icons/fi";
 import type { DocEntry } from "./_types";
 
@@ -22,16 +22,15 @@ const meta = {
 		"catalogue accessibility",
 	],
 	relatedSlugs: ["customize-design", "share-your-catalogue"],
-	coverImage: "/images/documentation/docs-landing-one-source.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/images/documentation/docs-landing-one-source.svg"
 				alt="One catalogue as the single source feeding phones, tablets, desktops, and print"
 				priority
+				src="/images/documentation/docs-landing-one-source.svg"
 			/>
 
 			<Prose>
@@ -71,8 +70,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/responsive-devices-layout.svg"
 				alt="The same catalogue shown on a phone, tablet, and desktop - layout adapts automatically to each screen size"
+				src="/images/documentation/responsive-devices-layout.svg"
 			/>
 
 			<Prose>
@@ -119,8 +118,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/responsive-accessibility-features.svg"
 				alt="Three accessibility features: keyboard navigation with focus ring, screen reader support, and WCAG AA colour contrast"
+				src="/images/documentation/responsive-accessibility-features.svg"
 			/>
 
 			<Prose>

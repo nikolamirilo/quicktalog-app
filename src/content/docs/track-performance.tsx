@@ -1,8 +1,8 @@
 import { FiBarChart2 } from "react-icons/fi";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
 import type { DocEntry } from "./_types";
 
 const meta = {
@@ -21,16 +21,15 @@ const meta = {
 		"customer engagement",
 	],
 	relatedSlugs: ["plans-and-billing", "share-your-catalogue"],
-	coverImage: "/images/documentation/track-performance-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/images/documentation/track-performance-cover.svg"
 				alt="Quicktalog analytics dashboard showing catalogue views, busiest day, and a daily views chart"
 				priority
+				src="/images/documentation/track-performance-cover.svg"
 			/>
 
 			<Prose>
@@ -69,9 +68,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/track-performance-metrics.svg"
 				alt="Catalogue analytics metrics: total views, busiest day, average views per day, and a daily views line chart"
 				maxWidth="640px"
+				src="/images/documentation/track-performance-metrics.svg"
 			/>
 
 			<Prose>
@@ -86,8 +85,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/track-performance-decision-loop.svg"
 				alt="The analytics decision loop: read the chart, spot the pattern, update or promote, then watch it respond"
+				src="/images/documentation/track-performance-decision-loop.svg"
 			/>
 
 			<Callout title="Share the link to see movement" variant="tip">

@@ -6,7 +6,7 @@ import ChatImageAttachments, {
 import ChatMessageBubble from "@/components/catalogue/chat/ChatMessageBubble";
 import CreditMeter from "@/components/catalogue/chat/CreditMeter";
 import PlanChecklist from "@/components/catalogue/chat/PlanChecklist";
-import LimitsModal from "@/components/modals/LimitsModal";
+import { LimitsModal } from "@/components/modals/LimitsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";

@@ -1,6 +1,5 @@
 "use client";
 
-//@ts-nocheck
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import * as React from "react";
@@ -19,7 +18,7 @@ const SelectTrigger = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Trigger
 		className={cn(
-			"flex h-10 !bg-transparent w-full items-center justify-between rounded-md border text-product-foreground border-product-border px-3 py-2 text-sm shadow-product-shadow transition-[var(--product-nav-transition)] hover:bg-product-background-hover hover:shadow-[var(--product-shadow-hover)]  focus:ring-[var(--product-nav-focus-ring)] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+			"flex h-11 w-full items-center justify-between gap-2 rounded-[14px] px-4 text-left text-base md:text-[15px] border-[1.5px] border-product-border-strong bg-product-card text-product-foreground transition-[border-color,box-shadow] placeholder:text-product-muted hover:border-product-border-hover focus:outline-none focus:border-product-primary focus:ring-4 focus:ring-product-primary/25 aria-[invalid=true]:border-product-error aria-[invalid=true]:ring-4 aria-[invalid=true]:ring-product-error/10 disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-product-muted [&>span]:line-clamp-1",
 			className,
 		)}
 		ref={ref}
@@ -32,8 +31,8 @@ const SelectTrigger = React.forwardRef<
 		<SelectPrimitive.Icon asChild>
 			<ChevronDown
 				className={cn(
-					"h-5 w-5 text-product-icon transition-transform duration-200 ease-in-out",
-					"data-[state=open]:rotate-180 data-[state=open]:text-product-primary-accent",
+					"h-4 w-4 shrink-0 text-product-muted transition-transform duration-200 ease-in-out",
+					"data-[state=open]:rotate-180",
 				)}
 			/>
 		</SelectPrimitive.Icon>
@@ -54,7 +53,7 @@ const SelectScrollUpButton = React.forwardRef<
 		translate="no"
 		{...props}
 	>
-		<ChevronUp className="h-4 w-4 text-product-icon" />
+		<ChevronUp className="h-4 w-4 text-product-muted" />
 	</SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -72,7 +71,7 @@ const SelectScrollDownButton = React.forwardRef<
 		translate="no"
 		{...props}
 	>
-		<ChevronDown className="h-4 w-4 text-product-icon" />
+		<ChevronDown className="h-4 w-4 text-product-muted" />
 	</SelectPrimitive.ScrollDownButton>
 ));
 SelectScrollDownButton.displayName =
@@ -85,7 +84,7 @@ const SelectContent = React.forwardRef<
 	<SelectPrimitive.Portal>
 		<SelectPrimitive.Content
 			className={cn(
-				"relative z-[2000] max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border text-product-foreground border-product-border shadow-[var(--product-shadow)] transition-[var(--product-nav-transition)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin] notranslate bg-white",
+				"relative z-[2000] max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-[18px] border border-product-border bg-product-card text-product-foreground shadow-product-hover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin] notranslate",
 				position === "popper" &&
 					"data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
 				// iOS Safari fixes
@@ -100,7 +99,7 @@ const SelectContent = React.forwardRef<
 			<SelectScrollUpButton />
 			<SelectPrimitive.Viewport
 				className={cn(
-					"p-1 notranslate",
+					"p-1.5 notranslate",
 					position === "popper" &&
 						"h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
 				)}
@@ -120,7 +119,7 @@ const SelectLabel = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Label
 		className={cn(
-			"px-2 py-1.5 text-sm font-semibold text-product-foreground",
+			"px-3 py-1.5 text-xs font-bold uppercase tracking-[0.06em] text-product-muted",
 			className,
 		)}
 		ref={ref}
@@ -140,16 +139,16 @@ const SelectItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Item
 		className={cn(
-			"relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none bg-product-background text-product-foreground hover:bg-product-background-hover hover:text-product-foreground-accent focus:bg-product-primary focus:text-product-background transition-[var(--product-nav-transition)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50 notranslate",
+			"relative flex min-h-10 w-full cursor-pointer select-none items-center rounded-[12px] py-2 pl-3 pr-9 text-sm font-medium text-product-foreground outline-none transition-colors focus:bg-product-background-hero data-[state=checked]:bg-product-primary-soft data-[state=checked]:font-semibold data-[disabled]:pointer-events-none data-[disabled]:opacity-50 notranslate",
 			className,
 		)}
 		ref={ref}
 		translate="no"
 		{...props}
 	>
-		<span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+		<span className="absolute right-3 flex h-3.5 w-3.5 items-center justify-center">
 			<SelectPrimitive.ItemIndicator>
-				<Check className="h-4 w-4 text-product-icon" />
+				<Check className="h-4 w-4 text-product-primary-ink" />
 			</SelectPrimitive.ItemIndicator>
 		</span>
 		<SelectPrimitive.ItemText>

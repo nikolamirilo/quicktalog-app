@@ -1,8 +1,5 @@
-import React from "react";
-import Loader from "@/components/navigation/Loader";
+import { Loader } from "@/components/navigation/Loader";
 
-const loading = () => {
+export default function Loading() {
 	return <Loader />;
-};
-
-export default loading;
+}

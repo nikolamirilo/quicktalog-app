@@ -1,136 +1,48 @@
 "use client";
-import { sendContactEmail } from "@/actions/email";
-import { Button } from "@/components/ui/button";
+
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-import ContactForm, { subjectOptions } from "./ContactForm";
+
+import { ContactAside } from "@/components/contact/ContactAside";
+import { ContactForm } from "@/components/contact/ContactForm";
+import { ContactSent } from "@/components/contact/ContactSent";
+import { Container } from "@/components/general/Container";
+import { contactSubjects } from "@/constants/details";
+import { useContactSubmit } from "@/hooks/useContactSubmit";
 
 /** Matches a `?subject=` param (e.g. "feature-request") against the exact option strings. */
 const matchSubjectParam = (param: string | null) => {
-	if (!param) return null;
+	if (!param) return undefined;
 	const normalized = param
 		.trim()
 		.toLowerCase()
 		.replace(/[^a-z0-9]+/g, " ");
-	return (
-		subjectOptions.find((option) => option.toLowerCase() === normalized) ?? null
-	);
+	return contactSubjects.find((option) => option.toLowerCase() === normalized);
 };
 
-const Contact = ({ type = "regular" }: { type?: string }) => {
+/** Contact page body: the message card and the other ways to reach us. */
+export function Contact() {
 	const searchParams = useSearchParams();
-	const [name, setName] = useState("");
-	const [company, setCompany] = useState("");
-	const [subject, setSubject] = useState(
-		() =>
-			matchSubjectParam(searchParams.get("subject")) ??
-			(type !== "support" ? "Custom Plan" : "Technical Support"),
+	const [initialSubject] = useState(() =>
+		matchSubjectParam(searchParams.get("subject")),
 	);
-	const [message, setMessage] = useState("");
-	const [email, setEmail] = useState("");
-	const [isLoading, setIsLoading] = useState(false);
-	const [isOpen, setIsOpen] = useState(false);
-
-	async function handleSubmit(e: React.FormEvent) {
-		e.preventDefault();
-		setIsLoading(true);
-
-		const res = await sendContactEmail({
-			message,
-			email,
-			name,
-			subject: `Contact Form: ${subject}`,
-		});
-		if (res == true) {
-			setIsOpen(true);
-			setIsLoading(false);
-			setName("");
-			setCompany("");
-			setSubject("Custom Plan");
-			setMessage("");
-			setEmail("");
-		} else {
-			alert("Error occured");
-		}
-	}
+	const { sent, submit, reset } = useContactSubmit();
 
 	return (
-		<section
-			className={`font-lora ${type !== "support" ? "bg-product-background pt-32 md:pt-40 pb-32" : ""}`}
-			id="contact"
-		>
-			{isOpen && (
-				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-					<div className="bg-product-background rounded-2xl p-8 max-w-md mx-4 shadow-2xl border border-product-border">
-						<div className="text-center">
-							<div className="w-16 h-16 bg-product-primary rounded-full flex items-center justify-center mx-auto mb-4">
-								<svg
-									className="w-8 h-8 text-product-foreground"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										d="M5 13l4 4L19 7"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-									/>
-								</svg>
-							</div>
-							<h3 className="text-xl font-semibold text-product-foreground mb-2">
-								{type === "support"
-									? "Thank you for submitting your request."
-									: "Thanks-your message is on its way!"}
-							</h3>
-							<p className="text-product-foreground-accent mb-6">
-								We've received your message and will reply via email within 1
-								business day.
-							</p>
-							<Button onClick={() => setIsOpen(false)} variant="contact">
-								Close
-							</Button>
-						</div>
-					</div>
+		<section aria-label="Contact options" id="contact">
+			<Container className="grid grid-cols-1 gap-5 pb-14 pt-2 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)] lg:items-start lg:gap-7">
+				<div className="rounded-product-card border border-product-border bg-product-card px-5 py-6 shadow-product lg:px-[34px] lg:pb-[30px] lg:pt-[34px]">
+					{sent ? (
+						<ContactSent onReset={reset} sent={sent} />
+					) : (
+						<ContactForm
+							defaultValues={{ subject: initialSubject }}
+							onSubmit={submit}
+						/>
+					)}
 				</div>
-			)}
-
-			<div className="container mx-auto  max-w-4xl">
-				{/* Header */}
-				{type !== "support" && (
-					<div className="text-center mb-16">
-						<h1 className="text-5xl font-bold text-product-foreground mb-4">
-							Contact Quicktalog
-						</h1>
-						<p className="text-xl text-product-foreground-accent max-w-2xl mx-auto">
-							Have questions about our digital catalog builder? Our sales and
-							support teams are here to help and typically respond within 1
-							business day.
-						</p>
-					</div>
-				)}
-
-				{/* Contact Form */}
-				<ContactForm
-					company={company}
-					email={email}
-					handleSubmit={handleSubmit}
-					isLoading={isLoading}
-					message={message}
-					name={name}
-					setCompany={setCompany}
-					setEmail={setEmail}
-					setMessage={setMessage}
-					setName={setName}
-					setSubject={setSubject}
-					subject={subject}
-				/>
-
-				{/* Uncomment to show contact info section:
-				<ContactInfo /> */}
-			</div>
+				<ContactAside />
+			</Container>
 		</section>
 	);
-};
-
-export default Contact;
+}

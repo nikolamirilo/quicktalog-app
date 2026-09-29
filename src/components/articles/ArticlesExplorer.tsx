@@ -1,54 +1,58 @@
 "use client";
 
 import { useMemo, useState } from "react";
+
+import { ArticleCard } from "@/components/articles/ArticleCard";
+import { FilterChip } from "@/components/general/FilterChip";
 import type { ArticleMeta } from "@/content/articles/_types";
-import ArticleCard from "./ArticleCard";
+
+const ALL = "All";
+
+const countLabel = (count: number) =>
+	`${count} ${count === 1 ? "article" : "articles"}`;
 
 /**
- * Client-side category filter for the articles index. The featured article is
- * pinned above this on the server, so it is excluded here to avoid duplication.
+ * Client-side category filter for the articles grid. The featured article is
+ * pinned above this on the server and is not part of `articles`, so the chips
+ * and the status only count what the grid can show.
  */
-export default function ArticlesExplorer({
-	metas,
-	featuredSlug,
-}: {
-	metas: ArticleMeta[];
-	featuredSlug: string;
-}) {
-	const rest = useMemo(
-		() => metas.filter((m) => m.slug !== featuredSlug),
-		[metas, featuredSlug],
-	);
+export function ArticlesExplorer({ articles }: { articles: ArticleMeta[] }) {
 	const categories = useMemo(
-		() => ["All", ...Array.from(new Set(rest.map((m) => m.category)))],
-		[rest],
+		() => [ALL, ...Array.from(new Set(articles.map((m) => m.category)))],
+		[articles],
 	);
-	const [active, setActive] = useState("All");
+	const [active, setActive] = useState(ALL);
 	const filtered =
-		active === "All" ? rest : rest.filter((m) => m.category === active);
+		active === ALL ? articles : articles.filter((m) => m.category === active);
+
+	const status =
+		active === ALL
+			? `Showing all ${countLabel(filtered.length)} below the editor's pick`
+			: `Showing ${countLabel(filtered.length)} in ${active}`;
 
 	return (
-		<div className="mt-12">
-			<div className="mb-10 flex flex-wrap justify-center gap-2">
-				{categories.map((category) => {
-					const isActive = category === active;
-					return (
-						<button
-							className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-								isActive
-									? "border-product-secondary bg-product-secondary text-white"
-									: "border-product-border bg-product-background text-product-foreground-accent hover:border-product-secondary hover:text-product-foreground"
-							}`}
+		<div>
+			{categories.length > 2 ? (
+				<div
+					aria-label="Filter articles by category"
+					className="-mx-5 mb-[22px] flex gap-2 overflow-x-auto px-5 pb-1.5 pt-0.5 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden"
+					role="group"
+				>
+					{categories.map((category) => (
+						<FilterChip
 							key={category}
 							onClick={() => setActive(category)}
-							type="button"
+							pressed={category === active}
 						>
 							{category}
-						</button>
-					);
-				})}
-			</div>
-			<div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+						</FilterChip>
+					))}
+				</div>
+			) : null}
+			<p aria-live="polite" className="sr-only" role="status">
+				{status}
+			</p>
+			<div className="grid grid-cols-1 gap-[18px] md:grid-cols-2 lg:grid-cols-3 lg:gap-[22px]">
 				{filtered.map((meta) => (
 					<ArticleCard key={meta.slug} meta={meta} />
 				))}

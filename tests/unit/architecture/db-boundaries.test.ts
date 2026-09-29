@@ -167,6 +167,7 @@ describe("database boundaries", () => {
 			importersOf("utils/supabase/server-forwarded", [
 				"app/auth/callback/**",
 				"app/auth/confirm/**",
+				"actions/auth-confirm",
 				"utils/supabase/middleware",
 			]),
 		).toEqual([]);
@@ -183,6 +184,7 @@ describe("database boundaries", () => {
 					"utils/supabase/auth-admin",
 					"app/auth/callback/**",
 					"app/auth/confirm/**",
+					"actions/auth-confirm",
 					"scripts/**",
 				]),
 		);

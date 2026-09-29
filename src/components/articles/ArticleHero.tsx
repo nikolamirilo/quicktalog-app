@@ -1,36 +1,38 @@
+import { ArticleCover } from "@/components/articles/ArticleCover";
+import { AuthorByline } from "@/components/articles/AuthorByline";
+import { CategoryTag } from "@/components/resources/CategoryTag";
+import { ResourceBackLink } from "@/components/articles/ResourceBackLink";
+import { Container } from "@/components/general/Container";
+import { HeroBackdrop } from "@/components/general/PageHero";
 import type { ArticleMeta } from "@/content/articles/_types";
-import ArticleImage from "./ArticleImage";
-import AuthorByline from "./AuthorByline";
 
-/** Title block: category kicker, H1, description, byline, and hero image. */
-export default function ArticleHero({ meta }: { meta: ArticleMeta }) {
+/** Article header: back link, category, H1, summary, byline and the cover banner. */
+export function ArticleHero({ meta }: { meta: ArticleMeta }) {
 	return (
-		<header className="mb-10 text-center">
-			<span className="inline-flex items-center gap-2 rounded-full border border-product-border bg-product-background px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-product-secondary">
-				<span className="h-1.5 w-1.5 rounded-full bg-product-primary" />
-				{meta.category}
-			</span>
-			<h1 className="mt-6 font-lora text-4xl font-bold leading-[1.1] text-product-foreground sm:text-5xl">
-				{meta.title}
-			</h1>
-			<p className="mx-auto mt-5 max-w-2xl text-lg text-product-foreground-accent">
-				{meta.description}
-			</p>
-			<div className="mt-6">
+		<header className="relative isolate overflow-hidden pt-28 lg:pt-[148px]">
+			<HeroBackdrop />
+			<Container className="flex flex-col items-start gap-3.5">
+				<ResourceBackLink href="/articles" label="All articles" />
+				<CategoryTag>{meta.category}</CategoryTag>
+				<h1 className="max-w-[860px] text-balance text-[clamp(30px,4.6vw,52px)] font-extrabold leading-[1.08] tracking-[-0.035em] text-product-foreground">
+					{meta.title}
+				</h1>
+				<p className="max-w-[62ch] text-[clamp(17px,1.6vw,20px)] leading-[1.6] text-product-foreground-accent">
+					{meta.description}
+				</p>
 				<AuthorByline
 					author={meta.author}
 					publishedAt={meta.publishedAt}
 					readingTimeMinutes={meta.readingTimeMinutes}
 				/>
-			</div>
-			<div className="mt-10">
-				<ArticleImage
-					alt={meta.heroImageAlt}
-					credit={meta.heroCredit}
-					priority
-					src={meta.heroImage}
+			</Container>
+			<Container className="mt-[30px]">
+				<ArticleCover
+					className="rounded-product-panel border border-product-border shadow-product"
+					cover={meta.cover}
+					size="lg"
 				/>
-			</div>
+			</Container>
 		</header>
 	);
 }

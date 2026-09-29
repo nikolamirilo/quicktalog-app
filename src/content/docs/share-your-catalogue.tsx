@@ -1,9 +1,9 @@
 import { FiShare2 } from "react-icons/fi";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
+import { Stepper } from "@/components/resources/Stepper";
 import type { DocEntry } from "./_types";
 
 const meta = {
@@ -23,17 +23,16 @@ const meta = {
 		"custom QR code",
 	],
 	relatedSlugs: ["track-performance", "customize-design"],
-	coverImage: "/images/documentation/share-catalogue-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/images/documentation/share-catalogue-cover.svg"
 				alt="Sharing a Quicktalog catalogue via a link and a branded QR code"
 				maxWidth="640px"
 				priority
+				src="/images/documentation/share-catalogue-cover.svg"
 			/>
 
 			<Prose>
@@ -65,9 +64,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/share-catalogue-publish.svg"
 				alt="The publish button in the Quicktalog builder taking a draft catalogue live"
 				maxWidth="380px"
+				src="/images/documentation/share-catalogue-publish.svg"
 			/>
 
 			<Prose>
@@ -80,9 +79,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/share-catalogue-link-channels.svg"
 				alt="Channels for sharing a catalogue link: text message, email, social media profiles, and website"
 				maxWidth="380px"
+				src="/images/documentation/share-catalogue-link-channels.svg"
 			/>
 
 			<Stepper
@@ -111,8 +110,8 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/images/documentation/share-catalogue-qr-placements.svg"
 				alt="Branded QR codes placed on a table card, a sign, a menu, and a flyer"
+				src="/images/documentation/share-catalogue-qr-placements.svg"
 			/>
 
 			<Callout title="Make the QR code earn its place" variant="tip">
@@ -132,9 +131,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/share-catalogue-update.svg"
 				alt="Updating a live catalogue: edit in the builder, publish, and the same link and QR code show the new version"
 				maxWidth="640px"
+				src="/images/documentation/share-catalogue-update.svg"
 			/>
 		</>
 	);

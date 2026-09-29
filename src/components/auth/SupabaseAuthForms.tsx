@@ -2,15 +2,17 @@
 
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { AuthSwitch } from "@/components/auth/common/AuthFine";
 import { LANDING_ERRORS } from "@/components/auth/common/authMessages";
 import type { AuthMode } from "@/components/auth/common/AuthModeTabs";
-import AuthModeTabs from "@/components/auth/common/AuthModeTabs";
-import AuthNotice from "@/components/auth/common/AuthNotice";
-import useSignupConsent from "@/components/auth/common/useSignupConsent";
-import ResetPasswordForm from "@/components/auth/forms/ResetPasswordForm";
-import SignInForm from "@/components/auth/forms/SignInForm";
-import SignUpForm from "@/components/auth/forms/SignUpForm";
+import { AuthModeTabs } from "@/components/auth/common/AuthModeTabs";
+import { AuthNotice } from "@/components/auth/common/AuthNotice";
+import { useSignupConsent } from "@/components/auth/common/useSignupConsent";
+import { ResetPasswordForm } from "@/components/auth/forms/ResetPasswordForm";
+import { SignInForm } from "@/components/auth/forms/SignInForm";
+import { SignUpForm } from "@/components/auth/forms/SignUpForm";
 import { safeNext } from "@/lib/auth/redirects";
+import { textLinkClass } from "@/components/general/TextLink";
 
 /**
  * The `/auth` screen on Supabase Auth. Every call underneath runs in the
@@ -23,7 +25,7 @@ import { safeNext } from "@/lib/auth/redirects";
  */
 type View = AuthMode | "reset";
 
-export default function SupabaseAuthForms({
+export function SupabaseAuthForms({
 	mode,
 	termsVersion,
 }: {
@@ -55,20 +57,48 @@ export default function SupabaseAuthForms({
 	);
 
 	return (
-		<div className="space-y-4">
-			<AuthNotice message={problem} tone="info" />
+		<>
+			{problem ? (
+				<div className="mb-4 w-full max-w-[460px]">
+					<AuthNotice message={problem} tone="info" />
+				</div>
+			) : null}
 			{view === "reset" ? (
 				<ResetPasswordForm onBack={() => setView("signin")} />
 			) : view === "signup" ? (
-				<SignUpForm next={next} tabs={tabs} termsVersion={termsVersion} />
+				<>
+					<SignUpForm next={next} tabs={tabs} termsVersion={termsVersion} />
+					<AuthSwitch>
+						Already have an account?{" "}
+						<button
+							className={textLinkClass}
+							onClick={() => setView("signin")}
+							type="button"
+						>
+							Sign in
+						</button>
+					</AuthSwitch>
+				</>
 			) : (
-				<SignInForm
-					next={next}
-					onForgotPassword={() => setView("reset")}
-					tabs={tabs}
-				/>
+				<>
+					<SignInForm
+						next={next}
+						onForgotPassword={() => setView("reset")}
+						tabs={tabs}
+					/>
+					<AuthSwitch>
+						New to Quicktalog?{" "}
+						<button
+							className={textLinkClass}
+							onClick={requestSignUp}
+							type="button"
+						>
+							Create a free account
+						</button>
+					</AuthSwitch>
+				</>
 			)}
 			{modal}
-		</div>
+		</>
 	);
 }

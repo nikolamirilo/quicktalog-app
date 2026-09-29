@@ -1,12 +1,13 @@
-import ArticleCTA from "@/components/articles/ArticleCTA";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
-import PullQuote from "@/components/articles/PullQuote";
-import StatHighlights from "@/components/articles/StatHighlights";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleCTA } from "@/components/resources/ArticleCTA";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
+import { PullQuote } from "@/components/articles/PullQuote";
+import { StatHighlights } from "@/components/articles/StatHighlights";
+import { Stepper } from "@/components/resources/Stepper";
 import type { Article } from "./_types";
+import { TextLink } from "@/components/general/TextLink";
 
 const meta = {
 	slug: "businesses-that-need-digital-catalog",
@@ -25,7 +26,7 @@ const meta = {
 		"https://images.unsplash.com/photo-1753161029492-0644556055cf?auto=format&fit=crop&w=1600&q=80",
 	heroImageAlt:
 		"A boutique owner checking clothing stock on a tablet in her shop",
-	heroCredit: { name: "Unsplash", url: "https://unsplash.com" },
+	cover: "businesses",
 	publishedAt: "2026-06-14",
 	readingTimeMinutes: 7,
 	author: "The Quicktalog Team",
@@ -85,9 +86,9 @@ function Body() {
 						different every day, and the laminated menu cannot keep up. Put the
 						menu online and you edit a line instead of reprinting a stack. This
 						is the classic case, covered step by step in the{" "}
-						<a href="/articles/digital-menu-for-restaurants">
+						<TextLink href="/articles/digital-menu-for-restaurants">
 							guide to digital menus for restaurants
-						</a>
+						</TextLink>
 						.
 					</li>
 					<li>
@@ -111,9 +112,9 @@ function Body() {
 						costs and how long to set aside. Instead of typing the same answer
 						again, you send a link with every service, its duration, and its
 						price. There is a full walkthrough in the{" "}
-						<a href="/articles/digital-service-menu-salons-spas">
+						<TextLink href="/articles/digital-service-menu-salons-spas">
 							guide to digital service menus for salons and spas
-						</a>
+						</TextLink>
 						.
 					</li>
 					<li>
@@ -198,7 +199,7 @@ function Body() {
 				</ul>
 			</Prose>
 
-			<ArticleCTA variant="mid" />
+			<ArticleCTA />
 
 			<Prose>
 				<h2>Services and community</h2>
@@ -237,9 +238,9 @@ function Body() {
 				</p>
 				<p>
 					If you want to lean on the QR side of that, the{" "}
-					<a href="/articles/qr-code-catalog-guide">
+					<TextLink href="/articles/qr-code-catalog-guide">
 						guide to QR code catalogs
-					</a>{" "}
+					</TextLink>{" "}
 					covers where to place a code so people actually scan it.
 				</p>
 			</Prose>
@@ -284,9 +285,9 @@ function Body() {
 				<p>
 					That is the whole process. If you would rather see the AI route in
 					detail first, the{" "}
-					<a href="/articles/create-catalog-with-ai">
+					<TextLink href="/articles/create-catalog-with-ai">
 						guide to creating a catalog with AI
-					</a>{" "}
+					</TextLink>{" "}
 					walks through it. Otherwise the only real step left is starting, and
 					your first catalog is free.
 				</p>

@@ -1,9 +1,14 @@
-import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
-import { LimitType, PricingPlan, tiers } from "@quicktalog/common";
-import { getLimitContent, getIcon } from "./limits/limitContent";
-import LimitsModalHeader from "./limits/LimitsModalHeader";
-import NotFoundContent from "./limits/NotFoundContent";
-import PlanComparison from "./limits/LimitUpgradeComparison";
+import { type LimitType, type PricingPlan, tiers } from "@quicktalog/common";
+
+import { AppDialogContent } from "@/components/modals/AppDialog";
+import {
+	getIcon,
+	getLimitContent,
+} from "@/components/modals/limits/limitContent";
+import { LimitsModalHeader } from "@/components/modals/limits/LimitsModalHeader";
+import { LimitUpgradeComparison } from "@/components/modals/limits/LimitUpgradeComparison";
+import { NotFoundContent } from "@/components/modals/limits/NotFoundContent";
+import { AlertDialog } from "@/components/ui/alert-dialog";
 
 interface LimitsModalProps {
 	isOpen: boolean;
@@ -13,7 +18,7 @@ interface LimitsModalProps {
 	onClose?: () => void;
 }
 
-const LimitsModal = ({
+export const LimitsModal = ({
 	isOpen,
 	type = "catalogue",
 	currentPlan = tiers[0],
@@ -29,29 +34,24 @@ const LimitsModal = ({
 
 	return (
 		<AlertDialog open={isOpen}>
-			<AlertDialogContent className="w-[98vw] sm:w-[95vw] max-w-md xl:max-w-lg mx-auto p-0 bg-product-background border border-product-border shadow-product-shadow overflow-hidden max-h-[90dvh] flex flex-col">
+			<AppDialogContent>
 				<LimitsModalHeader
 					content={content}
 					IconComponent={IconComponent}
 					isNotFound={isNotFound}
 					onClose={onClose}
 				/>
-
-				<div className="p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 flex-1 overflow-y-auto">
-					{isNotFound ? (
-						<NotFoundContent />
-					) : (
-						<PlanComparison
-							content={content}
-							currentPlan={currentPlan}
-							isStandardPlanLimitReached={isStandardPlanLimitReached}
-							requiredPlan={requiredPlan}
-						/>
-					)}
-				</div>
-			</AlertDialogContent>
+				{isNotFound ? (
+					<NotFoundContent />
+				) : (
+					<LimitUpgradeComparison
+						content={content}
+						currentPlan={currentPlan}
+						isStandardPlanLimitReached={isStandardPlanLimitReached}
+						requiredPlan={requiredPlan}
+					/>
+				)}
+			</AppDialogContent>
 		</AlertDialog>
 	);
 };
-
-export default LimitsModal;

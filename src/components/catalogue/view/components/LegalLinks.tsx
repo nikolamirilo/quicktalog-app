@@ -1,5 +1,5 @@
 import Link from "next/link";
-import SmartLink from "@/components/general/SmartLink";
+import { SmartLink } from "@/components/general/SmartLink";
 
 const LegalLinks = ({
 	type,

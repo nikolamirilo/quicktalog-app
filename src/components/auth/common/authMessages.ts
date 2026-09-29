@@ -1,5 +1,5 @@
 import type { AuthError } from "@supabase/supabase-js";
-import type { ConfirmResult } from "@/app/auth/confirm/continue/actions";
+import type { ConfirmResult } from "@/actions/auth-confirm";
 
 /**
  * Every user-facing auth string, in one place.

@@ -12,7 +12,7 @@ const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
  * With no site key configured the widget is absent and `pending` is false, so
  * local development is not blocked by it.
  */
-export default function useTurnstile() {
+export function useTurnstile() {
 	const widget = useRef<TurnstileInstance | undefined>(undefined);
 	const [token, setToken] = useState<string | null>(null);
 
@@ -31,7 +31,7 @@ export default function useTurnstile() {
 				onError={() => setToken(null)}
 				onExpire={() => setToken(null)}
 				onSuccess={setToken}
-				options={{ theme: "auto", size: "flexible" }}
+				options={{ theme: "light", size: "flexible" }}
 				ref={widget}
 				siteKey={SITE_KEY}
 			/>

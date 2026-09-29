@@ -48,7 +48,7 @@ export default function CatalogueError({
 					Please try again - if the problem continues, head back home.
 				</p>
 				<div className="flex flex-col sm:flex-row gap-3 justify-center">
-					<Button onClick={reset} variant="cta">
+					<Button onClick={reset} variant="default">
 						Try Again
 					</Button>
 					<Button asChild variant="outline">

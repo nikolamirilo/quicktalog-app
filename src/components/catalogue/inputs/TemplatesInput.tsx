@@ -109,7 +109,7 @@ export default function TemplatesInput({
 							className={cn(
 								"group relative p-3 sm:p-4 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl cursor-pointer transition-all duration-300 h-full border-2 touch-manipulation",
 								isSelected
-									? "border-product-primary bg-product-primary/5 shadow-product-shadow ring-1 ring-product-primary"
+									? "border-product-primary bg-product-primary/5 shadow-product ring-1 ring-product-primary"
 									: "border-product-border bg-product-background hover:border-product-primary/50 hover:shadow-lg hover:scale-[1.01]",
 								isScratch && !isSelected && "border-dashed border-gray-300",
 							)}

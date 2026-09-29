@@ -1,13 +1,20 @@
+import type { ReactElement } from "react";
+
+import {
+	AppDialogContent,
+	AppDialogFooter,
+	AppDialogIcon,
+	type AppDialogTone,
+} from "@/components/modals/AppDialog";
 import {
 	AlertDialog,
 	AlertDialogAction,
 	AlertDialogCancel,
-	AlertDialogContent,
 	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/ui/cn";
 
 interface InformModalProps {
 	isOpen: boolean;
@@ -20,10 +27,16 @@ interface InformModalProps {
 	loading?: boolean;
 	image?: string;
 	imageAlt?: string;
-	icon?: React.ReactElement;
+	/** Shown in a 46px tile above the title. */
+	icon?: ReactElement;
+	/** Tile colour; `red` also turns the confirm button destructive. */
+	tone?: AppDialogTone;
+	/** Leave closing to the caller, so `loading` can show while it works. */
+	keepOpenOnConfirm?: boolean;
 }
 
-export default function InformModal({
+/** Small confirm / explainer dialog (`.as-dlg-sm`). */
+export function InformModal({
 	isOpen,
 	onConfirm,
 	onCancel,
@@ -35,6 +48,8 @@ export default function InformModal({
 	image,
 	imageAlt = "Screenshot",
 	icon,
+	tone = "amber",
+	keepOpenOnConfirm = false,
 }: InformModalProps) {
 	return (
 		<AlertDialog
@@ -43,44 +58,42 @@ export default function InformModal({
 			}}
 			open={isOpen}
 		>
-			<AlertDialogContent className="font-lora text-product-foreground w-[95vw] max-w-lg mx-auto p-6 sm:p-8 bg-product-background border border-product-border shadow-product-shadow rounded-2xl">
-				<AlertDialogHeader className="space-y-3">
-					<AlertDialogTitle className="text-xl font-bold text-product-foreground font-heading mb-3">
-						<div className="flex flex-row items-center justify-start gap-2">
-							{icon} {title}
-						</div>
-					</AlertDialogTitle>
-					<AlertDialogDescription className="text-product-foreground-accent text-base leading-relaxed">
-						{message}
-					</AlertDialogDescription>
-					{image && (
-						<div className="mt-4 rounded-lg overflow-hidden border border-product-border">
-							<img
-								alt={imageAlt}
-								className="w-full h-auto max-h-64 object-cover"
-								src={image}
-							/>
-						</div>
-					)}
-				</AlertDialogHeader>
-				<AlertDialogFooter className="pt-4 border-t border-product-border">
-					{onCancel && (
-						<AlertDialogCancel
-							className="bg-product-foreground-accent/10 text-product-foreground-accent hover:bg-product-foreground-accent/20 border border-product-border hover:border-product-foreground-accent/30 transition-colors duration-200"
-							disabled={loading}
-						>
+			<AppDialogContent size="sm">
+				{icon && <AppDialogIcon tone={tone}>{icon}</AppDialogIcon>}
+				<AlertDialogTitle>{title}</AlertDialogTitle>
+				<AlertDialogDescription className="text-sm">
+					{message}
+				</AlertDialogDescription>
+				{image && (
+					<div className="overflow-hidden rounded-2xl border border-product-border">
+						<img
+							alt={imageAlt}
+							className="h-auto max-h-64 w-full object-cover"
+							src={image}
+						/>
+					</div>
+				)}
+				<AppDialogFooter>
+					{onCancel && cancelText && (
+						<AlertDialogCancel className="mt-0" disabled={loading}>
 							{cancelText}
 						</AlertDialogCancel>
 					)}
 					<AlertDialogAction
-						className="bg-product-primary text-product-foreground border border-product-primary hover:border-product-primary-accent transition-colors duration-200 font-semibold"
+						aria-busy={loading || undefined}
+						className={cn(
+							tone === "red" && buttonVariants({ variant: "destructive" }),
+						)}
 						disabled={loading}
-						onClick={onConfirm}
+						onClick={(event) => {
+							if (keepOpenOnConfirm) event.preventDefault();
+							onConfirm();
+						}}
 					>
 						{loading ? "Processing..." : confirmText}
 					</AlertDialogAction>
-				</AlertDialogFooter>
-			</AlertDialogContent>
+				</AppDialogFooter>
+			</AppDialogContent>
 		</AlertDialog>
 	);
 }

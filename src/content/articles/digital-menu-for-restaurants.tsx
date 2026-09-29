@@ -1,13 +1,14 @@
-import ArticleCTA from "@/components/articles/ArticleCTA";
-import ArticleImage from "@/components/articles/ArticleImage";
-import BarCompare from "@/components/articles/BarCompare";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
-import PullQuote from "@/components/articles/PullQuote";
-import StatHighlights from "@/components/articles/StatHighlights";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleCTA } from "@/components/resources/ArticleCTA";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { BarCompare } from "@/components/articles/BarCompare";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
+import { PullQuote } from "@/components/articles/PullQuote";
+import { StatHighlights } from "@/components/articles/StatHighlights";
+import { Stepper } from "@/components/resources/Stepper";
 import type { Article } from "./_types";
+import { TextLink } from "@/components/general/TextLink";
 
 const meta = {
 	slug: "digital-menu-for-restaurants",
@@ -26,7 +27,7 @@ const meta = {
 	heroImage:
 		"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=80",
 	heroImageAlt: "A warm, busy restaurant dining room during service",
-	heroCredit: { name: "Unsplash", url: "https://unsplash.com" },
+	cover: "restaurants",
 	publishedAt: "2026-06-19",
 	readingTimeMinutes: 7,
 	author: "The Quicktalog Team",
@@ -142,8 +143,10 @@ function Body() {
 				OCR import pull the dishes and prices into a draft for you. Fix the few
 				things it gets wrong, and you are most of the way there. If you would
 				rather start from a description of your restaurant, the{" "}
-				<a href="/articles/create-catalog-with-ai">AI generator</a> can draft a
-				first version for you to edit.
+				<TextLink href="/articles/create-catalog-with-ai">
+					AI generator
+				</TextLink>{" "}
+				can draft a first version for you to edit.
 			</Callout>
 
 			<Prose>
@@ -179,7 +182,7 @@ function Body() {
 				]}
 			/>
 
-			<ArticleCTA variant="mid" />
+			<ArticleCTA heading="Publish your own digital menu in minutes" />
 
 			<Prose>
 				<h2>Make the menu sell for you</h2>
@@ -222,8 +225,10 @@ function Body() {
 					not confuse the camera. And test the printed version before you put it
 					out, because a code that looks fine on screen can fail once it is
 					laminated under glare. Our{" "}
-					<a href="/articles/qr-code-catalog-guide">QR code menu guide</a> goes
-					deeper on sizing and printing.
+					<TextLink href="/articles/qr-code-catalog-guide">
+						QR code menu guide
+					</TextLink>{" "}
+					goes deeper on sizing and printing.
 				</p>
 
 				<h2>Keeping it current</h2>

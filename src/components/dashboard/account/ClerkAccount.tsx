@@ -2,6 +2,7 @@
 
 import { UserProfile } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+
 import { getAccountChangesPaused } from "@/actions/ops";
 
 /**
@@ -14,7 +15,7 @@ import { getAccountChangesPaused } from "@/actions/ops";
  * after the Clerk export would be lost, because the export is what the import
  * carries across.
  */
-export default function ClerkAccount() {
+export function ClerkAccount() {
 	const [paused, setPaused] = useState(false);
 
 	useEffect(() => {
@@ -32,26 +33,30 @@ export default function ClerkAccount() {
 	}, []);
 
 	return (
-		<div className="space-y-6">
+		<div className="flex min-w-0 flex-col gap-4">
 			{paused && (
 				<div
-					className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-700/60 dark:bg-amber-950/40 dark:text-amber-100"
+					className="rounded-product-card border border-product-primary/50 bg-product-primary-soft p-4 text-product-foreground"
 					role="status"
 				>
-					<p className="font-semibold">Account changes are paused</p>
-					<p className="mt-1 text-sm">
+					<p className="font-product-heading font-bold">
+						Account changes are paused
+					</p>
+					<p className="mt-1 text-sm text-product-foreground-accent">
 						We are moving Quicktalog to a new sign-in system. Until that is
 						done, changes to your name, email address or password will not be
 						carried over, so please make them after the move.
 					</p>
-					<p className="mt-2 text-sm">
+					<p className="mt-2 text-sm text-product-foreground-accent">
 						Signing in and everything else in Quicktalog work as usual. You will
 						be asked to sign in once when the move is complete, with the same
 						email address and password.
 					</p>
 				</div>
 			)}
-			<UserProfile />
+			<div className="max-w-full overflow-x-auto">
+				<UserProfile />
+			</div>
 		</div>
 	);
 }

@@ -1,0 +1,20 @@
+/* The bobbing amber "O" in the 404 / error digits (design: .g3-nf-o). */
+.bob {
+	animation: status-bob 3.6s ease-in-out infinite;
+}
+
+@keyframes status-bob {
+	0%,
+	100% {
+		transform: translateY(0) rotate(-6deg);
+	}
+	50% {
+		transform: translateY(-0.05em) rotate(6deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bob {
+		animation: none;
+	}
+}

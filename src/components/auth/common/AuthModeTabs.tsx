@@ -1,6 +1,5 @@
 "use client";
 
-import { AUTH_CONTROL_HEIGHT } from "@/components/auth/common/authStyles";
 import { cn } from "@/lib/ui/cn";
 
 export type AuthMode = "signin" | "signup";
@@ -12,7 +11,7 @@ export type AuthMode = "signin" | "signup";
  * Real `<button>`s rather than links: the mode is component state, and
  * `aria-pressed` is what tells a screen reader which one is showing.
  */
-export default function AuthModeTabs({
+export function AuthModeTabs({
 	onChange,
 	value,
 }: {
@@ -25,11 +24,10 @@ export default function AuthModeTabs({
 			<button
 				aria-pressed={active}
 				className={cn(
-					AUTH_CONTROL_HEIGHT,
-					"flex-1 rounded-lg text-sm font-medium transition-colors duration-200",
+					"flex h-10 items-center justify-center rounded-full text-[14.5px] transition-[background-color,color,box-shadow] duration-200",
 					active
-						? "bg-product-background text-product-foreground shadow-sm"
-						: "bg-transparent text-product-foreground-accent hover:text-product-foreground",
+						? "bg-product-card font-bold text-product-foreground shadow-[0_1px_2px_rgba(22,20,15,0.08),0_4px_10px_-4px_rgba(22,20,15,0.12)]"
+						: "font-semibold text-product-foreground-accent hover:text-product-foreground",
 				)}
 				onClick={() => onChange(mode)}
 				type="button"
@@ -40,7 +38,11 @@ export default function AuthModeTabs({
 	};
 
 	return (
-		<div className="flex gap-1 rounded-xl bg-product-background-hero p-1">
+		<div
+			aria-label="Account"
+			className="grid grid-cols-2 gap-1 rounded-full border border-product-border bg-product-background-hero p-1"
+			role="group"
+		>
 			{tab("signin", "Sign in")}
 			{tab("signup", "Create account")}
 		</div>

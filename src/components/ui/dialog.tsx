@@ -1,6 +1,5 @@
 "use client";
 
-//@ts-nocheck
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import * as React from "react";
@@ -21,7 +20,7 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<DialogPrimitive.Overlay
 		className={cn(
-			"fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+			"z-50 fixed inset-0 bg-[rgba(22,20,15,0.42)] backdrop-blur-[4px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
 			className,
 		)}
 		ref={ref}
@@ -40,7 +39,7 @@ const DialogContent = React.forwardRef<
 		<DialogOverlay />
 		<DialogPrimitive.Content
 			className={cn(
-				"fixed left-[50%] top-[50%] md:top-[50%] max-md:top-[40dvh] !z-[1100] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] max-md:max-h-[85dvh] max-md:overflow-y-auto gap-4 border-none bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-lg sm:rounded-xl",
+				"fixed left-[50%] top-[50%] !z-[1100] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] max-h-[calc(100dvh-32px)] overflow-y-auto gap-4 border border-product-border bg-product-card p-6 text-product-foreground shadow-product-hover rounded-product-panel duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
 				// iOS Safari fixes
 				"[-webkit-overflow-scrolling:touch]",
 				className,
@@ -50,7 +49,7 @@ const DialogContent = React.forwardRef<
 		>
 			{children}
 			{showClose && (
-				<DialogPrimitive.Close className="absolute right-2 top-2 z-20 p-2  bg-black/50 text-white rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+				<DialogPrimitive.Close className="absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full text-product-foreground-accent transition-colors hover:bg-product-background-hero hover:text-product-foreground disabled:pointer-events-none">
 					<X className="h-4 w-4" />
 					<span className="sr-only">Close</span>
 				</DialogPrimitive.Close>
@@ -95,7 +94,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<DialogPrimitive.Title
 		className={cn(
-			"text-lg font-semibold leading-none tracking-tight",
+			"font-product-heading text-xl font-bold leading-tight tracking-[-0.02em] text-product-foreground",
 			className,
 		)}
 		ref={ref}
@@ -109,7 +108,10 @@ const DialogDescription = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
 	<DialogPrimitive.Description
-		className={cn("text-sm text-muted-foreground", className)}
+		className={cn(
+			"text-[15px] leading-relaxed text-product-foreground-accent",
+			className,
+		)}
 		ref={ref}
 		{...props}
 	/>

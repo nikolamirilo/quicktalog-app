@@ -1,9 +1,9 @@
 import { FiLayout } from "react-icons/fi";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
+import { Stepper } from "@/components/resources/Stepper";
 import type { DocEntry } from "./_types";
 
 const meta = {
@@ -23,17 +23,16 @@ const meta = {
 		"header and footer",
 	],
 	relatedSlugs: ["share-your-catalogue", "build-and-edit"],
-	coverImage: "/images/documentation/customize-design-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/images/documentation/customize-design-cover.svg"
 				alt="Quicktalog design customization showing the Appearance tab with themes, fonts, and colour options"
 				maxWidth="640px"
 				priority
+				src="/images/documentation/customize-design-cover.svg"
 			/>
 
 			<Prose>
@@ -66,8 +65,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/customize-design-themes.svg"
 				alt="Theme picker in the Quicktalog Appearance tab showing a grid of available catalogue themes"
+				src="/images/documentation/customize-design-themes.svg"
 			/>
 
 			<Prose>
@@ -102,9 +101,9 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/images/documentation/customize-design-fonts-colours.svg"
 				alt="Font and colour controls in Quicktalog showing heading font selection and brand colour options"
 				maxWidth="640px"
+				src="/images/documentation/customize-design-fonts-colours.svg"
 			/>
 
 			<Prose>
@@ -125,8 +124,8 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/customize-design-header-footer.svg"
 				alt="Header and footer settings showing business name, logo, social links, and contact details"
+				src="/images/documentation/customize-design-header-footer.svg"
 			/>
 
 			<Callout title="Check it on a phone" variant="tip">
@@ -137,9 +136,9 @@ function Body() {
 			</Callout>
 
 			<ArticleImage
-				src="/images/documentation/customize-design-mobile-check.svg"
 				alt="Quicktalog catalogue previewed on a mobile phone showing the responsive layout"
 				maxWidth="380px"
+				src="/images/documentation/customize-design-mobile-check.svg"
 			/>
 		</>
 	);

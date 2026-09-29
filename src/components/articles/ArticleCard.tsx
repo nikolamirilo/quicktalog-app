@@ -1,7 +1,12 @@
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
+
+import { ArticleCover } from "@/components/articles/ArticleCover";
+import { CategoryTag } from "@/components/resources/CategoryTag";
+import { MetaLine } from "@/components/resources/MetaLine";
+import { ReadMore } from "@/components/resources/ReadMore";
 import type { ArticleMeta } from "@/content/articles/_types";
+import { cn } from "@/lib/ui/cn";
 
 interface Props {
 	meta: ArticleMeta;
@@ -11,83 +16,68 @@ interface Props {
 }
 
 /**
- * Card used on the /articles index grid and in RelatedArticles. The image
- * zooms gently on hover, the card lifts, and a "Read" affordance slides in.
- * Featured renders a wider 2-column editorial layout.
+ * Card used on the /articles index and in "Keep reading". Featured renders a
+ * wide row (cover | body) from 860px up.
  */
-export default function ArticleCard({
-	meta,
-	featured = false,
-	eyebrow,
-}: Props) {
-	const href = `/articles/${meta.slug}`;
-	const date = new Date(meta.publishedAt).toLocaleDateString("en-US", {
-		month: "short",
-		day: "numeric",
-		year: "numeric",
-	});
-
+export function ArticleCard({ meta, featured = false, eyebrow }: Props) {
 	return (
 		<Link
-			className={`group relative block cursor-pointer overflow-hidden rounded-2xl border border-product-border bg-product-background shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-				featured ? "md:grid md:grid-cols-2 md:items-stretch" : ""
-			}`}
-			href={href}
+			className={cn(
+				"group flex flex-col overflow-hidden rounded-product-card border bg-product-card text-product-foreground shadow-product transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-product-hover",
+				featured
+					? "border-product-primary/55 min-[860px]:flex-row"
+					: "border-product-border",
+			)}
+			href={`/articles/${meta.slug}`}
 		>
+			<ArticleCover
+				className={cn(
+					"border-b border-product-border",
+					featured
+						? "aspect-video min-[860px]:aspect-auto min-[860px]:min-h-[340px] min-[860px]:flex-[0_0_52%] min-[860px]:border-b-0 min-[860px]:border-r"
+						: "aspect-video",
+				)}
+				cover={meta.cover}
+			/>
 			<div
-				className={`relative overflow-hidden ${
-					featured ? "aspect-[16/10] md:h-full" : "aspect-[16/9]"
-				}`}
-			>
-				<Image
-					alt={meta.heroImageAlt}
-					className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-					fill
-					sizes={
-						featured
-							? "(max-width: 768px) 100vw, 50vw"
-							: "(max-width: 768px) 100vw, 33vw"
-					}
-					src={meta.heroImage}
-				/>
-				<div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-				<span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-product-secondary backdrop-blur-sm">
-					<span className="h-1.5 w-1.5 rounded-full bg-product-primary" />
-					{meta.category}
-				</span>
-			</div>
-			<div
-				className={`flex flex-col p-5 ${
-					featured ? "md:justify-center md:p-9" : ""
-				}`}
+				className={cn(
+					"flex flex-1 flex-col gap-2.5 px-[22px] py-5",
+					featured &&
+						"min-[860px]:justify-center min-[860px]:px-9 min-[860px]:py-[34px]",
+				)}
 			>
 				{eyebrow && (
-					<span className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-product-primary">
-						<span className="text-product-secondary">{eyebrow}</span>
+					<span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-product-primary-ink">
+						<Sparkles aria-hidden="true" className="h-3.5 w-3.5" />
+						{eyebrow}
 					</span>
 				)}
+				<CategoryTag>{meta.category}</CategoryTag>
 				<h3
-					className={`font-lora font-bold leading-snug text-product-foreground transition-colors group-hover:text-product-secondary ${
-						featured ? "text-2xl md:text-3xl" : "text-xl"
-					}`}
+					className={cn(
+						"text-product-foreground",
+						featured
+							? "text-[clamp(22px,2.6vw,32px)] font-extrabold leading-[1.15] tracking-[-0.028em]"
+							: "text-[19px] font-bold leading-[1.28] tracking-[-0.015em]",
+					)}
 				>
 					{meta.title}
 				</h3>
 				<p
-					className={`mt-3 text-product-foreground-accent ${
-						featured ? "line-clamp-3 text-base" : "line-clamp-2 text-[0.95rem]"
-					}`}
+					className={cn(
+						"leading-[1.6] text-product-foreground-accent",
+						featured ? "text-base" : "text-[15px]",
+					)}
 				>
 					{meta.description}
 				</p>
-				<div className="mt-5 flex items-center justify-between border-t border-product-border pt-4">
-					<span className="text-xs font-medium uppercase tracking-wide text-product-foreground-accent">
-						{date} · {meta.readingTimeMinutes} min read
-					</span>
-					<span className="inline-flex items-center gap-1 text-sm font-semibold text-product-secondary transition-all duration-300 group-hover:gap-2">
-						Read <ArrowRight className="h-4 w-4" />
-					</span>
-				</div>
+				<span className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-2 pt-1.5">
+					<MetaLine
+						publishedAt={meta.publishedAt}
+						readingTimeMinutes={meta.readingTimeMinutes}
+					/>
+					<ReadMore />
+				</span>
 			</div>
 		</Link>
 	);

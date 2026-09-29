@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { CatalogueButton } from "@/components/catalogue/view/components/CatalogueButton";
 import { FiCheck } from "react-icons/fi";
 
 const Newsletter = ({
@@ -44,7 +44,7 @@ const Newsletter = ({
 							value={newsletterEmail}
 						/>
 					</div>
-					<Button
+					<CatalogueButton
 						aria-label="Subscribe to newsletter"
 						className={`font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button flex items-center gap-2 ${
 							submitSuccess
@@ -54,9 +54,7 @@ const Newsletter = ({
 									: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
 						}`}
 						disabled={isSubmitting || submitSuccess || alreadySubscribed}
-						size="default"
 						type="submit"
-						variant="outline"
 					>
 						{isSubmitting ? (
 							<span>Subscribing...</span>
@@ -73,7 +71,7 @@ const Newsletter = ({
 						) : (
 							<span>Subscribe</span>
 						)}
-					</Button>
+					</CatalogueButton>
 					{submitError && (
 						<p
 							aria-live="polite"

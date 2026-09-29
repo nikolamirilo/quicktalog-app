@@ -1,39 +1,149 @@
 .product {
-	--product-background: #ffffff;
-	--product-foreground: #171717;
-	--product-primary: #ffc107;
-	--product-secondary: #010e58;
-	--product-primary-accent: #e5c230;
-	--product-foreground-accent: #454545;
-	--product-background-hero: #f3f3f5;
+	/* Colours are RGB channels so Tailwind opacity modifiers (`bg-product-primary/10`) work. */
 
-	--product-border: #eaeaea;
-	--product-background-hover: #fff9e5;
-	--product-icon: #e5c230;
-	--product-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+	/* Surfaces */
+	--product-background-rgb: 250 248 243;
+	--product-background: rgb(var(--product-background-rgb));
+	--product-background-hero-rgb: 244 241 234;
+	--product-background-hero: rgb(var(--product-background-hero-rgb));
+	--product-card-rgb: 255 255 255;
+	--product-card: rgb(var(--product-card-rgb));
+	--product-background-hover-rgb: 255 244 220;
+	--product-background-hover: rgb(var(--product-background-hover-rgb));
+	--product-dark-rgb: 21 19 14;
+	--product-dark: rgb(var(--product-dark-rgb));
+	--product-dark-raised-rgb: 31 28 22;
+	--product-dark-raised: rgb(var(--product-dark-raised-rgb));
+	--product-dark-deep-rgb: 14 13 10;
+	--product-dark-deep: rgb(var(--product-dark-deep-rgb));
 
-	--product-scale-hover: 1.02;
-	--product-shadow-hover: 0 4px 10px rgba(229, 194, 48, 0.15);
+	/* Text */
+	--product-foreground-rgb: 22 20 15;
+	--product-foreground: rgb(var(--product-foreground-rgb));
+	--product-foreground-accent-rgb: 94 88 77;
+	--product-foreground-accent: rgb(var(--product-foreground-accent-rgb));
+	--product-muted-rgb: 122 116 102;
+	--product-muted: rgb(var(--product-muted-rgb));
+	--product-on-dark-rgb: 244 239 230;
+	--product-on-dark: rgb(var(--product-on-dark-rgb));
+	--product-on-dark-muted-rgb: 207 200 186;
+	--product-on-dark-muted: rgb(var(--product-on-dark-muted-rgb));
+	--product-on-dark-subtle-rgb: 167 159 144;
+	--product-on-dark-subtle: rgb(var(--product-on-dark-subtle-rgb));
 
-	/* Navbar button hover enhancements */
-	--product-nav-hover-bg: #f0f0f0;
-	--product-nav-hover-text: #d3af37;
-	--product-nav-hover-border: #d3af37;
-	--product-nav-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-	--product-nav-focus-ring: 0 0 0 3px rgba(211, 175, 55, 0.2);
-	--product-nav-active: #000;
-	--product-error: #ff0000;
-	--product-warning: #d97706;
+	/* Lines */
+	--product-border-rgb: 236 231 220;
+	--product-border: rgb(var(--product-border-rgb));
+	--product-border-strong-rgb: 220 213 198;
+	--product-border-strong: rgb(var(--product-border-strong-rgb));
+	--product-border-hover-rgb: 201 193 176;
+	--product-border-hover: rgb(var(--product-border-hover-rgb));
+
+	/* Brand */
+	--product-primary-rgb: 255 176 32;
+	--product-primary: rgb(var(--product-primary-rgb));
+	--product-primary-accent-rgb: 245 163 0;
+	--product-primary-accent: rgb(var(--product-primary-accent-rgb));
+	--product-primary-ink-rgb: 138 90 0;
+	--product-primary-ink: rgb(var(--product-primary-ink-rgb));
+	--product-primary-soft-rgb: 255 244 220;
+	--product-primary-soft: rgb(var(--product-primary-soft-rgb));
+	--product-primary-bright-rgb: 255 199 90;
+	--product-primary-bright: rgb(var(--product-primary-bright-rgb));
+	--product-secondary-rgb: 1 14 88;
+	--product-secondary: rgb(var(--product-secondary-rgb));
+	--product-secondary-soft-rgb: 243 244 250;
+	--product-secondary-soft: rgb(var(--product-secondary-soft-rgb));
+
+	/* Status */
+	--product-error-rgb: 200 50 43;
+	--product-error: rgb(var(--product-error-rgb));
+	--product-error-soft-rgb: 253 236 234;
+	--product-error-soft: rgb(var(--product-error-soft-rgb));
+	--product-error-ink-rgb: 142 31 26;
+	--product-error-ink: rgb(var(--product-error-ink-rgb));
+	--product-warning-rgb: 217 119 6;
+	--product-warning: rgb(var(--product-warning-rgb));
+	--product-success-rgb: 31 122 74;
+	--product-success: rgb(var(--product-success-rgb));
+	--product-success-bright-rgb: 31 157 85;
+	--product-success-bright: rgb(var(--product-success-bright-rgb));
+	--product-success-soft-rgb: 231 245 236;
+	--product-success-soft: rgb(var(--product-success-soft-rgb));
+	--product-success-on-dark-rgb: 74 222 128;
+	--product-success-on-dark: rgb(var(--product-success-on-dark-rgb));
+	--product-info-rgb: 39 72 168;
+	--product-info: rgb(var(--product-info-rgb));
+	--product-info-soft-rgb: 232 238 252;
+	--product-info-soft: rgb(var(--product-info-soft-rgb));
+
+	/* Data */
+	--product-chart-rgb: 212 138 0;
+	--product-chart: rgb(var(--product-chart-rgb));
+
+	/* Elevation */
+	--product-shadow:
+		0 1px 2px rgba(22, 20, 15, 0.04), 0 4px 12px rgba(22, 20, 15, 0.05), 0 16px
+		32px -12px rgba(22, 20, 15, 0.08);
+	--product-shadow-hover:
+		0 2px 4px rgba(22, 20, 15, 0.05), 0 10px 24px rgba(22, 20, 15, 0.08), 0 28px
+		48px -16px rgba(22, 20, 15, 0.14);
+	--product-shadow-primary: 0 6px 18px -6px rgba(245, 163, 0, 0.55);
+
+	/* Shape */
+	--product-radius-card: 22px;
+	--product-radius-panel: 28px;
+	--product-radius-band: 36px;
+
+	/* Type */
+	--product-font-heading:
+		var(--font-plus-jakarta-sans), system-ui, -apple-system, "Segoe UI",
+		sans-serif;
+	--product-font-body:
+		var(--font-inter-tight), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+	/* Builder */
+	--product-nav-active: var(--product-foreground);
+
+	font-family: var(--product-font-body);
+	font-size: 1rem;
+	-webkit-font-smoothing: antialiased;
+	line-height: 1.6;
+
 	color: var(--product-foreground);
 	background: var(--product-background);
-
-	@apply text-lg;
 }
 
-.home #logos svg {
-	@apply w-fit h-10 sm:h-12;
+/* Zero specificity so utility classes win; the published catalogue keeps its own fonts. */
+:where(.product)
+	:where(h1, h2, h3, h4, h5, h6):not(
+		:where(.catalogue-root, .catalogue-root *)
+	) {
+	font-family: var(--product-font-heading);
+	line-height: 1.12;
+	letter-spacing: -0.025em;
 }
 
-.home .benefit-section:last-of-type > div {
-	@apply mb-10;
+:where(.product)
+	:focus-visible:not(:where(.catalogue-root, .catalogue-root *)) {
+	outline: 3px solid var(--product-secondary);
+	outline-offset: 3px;
+}
+
+/* The catalogue must not inherit product typography: it keeps the look it had
+   under the old `.product` defaults (Lora, 18px). */
+.catalogue-root {
+	font-family: var(--font-lora-regular);
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+	letter-spacing: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:where(.product) *:not(:where(.catalogue-root, .catalogue-root *)) {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
 }

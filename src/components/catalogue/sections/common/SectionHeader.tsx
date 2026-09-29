@@ -1,6 +1,9 @@
 import { FiChevronDown } from "react-icons/fi";
-import { Button } from "@/components/ui/button";
 import BlockControls from "@/components/catalogue/cards/common/BlockControls";
+
+// Catalogue-owned so product Button restyles never reach the published catalogue.
+const headerButtonClasses =
+	"gap-2 whitespace-nowrap outline-none focus:outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 w-full group relative flex items-center justify-between text-xl sm:text-2xl md:text-3xl font-semibold border-2 border-catalogue-category-border rounded-2xl shadow-catalogue-category-shadow transition-all duration-300 ease-in-out hover:scale-[1.02] hover:transform hover:-translate-y-1 backdrop-blur-sm overflow-hidden !px-3 !py-3 !h-auto !min-h-0 h-9 px-4 py-2 will-change-transform";
 
 const SectionHeader = ({
 	title,
@@ -37,11 +40,11 @@ const SectionHeader = ({
 	const showContent = mode === "edit" || isExpanded;
 	return (
 		<div className="relative group/header">
-			<Button
+			<button
 				aria-controls={contentId}
 				aria-expanded={showContent}
 				aria-label={`${showContent ? "Collapse" : "Expand"} ${title} section`}
-				className="group relative overflow-hidden will-change-transform w-full"
+				className={headerButtonClasses}
 				id={`section-header-${code}`}
 				onClick={() => onToggle(code)}
 				style={{
@@ -54,7 +57,6 @@ const SectionHeader = ({
 					transitionDuration: "var(--animation-duration)",
 				}}
 				type="button"
-				variant="section-header"
 			>
 				<div
 					aria-hidden="true"
@@ -104,7 +106,7 @@ const SectionHeader = ({
 						</div>
 					</div>
 				)}
-			</Button>
+			</button>
 
 			{mode === "edit" && (
 				<BlockControls

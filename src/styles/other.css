@@ -104,3 +104,10 @@
 .rich-text-content * {
 	font-family: inherit !important;
 }
+
+/* Catalogue view: footer, header and sidebar CTA buttons use the catalogue heading font. */
+.footer-cta-button {
+	font-family: var(--font-family-heading, "Lora", serif) !important;
+	font-weight: var(--font-weight-heading, 600) !important;
+	letter-spacing: var(--letter-spacing-heading, -0.02em) !important;
+}

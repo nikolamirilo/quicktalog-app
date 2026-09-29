@@ -1,20 +1,21 @@
 "use client";
 
+import { ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useState } from "react";
-import AuthCard from "@/components/auth/common/AuthCard";
-import AuthDivider from "@/components/auth/common/AuthDivider";
-import AuthField from "@/components/auth/common/AuthField";
+import { AuthCard, AuthHeader } from "@/components/auth/common/AuthCard";
+import { AuthDivider } from "@/components/auth/common/AuthDivider";
+import { AuthField } from "@/components/auth/common/AuthField";
+import { AuthFine } from "@/components/auth/common/AuthFine";
 import { authErrorMessage } from "@/components/auth/common/authMessages";
-import AuthNotice from "@/components/auth/common/AuthNotice";
-import { AUTH_LINK } from "@/components/auth/common/authStyles";
-import GoogleButton from "@/components/auth/common/GoogleButton";
-import SubmitButton from "@/components/auth/common/SubmitButton";
-import useTurnstile from "@/components/auth/common/useTurnstile";
-import { cn } from "@/lib/ui/cn";
+import { AuthNotice } from "@/components/auth/common/AuthNotice";
+import { AUTH_ACTION_LINK } from "@/components/auth/common/authStyles";
+import { GoogleButton } from "@/components/auth/common/GoogleButton";
+import { SubmitButton } from "@/components/auth/common/SubmitButton";
+import { useTurnstile } from "@/components/auth/common/useTurnstile";
 import { createClient } from "@/utils/supabase/client";
 
-export default function SignInForm({
+export function SignInForm({
 	next,
 	onForgotPassword,
 	tabs,
@@ -56,17 +57,19 @@ export default function SignInForm({
 	};
 
 	return (
-		<AuthCard
-			subtitle="Sign in to your Quicktalog account."
-			tabs={tabs}
-			title="Welcome back"
-		>
-			<GoogleButton next={next} />
+		<AuthCard tabs={tabs}>
+			<AuthHeader
+				subtitle="Sign in to your Quicktalog account."
+				title="Welcome back"
+			/>
+			<GoogleButton className="mt-6" next={next} />
 			<AuthDivider />
-			<form className="space-y-4" onSubmit={submit}>
+			<form className="grid gap-[18px]" onSubmit={submit}>
+				<AuthNotice message={error} />
 				<AuthField
 					autoComplete="username"
 					id="email"
+					inputMode="email"
 					label="Email"
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="name@company.com"
@@ -77,7 +80,7 @@ export default function SignInForm({
 				<AuthField
 					action={
 						<button
-							className={cn(AUTH_LINK, "text-xs")}
+							className={AUTH_ACTION_LINK}
 							onClick={onForgotPassword}
 							type="button"
 						>
@@ -94,16 +97,22 @@ export default function SignInForm({
 					value={password}
 				/>
 				{captcha.element}
-				<AuthNotice message={error} />
 				<SubmitButton
 					busy={busy}
 					busyLabel="Signing in…"
+					className="mt-1"
 					disabled={captcha.pending}
 					type="submit"
 				>
 					Sign in
 				</SubmitButton>
 			</form>
+			{captcha.element ? (
+				<AuthFine>
+					<ShieldCheck aria-hidden="true" />
+					Protected by Cloudflare Turnstile against bots.
+				</AuthFine>
+			) : null}
 		</AuthCard>
 	);
 }

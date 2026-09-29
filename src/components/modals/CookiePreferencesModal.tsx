@@ -1,6 +1,15 @@
 "use client";
 
+import { IconTile } from "@/components/general/IconTile";
 import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { useUserContext } from "@/context/UserContext";
 import {
 	loadPreferences,
 	savePreferences,
@@ -8,11 +17,9 @@ import {
 	updateGTMConsent,
 	updateUserConsent,
 } from "@/utils/cookies";
-import { useUserContext } from "@/context/UserContext";
-import { Shield, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
-import FocusLock from "react-focus-lock";
+import { ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useId, useState } from "react";
 
 export type CookiePreferencesModalProps = {
 	isOpen: boolean;
@@ -20,7 +27,61 @@ export type CookiePreferencesModalProps = {
 	onSave?: () => void;
 };
 
-const CookiePreferencesModal = ({
+type CategoryRowProps = {
+	title: string;
+	description: string;
+	examples: string;
+	switchLabel: string;
+	checked: boolean;
+	disabled?: boolean;
+	onCheckedChange?: (checked: boolean) => void;
+};
+
+const CategoryRow = ({
+	title,
+	description,
+	examples,
+	switchLabel,
+	checked,
+	disabled,
+	onCheckedChange,
+}: CategoryRowProps) => {
+	const descriptionId = useId();
+	return (
+		<div
+			className={
+				disabled
+					? "flex items-start justify-between gap-4 rounded-[18px] border border-product-border bg-product-background-hero p-4"
+					: "flex items-start justify-between gap-4 rounded-[18px] border border-product-border bg-product-card p-4"
+			}
+		>
+			<div className="min-w-0 flex-1" id={descriptionId}>
+				<h3 className="text-[15px] font-bold text-product-foreground">
+					{title}
+				</h3>
+				<p className="mt-1 text-[13.5px] leading-relaxed text-product-foreground-accent">
+					{description}
+				</p>
+				<p className="mt-2 text-[13px] text-product-muted">
+					<strong className="font-semibold text-product-foreground-accent">
+						Examples:
+					</strong>{" "}
+					{examples}
+				</p>
+			</div>
+			<Switch
+				aria-describedby={descriptionId}
+				aria-label={switchLabel}
+				checked={checked}
+				className="mt-0.5"
+				disabled={disabled}
+				onCheckedChange={onCheckedChange}
+			/>
+		</div>
+	);
+};
+
+export const CookiePreferencesModal = ({
 	isOpen,
 	onClose,
 	onSave,
@@ -29,17 +90,14 @@ const CookiePreferencesModal = ({
 	const isSignedIn = !!userData;
 	const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 	const [marketingEnabled, setMarketingEnabled] = useState(false);
-	const [mounted, setMounted] = useState(false);
 
-	useState(() => {
+	// Read the saved choice each time the dialog opens (localStorage is client-only).
+	useEffect(() => {
+		if (!isOpen) return;
 		const prefs = loadPreferences();
 		setAnalyticsEnabled(prefs.analytics);
 		setMarketingEnabled(prefs.marketing);
-	});
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
+	}, [isOpen]);
 
 	const handleSaveSettings = async () => {
 		const prefs = savePreferences({
@@ -59,189 +117,84 @@ const CookiePreferencesModal = ({
 		});
 	};
 
-	const handleAcceptAll = async () => {
-		setAnalyticsEnabled(true);
-		setMarketingEnabled(true);
-
-		const prefs = savePreferences({
-			accepted: true,
-			analytics: true,
-			marketing: true,
-		});
-
-		updateGTMConsent(true, true);
-
-		await updateUserConsent(prefs, isSignedIn);
-		onClose();
-		onSave?.();
-		trackGTMEvent("cookie_modal_accept_all");
-	};
-
-	const handleRejectAll = async () => {
-		setAnalyticsEnabled(false);
-		setMarketingEnabled(false);
-
-		const prefs = savePreferences({
-			accepted: true,
-			analytics: false,
-			marketing: false,
-		});
-
-		updateGTMConsent(false, false);
-
-		await updateUserConsent(prefs, isSignedIn);
-		onClose();
-		onSave?.();
-		trackGTMEvent("cookie_modal_reject_all");
-	};
-
-	if (!isOpen || !mounted) return null;
-
-	return createPortal(
-		<div
-			aria-labelledby="cookie-settings-title"
-			aria-modal="true"
-			className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 rounded-xl"
-			role="dialog"
+	return (
+		<Dialog
+			onOpenChange={(open) => {
+				if (!open) onClose();
+			}}
+			open={isOpen}
 		>
-			<FocusLock>
-				<div className="bg-product-background rounded-lg shadow-lg max-w-lg w-full mx-4 overflow-hidden max-h-[90vh] overflow-y-auto">
-					<div className="relative p-6 text-center bg-product-background-hero">
-						<button
-							aria-label="Close cookie settings"
-							className="absolute top-4 right-4 text-product-foreground-accent hover:text-product-foreground transition-colors"
-							onClick={onClose}
-						>
-							<X className="w-5 h-5" />
-						</button>
-						<div className="flex justify-center mb-4">
-							<div className="w-16 h-16 rounded-full flex items-center justify-center bg-product-primary">
-								<Shield className="w-8 h-8 text-product-secondary" />
-							</div>
-						</div>
-						<h2
-							className="text-xl font-semibold mb-2 text-product-foreground"
-							id="cookie-settings-title"
-						>
-							Cookie Settings
-						</h2>
-						<p className="text-sm text-product-foreground-accent">
+			<DialogContent className="max-h-[90vh] max-w-lg gap-0 overflow-y-auto p-0">
+				<div className="flex items-start gap-3.5 border-b border-product-border px-6 pb-5 pt-6 pr-16">
+					<IconTile>
+						<ShieldCheck />
+					</IconTile>
+					<div>
+						<DialogTitle>Cookie Settings</DialogTitle>
+						<DialogDescription className="mt-1 text-sm">
 							Choose how we use your data
-						</p>
-					</div>
-
-					<div className="p-6 space-y-4">
-						<div className="p-4 rounded-lg bg-blue-50 border border-blue-200 mb-6">
-							<p className="text-sm text-blue-800">
-								<strong>Your Rights:</strong> Withdraw consent anytime. If
-								signed in, preferences sync with your account.
-								<a
-									className="text-blue-600 hover:underline ml-1"
-									href="/privacy"
-								>
-									Privacy Policy
-								</a>
-							</p>
-						</div>
-						<div className="flex items-start justify-between p-4 rounded-lg bg-product-background-hover">
-							<div className="flex-1 pr-3">
-								<h3 className="text-sm font-medium text-product-foreground mb-1">
-									Essential Cookies
-								</h3>
-								<p className="text-xs text-product-foreground-accent leading-relaxed">
-									Needed for site security, login, and core features. Cannot be
-									disabled.
-								</p>
-								<div className="mt-2 text-xs text-product-foreground-accent">
-									<strong>Examples:</strong> Sessions, tokens, accessibility,
-									user details.
-								</div>
-							</div>
-							<div className="flex-shrink-0">
-								<input
-									aria-label="Essential cookies always enabled"
-									checked
-									className="w-4 h-4 text-product-primary bg-product-background border-product-border rounded focus:ring-product-primary"
-									disabled
-									type="checkbox"
-								/>
-							</div>
-						</div>
-						<div className="flex items-start justify-between p-4 rounded-lg border border-product-border">
-							<div className="flex-1 pr-3">
-								<h3 className="text-sm font-medium text-product-foreground mb-1">
-									Analytics
-								</h3>
-								<p className="text-xs text-product-foreground-accent leading-relaxed">
-									Anonymous data to improve site performance and fix issues.
-								</p>
-								<div className="mt-2 text-xs text-product-foreground-accent">
-									<strong>Examples:</strong> Google Analytics via GTM, page
-									views, clicks, errors
-								</div>
-							</div>
-							<div className="flex-shrink-0">
-								<input
-									aria-label="Enable analytics cookies"
-									checked={analyticsEnabled}
-									className="w-4 h-4 text-product-primary bg-product-background border-product-border rounded focus:ring-product-primary cursor-pointer"
-									onChange={(e) => setAnalyticsEnabled(e.target.checked)}
-									type="checkbox"
-								/>
-							</div>
-						</div>
-						<div className="flex items-start justify-between p-4 rounded-lg border border-product-border">
-							<div className="flex-1 pr-3">
-								<h3 className="text-sm font-medium text-product-foreground mb-1">
-									Marketing
-								</h3>
-								<p className="text-xs text-product-foreground-accent leading-relaxed">
-									Personalized ads and content. May share data with partners.
-								</p>
-								<div className="mt-2 text-xs text-product-foreground-accent">
-									<strong>Examples:</strong> Ad pixels, retargeting, A/B tests,
-									recommendations
-								</div>
-							</div>
-							<div className="flex-shrink-0">
-								<input
-									aria-label="Enable marketing cookies"
-									checked={marketingEnabled}
-									className="w-4 h-4 text-product-primary bg-product-background border-product-border rounded focus:ring-product-primary cursor-pointer"
-									onChange={(e) => setMarketingEnabled(e.target.checked)}
-									type="checkbox"
-								/>
-							</div>
-						</div>
-						<div className="mt-6 p-3 rounded-lg bg-gray-50 border border-gray-200">
-							<p className="text-xs text-gray-600">
-								<strong>Retention:</strong> Analytics kept 26 months, marketing
-								13 months. You may request deletion anytime.
-							</p>
-						</div>
-					</div>
-
-					<div className="p-6 pt-0">
-						<div className="flex flex-col gap-3">
-							<div className="flex gap-3">
-								<Button className="flex-1" onClick={onClose} variant="outline">
-									Cancel
-								</Button>
-								<Button
-									className="flex-1"
-									onClick={handleSaveSettings}
-									variant="default"
-								>
-									Save Settings
-								</Button>
-							</div>
-						</div>
+						</DialogDescription>
 					</div>
 				</div>
-			</FocusLock>
-		</div>,
-		document.body,
+
+				<div className="space-y-3 px-6 py-5">
+					<p className="rounded-[14px] border border-product-secondary/[0.12] bg-product-background-hero px-4 py-3 text-[13.5px] leading-relaxed text-product-foreground-accent">
+						<strong className="font-semibold text-product-foreground">
+							Your Rights:
+						</strong>{" "}
+						Withdraw consent anytime. If signed in, preferences sync with your
+						account.{" "}
+						<Link
+							className="font-semibold text-product-foreground underline decoration-product-primary/80 decoration-2 underline-offset-[3px] hover:text-product-primary-ink"
+							href="/privacy-policy"
+						>
+							Privacy Policy
+						</Link>
+					</p>
+
+					<CategoryRow
+						checked
+						description="Needed for site security, login, and core features. Cannot be disabled."
+						disabled
+						examples="Sessions, tokens, accessibility, user details."
+						switchLabel="Essential cookies always enabled"
+						title="Essential Cookies"
+					/>
+					<CategoryRow
+						checked={analyticsEnabled}
+						description="Anonymous data to improve site performance and fix issues."
+						examples="Google Analytics via GTM, page views, clicks, errors"
+						onCheckedChange={setAnalyticsEnabled}
+						switchLabel="Enable analytics cookies"
+						title="Analytics"
+					/>
+					<CategoryRow
+						checked={marketingEnabled}
+						description="Personalized ads and content. May share data with partners."
+						examples="Ad pixels, retargeting, A/B tests, recommendations"
+						onCheckedChange={setMarketingEnabled}
+						switchLabel="Enable marketing cookies"
+						title="Marketing"
+					/>
+
+					<p className="px-1 text-[13px] text-product-muted">
+						<strong className="font-semibold text-product-foreground-accent">
+							Retention:
+						</strong>{" "}
+						Analytics kept 26 months, marketing 13 months. You may request
+						deletion anytime.
+					</p>
+				</div>
+
+				<div className="flex flex-col-reverse gap-3 border-t border-product-border px-6 py-5 sm:flex-row sm:justify-end">
+					<Button onClick={onClose} type="button" variant="outline">
+						Cancel
+					</Button>
+					<Button onClick={handleSaveSettings} type="button">
+						Save Settings
+					</Button>
+				</div>
+			</DialogContent>
+		</Dialog>
 	);
 };
-
-export default CookiePreferencesModal;

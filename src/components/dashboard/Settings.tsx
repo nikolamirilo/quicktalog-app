@@ -1,10 +1,10 @@
 "use client";
 
+import { Cookie, LogOut, Settings as SettingsIcon } from "lucide-react";
 import { lazy, Suspense, useState } from "react";
-import { FiSettings } from "react-icons/fi";
-import { LuCookie } from "react-icons/lu";
-import { MdLogout } from "react-icons/md";
-import CookiePreferencesModal from "@/components/modals/CookiePreferencesModal";
+
+import { AppTitle } from "@/components/dashboard/common/AppHeadings";
+import { CookiePreferencesModal } from "@/components/modals/CookiePreferencesModal";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { AUTH_PROVIDER } from "@/lib/auth/provider";
@@ -14,39 +14,42 @@ import { AUTH_PROVIDER } from "@/lib/auth/provider";
 // only the live provider's forms end up in the bundle.
 const Account = lazy(() =>
 	AUTH_PROVIDER === "supabase"
-		? import("./account/SupabaseAccount")
-		: import("./account/ClerkAccount"),
+		? import("@/components/dashboard/account/supabase/SupabaseAccount").then(
+				(m) => ({ default: m.SupabaseAccount }),
+			)
+		: import("@/components/dashboard/account/ClerkAccount").then((m) => ({
+				default: m.ClerkAccount,
+			})),
 );
 
-const Settings = () => {
+export const Settings = () => {
 	const [isCookieSettingsOpen, setIsCookieSettingsOpen] = useState(false);
 	const { signOut } = useAuth();
 
 	return (
-		<div className="max-w-5xl space-y-4 relative">
+		<div>
 			<CookiePreferencesModal
 				isOpen={isCookieSettingsOpen}
 				onClose={() => setIsCookieSettingsOpen(false)}
 			/>
-			<h2 className="text-base sm:text-lg md:text-xl font-bold mb-3 sm:mb-4 text-product-foreground flex items-center gap-2 font-heading">
-				<FiSettings className="text-product-primary w-5 h-5 sm:w-6 sm:h-6" />{" "}
-				Settings
-			</h2>
-			<div className="flex flex-col max-w-[300px] mx-auto md:mx-0 md:flex-row gap-3 my-4">
+			<AppTitle icon={<SettingsIcon />}>Settings</AppTitle>
+			<div className="-mt-1 mb-5 flex flex-wrap gap-2">
 				<Button
-					aria-label="Manage cookie preferences"
 					onClick={() => setIsCookieSettingsOpen(true)}
+					size="sm"
+					variant="outline"
 				>
-					<LuCookie className="w-4 h-4" />
+					<Cookie aria-hidden="true" />
 					Manage Cookie Preferences
 				</Button>
-				<Button onClick={() => signOut()} variant="destructive">
-					<MdLogout /> Sign Out
+				<Button onClick={() => signOut()} size="sm" variant="destructive">
+					<LogOut aria-hidden="true" />
+					Sign Out
 				</Button>
 			</div>
 			<Suspense
 				fallback={
-					<div className="h-32 w-full bg-product-background-hover animate-pulse rounded-xl" />
+					<div className="h-32 w-full animate-pulse rounded-product-card bg-product-background-hero" />
 				}
 			>
 				<Account />
@@ -54,5 +57,3 @@ const Settings = () => {
 		</div>
 	);
 };
-
-export default Settings;

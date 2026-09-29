@@ -5,23 +5,21 @@ export interface Stat {
 	label: string;
 }
 
-/**
- * A row of large, scannable stat figures. Numbers use the display serif and
- * the high-contrast navy so they stay readable; hairline dividers between cells
- * come from the parent border showing through a 1px gap.
- */
-export default function StatHighlights({ stats }: { stats: Stat[] }) {
+/** A row of large, scannable stat figures (three columns from small screens up). */
+export function StatHighlights({ stats }: { stats: Stat[] }) {
 	return (
-		<div className="my-10 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-product-border bg-product-border sm:grid-cols-3">
+		<div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
 			{stats.map((stat) => (
-				<div className="bg-product-background p-6 text-center" key={stat.label}>
-					<div className="font-lora text-4xl font-bold text-product-secondary sm:text-5xl">
+				<div
+					className="rounded-[18px] border border-product-border bg-product-card px-5 py-[18px] shadow-[0_1px_2px_rgba(22,20,15,0.04)]"
+					key={stat.label}
+				>
+					<b className="block font-product-heading text-[clamp(26px,3vw,32px)] font-extrabold leading-[1.1] tracking-[-0.03em] text-product-foreground">
 						{stat.value}
-					</div>
-					<div className="mx-auto mt-3 h-0.5 w-8 rounded-full bg-product-primary" />
-					<div className="mt-3 text-sm text-product-foreground-accent">
+					</b>
+					<span className="mt-1.5 block text-[14.5px] leading-[1.45] text-product-muted">
 						{stat.label}
-					</div>
+					</span>
 				</div>
 			))}
 		</div>

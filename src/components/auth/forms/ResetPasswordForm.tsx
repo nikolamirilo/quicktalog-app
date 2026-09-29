@@ -1,22 +1,45 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
-import AuthCard from "@/components/auth/common/AuthCard";
-import AuthField from "@/components/auth/common/AuthField";
+import { ArrowLeft, Inbox, KeyRound } from "lucide-react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
+import {
+	AuthCard,
+	AuthEmphasis,
+	AuthHeader,
+} from "@/components/auth/common/AuthCard";
+import { AuthDone } from "@/components/auth/common/AuthDone";
+import { AuthField } from "@/components/auth/common/AuthField";
+import { AuthFine } from "@/components/auth/common/AuthFine";
 import { authErrorMessage } from "@/components/auth/common/authMessages";
-import AuthNotice from "@/components/auth/common/AuthNotice";
-import AuthFooter from "@/components/auth/common/AuthFooter";
-import { AUTH_LINK } from "@/components/auth/common/authStyles";
-import SubmitButton from "@/components/auth/common/SubmitButton";
-import useTurnstile from "@/components/auth/common/useTurnstile";
+import { AuthNotice } from "@/components/auth/common/AuthNotice";
+import { AUTH_BACK } from "@/components/auth/common/authStyles";
+import { SubmitButton } from "@/components/auth/common/SubmitButton";
+import { useTurnstile } from "@/components/auth/common/useTurnstile";
 import { createClient } from "@/utils/supabase/client";
+import { textLinkClass } from "@/components/general/TextLink";
 
-export default function ResetPasswordForm({ onBack }: { onBack: () => void }) {
+const TIPS = [
+	"The link can be used once and expires, so open it soon.",
+	"Open it in this browser to keep things simple.",
+	"Nothing after a few minutes? Check your spam folder.",
+];
+
+export function ResetPasswordForm({ onBack }: { onBack: () => void }) {
 	const captcha = useTurnstile();
 	const [email, setEmail] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [busy, setBusy] = useState(false);
 	const [sent, setSent] = useState(false);
+	const emailRef = useRef<HTMLInputElement>(null);
+	// "Try another email" brings the form back; focus then goes to its field.
+	const refocusEmail = useRef(false);
+
+	useEffect(() => {
+		if (!sent && refocusEmail.current) {
+			refocusEmail.current = false;
+			emailRef.current?.focus();
+		}
+	}, [sent]);
 
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -48,26 +71,67 @@ export default function ResetPasswordForm({ onBack }: { onBack: () => void }) {
 
 	if (sent) {
 		return (
-			<AuthCard
-				subtitle={`If ${email.trim()} has an account, a reset link is on its way.`}
-				title="Check your inbox"
-			>
-				<SubmitButton onClick={onBack} type="button" variant="outline">
-					Back to sign in
-				</SubmitButton>
+			<AuthCard>
+				<AuthDone
+					icon={<Inbox />}
+					subtitle={
+						<>
+							If <AuthEmphasis>{email.trim()}</AuthEmphasis> has an account, a
+							reset link is on its way.
+						</>
+					}
+					title="Check your inbox"
+				>
+					<ul className="mt-5 grid gap-2 rounded-2xl bg-product-background-hero px-4 py-3.5 text-left text-[14.5px] leading-normal text-product-foreground-accent">
+						{TIPS.map((tip) => (
+							<li
+								className="relative pl-[22px] before:absolute before:left-[3px] before:top-[0.55em] before:size-2 before:rounded-full before:bg-product-primary"
+								key={tip}
+							>
+								{tip}
+							</li>
+						))}
+					</ul>
+					<SubmitButton
+						className="mt-[22px] h-12"
+						onClick={onBack}
+						type="button"
+					>
+						Back to sign in
+					</SubmitButton>
+					<AuthFine>
+						Used the wrong address?{" "}
+						<button
+							className={textLinkClass}
+							onClick={() => {
+								refocusEmail.current = true;
+								setEmail("");
+								setSent(false);
+							}}
+							type="button"
+						>
+							Try another email
+						</button>
+					</AuthFine>
+				</AuthDone>
 			</AuthCard>
 		);
 	}
 
 	return (
-		<AuthCard
-			subtitle="We will email you a link to choose a new one."
-			title="Reset your password"
-		>
-			<form className="space-y-4" onSubmit={submit}>
+		<AuthCard>
+			<AuthHeader
+				badge={<KeyRound />}
+				subtitle="We will email you a link to choose a new one."
+				title="Reset your password"
+			/>
+			<form className="mt-6 grid gap-[18px]" onSubmit={submit}>
+				<AuthNotice message={error} />
 				<AuthField
 					autoComplete="username"
 					id="reset-email"
+					inputMode="email"
+					inputRef={emailRef}
 					label="Email"
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="name@company.com"
@@ -76,21 +140,20 @@ export default function ResetPasswordForm({ onBack }: { onBack: () => void }) {
 					value={email}
 				/>
 				{captcha.element}
-				<AuthNotice message={error} />
 				<SubmitButton
 					busy={busy}
 					busyLabel="Sending…"
+					className="mt-1"
 					disabled={captcha.pending}
 					type="submit"
 				>
 					Send reset link
 				</SubmitButton>
 			</form>
-			<AuthFooter>
-				<button className={AUTH_LINK} onClick={onBack} type="button">
-					Back to sign in
-				</button>
-			</AuthFooter>
+			<button className={AUTH_BACK} onClick={onBack} type="button">
+				<ArrowLeft aria-hidden="true" />
+				Back to sign in
+			</button>
 		</AuthCard>
 	);
 }

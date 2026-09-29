@@ -1,13 +1,14 @@
-import ArticleCTA from "@/components/articles/ArticleCTA";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import ProsCons from "@/components/articles/ProsCons";
-import Prose from "@/components/articles/Prose";
-import PullQuote from "@/components/articles/PullQuote";
-import StatHighlights from "@/components/articles/StatHighlights";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleCTA } from "@/components/resources/ArticleCTA";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { ProsCons } from "@/components/articles/ProsCons";
+import { Prose } from "@/components/resources/Prose";
+import { PullQuote } from "@/components/articles/PullQuote";
+import { StatHighlights } from "@/components/articles/StatHighlights";
+import { Stepper } from "@/components/resources/Stepper";
 import type { Article } from "./_types";
+import { TextLink } from "@/components/general/TextLink";
 
 const meta = {
 	slug: "digital-service-menu-salons-spas",
@@ -26,7 +27,7 @@ const meta = {
 	heroImage:
 		"https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1600&q=80",
 	heroImageAlt: "Inside a bright, modern hair salon",
-	heroCredit: { name: "Unsplash", url: "https://unsplash.com" },
+	cover: "salons",
 	publishedAt: "2026-06-18",
 	readingTimeMinutes: 6,
 	author: "The Quicktalog Team",
@@ -202,7 +203,7 @@ function Body() {
 				reaches your inbox.
 			</PullQuote>
 
-			<ArticleCTA variant="mid" />
+			<ArticleCTA />
 
 			<Prose>
 				<h2>Update prices and seasonal offers without a designer</h2>
@@ -233,13 +234,13 @@ function Body() {
 					price question before it reaches your inbox, it looks the part, and it
 					is ready to share the moment someone asks what you offer. If you are
 					still deciding whether this fits your business, see{" "}
-					<a href="/articles/businesses-that-need-digital-catalog">
+					<TextLink href="/articles/businesses-that-need-digital-catalog">
 						which businesses get the most out of a digital catalog
-					</a>{" "}
+					</TextLink>{" "}
 					and how to{" "}
-					<a href="/articles/qr-code-catalog-guide">
+					<TextLink href="/articles/qr-code-catalog-guide">
 						put a QR code to work at the front desk
-					</a>
+					</TextLink>
 					.
 				</p>
 			</Prose>

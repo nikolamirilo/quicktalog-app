@@ -1,12 +1,13 @@
-import ArticleCTA from "@/components/articles/ArticleCTA";
-import BarCompare from "@/components/articles/BarCompare";
-import Callout from "@/components/articles/Callout";
-import ComparisonTable from "@/components/articles/ComparisonTable";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import ProsCons from "@/components/articles/ProsCons";
-import Prose from "@/components/articles/Prose";
-import PullQuote from "@/components/articles/PullQuote";
+import { ArticleCTA } from "@/components/resources/ArticleCTA";
+import { BarCompare } from "@/components/articles/BarCompare";
+import { Callout } from "@/components/resources/Callout";
+import { ComparisonTable } from "@/components/articles/ComparisonTable";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { ProsCons } from "@/components/articles/ProsCons";
+import { Prose } from "@/components/resources/Prose";
+import { PullQuote } from "@/components/articles/PullQuote";
 import type { Article } from "./_types";
+import { TextLink } from "@/components/general/TextLink";
 
 const meta = {
 	slug: "digital-catalog-alternatives",
@@ -26,7 +27,7 @@ const meta = {
 	heroImage:
 		"https://images.unsplash.com/photo-1724961223462-879f7b5006c4?auto=format&fit=crop&w=1600&q=80",
 	heroImageAlt: "A wall of printed magazines, the old way to share a catalog",
-	heroCredit: { name: "Unsplash", url: "https://unsplash.com" },
+	cover: "alternatives",
 	publishedAt: "2026-06-15",
 	readingTimeMinutes: 8,
 	author: "The Quicktalog Team",
@@ -147,14 +148,14 @@ function Body() {
 					customer's. It gives you one live link and a QR code from the start,
 					and edits go live the moment you save, with nothing to export and
 					nothing to re-share. You can begin from an{" "}
-					<a href="/articles/create-catalog-with-ai">AI draft</a> or an OCR
-					import of what you already have, watch how people use it with built-in
-					analytics, and publish your first one for free. This is the route to
-					choose when the catalog changes often and lives on a phone screen,
-					which is most{" "}
-					<a href="/articles/digital-menu-for-restaurants">
+					<TextLink href="/articles/create-catalog-with-ai">AI draft</TextLink>{" "}
+					or an OCR import of what you already have, watch how people use it
+					with built-in analytics, and publish your first one for free. This is
+					the route to choose when the catalog changes often and lives on a
+					phone screen, which is most{" "}
+					<TextLink href="/articles/digital-menu-for-restaurants">
 						menus and price lists
-					</a>
+					</TextLink>
 					.
 				</p>
 			</Prose>
@@ -236,7 +237,7 @@ function Body() {
 				this fall into that last group.
 			</Callout>
 
-			<ArticleCTA variant="mid" />
+			<ArticleCTA />
 
 			<Prose>
 				<h2>Which should you pick?</h2>
@@ -260,9 +261,9 @@ function Body() {
 					items and prices into a draft. Tidy up the wording, publish, and you
 					have a live catalog with a link and a QR code, usually inside an
 					afternoon. If you want to see how the build itself goes, the{" "}
-					<a href="/articles/create-catalog-with-ai">
+					<TextLink href="/articles/create-catalog-with-ai">
 						guide to starting with AI
-					</a>{" "}
+					</TextLink>{" "}
 					walks through both routes step by step.
 				</p>
 			</Prose>

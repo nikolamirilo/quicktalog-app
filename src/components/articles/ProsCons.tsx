@@ -9,8 +9,8 @@ interface Props {
 	consLabel?: string;
 }
 
-/** Side-by-side pros and cons. Color is backed by icons, never the only signal. */
-export default function ProsCons({
+/** Side-by-side pros and cons. Colour is backed by icons and labels, never the only signal. */
+export function ProsCons({
 	title,
 	pros,
 	cons,
@@ -18,46 +18,50 @@ export default function ProsCons({
 	consLabel = "The catch",
 }: Props) {
 	return (
-		<div className="my-10">
+		<div>
 			{title && (
-				<h4 className="mb-4 font-lora text-xl font-bold text-product-foreground">
+				<p className="mb-3 font-product-heading text-[17px] font-bold leading-[1.35] text-product-foreground">
 					{title}
-				</h4>
+				</p>
 			)}
-			<div className="grid gap-4 sm:grid-cols-2">
-				<div className="rounded-2xl border border-product-border bg-product-background p-6">
-					<p className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-product-foreground">
-						<span className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100">
-							<Check className="h-4 w-4 text-green-600" />
-						</span>
+			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+				<div className="flex flex-col gap-3 rounded-[18px] border-[1.5px] border-product-primary/55 bg-product-card px-[18px] pb-4 pt-[18px] shadow-product ring-[5px] ring-product-primary/[0.07]">
+					<p className="text-[12.5px] font-bold uppercase tracking-[0.08em] text-product-primary-ink">
 						{prosLabel}
 					</p>
-					<ul className="space-y-3">
+					<ul className="grid gap-[9px]">
 						{pros.map((p) => (
 							<li
-								className="flex gap-2.5 text-product-foreground-accent"
+								className="flex items-start gap-2.5 text-[15px] font-medium leading-[1.45] text-product-foreground"
 								key={p}
 							>
-								<Check className="mt-1 h-4 w-4 flex-shrink-0 text-green-600" />
+								<span
+									aria-hidden="true"
+									className="mt-px grid h-5 w-5 flex-none place-items-center rounded-full bg-product-primary-soft text-product-primary-ink"
+								>
+									<Check className="h-3 w-3" strokeWidth={3} />
+								</span>
 								<span>{p}</span>
 							</li>
 						))}
 					</ul>
 				</div>
-				<div className="rounded-2xl border border-product-border bg-product-background p-6">
-					<p className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-product-foreground">
-						<span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-100">
-							<X className="h-4 w-4 text-red-500" />
-						</span>
+				<div className="flex flex-col gap-3 rounded-[18px] border border-dashed border-product-border-strong bg-product-background-hero px-[18px] pb-4 pt-[18px]">
+					<p className="text-[12.5px] font-bold uppercase tracking-[0.08em] text-product-muted">
 						{consLabel}
 					</p>
-					<ul className="space-y-3">
+					<ul className="grid gap-[9px]">
 						{cons.map((c) => (
 							<li
-								className="flex gap-2.5 text-product-foreground-accent"
+								className="flex items-start gap-2.5 text-[15px] leading-[1.45] text-product-muted"
 								key={c}
 							>
-								<X className="mt-1 h-4 w-4 flex-shrink-0 text-red-500" />
+								<span
+									aria-hidden="true"
+									className="mt-px grid h-5 w-5 flex-none place-items-center rounded-full bg-product-error-soft text-product-error"
+								>
+									<X className="h-3 w-3" strokeWidth={3} />
+								</span>
 								<span>{c}</span>
 							</li>
 						))}

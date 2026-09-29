@@ -1,10 +1,11 @@
+import { AlertCircle, Info } from "lucide-react";
 import { cn } from "@/lib/ui/cn";
 
 /**
  * A form-level message. `tone` is "error" for something the user must fix and
  * "info" for context the page arrived with, such as an expired link.
  */
-export default function AuthNotice({
+export function AuthNotice({
 	message,
 	tone = "error",
 }: {
@@ -12,17 +13,19 @@ export default function AuthNotice({
 	tone?: "error" | "info";
 }) {
 	if (!message) return null;
+	const Icon = tone === "error" ? AlertCircle : Info;
 	return (
-		<p
+		<div
 			className={cn(
-				"rounded-lg px-3.5 py-2.5 text-sm leading-relaxed",
+				"flex w-full items-start gap-2.5 rounded-[14px] border px-3.5 py-3 text-[14.5px] font-medium leading-[1.45] [&>svg]:mt-px [&>svg]:size-[18px] [&>svg]:flex-none",
 				tone === "error"
-					? "border border-red-200 bg-red-50 text-red-700"
-					: "bg-product-background-hero text-product-foreground-accent",
+					? "border-product-error/25 bg-product-error-soft text-product-error"
+					: "border-product-primary/45 bg-product-primary-soft text-product-foreground [&>svg]:text-product-primary-ink",
 			)}
-			role="alert"
+			role={tone === "error" ? "alert" : "status"}
 		>
-			{message}
-		</p>
+			<Icon aria-hidden="true" />
+			<p>{message}</p>
+		</div>
 	);
 }

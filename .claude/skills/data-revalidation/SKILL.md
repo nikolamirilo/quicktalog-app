@@ -1,6 +1,6 @@
 ---
 name: data-revalidation
-description: Use when a Quicktalog mutation needs to refresh data - deciding which cache to invalidate and how the UI updates after a create/update/delete/publish. Covers the two server-side revalidation helpers, Redis cache sync, and the client-side router.refresh / SWR mutate / refreshUserData split, so you avoid redundant or missing refreshes.
+description: Use when a Quicktalog mutation needs to refresh data - deciding which cache to invalidate and how the UI updates after a create/update/delete/publish. Covers the two server-side revalidation helpers, Redis cache sync, and the client-side router.refresh / refreshDashboardData / refreshUserData split, so you avoid redundant or missing refreshes.
 ---
 
 # Data Revalidation
@@ -24,7 +24,7 @@ A mutation changes data → it invalidates the caches it touched (Next.js + Redi
 
 Two client helpers exist on top of `router.refresh()` - use them only when their specific condition holds:
 
-- **`refreshAll()`** ([hooks/useDashboardData.ts](../../../src/hooks/useDashboardData.ts)) - SWR `mutate()` for the dashboard's analytics/catalogues/newsletter. Use **only on the dashboard** for immediate/optimistic update. Pointless anywhere else.
+- **`refreshDashboardData()`** ([hooks/useDashboardData.ts](../../../src/hooks/useDashboardData.ts)) - SWR `mutate()` by key for the dashboard's analytics/catalogues/newsletter. It is a plain function, not a hook, so call it from anywhere a mutation changes dashboard data (the builder calls it after publishing so the dashboard is fresh on return). It fetches only while the dashboard is mounted; otherwise it marks the cache stale. Inside the dashboard, `useDashboardData(...).refreshAll` is the same function.
 - **`refreshUserData()`** ([context/UserContext.tsx](../../../src/context/UserContext.tsx)) - re-fetches the user's plan/usage. Use **only when the mutation changed the user's usage or limits** (creating/deleting a catalogue, hitting a plan gate). Not for edits within an existing catalogue.
 
 ## Which server helper to call
@@ -48,7 +48,7 @@ Rule of thumb: pass the **name** whenever a single catalogue changed; add **`rev
 ```typescript
 // In a dashboard component, after a mutation that changes plan usage:
 await deleteItem(name);   // server action already invalidated Next.js + the draft
-await refreshAll();       // SWR: instant dashboard update (dashboard only)
+await refreshDashboardData(); // SWR: dashboard caches
 await refreshUserData();  // usage/limit changed (create/delete only)
 router.refresh();         // re-render server components
 ```
@@ -62,7 +62,7 @@ Server actions write via **Drizzle**; `src/app/api/items/route.ts` writes the sa
 ## Common Mistakes
 
 - **Client re-invalidates what the server already did** - e.g. calling a `revalidateData()`-style purge from the component after the action already revalidated. Redundant; the action owns it.
-- **`refreshAll()` outside the dashboard** - it only mutates dashboard SWR caches; useless elsewhere.
+- **Mounting `useDashboardData` just to refresh** - it subscribes and fetches all three endpoints. Call `refreshDashboardData()` instead.
 - **`refreshUserData()` on a content edit** - usage didn't change, so it's a wasted re-fetch. Reserve it for create/delete/plan-gate operations.
 - **Forgot the draft sync in the action** - the builder reads the draft on top of the database row (`readOwnedDraft`), so the editor keeps showing stale edits even after `revalidateCatalogue`. Write or delete the draft on every write.
 - **Nuclear revalidation** - purging the root layout for a single-catalogue edit. Pass the `name` and target it instead.

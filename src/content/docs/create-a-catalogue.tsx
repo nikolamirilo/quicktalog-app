@@ -1,10 +1,10 @@
 import { FiPlusCircle } from "react-icons/fi";
-import ArticleCTA from "@/components/articles/ArticleCTA";
-import ArticleImage from "@/components/articles/ArticleImage";
-import Callout from "@/components/articles/Callout";
-import KeyTakeaways from "@/components/articles/KeyTakeaways";
-import Prose from "@/components/articles/Prose";
-import Stepper from "@/components/articles/Stepper";
+import { ArticleCTA } from "@/components/resources/ArticleCTA";
+import { ArticleImage } from "@/components/resources/ArticleImage";
+import { Callout } from "@/components/resources/Callout";
+import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
+import { Prose } from "@/components/resources/Prose";
+import { Stepper } from "@/components/resources/Stepper";
 import type { DocEntry } from "./_types";
 
 const meta = {
@@ -24,17 +24,16 @@ const meta = {
 		"start a catalogue",
 	],
 	relatedSlugs: ["build-and-edit", "customize-design"],
-	coverImage: "/images/documentation/create-catalogue-cover.svg",
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				src="/images/documentation/create-catalogue-cover.svg"
 				alt="Three ways to start a Quicktalog catalogue: from scratch, with AI, or by importing a photo"
 				maxWidth="640px"
 				priority
+				src="/images/documentation/create-catalogue-cover.svg"
 			/>
 
 			<Prose>
@@ -102,9 +101,9 @@ function Body() {
 			/>
 
 			<ArticleImage
-				src="/images/documentation/create-catalogue-ai-flow.svg"
 				alt="The AI catalogue generation flow from business description to finished draft in the builder"
 				maxWidth="640px"
+				src="/images/documentation/create-catalogue-ai-flow.svg"
 			/>
 
 			<Callout title="Always set your own prices" variant="warning">
@@ -131,9 +130,9 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/create-catalogue-ocr-flow.svg"
 				alt="The OCR photo import flow: upload a photo or PDF and Quicktalog reads it into a draft catalogue"
 				maxWidth="640px"
+				src="/images/documentation/create-catalogue-ocr-flow.svg"
 			/>
 
 			<Prose>
@@ -160,12 +159,12 @@ function Body() {
 			</Prose>
 
 			<ArticleImage
-				src="/images/documentation/create-catalogue-decision.svg"
 				alt="Decision guide: AI generation for new catalogues, photo import for existing printed ones"
 				maxWidth="640px"
+				src="/images/documentation/create-catalogue-decision.svg"
 			/>
 
-			<ArticleCTA variant="mid" />
+			<ArticleCTA />
 
 			<Prose>
 				<p>

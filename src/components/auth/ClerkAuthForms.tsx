@@ -7,7 +7,7 @@ import { SignIn, SignUp } from "@clerk/nextjs";
  * beside this file; `Auth.tsx` picks between them, so the page around the form
  * (consent gate, layout) stays provider-agnostic.
  */
-export default function ClerkAuthForms({ mode }: { mode: string | null }) {
+export function ClerkAuthForms({ mode }: { mode: string | null }) {
 	return mode === "signup" ? (
 		<SignUp
 			forceRedirectUrl="/admin/dashboard"

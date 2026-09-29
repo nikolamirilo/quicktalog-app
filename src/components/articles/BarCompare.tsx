@@ -18,45 +18,59 @@ interface Props {
 
 /**
  * Horizontal bar chart for quick visual comparisons (cost, time, effort).
- * Each bar carries its own text value, so the chart is readable without relying
- * on color alone. The highlighted bar uses brand amber, the rest use navy.
+ * Each bar carries its own text value, so the chart reads without colour; the
+ * highlighted row is amber and also marked with a dot.
  */
-export default function BarCompare({ title, items, max, caption }: Props) {
+export function BarCompare({ title, items, max, caption }: Props) {
 	const ceiling = max ?? Math.max(...items.map((i) => i.value), 1);
 
 	return (
-		<figure className="my-10 rounded-2xl border border-product-border bg-product-background-hero p-6 sm:p-7">
+		<figure className="rounded-product-card border border-product-border bg-product-card p-[22px] shadow-product">
 			{title && (
-				<figcaption className="mb-5 font-lora-semibold text-base font-semibold text-product-foreground">
+				<p className="font-product-heading text-[17px] font-bold leading-[1.35] tracking-[-0.01em] text-product-foreground">
 					{title}
-				</figcaption>
+				</p>
 			)}
-			<div className="space-y-4">
+			<ul className="mt-4 grid gap-3.5">
 				{items.map((item) => (
-					<div key={item.label}>
-						<div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
-							<span className="font-medium text-product-foreground">
-								{item.label}
-							</span>
-							<span className="font-lora-semibold font-semibold text-product-foreground">
-								{item.display ?? item.value}
-							</span>
-						</div>
-						<div className="h-3 w-full overflow-hidden rounded-full bg-product-background">
-							<div
-								className={`h-full rounded-full ${
-									item.highlight ? "bg-product-primary" : "bg-product-secondary"
+					<li
+						className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5"
+						key={item.label}
+					>
+						<span className="text-[14.5px] font-semibold leading-[1.35] text-product-foreground">
+							{item.label}
+							{item.highlight && (
+								<span
+									aria-hidden="true"
+									className="ml-2 inline-block h-[7px] w-[7px] rounded-full bg-product-primary align-[0.12em]"
+								/>
+							)}
+						</span>
+						<span className="font-product-heading text-[15px] font-extrabold leading-none tabular-nums text-product-foreground">
+							{item.display ?? item.value}
+						</span>
+						<span
+							aria-hidden="true"
+							className="col-span-2 h-3 overflow-hidden rounded-full bg-product-background-hero"
+						>
+							<span
+								className={`block h-full rounded-full ${
+									item.highlight
+										? "bg-product-primary"
+										: "bg-product-border-strong"
 								}`}
 								style={{
-									width: `${Math.max((item.value / ceiling) * 100, 4)}%`,
+									width: `${Math.max((item.value / ceiling) * 100, 3)}%`,
 								}}
 							/>
-						</div>
-					</div>
+						</span>
+					</li>
 				))}
-			</div>
+			</ul>
 			{caption && (
-				<p className="mt-5 text-xs text-product-foreground-accent">{caption}</p>
+				<figcaption className="mt-3.5 text-[13.5px] leading-[1.55] text-product-muted">
+					{caption}
+				</figcaption>
 			)}
 		</figure>
 	);

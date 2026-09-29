@@ -1,4 +1,4 @@
-const Overlay = ({ emoji }: { emoji: string }) => {
+export const Overlay = ({ emoji }: { emoji: string }) => {
 	return (
 		<div aria-hidden="true" className="overlay">
 			<div className="overlay-item">{emoji}</div>
@@ -14,5 +14,3 @@ const Overlay = ({ emoji }: { emoji: string }) => {
 		</div>
 	);
 };
-
-export default Overlay;

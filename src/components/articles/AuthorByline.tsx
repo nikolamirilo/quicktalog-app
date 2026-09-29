@@ -1,4 +1,4 @@
-import { Clock } from "lucide-react";
+import { MetaLine } from "@/components/resources/MetaLine";
 
 interface Props {
 	author: string;
@@ -6,33 +6,26 @@ interface Props {
 	readingTimeMinutes: number;
 }
 
-/** Author avatar, name, date, and reading time row shown under the title. */
-export default function AuthorByline({
+/** Author avatar, name, date and reading time shown under the article title. */
+export function AuthorByline({
 	author,
 	publishedAt,
 	readingTimeMinutes,
 }: Props) {
-	const date = new Date(publishedAt).toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
-	const initial = author.trim().charAt(0).toUpperCase();
-
 	return (
-		<div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-product-foreground-accent">
+		<div className="mt-1 flex items-center gap-3">
 			<span
-				aria-hidden
-				className="flex h-9 w-9 items-center justify-center rounded-full bg-product-secondary font-lora-semibold text-sm font-bold text-white"
+				aria-hidden="true"
+				className="grid h-[42px] w-[42px] flex-none place-items-center rounded-full bg-product-primary font-product-heading text-[17px] font-extrabold leading-none text-product-foreground shadow-product-primary"
 			>
-				{initial}
+				Q
 			</span>
-			<span className="font-medium text-product-foreground">{author}</span>
-			<span aria-hidden>·</span>
-			<time dateTime={publishedAt}>{date}</time>
-			<span aria-hidden>·</span>
-			<span className="inline-flex items-center gap-1">
-				<Clock className="h-4 w-4" /> {readingTimeMinutes} min read
+			<span>
+				<b className="block text-[15px] text-product-foreground">{author}</b>
+				<MetaLine
+					publishedAt={publishedAt}
+					readingTimeMinutes={readingTimeMinutes}
+				/>
 			</span>
 		</div>
 	);

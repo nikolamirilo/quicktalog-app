@@ -4,7 +4,7 @@ import { ownsCatalogue } from "@/lib/catalogue/ownership";
 import type { Tx } from "@/utils/db";
 import { schema } from "@quicktalog/common";
 import { and, eq } from "drizzle-orm";
-import type { Options } from "qr-code-styling";
+import type { QrConfig } from "@/lib/qr/design";
 
 const { catalogues, qrConfigs } = schema;
 
@@ -18,7 +18,7 @@ export async function getOwnedQrConfig(
 	tx: Tx,
 	me: VerifiedIdentity,
 	catalogue: string,
-): Promise<Options | undefined> {
+): Promise<QrConfig | undefined> {
 	const [row] = await tx
 		.select({ config: qrConfigs.config })
 		.from(qrConfigs)
@@ -30,7 +30,7 @@ export async function getOwnedQrConfig(
 			),
 		)
 		.limit(1);
-	return row?.config as Options | undefined;
+	return row?.config as QrConfig | undefined;
 }
 
 /**
@@ -50,7 +50,7 @@ export async function upsertOwnedQrConfig(
 	tx: Tx,
 	me: VerifiedIdentity,
 	catalogue: string,
-	config: Options,
+	config: QrConfig,
 ): Promise<boolean> {
 	if (!(await ownsCatalogue(tx, me, catalogue))) return false;
 

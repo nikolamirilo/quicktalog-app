@@ -1,17 +1,18 @@
 "use client";
-import type { Usage } from "@quicktalog/common";
-import UpgradePlanCTA from "@/components/general/UpgradePlanCTA";
+import type { PricingPlan, Usage } from "@quicktalog/common";
 
-export interface LimitCTAs {
-	matchedTier: any;
+import { UpgradePlanCTA } from "@/components/general/UpgradePlanCTA";
+
+type LimitCTAsProps = {
+	currentPlan: PricingPlan;
 	usage: Usage;
-}
+};
 
-export default function LimitCTAs({ matchedTier, usage }: LimitCTAs) {
+export function LimitCTAs({ currentPlan, usage }: LimitCTAsProps) {
 	const isAtCatalogueLimit =
-		usage.catalogues >= matchedTier.features.catalogues;
+		usage.catalogues >= currentPlan.features.catalogues;
 	const isAtTrafficLimit =
-		usage.traffic.pageview_count >= matchedTier.features.traffic_limit;
+		usage.traffic.pageview_count >= currentPlan.features.traffic_limit;
 
 	return (
 		<>
@@ -19,7 +20,7 @@ export default function LimitCTAs({ matchedTier, usage }: LimitCTAs) {
 				<UpgradePlanCTA
 					ctaLabel="Upgrade plan"
 					href="/pricing"
-					subtitle=" Upgrade your plan to get more catalogues, features, and higher limits."
+					subtitle="Upgrade your plan to get more catalogues, features, and higher limits."
 					title="You've reached your current catalogue limit"
 				/>
 			)}

@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
+import { CatalogueButton } from "@/components/catalogue/view/components/CatalogueButton";
 import { footerDetails } from "@/constants/details";
 import Link from "next/link";
 import { FiPlus } from "react-icons/fi";
-import SocialIcon from "@/components/general/SocialIcon";
+import { SocialIcon } from "@/components/general/SocialIcon";
 
 const DefaultActions = () => {
 	const socialLinks = footerDetails.socials;
@@ -20,11 +20,9 @@ const DefaultActions = () => {
 				))}
 			</div>
 
-			<Button
+			<CatalogueButton
 				asChild
 				className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary footer-cta-button"
-				size="default"
-				variant="outline"
 			>
 				<Link
 					aria-label="Create your own digital catalog"
@@ -33,7 +31,7 @@ const DefaultActions = () => {
 					<FiPlus className="w-4 h-4" />
 					Create Your Digital Catalog
 				</Link>
-			</Button>
+			</CatalogueButton>
 		</div>
 	);
 };

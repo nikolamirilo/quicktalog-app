@@ -1,6 +1,6 @@
 import { getCatalogueByName } from "@/actions/catalogue";
 import Catalogue from "@/components/catalogue/view/Catalogue";
-import LimitsModal from "@/components/modals/LimitsModal";
+import { LimitsModal } from "@/components/modals/LimitsModal";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
 import * as Sentry from "@sentry/nextjs";
 import { Catalogue as CatalogueType } from "@quicktalog/common";

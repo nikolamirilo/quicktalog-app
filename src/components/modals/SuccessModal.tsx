@@ -77,7 +77,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 			}}
 			open={isOpen}
 		>
-			<DialogContent className="max-h-[90vh] sm:max-h-[85vh] overflow-y-auto w-[95vw] max-w-[95vw] sm:max-w-[550px] !p-4 sm:!p-7 bg-white/95 border border-product-border shadow-product-shadow rounded-3xl">
+			<DialogContent className="max-h-[90vh] sm:max-h-[85vh] overflow-y-auto w-[95vw] max-w-[95vw] sm:max-w-[550px] !p-4 sm:!p-7 bg-white/95 border border-product-border shadow-product rounded-3xl">
 				<DialogHeader className="space-y-2 sm:space-y-3">
 					<div className="flex items-center justify-center gap-3">
 						<DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-product-foreground font-heading">
@@ -127,7 +127,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 							</TabsTrigger>
 						</TabsList>
 
-						<div className="border border-gray-200 rounded-b-lg bg-white shadow-product-shadow p-5">
+						<div className="border border-gray-200 rounded-b-lg bg-white shadow-product p-5">
 							<TabsContent className="space-y-4 mt-0" value="share">
 								<div className="flex flex-col gap-4 p-4 sm:p-6 bg-product-background/50 rounded-xl border border-product-border">
 									<div className="space-y-3">

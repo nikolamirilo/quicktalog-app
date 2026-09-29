@@ -1,65 +1,70 @@
 import { Star } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
-const UpgradePlanCTA = ({
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/ui/cn";
+
+/** Amber upgrade strip used inside the app (`.as-cta`). */
+export const UpgradePlanCTA = ({
 	type = "default",
 	size = "default",
 	title,
 	subtitle,
 	href,
 	ctaLabel,
+	className,
 }: {
+	/** `form` hides the button (the surrounding form has its own action). */
 	type?: "default" | "form";
 	size?: "default" | "small";
 	title: string;
 	subtitle: string;
 	href?: string;
 	ctaLabel?: string;
+	className?: string;
 }) => {
 	const isSmall = size === "small";
 
 	return (
 		<div
-			className={`flex flex-col sm:flex-row items-center mb-6 justify-between gap-4 bg-gradient-to-r from-product-primary/10 to-product-primary/5 border-2 border-product-primary rounded-2xl shadow-lg ${
-				isSmall ? "p-4" : "p-6"
-			}`}
+			className={cn(
+				"mb-[18px] flex flex-wrap items-center gap-x-4 gap-y-3 rounded-product-card border border-product-primary/50 bg-[linear-gradient(120deg,var(--product-primary-soft),var(--product-card)_80%)]",
+				isSmall ? "px-3.5 py-3" : "px-[18px] py-4",
+				className,
+			)}
 		>
-			<div className="text-center sm:text-left">
-				<h2
-					className={`${
-						isSmall ? "text-lg" : "text-xl"
-					} font-bold text-product-foreground flex items-center gap-2`}
-				>
-					<Star
-						className={`${isSmall ? "w-4 h-4" : "w-5 h-5"} text-product-primary`}
-					/>
-					{title}
-				</h2>
+			<span
+				aria-hidden="true"
+				className="grid h-10 w-10 flex-none place-items-center rounded-full bg-product-primary text-product-foreground"
+			>
+				<Star className="size-[19px]" />
+			</span>
+			<div className="min-w-0 flex-[1_1_220px]">
 				<p
-					className={`text-product-foreground-accent ${
-						isSmall ? "text-xs" : "text-sm"
-					} mt-1`}
+					className={cn(
+						"font-product-heading font-bold leading-snug",
+						isSmall ? "text-[14.5px]" : "text-[15.5px]",
+					)}
 				>
-					{subtitle}
+					{title}
+				</p>
+				<p
+					className={cn(
+						"mt-0.5 text-product-foreground-accent",
+						isSmall ? "text-[13px]" : "text-sm",
+					)}
+				>
+					{subtitle.trim()}
 				</p>
 			</div>
-			{type === "default" && (
-				<Link href={href}>
-					<Button
-						className={`w-fit ${
-							isSmall ? "min-w-32" : "min-w-56"
-						} bg-product-primary  shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105`}
-						size={isSmall ? "sm" : "default"}
-						variant="default"
-					>
-						<Star className="w-4 h-4" />
+			{type === "default" && href && (
+				<Button asChild size="sm">
+					<Link href={href}>
+						<Star aria-hidden="true" />
 						{ctaLabel}
-					</Button>
-				</Link>
+					</Link>
+				</Button>
 			)}
 		</div>
 	);
 };
-
-export default UpgradePlanCTA;

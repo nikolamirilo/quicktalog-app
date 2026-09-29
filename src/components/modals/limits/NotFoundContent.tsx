@@ -1,37 +1,33 @@
-import { Sparkles, TrendingUp, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
-const NotFoundContent = () => {
+import { Button } from "@/components/ui/button";
+import { TickList } from "@/components/modals/limits/TickList";
+
+export const NotFoundContent = () => {
 	return (
-		<div className="space-y-6">
-			{/* Quicktalog Promotional Content */}
-			<div className="p-4 sm:p-5 rounded-xl bg-product-background-hover border border-product-border">
-				<h3 className="text-base sm:text-lg font-semibold text-product-foreground mb-2">
+		<>
+			<div className="rounded-2xl border border-product-primary/40 bg-product-primary-soft p-3.5">
+				<p className="mb-2.5 text-sm font-bold">
 					Create Your Digital Catalogue with Quicktalog
-				</h3>
-				<ul className="space-y-2 text-sm text-product-foreground-accent">
-					<li className="flex items-start">
-						<Sparkles className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-						<span>Beautiful, mobile-friendly catalogs in minutes</span>
-					</li>
-					<li className="flex items-start">
-						<Zap className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-						<span>Share via QR codes and get real-time analytics</span>
-					</li>
-					<li className="flex items-start">
-						<TrendingUp className="w-4 h-4 mr-2 mt-0.5 text-product-primary flex-shrink-0" />
-						<span>No coding required - start today</span>
-					</li>
-				</ul>
+				</p>
+				<TickList
+					items={[
+						"Beautiful, mobile-friendly catalogs in minutes",
+						"Share via QR codes and get real-time analytics",
+						"No coding required - start today",
+					]}
+				/>
 			</div>
-			<Button className="w-full h-12 text-base font-semibold" variant="cta">
+			<Button asChild className="group mt-1 w-full">
 				<Link href={process.env.NEXT_PUBLIC_BASE_URL!} target="_blank">
 					Get Started Today
+					<ArrowRight
+						aria-hidden="true"
+						className="transition-transform group-hover:translate-x-0.5"
+					/>
 				</Link>
 			</Button>
-		</div>
+		</>
 	);
 };
-
-export default NotFoundContent;

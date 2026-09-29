@@ -19,7 +19,7 @@ export interface ImageDropzoneProps {
 	image: string;
 }
 
-const ImageDropzone: React.FC<ImageDropzoneProps> = ({
+export const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 	type = "default",
 	setIsUploading,
 	removeImage,
@@ -148,7 +148,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 		<div className="notranslate" translate="no">
 			{image && type != "qr-editor" ? (
 				<div
-					className={`relative mt-2 ${type === "default" ? "w-48 h-48" : "w-fit h-fit"} rounded-lg overflow-hidden bg-product-background shadow-product-shadow`}
+					className={`relative mt-2 ${type === "default" ? "w-48 h-48" : "w-fit h-fit"} rounded-lg overflow-hidden bg-product-background shadow-product`}
 				>
 					<img
 						alt="Uploaded image preview"
@@ -159,9 +159,11 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 						src={image}
 					/>
 					<button
-						className="absolute top-1 right-1 z-10 bg-red-500 text-white rounded-full cursor-pointer hover:bg-red-600 transition-colors duration-200 shadow-lg"
+						aria-label="Remove image"
+						className="absolute top-1 right-1 z-10 bg-product-error text-product-card rounded-full cursor-pointer hover:bg-product-error-ink transition-colors duration-200 shadow-lg"
 						onClick={removeImage}
 						translate="no"
+						type="button"
 					>
 						<IoClose size={25} />
 					</button>
@@ -171,7 +173,8 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					<UploadDropzone
 						appearance={{
 							button: "hidden",
-							label: "text-gray-600 hover:text-product-primary",
+							label:
+								"text-product-foreground-accent hover:text-product-primary-ink",
 							container: type === "icon" ? `h-48 w-full` : `h-48 w-full`,
 						}}
 						className={className}
@@ -187,18 +190,20 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 								if (isUploading)
 									return (
 										<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center bg-product-background/90">
-											<span className="animate-spin rounded-full h-14 w-14 border-4 border-gray-300 border-t-product-primary z-10"></span>
+											<span className="animate-spin rounded-full h-14 w-14 border-4 border-product-border-strong border-t-product-primary z-10"></span>
 										</div>
 									);
 								return (
 									<div className="absolute inset-0 flex items-center justify-center">
-										<span className="animate-spin rounded-full h-14 w-14 border-4 border-gray-300 border-t-product-primary"></span>
+										<span className="animate-spin rounded-full h-14 w-14 border-4 border-product-border-strong border-t-product-primary"></span>
 									</div>
 								);
 							},
 							uploadIcon: ({ ready, isUploading }) => {
 								if (ready && !isUploading)
-									return <FiUploadCloud color="#ffc017" size={40} />;
+									return (
+										<FiUploadCloud className="text-product-primary" size={40} />
+									);
 								if (isUploading) return "";
 								return "";
 							},
@@ -224,7 +229,7 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 					/>
 					{isBusy && (
 						<div className="absolute inset-0 w-full h-full rounded-lg overflow-hidden flex items-center justify-center bg-product-background/90 z-50 pointer-events-auto">
-							<span className="animate-spin rounded-full h-14 w-14 border-4 border-gray-300 border-t-product-primary"></span>
+							<span className="animate-spin rounded-full h-14 w-14 border-4 border-product-border-strong border-t-product-primary"></span>
 						</div>
 					)}
 				</div>
@@ -232,5 +237,3 @@ const ImageDropzone: React.FC<ImageDropzoneProps> = ({
 		</div>
 	);
 };
-
-export default ImageDropzone;

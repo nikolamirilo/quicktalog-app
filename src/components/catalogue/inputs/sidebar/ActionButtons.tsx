@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { refreshDashboardData } from "@/hooks/useDashboardData";
 import {
 	ChevronUp,
 	Eye,
@@ -42,7 +42,6 @@ const ActionButtons = ({
 		updateCatalogue: updateContextCatalogue,
 		setIsChatOpen,
 	} = useCatalogueContext();
-	const { refreshAll } = useDashboardData("overview");
 	const { refreshUserData } = useUserContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = React.useState(false);
 	const [isTemplateModalOpen, setIsTemplateModalOpen] = React.useState(false);
@@ -118,7 +117,7 @@ const ActionButtons = ({
 					if (!success) throw new Error("Failed to update status");
 					updateContextCatalogue({ status: "active" });
 					setIsSuccessModalOpen(true);
-					await refreshAll();
+					await refreshDashboardData();
 					await refreshUserData();
 					router.refresh();
 					return "Catalogue published successfully";
@@ -219,7 +218,7 @@ const ActionButtons = ({
 							onClick={onClick}
 							size="sm"
 							title={label}
-							variant={primary ? "default" : "grayed"}
+							variant={primary ? "default" : "secondary"}
 						>
 							<Icon
 								className={`mr-1.5 md:mr-0 ${!isOpen && "md:mr-0 w-4 h-4"} shrink-0 transition-all duration-300`}

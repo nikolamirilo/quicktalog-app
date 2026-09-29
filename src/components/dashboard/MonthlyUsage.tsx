@@ -1,95 +1,114 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
-import { PricingPlan, Usage } from "@quicktalog/common";
-import { BiGridAlt } from "react-icons/bi";
-import { FiBarChart2 } from "react-icons/fi";
-import { IoAnalyticsOutline } from "react-icons/io5";
-import { RiSparkling2Line } from "react-icons/ri";
-import GaugeChart from "@/components/charts/GaugeChart";
+import type { PricingPlan, Usage } from "@quicktalog/common";
+import { ChartColumn, Eye, LayoutGrid, Sparkles } from "lucide-react";
+import type { ReactNode } from "react";
 
-const MonthlyUsage = ({
-	data,
-	pricingPlan,
-}: {
-	data: Usage;
-	pricingPlan: PricingPlan;
-}) => {
-	const trafficUsage = {
-		used: data.traffic.pageview_count,
-		limit: pricingPlan.features.traffic_limit,
-		unit: "views",
-		title: "Traffic",
-		icon: <IoAnalyticsOutline className="w-5 h-5" />,
-		shown: true,
-	};
+import { GaugeChart, getGaugeStatus } from "@/components/charts/GaugeChart";
+import { AppLead, AppTitle } from "@/components/dashboard/common/AppHeadings";
+import { IconTile } from "@/components/general/IconTile";
+import { cn } from "@/lib/ui/cn";
 
-	const cataloguesUsage = {
-		used: data.catalogues,
-		limit: pricingPlan.features.catalogues,
-		unit: "catalogues",
-		title: "Catalogues",
-		icon: <BiGridAlt className="w-5 h-5" />,
-		shown: true,
-	};
+type UsageMeter = {
+	title: string;
+	used: number;
+	limit: number;
+	unit: string;
+	icon: ReactNode;
+	shown: boolean;
+};
 
-	const aiCreditsUsage = {
-		used: data.credits,
-		limit: pricingPlan.features.ai_credits,
-		unit: "credits",
-		title: "AI Credits",
-		icon: <RiSparkling2Line className="w-5 h-5" />,
-		shown: pricingPlan.features.ai_credits > 0,
-	};
-
-	const charts = [trafficUsage, cataloguesUsage, aiCreditsUsage];
+function UsageCard({ meter }: { meter: UsageMeter }) {
+	const status = getGaugeStatus(meter.used, meter.limit);
 
 	return (
-		<div className="max-w-6xl space-y-8 bg-gradient-to-br from-product-background to-product-background-hero  rounded-3xl">
-			{/* Header Section */}
-			<div className="space-y-4">
-				<h2
-					className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold mb-4 sm:mb-6 text-product-foreground flex items-center gap-2 sm:gap-3"
-					style={{
-						fontFamily:
-							"var(--font-playfair-display), var(--font-inter), serif",
-					}}
-				>
-					<FiBarChart2 className="text-product-icon font-lora w-6 h-6 sm:w-8 sm:h-8" />{" "}
-					Usage Overview
+		<article
+			className={cn(
+				"flex flex-col items-center gap-1.5 rounded-product-card border bg-product-card p-5 text-center shadow-product",
+				status === "normal" && "border-product-border",
+				status === "warning" &&
+					"border-product-primary/60 bg-[linear-gradient(180deg,var(--product-primary-soft),var(--product-card)_45%)]",
+				status === "critical" &&
+					"border-product-error/40 bg-[linear-gradient(180deg,var(--product-error-soft),var(--product-card)_45%)]",
+			)}
+		>
+			<div className="flex w-full items-center gap-2.5 text-left">
+				<IconTile size="sm">{meter.icon}</IconTile>
+				<h2 className="flex-1 text-[16.5px] font-bold leading-snug tracking-[-0.015em]">
+					{meter.title}
 				</h2>
-				<p className="text-product-foreground-accent text-lg max-w-2xl">
-					Monitor your resource consumption and track usage across all features
-				</p>
+				{status === "warning" && (
+					<span className="inline-flex h-6 items-center whitespace-nowrap rounded-full border border-product-primary/45 bg-product-primary-soft px-2.5 text-xs font-bold text-product-primary-ink">
+						Near limit
+					</span>
+				)}
+				{status === "critical" && (
+					<span className="inline-flex h-6 items-center whitespace-nowrap rounded-full bg-product-error-soft px-2.5 text-xs font-bold text-product-error">
+						{meter.used > meter.limit
+							? `${(meter.used - meter.limit).toLocaleString("en-US")} ${meter.unit} over`
+							: "Limit reached"}
+					</span>
+				)}
 			</div>
+			<GaugeChart
+				label={meter.title}
+				limit={meter.limit}
+				unit={meter.unit}
+				used={meter.used}
+			/>
+		</article>
+	);
+}
 
-			{/* Usage Cards Grid */}
-			<div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
-				{charts
-					.filter((item) => item.shown === true)
-					.map((chart, index) => (
-						<Card className="shadow-lg overflow-hidden" key={`usage-${index}`}>
-							<CardContent className="p-6">
-								{/* Header with Icon */}
-								<div className="flex items-center gap-3 mb-6">
-									<div className="w-10 h-10 rounded-full flex items-center justify-center bg-product-primary/10 text-product-primary">
-										{chart.icon}
-									</div>
-									<h3 className="text-xl font-bold text-product-foreground">
-										{chart.title}
-									</h3>
-								</div>
+export const MonthlyUsage = ({
+	usage,
+	currentPlan,
+}: {
+	usage: Usage;
+	currentPlan: PricingPlan;
+}) => {
+	const meters: UsageMeter[] = [
+		{
+			title: "Traffic",
+			used: usage.traffic.pageview_count,
+			limit: currentPlan.features.traffic_limit,
+			unit: "views",
+			icon: <Eye />,
+			shown: true,
+		},
+		{
+			title: "Catalogues",
+			used: usage.catalogues,
+			limit: currentPlan.features.catalogues,
+			unit: "catalogues",
+			icon: <LayoutGrid />,
+			shown: true,
+		},
+		{
+			title: "AI Credits",
+			used: usage.credits,
+			limit: currentPlan.features.ai_credits,
+			unit: "credits",
+			icon: <Sparkles />,
+			shown: currentPlan.features.ai_credits > 0,
+		},
+	];
 
-								<GaugeChart
-									limit={chart.limit}
-									unit={chart.unit}
-									used={chart.used}
-								/>
-							</CardContent>
-						</Card>
+	return (
+		<div>
+			<AppTitle icon={<ChartColumn />}>Usage Overview</AppTitle>
+			<AppLead>
+				Monitor your resource consumption and track usage across all features
+			</AppLead>
+			<section
+				aria-label="Usage against your plan limits"
+				className="grid gap-3.5 min-[900px]:grid-cols-3"
+			>
+				{meters
+					.filter((meter) => meter.shown)
+					.map((meter) => (
+						<UsageCard key={meter.title} meter={meter} />
 					))}
-			</div>
+			</section>
 		</div>
 	);
 };
-
-export default MonthlyUsage;

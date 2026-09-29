@@ -65,7 +65,7 @@ export function ContentOptionsSelector({
 							key={key}
 							locked={locked}
 							onClick={() => onSelect(key)}
-							variant="nav"
+							variant="ghost"
 						>
 							<Icon
 								className={`w-4 h-4 mr-2 ${
@@ -88,7 +88,7 @@ export function ContentOptionsSelector({
 						<Button
 							className={`w-full justify-start gap-3 h-auto py-3 px-4 text-base font-normal ${
 								isActive
-									? "bg-product-primary shadow-product-shadow text-white hover:text-white"
+									? "bg-product-primary shadow-product text-white hover:text-white"
 									: "text-product-foreground hover:text-product-foreground hover:bg-gray-100/50"
 							}`}
 							key={key}
