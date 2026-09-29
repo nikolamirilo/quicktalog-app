@@ -3,26 +3,36 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import {
-	AccountHint,
-	AccountSection,
-} from "@/components/dashboard/account/supabase/AccountSection";
 import { describeAuthError } from "@/components/dashboard/account/supabase/authErrors";
 import type { SupabaseBrowserClient } from "@/components/dashboard/account/supabase/types";
+import {
+	SettingsEditorActions,
+	SettingsHint,
+	SettingsRow,
+} from "@/components/dashboard/settings/SettingsGroup";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function EmailCard({
+export function EmailRow({
 	currentEmail,
 	supabase,
+	open,
+	onOpenChange,
 }: {
 	currentEmail: string | null;
 	supabase: SupabaseBrowserClient;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
 }) {
 	const [email, setEmail] = useState("");
 	const [sending, setSending] = useState(false);
 	const [sent, setSent] = useState(false);
+
+	const close = () => {
+		setEmail("");
+		onOpenChange(false);
+	};
 
 	const requestChange = async () => {
 		setSending(true);
@@ -40,7 +50,7 @@ export function EmailCard({
 				return;
 			}
 			setSent(true);
-			setEmail("");
+			close();
 			toast.success("Confirmation links sent.");
 		} finally {
 			setSending(false);
@@ -48,22 +58,26 @@ export function EmailCard({
 	};
 
 	return (
-		<AccountSection
-			description="Changing your email takes two confirmations, one from the current address and one from the new one. Nothing changes until both links are opened."
-			footer={
-				<Button
-					disabled={sending || !email.includes("@")}
-					onClick={requestChange}
-					size="sm"
-				>
-					{sending ? "Sending..." : "Send confirmation links"}
-				</Button>
+		<SettingsRow
+			editLabel="Change"
+			label="Email"
+			onOpenChange={onOpenChange}
+			open={open}
+			value={
+				<>
+					{currentEmail ?? "Unknown"}
+					{sent && (
+						<SettingsHint>
+							Check both inboxes. The change is applied only after both links
+							are confirmed.
+						</SettingsHint>
+					)}
+				</>
 			}
-			title="Email address"
 		>
-			<p className="text-[13.5px] text-product-foreground-accent">
+			<p className="text-sm text-product-foreground-accent">
 				Current address:{" "}
-				<b className="font-semibold text-product-foreground">
+				<b className="font-semibold text-product-foreground [overflow-wrap:anywhere]">
 					{currentEmail ?? "unknown"}
 				</b>
 			</p>
@@ -78,12 +92,19 @@ export function EmailCard({
 					value={email}
 				/>
 			</div>
-			{sent && (
-				<AccountHint>
-					Check both inboxes. The change is applied only after both links are
-					confirmed.
-				</AccountHint>
-			)}
-		</AccountSection>
+			<p className="text-[13px] text-product-muted">
+				We send a link to both addresses. Nothing changes until both links are
+				opened.
+			</p>
+			<SettingsEditorActions onCancel={close}>
+				<Button
+					disabled={sending || !email.includes("@")}
+					onClick={requestChange}
+					size="sm"
+				>
+					{sending ? "Sending..." : "Send confirmation links"}
+				</Button>
+			</SettingsEditorActions>
+		</SettingsRow>
 	);
 }

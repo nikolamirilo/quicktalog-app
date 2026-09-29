@@ -76,13 +76,13 @@ const Skipped = ({ text }: { text: string }) => (
 	</li>
 );
 
-/** The assistant's mark beside its turns: the Quick AI mark on ink, as in the header. */
+/** The assistant's mark beside its turns: the Quick AI mark on a soft amber tile, as in the header. */
 export const AssistantAvatar = () => (
 	<span
 		aria-hidden="true"
-		className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-product-foreground"
+		className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-product-primary/35 bg-product-primary-soft text-product-primary-ink"
 	>
-		<QuickAiMark className="size-4" variant="gradient" />
+		<QuickAiMark className="size-4" />
 	</span>
 );
 

@@ -1,9 +1,17 @@
 "use client";
 
 import { UserProfile } from "@clerk/nextjs";
+import { LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { getAccountChangesPaused } from "@/actions/ops";
+import { CookiesRow } from "@/components/dashboard/settings/CookiesRow";
+import {
+	SettingsGroup,
+	SettingsRow,
+} from "@/components/dashboard/settings/SettingsGroup";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 /**
  * The provider-specific half of the settings page. Clerk ships a whole account
@@ -17,6 +25,7 @@ import { getAccountChangesPaused } from "@/actions/ops";
  */
 export function ClerkAccount() {
 	const [paused, setPaused] = useState(false);
+	const { signOut } = useAuth();
 
 	useEffect(() => {
 		let active = true;
@@ -57,6 +66,18 @@ export function ClerkAccount() {
 			<div className="max-w-full overflow-x-auto">
 				<UserProfile />
 			</div>
+			<SettingsGroup title="Privacy and sessions">
+				<CookiesRow />
+				<SettingsRow
+					action={
+						<Button onClick={() => signOut()} size="sm" variant="outline">
+							<LogOut aria-hidden="true" /> Sign out
+						</Button>
+					}
+					description="Sign out of Quicktalog on this device."
+					label="Sessions"
+				/>
+			</SettingsGroup>
 		</div>
 	);
 }

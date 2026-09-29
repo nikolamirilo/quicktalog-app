@@ -5,7 +5,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { deleteAccount } from "@/actions/account";
-import { AccountSection } from "@/components/dashboard/account/supabase/AccountSection";
+import {
+	SettingsGroup,
+	SettingsRow,
+} from "@/components/dashboard/settings/SettingsGroup";
 import {
 	AppDialogContent,
 	AppDialogFooter,
@@ -20,8 +23,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-/** "Delete account" card and its type-DELETE confirmation dialog. */
-export function DeleteAccountCard({
+/** "Delete account" row and its type-DELETE confirmation dialog. */
+export function DeleteAccountRow({
 	onDeleted,
 }: {
 	onDeleted: () => Promise<void>;
@@ -49,16 +52,17 @@ export function DeleteAccountCard({
 	};
 
 	return (
-		<AccountSection
-			description="Deleting your account cancels your subscription and permanently removes your catalogues, their public pages and everything else stored with them. This cannot be undone."
-			footer={
-				<Button onClick={() => setOpen(true)} size="sm" variant="destructive">
-					<Trash2 aria-hidden="true" /> Delete my account
-				</Button>
-			}
-			title="Delete account"
-			tone="danger"
-		>
+		<SettingsGroup title="Danger zone" tone="danger">
+			<SettingsRow
+				action={
+					<Button onClick={() => setOpen(true)} size="sm" variant="destructive">
+						<Trash2 aria-hidden="true" /> Delete account
+					</Button>
+				}
+				description="Cancels your subscription and permanently removes your catalogues and their public pages. This cannot be undone."
+				label="Delete account"
+				tone="danger"
+			/>
 			<AlertDialog
 				onOpenChange={(next) => {
 					if (!deleting) setOpen(next);
@@ -111,6 +115,6 @@ export function DeleteAccountCard({
 					</AppDialogFooter>
 				</AppDialogContent>
 			</AlertDialog>
-		</AccountSection>
+		</SettingsGroup>
 	);
 }

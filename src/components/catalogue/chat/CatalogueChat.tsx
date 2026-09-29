@@ -251,9 +251,9 @@ const CatalogueChat = ({
 							<div className="flex min-w-0 items-center gap-3">
 								<span
 									aria-hidden="true"
-									className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-product-foreground"
+									className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-product-primary/35 bg-product-primary-soft text-product-primary-ink"
 								>
-									<QuickAiMark className="size-5" variant="gradient" />
+									<QuickAiMark className="size-5" />
 								</span>
 								<div className="min-w-0">
 									<h2

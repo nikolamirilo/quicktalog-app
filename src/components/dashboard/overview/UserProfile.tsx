@@ -14,16 +14,8 @@ export const UserProfile = ({ user }: { user: User }) => {
 	return (
 		<section
 			aria-label="Your profile"
-			className="relative flex flex-col items-center gap-3.5 overflow-hidden rounded-product-card border border-product-border bg-product-card px-[18px] py-6 text-center shadow-product md:flex-row md:gap-6 md:p-8 md:text-left"
+			className="flex flex-col items-center gap-3.5 rounded-product-card border border-product-border bg-product-amber-panel px-[18px] py-6 text-center shadow-product md:flex-row md:gap-6 md:p-8 md:text-left"
 		>
-			<span
-				aria-hidden="true"
-				className="pointer-events-none absolute -right-5 -top-[30px] h-[170px] w-[170px] rounded-full bg-product-primary/30 blur-[36px]"
-			/>
-			<span
-				aria-hidden="true"
-				className="pointer-events-none absolute -bottom-10 -left-5 h-[140px] w-[140px] rounded-full bg-product-primary/20 blur-[36px]"
-			/>
 			{user.image ? (
 				<img
 					alt=""
@@ -44,7 +36,7 @@ export const UserProfile = ({ user }: { user: User }) => {
 					{initialsFrom(user.name)}
 				</span>
 			)}
-			<div className="relative min-w-0">
+			<div className="min-w-0">
 				<h1 className="text-[clamp(22px,3vw,30px)] font-extrabold leading-[1.15] tracking-[-0.03em]">
 					{firstName ? `Welcome back, ${firstName}!` : "Welcome back!"}
 				</h1>

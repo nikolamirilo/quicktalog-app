@@ -1,19 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { describeAuthError } from "@/components/dashboard/account/supabase/authErrors";
-import { DeleteAccountCard } from "@/components/dashboard/account/supabase/DeleteAccountCard";
-import { EmailCard } from "@/components/dashboard/account/supabase/EmailCard";
-import { IdentitiesCard } from "@/components/dashboard/account/supabase/IdentitiesCard";
-import { PasswordCard } from "@/components/dashboard/account/supabase/PasswordCard";
-import { ProfileCard } from "@/components/dashboard/account/supabase/ProfileCard";
-import { SessionsCard } from "@/components/dashboard/account/supabase/SessionsCard";
+import { DeleteAccountRow } from "@/components/dashboard/account/supabase/DeleteAccountRow";
+import { EmailRow } from "@/components/dashboard/account/supabase/EmailRow";
+import { GoogleRow } from "@/components/dashboard/account/supabase/GoogleRow";
+import { PasswordRow } from "@/components/dashboard/account/supabase/PasswordRow";
+import { ProfileRow } from "@/components/dashboard/account/supabase/ProfileRow";
+import { SessionsRow } from "@/components/dashboard/account/supabase/SessionsRow";
+import { CookiesRow } from "@/components/dashboard/settings/CookiesRow";
+import { SettingsGroup } from "@/components/dashboard/settings/SettingsGroup";
 import { useAuth } from "@/context/AuthContext";
 import { useUserContext } from "@/context/UserContext";
 import { createClient } from "@/utils/supabase/client";
+
+type EditableRow = "name" | "email" | "password";
 
 /**
  * The Supabase half of the settings page: everything Clerk's hosted `UserProfile`
@@ -28,31 +32,47 @@ export function SupabaseAccount() {
 	const router = useRouter();
 	const { user, signOut } = useAuth();
 	const { userData, refreshUserData } = useUserContext();
+	// One editor open at a time.
+	const [openRow, setOpenRow] = useState<EditableRow | null>(null);
+	const rowProps = (row: EditableRow) => ({
+		open: openRow === row,
+		onOpenChange: (open: boolean) => setOpenRow(open ? row : null),
+	});
 
 	return (
 		<div className="flex min-w-0 flex-col gap-4">
-			<ProfileCard
-				initialName={(userData?.name as string) ?? user?.name ?? ""}
-				onSaved={refreshUserData}
-			/>
-			<EmailCard currentEmail={user?.email ?? null} supabase={supabase} />
-			<PasswordCard supabase={supabase} />
-			<IdentitiesCard supabase={supabase} />
-			<SessionsCard
-				onSignOut={signOut}
-				onSignOutEverywhere={async () => {
-					const { error } = await supabase.auth.signOut({ scope: "global" });
-					if (error) {
-						toast.error(
-							describeAuthError(error, "Could not sign out everywhere."),
-						);
-						return;
-					}
-					router.replace("/");
-					router.refresh();
-				}}
-			/>
-			<DeleteAccountCard
+			<SettingsGroup title="Account">
+				<ProfileRow
+					initialName={(userData?.name as string) ?? user?.name ?? ""}
+					onSaved={refreshUserData}
+					{...rowProps("name")}
+				/>
+				<EmailRow
+					currentEmail={user?.email ?? null}
+					supabase={supabase}
+					{...rowProps("email")}
+				/>
+				<PasswordRow supabase={supabase} {...rowProps("password")} />
+				<GoogleRow supabase={supabase} />
+			</SettingsGroup>
+			<SettingsGroup title="Privacy and sessions">
+				<CookiesRow />
+				<SessionsRow
+					onSignOut={signOut}
+					onSignOutEverywhere={async () => {
+						const { error } = await supabase.auth.signOut({ scope: "global" });
+						if (error) {
+							toast.error(
+								describeAuthError(error, "Could not sign out everywhere."),
+							);
+							return;
+						}
+						router.replace("/");
+						router.refresh();
+					}}
+				/>
+			</SettingsGroup>
+			<DeleteAccountRow
 				onDeleted={async () => {
 					// The account is gone; this only clears the cookies this browser
 					// still holds. The access token itself is dead either way.
