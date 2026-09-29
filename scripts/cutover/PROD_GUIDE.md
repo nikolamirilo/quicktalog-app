@@ -17,10 +17,80 @@ MIGRATION_DATABASE_URL=postgresql://postgres.uhfbapjuzvlyzyodxhqn:<password>@<ho
 SUPABASE_SECRET_KEY=sb_secret_...
 CLERK_SECRET_KEY=sk_live_...
 SUPABASE_ACCESS_TOKEN=sbp_...
+SUPABASE_SMTP_PASS=re_xxx
+SUPABASE_GOOGLE_CLIENT_ID=...apps.googleusercontent.com
+SUPABASE_GOOGLE_SECRET=GOCSPX-...
 ```
+
+`SUPABASE_SMTP_PASS` and the two Google values are only read by
+`scripts/supabase/auth-config.ts` - they are the secrets behind the SMTP and
+Google rows in `auth-config.prod.json`. Set them once, in `.env.cutover`, and
+the `--apply` step at the bottom of this guide pushes them to Supabase.
 
 Use port **5432**, not 6543. The re-key holds a lock across several statements
 and needs a session connection.
+
+### Configure SMTP for Resend on Supabase
+
+The Supabase project's mailer has to point at Resend's SMTP relay before the
+Management API can take over. Without this, every email - the Supabase
+Auth templates AND any transactional email Supabase sends on your behalf -
+bounces.
+
+1. Resend dashboard, **Domains**, add `auth.quicktalog.app` and add the DNS
+   records it asks for. Wait for the green tick on every record before
+   continuing.
+2. Resend dashboard, **API Keys**, create a key with `Sending access` only
+   (never `Full access`). Call it `Supabase SMTP (prod)` and copy it - this
+   is the `re_...` value you put in `SUPABASE_SMTP_PASS`.
+3. Supabase dashboard, **Authentication**, **SMTP Settings**, **Enable Custom
+   SMTP**. Fill in:
+   - **Sender email**: `no-reply@auth.quicktalog.app` (matches
+     `smtp_admin_email` in `auth-config.prod.json`)
+   - **Sender name**: `Quicktalog`
+   - **Host**: `smtp.resend.com`
+   - **Port**: `465`
+   - **Username**: `resend`
+   - **Password**: paste the `re_...` key from step 2
+4. Supabase dashboard, **Authentication**, **Emails**, **Enable Confirm
+   Email** - sign-ups will be closed during the cutover, but the setting has
+   to be on for the templates to flow.
+5. Send yourself a test email from the Supabase dashboard. If it does not
+   arrive in 60 seconds, fix this before touching anything else - every later
+   step assumes mail is working.
+
+Do this on TEST first, end-to-end, then repeat on PROD. The TEST rehearsal is
+the place to discover DNS propagation surprises and wrong-port mistakes.
+
+### Configure the Google provider on Supabase
+
+Existing users have Google identities from Clerk. They have to be able to keep
+using "Sign in with Google" after the cutover - that means Supabase must hold
+a Google OAuth client, not Clerk's.
+
+1. Google Cloud console, **APIs & Services**, **Credentials**. Create an OAuth
+   2.0 Client ID of type **Web application** (a separate client per
+   environment - TEST and PROD - so a refresh in one never affects the other).
+   - **Authorized JavaScript origins**: `https://<supabase-ref>.supabase.co`
+     and `https://www.quicktalog.app`
+   - **Authorized redirect URIs**:
+     `https://<supabase-ref>.supabase.co/auth/v1/callback`
+2. Copy the client ID and client secret. They are the values of
+   `SUPABASE_GOOGLE_CLIENT_ID` and `SUPABASE_GOOGLE_SECRET` in
+   `.env.cutover`.
+3. Supabase dashboard, **Authentication**, **Sign In / Up**, **Google**,
+   toggle on, paste the two values. **Save**.
+4. Back in the Google Cloud console, publish the OAuth consent screen if it
+   is still in "Testing" - a Testing app only lets test users in, which is
+   exactly the bug that hides itself until a real customer tries to log in.
+5. Send yourself a Google sign-in from the TEST project before PROD. If
+   "Sign in with Google" lands on an empty new account instead of the
+   existing one, the imported Google identities are not linked - go back to
+   `migrate-clerk-to-supabase.ts` reports and check `conflicts.csv` /
+   `orphans.csv`.
+
+Do this on TEST first. A wrong redirect URI is the single most common reason
+Google sign-in silently breaks, and you want to find it before the window.
 
 ### Building that URL
 
