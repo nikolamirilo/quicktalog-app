@@ -1,9 +1,12 @@
 "use client";
 
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+
+/** Cloudflare's "flexible" widget can't shrink below this width. */
+const FLEXIBLE_MIN_WIDTH = 300;
 
 /**
  * One captcha widget per form. The token is single-use, so every submit resets
@@ -15,6 +18,20 @@ const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 export function useTurnstile() {
 	const widget = useRef<TurnstileInstance | undefined>(undefined);
 	const [token, setToken] = useState<string | null>(null);
+	const box = useRef<HTMLDivElement>(null);
+	const [size, setSize] = useState<"flexible" | "compact">("flexible");
+
+	useEffect(() => {
+		const el = box.current;
+		if (!el || typeof ResizeObserver === "undefined") return;
+		const observer = new ResizeObserver(([entry]) =>
+			setSize(
+				entry.contentRect.width < FLEXIBLE_MIN_WIDTH ? "compact" : "flexible",
+			),
+		);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, []);
 
 	return {
 		token,
@@ -25,16 +42,20 @@ export function useTurnstile() {
 			widget.current?.reset();
 		},
 		element: SITE_KEY ? (
-			<Turnstile
-				// Cloudflare injects a fixed-width iframe into its full-width wrapper.
-				className="[&_iframe]:!w-full"
-				onError={() => setToken(null)}
-				onExpire={() => setToken(null)}
-				onSuccess={setToken}
-				options={{ theme: "light", size: "flexible" }}
-				ref={widget}
-				siteKey={SITE_KEY}
-			/>
+			<div className="min-w-0" ref={box}>
+				<Turnstile
+					// Cloudflare injects a fixed-width iframe into its full-width wrapper.
+					className="[&_iframe]:!w-full"
+					// The widget size is fixed at render, so a new size needs a new widget.
+					key={size}
+					onError={() => setToken(null)}
+					onExpire={() => setToken(null)}
+					onSuccess={setToken}
+					options={{ theme: "light", size }}
+					ref={widget}
+					siteKey={SITE_KEY}
+				/>
+			</div>
 		) : null,
 	};
 }

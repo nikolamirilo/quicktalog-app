@@ -15,7 +15,7 @@ export function AuthCard({
 	children: ReactNode;
 }) {
 	return (
-		<div className="w-full max-w-[460px] rounded-product-card border border-product-border bg-product-card px-[22px] pb-[30px] pt-7 shadow-[0_1px_2px_rgba(22,20,15,0.04),0_24px_60px_-28px_rgba(22,20,15,0.28),0_8px_24px_-12px_rgba(22,20,15,0.08)] min-[480px]:px-10 min-[480px]:pb-[42px] min-[480px]:pt-10">
+		<div className="w-full max-w-[460px] rounded-product-card border border-product-border bg-product-card px-4 pb-[30px] min-[400px]:px-[22px] pt-7 shadow-[0_1px_2px_rgba(22,20,15,0.04),0_24px_60px_-28px_rgba(22,20,15,0.28),0_8px_24px_-12px_rgba(22,20,15,0.08)] min-[480px]:px-10 min-[480px]:pb-[42px] min-[480px]:pt-10">
 			{tabs ? <div className="mb-[26px]">{tabs}</div> : null}
 			{children}
 		</div>

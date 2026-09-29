@@ -53,7 +53,7 @@ export function UpdatePasswordForm() {
 				subtitle="You will stay signed in here. Every other device is signed out."
 				title="Choose a new password"
 			/>
-			<form className="mt-6 grid gap-[18px]" onSubmit={submit}>
+			<form className="mt-6 grid grid-cols-1 gap-[18px]" onSubmit={submit}>
 				<AuthNotice message={error} />
 				<AuthField
 					autoComplete="new-password"

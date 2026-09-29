@@ -20,7 +20,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
 				aria-hidden="true"
 				className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[min(720px,120vw)] w-[min(820px,140vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,176,32,0.24),rgba(255,176,32,0.08)_55%,transparent)]"
 			/>
-			<Container className="flex min-w-0 flex-col items-center">
+			<Container className="flex min-w-0 flex-col items-center px-3 min-[400px]:px-5">
 				{children}
 			</Container>
 		</section>

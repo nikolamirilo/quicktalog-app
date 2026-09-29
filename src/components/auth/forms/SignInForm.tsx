@@ -64,7 +64,7 @@ export function SignInForm({
 			/>
 			<GoogleButton className="mt-6" next={next} />
 			<AuthDivider />
-			<form className="grid gap-[18px]" onSubmit={submit}>
+			<form className="grid grid-cols-1 gap-[18px]" onSubmit={submit}>
 				<AuthNotice message={error} />
 				<AuthField
 					autoComplete="username"

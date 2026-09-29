@@ -125,7 +125,7 @@ export function ResetPasswordForm({ onBack }: { onBack: () => void }) {
 				subtitle="We will email you a link to choose a new one."
 				title="Reset your password"
 			/>
-			<form className="mt-6 grid gap-[18px]" onSubmit={submit}>
+			<form className="mt-6 grid grid-cols-1 gap-[18px]" onSubmit={submit}>
 				<AuthNotice message={error} />
 				<AuthField
 					autoComplete="username"

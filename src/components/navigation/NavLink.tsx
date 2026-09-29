@@ -11,10 +11,10 @@ export const navPillBase =
 export const navPillActive =
 	"border-product-primary/55 bg-product-primary-soft font-bold text-product-foreground hover:bg-product-primary-soft";
 
-/** Size of each nav pill: the desktop bar (40px) or a full-width mobile sheet row (48px). */
+/** Size of each nav pill: the desktop bar (40px) or a mobile sheet cell (44px). */
 export const navPillSizes = {
 	bar: "h-10 px-3.5 text-[15px] font-medium",
-	sheet: "h-12 w-full px-4 text-base font-medium",
+	sheet: "h-11 w-full min-w-0 px-3.5 text-[15px] font-medium",
 } as const;
 
 /** A hash link (`/#faq`) points into a page, so it never marks itself active. */

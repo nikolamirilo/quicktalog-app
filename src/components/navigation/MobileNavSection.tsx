@@ -9,7 +9,7 @@ type MobileNavSectionProps = {
 	onLinkClick: () => void;
 };
 
-/** A labelled group of links in the mobile sheet ("Product", "Resources", "More"). */
+/** A labelled group of links in the mobile sheet ("Product", "Resources"), laid out two per row. */
 export const MobileNavSection = ({
 	title,
 	items,
@@ -18,28 +18,26 @@ export const MobileNavSection = ({
 	const headingId = useId();
 
 	return (
-		<div
-			aria-labelledby={headingId}
-			className="flex flex-col gap-1"
-			role="group"
-		>
+		<div aria-labelledby={headingId} role="group">
 			<p
 				className="mx-4 mb-0.5 mt-2 text-[11.5px] font-bold uppercase tracking-[0.1em] text-product-muted"
 				id={headingId}
 			>
 				{title}
 			</p>
-			{items.map((item) => (
-				<NavLink
-					href={item.url}
-					icon={item.icon}
-					key={item.url}
-					onClick={onLinkClick}
-					variant="sheet"
-				>
-					{item.text}
-				</NavLink>
-			))}
+			<div className="grid grid-cols-2 gap-1">
+				{items.map((item) => (
+					<NavLink
+						href={item.url}
+						icon={item.icon}
+						key={item.url}
+						onClick={onLinkClick}
+						variant="sheet"
+					>
+						{item.text}
+					</NavLink>
+				))}
+			</div>
 		</div>
 	);
 };

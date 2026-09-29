@@ -175,7 +175,7 @@ export const Navbar = () => {
 
 				<div
 					className={cn(
-						"pointer-events-auto relative z-[51] mx-auto mt-2.5 max-h-[calc(100vh-110px)] max-w-[1240px] flex-col gap-1 overflow-y-auto rounded-[26px] border border-product-border bg-product-card p-2.5 shadow-product-hover animate-in fade-in-0 slide-in-from-top-2 duration-200 lg:hidden",
+						"pointer-events-auto relative z-[51] mx-auto mt-2.5 max-h-[calc(100dvh-110px)] max-w-[1240px] flex-col gap-1 overflow-y-auto rounded-[26px] border border-product-border bg-product-card p-2.5 shadow-product-hover animate-in fade-in-0 slide-in-from-top-2 duration-200 [scrollbar-width:thin] [scrollbar-color:rgb(var(--product-border-strong-rgb))_transparent] [&::-webkit-scrollbar-thumb]:bg-product-border-strong [&::-webkit-scrollbar]:w-1 lg:hidden",
 						sheetOpen ? "flex" : "hidden",
 					)}
 					id={SHEET_ID}
@@ -183,14 +183,19 @@ export const Navbar = () => {
 				>
 					{sheetOpen && (
 						<>
-							<NavLink
-								href={mobileHomeLink.url}
-								icon={mobileHomeLink.icon}
-								onClick={closeSheet}
-								variant="sheet"
-							>
-								{mobileHomeLink.text}
-							</NavLink>
+							<div className="grid grid-cols-2 gap-1">
+								{[mobileHomeLink, ...navLinks].map((link) => (
+									<NavLink
+										href={link.url}
+										icon={link.icon}
+										key={link.url}
+										onClick={closeSheet}
+										variant="sheet"
+									>
+										{link.text}
+									</NavLink>
+								))}
+							</div>
 							{navMenus.map((menu) => (
 								<MobileNavSection
 									items={menu.items}
@@ -199,11 +204,6 @@ export const Navbar = () => {
 									title={menu.label}
 								/>
 							))}
-							<MobileNavSection
-								items={navLinks}
-								onLinkClick={closeSheet}
-								title="More"
-							/>
 							<AuthLinks onLinkClick={closeSheet} variant="sheet" />
 						</>
 					)}
