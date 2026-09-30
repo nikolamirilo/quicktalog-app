@@ -21,7 +21,7 @@ const ItemInput = ({
 	categoryName,
 }: ItemInputProps) => {
 	return (
-		<div className="space-y-2 md:space-y-4 p-1 !z-[90000]">
+		<div className="space-y-4 p-1 !z-[90000]">
 			<ItemDetails
 				categoryName={categoryName}
 				onChange={onChange}

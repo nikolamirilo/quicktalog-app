@@ -133,6 +133,7 @@ const ItemsSection = ({
 						isFirst={isFirst}
 						isLast={isLast}
 						label="Items"
+						name={block.name}
 						onDelete={onDelete}
 						onEdit={onEdit}
 						onLayoutChange={(layout) =>

@@ -54,14 +54,16 @@ const DividerBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className={`${BLOCK_CONTROLS_GROUP} relative rounded-lg border-2 border-dashed transition-colors ${isEditing ? "border-product-primary bg-product-card p-4 font-product-body text-sm text-product-foreground" : "border-transparent p-2 hover:border-product-border-strong"}`}
+			className={`${BLOCK_CONTROLS_GROUP} relative rounded-lg border-2 border-dashed transition-colors ${isEditing ? "border-product-primary bg-product-card p-4 font-product-body text-sm text-product-foreground" : "border-transparent p-2 hover:border-product-border-strong [@media(hover:none)]:border-product-border"}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
 			<BlockControls
+				editLabel="Edit divider"
 				isEditing={isEditing}
 				isFirst={isFirst}
 				isLast={isLast}
 				label="Divider"
+				name={block.name}
 				onDelete={onDelete}
 				onEdit={() => setIsEditing(!isEditing)}
 				onMoveDown={onMoveDown}

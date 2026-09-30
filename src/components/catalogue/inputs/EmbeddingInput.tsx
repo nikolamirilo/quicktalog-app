@@ -59,7 +59,7 @@ const EmbeddingInput = ({ value, onChange }: EmbeddingInputProps) => {
 	const [activePreset, setActivePreset] = useState(PRESETS[0]);
 
 	return (
-		<div className="space-y-6 font-product-body">
+		<div className="space-y-4 font-product-body">
 			<BlockNameInput
 				onChange={(name) => onChange({ ...value, name })}
 				type="embedding"

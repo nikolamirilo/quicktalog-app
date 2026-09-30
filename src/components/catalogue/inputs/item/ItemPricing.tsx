@@ -1,3 +1,4 @@
+import { builderFieldClass } from "@/components/catalogue/modals/content/BuilderDialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/ui/cn";
 import { Item } from "@quicktalog/common";
 import { useEffect, useState } from "react";
 
@@ -26,6 +28,10 @@ const DENOMINATORS = [
 	{ value: "pcs", label: "pcs" },
 	{ value: "portion", label: "portion" },
 ];
+
+/** A checkbox drawn as a pill toggle; the whole pill is its label. */
+const toggleClass =
+	"inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-product-border bg-product-card pl-2.5 pr-3.5 text-[13.5px] font-semibold text-product-foreground-accent transition-colors hover:border-product-border-strong has-[[data-state=checked]]:border-product-primary-accent has-[[data-state=checked]]:bg-product-primary-soft has-[[data-state=checked]]:text-product-foreground has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50";
 
 const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 	const [priceString, setPriceString] = useState(
@@ -136,13 +142,12 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 
 	return (
 		<>
-			{/* Price Row */}
-			<div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-6">
-				<div className="space-y-2">
-					<Label htmlFor="item-price">Item Price ({currency})</Label>
+			<div className="grid gap-2.5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-6">
+				<div className="space-y-1.5">
+					<Label htmlFor="item-price">Price ({currency})</Label>
 					<div className="flex gap-2">
 						<Input
-							className="min-w-0 flex-1"
+							className={cn(builderFieldClass, "min-w-0 flex-1")}
 							disabled={value.isFree}
 							id="item-price"
 							inputMode="decimal"
@@ -163,7 +168,7 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 						>
 							<SelectTrigger
 								aria-label="Price unit"
-								className="w-[132px] flex-none"
+								className={cn(builderFieldClass, "w-[112px] flex-none")}
 							>
 								<SelectValue placeholder="Unit" />
 							</SelectTrigger>
@@ -178,10 +183,11 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 					</div>
 				</div>
 
-				<div className="flex h-11 items-center gap-6">
-					<div className="flex items-center gap-2">
+				<div className="flex items-center gap-2 md:h-10">
+					<label className={toggleClass} htmlFor="is-free">
 						<Checkbox
 							checked={value.isFree}
+							className="h-4 w-4 rounded-[5px]"
 							id="is-free"
 							onCheckedChange={(checked) =>
 								onChange({
@@ -191,36 +197,33 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 								})
 							}
 						/>
-						<Label className="cursor-pointer font-medium" htmlFor="is-free">
-							Free
-						</Label>
-					</div>
+						Free
+					</label>
 
-					<div className="flex items-center gap-2">
+					<label className={toggleClass} htmlFor="discount">
 						<Checkbox
 							checked={!!value.discount?.isOnDiscount}
+							className="h-4 w-4 rounded-[5px]"
 							disabled={value.isFree}
 							id="discount"
 							onCheckedChange={(checked) => toggleDiscount(checked as boolean)}
 						/>
-						<Label className="cursor-pointer font-medium" htmlFor="discount">
-							Discount
-						</Label>
-					</div>
+						On sale
+					</label>
 				</div>
 			</div>
 
-			{/* Sale Fields */}
 			{value.discount?.isOnDiscount && !value.isFree && (
-				<div className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-2 sm:gap-6">
-					<div className="space-y-2">
+				<div className="grid grid-cols-2 gap-3 md:gap-6">
+					<div className="space-y-1.5">
 						<Label htmlFor="sale-price">
-							Sale Price ({currency}){" "}
+							Sale price ({currency}){" "}
 							<span aria-hidden="true" className="text-product-error">
 								*
 							</span>
 						</Label>
 						<Input
+							className={builderFieldClass}
 							id="sale-price"
 							inputMode="decimal"
 							onBlur={handleDiscountBlur}
@@ -229,7 +232,7 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 							value={discountPriceString}
 						/>
 					</div>
-					<div className="space-y-2">
+					<div className="space-y-1.5">
 						<Label htmlFor="sale-percentage">
 							Percentage{" "}
 							<span aria-hidden="true" className="text-product-error">
@@ -238,7 +241,7 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 						</Label>
 						<div className="relative">
 							<Input
-								className="pr-9"
+								className={cn(builderFieldClass, "pr-8")}
 								id="sale-percentage"
 								inputMode="numeric"
 								onBlur={handleDiscountBlur}
@@ -250,7 +253,7 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 							/>
 							<span
 								aria-hidden="true"
-								className="absolute right-4 top-1/2 -translate-y-1/2 text-product-muted"
+								className="absolute right-3 top-1/2 -translate-y-1/2 text-product-muted"
 							>
 								%
 							</span>

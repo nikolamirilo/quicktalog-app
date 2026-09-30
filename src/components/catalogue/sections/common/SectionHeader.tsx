@@ -1,5 +1,5 @@
 import { FiChevronDown } from "react-icons/fi";
-import BlockControls from "@/components/catalogue/cards/common/BlockControls";
+import { BlockMenu } from "@/components/catalogue/cards/common/BlockMenu";
 
 // Catalogue-owned so product Button restyles never reach the published catalogue.
 const headerButtonClasses =
@@ -40,24 +40,16 @@ const SectionHeader = ({
 	const showContent = mode === "edit" || isExpanded;
 	return (
 		<div className="relative group/header">
-			{/* Edit tools get their own row above the header so they never cover the title. */}
-			{mode === "edit" && (
-				<BlockControls
-					currentLayout={currentLayout}
-					isFirst={isFirst}
-					isLast={isLast}
-					onDelete={onDelete}
-					onEdit={onEdit}
-					onLayoutChange={onLayoutChange}
-					onMoveDown={onMoveDown}
-					onMoveUp={onMoveUp}
-				/>
-			)}
 			<button
 				aria-controls={contentId}
 				aria-expanded={showContent}
 				aria-label={`${showContent ? "Collapse" : "Expand"} ${title} section`}
-				className={headerButtonClasses}
+				// In edit mode the ⋯ menu takes the chevron's place, so the title keeps clear of it.
+				className={
+					mode === "edit"
+						? `${headerButtonClasses} !pr-14`
+						: headerButtonClasses
+				}
 				id={`section-header-${code}`}
 				onClick={() => onToggle(code)}
 				style={{
@@ -120,6 +112,20 @@ const SectionHeader = ({
 					</div>
 				)}
 			</button>
+			{mode === "edit" && (
+				<BlockMenu
+					className="absolute right-2.5 top-1/2 z-20 -translate-y-1/2"
+					currentLayout={currentLayout}
+					isFirst={isFirst}
+					isLast={isLast}
+					name={title}
+					onDelete={onDelete}
+					onEdit={onEdit}
+					onLayoutChange={onLayoutChange}
+					onMoveDown={onMoveDown}
+					onMoveUp={onMoveUp}
+				/>
+			)}
 		</div>
 	);
 };

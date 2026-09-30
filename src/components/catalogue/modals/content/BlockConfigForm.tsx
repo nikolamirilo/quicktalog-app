@@ -67,7 +67,7 @@ const BlockConfigForm = ({
 					)}
 
 					{selectedOption === "text" && (
-						<div className="flex flex-col gap-6">
+						<div className="flex flex-col gap-4">
 							<BlockNameInput
 								onChange={(name) => setBlockData({ ...blockData, name })}
 								type="text"
@@ -92,7 +92,7 @@ const BlockConfigForm = ({
 					)}
 
 					{selectedOption === "divider" && (
-						<div className="flex flex-col gap-6">
+						<div className="flex flex-col gap-4">
 							<BlockNameInput
 								onChange={(name) => setBlockData({ ...blockData, name })}
 								type="divider"

@@ -95,10 +95,10 @@ const ItemModal = ({
 			<AppDialogContent className={cn(builderDialogFrame, "max-w-[640px]")}>
 				<BuilderDialogHeader>
 					<div className="min-w-0">
-						<AlertDialogTitle>
-							{initialItem ? "Edit Item" : "Add Item"}
+						<AlertDialogTitle className="text-lg">
+							{initialItem ? "Edit item" : "Add item"}
 						</AlertDialogTitle>
-						<AlertDialogDescription className="mt-1 text-sm">
+						<AlertDialogDescription className="mt-0.5 text-[13px] leading-[18px]">
 							{categoryName
 								? `In ${categoryName}`
 								: "Name, price and picture of the item."}
@@ -127,8 +127,13 @@ const ItemModal = ({
 					/>
 				</BuilderDialogBody>
 
+				{/* On phones the header × cancels, so adding fits one row. */}
 				<BuilderDialogFooter>
-					<Button onClick={onClose} variant="outline">
+					<Button
+						className={cn(!initialItem && "max-md:hidden")}
+						onClick={onClose}
+						variant="outline"
+					>
 						Cancel
 					</Button>
 
@@ -138,21 +143,15 @@ const ItemModal = ({
 							onClick={() => handleSave(true)}
 							variant="outline"
 						>
-							<span className="hidden sm:inline">
-								Add Item &amp; Add Another
+							<span className="hidden md:inline">
+								Add item &amp; add another
 							</span>
-							<span className="sm:hidden">Add Another</span>
+							<span className="md:hidden">Add another</span>
 						</Button>
 					)}
 
-					<Button
-						className={cn(
-							!initialItem && "!basis-full min-[520px]:!basis-auto",
-						)}
-						disabled={!isFormValid}
-						onClick={() => handleSave(false)}
-					>
-						{initialItem ? "Save Item" : "Add Item"}
+					<Button disabled={!isFormValid} onClick={() => handleSave(false)}>
+						{initialItem ? "Save item" : "Add item"}
 					</Button>
 				</BuilderDialogFooter>
 			</AppDialogContent>

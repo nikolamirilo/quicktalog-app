@@ -1,5 +1,6 @@
 import { DASHBOARD_TABS, type DashboardTab } from "@/constants/dashboard";
 import { cn } from "@/lib/ui/cn";
+import { pillTab } from "@/lib/ui/pill-tab";
 
 export type DashboardTabNavProps = {
 	activeTab: DashboardTab;
@@ -16,11 +17,7 @@ const VARIANTS = {
 			"border-product-primary bg-product-primary-soft font-bold text-product-foreground shadow-[0_1px_2px_rgb(var(--product-foreground-rgb)/0.06)] hover:scale-[1.03] hover:bg-product-primary-soft [&_svg]:text-product-primary-ink",
 	},
 	/** Pills in the scrollable bar (below 720px). */
-	bar: {
-		base: "inline-flex h-10 flex-none items-center gap-[7px] whitespace-nowrap rounded-full border border-product-border bg-product-card px-3.5 text-sm font-semibold text-product-foreground-accent [&_svg]:size-4",
-		active:
-			"border-product-primary bg-product-primary-soft font-bold text-product-foreground [&_svg]:text-product-primary-ink",
-	},
+	bar: pillTab,
 };
 
 /**

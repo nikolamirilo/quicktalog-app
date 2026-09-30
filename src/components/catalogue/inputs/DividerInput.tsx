@@ -41,7 +41,7 @@ const DividerInput = ({ value, onChange }: DividerInputProps) => {
 	const thickness = border.thickness || 1;
 
 	return (
-		<div className="space-y-6 font-product-body">
+		<div className="space-y-4 font-product-body">
 			<SliderField
 				label="Vertical spacing"
 				max={10}

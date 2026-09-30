@@ -190,6 +190,7 @@ const EmbeddingBlockComponent = ({
 					isFirst={isFirst}
 					isLast={isLast}
 					label="Embed"
+					name={block.name}
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}

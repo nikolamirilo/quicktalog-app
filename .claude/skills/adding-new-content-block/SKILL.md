@@ -38,7 +38,7 @@ use `isItemsBlock` / `asItemsBlock` from that helper.
 | # | Area | File(s) | What to do |
 |---|------|---------|------------|
 | 1 | Shared type | `@quicktalog/common` → `src/types/catalogue.ts` | Interface extends `BaseContentBlock`; add to the `ContentBlock` union. **Needs a package release.** |
-| 2 | Renderer | [components/catalogue/sections/](../../../src/components/catalogue/sections/)`[Name].tsx` | View + edit mode; `BlockControls` in edit mode |
+| 2 | Renderer | [components/catalogue/sections/](../../../src/components/catalogue/sections/)`[Name].tsx` | View + edit mode; in edit mode `BlockControls` (type label + ⋯ menu), with `BLOCK_CONTROLS_GROUP` on the outer element and the block's `name` passed through |
 | 3 | Input | [components/catalogue/inputs/](../../../src/components/catalogue/inputs/)`[Name]Input.tsx` | The config form |
 | 4 | Picker option | [modals/content/SectionTypePicker.tsx](../../../src/components/catalogue/modals/content/SectionTypePicker.tsx) + `ContentOption` in [BlockConfigHeader.tsx](../../../src/components/catalogue/modals/content/BlockConfigHeader.tsx) | `OPTIONS` entry (key, label, lucide icon); the `isLocked` case lives with the plan gate in `AddContentModal` |
 | 5 | Modal state | [modals/AddContentModal.tsx](../../../src/components/catalogue/modals/AddContentModal.tsx) | `ContentOption`, `DEFAULT_BLOCK_DATA`, edit-hydration, `handleAdd`, `isFormValid`, `isLocked` |

@@ -1,4 +1,5 @@
 "use client";
+import { builderFieldClass } from "@/components/catalogue/modals/content/BuilderDialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -19,17 +20,18 @@ interface BlockNameInputProps {
  * block in the builder and to the AI assistant.
  */
 const BlockNameInput = ({ type, value, onChange }: BlockNameInputProps) => (
-	<div className="flex max-w-md flex-col gap-2 font-product-body">
+	<div className="flex max-w-md flex-col gap-1.5 font-product-body">
 		<Label htmlFor={`${type}-name-input`}>Section name</Label>
 		<Input
 			aria-describedby={`${type}-name-hint`}
+			className={builderFieldClass}
 			id={`${type}-name-input`}
 			onChange={(e) => onChange(e.target.value)}
 			placeholder="e.g. Summer sale banner"
 			value={value}
 		/>
 		<span
-			className="text-[12.5px] leading-snug text-product-muted"
+			className="text-xs leading-snug text-product-muted"
 			id={`${type}-name-hint`}
 		>
 			Describes this section for screen readers and identifies it in the
