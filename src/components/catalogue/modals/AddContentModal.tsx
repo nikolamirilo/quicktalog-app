@@ -4,7 +4,6 @@ import { AppDialogContent } from "@/components/modals/AppDialog";
 import { AlertDialog, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { snakeToTitleCase } from "@/lib/format/text";
 import { ContentBlock, ItemsBlock, UserData } from "@quicktalog/common";
 import { normalizeBlock } from "@/lib/catalogue/content-blocks";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
@@ -224,19 +223,22 @@ const AddContentModal = ({
 				<AppDialogContent
 					className={cn(
 						builderDialogFrame,
-						"max-w-5xl md:h-[min(660px,calc(100dvh-48px))] md:flex-row",
+						"max-w-[880px] md:h-[min(600px,calc(100dvh-48px))] md:flex-row",
 					)}
 				>
-					{/* Section type: chips above the form on phones, a side list from md. */}
-					<div className="flex flex-none flex-col border-b border-product-border bg-product-background-hero px-5 pb-4 pt-5 sm:px-6 md:w-60 md:border-b-0 md:border-r md:px-4 md:pt-6">
-						<div className="flex items-start justify-between gap-3 md:px-1.5">
-							<AlertDialogTitle className="text-lg md:text-xl">
+					{/* Section type: a scrolling pill bar on phones, a side list from md. */}
+					<div className="flex flex-none flex-col border-b border-product-border bg-product-card px-4 pt-3 md:w-56 md:border-b-0 md:border-r md:bg-product-background-hero md:px-3.5 md:pb-4 md:pt-5">
+						<div className="flex items-center justify-between gap-3 md:px-1.5">
+							<AlertDialogTitle className="text-lg">
 								{editingBlock ? "Edit section" : "Add section"}
 							</AlertDialogTitle>
-							<BuilderDialogClose className="md:hidden" onClick={onClose} />
+							<BuilderDialogClose
+								className="mt-0 md:hidden"
+								onClick={onClose}
+							/>
 						</div>
 						<SectionTypePicker
-							className="mt-3 md:mt-5"
+							className="mt-1.5 md:mt-4"
 							isLocked={isLocked}
 							onChange={setSelectedOption}
 							value={selectedOption}
@@ -261,8 +263,7 @@ const AddContentModal = ({
 								Cancel
 							</Button>
 							<Button disabled={!isFormValid()} onClick={handleAdd}>
-								{editingBlock ? "Update" : "Add"}{" "}
-								{snakeToTitleCase(selectedOption)}
+								{editingBlock ? "Save section" : "Add section"}
 							</Button>
 						</BuilderDialogFooter>
 					</div>

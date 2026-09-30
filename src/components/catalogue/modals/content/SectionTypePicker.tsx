@@ -7,9 +7,11 @@ import {
 	SeparatorHorizontal,
 	Type,
 } from "lucide-react";
-import type { ElementType } from "react";
+import { type ElementType, useRef } from "react";
 import { useRadioKeys } from "@/hooks/useRadioKeys";
+import { useScrollActiveIntoView } from "@/hooks/useScrollActiveIntoView";
 import { cn } from "@/lib/ui/cn";
+import { pillTab, pillTabBar } from "@/lib/ui/pill-tab";
 import type { ContentOption } from "./BlockConfigHeader";
 
 const OPTIONS: { key: ContentOption; label: string; icon: ElementType }[] = [
@@ -23,9 +25,9 @@ const OPTIONS: { key: ContentOption; label: string; icon: ElementType }[] = [
 const KEYS = OPTIONS.map((o) => o.key);
 
 /**
- * Section type choice: wrapping chips on phones, a vertical list from `md`.
- * A locked type stays selectable so the form can show why it's locked; the
- * dialog's add button stays disabled for it.
+ * Section type choice: the dashboard's scrolling pill bar on phones, a
+ * vertical list from `md`. A locked type stays selectable so the form can show
+ * why it's locked; the dialog's add button stays disabled for it.
  */
 export function SectionTypePicker({
 	value,
@@ -39,15 +41,19 @@ export function SectionTypePicker({
 	className?: string;
 }) {
 	const { onKeyDown, itemProps } = useRadioKeys(KEYS, value, onChange);
+	const listRef = useRef<HTMLDivElement>(null);
+	useScrollActiveIntoView(listRef, '[aria-checked="true"]', value);
 
 	return (
 		<div
 			aria-label="Section type"
 			className={cn(
-				"flex flex-wrap gap-1.5 md:flex-col md:flex-nowrap md:gap-1",
+				pillTabBar,
+				"-mx-4 px-4 pb-2.5 pt-1 md:mx-0 md:flex-col md:gap-1 md:overflow-visible md:p-0",
 				className,
 			)}
 			onKeyDown={onKeyDown}
+			ref={listRef}
 			role="radiogroup"
 		>
 			{OPTIONS.map(({ key, label, icon: Icon }, i) => {
@@ -57,28 +63,24 @@ export function SectionTypePicker({
 					<button
 						{...itemProps(key, i)}
 						className={cn(
-							"inline-flex h-9 items-center gap-2 rounded-full border-[1.5px] border-product-border bg-product-card px-3 text-[13.5px] font-semibold text-product-foreground-accent transition-colors hover:border-product-border-strong hover:text-product-foreground",
-							"md:h-11 md:w-full md:rounded-[14px] md:border-transparent md:bg-transparent md:px-3.5 md:text-sm md:hover:border-transparent md:hover:bg-product-card",
+							pillTab.base,
+							"transition-colors hover:border-product-border-strong hover:text-product-foreground",
+							"md:h-10 md:w-full md:rounded-[12px] md:border-[1.5px] md:border-transparent md:bg-transparent md:px-3 md:hover:border-transparent md:hover:bg-product-card",
 							checked &&
-								"border-product-primary-accent bg-product-primary-soft text-product-foreground hover:border-product-primary-accent md:border-product-primary-accent md:bg-product-primary-soft md:hover:border-product-primary-accent md:hover:bg-product-primary-soft",
+								cn(
+									pillTab.active,
+									"hover:border-product-primary md:border-product-primary-accent md:bg-product-primary-soft md:hover:border-product-primary-accent md:hover:bg-product-primary-soft",
+								),
 						)}
 						key={key}
 					>
-						<Icon
-							aria-hidden="true"
-							className={cn(
-								"size-4 flex-none",
-								checked && "text-product-primary-ink",
-							)}
-						/>
-						<span className="whitespace-nowrap md:flex-1 md:text-left">
-							{label}
-						</span>
+						<Icon aria-hidden="true" className="flex-none" />
+						<span className="md:flex-1 md:text-left">{label}</span>
 						{locked && (
 							<>
 								<Lock
 									aria-hidden="true"
-									className="size-3.5 flex-none text-product-muted"
+									className="flex-none !text-product-muted"
 								/>
 								<span className="sr-only">(upgrade required)</span>
 							</>

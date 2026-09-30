@@ -43,14 +43,16 @@ const TextBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className={`mb-5 ${BLOCK_CONTROLS_GROUP} relative min-h-[50px] rounded-lg border-2 border-dashed p-2 transition-colors ${isEditing ? "border-product-primary" : "border-transparent hover:border-product-border-strong"}`}
+			className={`mb-5 ${BLOCK_CONTROLS_GROUP} relative min-h-[50px] rounded-lg border-2 border-dashed p-2 transition-colors ${isEditing ? "border-product-primary" : "border-transparent hover:border-product-border-strong [@media(hover:none)]:border-product-border"}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
 			<BlockControls
+				editLabel="Edit text"
 				isEditing={isEditing}
 				isFirst={isFirst}
 				isLast={isLast}
 				label="Text"
+				name={block.name}
 				onDelete={onDelete}
 				onEdit={() => setIsEditing(!isEditing)}
 				onMoveDown={onMoveDown}

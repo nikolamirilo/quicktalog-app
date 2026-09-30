@@ -185,6 +185,7 @@ const CustomCodeBlockComponent = ({
 					isFirst={isFirst}
 					isLast={isLast}
 					label="Custom code"
+					name={block.name}
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}

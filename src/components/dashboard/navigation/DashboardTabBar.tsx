@@ -1,10 +1,13 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import {
 	DashboardTabButtons,
 	type DashboardTabNavProps,
 } from "@/components/dashboard/navigation/DashboardTabButtons";
+import { useScrollActiveIntoView } from "@/hooks/useScrollActiveIntoView";
+import { cn } from "@/lib/ui/cn";
+import { pillTabBar } from "@/lib/ui/pill-tab";
 
 /**
  * Horizontally scrollable pill tabs shown below 720px. The active pill is kept
@@ -16,22 +19,15 @@ export function DashboardTabBar({
 	disabled,
 }: DashboardTabNavProps) {
 	const listRef = useRef<HTMLElement>(null);
-
-	useEffect(() => {
-		const list = listRef.current;
-		const active = list?.querySelector<HTMLElement>('[aria-pressed="true"]');
-		if (!list || !active) return;
-		// scrollLeft, not scrollIntoView: that would also scroll the page.
-		list.scrollTo({
-			left: active.offsetLeft - (list.clientWidth - active.clientWidth) / 2,
-			behavior: "smooth",
-		});
-	}, [activeTab]);
+	useScrollActiveIntoView(listRef, '[aria-pressed="true"]', activeTab);
 
 	return (
 		<nav
 			aria-label="Dashboard tabs"
-			className="-mx-4 -mt-1 mb-[18px] flex gap-1.5 overflow-x-auto border-b border-product-border px-4 pb-2.5 pt-1 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
+			className={cn(
+				pillTabBar,
+				"-mx-4 -mt-1 mb-[18px] border-b border-product-border px-4 pb-2.5 pt-1 md:hidden",
+			)}
 			ref={listRef}
 		>
 			<DashboardTabButtons

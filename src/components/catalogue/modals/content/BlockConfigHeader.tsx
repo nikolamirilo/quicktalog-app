@@ -25,7 +25,7 @@ const LABELS: Record<ContentOption, string> = {
 
 const DESCRIPTIONS: Record<ContentOption, string> = {
 	items:
-		"A section of items. Give it a heading to make it collapsible, or leave the heading off for a plain grid.",
+		"A group of items. With a heading it can collapse; without one it is a plain grid.",
 	embedding:
 		"Embed external content such as maps, videos, or third-party widgets.",
 	custom_code: "Insert custom HTML to add advanced or custom functionality.",
@@ -35,20 +35,21 @@ const DESCRIPTIONS: Record<ContentOption, string> = {
 };
 
 /**
- * Name and description of the chosen section type. On phones the chips above
- * already name it, so only the description shows; the close button shows from `md`.
+ * Name and description of the chosen section type. On phones the pill bar
+ * already names it, so only the description shows, as a hint at the top of the
+ * form; the name and the close button show from `md`.
  */
 const BlockConfigHeader = ({
 	selectedOption,
 	onClose,
 }: BlockConfigHeaderProps) => {
 	return (
-		<BuilderDialogHeader className="py-3 md:pb-4 md:pt-6">
+		<BuilderDialogHeader className="max-md:border-b-0 max-md:pb-0 max-md:pt-3">
 			<div className="min-w-0">
-				<h3 className="hidden font-product-heading text-lg md:block font-bold leading-tight text-product-foreground">
+				<h3 className="hidden font-product-heading text-base font-bold leading-tight text-product-foreground md:block">
 					{LABELS[selectedOption]}
 				</h3>
-				<AlertDialogDescription className="text-sm leading-relaxed md:mt-1">
+				<AlertDialogDescription className="text-[13px] leading-[18px] md:mt-1">
 					{DESCRIPTIONS[selectedOption]}
 				</AlertDialogDescription>
 			</div>

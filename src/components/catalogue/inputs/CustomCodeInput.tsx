@@ -12,7 +12,7 @@ interface CustomCodeInputProps {
 
 const CustomCodeInput = ({ value, onChange }: CustomCodeInputProps) => {
 	return (
-		<div className="space-y-6">
+		<div className="space-y-4">
 			<BlockNameInput
 				onChange={(name) => onChange({ ...value, name })}
 				type="custom_code"

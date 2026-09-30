@@ -123,7 +123,29 @@ const GLYPHS: Record<ContentLayout, ReactNode> = {
 	),
 };
 
-/** Item layout choice as radio tiles, keyboard-operable with the arrow keys. */
+/** Drawn thumbnail of one item layout. */
+export function LayoutGlyph({
+	layout,
+	className,
+}: {
+	layout: ContentLayout;
+	className?: string;
+}) {
+	return (
+		<svg
+			aria-hidden="true"
+			className={cn("h-auto overflow-visible", className)}
+			viewBox="0 0 48 36"
+		>
+			<g strokeWidth="0.75">{GLYPHS[layout]}</g>
+		</svg>
+	);
+}
+
+/**
+ * Item layout choice as radio tiles, keyboard-operable with the arrow keys.
+ * Tiles are shorter on phones so the whole row fits in a builder sheet.
+ */
 export function LayoutPicker({
 	value,
 	onChange,
@@ -153,7 +175,7 @@ export function LayoutPicker({
 					<button
 						{...itemProps(key, i)}
 						className={cn(
-							"relative flex min-w-0 flex-col items-center gap-2 rounded-[14px] border-[1.5px] border-product-border bg-product-card px-1.5 pb-2.5 pt-2 text-[12.5px] font-semibold leading-tight text-product-foreground-accent transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-product-border-strong",
+							"relative flex min-w-0 flex-col items-center gap-1.5 rounded-[12px] border-[1.5px] border-product-border bg-product-card px-1.5 pb-2 pt-1.5 text-xs font-semibold leading-tight text-product-foreground-accent transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-product-border-strong md:gap-2 md:rounded-[14px] md:pb-2.5 md:pt-2 md:text-[12.5px]",
 							checked &&
 								"border-product-primary-accent text-product-foreground shadow-[0_0_0_3px_rgb(var(--product-primary-rgb)/0.25)] hover:border-product-primary-accent",
 						)}
@@ -162,22 +184,20 @@ export function LayoutPicker({
 						<span
 							aria-hidden="true"
 							className={cn(
-								"grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-[10px] bg-product-background-hero transition-colors",
+								"grid h-11 w-full place-items-center overflow-hidden rounded-[8px] bg-product-background-hero transition-colors md:aspect-[4/3] md:h-auto md:rounded-[10px]",
 								checked && "bg-product-primary-soft",
 							)}
 						>
-							<svg
-								className="h-auto w-[78%] max-w-[88px] overflow-visible"
-								viewBox="0 0 48 36"
-							>
-								<g strokeWidth="0.75">{GLYPHS[key]}</g>
-							</svg>
+							<LayoutGlyph
+								className="w-10 md:w-[78%] md:max-w-[88px]"
+								layout={key}
+							/>
 						</span>
 						<span className="text-center">{layout.label}</span>
 						{checked && (
 							<span
 								aria-hidden="true"
-								className="absolute -right-[7px] -top-[7px] grid h-5 w-5 place-items-center rounded-full bg-product-primary shadow-[0_0_0_2px_var(--product-card)]"
+								className="absolute -right-1.5 -top-1.5 grid h-[18px] w-[18px] place-items-center rounded-full md:-right-[7px] md:-top-[7px] md:h-5 md:w-5 bg-product-primary shadow-[0_0_0_2px_var(--product-card)]"
 							>
 								<svg
 									className="h-3 w-3"

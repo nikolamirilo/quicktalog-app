@@ -1,3 +1,4 @@
+import { builderFieldClass } from "@/components/catalogue/modals/content/BuilderDialog";
 import { ImageDropzone } from "@/components/general/ImageDropzone";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,61 +29,65 @@ const ItemImage = ({
 	if (layout === "variant_3") return null;
 
 	return (
-		<div className="space-y-2 pt-3 md:pt-1">
-			<p
-				className="text-[13.5px] font-semibold leading-none text-product-foreground"
-				id="item-image-label"
-			>
-				Item Image
-			</p>
-			<Tabs
-				className="w-full"
-				onValueChange={(v) => setImageTab(v as "upload" | "url")}
-				value={imageTab}
-			>
-				<TabsList
-					aria-labelledby="item-image-label"
-					className="grid w-full grid-cols-2 sm:inline-flex sm:w-auto"
+		<Tabs
+			className="flex w-full flex-col gap-1.5"
+			onValueChange={(v) => setImageTab(v as "upload" | "url")}
+			value={imageTab}
+		>
+			<div className="flex items-center justify-between gap-3">
+				<p
+					className="text-[13.5px] font-semibold leading-none text-product-foreground"
+					id="item-image-label"
 				>
-					<TabsTrigger value="upload">
+					Image
+				</p>
+				<TabsList aria-labelledby="item-image-label" className="h-8 p-0.5">
+					<TabsTrigger
+						className="gap-1.5 px-2.5 text-[12.5px] [&_svg]:size-3.5"
+						value="upload"
+					>
 						<Upload aria-hidden="true" />
-						Upload File
+						Upload
 					</TabsTrigger>
-					<TabsTrigger value="url">
+					<TabsTrigger
+						className="gap-1.5 px-2.5 text-[12.5px] [&_svg]:size-3.5"
+						value="url"
+					>
 						<Link2 aria-hidden="true" />
 						URL
 					</TabsTrigger>
 				</TabsList>
-				<TabsContent value="upload">
+			</div>
+			<TabsContent className="mt-0" value="upload">
+				<ImageDropzone
+					className="w-full max-md:h-32"
+					image={value.image}
+					onUploadComplete={(url) => onChange({ ...value, image: url })}
+					removeImage={() => onChange({ ...value, image: "" })}
+					setIsUploading={setIsUploading}
+				/>
+			</TabsContent>
+			<TabsContent className="mt-0 space-y-3" value="url">
+				<Input
+					aria-label="Image URL"
+					className={builderFieldClass}
+					inputMode="url"
+					onChange={(e) => onChange({ ...value, image: e.target.value })}
+					placeholder="https://example.com/image.jpg"
+					type="url"
+					value={value.image}
+				/>
+				{value.image && (
 					<ImageDropzone
-						className="aspect-video w-full"
+						className="w-full max-md:h-32"
 						image={value.image}
 						onUploadComplete={(url) => onChange({ ...value, image: url })}
 						removeImage={() => onChange({ ...value, image: "" })}
 						setIsUploading={setIsUploading}
 					/>
-				</TabsContent>
-				<TabsContent className="space-y-3" value="url">
-					<Input
-						aria-label="Image URL"
-						inputMode="url"
-						onChange={(e) => onChange({ ...value, image: e.target.value })}
-						placeholder="https://example.com/image.jpg"
-						type="url"
-						value={value.image}
-					/>
-					{value.image && (
-						<ImageDropzone
-							className="aspect-video w-full"
-							image={value.image}
-							onUploadComplete={(url) => onChange({ ...value, image: url })}
-							removeImage={() => onChange({ ...value, image: "" })}
-							setIsUploading={setIsUploading}
-						/>
-					)}
-				</TabsContent>
-			</Tabs>
-		</div>
+				)}
+			</TabsContent>
+		</Tabs>
 	);
 };
 
