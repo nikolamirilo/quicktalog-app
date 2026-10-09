@@ -18,13 +18,13 @@ const catalogue = {
 const FREE_PLAN: AiSectionAccess = {
 	divider: false,
 	embedding: false,
-	customCode: false,
+	customVisual: false,
 };
 
 const FULL_ACCESS: AiSectionAccess = {
 	divider: true,
 	embedding: true,
-	customCode: true,
+	customVisual: true,
 };
 
 const prompt = (access: AiSectionAccess = FULL_ACCESS) =>
@@ -53,16 +53,16 @@ describe("buildInstructions", () => {
 		const rendered = prompt(FREE_PLAN);
 
 		expect(rendered).not.toContain("Writing code:");
-		expect(rendered).not.toContain("custom_code is the opposite");
+		expect(rendered).not.toContain("custom_visual is the opposite");
 		expect(rendered).toContain(
-			"cannot use these section types: divider, embedding, custom_code",
+			"cannot use these section types: divider, embedding, custom_visual",
 		);
 	});
 
 	it("sends the code rules once a code section is unlocked", () => {
 		expect(prompt()).toContain("Writing code:");
 		expect(
-			prompt({ divider: false, embedding: true, customCode: false }),
+			prompt({ divider: false, embedding: true, customVisual: false }),
 		).toContain("Writing code:");
 	});
 

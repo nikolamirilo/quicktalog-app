@@ -42,15 +42,20 @@ const groupsOf = (f: Features): { title: string; rows: FeatureRow[] }[] => [
 	{
 		title: "Section types",
 		rows: [
+			{ label: "Items", value: true },
+			{ label: "Text", value: true },
 			{ label: "Divider", value: f.sections.divider },
 			{ label: "External content", value: f.sections.embedding },
-			{ label: "Custom code", value: f.sections.customCode },
+			{ label: "Custom visual", value: f.sections.customVisual },
 		],
 	},
 	{
 		title: "Growth & support",
 		rows: [
 			{ label: "Analytics", value: f.analytics },
+			// Named "tags" to separate it from the row above, which is the
+			// built-in dashboard analytics tier.
+			{ label: "Your own analytics tags", value: f.integrations.tracking },
 			{ label: "Newsletter sign-ups", value: f.newsletter },
 			{ label: "Support", value: f.support },
 			{ label: "Custom features", value: f.custom_features },
@@ -107,7 +112,7 @@ export function PlanFeatures({ features }: { features: Features }) {
 			<div className="mt-5 grid gap-x-8 gap-y-5 md:grid-cols-3">
 				{groups.map((group) => (
 					<div key={group.title}>
-						<h3 className="mb-1.5 text-xs font-bold uppercase tracking-[0.06em] text-product-muted">
+						<h3 className="mb-1.5 text-xs font-bold text-product-muted">
 							{group.title}
 						</h3>
 						<ul className="divide-y divide-product-border">

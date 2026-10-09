@@ -161,7 +161,7 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 							activeData?.footer?.cta?.url && (
 								<CatalogueButton
 									asChild
-									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary flex items-center gap-2"
+									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-catalogue-card-heading border-primary flex items-center gap-2"
 								>
 									<SmartLink
 										aria-label={activeData?.footer?.cta?.label}

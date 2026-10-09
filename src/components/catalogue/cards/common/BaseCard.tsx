@@ -33,6 +33,8 @@ const BaseCard = ({
 	return (
 		<article
 			className={`card-catalogue cursor-pointer bg-catalogue-card-background text-catalogue-card-text border border-catalogue-card-border overflow-hidden relative group ${className}`}
+			// AI review highlights find a changed item by this.
+			data-item-id={record?.id}
 			onClick={onClick}
 			{...rootProps}
 		>

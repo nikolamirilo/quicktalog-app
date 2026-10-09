@@ -171,20 +171,20 @@ describe("applyCatalogueOperations", () => {
 		expect(result.limitReached).toBe(true);
 	});
 
-	it("creates embed and custom-code sections from the model's markup", () => {
+	it("creates embed and custom-visual sections from the model's markup", () => {
 		const result = applyCatalogueOperations(base(), [
 			{
 				op: "add_section",
 				sectionType: "embedding",
 				code: '<iframe src="https://maps.example/x"></iframe>',
 			},
-			{ op: "add_section", sectionType: "custom_code", code: "<b>hi</b>" },
+			{ op: "add_section", sectionType: "custom_visual", code: "<b>hi</b>" },
 		]);
 
 		const [, , embed, custom] = result.catalogue.content as any[];
 		expect(embed.type).toBe("embedding");
 		expect(embed.code).toBe('<iframe src="https://maps.example/x"></iframe>');
-		expect(custom.type).toBe("custom_code");
+		expect(custom.type).toBe("custom_visual");
 		expect(custom.code).toBe("<b>hi</b>");
 		expect(result.skipped).toHaveLength(0);
 	});
@@ -193,7 +193,7 @@ describe("applyCatalogueOperations", () => {
 		const result = applyCatalogueOperations(base(), [
 			{
 				op: "add_section",
-				sectionType: "custom_code",
+				sectionType: "custom_visual",
 				name: "Spin the wheel",
 				code: "<div></div>",
 			},
@@ -210,7 +210,7 @@ describe("applyCatalogueOperations", () => {
 		expect(text.name).toBe("Intro");
 		// The summary now reports the real name rather than inventing one.
 		expect(result.applied[0]).toBe(
-			'Added custom_code section "Spin the wheel"',
+			'Added custom_visual section "Spin the wheel"',
 		);
 	});
 
@@ -219,7 +219,7 @@ describe("applyCatalogueOperations", () => {
 			{
 				id: "sec-9",
 				order: 0,
-				type: "custom_code",
+				type: "custom_visual",
 				name: "Old",
 				code: "<div/>",
 			},
@@ -251,18 +251,20 @@ describe("applyCatalogueOperations", () => {
 		const result = applyCatalogueOperations(
 			base(),
 			[
-				{ op: "add_section", sectionType: "custom_code", code: "<b>x</b>" },
+				{ op: "add_section", sectionType: "custom_visual", code: "<b>x</b>" },
 				{ op: "add_section", sectionType: "embedding", code: "<iframe/>" },
 				{ op: "add_section", sectionType: "items", name: "Desserts" },
 			],
-			{ sectionTypes: { divider: true, embedding: false, customCode: false } },
+			{
+				sectionTypes: { divider: true, embedding: false, customVisual: false },
+			},
 		);
 
 		// Only the category survives; the two locked types are reported back.
 		expect(result.catalogue.content).toHaveLength(3);
 		expect((result.catalogue.content[2] as any).name).toBe("Desserts");
 		expect(result.skipped).toEqual([
-			"Custom code sections are not part of your plan.",
+			"Custom visual sections are not part of your plan.",
 			"Embed sections are not part of your plan.",
 		]);
 		expect(result.limitReached).toBe(true);
@@ -373,14 +375,14 @@ describe("applyCatalogueOperations", () => {
 	describe("per-type plan gating", () => {
 		const addCode = {
 			op: "add_section" as const,
-			sectionType: "custom_code" as const,
+			sectionType: "custom_visual" as const,
 			name: "Widget",
 			code: "<div>hi</div>",
 		};
 
 		it("refuses a gated type the plan does not grant", () => {
 			const result = applyCatalogueOperations(base(), [addCode], {
-				sectionTypes: { divider: true, embedding: true, customCode: false },
+				sectionTypes: { divider: true, embedding: true, customVisual: false },
 			});
 
 			expect(result.applied).toEqual([]);
@@ -400,11 +402,11 @@ describe("applyCatalogueOperations", () => {
 
 		it("allows a gated type the plan grants explicitly", () => {
 			const result = applyCatalogueOperations(base(), [addCode], {
-				sectionTypes: { divider: true, embedding: true, customCode: true },
+				sectionTypes: { divider: true, embedding: true, customVisual: true },
 			});
 
 			expect(result.applied).toHaveLength(1);
-			expect(result.catalogue.content.at(-1)?.type).toBe("custom_code");
+			expect(result.catalogue.content.at(-1)?.type).toBe("custom_visual");
 		});
 
 		// The browser replays operations the server already authorised, and it has
@@ -413,7 +415,7 @@ describe("applyCatalogueOperations", () => {
 			const result = applyCatalogueOperations(base(), [addCode]);
 
 			expect(result.skipped).toEqual([]);
-			expect(result.catalogue.content.at(-1)?.type).toBe("custom_code");
+			expect(result.catalogue.content.at(-1)?.type).toBe("custom_visual");
 		});
 
 		it("never gates the types every plan includes", () => {

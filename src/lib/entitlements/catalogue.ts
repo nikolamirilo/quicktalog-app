@@ -1,6 +1,10 @@
 import "server-only";
 import type { Catalogue } from "@quicktalog/common";
 import { sql } from "drizzle-orm";
+import {
+	dropInvalidTrackingIds,
+	stripTrackingIds,
+} from "@/lib/catalogue/tracking-providers";
 import type { Tx } from "@/utils/db";
 import type { Tier } from "./plan";
 
@@ -17,6 +21,16 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 	const type = tier.features.branding ? "custom" : "default";
 	const out = { ...data };
 	if (out.header) out.header = { ...out.header, type };
+	// The client sends the whole `metadata` object back on every save, so both
+	// the plan and the shape are enforced here rather than trusted from the
+	// builder. A malformed id would be dropped at render anyway, but persisting
+	// it leaves the owner looking at a field they think is connected.
+	if (out.metadata) {
+		out.metadata =
+			tier.features.integrations?.tracking === true
+				? dropInvalidTrackingIds(out.metadata)
+				: stripTrackingIds(out.metadata);
+	}
 	if (out.footer) {
 		out.footer = {
 			...out.footer,
@@ -31,14 +45,16 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
  * Brings a user's catalogues back within a plan they no longer pay for:
  * deactivates the ones over the new catalogue quota (most recently updated
  * kept), and removes branding and newsletter where the plan no longer includes
- * them. Returns the names that were deactivated so their pages can be
- * revalidated after the transaction commits.
+ * them. Returns the names that were deactivated and the names that merely lost
+ * their analytics tags, so both can be revalidated after the transaction
+ * commits - a catalogue that stays active still has stale HTML in the ISR
+ * cache.
  */
 export async function applyPlanDowngrade(
 	tx: Tx,
 	userId: string,
 	tier: Tier,
-): Promise<string[]> {
+): Promise<{ deactivated: string[]; trackingCleared: string[] }> {
 	const deactivated = await tx.execute<{ name: string }>(sql`
 		with ranked as (
 			select id,
@@ -74,5 +90,22 @@ export async function applyPlanDowngrade(
 		`);
 	}
 
-	return [...deactivated].map((row) => row.name);
+	// Catalogues that stay active but lose their tags still have stale HTML in
+	// the ISR cache, so their names are returned for revalidation too.
+	let trackingCleared: string[] = [];
+	if (!tier.features.integrations?.tracking) {
+		const cleared = await tx.execute<{ name: string }>(sql`
+			update public.catalogues
+			   set metadata = metadata - 'googleAnalyticsId' - 'metaPixelId'
+			 where user_id = ${userId}
+			   and (metadata ? 'googleAnalyticsId' or metadata ? 'metaPixelId')
+			returning name
+		`);
+		trackingCleared = [...cleared].map((row) => row.name);
+	}
+
+	return {
+		deactivated: [...deactivated].map((row) => row.name),
+		trackingCleared,
+	};
 }

@@ -23,17 +23,39 @@ const SelectTemplateModal = ({
 	isOpen: externalIsOpen,
 	onClose: externalOnClose,
 }: SelectTemplateModalProps = {}) => {
-	const { catalogue, setIsSidebarOpen } = useCatalogueContext();
+	const {
+		catalogue,
+		setIsChatOpen,
+		setIsSidebarOpen,
+		setIsTemplatePickerOpen,
+	} = useCatalogueContext();
 	const [internalIsOpen, setInternalIsOpen] = useState(false);
 	const hasAutoOpened = useRef(false);
+	const pickerShown = useRef(false);
 
 	const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
 
+	// Quick AI steps aside while the picker is up: a new catalogue would
+	// otherwise open with the picker and the chat on screen together.
 	useEffect(() => {
 		if (isOpen) {
+			pickerShown.current = true;
+			setIsTemplatePickerOpen?.(true);
 			setIsSidebarOpen?.(false);
+			setIsChatOpen?.(false);
+		} else if (pickerShown.current) {
+			pickerShown.current = false;
+			setIsTemplatePickerOpen?.(false);
 		}
-	}, [isOpen, setIsSidebarOpen]);
+	}, [isOpen, setIsChatOpen, setIsSidebarOpen, setIsTemplatePickerOpen]);
+
+	// Leaving the builder with the picker open must not leave Quick AI hidden.
+	useEffect(
+		() => () => {
+			if (pickerShown.current) setIsTemplatePickerOpen?.(false);
+		},
+		[setIsTemplatePickerOpen],
+	);
 
 	const handleClose = () => {
 		if (externalOnClose) {

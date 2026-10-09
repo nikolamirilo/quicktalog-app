@@ -1,12 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-	customThemeColorsEqual,
-	DEFAULT_CUSTOM_COLORS,
-} from "@/lib/themes/custom-theme";
+import { DEFAULT_CUSTOM_COLORS } from "@/lib/themes/custom-theme";
 import { cn } from "@/lib/ui/cn";
-import type { CustomThemeColors, SavedTheme } from "@quicktalog/common";
+import type { SavedTheme } from "@quicktalog/common";
 import { themes } from "@quicktalog/common";
 import { Palette, Plus, X } from "lucide-react";
 import { useState } from "react";
@@ -15,10 +12,11 @@ interface ThemeSelectionProps {
 	currentThemeName: string | undefined;
 	onThemeSelect: (themeKey: string) => void;
 	isCustomActive: boolean;
-	currentCustomColors: CustomThemeColors | undefined;
+	/** The saved theme the custom panel is editing; its tile shows as selected. */
+	activeSavedThemeId: string | undefined;
 	onCustomSelect: () => void;
 	savedThemes: SavedTheme[];
-	onSavedThemeSelect: (colors: CustomThemeColors) => void;
+	onSavedThemeSelect: (theme: SavedTheme) => void;
 	onDeleteSavedTheme: (id: string) => void;
 	/** Plans without custom themes see neither the "Custom" tile nor saved themes. */
 	allowCustom: boolean;
@@ -35,7 +33,7 @@ const ThemeSelection = ({
 	currentThemeName,
 	onThemeSelect,
 	isCustomActive,
-	currentCustomColors,
+	activeSavedThemeId,
 	onCustomSelect,
 	savedThemes,
 	onSavedThemeSelect,
@@ -55,11 +53,6 @@ const ThemeSelection = ({
 	);
 	const totalThemeCount = availableSavedThemes.length + sortedThemes.length;
 
-	const activeSavedThemeId = isCustomActive
-		? savedThemes.find((saved) =>
-				customThemeColorsEqual(saved.colors, currentCustomColors),
-			)?.id
-		: undefined;
 	const isCreatingCustom = isCustomActive && !activeSavedThemeId;
 
 	return (
@@ -111,7 +104,7 @@ const ThemeSelection = ({
 									"flex h-24 w-full flex-col items-center justify-center rounded-2xl border border-product-border p-3 transition-[box-shadow,transform] hover:-translate-y-px",
 									isSelected && SELECTED_RING,
 								)}
-								onClick={() => onSavedThemeSelect(saved.colors)}
+								onClick={() => onSavedThemeSelect(saved)}
 								style={{ backgroundColor: background, color: heading }}
 								type="button"
 							>

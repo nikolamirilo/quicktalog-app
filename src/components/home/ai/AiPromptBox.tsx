@@ -17,7 +17,7 @@ export function AiPromptBox() {
 	return (
 		<div className="mt-[18px] rounded-[18px] border border-white/10 bg-product-dark-raised p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
 			<div
-				className="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.04em] text-product-on-dark-subtle"
+				className="flex items-center justify-between text-xs font-semibold text-product-on-dark-subtle"
 				id="ai-prompt-label"
 			>
 				Describe your business

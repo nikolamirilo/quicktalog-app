@@ -54,7 +54,7 @@ function GroupHeading({ children }: { children: ReactNode }) {
 	return (
 		<tr>
 			<th
-				className="bg-product-background-hero px-3.5 py-2.5 text-left text-[13px] font-bold tracking-[0.12em] text-product-primary-ink [font-variant-caps:all-small-caps] md:px-[22px]"
+				className="bg-product-background-hero px-3.5 py-2.5 text-left text-[13px] font-bold text-product-primary-ink md:px-[22px]"
 				colSpan={standardTiers.length + 1}
 				scope="rowgroup"
 			>
@@ -105,7 +105,7 @@ export function ComparisonTable({
 								className={cn(
 									cell,
 									stickyCell,
-									"z-[3] border-product-border-strong pt-[30px] text-[13px] font-bold tracking-[0.12em] text-product-muted [font-variant-caps:all-small-caps]",
+									"z-[3] border-product-border-strong pt-[30px] text-[13px] font-bold text-product-muted",
 								)}
 								scope="col"
 							>

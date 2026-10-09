@@ -27,6 +27,24 @@ export const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 export const LOGO_URL_MAX = 512;
 
 /**
+ * The largest logo the editor allows. qr-code-styling lets a logo hide
+ * `imageSize` times the share of the code its error correction can recover, so
+ * at 1.0 the logo uses the whole budget and some codes stop scanning. 0.6 (the
+ * default size) leaves the rest for print and camera noise.
+ */
+export const LOGO_SIZE_MAX = 0.6;
+
+/** `config` with its logo no larger than {@link LOGO_SIZE_MAX}. */
+function capLogoSize<T extends QrConfig>(config: T): T {
+	const size = config.imageOptions?.imageSize;
+	if (typeof size !== "number" || size <= LOGO_SIZE_MAX) return config;
+	return {
+		...config,
+		imageOptions: { ...config.imageOptions, imageSize: LOGO_SIZE_MAX },
+	};
+}
+
+/**
  * True for a logo the editor itself uploaded: an https URL on UploadThing's
  * file hosts (`<app>.ufs.sh/f/…`, or the legacy `utfs.io/f/…`). Anything else
  * (data: URLs, other hosts, plain http) is refused, so a saved design can
@@ -179,7 +197,8 @@ export function loadQrConfig(
 	data: string,
 ): QrConfig {
 	if (!saved) return defaultQrConfig(data);
-	return {
+	// Designs saved before the cap load at the largest size that still scans.
+	return capLogoSize({
 		...saved,
 		data,
 		// A logo from before uploads were checked is dropped, so the design
@@ -193,7 +212,7 @@ export function loadQrConfig(
 			text: DEFAULT_FRAME_TEXT,
 		},
 		showLogo: saved.showLogo !== false,
-	};
+	});
 }
 
 function sanitizeFrameText(
@@ -212,17 +231,20 @@ function sanitizeFrameText(
  * their shapes and the URL replaced by the catalogue's own.
  */
 export function normalizeQrConfig(config: QrConfig, data: string): QrConfig {
-	return {
+	return capLogoSize({
 		...config,
 		data,
 		frameText: sanitizeFrameText(config.frameText),
 		showLogo: config.showLogo !== false,
-	};
+	});
 }
 
-/** The options qr-code-styling draws: the app fields stripped, a hidden logo dropped. */
+/**
+ * The options qr-code-styling draws: the app fields stripped, a hidden logo
+ * dropped and an oversized one capped.
+ */
 export function toStylingOptions(config: QrConfig): Options {
-	const { frameText: _frame, showLogo, ...options } = config;
+	const { frameText: _frame, showLogo, ...options } = capLogoSize(config);
 	return {
 		...options,
 		// "" rather than undefined: update() merges, so undefined keeps the old logo.

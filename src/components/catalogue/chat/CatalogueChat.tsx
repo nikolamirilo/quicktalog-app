@@ -6,6 +6,7 @@ import ChatImageAttachments, {
 import ChatMessageBubble, {
 	AssistantAvatar,
 } from "@/components/catalogue/chat/ChatMessageBubble";
+import { AiReviewBar } from "@/components/catalogue/chat/AiReviewBar";
 import CreditMeter from "@/components/catalogue/chat/CreditMeter";
 import PlanChecklist from "@/components/catalogue/chat/PlanChecklist";
 import { LimitsModal } from "@/components/modals/LimitsModal";
@@ -103,6 +104,8 @@ const CatalogueChat = ({
 	const context = useCatalogueContext();
 	const isOpen = context?.isChatOpen ?? false;
 	const setIsOpen = context?.setIsChatOpen;
+	// The template picker owns the screen while it's up; the pill waits.
+	const isPickerOpen = context?.isTemplatePickerOpen ?? false;
 	const [draft, setDraft] = useState("");
 	const [announcement, setAnnouncement] = useState("");
 	const scrollRef = useRef<HTMLDivElement>(null);
@@ -195,6 +198,18 @@ const CatalogueChat = ({
 		}
 	};
 
+	// AI edits waiting to be kept or undone. The bar sits over the composer, or
+	// floats bottom-left while the chat is minimised.
+	const review = context?.aiReview ?? null;
+	const acceptChanges = () => {
+		context?.acceptAiChanges();
+		setAnnouncement("Kept the AI changes.");
+	};
+	const rejectChanges = () => {
+		context?.rejectAiChanges();
+		setAnnouncement("Undid the AI changes.");
+	};
+
 	const isEmpty = messages.length === 0 && !loading;
 	// Only shown when the assistant isn't already narrating itself (streaming text
 	// or a running tool), and not while a plan's checklist is the status display instead.
@@ -208,13 +223,22 @@ const CatalogueChat = ({
 				aria-expanded={isOpen}
 				className={cn(
 					"fixed bottom-6 left-6 z-[1040] hidden font-product-body shadow-product-primary md:inline-flex",
-					isOpen && "md:invisible",
+					(isOpen || isPickerOpen) && "md:invisible",
 				)}
 				onClick={() => setIsOpen?.(true)}
 			>
 				<QuickAiMark className="size-[1.2em]" />
 				Quick AI
 			</Button>
+			{review && !isOpen && !isPickerOpen && (
+				<AiReviewBar
+					busy={loading}
+					changes={review.changes}
+					onAccept={acceptChanges}
+					onReject={rejectChanges}
+					variant="floating"
+				/>
+			)}
 			{isOpen && (
 				<>
 					{/* Phone only: the sheet covers the page, so a tap outside it minimizes. */}
@@ -317,7 +341,7 @@ const CatalogueChat = ({
 										</p>
 									</div>
 									<div className="space-y-2">
-										<p className="text-xs font-semibold uppercase tracking-[0.08em] text-product-muted">
+										<p className="text-xs font-semibold text-product-muted">
 											Try one of these
 										</p>
 										<ul className="space-y-2">
@@ -382,6 +406,15 @@ const CatalogueChat = ({
 						</p>
 
 						<div className="shrink-0 border-t border-product-border bg-product-card px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 md:pb-3">
+							{review && (
+								<AiReviewBar
+									busy={loading}
+									changes={review.changes}
+									onAccept={acceptChanges}
+									onReject={rejectChanges}
+									variant="panel"
+								/>
+							)}
 							<ChatImageAttachments
 								disabled={loading}
 								images={attachments.images}
@@ -422,7 +455,7 @@ const CatalogueChat = ({
 										·
 									</span>
 								</span>
-								Changes apply to the builder - save when you're happy
+								Changes apply to the builder - review them, then save
 							</p>
 						</div>
 					</section>

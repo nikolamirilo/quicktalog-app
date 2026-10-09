@@ -20,7 +20,7 @@ export const MobileNavSection = ({
 	return (
 		<div aria-labelledby={headingId} role="group">
 			<p
-				className="mx-4 mb-0.5 mt-2 text-[11.5px] font-bold uppercase tracking-[0.1em] text-product-muted"
+				className="mx-4 mb-0.5 mt-2 text-[11.5px] font-bold text-product-muted"
 				id={headingId}
 			>
 				{title}

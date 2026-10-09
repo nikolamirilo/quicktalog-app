@@ -39,8 +39,8 @@ const planningRules = `- When the user asks for several distinct things in one m
 /** What the catalogue is made of and which edit each request calls for. */
 const contentRules = `- The CATALOGUE snapshot is the current state and already contains everything you did on earlier turns. Before adding a section, check whether one like it already exists. If it does, say so instead of adding a duplicate.
 - Asking for something new means addSection. Reach for updateSection only when the user clearly points at a section that already exists, either by its name or with words like change, edit, update, fix, restyle or replace. Never overwrite or repurpose an existing section to make room for a new one.
-- Section types: "category" (collapsible list of items), "container" (always-open list of items), "text" (a block of prose, set content), "divider" (a horizontal rule), "embedding" (third-party embed such as a Google Map, YouTube video or booking widget, set code), "custom_code" (raw HTML/CSS/JS, set code). Use "category" for items unless the user asks otherwise.
-- Every section type accepts a name. On text, divider, embedding and custom_code sections it is never drawn on the page. It is the accessible name and how the section is identified in the builder. Always set a short, descriptive one.
+- Section types: "items" (a list of items; set showHeading true for a collapsible section with a heading, false for a plain grid), "text" (a block of prose, set content), "divider" (a horizontal rule), "embedding" (third-party embed such as a Google Map, YouTube video or booking widget, set code), "custom_visual" (a banner, animation or small interactive object you write yourself as HTML/CSS/JS, set code). Use "items" for anything priced.
+- Every section type accepts a name. On text, divider, embedding and custom_visual sections it is never drawn on the page. It is the accessible name and how the section is identified in the builder. Always set a short, descriptive one.
 - Headings and text-section content are HTML fragments; keep them simple (<h1>, <p>, <strong>, <em>, <br>).
 - Available themes: theme-monochrome, theme-elegant, theme-organic, theme-modern, theme-luxury, theme-creative, theme-coffee. Pass any of these as the theme field on updateAppearance when the user picks one. When they want a colour or palette that none of those offer, call setCustomTheme with the six hex colours it needs (background, heading, text, primary, secondary, cardBackground) and a short name to save it under in their theme library. The name is required: if the user did not say one, ask for it instead of guessing. Pick colours that read well together: a background close to white, a card background lighter or darker than the page, a primary with enough contrast against the card background for prices and buttons.
 - Never invent items, prices or contact details the user did not ask for. When a request is ambiguous, or destructive and unclear, ask instead of guessing.`;
@@ -54,7 +54,7 @@ const settingsRules = `- Catalogue-wide settings live on updateCatalogue: headin
 
 /** Every bullet is a bug that reached a published page, hence the absolutes. */
 const codeRules = `- "embedding" is for third-party embeds. Its code must be an embed snippet or URL the user gave you in this conversation. Never invent a src, an API key or an account id. If they ask you to embed a service without supplying the snippet, ask for it instead of calling the tool.
-- "custom_code" is the opposite: original code you write yourself, such as an interactive widget, game, calculator or custom layout. Write it without being asked for a URL. It must be one self-contained HTML fragment with inline <style> and <script>, using no external scripts, CDNs, fonts, images or network calls. Prefix your class names so they cannot collide with the rest of the page, and keep the fragment compact. You may use item names, prices and descriptions from the snapshot.
+- "custom_visual" is the opposite: original code you write yourself, such as a banner, an animation, an interactive widget, a game, a calculator or a custom layout. Write it without being asked for a URL. It must be one self-contained HTML fragment with inline <style> and <script>, using no external scripts, CDNs, fonts, images or network calls. Prefix your class names so they cannot collide with the rest of the page, and keep the fragment compact. You may use item names, prices and descriptions from the snapshot.
 - Never paste catalogue text straight into a JavaScript string literal: one apostrophe in a name ("Chef's Special") is a syntax error that silently kills the whole widget. Put the data in a <script type="application/json" class="qt-data"> tag and read it back with JSON.parse(root.querySelector('script.qt-data').textContent).
 - Never give elements id attributes, and never look anything up with getElementById or a bare document.querySelector. The same widget can appear twice on one page, ids then collide and every copy after the first silently stays empty. Start your script with "var root = document.currentScript.parentNode;" and find everything with root.querySelector(...) using class names.
 - Run your setup code immediately, at the top level of the <script>. Never wrap it in a DOMContentLoaded, load or readystatechange listener and never call it from window.onload: the script is injected after the page has finished loading, so those events have already fired and your code would never run.
@@ -63,7 +63,7 @@ const codeRules = `- "embedding" is for third-party embeds. Its code must be an 
 const photoRules = `- Never write an image URL. Only add photos when the user asks for images. The snapshot marks items that already have one with [img], so skip those when filling in missing photos.
 - When the items come from a page you read in this turn, use that page's own pictures. Each one appears in the page text as ${pictureMarker(3, "alt text")}; set pageImage to its number. Give an item the picture that sits with it on the page, and leave pageImage out when you cannot tell which picture is its. The numbers only last for the turn the page was read in, so read the page again to use its pictures later.
 - Otherwise set imageQuery to two or three plain English words describing the photo you want ("espresso coffee cup", "margherita pizza") and a stock photo is looked up for you. Write the query in English even when the catalogue is in another language. If a tool reports an image miss, tell the user which one and offer to try a different search.
-- if container/category has layout: variant_3 then change it to some other layout as images won't be visible
+- if an items section has layout: variant_3 then change it to some other layout as images won't be visible
   `;
 
 /** A fetched page is the only input here an attacker fully controls. */
@@ -88,7 +88,7 @@ function catalogueContext(
 ): string {
 	const catalogue = session.working;
 	const locked = (
-		["divider", "embedding", "custom_code"] as AiSectionType[]
+		["divider", "embedding", "custom_visual"] as AiSectionType[]
 	).filter((type) => !sectionTypes.includes(type));
 
 	const lines = [
@@ -108,7 +108,8 @@ function catalogueContext(
 export function buildInstructions(session: CatalogueSession): string {
 	const sectionTypes = allowedSectionTypes(session.access);
 	const canWriteCode =
-		sectionTypes.includes("custom_code") || sectionTypes.includes("embedding");
+		sectionTypes.includes("custom_visual") ||
+		sectionTypes.includes("embedding");
 
 	const blocks = [
 		role,

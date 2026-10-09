@@ -62,9 +62,7 @@ export function ShowcaseList({
 			className="hidden w-[300px] flex-none flex-col overflow-hidden rounded-product-card border border-product-border bg-product-card shadow-product lg:flex"
 		>
 			<div className="border-b border-product-border px-[22px] pb-4 pt-[18px]">
-				<p className="text-xs font-bold uppercase tracking-[0.14em] text-product-primary-ink">
-					Catalogues
-				</p>
+				<p className="text-xs font-bold text-product-primary-ink">Catalogues</p>
 				<p className="mt-0.5 text-[13.5px] text-product-muted">
 					{items.length} live examples
 				</p>

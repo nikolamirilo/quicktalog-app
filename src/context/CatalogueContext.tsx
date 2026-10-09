@@ -14,7 +14,15 @@ import {
 	defaultCatalogueData,
 	Item,
 } from "@quicktalog/common";
-import { createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+
+/** AI chat edits waiting for the owner to keep or undo. */
+export interface AiReview {
+	/** The catalogue as it was before the first edit under review. */
+	before: Catalogue;
+	/** What landed, one line per edit, in order. */
+	changes: string[];
+}
 
 interface CatalogueContextType {
 	catalogue: Catalogue;
@@ -33,6 +41,12 @@ interface CatalogueContextType {
 	 */
 	isChatOpen: boolean;
 	setIsChatOpen: (open: boolean) => void;
+	/**
+	 * The template picker is up. Quick AI stays out of the way while it is, so a
+	 * new catalogue doesn't open with the picker and the chat on screen together.
+	 */
+	isTemplatePickerOpen: boolean;
+	setIsTemplatePickerOpen: (open: boolean) => void;
 	addBlock: (block: ContentBlock, index?: number) => void;
 	removeBlock: (index: number) => void;
 	updateBlock: (index: number, data: Partial<ContentBlock>) => void;
@@ -54,6 +68,17 @@ interface CatalogueContextType {
 		operations: CatalogueOperation[],
 		limits?: OperationLimits,
 	) => OperationOutcome;
+	/**
+	 * AI chat edits the owner hasn't kept or undone yet, or null. They land on
+	 * the draft straight away and are highlighted; Reject puts back `before`.
+	 */
+	aiReview: AiReview | null;
+	/** `applyOperations` for the AI chat: the edits also go up for review. */
+	applyAiOperations: (operations: CatalogueOperation[]) => OperationOutcome;
+	/** Keeps the edits under review. */
+	acceptAiChanges: () => void;
+	/** Puts the catalogue back to how it was before the edits under review. */
+	rejectAiChanges: () => void;
 }
 const CatalogueContext = createContext<CatalogueContextType | null>(null);
 
@@ -74,6 +99,7 @@ export const CatalogueContextProvider = ({
 		useState<Omit<Catalogue, "id">>(defaultCatalogueData);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [isChatOpen, setIsChatOpen] = useState(false);
+	const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false);
 
 	// Mirrors the latest committed catalogue so `applyOperations` can compute and
 	// return its outcome synchronously instead of only inside a state updater.
@@ -280,6 +306,56 @@ export const CatalogueContextProvider = ({
 		return outcome;
 	};
 
+	const [aiReview, setAiReview] = useState<AiReview | null>(null);
+	// Refs mirror the review so several edits applied in one pass stack up
+	// synchronously, before React re-renders.
+	const aiReviewRef = useRef<AiReview | null>(null);
+	/** The catalogue the last AI edit produced. Any other change is a hand edit. */
+	const lastAiCatalogue = useRef<unknown>(null);
+
+	const clearAiReview = () => {
+		aiReviewRef.current = null;
+		lastAiCatalogue.current = null;
+		setAiReview(null);
+	};
+
+	const applyAiOperations = (
+		operations: CatalogueOperation[],
+	): OperationOutcome => {
+		const before = catalogueRef.current as Catalogue;
+		const outcome = applyOperations(operations);
+		if (outcome.applied.length > 0) {
+			const review: AiReview = {
+				before: aiReviewRef.current?.before ?? before,
+				changes: [...(aiReviewRef.current?.changes ?? []), ...outcome.applied],
+			};
+			aiReviewRef.current = review;
+			lastAiCatalogue.current = outcome.catalogue;
+			setAiReview(review);
+		}
+		return outcome;
+	};
+
+	const acceptAiChanges = () => {
+		if (aiReviewRef.current) clearAiReview();
+	};
+
+	const rejectAiChanges = () => {
+		const review = aiReviewRef.current;
+		if (!review) return;
+		clearAiReview();
+		catalogueRef.current = review.before;
+		setCatalogue(review.before);
+	};
+
+	// A hand edit made while a review is open keeps the AI edits: undoing them
+	// afterwards would throw the hand edit away along with them.
+	useEffect(() => {
+		if (aiReviewRef.current && catalogue !== lastAiCatalogue.current) {
+			clearAiReview();
+		}
+	}, [catalogue]);
+
 	const updateAppearance = (
 		partial: Partial<Catalogue["appearance"]["style"]>,
 	) => {
@@ -321,6 +397,8 @@ export const CatalogueContextProvider = ({
 				setIsSidebarOpen,
 				isChatOpen,
 				setIsChatOpen,
+				isTemplatePickerOpen,
+				setIsTemplatePickerOpen,
 				addBlock,
 				removeBlock,
 				updateBlock,
@@ -331,6 +409,10 @@ export const CatalogueContextProvider = ({
 				moveItem,
 				moveItemToBlock,
 				applyOperations,
+				aiReview,
+				applyAiOperations,
+				acceptAiChanges,
+				rejectAiChanges,
 			}}
 		>
 			{children}

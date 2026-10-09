@@ -4,7 +4,7 @@ import { type SavedTheme, schema } from "@quicktalog/common";
 import { and, eq } from "drizzle-orm";
 import { sanitizeCustomThemeColors } from "@/lib/themes/custom-theme";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
-import { type Tx, withUser } from "@/utils/db";
+import { isUniqueViolation, type Tx, withUser } from "@/utils/db";
 
 const userThemes = schema.userThemes;
 
@@ -71,6 +71,51 @@ export async function saveOwnTheme(
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "saveOwnTheme" } });
 		console.error("Unexpected error while saving theme:", err);
+		return { success: false, error: "Unknown error" };
+	}
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Renames and recolours one of `me`'s saved themes by id, so editing a theme
+ * keeps its row even when the name changes. A name another of their themes
+ * already uses is refused rather than merged into it.
+ */
+export async function updateOwnTheme(
+	me: VerifiedIdentity,
+	id: string,
+	name: string,
+	colors: unknown,
+): Promise<ThemeResult> {
+	const trimmedName = typeof name === "string" ? name.trim() : "";
+	if (!trimmedName) return { success: false, error: "Name is required" };
+	if (typeof id !== "string" || !UUID.test(id)) {
+		return { success: false, error: "Not found" };
+	}
+
+	try {
+		const [saved] = await withUser(me, (tx) =>
+			tx
+				.update(userThemes)
+				.set({
+					name: trimmedName,
+					colors: sanitizeCustomThemeColors(colors),
+				})
+				.where(and(eq(userThemes.id, id), eq(userThemes.userId, me.userId)))
+				.returning(),
+		);
+		if (!saved) return { success: false, error: "Not found" };
+		return { success: true, data: saved as SavedTheme };
+	} catch (err) {
+		if (isUniqueViolation(err)) {
+			return {
+				success: false,
+				error: "You already have a theme with that name",
+			};
+		}
+		Sentry.captureException(err, { tags: { op: "updateOwnTheme" } });
+		console.error("Unexpected error while updating theme:", err);
 		return { success: false, error: "Unknown error" };
 	}
 }

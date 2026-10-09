@@ -47,7 +47,7 @@ function Body() {
 				points={[
 					"Items are the core of a catalogue: a name, a price, a photo, and a short description.",
 					"Categories group items so a long list stays easy to scan.",
-					"Content blocks add text and dividers between items, with embeds and custom code on higher plans.",
+					"Content blocks add text and dividers between items, with embeds and custom visuals on higher plans.",
 					"The settings panel is split into General, Header, Footer, and Appearance.",
 				]}
 			/>
@@ -106,13 +106,25 @@ function Body() {
 			/>
 
 			<Prose>
+				<h2>Connect your own analytics</h2>
+				<p>
+					On higher plans the General tab has an Analytics &amp; tracking
+					section, where you can paste your Google Analytics Measurement ID or
+					your Meta Pixel ID. Visitors are asked to allow analytics before
+					anything loads, and nothing loads if they decline, so remember to
+					mention these tools in your privacy policy. Google Tag Manager is not
+					supported, because a container can run any code on your page.
+				</p>
+			</Prose>
+
+			<Prose>
 				<h2>Add content blocks</h2>
 				<p>
 					A catalogue is more than a list. Text blocks let you add a welcome
 					note, opening hours, or a short story about the business. Dividers
 					break the page into clear sections. On higher plans you can also embed
-					outside content, like a booking widget or a map, and add custom code
-					for anything bespoke.
+					outside content, like a booking widget or a map, and design a custom
+					visual such as a banner or an animation.
 				</p>
 			</Prose>
 

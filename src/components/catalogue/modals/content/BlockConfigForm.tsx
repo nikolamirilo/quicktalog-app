@@ -1,7 +1,7 @@
 "use client";
 
 import BlockNameInput from "@/components/catalogue/inputs/BlockNameInput";
-import CustomCodeInput from "@/components/catalogue/inputs/CustomCodeInput";
+import CustomVisualInput from "@/components/catalogue/inputs/CustomVisualInput";
 import DividerInput from "@/components/catalogue/inputs/DividerInput";
 import EmbeddingInput from "@/components/catalogue/inputs/EmbeddingInput";
 import LimitsOverlay from "@/components/catalogue/inputs/sidebar/LimitsOverlay";
@@ -59,8 +59,8 @@ const BlockConfigForm = ({
 						/>
 					)}
 
-					{selectedOption === "custom_code" && (
-						<CustomCodeInput
+					{selectedOption === "custom_visual" && (
+						<CustomVisualInput
 							onChange={(val) => setBlockData({ ...blockData, ...val })}
 							value={blockData}
 						/>

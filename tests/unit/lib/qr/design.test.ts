@@ -3,6 +3,7 @@ import {
 	defaultQrConfig,
 	designKey,
 	isUploadedLogoUrl,
+	LOGO_SIZE_MAX,
 	loadQrConfig,
 	mergeQrConfig,
 	normalizeQrConfig,
@@ -55,6 +56,34 @@ describe("toStylingOptions", () => {
 		expect(options).not.toHaveProperty("frameText");
 		expect(options).not.toHaveProperty("showLogo");
 		expect(options.image).toBe("");
+	});
+});
+
+describe("logo size cap", () => {
+	const oversized: QrConfig = {
+		...defaultQrConfig(URL),
+		imageOptions: { imageSize: 1, hideBackgroundDots: true },
+	};
+
+	it("caps an oversized logo when loading, saving and drawing", () => {
+		expect(loadQrConfig(oversized, URL).imageOptions?.imageSize).toBe(
+			LOGO_SIZE_MAX,
+		);
+		expect(normalizeQrConfig(oversized, URL).imageOptions?.imageSize).toBe(
+			LOGO_SIZE_MAX,
+		);
+		expect(toStylingOptions(oversized).imageOptions?.imageSize).toBe(
+			LOGO_SIZE_MAX,
+		);
+		expect(oversized.imageOptions?.hideBackgroundDots).toBe(true);
+	});
+
+	it("leaves a logo within the cap alone", () => {
+		const config: QrConfig = {
+			...defaultQrConfig(URL),
+			imageOptions: { imageSize: 0.3 },
+		};
+		expect(toStylingOptions(config).imageOptions?.imageSize).toBe(0.3);
 	});
 });
 

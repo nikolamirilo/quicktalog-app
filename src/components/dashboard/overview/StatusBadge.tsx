@@ -41,9 +41,7 @@ export function StatusBadge({
 		className: STATUS_STYLE.inactive.className,
 	};
 	return (
-		<Badge
-			className={cn("self-start tracking-[0.06em]", style.className, className)}
-		>
+		<Badge className={cn("self-start", style.className, className)}>
 			{style.label}
 		</Badge>
 	);

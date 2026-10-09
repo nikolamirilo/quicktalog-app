@@ -107,12 +107,14 @@ const AddContentModal = ({
 		if (!userData?.currentPlan?.features?.sections) return false;
 
 		switch (key) {
+			// `!== true`, not `=== false`: a tier that omits a flag must not get
+			// the block. Matches `isSectionTypeLocked` on the agent path.
 			case "divider":
-				return userData.currentPlan.features.sections.divider === false;
+				return userData.currentPlan.features.sections.divider !== true;
 			case "embedding":
-				return userData.currentPlan.features.sections.embedding === false;
-			case "custom_code":
-				return userData.currentPlan.features.sections.customCode === false;
+				return userData.currentPlan.features.sections.embedding !== true;
+			case "custom_visual":
+				return userData.currentPlan.features.sections.customVisual !== true;
 			default:
 				return false;
 		}
@@ -173,7 +175,7 @@ const AddContentModal = ({
 				name: blockData.name || undefined,
 				code: blockData.code,
 			};
-		} else if (selectedOption === "custom_code") {
+		} else if (selectedOption === "custom_visual") {
 			newBlock = {
 				...newBlock,
 				name: blockData.name || undefined,
@@ -210,7 +212,7 @@ const AddContentModal = ({
 			return (blockData.name?.trim().length ?? 0) > 0;
 		if (selectedOption === "embedding")
 			return (blockData.code?.trim().length ?? 0) > 0;
-		if (selectedOption === "custom_code")
+		if (selectedOption === "custom_visual")
 			return (blockData.code?.trim().length ?? 0) > 0;
 		return true;
 	};

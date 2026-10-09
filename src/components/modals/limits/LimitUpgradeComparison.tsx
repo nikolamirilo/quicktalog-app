@@ -31,7 +31,7 @@ function PlanColumn({
 }) {
 	return (
 		<div className="flex min-w-0 flex-1 flex-col text-center">
-			<span className="text-[11.5px] font-bold uppercase tracking-[0.08em] text-product-muted">
+			<span className="text-[11.5px] font-bold text-product-muted">
 				{label}
 			</span>
 			<b
@@ -102,7 +102,7 @@ export const LimitUpgradeComparison = ({
 		<>
 			<div className="flex items-center gap-2.5 rounded-2xl border border-product-border bg-product-background p-3.5">
 				<PlanColumn
-					label="Current Plan"
+					label="Current plan"
 					planName={currentPlan.name}
 					unit={featureLabel(content.currentLimit)}
 					value={formatLimit(content.currentLimit)}
@@ -113,7 +113,7 @@ export const LimitUpgradeComparison = ({
 				/>
 				<PlanColumn
 					highlight
-					label="Required Plan"
+					label="Required plan"
 					planName={
 						isStandardPlanLimitReached ? "Custom Plan" : requiredPlan.name
 					}

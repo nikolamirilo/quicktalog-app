@@ -6,7 +6,7 @@ import { cn } from "@/lib/ui/cn";
 type CtaBandProps = {
 	title: ReactNode;
 	description?: ReactNode;
-	/** Small uppercase label or a media element above the title. */
+	/** Small label or a media element above the title. */
 	kicker?: ReactNode;
 	/** Short reassurance items shown with green checks. */
 	checks?: string[];
@@ -110,7 +110,7 @@ function CheckList({
 /** Uppercase amber label for dark surfaces. */
 export function CtaKicker({ children }: { children: ReactNode }) {
 	return (
-		<span className="inline-flex items-center gap-[7px] rounded-full border border-product-primary/30 bg-product-primary/[0.12] px-3 py-1.5 text-[12.5px] font-bold uppercase tracking-[0.06em] text-product-primary-bright [&_svg]:size-3.5">
+		<span className="inline-flex items-center gap-[7px] rounded-full border border-product-primary/30 bg-product-primary/[0.12] px-3 py-1.5 text-[12.5px] font-bold text-product-primary-bright [&_svg]:size-3.5">
 			{children}
 		</span>
 	);

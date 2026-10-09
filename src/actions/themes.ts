@@ -1,7 +1,7 @@
 "use server";
 import * as Sentry from "@sentry/nextjs";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { saveOwnTheme } from "@/lib/themes/upsert";
+import { saveOwnTheme, updateOwnTheme } from "@/lib/themes/upsert";
 import { withUser } from "@/utils/db";
 import { type SavedTheme, schema } from "@quicktalog/common";
 import { and, desc, eq } from "drizzle-orm";
@@ -40,6 +40,17 @@ export async function saveTheme(
 	const me = await getVerifiedIdentity();
 	if (!me) return { success: false, error: "Unauthorized" };
 	return saveOwnTheme(me, name, colors);
+}
+
+/** Renames and recolours one saved theme in place, by id. */
+export async function updateSavedTheme(
+	id: string,
+	name: string,
+	colors: unknown,
+): Promise<{ success: boolean; data?: SavedTheme; error?: string }> {
+	const me = await getVerifiedIdentity();
+	if (!me) return { success: false, error: "Unauthorized" };
+	return updateOwnTheme(me, id, name, colors);
 }
 
 export async function deleteSavedTheme(

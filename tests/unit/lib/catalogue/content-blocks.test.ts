@@ -26,6 +26,14 @@ const legacyContainer = {
 	items: [],
 } as unknown as ContentBlock;
 
+const legacyCustomCode = {
+	id: "sec-4",
+	order: 3,
+	type: "custom_code",
+	name: "Spin the wheel",
+	code: "<div>widget</div>",
+} as unknown as ContentBlock;
+
 const text = {
 	id: "sec-3",
 	order: 2,
@@ -34,6 +42,27 @@ const text = {
 } as ContentBlock;
 
 describe("normalizeBlock", () => {
+	it("renames a legacy custom_code block to custom_visual, keeping its code", () => {
+		const block = normalizeBlock(legacyCustomCode);
+
+		expect(block.type).toBe("custom_visual");
+		expect((block as { code: string }).code).toBe("<div>widget</div>");
+		expect((block as { name?: string }).name).toBe("Spin the wheel");
+		expect(block.id).toBe("sec-4");
+		expect(block.order).toBe(3);
+	});
+
+	it("leaves a custom_code block with no code as an empty custom_visual", () => {
+		const block = normalizeBlock({
+			id: "sec-5",
+			order: 0,
+			type: "custom_code",
+		} as unknown as ContentBlock);
+
+		expect(block.type).toBe("custom_visual");
+		expect((block as { code: string }).code).toBe("");
+	});
+
 	it("turns a legacy category into an items block that still shows its heading", () => {
 		const block = normalizeBlock(legacyCategory) as ItemsBlock;
 

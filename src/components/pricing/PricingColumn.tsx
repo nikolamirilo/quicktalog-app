@@ -202,7 +202,7 @@ export function PricingColumn({
 				{cta}
 			</div>
 			<div className="flex-1 px-6 pb-7 pt-[18px]">
-				<p className="mb-3 text-[15px] font-bold tracking-[0.14em] text-product-foreground [font-variant-caps:all-small-caps]">
+				<p className="mb-3 text-[15px] font-bold text-product-foreground">
 					Features
 				</p>
 				<ul className="flex flex-col gap-3">{featureItems}</ul>

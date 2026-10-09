@@ -82,13 +82,13 @@ export function AnalyticsControls({ catalogue, catalogues, range }: Props) {
 					const checked = days === selected;
 					return (
 						<button
+							key={days}
 							{...itemProps(days, i)}
 							className={cn(
 								"inline-flex min-h-8 items-center justify-center whitespace-nowrap rounded-[9px] px-3 text-[13px] font-semibold text-product-foreground-accent transition-colors hover:text-product-foreground",
 								checked &&
 									"bg-product-card text-product-foreground shadow-[0_1px_2px_rgb(var(--product-foreground-rgb)/0.08),0_2px_6px_rgb(var(--product-foreground-rgb)/0.06)]",
 							)}
-							key={days}
 						>
 							{days} days
 						</button>

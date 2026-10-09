@@ -5,6 +5,7 @@ import { ExternalLink, Globe } from "lucide-react";
 import { BrowserChrome } from "@/components/general/BrowserChrome";
 import type { ShowcaseItem } from "@/constants/marketing";
 import { useSwipe } from "@/hooks/useSwipe";
+import { withQtFrame } from "@/lib/catalogue/tracking-providers";
 
 /**
  * The live catalogue in a browser frame. One iframe for every screen size:
@@ -64,7 +65,10 @@ export function ShowcaseFrame({
 					<iframe
 						className="pointer-events-none absolute inset-0 block h-full w-full border-none lg:pointer-events-auto lg:h-[133.3333%] lg:w-[133.3333%] lg:origin-top-left lg:scale-75"
 						loading="lazy"
-						src={item.src}
+						// Marked as our frame, so showing a catalogue here does not
+						// report a visit to its owner's analytics. The link above
+						// stays the plain URL.
+						src={withQtFrame(item.src)}
 						title={item.title}
 					/>
 				</div>

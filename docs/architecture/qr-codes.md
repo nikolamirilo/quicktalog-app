@@ -51,6 +51,8 @@ The save action:
 
 A saved logo that breaks the URL rule (from before it existed) is dropped when the design loads, so the design can be saved again.
 
+The logo is capped at `LOGO_SIZE_MAX` (0.6). qr-code-styling lets a logo hide `imageSize` times the share of the code its error correction can recover, so at 1.0 the logo uses the whole budget and some codes stop scanning. The slider stops at the cap, and `loadQrConfig`, `normalizeQrConfig` and `toStylingOptions` all clamp older designs to it. The schema still accepts up to 1; `normalizeQrConfig` caps anything above the limit before it is stored.
+
 ## Editing state
 
 `QRContext.updateOptions` shallow-merges only the option groups a change mentions (`mergeQrConfig`); groups it does not mention are left exactly as they were. So undoing a change on an older design brings `designKey` back to the saved value and the dirty flag clears. The provider value is memoised.

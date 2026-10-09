@@ -25,7 +25,7 @@ export function ReleaseNotesNav({ releases }: Props) {
 
 	return (
 		<nav aria-label="Releases">
-			<p className="mb-2 ml-2.5 text-xs font-bold uppercase tracking-[0.1em] text-product-muted">
+			<p className="mb-2 ml-2.5 text-xs font-bold text-product-muted">
 				Releases
 			</p>
 			<ol className="grid gap-0.5">

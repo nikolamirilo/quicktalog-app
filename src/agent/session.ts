@@ -395,7 +395,7 @@ export class CatalogueSession {
 				lines.push(
 					`  [${index}] text${block.name ? ` "${block.name}"` : ""} - "${truncate(stripHtml(block.content ?? ""), 160)}"`,
 				);
-			} else if (block.type === "custom_code" || block.type === "embedding") {
+			} else if (block.type === "custom_visual" || block.type === "embedding") {
 				// Blocks predating `name` have none, so fall back to a markup excerpt.
 				const hint =
 					block.name ||

@@ -42,13 +42,13 @@ export function RadioTiles<T extends string>({
 				const checked = option.value === value;
 				return (
 					<button
+						key={option.value}
 						{...itemProps(option.value, i)}
 						className={cn(
 							"relative flex min-w-0 flex-col items-center gap-2 rounded-[14px] border-[1.5px] border-product-border bg-product-card px-1.5 pb-[11px] pt-2.5 text-[12.5px] font-semibold leading-none text-product-foreground-accent transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-product-border-strong",
 							checked &&
 								"border-product-primary-accent text-product-foreground shadow-[0_0_0_3px_rgb(var(--product-primary-rgb)/0.25)] hover:border-product-primary-accent",
 						)}
-						key={option.value}
 					>
 						<span
 							aria-hidden="true"

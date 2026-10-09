@@ -68,7 +68,7 @@ const run = (
 	);
 
 const WIDGET = {
-	sectionType: "custom_code",
+	sectionType: "custom_visual",
 	name: "Counter",
 	code: "<div class='qt-x'>hi</div>",
 };
@@ -77,7 +77,7 @@ const WIDGET = {
 const FULL_ACCESS: AiSectionAccess = {
 	divider: true,
 	embedding: true,
-	customCode: true,
+	customVisual: true,
 };
 
 describe("skill gate through the real tools", () => {

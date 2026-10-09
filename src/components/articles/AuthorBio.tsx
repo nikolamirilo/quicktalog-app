@@ -17,7 +17,7 @@ export function AuthorBio({ author }: { author: string }) {
 				Q
 			</span>
 			<div className="md:flex-1">
-				<small className="text-[12.5px] font-bold uppercase tracking-[0.08em] text-product-muted">
+				<small className="text-[12.5px] font-bold text-product-muted">
 					Written by
 				</small>
 				<b className="mt-0.5 block font-product-heading text-lg font-extrabold leading-[1.3] text-product-foreground">

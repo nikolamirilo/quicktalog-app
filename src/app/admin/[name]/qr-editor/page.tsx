@@ -22,7 +22,6 @@ export default async function page({
 		const catalogue = await getOwnedCatalogue(tx, me, name);
 		if (!catalogue) return null;
 		return {
-			status: catalogue.status,
 			config: await getOwnedQrConfig(tx, me, name),
 		};
 	});
@@ -35,11 +34,7 @@ export default async function page({
 			<QrProvider
 				initialOptions={loadQrConfig(owned.config, catalogueUrl(name))}
 			>
-				<QrEditor
-					hasSavedDesign={Boolean(owned.config)}
-					name={name}
-					status={owned.status}
-				/>
+				<QrEditor hasSavedDesign={Boolean(owned.config)} name={name} />
 			</QrProvider>
 		</AppShell>
 	);

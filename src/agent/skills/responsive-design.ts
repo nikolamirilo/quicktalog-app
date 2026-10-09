@@ -4,15 +4,16 @@ export const responsiveDesign: Skill = {
 	name: "responsive-design",
 	description: "Layout rules every code fragment must follow.",
 	load: "on-demand",
-	when: "you are about to write or change the code of a custom_code or embedding section, before you write the fragment",
+	when: "you are about to write or change the code of a custom_visual or embedding section, before you write the fragment",
 	applies: ({ sectionTypes }) =>
-		sectionTypes.includes("custom_code") || sectionTypes.includes("embedding"),
+		sectionTypes.includes("custom_visual") ||
+		sectionTypes.includes("embedding"),
 	requiredFor: ({ tool, input }) =>
 		(tool === "addSection" || tool === "updateSection") &&
 		typeof input.code === "string" &&
 		input.code.trim().length > 0,
 	content: `RESPONSIVE DESIGN:
-Applies to every fragment you write for a custom_code or embedding section. Most catalogues are opened from a QR code on a phone, so mobile is the default case, not the edge case.
+Applies to every fragment you write for a custom_visual or embedding section. Most catalogues are opened from a QR code on a phone, so mobile is the default case, not the edge case.
 • Design for 320px width first, then let the layout grow. Never assume a desktop viewport.
 • Never set a fixed pixel width on anything that holds content. Use percentages, fr units, max-width, or let the box size itself.
 • Always set "max-width: 100%" on images, tables, iframes and any embed, and "box-sizing: border-box" on your own elements. Nothing may cause sideways scrolling.

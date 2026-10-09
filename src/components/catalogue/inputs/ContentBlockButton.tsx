@@ -28,7 +28,7 @@ const ContentBlockButton = ({
 						Add Section
 					</span>
 					<span className="text-sm leading-snug text-product-muted">
-						Items, text, a divider, an embed or custom code
+						Items, text, a divider, an embed or a custom visual
 					</span>
 				</span>
 			</button>

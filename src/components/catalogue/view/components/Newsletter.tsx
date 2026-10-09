@@ -51,7 +51,7 @@ const Newsletter = ({
 								? "bg-green-500 text-white border-green-500 hover:bg-green-600"
 								: alreadySubscribed
 									? "bg-blue-500 text-white border-blue-500 hover:bg-blue-600"
-									: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary"
+									: "hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-catalogue-card-heading border-primary"
 						}`}
 						disabled={isSubmitting || submitSuccess || alreadySubscribed}
 						type="submit"

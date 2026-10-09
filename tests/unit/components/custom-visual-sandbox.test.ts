@@ -14,7 +14,7 @@ import { describe, expect, it } from "vitest";
 const source = readFileSync(
 	fileURLToPath(
 		new URL(
-			"../../../src/components/catalogue/sections/CustomCode.tsx",
+			"../../../src/components/catalogue/sections/CustomVisual.tsx",
 			import.meta.url,
 		),
 	),

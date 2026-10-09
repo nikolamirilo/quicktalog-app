@@ -88,7 +88,7 @@ export function TableOfContents() {
 
 	return (
 		<nav aria-label="On this page">
-			<p className="mb-2.5 text-xs font-bold uppercase tracking-[0.1em] text-product-muted">
+			<p className="mb-2.5 text-xs font-bold text-product-muted">
 				On this page
 			</p>
 			<ol className="border-l-2 border-product-border">

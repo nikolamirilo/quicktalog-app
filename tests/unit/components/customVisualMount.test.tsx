@@ -1,15 +1,15 @@
 // @vitest-environment happy-dom
-import CustomCodeBlockComponent, {
+import CustomVisualBlockComponent, {
 	buildWidgetDocument,
 	WIDGET_MESSAGE,
-} from "@/components/catalogue/sections/CustomCode";
+} from "@/components/catalogue/sections/CustomVisual";
 import { act, render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 const block = {
 	id: "b1",
 	order: 0,
-	type: "custom_code" as const,
+	type: "custom_visual" as const,
 	name: "Spin the Wheel",
 	code: '<div class="w"><canvas class="c"></canvas></div><script type="application/json" class="d">[1,2]</script><script>window.x=1;</script>',
 };
@@ -24,11 +24,11 @@ const frameIdOf = (frame: HTMLIFrameElement): string => {
 	return JSON.parse(match[1]);
 };
 
-describe("CustomCodeBlockComponent", () => {
+describe("CustomVisualBlockComponent", () => {
 	describe("isolation", () => {
 		it("runs the widget in a sandboxed frame", () => {
 			const { container } = render(
-				<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+				<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 			);
 
 			expect(frameOf(container)).toBeTruthy();
@@ -39,7 +39,7 @@ describe("CustomCodeBlockComponent", () => {
 			// With allow-same-origin AND allow-scripts, the frame can reach out and
 			// strip its own sandbox attribute. The pair must never both be set.
 			const { container } = render(
-				<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+				<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 			);
 
 			expect(frameOf(container).getAttribute("sandbox")).not.toContain(
@@ -49,7 +49,7 @@ describe("CustomCodeBlockComponent", () => {
 
 		it("puts the markup in the frame, not in the page", () => {
 			const { container } = render(
-				<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+				<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 			);
 
 			// The page itself must hold none of it - that was the old behaviour.
@@ -99,7 +99,7 @@ describe("CustomCodeBlockComponent", () => {
 	describe("sizing", () => {
 		it("starts at a sane height before the widget reports one", () => {
 			const { container } = render(
-				<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+				<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 			);
 
 			expect(frameOf(container).style.height).toBe("200px");
@@ -107,7 +107,7 @@ describe("CustomCodeBlockComponent", () => {
 
 		it("grows to the height its own frame reports", () => {
 			const { container } = render(
-				<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+				<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 			);
 			const frame = frameOf(container);
 			const id = frameIdOf(frame);
@@ -130,7 +130,7 @@ describe("CustomCodeBlockComponent", () => {
 
 		it("refuses a height that would make an endless page", () => {
 			const { container } = render(
-				<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+				<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 			);
 			const frame = frameOf(container);
 			const id = frameIdOf(frame);
@@ -155,7 +155,7 @@ describe("CustomCodeBlockComponent", () => {
 			// `event.source` is the only trustworthy identity here: a sandboxed
 			// frame posts with origin "null", so origin cannot be checked.
 			const { container } = render(
-				<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+				<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 			);
 
 			act(() => {
@@ -173,7 +173,7 @@ describe("CustomCodeBlockComponent", () => {
 
 	it("uses the block name as the section's accessible name", () => {
 		const { container } = render(
-			<CustomCodeBlockComponent block={block} mode="view" slug="s" />,
+			<CustomVisualBlockComponent block={block} mode="view" slug="s" />,
 		);
 
 		expect(container.querySelector("section")?.getAttribute("aria-label")).toBe(

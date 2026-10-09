@@ -47,7 +47,8 @@ function parseErrorMessage(error: Error | undefined): string | undefined {
  * finishing the list takes several requests - sending those is this hook's
  * job (the loop below), guarded against a confused model looping forever.
  *
- * Nothing is persisted here: the user still saves/publishes normally.
+ * Nothing is persisted here: the user still saves/publishes normally. Edits
+ * go up for review in the context, where the owner accepts or rejects them.
  */
 export function useCatalogueChat() {
 	const context = useCatalogueContext();
@@ -107,7 +108,8 @@ export function useCatalogueChat() {
 				}
 				// Reading tools carry no edit to replay.
 				if (!output.operation) continue;
-				context?.applyOperations([output.operation]);
+				// Lands on the draft right away, held for the owner to keep or undo.
+				context?.applyAiOperations([output.operation]);
 			}
 		}
 	}, [messages, context]);
@@ -201,6 +203,10 @@ export function useCatalogueChat() {
 		}
 
 		clearError(); // a leftover error from the last ask would read as this one failing
+
+		// A new ask keeps whatever the last one changed: a review covers one ask
+		// (with its plan's follow-up requests), not the whole conversation.
+		context.acceptAiChanges();
 
 		// A new ask starts a new plan, so the loop starts over.
 		continuations.current = 0;

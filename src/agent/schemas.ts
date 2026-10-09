@@ -15,7 +15,7 @@ export function allowedSectionTypes(access?: AiSectionAccess): AiSectionType[] {
 	const types: AiSectionType[] = ["items", "text"];
 	if (access?.divider === true) types.push("divider");
 	if (access?.embedding === true) types.push("embedding");
-	if (access?.customCode === true) types.push("custom_code");
+	if (access?.customVisual === true) types.push("custom_visual");
 	return types;
 }
 

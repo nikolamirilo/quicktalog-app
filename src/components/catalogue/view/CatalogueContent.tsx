@@ -13,13 +13,17 @@ import {
 	getDisplayItems,
 	getTotalItemCount,
 } from "@/lib/catalogue/items";
-import { asItemsBlock, isItemsBlock } from "@/lib/catalogue/content-blocks";
+import {
+	asItemsBlock,
+	isItemsBlock,
+	normalizeContent,
+} from "@/lib/catalogue/content-blocks";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FiFileMinus } from "react-icons/fi";
 import ItemModal from "@/components/catalogue/modals/ItemModal";
-import CustomCodeBlockComponent from "@/components/catalogue/sections/CustomCode";
+import CustomVisualBlockComponent from "@/components/catalogue/sections/CustomVisual";
 import DividerBlockComponent from "@/components/catalogue/sections/DividerBlock";
 import EmbeddingBlockComponent from "@/components/catalogue/sections/EmbeddingBlock";
 import ItemsSection from "@/components/catalogue/sections/ItemsSection";
@@ -38,7 +42,7 @@ export type CatalogueContentProps = {
 };
 
 const CatalogueContent = ({
-	data,
+	data: rawData,
 	currency,
 	locale,
 	type,
@@ -57,6 +61,17 @@ const CatalogueContent = ({
 		updateBlock,
 	} = useCatalogueContext() || {};
 	const { layout } = useMainContext();
+	/**
+	 * Legacy keys are mapped here, once, before anything matches on
+	 * `block.type`. Without this a stored `custom_code` or `category` row hits
+	 * no branch and renders nothing - the row is intact, the page is just
+	 * blank, which is the worst way for a rename to fail.
+	 *
+	 * Order and length are preserved, so the indices the edit callbacks pass to
+	 * `removeBlock`/`moveBlock`/`updateBlock` still address the right block in
+	 * the unnormalized draft those callbacks mutate.
+	 */
+	const data = useMemo(() => normalizeContent(rawData), [rawData]);
 	const [expandedSections, setExpandedSections] = useState<
 		Record<string, boolean>
 	>({});
@@ -313,9 +328,9 @@ const CatalogueContent = ({
 							slug={block.id}
 						/>
 					);
-				} else if (block.type === "custom_code") {
+				} else if (block.type === "custom_visual") {
 					return (
-						<CustomCodeBlockComponent
+						<CustomVisualBlockComponent
 							block={block}
 							isFirst={index === 0}
 							isLast={index === data.length - 1}

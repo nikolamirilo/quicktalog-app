@@ -85,6 +85,7 @@ describe("ProcessWebhook", () => {
 			kind: "downgraded",
 			user: { name: "Ana", email: "ana@example.com" },
 			deactivated: ["lux-watches"],
+			trackingCleared: [],
 		});
 		await new ProcessWebhook().processEvent(
 			subscriptionEvent(EventName.SubscriptionCanceled),
@@ -95,6 +96,43 @@ describe("ProcessWebhook", () => {
 			unpublished: ["lux-watches"],
 		});
 		expect(mocks.revalidateCatalogue).toHaveBeenCalledWith("lux-watches");
+	});
+
+	it("revalidates a catalogue that only lost its analytics tags", async () => {
+		// It stays published, so it is not in `deactivated` - but its cached HTML
+		// still carries the owner's tag, and `revalidate` is 24h.
+		mocks.asAdmin.mockResolvedValue({
+			kind: "downgraded",
+			user: { name: "Ana", email: "ana@example.com" },
+			deactivated: [],
+			trackingCleared: ["still-live"],
+		});
+		await new ProcessWebhook().processEvent(
+			subscriptionEvent(EventName.SubscriptionCanceled),
+		);
+		expect(mocks.revalidateCatalogue).toHaveBeenCalledWith("still-live");
+		// Not reported as unpublished, because it was not.
+		expect(mocks.sendSubscriptionCancelationEmail).toHaveBeenCalledWith({
+			email: "ana@example.com",
+			name: "Ana",
+			unpublished: [],
+		});
+	});
+
+	it("revalidates each changed catalogue once when both sets overlap", async () => {
+		mocks.asAdmin.mockResolvedValue({
+			kind: "downgraded",
+			user: { name: "Ana", email: "ana@example.com" },
+			deactivated: ["both"],
+			trackingCleared: ["both"],
+		});
+		await new ProcessWebhook().processEvent(
+			subscriptionEvent(EventName.SubscriptionCanceled),
+		);
+		const calls = mocks.revalidateCatalogue.mock.calls.filter(
+			([name]: [string]) => name === "both",
+		);
+		expect(calls).toHaveLength(1);
 	});
 
 	it("does not touch the database for customer events", async () => {

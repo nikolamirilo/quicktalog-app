@@ -7,7 +7,7 @@ export type ContentOption =
 	| "items"
 	| "text"
 	| "embedding"
-	| "custom_code"
+	| "custom_visual"
 	| "divider";
 
 interface BlockConfigHeaderProps {
@@ -19,7 +19,7 @@ const LABELS: Record<ContentOption, string> = {
 	items: "Items",
 	text: "Text",
 	embedding: "External content",
-	custom_code: "Custom code",
+	custom_visual: "Custom visual",
 	divider: "Divider",
 };
 
@@ -28,7 +28,8 @@ const DESCRIPTIONS: Record<ContentOption, string> = {
 		"A group of items. With a heading it can collapse; without one it is a plain grid.",
 	embedding:
 		"Embed external content such as maps, videos, or third-party widgets.",
-	custom_code: "Insert custom HTML to add advanced or custom functionality.",
+	custom_visual:
+		"Build a banner, animation or small interactive object with your own HTML, CSS and JavaScript.",
 	text: "Add rich text content with headings, lists, links, and formatting.",
 	divider:
 		"Add a visual separator with customizable spacing and border styles.",

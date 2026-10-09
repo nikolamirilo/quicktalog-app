@@ -2,6 +2,7 @@
 import type { ContentBlock, Item } from "@quicktalog/common";
 import { act, cleanup, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { CatalogueOperation } from "@/types/ai";
 
 vi.mock("@clerk/nextjs", () => ({
 	useUser: () => ({ user: null }),
@@ -153,5 +154,67 @@ describe("CatalogueContext item actions", () => {
 		expect(itemsAt(content[0]).map((i) => i.order)).toEqual([0]);
 		expect(itemsAt(content[1]).map((i) => i.id)).toEqual(["Cola"]);
 		expect(itemsAt(content[1]).map((i) => i.order)).toEqual([0]);
+	});
+});
+
+describe("CatalogueContext AI review", () => {
+	const addItemOp = (id: string): CatalogueOperation => ({
+		op: "add_items",
+		sectionId: "drinks",
+		items: [{ id, name: id, price: 3 }],
+	});
+
+	const setupWithSection = () => {
+		const hook = setup();
+		act(() => hook.result.current?.addBlock(category("drinks")));
+		return hook;
+	};
+
+	const itemIds = (hook: ReturnType<typeof setup>) =>
+		itemsAt(hook.result.current?.catalogue.content[0] as ContentBlock).map(
+			(entry) => entry.id,
+		);
+
+	it("applies AI edits straight away and holds them for review", () => {
+		const hook = setupWithSection();
+		act(() => {
+			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+		});
+		expect(itemIds(hook)).toEqual(["latte"]);
+		expect(hook.result.current?.aiReview?.changes).toHaveLength(1);
+	});
+
+	it("puts the catalogue back on reject, across several AI edits", () => {
+		const hook = setupWithSection();
+		act(() => {
+			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+		});
+		act(() => {
+			hook.result.current?.applyAiOperations([addItemOp("mocha")]);
+		});
+		expect(hook.result.current?.aiReview?.changes).toHaveLength(2);
+		act(() => hook.result.current?.rejectAiChanges());
+		expect(itemIds(hook)).toEqual([]);
+		expect(hook.result.current?.aiReview).toBeNull();
+	});
+
+	it("keeps the edits on accept", () => {
+		const hook = setupWithSection();
+		act(() => {
+			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+		});
+		act(() => hook.result.current?.acceptAiChanges());
+		expect(itemIds(hook)).toEqual(["latte"]);
+		expect(hook.result.current?.aiReview).toBeNull();
+	});
+
+	it("treats a hand edit as keeping the AI edits", () => {
+		const hook = setupWithSection();
+		act(() => {
+			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+		});
+		act(() => hook.result.current?.addItem(0, item("mocha")));
+		expect(hook.result.current?.aiReview).toBeNull();
+		expect(itemIds(hook)).toEqual(["latte", "mocha"]);
 	});
 });

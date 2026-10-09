@@ -151,7 +151,18 @@ export const comparisonGroups: ComparisonGroup[] = [
 		title: "Section types",
 		rows: [
 			{
+				label: "Items section",
+				hint: "Your products or services, with prices and photos",
+				value: () => true,
+			},
+			{
+				label: "Text section",
+				hint: "Rich text for a welcome note, opening hours or a story",
+				value: () => true,
+			},
+			{
 				label: "Divider section",
+				hint: "A visual separator with adjustable spacing and border",
 				value: (tier) => tier.features.sections.divider,
 			},
 			{
@@ -160,8 +171,9 @@ export const comparisonGroups: ComparisonGroup[] = [
 				value: (tier) => tier.features.sections.embedding,
 			},
 			{
-				label: "Custom code section",
-				value: (tier) => tier.features.sections.customCode,
+				label: "Custom visual section",
+				hint: "Banners, animations and interactive objects you design yourself",
+				value: (tier) => tier.features.sections.customVisual,
 			},
 		],
 	},
@@ -185,6 +197,13 @@ export const comparisonGroups: ComparisonGroup[] = [
 				value: () => true,
 			},
 			{ label: "Analytics", value: (tier) => tier.features.analytics },
+			{
+				// Distinct from the row above, which is the built-in dashboard
+				// analytics tier.
+				label: "Your own analytics tags",
+				hint: "Connect your Google Analytics or Meta Pixel to a catalogue",
+				value: (tier) => tier.features.integrations.tracking,
+			},
 			{
 				label: "Newsletter sign-ups",
 				value: (tier) => tier.features.newsletter,

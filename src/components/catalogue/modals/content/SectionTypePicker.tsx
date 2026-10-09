@@ -1,10 +1,10 @@
 "use client";
 import {
-	Code,
 	Globe,
 	LayoutGrid,
 	Lock,
 	SeparatorHorizontal,
+	Sparkles,
 	Type,
 } from "lucide-react";
 import { type ElementType, useRef } from "react";
@@ -19,7 +19,7 @@ const OPTIONS: { key: ContentOption; label: string; icon: ElementType }[] = [
 	{ key: "text", label: "Text", icon: Type },
 	{ key: "divider", label: "Divider", icon: SeparatorHorizontal },
 	{ key: "embedding", label: "External content", icon: Globe },
-	{ key: "custom_code", label: "Custom code", icon: Code },
+	{ key: "custom_visual", label: "Custom visual", icon: Sparkles },
 ];
 
 const KEYS = OPTIONS.map((o) => o.key);
@@ -61,6 +61,7 @@ export function SectionTypePicker({
 				const locked = isLocked(key);
 				return (
 					<button
+						key={key}
 						{...itemProps(key, i)}
 						className={cn(
 							pillTab.base,
@@ -72,7 +73,6 @@ export function SectionTypePicker({
 									"hover:border-product-primary md:border-product-primary-accent md:bg-product-primary-soft md:hover:border-product-primary-accent md:hover:bg-product-primary-soft",
 								),
 						)}
-						key={key}
 					>
 						<Icon aria-hidden="true" className="flex-none" />
 						<span className="md:flex-1 md:text-left">{label}</span>

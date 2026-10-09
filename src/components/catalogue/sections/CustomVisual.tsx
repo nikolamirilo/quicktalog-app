@@ -1,6 +1,6 @@
 "use client";
 
-import type { CustomCodeBlock } from "@quicktalog/common";
+import type { CustomVisualBlock } from "@quicktalog/common";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import BlockControls, {
 	BLOCK_CONTROLS_GROUP,
@@ -91,8 +91,8 @@ ${code}
 </html>`;
 }
 
-interface CustomCodeBlockProps {
-	block: CustomCodeBlock;
+interface CustomVisualBlockProps {
+	block: CustomVisualBlock;
 	slug: string;
 	onDelete?: () => void;
 	onMoveUp?: () => void;
@@ -104,20 +104,26 @@ interface CustomCodeBlockProps {
 }
 
 /**
- * A custom code block, run inside a sandboxed frame. The fragment is arbitrary
- * HTML/CSS/JS, and the AI editor can write it under the influence of
- * untrusted text (a fetched page, an OCR scan), mounted same-origin with the
- * app in the owner's signed-in session. No source filter can make that safe,
- * so the control is isolation: `sandbox="allow-scripts"` WITHOUT
- * `allow-same-origin` gives the frame an opaque origin - it can reach no
- * cookie, storage, parent DOM or credentialed request.
+ * A custom visual block - a banner, an animated object, a small interactive
+ * widget - run inside a sandboxed frame. The fragment is arbitrary HTML/CSS/JS,
+ * and the AI editor can write it under the influence of untrusted text (a
+ * fetched page, an OCR scan), mounted same-origin with the app in the owner's
+ * signed-in session. No source filter can make that safe, so the control is
+ * isolation: `sandbox="allow-scripts"` WITHOUT `allow-same-origin` gives the
+ * frame an opaque origin - it can reach no cookie, storage, parent DOM or
+ * credentialed request.
+ *
+ * That isolation is also what divides this block from `tracking`: an analytics
+ * tag needs the real document URL and cookies on the real domain, so it cannot
+ * work in here at all. Analytics goes through the tracking block, which stores
+ * an id rather than a snippet. Nothing arbitrary ever runs same-origin.
  *
  * Do not add `allow-same-origin`: combined with `allow-scripts` it lets the
  * frame remove its own sandbox attribute, undoing all of this.
  *
  * A frame doesn't size to its content, so the document reports its height and the parent sets it here.
  */
-const CustomCodeBlockComponent = ({
+const CustomVisualBlockComponent = ({
 	block,
 	slug,
 	onDelete,
@@ -127,7 +133,7 @@ const CustomCodeBlockComponent = ({
 	isFirst,
 	isLast,
 	mode,
-}: CustomCodeBlockProps) => {
+}: CustomVisualBlockProps) => {
 	const frameRef = useRef<HTMLIFrameElement>(null);
 	const hostRef = useRef<HTMLDivElement>(null);
 	const frameId = useId();
@@ -184,7 +190,7 @@ const CustomCodeBlockComponent = ({
 				<BlockControls
 					isFirst={isFirst}
 					isLast={isLast}
-					label="Custom code"
+					label="Custom visual"
 					name={block.name}
 					onDelete={onDelete}
 					onEdit={onEdit}
@@ -207,4 +213,4 @@ const CustomCodeBlockComponent = ({
 	);
 };
 
-export default CustomCodeBlockComponent;
+export default CustomVisualBlockComponent;

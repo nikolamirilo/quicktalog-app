@@ -44,7 +44,10 @@ type SubscriptionOutcome =
 	| {
 			kind: "downgraded";
 			user: { name: string | null; email: string | null };
+			/** Catalogues taken offline by the new catalogue quota. */
 			deactivated: string[];
+			/** Catalogues that stayed online but lost their analytics tags. */
+			trackingCleared: string[];
 	  };
 
 /**
@@ -177,13 +180,13 @@ export class ProcessWebhook {
 						);
 
 					// The user keeps only what the free plan includes.
-					const deactivated = await applyPlanDowngrade(
+					const downgrade = await applyPlanDowngrade(
 						tx,
 						userId,
 						tierForPlanId(freePlanId),
 					);
 
-					return { kind: "downgraded", user, deactivated };
+					return { kind: "downgraded", user, ...downgrade };
 				}
 
 				return { kind: "stored" };
@@ -211,8 +214,14 @@ export class ProcessWebhook {
 		}
 
 		if (outcome.kind === "downgraded") {
-			for (const name of outcome.deactivated) revalidateCatalogue(name);
-			if (outcome.deactivated.length > 0) revalidateDashboard();
+			// Both sets need it: a deactivated catalogue to stop serving, and one
+			// that merely lost its analytics tags to stop loading them.
+			const changed = new Set([
+				...outcome.deactivated,
+				...outcome.trackingCleared,
+			]);
+			for (const name of changed) revalidateCatalogue(name);
+			if (changed.size > 0) revalidateDashboard();
 			if (outcome.user.email) {
 				await sendSubscriptionCancelationEmail({
 					email: outcome.user.email,

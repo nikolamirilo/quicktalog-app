@@ -13,7 +13,7 @@ export function HtmlContent({
 	className?: string;
 	/**
 	 * Skip the `.rich-text-content` typography rules. For markup that carries its
-	 * own styling (custom code blocks), inheriting them is interference.
+	 * own styling (custom visual blocks), inheriting them is interference.
 	 */
 	unstyled?: boolean;
 	/**

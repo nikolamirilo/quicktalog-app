@@ -67,7 +67,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, onChange }) => {
 				/>
 			</div>
 			<p className="text-[12.5px] leading-snug text-product-muted">
-				Paste valid HTML code. It will be rendered directly in your catalogue.
+				HTML, CSS and JavaScript for a banner, animation or small interactive
+				object. It runs in an isolated frame, so analytics and tracking scripts
+				will not work here - connect those under Analytics &amp; tracking in the
+				General tab.
 			</p>
 		</div>
 	);

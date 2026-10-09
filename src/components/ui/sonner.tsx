@@ -12,13 +12,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
 			toastOptions={{
 				classNames: {
 					toast:
-						"group toast group-[.toaster]:rounded-2xl group-[.toaster]:border-0 group-[.toaster]:bg-product-foreground group-[.toaster]:font-product-body group-[.toaster]:text-white group-[.toaster]:shadow-product-hover [&_[data-icon]]:text-product-primary",
-					description: "group-[.toast]:text-white/75",
+						"group toast group-[.toaster]:rounded-2xl group-[.toaster]:border group-[.toaster]:border-product-border group-[.toaster]:bg-product-card group-[.toaster]:font-product-body group-[.toaster]:text-product-foreground group-[.toaster]:shadow-product-hover [&_[data-icon]]:text-product-primary-ink",
+					description: "group-[.toast]:text-product-muted",
 					actionButton:
-						"group-[.toast]:!rounded-full group-[.toast]:!bg-product-primary group-[.toast]:!font-semibold group-[.toast]:!text-product-foreground",
+						"group-[.toast]:!rounded-full group-[.toast]:!bg-product-primary group-[.toast]:!font-semibold group-[.toast]:!text-product-primary-ink",
 					cancelButton:
-						"group-[.toast]:!rounded-full group-[.toast]:!bg-white/10 group-[.toast]:!text-white",
-					error: "[&_[data-icon]]:!text-[#ff8a80]",
+						"group-[.toast]:!rounded-full group-[.toast]:!bg-product-background group-[.toast]:!text-product-foreground",
+					error: "[&_[data-icon]]:!text-product-error",
 				},
 			}}
 			{...props}

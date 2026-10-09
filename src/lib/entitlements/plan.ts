@@ -83,6 +83,31 @@ export async function canActivate(tx: Tx, tier: Tier): Promise<PlanCheck> {
  * Growth-only: content that is already over the limit (after a downgrade) may
  * be saved again as long as it does not grow.
  */
+/**
+ * Which stored `type` keys each `features.sections` flag governs, including the
+ * legacy keys a row can still carry. A gated type must be listed here or it is
+ * ungated, so the map is the gate.
+ */
+const GATED_SECTION_TYPES: {
+	types: string[];
+	label: string;
+	flag: keyof Tier["features"]["sections"];
+}[] = [
+	{ types: ["divider"], label: "Divider", flag: "divider" },
+	{ types: ["embedding"], label: "External content", flag: "embedding" },
+	{
+		// `custom_code` is the pre-rename key; a stored row still has it.
+		types: ["custom_visual", "custom_code"],
+		label: "Custom visual",
+		flag: "customVisual",
+	},
+];
+
+const countOfTypes = (content: unknown, types: string[]): number =>
+	Array.isArray(content)
+		? content.filter((block: any) => types.includes(block?.type)).length
+		: 0;
+
 export function contentWithinPlan(
 	next: Partial<Catalogue>,
 	previous: Partial<Catalogue> | null,
@@ -131,5 +156,26 @@ export function contentWithinPlan(
 			reason: `Your plan allows ${itemLimit} items per catalogue`,
 		};
 	}
+
+	// Block types the plan does not include. The builder and the agent both
+	// gate these already, but neither is a control: `content` arrives from the
+	// client on every save, so a crafted payload could otherwise add a paid
+	// block on any plan.
+	//
+	// Judged the same way as the counts above - refused only when the save adds
+	// one. A user who downgrades keeps the blocks they already had and can go on
+	// editing the catalogue; they just cannot add more.
+	for (const { types, label, flag } of GATED_SECTION_TYPES) {
+		if (tier.features.sections[flag] === true) continue;
+		const used = countOfTypes(content, types);
+		if (used === 0) continue;
+		if (used > countOfTypes(before, types)) {
+			return {
+				ok: false,
+				reason: `${label} sections are not part of your plan`,
+			};
+		}
+	}
+
 	return { ok: true };
 }

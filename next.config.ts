@@ -47,12 +47,12 @@ const nextConfig: NextConfig = {
 	async headers() {
 		const csp = [
 			"default-src 'self'",
-			"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com https://www.google-analytics.com https://*.clarity.ms https://challenges.cloudflare.com https://*.paddle.com https://cdn.paddle.com",
+			"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://*.clarity.ms https://challenges.cloudflare.com https://*.paddle.com https://cdn.paddle.com",
 			"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
 			"font-src 'self' data: https://fonts.gstatic.com",
 			"img-src 'self' data: blob: https:",
 			"media-src 'self' blob: https:",
-			"connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.clerk.accounts.dev https://clerk.quicktalog.app https://*.ingest.sentry.io https://*.posthog.com https://*.clarity.ms https://*.google-analytics.com https://*.googletagmanager.com https://*.paddle.com https://*.uploadthing.com https://uploadthing.com https://api.deepseek.com",
+			"connect-src 'self' https://*.facebook.com https://connect.facebook.net https://*.supabase.co wss://*.supabase.co https://*.clerk.accounts.dev https://clerk.quicktalog.app https://*.ingest.sentry.io https://*.posthog.com https://*.clarity.ms https://*.google-analytics.com https://*.googletagmanager.com https://*.paddle.com https://*.uploadthing.com https://uploadthing.com https://api.deepseek.com",
 			"frame-src 'self' https://challenges.cloudflare.com https://*.paddle.com https://*.clerk.accounts.dev",
 			"worker-src 'self' blob:",
 			"object-src 'none'",

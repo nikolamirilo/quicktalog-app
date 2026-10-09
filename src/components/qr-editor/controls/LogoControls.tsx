@@ -10,6 +10,7 @@ import {
 	SliderRow,
 	ToggleRow,
 } from "@/components/qr-editor/controls/rows";
+import { LOGO_SIZE_MAX } from "@/lib/qr/design";
 
 export function LogoControls({
 	image,
@@ -108,8 +109,8 @@ export function LogoControls({
 				<SliderRow
 					disabled={noLogo}
 					format={(v) => `${v.toFixed(2).replace(/0$/, "")}×`}
-					hint="From 0.1× to 1.0×"
-					max={1}
+					hint={`From 0.1× to ${LOGO_SIZE_MAX}×. Higher error correction fits a bigger logo.`}
+					max={LOGO_SIZE_MAX}
 					min={0.1}
 					onChange={onImageSizeChange}
 					step={0.05}

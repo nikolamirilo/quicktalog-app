@@ -203,6 +203,13 @@ export async function duplicateItem(id: string, name?: string) {
 				tier,
 			);
 
+			// A duplicate is new usage, so it is judged against the plan from
+			// scratch (`previous` is null): every section, item and gated block
+			// type in the copy has to fit. Without this, duplicating is a way to
+			// keep multiplying blocks and items a downgraded plan no longer
+			// includes. Returning null matches how the quota check above fails.
+			if (!contentWithinPlan(values, null, tier).ok) return null;
+
 			// A savepoint per attempt: a unique violation would otherwise abort the
 			// whole transaction, quota lock included.
 			for (let attempt = 1; attempt <= 20; attempt++) {

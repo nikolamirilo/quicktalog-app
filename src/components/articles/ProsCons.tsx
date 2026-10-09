@@ -26,7 +26,7 @@ export function ProsCons({
 			)}
 			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 				<div className="flex flex-col gap-3 rounded-[18px] border-[1.5px] border-product-primary/55 bg-product-card px-[18px] pb-4 pt-[18px] shadow-product ring-[5px] ring-product-primary/[0.07]">
-					<p className="text-[12.5px] font-bold uppercase tracking-[0.08em] text-product-primary-ink">
+					<p className="text-[12.5px] font-bold text-product-primary-ink">
 						{prosLabel}
 					</p>
 					<ul className="grid gap-[9px]">
@@ -47,7 +47,7 @@ export function ProsCons({
 					</ul>
 				</div>
 				<div className="flex flex-col gap-3 rounded-[18px] border border-dashed border-product-border-strong bg-product-background-hero px-[18px] pb-4 pt-[18px]">
-					<p className="text-[12.5px] font-bold uppercase tracking-[0.08em] text-product-muted">
+					<p className="text-[12.5px] font-bold text-product-muted">
 						{consLabel}
 					</p>
 					<ul className="grid gap-[9px]">

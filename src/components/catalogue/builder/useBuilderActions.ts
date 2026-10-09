@@ -38,14 +38,19 @@ export const useBuilderActions = ({
 }: {
 	closePanel: () => void;
 }) => {
-	const { catalogue, updateCatalogue: updateContextCatalogue } =
-		useCatalogueContext();
+	const {
+		catalogue,
+		updateCatalogue: updateContextCatalogue,
+		acceptAiChanges,
+	} = useCatalogueContext();
 	const { refreshUserData } = useUserContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 	const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 	const router = useRouter();
 
 	const handleSave = async () => {
+		// Saving (and Preview, which saves first) keeps AI edits still under review.
+		acceptAiChanges?.();
 		try {
 			const promise = updateCatalogueAction(catalogue);
 			toast.promise(promise, {
@@ -102,6 +107,7 @@ export const useBuilderActions = ({
 			toast.error("Please save the catalogue first");
 			return;
 		}
+		acceptAiChanges?.();
 		const promise = publishCatalogue(catalogue);
 		if (catalogue.status !== "active") {
 			toast.promise(promise, {

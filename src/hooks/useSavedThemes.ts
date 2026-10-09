@@ -1,5 +1,10 @@
 "use client";
-import { deleteSavedTheme, listSavedThemes, saveTheme } from "@/actions/themes";
+import {
+	deleteSavedTheme,
+	listSavedThemes,
+	saveTheme,
+	updateSavedTheme,
+} from "@/actions/themes";
 import type { CustomThemeColors, SavedTheme } from "@quicktalog/common";
 import { useCallback, useEffect, useState } from "react";
 
@@ -27,6 +32,16 @@ export function useSavedThemes() {
 		[refresh],
 	);
 
+	/** Saves over one theme by id, so a rename keeps the same theme. */
+	const update = useCallback(
+		async (id: string, name: string, colors: CustomThemeColors) => {
+			const res = await updateSavedTheme(id, name, colors);
+			if (res.success) await refresh();
+			return res;
+		},
+		[refresh],
+	);
+
 	const remove = useCallback(
 		async (id: string) => {
 			const res = await deleteSavedTheme(id);
@@ -36,5 +51,5 @@ export function useSavedThemes() {
 		[refresh],
 	);
 
-	return { themes, isLoading, save, remove, refresh };
+	return { themes, isLoading, save, update, remove, refresh };
 }

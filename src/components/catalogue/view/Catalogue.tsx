@@ -22,11 +22,13 @@ import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useEffect, useMemo, useState } from "react";
 import { Overlay } from "@/components/general/Overlay";
 import CatalogueChat from "@/components/catalogue/chat/CatalogueChat";
+import { AiReviewHighlights } from "@/components/catalogue/view/AiReviewHighlights";
 import ContentBlockButton from "@/components/catalogue/inputs/ContentBlockButton";
 import BuilderSidebar from "@/components/catalogue/inputs/sidebar";
 import { builderFramePadding } from "@/components/catalogue/builder/frame";
 import AddContentModal from "@/components/catalogue/modals/AddContentModal";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
+import CatalogueAnalytics from "./CatalogueAnalytics";
 import CatalogueContent from "./CatalogueContent";
 import CatalogueFooter from "./CatalogueFooter";
 import CatalogueHeader from "./CatalogueHeader";
@@ -165,6 +167,7 @@ const Catalogue = ({
 				<>
 					<BuilderSidebar userData={userData} />
 					<CatalogueChat userData={userData} />
+					<AiReviewHighlights />
 					<style
 						dangerouslySetInnerHTML={{
 							__html: `
@@ -262,6 +265,17 @@ const Catalogue = ({
 				</main>
 
 				<CatalogueFooter data={item} logo={logoSrc} type={item.footer.type} />
+
+				{/* Published pages only. The builder and the demo must not report
+				    traffic the owner never received. */}
+				{type === "view" && (
+					<CatalogueAnalytics
+						businessName={item.legal?.legalName || undefined}
+						metadata={item.metadata}
+						privacyPolicyUrl={item.legal?.privacyPolicy || undefined}
+						slug={item.name}
+					/>
+				)}
 
 				{userData && (
 					<AddContentModal

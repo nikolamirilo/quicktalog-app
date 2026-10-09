@@ -23,19 +23,28 @@ export interface ChatScannedImage extends OCRImageData {
 	failure?: string;
 }
 
-/** Section types the chat assistant is allowed to create. */
+/**
+ * Section types the chat assistant is allowed to create.
+ *
+ * `tracking` is deliberately absent. An analytics tag carries an account id the
+ * model must never invent, and leaving the type out means both gates close on
+ * their own: `allowedSectionTypes` cannot offer it and `isSectionTypeLocked`
+ * falls through to locked.
+ */
 export type AiSectionType =
 	| "items"
 	| "text"
 	| "divider"
 	| "embedding"
-	| "custom_code";
+	| "custom_visual";
 
 /** Per-plan section unlocks, mirroring `currentPlan.features.sections`. */
 export interface AiSectionAccess {
 	divider?: boolean;
 	embedding?: boolean;
-	customCode?: boolean;
+	customVisual?: boolean;
+	/** Mirrors the plan flag. No agent path reads it; see `AiSectionType`. */
+	tracking?: boolean;
 }
 
 export interface AiItemInput {
@@ -141,7 +150,7 @@ export type CatalogueOperation =
 			layout?: ContentLayout;
 			/** Body of a `text` section. */
 			content?: string;
-			/** Markup of an `embedding` or `custom_code` section. */
+			/** Markup of an `embedding` or `custom_visual` section. */
 			code?: string;
 			items?: AiItemInput[];
 			position?: number;

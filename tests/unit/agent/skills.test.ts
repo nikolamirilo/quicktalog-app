@@ -15,18 +15,18 @@ const names = (types: AiSectionType[]) =>
 	activeSkills({ sectionTypes: types }).map((skill) => skill.name);
 
 const FREE_PLAN: AiSectionType[] = ["items", "text"];
-const PAID_PLAN: AiSectionType[] = [...FREE_PLAN, "embedding", "custom_code"];
+const PAID_PLAN: AiSectionType[] = [...FREE_PLAN, "embedding", "custom_visual"];
 
 const FULL_ACCESS: AiSectionAccess = {
 	divider: true,
 	embedding: true,
-	customCode: true,
+	customVisual: true,
 };
 
 const NO_CODE: AiSectionAccess = {
 	divider: true,
 	embedding: false,
-	customCode: false,
+	customVisual: false,
 };
 
 const catalogue = { ...defaultCatalogueData, name: "cafe" } as Catalogue;
@@ -78,8 +78,14 @@ describe("agent skills", () => {
 		});
 
 		it("uses no em or en dashes in any skill sent to the model", () => {
+			// Escapes, not literals: the class was written as [-–], a plain
+			// hyphen-minus plus an en dash, so it matched every hyphenated word
+			// and missed the em dash it was named for.
+			const emOrEnDash = /[\u2014\u2013]/;
+			// Otherwise the loop below passes on an empty list.
+			expect(SKILLS.length).toBeGreaterThan(0);
 			for (const skill of SKILLS) {
-				expect(skill.content).not.toMatch(/[-–]/);
+				expect(skill.content).not.toMatch(emOrEnDash);
 			}
 		});
 	});

@@ -12,7 +12,7 @@ interface BlockNameInputProps {
 
 /**
  * Optional name for block types that render no heading of their own (text,
- * divider, embedding, custom code).
+ * divider, embedding, custom visual).
  *
  * It is never drawn on the page. It becomes the section's accessible name - a
  * `<section>` without one is not exposed as a landmark at all, so naming a

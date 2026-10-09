@@ -66,7 +66,9 @@ const isSectionTypeLocked = (
 	if (UNGATED_SECTION_TYPES.has(type)) return false;
 	if (type === "divider") return access.divider !== true;
 	if (type === "embedding") return access.embedding !== true;
-	if (type === "custom_code") return access.customCode !== true;
+	if (type === "custom_visual") return access.customVisual !== true;
+	// Anything else - `tracking` included, which the agent is never taught -
+	// is locked rather than free.
 	return true;
 };
 
@@ -75,7 +77,7 @@ const SECTION_TYPE_LABELS: Record<string, string> = {
 	text: "Text",
 	divider: "Divider",
 	embedding: "Embed",
-	custom_code: "Custom code",
+	custom_visual: "Custom visual",
 };
 
 /** Never interpolate a bare `undefined` into a message the user reads. */
@@ -152,10 +154,10 @@ const buildSection = (
 				name: op.name || undefined,
 				code: op.code ?? "",
 			};
-		case "custom_code":
+		case "custom_visual":
 			return {
 				...base,
-				type: "custom_code",
+				type: "custom_visual",
 				name: op.name || undefined,
 				code: op.code ?? "",
 			};
@@ -285,7 +287,7 @@ export function applyCatalogueOperations(
 					patch.content = operation.content;
 				}
 				if (
-					(block.type === "embedding" || block.type === "custom_code") &&
+					(block.type === "embedding" || block.type === "custom_visual") &&
 					operation.code !== undefined
 				) {
 					patch.code = operation.code;

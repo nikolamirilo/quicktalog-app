@@ -22,7 +22,7 @@ const DefaultActions = () => {
 
 			<CatalogueButton
 				asChild
-				className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-foreground border-primary footer-cta-button"
+				className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-catalogue-card-heading border-primary footer-cta-button"
 			>
 				<Link
 					aria-label="Create your own digital catalog"

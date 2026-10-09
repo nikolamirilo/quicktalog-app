@@ -28,12 +28,24 @@ export type AuthState = {
 
 export const AuthContext = createContext<AuthState | undefined>(undefined);
 
+/**
+ * Used by `useAuth` when no `AuthStateProvider` is in scope (e.g. a render
+ * path that bypasses the root layout, like a `not-found` boundary or a server
+ * action response). The shape keeps consumers reading as if the provider were
+ * present, so they fall back to their logged-out branches instead of crashing
+ * the whole render.
+ */
+const FALLBACK_AUTH_STATE: AuthState = {
+	isLoaded: true,
+	isSignedIn: false,
+	user: null,
+	signOut: async () => {},
+	accountHref: "/admin/dashboard?tab=settings",
+};
+
 export function useAuth(): AuthState {
 	const context = useContext(AuthContext);
-	if (!context) {
-		throw new Error("useAuth must be used inside <AuthProvider>");
-	}
-	return context;
+	return context ?? FALLBACK_AUTH_STATE;
 }
 
 export function AuthStateProvider({

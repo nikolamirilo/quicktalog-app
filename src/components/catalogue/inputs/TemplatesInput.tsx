@@ -115,7 +115,10 @@ export default function TemplatesInput({
 					const isScratch = template.id === "scratch";
 
 					return (
+						// `key` goes before the spread: placed after it, the JSX transform
+						// passes the children as a plain array and React asks each for a key.
 						<button
+							key={template.id}
 							{...itemProps(template.id, index)}
 							className={cn(
 								"group relative flex h-full w-full touch-manipulation items-center gap-4 rounded-product-card border-[1.5px] bg-product-card p-3 text-left transition-[border-color,box-shadow,transform] sm:p-4 md:flex-col md:justify-between md:gap-4 md:p-6 md:text-center",
@@ -126,7 +129,6 @@ export default function TemplatesInput({
 									!isSelected &&
 									"border-dashed border-product-border-strong",
 							)}
-							key={template.id}
 						>
 							{template.badge && (
 								<Badge

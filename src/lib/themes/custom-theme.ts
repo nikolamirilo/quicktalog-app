@@ -51,12 +51,21 @@ const normalizeHexColor = (value: unknown): string | undefined => {
 	return undefined;
 };
 
-/** Whether two palettes hold the same six colours, so a saved theme tile can tell it's the active selection. */
+/**
+ * Whether two palettes hold the same six colours, so a saved theme tile can
+ * tell it's the active selection and the editor can tell an edit is unsaved.
+ * Compared normalised: `#FFFFFF` typed into a field matches a saved `#ffffff`.
+ */
 export const customThemeColorsEqual = (
 	a: CustomThemeColors | undefined,
 	b: CustomThemeColors | undefined,
-): boolean =>
-	CUSTOM_COLOR_KEYS.every((key) => (a?.[key] ?? "") === (b?.[key] ?? ""));
+): boolean => {
+	const left = sanitizeCustomThemeColors(a);
+	const right = sanitizeCustomThemeColors(b);
+	return CUSTOM_COLOR_KEYS.every(
+		(key) => (left[key] ?? "") === (right[key] ?? ""),
+	);
+};
 
 const hexToRgb = (hex: string): { r: number; g: number; b: number } => {
 	const safe = isHexColor(hex) ? hex : "#000000";
@@ -134,6 +143,48 @@ const ensureContrast = (
 	return result;
 };
 
+/** WCAG AA for body text: what item text on a card has to reach. */
+const CARD_TEXT_CONTRAST = 4.5;
+
+/**
+ * `foreground` moved toward the on-colour of `background` just far enough to
+ * reach `target`. A colour that already reads is returned exactly as picked.
+ */
+const readableOn = (
+	foreground: string,
+	background: string,
+	target: number,
+): string => {
+	const anchor = onColor(background);
+	const start = isHexColor(foreground) ? foreground : anchor;
+	if (contrastRatio(start, background) >= target) return start;
+	let low = 0;
+	let high = 1;
+	for (let step = 0; step < 12; step++) {
+		const middle = (low + high) / 2;
+		if (contrastRatio(mix(start, anchor, middle), background) >= target) {
+			high = middle;
+		} else {
+			low = middle;
+		}
+	}
+	return mix(start, anchor, high);
+};
+
+/**
+ * Whether the owner's Text colour reads on their card colour as picked. When
+ * it doesn't, cards show it nudged toward black or white, and the editor says so.
+ */
+export const isTextReadableOnCard = (
+	colors: CustomThemeColors | undefined,
+): boolean => {
+	const { text, cardBackground } = {
+		...DEFAULT_CUSTOM_COLORS,
+		...sanitizeCustomThemeColors(colors),
+	};
+	return contrastRatio(text, cardBackground) >= CARD_TEXT_CONTRAST;
+};
+
 /** A background counts as dark when white is the legible colour to put on it. */
 export const isDarkBackground = (hex: string | undefined): boolean =>
 	onColor(isHexColor(hex) ? hex : DEFAULT_CUSTOM_COLORS.background) ===
@@ -169,6 +220,9 @@ export const deriveCatalogueVars = (
 
 	const onCard = onColor(cardBackground);
 	const onBackground = onColor(background);
+	// Item names and descriptions follow the owner's Text colour, moved only as
+	// far as it takes to stay readable on the card.
+	const cardText = readableOn(text, cardBackground, CARD_TEXT_CONTRAST);
 	const cardBorder = mix(cardBackground, onCard, 0.12);
 	// No seventh "navigation" swatch to seed from, so nudge the card colour
 	// toward the background instead of reusing it verbatim.
@@ -191,9 +245,13 @@ export const deriveCatalogueVars = (
 		"--catalogue-price": ensureContrast(primary, cardBackground),
 
 		"--catalogue-card-background": cardBackground,
-		"--catalogue-card-heading": onCard,
-		"--catalogue-card-text": mix(onCard, cardBackground, 0.12),
-		"--catalogue-card-description": mix(onCard, cardBackground, 0.32),
+		"--catalogue-card-heading": cardText,
+		"--catalogue-card-text": cardText,
+		"--catalogue-card-description": readableOn(
+			mix(cardText, cardBackground, 0.28),
+			cardBackground,
+			3,
+		),
 		"--catalogue-card-border": cardBorder,
 
 		"--catalogue-section-background": mix(background, onBackground, 0.06),

@@ -7,7 +7,7 @@ export function KeyTakeaways({ points }: { points: string[] }) {
 			aria-label="Key takeaways"
 			className="rounded-product-card border border-product-primary/45 bg-product-amber-panel px-[22px] pb-5 pt-[22px]"
 		>
-			<p className="mb-3 flex items-center gap-2 text-[15px] font-bold leading-none tracking-[0.14em] text-product-primary-ink [font-variant-caps:all-small-caps]">
+			<p className="mb-3 flex items-center gap-2 text-[15px] font-bold leading-none text-product-primary-ink">
 				<Flag aria-hidden="true" className="h-4 w-4" />
 				Key takeaways
 			</p>

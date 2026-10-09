@@ -119,7 +119,7 @@ const SelectLabel = React.forwardRef<
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Label
 		className={cn(
-			"px-3 py-1.5 text-xs font-bold uppercase tracking-[0.06em] text-product-muted",
+			"px-3 py-1.5 text-xs font-bold text-product-muted",
 			className,
 		)}
 		ref={ref}

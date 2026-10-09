@@ -70,7 +70,7 @@ export function AiShortcut() {
 					</div>
 
 					<div>
-						<span className="inline-flex items-center gap-[7px] rounded-full border border-product-primary/30 bg-product-primary/[0.12] px-3 py-1.5 text-[12.5px] font-bold uppercase tracking-[0.06em] text-product-primary-bright">
+						<span className="inline-flex items-center gap-[7px] rounded-full border border-product-primary/30 bg-product-primary/[0.12] px-3 py-1.5 text-[12.5px] font-bold text-product-primary-bright">
 							<Zap aria-hidden="true" className="h-3.5 w-3.5" />
 							AI catalog builder
 						</span>

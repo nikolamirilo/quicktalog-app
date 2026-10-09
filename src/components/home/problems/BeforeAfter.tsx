@@ -16,7 +16,7 @@ export function BeforeAfter({
 	return (
 		<Rise aria-labelledby={headingId} as="article">
 			<div className="mb-[18px] flex flex-col items-start gap-2.5">
-				<span className="rounded-full bg-product-primary-soft px-3 py-1.5 text-[12.5px] font-bold uppercase tracking-[0.08em] text-product-primary-ink">
+				<span className="rounded-full bg-product-primary-soft px-3 py-1.5 text-[12.5px] font-bold text-product-primary-ink">
 					{problem.topic}
 				</span>
 				<h3

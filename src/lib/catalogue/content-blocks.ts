@@ -5,8 +5,9 @@ import type {
 } from "@quicktalog/common";
 
 /**
- * `category` and `container` were merged into `items`. Stored rows are migrated,
- * but a Redis-cached draft or an unmigrated row can still carry a legacy key, so
+ * Two renames live in here. `category` and `container` were merged into `items`,
+ * and `custom_code` became `custom_visual`. Stored rows are migrated, but a
+ * Redis-cached draft or an unmigrated row can still carry a legacy key, so
  * everything reads through here rather than matching on the key directly.
  */
 export function isItemsBlock(block: ContentBlock): block is AnyItemsBlock {
@@ -45,6 +46,17 @@ export function normalizeBlock(block: ContentBlock): ContentBlock {
 			isExpanded: true,
 			layout: block.layout,
 			items: block.items ?? [],
+		};
+	}
+	// A pure rename: the sandboxed renderer and the `code` field are unchanged,
+	// so only the key moves.
+	if (block?.type === "custom_code") {
+		return {
+			id: block.id,
+			order: block.order,
+			type: "custom_visual",
+			name: block.name,
+			code: block.code ?? "",
 		};
 	}
 	return block;

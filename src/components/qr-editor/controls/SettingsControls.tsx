@@ -57,13 +57,13 @@ export function SettingsControls({
 					const checked = level.value === errorCorrectionLevel;
 					return (
 						<button
+							key={level.value}
 							{...itemProps(level.value, i)}
 							className={cn(
 								"flex min-w-0 flex-col items-center gap-1 rounded-[11px] px-1 py-[9px] text-product-foreground-accent transition-[background-color,color,box-shadow] hover:text-product-foreground",
 								checked &&
 									"bg-product-card text-product-foreground shadow-[0_1px_2px_rgb(var(--product-foreground-rgb)/0.08),0_4px_10px_-2px_rgb(var(--product-foreground-rgb)/0.08),inset_0_-3px_0_var(--product-primary)]",
 							)}
-							key={level.value}
 						>
 							<b className="font-product-heading text-base font-extrabold leading-none">
 								{level.value}

@@ -1,8 +1,8 @@
 "use client";
 import BlockNameInput from "./BlockNameInput";
-import CodeEditor from "./custom-code/CodeEditor";
+import CodeEditor from "./custom-visual/CodeEditor";
 
-interface CustomCodeInputProps {
+interface CustomVisualInputProps {
 	value: {
 		name?: string;
 		code?: string;
@@ -10,12 +10,12 @@ interface CustomCodeInputProps {
 	onChange: (value: any) => void;
 }
 
-const CustomCodeInput = ({ value, onChange }: CustomCodeInputProps) => {
+const CustomVisualInput = ({ value, onChange }: CustomVisualInputProps) => {
 	return (
 		<div className="space-y-4">
 			<BlockNameInput
 				onChange={(name) => onChange({ ...value, name })}
-				type="custom_code"
+				type="custom_visual"
 				value={value.name || ""}
 			/>
 
@@ -27,4 +27,4 @@ const CustomCodeInput = ({ value, onChange }: CustomCodeInputProps) => {
 	);
 };
 
-export default CustomCodeInput;
+export default CustomVisualInput;

@@ -173,13 +173,13 @@ export function LayoutPicker({
 				const checked = key === value;
 				return (
 					<button
+						key={key}
 						{...itemProps(key, i)}
 						className={cn(
 							"relative flex min-w-0 flex-col items-center gap-1.5 rounded-[12px] border-[1.5px] border-product-border bg-product-card px-1.5 pb-2 pt-1.5 text-xs font-semibold leading-tight text-product-foreground-accent transition-[border-color,box-shadow,transform] hover:-translate-y-px hover:border-product-border-strong md:gap-2 md:rounded-[14px] md:pb-2.5 md:pt-2 md:text-[12.5px]",
 							checked &&
 								"border-product-primary-accent text-product-foreground shadow-[0_0_0_3px_rgb(var(--product-primary-rgb)/0.25)] hover:border-product-primary-accent",
 						)}
-						key={key}
 					>
 						<span
 							aria-hidden="true"

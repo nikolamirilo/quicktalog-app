@@ -33,7 +33,7 @@ export function ComparisonTable({ columns, rows, highlightIndex = 0 }: Props) {
 						<th
 							className={cn(
 								cell,
-								"whitespace-nowrap bg-product-background-hero text-[12.5px] font-bold uppercase tracking-[0.06em] text-product-muted",
+								"whitespace-nowrap bg-product-background-hero text-[12.5px] font-bold text-product-muted",
 							)}
 							scope="col"
 						>
@@ -43,7 +43,7 @@ export function ComparisonTable({ columns, rows, highlightIndex = 0 }: Props) {
 							<th
 								className={cn(
 									cell,
-									"whitespace-nowrap text-[12.5px] font-bold uppercase tracking-[0.06em]",
+									"whitespace-nowrap text-[12.5px] font-bold",
 									i === highlightIndex
 										? "bg-product-primary/25 text-product-primary-ink"
 										: "bg-product-background-hero text-product-muted",

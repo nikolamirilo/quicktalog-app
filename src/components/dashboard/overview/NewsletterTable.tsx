@@ -98,7 +98,7 @@ export function NewsletterTable({ subscribers, error }: NewsletterTableProps) {
 							<TableRow className="border-product-border hover:bg-transparent">
 								{HEADINGS.map((heading) => (
 									<TableHead
-										className="h-auto bg-product-background px-[18px] py-3 text-xs font-bold uppercase tracking-[0.06em] text-product-muted"
+										className="h-auto bg-product-background px-[18px] py-3 text-xs font-bold text-product-muted"
 										key={heading}
 										scope="col"
 									>

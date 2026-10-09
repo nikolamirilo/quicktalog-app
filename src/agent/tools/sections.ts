@@ -54,7 +54,7 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 				.max(120)
 				.optional()
 				.describe(
-					"Short descriptive name. Always set one: on text, divider, embedding and custom_code sections it is the accessible name and how the section is identified in the builder.",
+					"Short descriptive name. Always set one: on text, divider, embedding and custom_visual sections it is the accessible name and how the section is identified in the builder.",
 				),
 			showHeading: z.coerce
 				.boolean()
@@ -72,7 +72,7 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 				.string()
 				.max(MAX_CODE_CHARS)
 				.optional()
-				.describe("Markup for an embedding or custom_code section."),
+				.describe("Markup for an embedding or custom_visual section."),
 			items: z.array(itemInputSchema).max(MAX_ITEMS_PER_CALL).optional(),
 			position: sectionIndexSchema
 				.optional()

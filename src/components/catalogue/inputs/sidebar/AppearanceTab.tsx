@@ -7,7 +7,12 @@ import {
 	readPaletteFromElement,
 } from "@/lib/themes/custom-theme";
 import { useSavedThemes } from "@/hooks/useSavedThemes";
-import { PricingPlan } from "@quicktalog/common";
+import type {
+	CustomThemeColors,
+	PricingPlan,
+	SavedTheme,
+} from "@quicktalog/common";
+import { useState } from "react";
 import CustomThemeConfiguration from "./appearance/CustomThemeConfiguration";
 import OverlayConfiguration from "./appearance/OverlayConfiguration";
 import StyleConfiguration from "./appearance/StyleConfiguration";
@@ -22,8 +27,15 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	const {
 		themes: savedThemes,
 		save: saveTheme,
+		update: updateTheme,
 		remove: removeTheme,
 	} = useSavedThemes();
+	// The saved theme the custom panel edits, tracked by id so changing a colour
+	// doesn't turn it into a "new" theme. `undefined` until the owner picks one
+	// (a saved theme matching the colours on screen counts); `null` is a new theme.
+	const [editingThemeId, setEditingThemeId] = useState<
+		string | null | undefined
+	>(undefined);
 	const hasStyles = plan?.features?.apperance?.styles;
 	const hasCustomThemes = plan?.features?.apperance?.customThemes;
 
@@ -32,15 +44,19 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 
 	const currentThemeName = catalogue.appearance?.theme?.name;
 	const isCustomActive = catalogue.appearance?.theme?.type === "custom";
-	const activeSavedTheme = isCustomActive
-		? savedThemes.find((saved) =>
-				customThemeColorsEqual(saved.colors, catalogue.appearance.theme.colors),
-			)
-		: undefined;
+	const customColors = catalogue.appearance?.theme?.colors;
+	const editingTheme: SavedTheme | undefined = !isCustomActive
+		? undefined
+		: editingThemeId === undefined
+			? savedThemes.find((saved) =>
+					customThemeColorsEqual(saved.colors, customColors),
+				)
+			: savedThemes.find((saved) => saved.id === editingThemeId);
 	const currentStyle = catalogue.appearance?.style || ({} as any);
 	const currentOverlay = catalogue.appearance?.overlay || ({} as any);
 
 	const handleThemeSelect = (themeKey: string) => {
+		setEditingThemeId(undefined);
 		updateCatalogue({
 			appearance: {
 				...catalogue.appearance,
@@ -61,12 +77,16 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	const handleCustomSelect = () => {
+		// The Custom tile only shows on plans with custom themes. Checking again
+		// here keeps the "Started a new custom theme" toast off every other plan.
+		if (!hasCustomThemes) return;
 		// From a standard theme, seed from what's on screen so it looks intentional.
 		// From a custom theme, the DOM already reflects it, so reset to neutral
 		// defaults instead - "Custom" always starts fresh.
 		const seeded = isCustomActive
 			? DEFAULT_CUSTOM_COLORS
 			: readPaletteFromElement(document.querySelector('[role="application"]'));
+		setEditingThemeId(null);
 		updateThemeColors(seeded);
 		toast.success(
 			"Started a new custom theme. Customize the colors below, then save it to reuse later.",
@@ -74,9 +94,25 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 		scrollToCustomPanel();
 	};
 
+	const handleSavedThemeSelect = (saved: SavedTheme) => {
+		setEditingThemeId(saved.id);
+		updateThemeColors(saved.colors);
+	};
+
 	const handleDeleteSavedTheme = async (id: string) => {
 		const res = await removeTheme(id);
 		if (!res.success) toast.error(res.error || "Failed to delete theme");
+		// The colours stay on the catalogue as a new, unsaved theme.
+		else if (id === editingTheme?.id) setEditingThemeId(null);
+	};
+
+	/** Saves over the theme being edited, or as a new one. */
+	const handleSaveTheme = async (name: string, colors: CustomThemeColors) => {
+		const res = editingTheme
+			? await updateTheme(editingTheme.id, name, colors)
+			: await saveTheme(name, colors);
+		if (res.success && res.data) setEditingThemeId(res.data.id);
+		return res;
 	};
 
 	const handleStyleChange = (field: string, value: any) => {
@@ -104,13 +140,13 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 				title="Themes"
 			>
 				<ThemeSelection
+					activeSavedThemeId={editingTheme?.id}
 					allowCustom={Boolean(hasCustomThemes)}
-					currentCustomColors={catalogue.appearance.theme.colors}
 					currentThemeName={currentThemeName}
 					isCustomActive={isCustomActive}
 					onCustomSelect={handleCustomSelect}
 					onDeleteSavedTheme={handleDeleteSavedTheme}
-					onSavedThemeSelect={updateThemeColors}
+					onSavedThemeSelect={handleSavedThemeSelect}
 					onThemeSelect={handleThemeSelect}
 					savedThemes={savedThemes}
 				/>
@@ -120,15 +156,15 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 				<PanelSection
 					className="scroll-mt-4"
 					id="custom-theme-panel"
-					info="Pick each colour of your theme, then save it to reuse it on other catalogues."
-					title="Custom colours"
+					info="Pick each color of your theme, then save it to reuse it on other catalogues."
+					title="Custom colors"
 				>
 					<LockedGroup locked={!hasCustomThemes} overlaySize="default">
 						<CustomThemeConfiguration
-							activeSavedThemeName={activeSavedTheme?.name}
-							colors={catalogue.appearance.theme.colors || {}}
+							colors={customColors || {}}
+							editingTheme={editingTheme}
 							onColorsChange={updateThemeColors}
-							onSave={saveTheme}
+							onSave={handleSaveTheme}
 						/>
 					</LockedGroup>
 				</PanelSection>

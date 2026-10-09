@@ -47,7 +47,7 @@ function Body() {
 				points={[
 					"The free Starter plan includes one catalogue with the core features and no time limit.",
 					"Paid plans raise the limits on catalogues, items, and views.",
-					"Higher tiers unlock AI generation, photo import, advanced analytics, and custom code.",
+					"Higher tiers unlock AI generation, photo import, advanced analytics, custom visuals, and connecting your own analytics tags.",
 					"Billing is handled securely by Paddle, and you manage it from your dashboard.",
 				]}
 			/>
@@ -66,9 +66,10 @@ function Body() {
 					Paid plans lift the ceilings and turn on the bigger features. As you
 					move up, you get more catalogues, more items per catalogue, and higher
 					view limits, plus extras like AI generation, photo import, advanced
-					analytics, embeds and custom code, and the option to remove Quicktalog
-					branding. The right plan is simply the lowest one that clears the
-					limit you keep hitting.
+					analytics, embeds, custom visuals, connecting your own Google
+					Analytics or Meta Pixel, and the option to remove Quicktalog branding.
+					The right plan is simply the lowest one that clears the limit you keep
+					hitting.
 				</p>
 				<p>
 					The pricing page lays out every plan side by side with the exact
