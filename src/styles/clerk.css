@@ -1,0 +1,250 @@
+/* Clerk Auth Widget Product Theme Overrides
+ * Mapped onto the redesign tokens (styles/product.css). The Clerk path is being
+ * retired in favour of the Supabase forms, so this is kept deliberately small. */
+.cl-internal-1fsg6zy,
+/* main container */
+	.cl-card,
+.cl-signIn-root,
+.cl-signUp-root {
+	font-family: var(--product-font-body) !important;
+	outline: none !important;
+	background: var(--product-card) !important;
+	border: 1px solid var(--product-border) !important;
+	border-radius: var(--product-radius-card) !important;
+	box-shadow: var(--product-shadow) !important;
+}
+
+/* Override the global border-border class for Clerk components */
+.cl-card,
+.cl-internal-1fsg6zy,
+.cl-signIn-root,
+.cl-signUp-root,
+.cl-card *,
+.cl-internal-1fsg6zy *,
+.cl-signIn-root *,
+.cl-signUp-root * {
+	border-color: transparent !important;
+}
+
+/* Remove any additional borders or outlines from inner elements */
+.cl-card *,
+.cl-internal-1fsg6zy *,
+.cl-signIn-root *,
+.cl-signUp-root * {
+	outline: none !important;
+}
+
+/* Restore borders only for specific elements that need them */
+.cl-formFieldInput,
+.cl-formFieldInputWrapper {
+	border-color: var(--product-border-strong) !important;
+}
+
+.cl-formFieldInput:focus,
+.cl-formFieldInputWrapper:focus-within {
+	border-color: var(--product-primary) !important;
+}
+
+.cl-formButtonSecondary {
+	border-color: var(--product-primary) !important;
+}
+
+.cl-socialButtonsBlockButton {
+	border-color: var(--product-border-strong) !important;
+}
+
+/* Remove borders from all other Clerk elements */
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-internal-1b5y6t5,
+.cl-internal-1b5y6t6,
+.cl-formFieldLabel,
+.cl-footerActionLink,
+.cl-dividerText,
+.cl-formFieldErrorText {
+	border: none !important;
+}
+
+/* Typography - Headers */
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-internal-1b5y6t5,
+.cl-internal-1b5y6t6 {
+	font-family: var(--product-font-heading) !important;
+	font-weight: 700 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: -0.02em !important;
+}
+
+.cl-headerSubtitle {
+	font-weight: 400 !important;
+	color: var(--product-foreground-accent) !important;
+	letter-spacing: 0 !important;
+}
+
+/* Form fields - matching contact page exactly */
+.cl-formFieldInput,
+.cl-formFieldInputWrapper {
+	font-family: var(--product-font-body) !important;
+	font-weight: 400 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: 0 !important;
+	outline: none !important;
+	background: var(--product-card) !important;
+	border: 1.5px solid var(--product-border-strong) !important;
+	border-radius: 14px !important;
+	box-shadow: none !important;
+	transition:
+		border-color 0.2s,
+		box-shadow 0.2s !important;
+}
+
+.cl-formFieldInput:focus,
+.cl-formFieldInputWrapper:focus-within {
+	outline: none !important;
+	background: var(--product-card) !important;
+	border-color: var(--product-primary) !important;
+	box-shadow: 0 0 0 4px rgb(var(--product-primary-rgb) / 0.2) !important;
+}
+
+.cl-formFieldInput::placeholder {
+	color: var(--product-muted) !important;
+}
+
+/* Labels */
+.cl-formFieldLabel {
+	font-family: var(--product-font-heading) !important;
+	font-weight: 600 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: -0.02em !important;
+}
+
+/* Primary buttons */
+.cl-formButtonPrimary {
+	font-family: var(--product-font-heading) !important;
+	font-weight: 600 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: -0.02em !important;
+	outline: none !important;
+	background: var(--product-primary) !important;
+	border: none !important;
+	border-radius: 999px !important;
+	box-shadow: var(--product-shadow-primary) !important;
+}
+
+.cl-formButtonPrimary:hover {
+	background: var(--product-primary-accent) !important;
+}
+
+/* Secondary buttons */
+.cl-formButtonSecondary {
+	font-family: var(--product-font-heading) !important;
+	font-weight: 600 !important;
+	color: var(--product-foreground) !important;
+	letter-spacing: -0.02em !important;
+	outline: none !important;
+	background: transparent !important;
+	border: 1.5px solid var(--product-primary) !important;
+	border-radius: 999px !important;
+	box-shadow: none !important;
+}
+
+.cl-formButtonSecondary:hover {
+	color: var(--product-foreground) !important;
+	background: var(--product-primary-soft) !important;
+}
+
+/* Social buttons */
+.cl-socialButtonsBlockButton {
+	display: flex !important;
+	gap: 0.5rem !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-height: 3rem !important;
+	padding: 0.75rem 1rem !important;
+	font-family: var(--product-font-body) !important;
+	font-size: 0.875rem !important;
+	font-weight: 600 !important;
+	/* Match input fields */
+	color: var(--product-foreground) !important;
+	cursor: pointer !important;
+	outline: none !important;
+	background: var(--product-card) !important;
+	border: 1.5px solid var(--product-border-strong) !important;
+	border-radius: 999px !important;
+	box-shadow: none !important;
+	transition:
+		border-color 0.2s,
+		background-color 0.2s !important;
+}
+
+.cl-socialButtonsBlockButton:hover {
+	background: var(--product-background) !important;
+	border-color: var(--product-muted) !important;
+}
+
+/* Social button icons */
+.cl-socialButtonsBlockButton svg,
+.cl-socialButtonsBlockButton img {
+	flex-shrink: 0 !important;
+	width: 1.25rem !important;
+	height: 1.25rem !important;
+}
+
+/* Social button text */
+.cl-socialButtonsBlockButton span {
+	font-weight: 600 !important;
+	letter-spacing: 0.025em !important;
+}
+
+/* Social buttons container */
+.cl-socialButtonsBlock {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 0.75rem !important;
+	width: 100% !important;
+}
+
+/* Links */
+.cl-footerActionLink {
+	font-family: var(--product-font-body) !important;
+	font-weight: 600 !important;
+	color: var(--product-primary-ink) !important;
+	text-decoration: none !important;
+}
+
+.cl-footerActionLink:hover {
+	color: var(--product-primary-ink) !important;
+	text-decoration: underline !important;
+}
+
+/* Footer section with border */
+.cl-footer {
+	padding-top: 1rem !important;
+	margin-top: 1rem !important;
+	border-top: 1px solid var(--product-border) !important;
+}
+
+/* Divider */
+.cl-dividerLine {
+	background: var(--product-border) !important;
+}
+
+.cl-dividerText {
+	font-family: var(--product-font-body) !important;
+	font-weight: 400 !important;
+	color: var(--product-muted) !important;
+}
+
+/* Error messages */
+.cl-formFieldErrorText {
+	font-family: var(--product-font-body) !important;
+	font-weight: 400 !important;
+	color: var(--product-error) !important;
+}
+
+/* Loading states */
+.cl-formButtonPrimary:disabled {
+	cursor: not-allowed !important;
+	opacity: 0.7 !important;
+}

@@ -19,7 +19,8 @@
 			}
 		],
 		"paths": {
-			"@/*": ["./*"]
+			"@/scripts/*": ["./scripts/*"],
+			"@/*": ["./src/*"]
 		}
 	},
 	"include": [
@@ -28,10 +29,6 @@
 		"**/*.tsx",
 		"**/*.d.ts",
 		".next/types/**/*.ts",
-		"utils/client.tsx",
-		"constants/form.ts",
-		"utils/generateSchema.ts",
-		"../quicktalog-packages/drizzle.config copy.ts",
 		".next/dev/types/**/*.ts"
 	],
 	"exclude": ["node_modules"]
