@@ -109,11 +109,12 @@ function Body() {
 				<h2>Connect your own analytics</h2>
 				<p>
 					On higher plans the General tab has an Analytics &amp; tracking
-					section, where you can paste your Google Analytics Measurement ID or
-					your Meta Pixel ID. Visitors are asked to allow analytics before
-					anything loads, and nothing loads if they decline, so remember to
-					mention these tools in your privacy policy. Google Tag Manager is not
-					supported, because a container can run any code on your page.
+					section. Turn on Google Analytics or Meta Pixel, then paste your
+					Measurement ID or Pixel ID. Turning a switch off removes that tag when
+					you save. Visitors are asked to allow analytics before anything loads,
+					and nothing loads if they decline, so remember to mention these tools
+					in your privacy policy. Google Tag Manager is not supported, because a
+					container can run any code on your page.
 				</p>
 			</Prose>
 
