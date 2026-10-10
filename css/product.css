@@ -1,0 +1,38 @@
+.product {
+	--product-background: #ffffff;
+	--product-foreground: #171717;
+	--product-primary: #ffc107;
+	--product-secondary: #010e58;
+	--product-primary-accent: #e5c230;
+	--product-foreground-accent: #454545;
+	--product-background-hero: #f3f3f5;
+
+	--product-border: #eaeaea;
+	--product-background-hover: #fff9e5;
+	--product-icon: #e5c230;
+	--product-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+	--product-scale-hover: 1.02;
+	--product-shadow-hover: 0 4px 10px rgba(229, 194, 48, 0.15);
+
+	/* Navbar button hover enhancements */
+	--product-nav-hover-bg: #f0f0f0;
+	--product-nav-hover-text: #d3af37;
+	--product-nav-hover-border: #d3af37;
+	--product-nav-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	--product-nav-focus-ring: 0 0 0 3px rgba(211, 175, 55, 0.2);
+	--product-nav-active: #000;
+	--product-error: #ff0000;
+	color: var(--product-foreground);
+	background: var(--product-background);
+
+	@apply text-lg;
+}
+
+.home #logos svg {
+	@apply w-fit h-10 sm:h-12;
+}
+
+.home .benefit-section:last-of-type > div {
+	@apply mb-10;
+}
