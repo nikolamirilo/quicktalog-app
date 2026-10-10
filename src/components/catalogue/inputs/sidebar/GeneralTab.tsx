@@ -8,13 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import {
-	TRACKING_VENDOR_KEYS,
-	TRACKING_VENDORS,
-	trackingIdError,
-} from "@/lib/catalogue/tracking-providers";
-import { LockedGroup, PANEL_TAB_ROOT, PanelSection } from "./panel";
 import { cn } from "@/lib/ui/cn";
+import TrackingSection from "@/components/catalogue/inputs/sidebar/general/TrackingSection";
+import { LockedGroup, PANEL_TAB_ROOT, PanelSection } from "./panel";
 
 const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
@@ -169,54 +165,11 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 				</LockedGroup>
 			</PanelSection>
 
-			<PanelSection
-				info="Connect your own Google Analytics or Meta Pixel to see how visitors use this catalogue. Visitors are asked to allow analytics before any tag loads, and nothing loads if they decline."
-				title="Analytics & tracking"
-			>
-				<LockedGroup locked={!hasTracking}>
-					<div className="space-y-4">
-						{TRACKING_VENDOR_KEYS.map((vendor) => {
-							const spec = TRACKING_VENDORS[vendor];
-							const value =
-								(catalogue.metadata?.[spec.field] as string | undefined) ?? "";
-							const error = trackingIdError(vendor, value);
-							return (
-								<div className="space-y-2" key={vendor}>
-									<Label htmlFor={`tracking-${vendor}`}>{spec.label} ID</Label>
-									<Input
-										aria-describedby={`tracking-${vendor}-hint`}
-										aria-invalid={!!error}
-										className="font-mono text-sm"
-										id={`tracking-${vendor}`}
-										onChange={(e) =>
-											handleChange(`metadata.${spec.field}`, e.target.value)
-										}
-										placeholder={spec.placeholder}
-										spellCheck={false}
-										value={value}
-									/>
-									<span
-										className={cn(
-											"block text-[12.5px] leading-snug",
-											error
-												? "font-semibold text-product-error"
-												: "text-product-muted",
-										)}
-										id={`tracking-${vendor}-hint`}
-									>
-										{error ?? spec.hint}
-									</span>
-								</div>
-							);
-						})}
-						<p className="text-[12.5px] leading-snug text-product-muted">
-							Google Tag Manager is not supported, because a container can run
-							any code on your page. Paste the IDs above instead. Remember to
-							mention these tools in your privacy policy.
-						</p>
-					</div>
-				</LockedGroup>
-			</PanelSection>
+			<TrackingSection
+				handleChange={handleChange}
+				hasTracking={hasTracking}
+				metadata={catalogue.metadata}
+			/>
 		</div>
 	);
 };

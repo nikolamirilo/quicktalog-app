@@ -30,6 +30,8 @@ export interface TrackingVendorSpec {
 	/** Key on `catalogue.metadata` holding this vendor's id. */
 	field: "googleAnalyticsId" | "metaPixelId";
 	label: string;
+	/** One line under the vendor's switch in the builder. */
+	summary: string;
 	/** Where in the vendor's own UI the id is found. Shown under the input. */
 	hint: string;
 	placeholder: string;
@@ -47,6 +49,7 @@ export const TRACKING_VENDORS: Record<TrackingVendor, TrackingVendorSpec> = {
 	googleAnalytics: {
 		field: "googleAnalyticsId",
 		label: "Google Analytics",
+		summary: "See visits in your own GA4 property.",
 		hint: "In Google Analytics: Admin → Data streams → your web stream. It starts with G-.",
 		placeholder: "G-XXXXXXXXXX",
 		pattern: /^G-[A-Z0-9]{4,15}$/i,
@@ -74,13 +77,14 @@ export const TRACKING_VENDORS: Record<TrackingVendor, TrackingVendorSpec> = {
 			{
 				pattern: /^\d{8,20}$/,
 				message:
-					"This looks like a Meta Pixel ID. Put it in the Meta Pixel field below.",
+					"This looks like a Meta Pixel ID. Turn on Meta Pixel below and paste it in the Meta Pixel field.",
 			},
 		],
 	},
 	metaPixel: {
 		field: "metaPixelId",
 		label: "Meta Pixel",
+		summary: "Measure visits from your Meta ads.",
 		hint: "In Meta Events Manager: Data sources → your pixel. A long number.",
 		placeholder: "1234567890123456",
 		pattern: /^\d{8,20}$/,
@@ -88,7 +92,7 @@ export const TRACKING_VENDORS: Record<TrackingVendor, TrackingVendorSpec> = {
 			{
 				pattern: /^G-/i,
 				message:
-					"This looks like a Google Analytics Measurement ID. Put it in the Google Analytics field above.",
+					"This looks like a Google Analytics Measurement ID. Turn on Google Analytics above and paste it in the Google Analytics field.",
 			},
 			{
 				pattern: /^GTM-/i,
