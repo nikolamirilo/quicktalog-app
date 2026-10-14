@@ -26,6 +26,7 @@ Plans, analyses and investigations produced before implementing something. Human
 
 | Plan | Status |
 |---|---|
+| [2026-10-14-docs-and-help-refresh](archive/2026-10-14-docs-and-help-refresh/PLAN.md) | Done: `/docs` and `/help` brought back to the shipped product. New "Build with Quick AI" topic, the removed AI-generator and Scan-and-Import flows rewritten, analytics/plans/design/sharing topics updated, and the Help Center FAQ rewritten from `tiers` |
 | [2026-09-22-auth-folder-refactor](archive/2026-09-22-auth-folder-refactor/PLAN.md) | Done: `components/auth/` split into `common/`/`forms/`/`session/`; sign-in and sign-up are one card with a mode toggle |
 | [ai-agent-plan-mode.md](archive/ai-agent-plan-mode.md) | Done/superseded: Part 1 (plan mode) built; Part 2 (credits) replaced by `2026-09-21-ai-credits` |
 | [articles-implementation-plan.md](archive/articles-implementation-plan.md) | Done: `/articles` exists |

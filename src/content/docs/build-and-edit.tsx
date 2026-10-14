@@ -1,28 +1,28 @@
-import { FiEdit3 } from "react-icons/fi";
 import { ArticleImage } from "@/components/resources/ArticleImage";
 import { Callout } from "@/components/resources/Callout";
 import { KeyTakeaways } from "@/components/resources/KeyTakeaways";
 import { Prose } from "@/components/resources/Prose";
 import { Stepper } from "@/components/resources/Stepper";
+import { FiEdit3 } from "react-icons/fi";
 import type { DocEntry } from "./_types";
 
 const meta = {
 	slug: "build-and-edit",
 	title: "Build and Edit Your Catalogue",
 	description:
-		"How the Quicktalog builder works: add and edit items, group them into categories, add content blocks, and find your way around the settings tabs.",
+		"How the Quicktalog builder works: add and edit items, group them into sections, choose a layout, add other kinds of content, and know when a change goes live.",
 	tag: "Build",
 	icon: FiEdit3,
 	order: 3,
-	readingTimeMinutes: 5,
+	readingTimeMinutes: 6,
 	keywords: [
 		"catalogue builder",
 		"edit catalogue items",
-		"catalogue categories",
+		"catalogue sections",
 		"content blocks",
-		"add products",
+		"publish catalogue",
 	],
-	relatedSlugs: ["customize-design", "share-your-catalogue"],
+	relatedSlugs: ["quick-ai", "customize-design"],
 } satisfies DocEntry["meta"];
 
 function Body() {
@@ -36,19 +36,20 @@ function Body() {
 
 			<Prose>
 				<p>
-					The builder is where a draft becomes a real catalogue. It shows a live
-					preview of your page with a settings panel beside it. Every change you
-					make appears right away, so you always see exactly what a customer
-					will see. Your work is saved to the draft as you go.
+					The builder is where a draft becomes a real catalogue. The middle of
+					the screen is your catalogue exactly as a customer will see it, and
+					you edit it in place: tap a section to change it, tap an item to open
+					it. Around that sit the controls, and a settings panel for everything
+					that applies to the whole page.
 				</p>
 			</Prose>
 
 			<KeyTakeaways
 				points={[
 					"Items are the core of a catalogue: a name, a price, a photo, and a short description.",
-					"Categories group items so a long list stays easy to scan.",
-					"Content blocks add text and dividers between items, with embeds and custom visuals on higher plans.",
-					"The settings panel is split into General, Header, Footer, and Appearance.",
+					"Sections group items, and a layout decides how each group is drawn.",
+					"Text and dividers break the page up; external content and custom visuals come in on higher plans.",
+					"Save keeps your work private. Publish is what customers see.",
 				]}
 			/>
 
@@ -58,8 +59,15 @@ function Body() {
 					An item is a single thing you offer. Add one, then give it a name, a
 					price, a photo, and a short description. Good photos and a clear line
 					of description do most of the selling, so spend the time on the items
-					that matter most. You can come back and edit any item later without
-					republishing from scratch.
+					that matter most. If a description is slow to come, the field has a
+					button that writes one from the item&apos;s name.
+				</p>
+				<p>
+					A price can carry a unit where that helps, like per kg or per portion.
+					You can mark an item as free rather than priced, or put it on
+					discount, in which case the old price is shown struck through beside
+					the new one. Every item has its own ⋮ menu for moving it up or down,
+					sending it to another section, or deleting it.
 				</p>
 			</Prose>
 
@@ -68,7 +76,7 @@ function Body() {
 					{
 						title: "Add an item",
 						description:
-							"Create a new item in the category you want it to sit in. An empty item appears in the preview, ready to fill.",
+							"Create a new item in the section you want it to sit in. It appears in the preview straight away, ready to fill.",
 					},
 					{
 						title: "Fill in the details",
@@ -78,7 +86,7 @@ function Body() {
 					{
 						title: "Arrange the order",
 						description:
-							"Put your strongest items near the top of their category. People scan from the top, so lead with what sells.",
+							"Put your strongest items near the top of their section. People scan from the top, so lead with what sells.",
 					},
 				]}
 			/>
@@ -90,47 +98,78 @@ function Body() {
 			/>
 
 			<Prose>
-				<h2>Group items into categories</h2>
+				<h2>Group items into sections</h2>
 				<p>
-					Categories keep a catalogue tidy. On a menu that might be starters,
+					Sections keep a catalogue tidy. On a menu that might be starters,
 					mains, and drinks. In a salon it might be the service types you offer.
 					Group related items together and your page stays easy to scan even as
 					it grows.
 				</p>
+				<p>
+					A section can show its name as a heading, which doubles as a control
+					your visitors can tap to fold it away, or it can be a plain grid with
+					no heading at all. Each one carries a ⋯ menu with everything you can
+					do to it: edit it, change its layout, move it up or down, or delete
+					it.
+				</p>
+
+				<h3>Choose a layout</h3>
+				<p>
+					The layout decides how the items in one section are drawn, and each
+					section can use a different one. There are four: an image beside the
+					text, an image above it, text only for lists where photos would get in
+					the way, and a carousel your visitors swipe through. Switching between
+					them takes one tap, so it is worth trying a couple on your longest
+					section.
+				</p>
 			</Prose>
 
 			<ArticleImage
-				alt="Category management in the Quicktalog builder showing grouped items under named sections"
+				alt="Section management in the Quicktalog builder showing grouped items under named sections"
 				maxWidth="640px"
 				src="/images/documentation/build-edit-categories.svg"
 			/>
 
 			<Prose>
-				<h2>Connect your own analytics</h2>
+				<h2>Add other kinds of content</h2>
 				<p>
-					On higher plans the General tab has an Analytics &amp; tracking
-					section. Turn on Google Analytics or Meta Pixel, then paste your
-					Measurement ID or Pixel ID. Turning a switch off removes that tag when
-					you save. Visitors are asked to allow analytics before anything loads,
-					and nothing loads if they decline, so remember to mention these tools
-					in your privacy policy. Google Tag Manager is not supported, because a
-					container can run any code on your page.
+					A catalogue is more than a list, so a section does not have to hold
+					items. When you add one, you choose what kind it is.
 				</p>
-			</Prose>
-
-			<Prose>
-				<h2>Add content blocks</h2>
+				<ul>
+					<li>
+						<strong>Items</strong> - your products or services, with prices and
+						photos. On every plan.
+					</li>
+					<li>
+						<strong>Text</strong> - a welcome note, your opening hours, or a
+						short story about the business. On every plan, and text blocks do
+						not count against the number of sections your plan allows.
+					</li>
+					<li>
+						<strong>Divider</strong> - a horizontal rule that breaks the page
+						into clear parts.
+					</li>
+					<li>
+						<strong>External content</strong> - something from another service
+						embedded into the page, like a map, a video, or a booking widget.
+						You paste in the snippet that service gives you.
+					</li>
+					<li>
+						<strong>Custom visual</strong> - a banner, an animation, or a small
+						interactive piece designed for your page. Quick AI can write one for
+						you if you describe what you want.
+					</li>
+				</ul>
 				<p>
-					A catalogue is more than a list. Text blocks let you add a welcome
-					note, opening hours, or a short story about the business. Dividers
-					break the page into clear sections. On higher plans you can also embed
-					outside content, like a booking widget or a map, and design a custom
-					visual such as a banner or an animation.
+					The last three come in on paid plans. If one is not part of yours, the
+					builder says which plan adds it rather than letting you build
+					something you cannot publish.
 				</p>
 			</Prose>
 
 			<ArticleImage
-				alt="Content blocks panel in the builder showing text, divider, and embed block options"
+				alt="The add-section panel in the builder showing items, text, divider, external content, and custom visual options"
 				maxWidth="640px"
 				src="/images/documentation/build-edit-content-blocks.svg"
 			/>
@@ -138,11 +177,22 @@ function Body() {
 			<Prose>
 				<h2>Find your way around the tabs</h2>
 				<p>
-					The settings panel is split into four tabs so each kind of setting has
-					its own place. General holds the basics, Header controls the top of
-					the page, Footer covers business details and links at the bottom, and
-					Appearance is where you change the look. The next topic covers
-					Appearance in full.
+					The settings panel holds everything that applies to the whole page
+					rather than one section, split into four tabs. General has the basics:
+					your heading, logo, contact details, and how the page is titled when
+					someone shares the link. Header controls the bar above the catalogue
+					and Footer the one below it. Appearance is where you change the look,
+					which the next topic but one covers in full.
+				</p>
+				<p>
+					On higher plans the General tab also has an{" "}
+					<strong>Analytics &amp; tracking</strong> section. Turn on Google
+					Analytics or Meta Pixel, then paste your Measurement ID or Pixel ID.
+					Turning a switch off removes that tag when you save. Visitors are
+					asked to allow analytics before anything loads, and nothing loads if
+					they decline, so remember to mention these tools in your privacy
+					policy. Google Tag Manager is not supported, because a container can
+					run any code on your page.
 				</p>
 			</Prose>
 
@@ -151,10 +201,33 @@ function Body() {
 				src="/images/documentation/build-edit-settings-tabs.svg"
 			/>
 
-			<Callout title="Edit live, publish when ready" variant="note">
-				Changes in the builder are saved to your draft, not to the live page.
-				Your customers keep seeing the last published version until you publish
-				again, so you can rework a catalogue without anyone seeing it half done.
+			<Prose>
+				<h2>Save, preview, publish</h2>
+				<p>
+					Three buttons, three different things, and the difference is worth
+					learning once.
+				</p>
+				<ul>
+					<li>
+						<strong>Save</strong> keeps your work in progress. Nothing a
+						customer sees changes.
+					</li>
+					<li>
+						<strong>Preview</strong> opens the saved draft as a visitor would
+						see it, without the builder controls on top of it.
+					</li>
+					<li>
+						<strong>Publish</strong> pushes the draft live. This is the only one
+						that changes what is on your link.
+					</li>
+				</ul>
+			</Prose>
+
+			<Callout title="Edit freely, publish when ready" variant="note">
+				Because editing and publishing are separate, you can rework a whole
+				catalogue over several days without anyone seeing it half done. Your
+				customers keep seeing the last published version until you publish
+				again.
 			</Callout>
 		</>
 	);

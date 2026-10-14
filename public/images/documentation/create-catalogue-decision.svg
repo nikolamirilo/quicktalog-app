@@ -59,7 +59,7 @@
             
             <g transform="translate(204,52)">
               <rect width="132" height="190" rx="14" fill="#f3f3f5" stroke="#eaeaea" stroke-width="2"></rect>
-              <circle cx="66" cy="34" r="18" fill="#010e58"></circle><use href="#i-scan" x="54" y="22" width="24" height="24" color="#fff"></use>
+              <circle cx="66" cy="34" r="18" fill="#010e58"></circle><use href="#i-pencil" x="54" y="22" width="24" height="24" color="#fff"></use>
               <g transform="translate(16,70)"><circle cx="9" cy="9" r="8" fill="#fff" stroke="#eaeaea" stroke-width="1.5"></circle><use href="#i-check" x="3" y="3" width="12" height="12" color="#010e58"></use><rect x="26" y="6" width="80" height="6" rx="3" fill="#454545" opacity="0.6"></rect></g>
               <g transform="translate(16,104)"><circle cx="9" cy="9" r="8" fill="#fff" stroke="#eaeaea" stroke-width="1.5"></circle><use href="#i-check" x="3" y="3" width="12" height="12" color="#010e58"></use><rect x="26" y="6" width="70" height="6" rx="3" fill="#454545" opacity="0.6"></rect></g>
               <g transform="translate(16,138)"><circle cx="9" cy="9" r="8" fill="#fff" stroke="#eaeaea" stroke-width="1.5"></circle><use href="#i-check" x="3" y="3" width="12" height="12" color="#010e58"></use><rect x="26" y="6" width="84" height="6" rx="3" fill="#454545" opacity="0.6"></rect></g>

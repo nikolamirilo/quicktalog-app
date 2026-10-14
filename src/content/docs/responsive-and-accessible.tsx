@@ -12,7 +12,7 @@ const meta = {
 		"Your catalogue looks right on every screen and works for every visitor - no configuration needed. One link is the single source of truth for phones, tablets, and desktops.",
 	tag: "Accessibility",
 	icon: FiSmartphone,
-	order: 7,
+	order: 8,
 	readingTimeMinutes: 3,
 	keywords: [
 		"responsive catalogue",

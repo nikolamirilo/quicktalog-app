@@ -10,17 +10,17 @@ const meta = {
 	slug: "share-your-catalogue",
 	title: "Share Your Catalogue",
 	description:
-		"Publish your catalogue and get it in front of customers with a link and a branded QR code you can print on signs, menus, and flyers.",
+		"Publish your catalogue and get it in front of customers: a link that works anywhere, a branded QR code you can print, and an embed for your own website.",
 	tag: "Share",
 	icon: FiShare2,
-	order: 5,
-	readingTimeMinutes: 4,
+	order: 6,
+	readingTimeMinutes: 5,
 	keywords: [
 		"share catalogue",
 		"catalogue link",
 		"QR code catalogue",
 		"publish catalogue",
-		"custom QR code",
+		"embed catalogue",
 	],
 	relatedSlugs: ["track-performance", "customize-design"],
 } satisfies DocEntry["meta"];
@@ -39,8 +39,8 @@ function Body() {
 				<p>
 					A catalogue is only useful once people can see it. When yours reads
 					well, publishing and sharing it takes seconds. You get a link that
-					works on any device and a QR code you can put anywhere in the real
-					world.
+					works on any device, a QR code you can put anywhere in the real world,
+					and a snippet for dropping the catalogue straight into your own site.
 				</p>
 			</Prose>
 
@@ -48,8 +48,8 @@ function Body() {
 				points={[
 					"Publishing makes your catalogue live, and later edits go out the moment you publish again.",
 					"Every catalogue has its own link that opens on any phone, tablet, or computer.",
-					"The QR code can be styled to match your brand and downloaded to print.",
-					"Customers need no app and no account to view your catalogue.",
+					"The QR code can be styled to match your brand and downloaded as PNG, JPEG or SVG.",
+					"You can also embed the catalogue in a page you already run.",
 				]}
 			/>
 
@@ -61,6 +61,12 @@ function Body() {
 					changes reach customers. There is no reprinting and no waiting, which
 					is the whole point of a digital catalogue over a printed one.
 				</p>
+				<p>
+					A live catalogue is marked <strong>Active</strong> on your dashboard.
+					From the same menu you can deactivate it, which takes it offline
+					without deleting anything, and activate it again later. That is the
+					switch to reach for when a seasonal menu is out of season.
+				</p>
 			</Prose>
 
 			<ArticleImage
@@ -70,12 +76,27 @@ function Body() {
 			/>
 
 			<Prose>
-				<h2>Share the link</h2>
+				<h2>Three ways to share it</h2>
 				<p>
-					Each catalogue has its own web link. Send it by text or email, put it
-					in your social profiles, or add it to your website. It opens straight
-					away on any device, with nothing for the customer to install.
+					The share dialog on each catalogue carries all three, and you can use
+					as many as you like at once. They all point at the same page.
 				</p>
+				<ul>
+					<li>
+						<strong>The link.</strong> Send it by text or email, put it in your
+						social profiles, or add it to your website. It opens straight away
+						on any device, with nothing for the customer to install.
+					</li>
+					<li>
+						<strong>The QR code.</strong> For the physical world: a table card,
+						a window, a flyer, the side of a van.
+					</li>
+					<li>
+						<strong>The embed.</strong> A snippet you paste into a page you
+						already run, so the catalogue appears inside your own site and still
+						updates whenever you publish.
+					</li>
+				</ul>
 			</Prose>
 
 			<ArticleImage
@@ -83,6 +104,23 @@ function Body() {
 				maxWidth="380px"
 				src="/images/documentation/share-catalogue-link-channels.svg"
 			/>
+
+			<Prose>
+				<h2>Make the QR code yours</h2>
+				<p>
+					Every catalogue has a QR editor, on every plan. You can change the
+					colours of the code and its background, change the shape of its dots
+					and corners, drop your logo in the middle, and print a short line of
+					text under it. Download the result as a PNG or JPEG for most uses, or
+					an SVG when a printer asks for something that scales.
+				</p>
+				<p>
+					As you style it, the editor tells you whether the code still scans
+					cleanly. Heavy colours and a large logo are the two things that push a
+					code over the line, so if it warns you, take the logo down a size
+					before you send anything to print.
+				</p>
+			</Prose>
 
 			<Stepper
 				steps={[
@@ -99,12 +137,12 @@ function Body() {
 					{
 						title: "Customize your QR code",
 						description:
-							"Open the QR editor to change colours, add your logo, and pick a frame so the code matches your brand.",
+							"Open the QR editor to change colours, add your logo, and add a short line of text so people know what they are scanning.",
 					},
 					{
 						title: "Download and print",
 						description:
-							"Export the QR code and put it on a sign, a table card, a menu, or a flyer where customers will scan it.",
+							"Export the code and put it on a sign, a table card, a menu, or a flyer where customers will scan it.",
 					},
 				]}
 			/>
@@ -123,10 +161,10 @@ function Body() {
 			<Prose>
 				<h2>Update any time</h2>
 				<p>
-					Because the catalogue lives online, the same link and QR code keep
-					working after you change the contents. Update a price, add a seasonal
-					item, or run a promotion, publish, and everyone who scans the existing
-					code sees the new version. You never reprint a thing.
+					Because the catalogue lives online, the same link, QR code and embed
+					keep working after you change the contents. Update a price, add a
+					seasonal item, or run a promotion, publish, and everyone who scans the
+					existing code sees the new version. You never reprint a thing.
 				</p>
 			</Prose>
 

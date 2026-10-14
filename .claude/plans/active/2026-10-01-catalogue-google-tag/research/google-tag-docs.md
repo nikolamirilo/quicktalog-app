@@ -340,7 +340,7 @@ Further facts from [Google tag management](https://support.google.com/tagmanager
 
 ### 4.8 Certified CMP: publishers only (Facts)
 
-- **Publishers.** "partners using our publisher products—Google AdSense, Ad Manager, or AdMob—are required to use a consent management platform (CMP) that has been certified by Google and integrates with the IAB's TCF when serving personalized ads... EEA and UK: As of 16 January 2024... Switzerland: As of 31 July 2024." ([AdSense CMP requirement](https://support.google.com/adsense/answer/13554116))
+- **Publishers.** "partners using our publisher products-Google AdSense, Ad Manager, or AdMob-are required to use a consent management platform (CMP) that has been certified by Google and integrates with the IAB's TCF when serving personalized ads... EEA and UK: As of 16 January 2024... Switzerland: As of 31 July 2024." ([AdSense CMP requirement](https://support.google.com/adsense/answer/13554116))
 - **Advertisers.** "Please note: Nothing prevents advertisers from using a CMP that is not a partner (yet) to adopt Consent Mode and meet our EU UCP requirements." ([CMP Partner Program](https://cmppartnerprogram.withgoogle.com/)) Google's EEA pages give custom-banner owners the instruction "implement consent mode v2".
 - **Conclusion.** Quicktalog may build its own banner for GA4 and Ads measurement. Certification would only matter if catalogues ever served AdSense or Ad Manager ads.
 - **TCF caveat.** "When your users deny consent with a consent solution that uses the TCF, Google Analytics properties aren't able to model data." ([GA consent](https://support.google.com/analytics/answer/9976101))

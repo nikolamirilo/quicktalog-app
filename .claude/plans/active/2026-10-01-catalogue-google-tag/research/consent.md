@@ -585,7 +585,7 @@ Versions and licences are from `npm view` on 2026-10-01.
 ### 7.3 Certified CMP and TCF
 
 **Facts.**
-- Google requires a Google-certified CMP integrated with IAB TCF only for "partners using our publisher products—Google AdSense, Ad Manager, or AdMob" serving ads to the EEA or UK (since 16 Jan 2024) and Switzerland (since 31 Jul 2024) ([Google, for publishers](https://support.google.com/admanager/answer/13554116?hl=en); [for CMPs](https://support.google.com/admanager/answer/13554020?hl=en)).
+- Google requires a Google-certified CMP integrated with IAB TCF only for "partners using our publisher products-Google AdSense, Ad Manager, or AdMob" serving ads to the EEA or UK (since 16 Jan 2024) and Switzerland (since 31 Jul 2024) ([Google, for publishers](https://support.google.com/admanager/answer/13554116?hl=en); [for CMPs](https://support.google.com/admanager/answer/13554020?hl=en)).
 - Advertisers must "collect consent … and share consent signals with Google". If "you maintain your own banner, implement consent mode v2". A CMP Partner is optional ([Google Ads Help](https://support.google.com/google-ads/answer/14625550?hl=en)).
 
 **Inference.** Catalogue owners are advertisers or analysts, not publishers selling inventory. No certified CMP is required and TCF is irrelevant. Adopting TCF would add complexity and IAB-framework obligations (cf. C-604/22) for no benefit.

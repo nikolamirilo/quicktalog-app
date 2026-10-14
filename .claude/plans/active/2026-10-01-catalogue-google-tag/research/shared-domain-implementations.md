@@ -80,8 +80,8 @@ Section 6 covers both.
 ### 2.1 Linktree (`linktr.ee/<name>`)
 
 **(a) Integrations and tier. Facts:**
-- GA4 integration page: "Available on Pro and Premium plans". "All you need to do is add your Google Analytics Measurement ID … and we'll do the rest." The ID is pasted into the **Google field** in Settings → Analytics Integrations. — [Linktree Help: GA](https://help.linktr.ee/en/articles/5434201-google-analytics-integration)
-- Meta Pixel is also "Available on Pro and Premium plans". The owner pastes the Pixel ID, plus an optional "Facebook Conversions API Access Token". — [Linktree Help: Meta Pixel](https://help.linktr.ee/en/articles/5434194-facebook-meta-pixel-integration) (cached 2026-09-30)
+- GA4 integration page: "Available on Pro and Premium plans". "All you need to do is add your Google Analytics Measurement ID … and we'll do the rest." The ID is pasted into the **Google field** in Settings → Analytics Integrations. - [Linktree Help: GA](https://help.linktr.ee/en/articles/5434201-google-analytics-integration)
+- Meta Pixel is also "Available on Pro and Premium plans". The owner pastes the Pixel ID, plus an optional "Facebook Conversions API Access Token". - [Linktree Help: Meta Pixel](https://help.linktr.ee/en/articles/5434194-facebook-meta-pixel-integration) (cached 2026-09-30)
 - The public profile payload has three ID fields: `"googleAnalyticsId":null,"facebookPixelId":"558811507626827","tiktokPixelId":"BU378EQHT2A1QT375IM0"`. This is from Linktree's own profile `https://linktr.ee/linktr.ee`, scraped from DE and US. A TikTok field therefore exists in the data model, even though the help center documents only GA and Meta.
 - No GTM or custom-code field was found in the profile payload or the tracking component (see (c)).
 
@@ -118,7 +118,7 @@ Live render from US, `https://linktr.ee/linktr.ee`, waitFor 4 s. Fact:
   - The consent tool "also describes the third party cookies that Linktree members may decide to use on their User Profile".
   - "You can separately control whether to accept or reject cookies set by Linktree Users on their User Profiles."
   - Source: [Linktree Cookie Notice](https://linktr.ee/s/about/cookie-notice)
-- Privacy Notice: when a visitor shares information with a Linktree User, "we facilitate this processing ('Processor Services'). This Privacy Notice does not address our Processor Services." — [Linktree Privacy Notice](https://linktr.ee/s/privacy) (cached 2026-09-29)
+- Privacy Notice: when a visitor shares information with a Linktree User, "we facilitate this processing ('Processor Services'). This Privacy Notice does not address our Processor Services." - [Linktree Privacy Notice](https://linktr.ee/s/privacy) (cached 2026-09-29)
 
 Inference on (d):
 - The banner is **platform-wide**, run by Linktree and shown on every profile.
@@ -126,9 +126,9 @@ Inference on (d):
 - Linktree frames the user's pixels as the user's "independent purposes".
 
 **(e) Events, differences, limits. Facts:**
-- GA: data appears in Realtime "Top Active Pages". No custom GA events are documented. — [GA help](https://help.linktr.ee/en/articles/5434201-google-analytics-integration)
+- GA: data appears in Realtime "Top Active Pages". No custom GA events are documented. - [GA help](https://help.linktr.ee/en/articles/5434201-google-analytics-integration)
 - Meta: "Every Linktree profile visit triggers a `PageView` event" and "Every link click triggers a `linkClick` event". The article mentions deduplication (browser plus CAPI).
-- Meta setup: users may need to put `linktr.ee` on the pixel's traffic-permission allow list. "You don't need to verify your Linktree page as your domain in Facebook Business Manager." — [Meta help](https://help.linktr.ee/en/articles/5434194-facebook-meta-pixel-integration)
+- Meta setup: users may need to put `linktr.ee` on the pixel's traffic-permission allow list. "You don't need to verify your Linktree page as your domain in Facebook Business Manager." - [Meta help](https://help.linktr.ee/en/articles/5434194-facebook-meta-pixel-integration)
 - No security rationale for the lack of GTM was found.
 
 ### 2.2 Calendly (`calendly.com/<user>/<event>`)
@@ -139,7 +139,7 @@ Inference on (d):
   - "You can't set up different GA tracking codes per user or team."
   - "Calendly doesn't support direct integration with Google Tag Manager at this time." (stated twice)
   - Source: [Calendly + Google Analytics](https://calendly.com/help/calendly-google-analytics) (updated 20 Aug 2026; cached 2026-09-30)
-- Meta Pixel ID is available on the same plans. — [Calendly + Meta Pixel](https://calendly.com/help/calendly-meta-pixel) (updated 24 Aug 2026)
+- Meta Pixel ID is available on the same plans. - [Calendly + Meta Pixel](https://calendly.com/help/calendly-meta-pixel) (updated 24 Aug 2026)
 
 **(b) URL structure. Fact:** booking pages are on `calendly.com/<user>`. The help header's "My Account" link is `https://calendly.com/event_types/user/me`, so builder and booking pages share an origin.
 
@@ -178,7 +178,7 @@ Live booking page `https://calendly.com/acmesales` (DE). Fact:
 - Invitees can reopen "Cookie settings" at the bottom of the booking page.
 - For embeds, the host can add `hide_gdpr_banner=1`. Calendly then warns: "Calendly uses cookies even if the banner is hidden. To stay compliant, wait to load Calendly until users accept performance cookies."
 - Source: [Calendly cookie management and banner](https://calendly.com/help/calendly-cookie-management-and-banner) (updated 24 Sep 2026)
-- "You cannot hide or change the cookie banner on your booking page" — (snippet) from the search result for [help.calendly.com/…/4418236309399](https://help.calendly.com/hc/en-us/articles/4418236309399-Calendly-cookie-management-and-banner). The current page text does not contain this sentence.
+- "You cannot hide or change the cookie banner on your booking page" - (snippet) from the search result for [help.calendly.com/…/4418236309399](https://help.calendly.com/hc/en-us/articles/4418236309399-Calendly-cookie-management-and-banner). The current page text does not contain this sentence.
 
 Inference: the banner is platform-run and names only Calendly's privacy notice. The customer's GA and Meta wait for OneTrust consent.
 
@@ -197,9 +197,9 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 - "To add your pixel to Eventbrite, you don't need the entire pixel code. Eventbrite will automatically add the code to your event. You just need to enter in your pixel ID."
 - "Due to international regulations, tracking pixels are disabled when using Eventbrite's embedded checkout feature in certain regions, such as Europe and the United Kingdom."
 - Source: [Getting started with tracking pixels](https://www.eventbrite.com/help/en-us/articles/598933/getting-started-with-tracking-pixels/) (redirects to support.eventbrite.com)
-- GA4: go to "Tracking pixels" under "Marketing", choose "This event" or "All events", and paste the measurement ID. "Eventbrite automatically adds in the rest of the tracking pixel code to your checkout." — [Set up a tracking pixel with Google Analytics](https://www.eventbrite.com/help/en-us/articles/475328/how-to-set-up-a-tracking-pixel-with-google-analytics/)
-- Meta: optional server-side tracking with a "Conversions API Access Token". "you won't be able to verify the domain of your Eventbrite event because Eventbrite is a third-party website". — [Add a Meta Pixel to your event](https://www.eventbrite.com/help/en-us/articles/558547/how-to-create-a-tracking-pixel-with-meta/)
-- Simple image pixel: the organizer pastes an image URL and picks where it fires (listing, register, order confirmation, seat pick). — (snippet) [Eventbrite: simple image tracking pixel](https://www.eventbrite.com/support/articles/en_US/How_To/how-to-set-up-a-simple-image-tracking-pixel?lg=en_US)
+- GA4: go to "Tracking pixels" under "Marketing", choose "This event" or "All events", and paste the measurement ID. "Eventbrite automatically adds in the rest of the tracking pixel code to your checkout." - [Set up a tracking pixel with Google Analytics](https://www.eventbrite.com/help/en-us/articles/475328/how-to-set-up-a-tracking-pixel-with-google-analytics/)
+- Meta: optional server-side tracking with a "Conversions API Access Token". "you won't be able to verify the domain of your Eventbrite event because Eventbrite is a third-party website". - [Add a Meta Pixel to your event](https://www.eventbrite.com/help/en-us/articles/558547/how-to-create-a-tracking-pixel-with-meta/)
+- Simple image pixel: the organizer pastes an image URL and picks where it fires (listing, register, order confirmation, seat pick). - (snippet) [Eventbrite: simple image tracking pixel](https://www.eventbrite.com/support/articles/en_US/How_To/how-to-set-up-a-simple-image-tracking-pixel?lg=en_US)
 - Inference: this is a URL-only, no-JavaScript escape hatch for vendors without a native integration.
 
 **(b) URL. Fact:** event pages are under `eventbrite.com/e/…`. The organizer dashboard is `https://www.eventbrite.com/organizations/events` (linked from the GA article). Same origin.
@@ -219,15 +219,15 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 - Inference: the region-scoped defaults cover `ad_storage` and `analytics_storage` only. No `ad_user_data` or `ad_personalization` defaults appear in this inline script; Transcend may add them.
 
 **(d) Consent. Facts:**
-- Cookie Statement: "Organizer cookies: Organizers selling tickets to events may use a variety of cookies on our Online Properties, including analytics and customization cookies, advertising cookies, and social media cookies … Please note that Eventbrite does not have access to or control the cookies that organizers chose to use." — [Eventbrite Cookie Statement](https://www.eventbrite.com/help/en-us/articles/666792/eventbrite-cookie-policy/) (cached 2026-09-29)
-- For EU attendee data, the organizer is controller and Eventbrite is processor. — (snippet) [Eventbrite DPA for Organizers](https://www.eventbrite.com/help/en-us/articles/429030/data-processing-addendum-for-organizers/)
+- Cookie Statement: "Organizer cookies: Organizers selling tickets to events may use a variety of cookies on our Online Properties, including analytics and customization cookies, advertising cookies, and social media cookies … Please note that Eventbrite does not have access to or control the cookies that organizers chose to use." - [Eventbrite Cookie Statement](https://www.eventbrite.com/help/en-us/articles/666792/eventbrite-cookie-policy/) (cached 2026-09-29)
+- For EU attendee data, the organizer is controller and Eventbrite is processor. - (snippet) [Eventbrite DPA for Organizers](https://www.eventbrite.com/help/en-us/articles/429030/data-processing-addendum-for-organizers/)
 - Inference: the CMP is platform-wide (Transcend airgap regulates requests by purpose), and the Cookie Statement disclaims control of organizer cookies.
 
 **(e) Events, differences, limits. Facts:**
 - GA: "In addition to page views, your Google pixel will collect … event_listing … event_register … Purchase."
-- On differences: "this data doesn't account for refunds, transfers, or manual transactions. Attendees' privacy settings may also block your pixel from firing. For the most accurate information about your event sales, view your event reports." — [GA article](https://www.eventbrite.com/help/en-us/articles/475328/how-to-set-up-a-tracking-pixel-with-google-analytics/)
+- On differences: "this data doesn't account for refunds, transfers, or manual transactions. Attendees' privacy settings may also block your pixel from firing. For the most accurate information about your event sales, view your event reports." - [GA article](https://www.eventbrite.com/help/en-us/articles/475328/how-to-set-up-a-tracking-pixel-with-google-analytics/)
 - Meta: by default `PageView` on the listing and `Purchase` on completion. Extra standard events can be mapped to "Event listing / Event register / Event order confirmation / Reserved seating pick a seat".
-- "Eventbrite uses tracking pixels as well, but they won't interfere with your data." — [Meta article](https://www.eventbrite.com/help/en-us/articles/558547/how-to-create-a-tracking-pixel-with-meta/)
+- "Eventbrite uses tracking pixels as well, but they won't interfere with your data." - [Meta article](https://www.eventbrite.com/help/en-us/articles/558547/how-to-create-a-tracking-pixel-with-meta/)
 
 ### 2.4 Tally (`tally.so/r/<id>`): the closest analogue
 
@@ -236,12 +236,12 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 - "If you use an existing Stream, make sure to add tally.so as an additional domain."
 - The integration offers "a transparent, user-friendly consent banner on your forms (supports Google Consent Mode v2)".
 - Source: [Tally: GA4 integration](https://tally.so/help/google-analytics-integration)
-- Meta Pixel has its own integration, or can be injected via code injection. — [Tally: Code injection](https://tally.so/help/code-injection)
+- Meta Pixel has its own integration, or can be injected via code injection. - [Tally: Code injection](https://tally.so/help/code-injection)
 
 **(b) URL structure and the GTM/custom-code rule. Facts:**
-- "Forms hosted on a custom domain have access to a code injection block." It is a Tally Pro feature that "requires coding skills". — [Code injection](https://tally.so/help/code-injection)
+- "Forms hosted on a custom domain have access to a code injection block." It is a Tally Pro feature that "requires coding skills". - [Code injection](https://tally.so/help/code-injection)
 - For GTM or Meta Pixel event tracking, the guidance is "✅ Recommended: use a custom domain … Install your GTM container snippet or Meta Pixel code on both your website (company.com) and the custom domain with code injection".
-- Without a custom domain, the "Track form events" embed option sends events to the host site's own GTM or Pixel. — [Tracking Tally form events with GTM or Meta Pixel](https://tally.so/help/track-form-events-with-google-tag-manager-or-meta-pixel)
+- Without a custom domain, the "Track form events" embed option sends events to the host site's own GTM or Pixel. - [Tracking Tally form events with GTM or Meta Pixel](https://tally.so/help/track-form-events-with-google-tag-manager-or-meta-pixel)
 - Inference: on the shared `tally.so` origin, owners get only the ID integrations. Arbitrary code, GTM included, needs a customer-owned domain.
 - Not verified this session: that Tally's builder/dashboard is also served from `tally.so`, i.e. that forms share the builder's origin. The help center is at `tally.so/help` and forms at `tally.so/r/<id>`.
 
@@ -264,7 +264,7 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 
 **(d) Consent. Facts:**
 - The banner is an **owner-controlled per-form option**. It uses a single iubenda site (`siteId 3514643`) and links to **Tally's** cookie policy.
-- Tally's GDPR guide is about consent checkboxes for respondent data and has no banner details. — [Tally: GDPR-compliant form](https://tally.so/help/how-to-create-a-gdpr-compliant-form)
+- Tally's GDPR guide is about consent checkboxes for respondent data and has no banner details. - [Tally: GDPR-compliant form](https://tally.so/help/how-to-create-a-gdpr-compliant-form)
 
 **(e) Events, differences, limits. Facts:**
 - Events: `Tally.FormPageView` (category is the page URL, label "Page [X]") and `Tally.FormSubmitted` (label is the form title).
@@ -278,20 +278,20 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 **(a) Integrations and tier. Facts:**
 - GA4: "This integration is only available on a Business or above Typeform plan."
 - "You can't track Payment questions due to legal reasons, so it is currently not possible to use Google Analytics if you have a Payment field in your typeform."
-- "If you add your Google Analytics tracking code to a typeform, you are responsible for the data collected by Google Analytics." It warns about PII in URL parameters. — [Typeform: GA](https://help.typeform.com/hc/en-us/articles/360029251312-Integrate-your-typeform-with-Google-Analytics)
+- "If you add your Google Analytics tracking code to a typeform, you are responsible for the data collected by Google Analytics." It warns about PII in URL parameters. - [Typeform: GA](https://help.typeform.com/hc/en-us/articles/360029251312-Integrate-your-typeform-with-Google-Analytics)
 - GTM needs "A Business Typeform account". The guide says "make sure cookie consent is enabled on your form … Respondents … will need to accept Typeform cookies … for event tracking to work in Google Tag Manager".
 - "it is currently not possible to use Google Tag Manager if you have a Payment field in your form."
 - "We block insecure domains that are not 'https'."
 - Source: [Typeform: Add GTM to a form](https://help.typeform.com/hc/en-us/articles/360029583611-Add-Google-Tag-Manager-to-a-form)
 
 **(b) URL. Facts and snippets:**
-- Default form URLs are `form.typeform.com/to/<id>`. A custom subdomain `<name>.typeform.com` is available on Plus and above. — (snippet) [Typeform: customize your form URL](https://help.typeform.com/hc/en-us/articles/360029251372-How-to-customize-your-form-URL)
-- Custom domains are on "Enterprise plus and Growth Custom". — (snippet) [Typeform: custom domains](https://help.typeform.com/hc/en-us/articles/4404606584852-Custom-domains-for-Enterprise-plus-and-Growth-Custom-accounts)
-- The builder login is `admin.typeform.com`. — (snippet) [admin.typeform.com/login](https://admin.typeform.com/login)
+- Default form URLs are `form.typeform.com/to/<id>`. A custom subdomain `<name>.typeform.com` is available on Plus and above. - (snippet) [Typeform: customize your form URL](https://help.typeform.com/hc/en-us/articles/360029251372-How-to-customize-your-form-URL)
+- Custom domains are on "Enterprise plus and Growth Custom". - (snippet) [Typeform: custom domains](https://help.typeform.com/hc/en-us/articles/4404606584852-Custom-domains-for-Enterprise-plus-and-Growth-Custom-accounts)
+- The builder login is `admin.typeform.com`. - (snippet) [admin.typeform.com/login](https://admin.typeform.com/login)
 - The Public Suffix List contains `pro.typeform.com`, "Submitted by Typeform <ops@typeform.com>". This is from a local copy of the PSL downloaded 2026-09-30 during prior research; [PSL](https://publicsuffix.org/list/public_suffix_list.dat).
 - Inference: GTM runs on a form origin distinct from the admin origin. It is the same site, so cookies can still be shared at `typeform.com` level.
 
-**(d) Consent. Fact:** with cookie consent on, "all tracking cookies—including third-party cookies used by integrations—will be blocked **until** respondents choose to accept". It covers Facebook Pixel, HubSpot and Google Analytics. — [Typeform: Activate cookie consent](https://help.typeform.com/hc/en-us/articles/6389226218132-Activate-cookie-consent)
+**(d) Consent. Fact:** with cookie consent on, "all tracking cookies-including third-party cookies used by integrations-will be blocked **until** respondents choose to accept". It covers Facebook Pixel, HubSpot and Google Analytics. - [Typeform: Activate cookie consent](https://help.typeform.com/hc/en-us/articles/6389226218132-Activate-cookie-consent)
 
 **(e) Events. Fact:** GA gets `TypeformQuestionPassed` and `TypeformSubmit`; GTM gets `TypeformFirstInteraction` and `TypeformSubmit`. Sources: the two articles above.
 
@@ -299,8 +299,8 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 
 **Facts:**
 - The pricing page (cached 2026-09-30) lists Free $0, Creator $10/mo ($8.33 billed annually, "Free custom domain", "Advanced SEO and marketing features"), Creator Plus $30/mo ($25 annually) and Creator Max $100/mo.
-- It also lists "Advanced Marketing: Use your own Facebook, TikTok, and Pinterest pixels". The extracted text does not show which plan that belongs to; prior notes placed it at Creator Plus. — [Beacons pricing](https://beacons.ai/i/pricing)
-- Help article "Google Analytics Tracking Id" exists but is thin. — [Beacons Help](https://help.beacons.ai/en/articles/4698625)
+- It also lists "Advanced Marketing: Use your own Facebook, TikTok, and Pinterest pixels". The extracted text does not show which plan that belongs to; prior notes placed it at Creator Plus. - [Beacons pricing](https://beacons.ai/i/pricing)
+- Help article "Google Analytics Tracking Id" exists but is thin. - [Beacons Help](https://help.beacons.ai/en/articles/4698625)
 - Live `https://beacons.ai/beacons` (DE, waitFor 3 s): no CMP script and no `gtag`, `googletagmanager` or `fbq` in the captured DOM. YouTube embed scripts were present. This profile may simply have no pixels.
 - Rendering and consent are **not verified**.
 
@@ -321,7 +321,7 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 ### 2.8 Taplink (`taplink.cc/<name>`)
 
 **Facts:**
-- "Starting today, you can integrate Google Analytics on your Taplink page. To connect them, simply add Google Analytics HTML code to the new add-on … Add-ons → Analytics → Google Analytics." Goals can be set on Link, Messaging apps and Social media blocks. Originally released 29 Jun 2018, updated 5 Mar 2024. — [Taplink blog](https://taplink.at/en/blog/google-analytics-integration.html) (cached 2026-09-30)
+- "Starting today, you can integrate Google Analytics on your Taplink page. To connect them, simply add Google Analytics HTML code to the new add-on … Add-ons → Analytics → Google Analytics." Goals can be set on Link, Messaging apps and Social media blocks. Originally released 29 Jun 2018, updated 5 Mar 2024. - [Taplink blog](https://taplink.at/en/blog/google-analytics-integration.html) (cached 2026-09-30)
 - Not verified on a live profile: `taplink.cc/taplink` redirected to the marketing site.
 - Inference: this may be the one shared-path product that accepts pasted GA HTML. Whether it parses out the ID or injects raw HTML is unknown.
 
@@ -332,7 +332,7 @@ Inference: the banner is platform-run and names only Calendly's privacy notice. 
 - The ID goes into Stats ⇒ Settings ⇒ External Tracking Pixels (`lnk.bio/manage/stats/settings`).
 - "If Google Analytics doesn't recognize your pixel, it might be because you have not accepted the Lnk.Bio cookies and thus the pixel cannot be shown."
 - Source: [Lnk.bio: GA](https://help.lnk.bio/en/articles/5418973-integrate-your-google-analytics-pixel)
-- Facebook and TikTok pixel articles exist. — (snippet) [FB](https://help.lnk.bio/en/articles/5418967-integrate-your-facebook-pixel), [TikTok](https://help.lnk.bio/en/articles/5418970-integrate-your-tiktok-pixel)
+- Facebook and TikTok pixel articles exist. - (snippet) [FB](https://help.lnk.bio/en/articles/5418967-integrate-your-facebook-pixel), [TikTok](https://help.lnk.bio/en/articles/5418970-integrate-your-tiktok-pixel)
 - Inference: platform consent gates profile pixels.
 
 ### 2.10 Later Link in Bio (`linkin.bio/<name>`)
@@ -367,8 +367,8 @@ export function startTrackingForGumroad() { ... gtag("config", "G-6LJN6D94N6", {
 ```
 - Gumroad's own property and the seller's property share **one gtag instance and one `dataLayer`**. Events are routed with `groups` and `send_to`.
 - There is no `cookie_prefix` or `cookie_path`. Inference: seller and Gumroad share the `_ga` client ID.
-- Gumroad fixed a real leak after an external report: GA4 had collected password-reset tokens through `page_location` and `page_referrer`. — (snippet) [antiwork/gumroad#6189](https://github.com/antiwork/gumroad/issues/6189)
-- The snippet view is a bare page that renders `<%= raw @third_party_analytics %>`. — [index.html.erb](https://raw.githubusercontent.com/antiwork/gumroad/main/app/views/third_party_analytics/index.html.erb)
+- Gumroad fixed a real leak after an external report: GA4 had collected password-reset tokens through `page_location` and `page_referrer`. - (snippet) [antiwork/gumroad#6189](https://github.com/antiwork/gumroad/issues/6189)
+- The snippet view is a bare page that renders `<%= raw @third_party_analytics %>`. - [index.html.erb](https://raw.githubusercontent.com/antiwork/gumroad/main/app/views/third_party_analytics/index.html.erb)
 
 **Security evidence. Fact:**
 - Hacktron's April 2025 white-box assessment lists "GUM-01-006 WP1 [Info]: Stored XSS via Unsanitized Third-Party Analytics Snippets".
@@ -377,10 +377,10 @@ export function startTrackingForGumroad() { ... gtag("config", "G-6LJN6D94N6", {
 - Source: [Hacktron Gumroad report PDF](https://www.hacktron.ai/reports/Gumroad_01.pdf), p.16.
 
 **(d) and (e) Facts:**
-- A seller-level toggle, "Enable third-party analytics services", disables GA and the Facebook Pixel. The page notes Gumroad analytics "are collected server-side". — [Gumroad: Turn off third-party trackers](https://gumroad.com/help/article/285-turning-off-third-party-trackers)
+- A seller-level toggle, "Enable third-party analytics services", disables GA and the Facebook Pixel. The page notes Gumroad analytics "are collected server-side". - [Gumroad: Turn off third-party trackers](https://gumroad.com/help/article/285-turning-off-third-party-trackers)
 - Events, from the help article: `view_item`, `add_to_cart`, `purchase` plus matching page views, and a profile page view. The source also sends `begin_checkout`.
 - Meta mapping: viewed → `ViewContent`, iwantthis → `InitiateCheckout`, purchased → `Purchase`. TikTok: `ViewContent`, `AddToCart`, `CompletePayment`.
-- On differences: "In every case, you should trust Gumroad's numbers over Google's … When these scripts don't run (a user's privacy preferences may turn off external loading, for example), the purchase data never makes its way to Google." — [help article](https://gumroad.com/help/article/174-third-party-analytics)
+- On differences: "In every case, you should trust Gumroad's numbers over Google's … When these scripts don't run (a user's privacy preferences may turn off external loading, for example), the purchase data never makes its way to Google." - [help article](https://gumroad.com/help/article/174-third-party-analytics)
 - I did not check whether Gumroad shows an EU banner.
 
 ### 2.12 Ko-fi (`ko-fi.com/<name>`)
@@ -395,19 +395,19 @@ export function startTrackingForGumroad() { ... gtag("config", "G-6LJN6D94N6", {
 
 ## 3. Contrast: platforms on subdomains or custom domains
 
-- **Carrd.** Site Analytics "Requires Pro Standard or higher". Providers: Cloudflare Web Analytics, Fathom, Google Analytics, Matomo, Plausible, PostHog, Simple Analytics, Umami. "Certain site analytics providers may require the collection of additional data from a site's visitors." — [Carrd: Site Analytics](https://carrd.com/docs/sites/setting-up-site-analytics)
+- **Carrd.** Site Analytics "Requires Pro Standard or higher". Providers: Cloudflare Web Analytics, Fathom, Google Analytics, Matomo, Plausible, PostHog, Simple Analytics, Umami. "Certain site analytics providers may require the collection of additional data from a site's visitors." - [Carrd: Site Analytics](https://carrd.com/docs/sites/setting-up-site-analytics)
   - Marketing trackers (Meta, TikTok, LinkedIn) and Embed code including `<head>`, which allows GTM, are from prior notes: [trackers](https://carrd.com/docs/sites/setting-up-marketing-trackers), [embed](https://carrd.co/docs/building/embedding-custom-code). Not re-fetched.
   - Builder `carrd.com`; sites `<x>.carrd.co`. PSL entry `carrd.co`, "Submitted by AJ <aj@carrd.co>" (local PSL copy).
-- **Notion Sites.** "If you're on a paid plan, you can … integrate with Google Analytics": Share → Publish → Site customization → Google Analytics → measurement ID. — [Notion Help](https://www.notion.com/help/edit-and-customize-your-notion-sites) (cached 2026-10-01)
+- **Notion Sites.** "If you're on a paid plan, you can … integrate with Google Analytics": Share → Publish → Site customization → Google Analytics → measurement ID. - [Notion Help](https://www.notion.com/help/edit-and-customize-your-notion-sites) (cached 2026-10-01)
   - PSL entry `notion.site`, "Submitted by Jess Yao <trust-core-team@makenotion.com>".
-- **Substack.** The Analytics section takes a GA4 ID, a **GTM ID**, a Meta pixel ID, an X pixel ID and a Parse.ly ID. "Once you save a tracking tool ID, Substack automatically loads that tool on your publication's pages". No custom-domain requirement is stated. — [Substack: Analytics section](https://support.substack.com/hc/en-us/articles/52667879688980-How-do-I-use-the-Analytics-section-on-Substack) (cached 2026-09-29)
-  - GA events: "page views, sign ups, and paid subscriptions". — [Substack: GA4](https://support.substack.com/hc/en-us/articles/15955098199444)
+- **Substack.** The Analytics section takes a GA4 ID, a **GTM ID**, a Meta pixel ID, an X pixel ID and a Parse.ly ID. "Once you save a tracking tool ID, Substack automatically loads that tool on your publication's pages". No custom-domain requirement is stated. - [Substack: Analytics section](https://support.substack.com/hc/en-us/articles/52667879688980-How-do-I-use-the-Analytics-section-on-Substack) (cached 2026-09-29)
+  - GA events: "page views, sign ups, and paid subscriptions". - [Substack: GA4](https://support.substack.com/hc/en-us/articles/15955098199444)
   - Live `https://on.substack.com/` (DE). Banner: "Substack and On Substack use cookies to improve your experience, for analytics, and for marketing. You can accept, reject, or manage your preferences."
   - Preloads: `"isEU":true`, `"showCookieBanner":true`, `"pubTrackerCookieIds":["_ga_tracking-publisher"]`. `disabledCookies` includes `"_ga_tracking-substack"`, `"meta_tracking_pixel-substack"`, `"_ga_tracking-publisher"`, `"_ga_tag_manager-publisher"`, `"fb_pixel-publisher"`, `"twitter_pixel-publisher"`, `"parsely_pixel-publisher"`.
   - Publication fields include `google_analytics_4_token`, `google_tag_manager_token` (null here) and `custom_domain: null`.
   - `substack.com` is not on the PSL (local copy).
   - Inference: Substack's banner names **both** the platform and the publisher, and publisher trackers are a separate category held until consent.
-- **Shopify** (prior notes, not re-fetched). Custom pixels run in a "lax sandbox" iframe (`allow-scripts allow-forms`). GTM is allowed only as a custom pixel. The Shopify cookie banner governs Shopify pixels. PSL entry `myshopify.com`. — [shopify.dev: About web pixels](https://shopify.dev/docs/apps/build/marketing/pixels), [Shopify Help: privacy settings](https://help.shopify.com/en/manual/privacy-and-security/privacy/customer-privacy-settings/privacy-settings)
+- **Shopify** (prior notes, not re-fetched). Custom pixels run in a "lax sandbox" iframe (`allow-scripts allow-forms`). GTM is allowed only as a custom pixel. The Shopify cookie banner governs Shopify pixels. PSL entry `myshopify.com`. - [shopify.dev: About web pixels](https://shopify.dev/docs/apps/build/marketing/pixels), [Shopify Help: privacy settings](https://help.shopify.com/en/manual/privacy-and-security/privacy/customer-privacy-settings/privacy-settings)
 
 **Inference: the split.** Free-form code or GTM appears only where tenant pages run on a different origin from the builder: a subdomain (Typeform, Substack), a separate registrable domain (Gumroad snippets, Carrd, Notion, Shopify) or a customer domain (Tally). On shared builder-origin paths, platforms accept only IDs. Taplink's "HTML code" add-on is the one unverified exception.
 
@@ -416,18 +416,18 @@ export function startTrackingForGumroad() { ... gtag("config", "G-6LJN6D94N6", {
 ## 4. Google's own guidance for platforms that add customers' tags
 
 **Facts:**
-- Google has a guide written for "CMS owners or website builders". — [Integrate the Google tag into your CMS or website builder](https://developers.google.com/tag-platform/devguides/gtag-integration) (updated 2026-07-30)
+- Google has a guide written for "CMS owners or website builders". - [Integrate the Google tag into your CMS or website builder](https://developers.google.com/tag-platform/devguides/gtag-integration) (updated 2026-07-30)
   - **Developer ID:** "Make sure you have a Google tag Developer ID", via a request form. Use `gtag('set', 'developer_id.<developer ID>', true);` and "Attach the ID to every event." Eventbrite does this (`developer_id.dOGRkZj`, §2.3).
   - **Input:** "Your customers should be able to supply multiple forms of their Google tag ID through one interface". "The tag ID input should accept multiple ID variants using the regular expression pattern `[A-Z]{1,3}\w{5,}[\w]*`". That covers `G-`, `AW-` and `GT-` IDs, not just GA4.
   - **Consent:** "customers get at least the `gtag('consent', 'update' {...})` call integrated with no action required by the customer". Platforms may also deploy "the `gtag('consent', default' {...})` state and unblocking Google tags (i.e., no consent-based conditional firing)". In other words, Google steers platforms towards **advanced** consent mode.
   - **Events:** "Log everything possible". "Set up at least 8 core events": `view_item_list`, `add_to_cart`, `begin_checkout`, `purchase`, `sign_up`, `generate_lead`, `subscribe`, `book_appointment`.
   - **One snippet:** "Ideally, the Google tag snippet should appear only once per page. The snippet can accommodate multiple tag IDs."
-- **Basic vs advanced consent mode.** Basic: "you prevent Google tags from loading until a user interacts with a consent banner … when the user doesn't consent, no data is transferred to Google at all". Advanced: tags load with defaults set to denied, and "While consent is denied, the Google tags send measurements without cookies". — [Consent mode overview](https://developers.google.com/tag-platform/security/concepts/consent-mode) (cached 2026-09-30)
+- **Basic vs advanced consent mode.** Basic: "you prevent Google tags from loading until a user interacts with a consent banner … when the user doesn't consent, no data is transferred to Google at all". Advanced: tags load with defaults set to denied, and "While consent is denied, the Google tags send measurements without cookies". - [Consent mode overview](https://developers.google.com/tag-platform/security/concepts/consent-mode) (cached 2026-09-30)
   - Consent types: `ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`.
-- **Cookie defaults.** "By default, Google tags use automatic cookie domain configuration. Cookies are set on the highest level of domain possible." `cookie_prefix: 'example'` turns `_ga` into `example_ga`. Changing names "may result in existing users appearing as new visitors". — [Configure and customize cookies](https://developers.google.com/tag-platform/security/guides/customize-cookies) (updated 2024-11-14)
-  - GA4 config defaults: `cookie_domain` 'auto', `cookie_expires` 63072000, `cookie_path` '/', `cookie_update` true, `page_location` = `document.location`, `send_page_view` true. — [GA4 config reference](https://developers.google.com/analytics/devguides/collection/ga4/reference/config)
-  - GA4 cookies: `_ga` (2 years, "Used to distinguish users") and `_ga_<container-id>` (2 years, "Used to persist session state"). — [GA4 cookie usage](https://support.google.com/analytics/answer/11397207?hl=en)
-- **Renaming the dataLayer for gtag.js:** "Add a query parameter named "l" to the URL to set the new data layer name, for example, l=myNewName." — [The data layer](https://developers.google.com/tag-platform/devguides/datalayer)
+- **Cookie defaults.** "By default, Google tags use automatic cookie domain configuration. Cookies are set on the highest level of domain possible." `cookie_prefix: 'example'` turns `_ga` into `example_ga`. Changing names "may result in existing users appearing as new visitors". - [Configure and customize cookies](https://developers.google.com/tag-platform/security/guides/customize-cookies) (updated 2024-11-14)
+  - GA4 config defaults: `cookie_domain` 'auto', `cookie_expires` 63072000, `cookie_path` '/', `cookie_update` true, `page_location` = `document.location`, `send_page_view` true. - [GA4 config reference](https://developers.google.com/analytics/devguides/collection/ga4/reference/config)
+  - GA4 cookies: `_ga` (2 years, "Used to distinguish users") and `_ga_<container-id>` (2 years, "Used to persist session state"). - [GA4 cookie usage](https://support.google.com/analytics/answer/11397207?hl=en)
+- **Renaming the dataLayer for gtag.js:** "Add a query parameter named "l" to the URL to set the new data layer name, for example, l=myNewName." - [The data layer](https://developers.google.com/tag-platform/devguides/datalayer)
 
 ---
 

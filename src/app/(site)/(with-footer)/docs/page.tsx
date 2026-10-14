@@ -2,11 +2,11 @@ import { ArrowRight, BookOpen, LifeBuoy } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { ResourcesCta } from "@/components/resources/ResourcesCta";
 import { DocCard } from "@/components/docs/DocCard";
 import { Container } from "@/components/general/Container";
 import { IconTile } from "@/components/general/IconTile";
 import { HeroKicker, PageHero } from "@/components/general/PageHero";
+import { ResourcesCta } from "@/components/resources/ResourcesCta";
 import { Button } from "@/components/ui/button";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";

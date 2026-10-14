@@ -53,9 +53,9 @@ function Body() {
 			<KeyTakeaways
 				points={[
 					"A catalogue is one shareable page for your products, services, or menu.",
-					"You can start from a blank page, from an AI draft, or from a photo of a printed catalogue.",
+					"You can start from a ready template, from a blank page, or from a draft written by Quick AI.",
 					"The free Starter plan is enough to build and share your first catalogue.",
-					"Everything is edited from the dashboard, and changes go live the moment you publish.",
+					"You edit in the builder and nothing reaches customers until you publish.",
 				]}
 			/>
 
@@ -79,9 +79,14 @@ function Body() {
 				<h2>Get to know the dashboard</h2>
 				<p>
 					The dashboard is your home base. It lists the catalogues you have
-					created, gives you a button to start a new one, and shows the status
-					of any AI or import jobs that are still running. Each catalogue card
-					is the way into its builder, its analytics, and its QR code.
+					created and gives you a button to start a new one. Each catalogue card
+					is the way into its builder, its analytics, its QR code and its
+					sharing options, and shows whether it is live or still a draft.
+				</p>
+				<p>
+					The tabs down the side cover everything that is not a catalogue: your
+					subscription, how much of your plan you have used this month, your
+					account settings, and a form for reaching us.
 				</p>
 			</Prose>
 
@@ -105,7 +110,7 @@ function Body() {
 					{
 						title: "Start your first catalogue",
 						description:
-							"Pick how you want to begin: a blank page, an AI draft, or a photo import. The next topic covers all three.",
+							"Name it, then pick what it starts as: a ready template or a blank page. The next topic walks through it.",
 					},
 				]}
 			/>
@@ -120,10 +125,11 @@ function Body() {
 				<h2>How the pieces fit together</h2>
 				<p>
 					The rest of the docs follow the natural order of building a catalogue.
-					You create a draft, shape it in the builder, make it look like your
-					brand, publish and share it, then watch how it performs and adjust.
-					Each step has its own short topic, so you can read straight through or
-					jump to the part you are on.
+					You create a draft, shape it in the builder, hand the heavy lifting to
+					Quick AI where it helps, make it look like your brand, publish and
+					share it, then watch how it performs and adjust. Each step has its own
+					short topic, so you can read straight through or jump to the part you
+					are on.
 				</p>
 			</Prose>
 

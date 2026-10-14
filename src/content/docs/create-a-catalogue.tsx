@@ -11,26 +11,26 @@ const meta = {
 	slug: "create-a-catalogue",
 	title: "Create Your First Catalogue",
 	description:
-		"Three ways to start a catalogue in Quicktalog: from a blank page, from an AI draft, or by importing a photo of a printed menu. Pick the fastest route for you.",
+		"Set up a new catalogue in Quicktalog: name it, pick a starting template, and fill it in yourself or let Quick AI draft it from a description, photos or your own web page.",
 	tag: "Create",
 	icon: FiPlusCircle,
 	order: 2,
 	readingTimeMinutes: 5,
 	keywords: [
 		"create catalogue",
+		"catalogue templates",
 		"AI catalogue generator",
-		"OCR menu import",
 		"build digital menu",
 		"start a catalogue",
 	],
-	relatedSlugs: ["build-and-edit", "customize-design"],
+	relatedSlugs: ["build-and-edit", "quick-ai"],
 } satisfies DocEntry["meta"];
 
 function Body() {
 	return (
 		<>
 			<ArticleImage
-				alt="Three ways to start a Quicktalog catalogue: from scratch, with AI, or by importing a photo"
+				alt="Three ways to fill a new Quicktalog catalogue: a ready template, a blank page, or a draft written by Quick AI"
 				maxWidth="640px"
 				priority
 				src="/images/documentation/create-catalogue-cover.svg"
@@ -38,40 +38,103 @@ function Body() {
 
 			<Prose>
 				<p>
-					The hardest part of any catalogue is the empty screen at the start.
-					Quicktalog gives you three ways past it. You can start from a blank
-					page, describe your business and let AI draft it, or upload a photo of
-					a catalogue you already have and let the import read it. All three
-					land you in the same builder, so you can mix and match.
+					Creating a catalogue takes two short steps. You answer four questions
+					about the business, and you choose what the page starts out as. From
+					there you are in the builder, and everything else is editing.
+				</p>
+				<p>
+					The hardest part is usually the empty screen, so Quicktalog does not
+					give you one. You can begin from a ready-made template, from a blank
+					page if you prefer the control, or by asking Quick AI to draft the
+					whole thing from a sentence about your business.
 				</p>
 			</Prose>
 
 			<KeyTakeaways
 				points={[
-					"From scratch gives you the most control and suits short lists.",
-					"AI generation drafts a full catalogue from a sentence or two about your business.",
-					"Photo import reads a printed menu or PDF and turns it into a draft.",
-					"Every route produces a draft you finish in the builder.",
+					"You name the catalogue first, and that name becomes its web address.",
+					"A new catalogue offers you two ready templates or a blank page.",
+					"Quick AI can fill a catalogue from a description, from photos of a printed menu, or from a page you already run.",
+					"Nothing is published until you say so, so a first attempt costs you nothing.",
 				]}
 			/>
 
 			<Prose>
-				<h2>Option one: start from scratch</h2>
+				<h2>Step one: the details</h2>
 				<p>
-					Begin with a blank catalogue and add each item yourself. This is the
-					simplest route when you have a short list or you know exactly how you
-					want it laid out. You name the catalogue, then add items and
-					categories one by one in the builder.
+					Press <strong>Create catalogue</strong> from the dashboard and fill in
+					four things: a name, the language your items are written in, the
+					currency your prices are in, and the kind of business you run.
 				</p>
-
-				<h2>Option two: generate with AI</h2>
 				<p>
-					Open the AI Catalogue Generator and tell it what your business is. A
+					The name matters most, because it becomes the link you share. You see
+					the finished address under the form as you type, and Quicktalog tells
+					you straight away if that one is taken. Pick something short that a
+					customer would recognise: your business name is almost always the
+					right answer.
+				</p>
+			</Prose>
+
+			<ArticleImage
+				alt="The Create a Catalog dialog with fields for name, language, currency and business type, and a preview of the catalogue's web address"
+				maxWidth="640px"
+				src="/images/documentation/create-catalogue-details.svg"
+			/>
+
+			<Callout
+				title="The language and currency are not just labels"
+				variant="note"
+			>
+				They set how prices are shown and what language Quick AI writes in. You
+				can change them later from the builder, but setting them correctly now
+				saves you re-reading every description afterwards.
+			</Callout>
+
+			<Prose>
+				<h2>Step two: pick a starting point</h2>
+				<p>
+					Confirming the details opens the builder, and an empty catalogue asks
+					what you want it to start as. There are three answers, and none of
+					them is permanent: a template is only a set of example sections you
+					then edit or delete.
+				</p>
+				<ul>
+					<li>
+						<strong>Quick Start</strong> gives you two sections and six example
+						items. It is the fastest way to see a finished-looking page you can
+						overwrite line by line.
+					</li>
+					<li>
+						<strong>Standard Catalog</strong> is larger, with four sections and
+						fifteen items, and suits a longer menu or price list.
+					</li>
+					<li>
+						<strong>Start from Scratch</strong> gives you a blank page. Best
+						when you know exactly how you want it laid out, or when you are
+						about to hand the work to Quick AI.
+					</li>
+				</ul>
+			</Prose>
+
+			<ArticleImage
+				alt="The template picker offering Quick Start, Standard Catalog, and Start from Scratch"
+				src="/images/documentation/create-catalogue-templates.svg"
+			/>
+
+			<Prose>
+				<h2>Step three: fill it in</h2>
+				<p>
+					Now the catalogue is yours to write. You can do it by hand, adding one
+					item at a time in the builder, which the next topic covers in full. Or
+					you can ask Quick AI, the assistant built into the builder, to do the
+					first pass for you.
+				</p>
+				<p>
+					Open <strong>Ask AI</strong> and tell it what your business is. A
 					short, clear description works best, something like a neighbourhood
-					Italian restaurant with antipasti, pasta, mains, and a few desserts.
-					Choose a theme, decide whether you want matching images created for
-					you, and generate. The catalogue builds in the background and is ready
-					in about five minutes.
+					Italian restaurant with antipasti, pasta, mains and a few desserts.
+					You watch the sections and items appear in the preview as it writes
+					them, and anything you do not like you change or throw away.
 				</p>
 			</Prose>
 
@@ -80,28 +143,28 @@ function Body() {
 					{
 						title: "Describe your business",
 						description:
-							"Enter your business name and type, then write one or two plain sentences about what you offer and how you group it.",
+							"One or two plain sentences about what you offer and how you group it. Say how many items you want in each part.",
 					},
 					{
-						title: "Pick a theme and image option",
+						title: "Or hand it what you already have",
 						description:
-							"Choose a starting theme. Turn on Generate Images if you want AI to create matching photos for your items.",
+							"Attach photos of a printed menu, or paste the address of your existing website, and Quick AI works from that instead.",
 					},
 					{
-						title: "Generate and wait a few minutes",
+						title: "Watch it build",
 						description:
-							"The job runs in the background. You can leave the page and watch its status from the dashboard while it finishes.",
+							"Sections and items land in the preview as they are written, and the changes are outlined so you can see what moved.",
 					},
 					{
-						title: "Refine the draft",
+						title: "Keep it and refine",
 						description:
-							"Open the result in the builder. Fix names, set your real prices, and trim anything that does not fit.",
+							"Accept the changes, then fix names, set your real prices, and trim anything that does not fit.",
 					},
 				]}
 			/>
 
 			<ArticleImage
-				alt="The AI catalogue generation flow from business description to finished draft in the builder"
+				alt="A short description handed to Quick AI and turned into a catalogue with sections, items and prices"
 				maxWidth="640px"
 				src="/images/documentation/create-catalogue-ai-flow.svg"
 			/>
@@ -113,53 +176,36 @@ function Body() {
 			</Callout>
 
 			<Prose>
-				<h2>Option three: import from a photo</h2>
-				<p>
-					If your catalogue already exists on paper, photo import is the fastest
-					route. Open Scan and Import, upload a photo or PDF, and choose the
-					language of the text from more than thirty options. Quicktalog reads
-					the page and sorts it into items with names and prices, which you then
-					check and clean up.
-				</p>
-				<p>
-					The import is only as good as the source. A flat, well lit photo of a
-					clean menu reads almost perfectly. A creased page shot at an angle in
-					dim light is harder to read, so the cleaner your image, the less you
-					fix afterward.
-				</p>
-			</Prose>
-
-			<ArticleImage
-				alt="The OCR photo import flow: upload a photo or PDF and Quicktalog reads it into a draft catalogue"
-				maxWidth="640px"
-				src="/images/documentation/create-catalogue-ocr-flow.svg"
-			/>
-
-			<Prose>
 				<h2>Which route to pick</h2>
 				<p>
-					Choose AI when you are building something new and want a structure and
-					starter descriptions to react to. Choose photo import when the
-					catalogue already exists and you mainly want to avoid retyping it.
+					Both routes end in the same place, so this is a question of where you
+					want to spend your time rather than a decision you are stuck with.
 				</p>
-				<h3>Reach for AI when</h3>
+				<h3>Reach for Quick AI when</h3>
 				<ul>
 					<li>You are building a catalogue that does not exist yet.</li>
 					<li>You want a ready structure and a set of starter descriptions.</li>
 					<li>
-						You only have the idea in your head, not a document to upload.
+						What you have is on paper or on a page somewhere, and you do not
+						want to retype it.
 					</li>
 				</ul>
-				<h3>Reach for photo import when</h3>
+				<h3>Fill it in yourself when</h3>
 				<ul>
-					<li>The catalogue already exists on paper or as a PDF.</li>
-					<li>You mainly want to avoid retyping every line by hand.</li>
-					<li>You can get a clean, well lit image of the source.</li>
+					<li>The list is short enough to type in a few minutes.</li>
+					<li>
+						Every name, price and description is already decided and you only
+						want them entered exactly.
+					</li>
+					<li>
+						You would rather spend your AI credits later, on rewriting and
+						restyling.
+					</li>
 				</ul>
 			</Prose>
 
 			<ArticleImage
-				alt="Decision guide: AI generation for new catalogues, photo import for existing printed ones"
+				alt="Decision guide: Quick AI for a catalogue that does not exist yet, typing it in yourself for a short decided list"
 				maxWidth="640px"
 				src="/images/documentation/create-catalogue-decision.svg"
 			/>

@@ -12,7 +12,7 @@ import { cn } from "@/lib/ui/cn";
 const popularSlugs = [
 	"getting-started",
 	"create-a-catalogue",
-	"share-your-catalogue",
+	"quick-ai",
 	"plans-and-billing",
 ];
 

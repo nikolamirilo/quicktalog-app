@@ -12,8 +12,8 @@ export const helpCategoryLabels: Record<IFAQCategory, string> = {
 
 /** One-tap searches offered under the Help Center search box. */
 export const helpPopularSearches = [
+	{ label: "Quick AI", query: "Quick AI" },
 	{ label: "QR code", query: "QR code" },
 	{ label: "Free plan", query: "free plan" },
-	{ label: "AI features", query: "AI features" },
 	{ label: "Analytics", query: "analytics" },
 ];
