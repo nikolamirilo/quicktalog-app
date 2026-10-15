@@ -1,8 +1,8 @@
 import {
-    baseFrameLayout,
-    framedSvgMarkup,
-    frameLayout,
-    SVG_FONT_STACK,
+	baseFrameLayout,
+	framedSvgMarkup,
+	frameLayout,
+	SVG_FONT_STACK,
 } from "@/lib/qr/export";
 import { describe, expect, it } from "vitest";
 
