@@ -7,6 +7,7 @@ import { TabSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { DashboardSidebar } from "@/components/dashboard/navigation/DashboardSidebar";
 import { DashboardTabBar } from "@/components/dashboard/navigation/DashboardTabBar";
 import { Overview } from "@/components/dashboard/Overview";
+import { AcquisitionSourceModal } from "@/components/dashboard/overview/AcquisitionSourceModal";
 import { Button } from "@/components/ui/button";
 import {
 	type DashboardTab,
@@ -153,6 +154,8 @@ export function Dashboard({
 					{activeTab === "support" && <Support />}
 				</Suspense>
 			</div>
+
+			<AcquisitionSourceModal />
 		</div>
 	);
 }

@@ -118,7 +118,6 @@ const ItemModal = ({
 						</div>
 					)}
 					<ItemInput
-						categoryName={categoryName}
 						currency={currency}
 						layout={layout}
 						onChange={setItem}

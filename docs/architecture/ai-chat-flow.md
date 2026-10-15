@@ -54,7 +54,7 @@ flowchart TD
         A3["useCatalogueChat.send<br/>guard: catalogue.name exists"]
         A4["Build history<br/>last 8 messages, role + content only"]
         A5[Append user message to transcript]
-        A6{"useAiAssist.run<br/>client credit gate<br/>usage.credits >= ai_credits?"}
+        A6{"useCatalogueChat.isOverLimit<br/>client credit gate<br/>usage.credits >= ai_credits?"}
         A7["Open AI LimitsModal<br/>no server call made"]
         A8[setLoading true]
     end
@@ -163,10 +163,10 @@ flowchart TD
 Three things about this diagram that are easy to miss:
 
 - **Quota rejections never reach the transcript.** Both the client gate (A6) and the
-  server gate (B6) open the same AI `LimitsModal`. `useAiAssist.run` special-cases
-  `code === "limit"` and does not call `onError`, so nothing is appended - the
-  transcript is left ending on an unanswered user message. Only `unauthorized`,
-  `not_found` and `ai_error` become error bubbles.
+  server gate (B6) open the same AI `LimitsModal`. `useCatalogueChat` special-cases
+  `code === "limit"` and appends no bubble, so the transcript is left ending on an
+  unanswered user message. Only `unauthorized`, `not_found` and `ai_error` become
+  error bubbles.
 - **The credit check fails closed.** It is no longer a TypeScript branch that can be
   skipped: `private.begin_ai_turn` raises `42501` when there is no verified identity,
   returns `not_found` for a catalogue the caller does not own, and holds
@@ -530,24 +530,22 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 | `src/components/catalogue/chat/CatalogueChat.tsx` | Floating panel from `md`, full-height sheet on a phone (kept above the keyboard by `useVisualViewport`); opened from the builder rail or phone bar through `isChatOpen`, not a button of its own. Suggestions, input, both limit modals |
 | `src/components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text, applied changes, skipped reasons |
 | `src/hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
-| `src/hooks/useAiAssist.ts` | Client quota gate, loading/error state, usage refresh |
-| `src/actions/ai.ts` | `chatEditCatalogue` + `authorize` + `meter`, and the item-description assist |
 | `lib/ai/catalogueEditor.ts` | System prompt, snapshot, zod schema, index→id, image resolution |
 | `src/lib/catalogue/operations.ts` | Pure operation applier with plan limits |
 | `src/context/CatalogueContext.tsx` | `applyOperations`, holds the unsaved draft |
 | `src/utils/deepseek.ts` | DeepSeek client, JSON mode, `DeepseekResponseError` |
 | `src/types/ai.ts` | `CatalogueOperation` union and result types |
 | `lib/users/fetchUserData.ts` | Plan + monthly usage counts |
-| `tests/unit/actions/ai.test.ts` | Turn behaviour: metering, ownership, truncation |
 | `tests/unit/lib/ai/catalogueEditor.test.ts` | Snapshot, index→id, image resolution |
 | `tests/unit/lib/catalogue/operations.test.ts` | Apply semantics and limit skips |
 
-### Sibling AI feature
+### Removed AI surfaces
 
-One other action lives in `src/actions/ai.ts` and shares `authorize` + `meter`
-but not the operation pipeline. It is single-shot and returns plain data:
+The agent is the only AI writing path left in the builder. Both earlier
+single-shot surfaces are gone, and nothing in the app charges the `describe`
+turn kind any more (the kind stays valid in the database for existing ledger
+rows):
 
-- `writeItemDescription` - one string, temp 0.7
-
-Bulk item generation (paste-a-list, generate-a-category) was removed; the chat
-agent covers it.
+- the per-item description writer (`writeItemDescription`, `useAiAssist`),
+  removed 2026-10-15
+- bulk item generation (paste-a-list, generate-a-category)

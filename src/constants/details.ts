@@ -118,7 +118,7 @@ export const faqs: IFAQ[] = [
 	{
 		category: "billing",
 		question: "How do AI credits work?",
-		answer: `Every plan includes a monthly allowance of credits for Quick AI, from ${starter.ai_credits} on the free plan up to ${topTier.features.ai_credits} on ${topTier.name}. Asking for a change costs ${CREDITS.agentBase} credits however many edits it takes, writing one item description costs ${CREDITS.describe}, and asking a question costs nothing. The allowance resets at the start of each month and unused credits do not carry over. You can see what is left in the chat panel and in the Usage tab of your dashboard.`,
+		answer: `Every plan includes a monthly allowance of credits for Quick AI, from ${starter.ai_credits} on the free plan up to ${topTier.features.ai_credits} on ${topTier.name}. Asking for a change costs ${CREDITS.agentBase} credits however many edits it takes, and asking a question costs nothing. The allowance resets at the start of each month and unused credits do not carry over. You can see what is left in the chat panel and in the Usage tab of your dashboard.`,
 	},
 	{
 		category: "billing",

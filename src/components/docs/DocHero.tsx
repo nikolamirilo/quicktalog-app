@@ -7,8 +7,7 @@ export function DocHero({ meta, total }: { meta: DocMeta; total: number }) {
 
 	return (
 		<header className="mb-[22px] flex flex-col gap-3 border-b border-product-border pb-6">
-			<span className="flex items-center gap-2.5">
-			</span>
+			<span className="flex items-center gap-2.5"></span>
 			<h1 className="text-balance text-[clamp(32px,4.4vw,48px)] font-extrabold leading-[1.08] tracking-[-0.035em] text-product-foreground">
 				{meta.title}
 			</h1>

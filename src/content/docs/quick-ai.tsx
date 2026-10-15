@@ -256,7 +256,6 @@ function Body() {
 					<li>
 						Reading a web page adds {CREDITS.perPageFetch} credits each time.
 					</li>
-					<li>Writing one item description costs {CREDITS.describe} credit.</li>
 					<li>
 						<strong>Asking a question is free</strong>, and so is a request that
 						ends up changing nothing.

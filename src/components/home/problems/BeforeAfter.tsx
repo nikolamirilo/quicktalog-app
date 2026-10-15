@@ -28,21 +28,21 @@ export function BeforeAfter({
 			</div>
 			<div className="grid grid-cols-1 items-stretch gap-3 min-[880px]:grid-cols-[minmax(0,1fr)_56px_minmax(0,1.08fr)]">
 				<div className="flex flex-col gap-3.5 rounded-product-card border border-dashed border-product-border-strong bg-product-background-hero px-[22px] pb-[22px] pt-6 min-[880px]:px-7 min-[880px]:pb-[26px] min-[880px]:pt-7">
-					<span className="self-start rounded-full bg-product-error-soft px-[11px] py-[5px] text-[12.5px] font-bold text-product-error">
+					<span className="self-start rounded-full bg-product-error-soft px-[11px] py-[5px] text-[12.5px] font-bold text-product-error-ink">
 						Before
 					</span>
-					<p className="max-w-[46ch] text-base leading-[1.6] text-product-muted">
+					<p className="max-w-[46ch] text-base font-medium leading-[1.6] text-product-foreground-accent">
 						{problem.before.text}
 					</p>
 					<ul className="grid gap-[9px]">
 						{problem.before.points.map((point) => (
 							<li
-								className="flex items-start gap-2.5 text-[15px] leading-[1.4] text-product-muted"
+								className="flex items-start gap-2.5 text-[15px] leading-[1.4] text-product-foreground-accent"
 								key={point}
 							>
 								<X
 									aria-hidden="true"
-									className="mt-px box-content h-3 w-3 flex-none rounded-full bg-product-error-soft p-1 text-product-error"
+									className="mt-px box-content h-3 w-3 flex-none rounded-full bg-product-error-soft p-1 text-product-error-ink"
 								/>
 								<span>
 									<span className="sr-only">Problem: </span>
@@ -62,7 +62,7 @@ export function BeforeAfter({
 					<span className="self-start rounded-full bg-product-primary px-[11px] py-[5px] text-[12.5px] font-bold text-product-foreground">
 						With Quicktalog
 					</span>
-					<p className="max-w-[46ch] text-base font-medium leading-[1.6]">
+					<p className="max-w-[46ch] text-base font-semibold leading-[1.6]">
 						{problem.after.text}
 					</p>
 					<ul className="grid gap-[9px]">

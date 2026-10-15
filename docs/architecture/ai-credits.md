@@ -20,12 +20,12 @@ server charge, the builder's plan estimate and the tests all move together.
 | each task settled beyond the first | **+1** | a 4-task build costs 5, a one-liner costs 2 |
 | page read (`fetchUrl`) | **+2** | Firecrawl is the only hard per-call cash cost in the loop |
 | image lookup | **0** | Unsplash is free and already capped per turn |
-| `describe` (item description) | **1** | one `deepseek-flash` call - the floor, and the unit the pricing page explains |
+| `describe` | **1** | no surface charges it since the item-description writer was removed (2026-10-15); the price and the DB kind stay for existing ledger rows |
 | a turn that applied nothing and fetched nothing | **0** | refunded; asking a question stays free |
 | OCR scan | **0** | runs in the user's browser; only the chat turn that uses the text is charged |
 
 Two properties to preserve when tuning: **a question is free**, and **1 credit is
-the smallest useful action**, so "1 credit ≈ one AI-written description" stays true.
+the smallest useful action**.
 
 ## 2. Allowances
 

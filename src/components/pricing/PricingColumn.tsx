@@ -1,7 +1,7 @@
 "use client";
 
 import type { PricingPlan } from "@quicktalog/common";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { FeatureItem } from "@/components/pricing/FeatureItem";
@@ -139,8 +139,7 @@ export function PricingColumn({
 					className="absolute -right-[120px] -top-[160px] -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgb(var(--product-primary-rgb)/0.25),transparent)]"
 				/>
 				<div>
-					<span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-product-primary px-3 py-[5px] text-[12.5px] font-bold text-product-foreground shadow-product-primary">
-						<Zap aria-hidden="true" className="h-[13px] w-[13px]" />
+					<span className="mb-3 inline-flex items-center rounded-full bg-product-primary px-3 py-[5px] text-[12.5px] font-bold text-product-foreground shadow-product-primary">
 						Free forever
 					</span>
 					<h3 className="mb-1.5 text-[26px] font-extrabold tracking-[-0.02em] text-product-primary-ink">

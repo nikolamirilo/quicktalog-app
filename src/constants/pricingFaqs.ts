@@ -24,7 +24,7 @@ export const pricingFaqs: IFAQ[] = [
 	},
 	{
 		question: "Which plans include Quick AI?",
-		answer: `Every plan comes with a monthly allowance of AI credits for Quick AI in the builder and the item description writer: ${credits}. One AI-written item description costs 1 credit, and asking the assistant a question is free.`,
+		answer: `Every plan comes with a monthly allowance of AI credits for Quick AI in the builder: ${credits}. Asking the assistant a question is free.`,
 	},
 	{
 		question: "What counts as a page view?",

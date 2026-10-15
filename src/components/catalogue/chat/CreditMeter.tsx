@@ -156,9 +156,8 @@ const CreditMeter = ({ used, limit }: { used: number; limit: number }) => {
 					)}
 
 					<p className="text-xs leading-relaxed text-product-foreground-accent">
-						A question is free. An item description costs {CREDITS.describe},
-						and a change costs {CREDITS.agentBase} plus one per extra task.
-						Resets at the start of each month.
+						A question is free. A change costs {CREDITS.agentBase} plus one per
+						extra task. Resets at the start of each month.
 					</p>
 				</div>
 			</PopoverContent>

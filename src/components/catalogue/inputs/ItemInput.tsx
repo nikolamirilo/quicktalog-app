@@ -9,7 +9,6 @@ interface ItemInputProps {
 	currency: string;
 	layout?: ContentLayout | null;
 	onUploadingChange?: (isUploading: boolean) => void;
-	categoryName?: string;
 }
 
 const ItemInput = ({
@@ -18,15 +17,10 @@ const ItemInput = ({
 	currency,
 	layout,
 	onUploadingChange,
-	categoryName,
 }: ItemInputProps) => {
 	return (
 		<div className="space-y-4 p-1 !z-[90000]">
-			<ItemDetails
-				categoryName={categoryName}
-				onChange={onChange}
-				value={value}
-			/>
+			<ItemDetails onChange={onChange} value={value} />
 			<ItemPricing currency={currency} onChange={onChange} value={value} />
 			<ItemImage
 				layout={layout}
