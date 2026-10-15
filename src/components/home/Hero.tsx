@@ -89,7 +89,7 @@ export function Hero() {
 						className="relative w-full max-w-[720px] drop-shadow-[0_30px_40px_rgb(var(--product-foreground-rgb)/0.18)] lg:-mr-10 lg:max-w-[760px] xl:-mr-20"
 						fetchPriority="high"
 						height={768}
-						src="/images/marketing/hero.webp"
+						src="/images/marketing/hero.png"
 						width={1100}
 					/>
 				</div>
