@@ -76,10 +76,11 @@ It also adds an object-valued `lg-max` breakpoint. `tailwind.config.ts` removes 
 The product theme is global: `<body class="product">`. So the catalogue explicitly opts out of everything it would otherwise inherit.
 
 1. **`.catalogue-root`** is set on the catalogue root (`components/catalogue/view/Catalogue.tsx`), on its portaled panels (the sidebar sheet and the item modal) and on their overlays. It pins the catalogue's own base typography: Lora, 18px / 28px, normal letter-spacing.
-   - It does **not** set `--catalogue-font-heading` / `--catalogue-font-body`. `Catalogue.tsx` writes the customer's font to those variables on `<html>`, so portaled panels inherit it; a default here would override that.
+   - It does **not** set `--catalogue-font-heading` / `--catalogue-font-body`. `Catalogue.tsx` writes the customer's font to those variables on `<html>`, so portaled panels inherit it; a default here would override that. It writes the customer's corner setting (`--border-radius`) there too, for the same reason.
    - Product heading, focus and reduced-motion rules exclude `.catalogue-root` and everything inside it.
 2. **Catalogue-owned copies of shared UI.**
-   - `CatalogueButton` (`components/catalogue/view/components/`) and `CatalogueDialog` (`components/catalogue/modals/`) are frozen copies of the pre-redesign `ui/button` outline style and `ui/dialog`.
+   - `CatalogueButton` (`components/catalogue/view/components/`) is a frozen copy of the pre-redesign `ui/button` outline style.
+   - `CatalogueDialog` (`components/catalogue/modals/`) holds the catalogue's dialog parts. `CatalogueDialogContent` is a frozen copy of the pre-redesign `ui/dialog`. `CatalogueSheetContent` is the item modal's frame: a bottom sheet below `md` and a centred 520px dialog from `md`, in the redesign's shape (layered shadow, blurred backdrop) but only catalogue colours. Its corners follow the corner setting: `--catalogue-sheet-radius` is twice `--border-radius`, capped at 28px, and `--catalogue-pill-radius` is a pill that turns square when the setting is 0. `CatalogueLightboxContent` shows one photo full screen.
    - The section header keeps its own class string.
    - The published catalogue does not import `ui/button` or `ui/dialog`. `ui/sheet` is used only by the catalogue sidebar, so treat it as catalogue-owned.
 3. **`--radius` and the generic Tailwind colours stay catalogue-only.**

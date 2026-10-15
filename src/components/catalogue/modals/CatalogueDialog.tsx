@@ -6,9 +6,10 @@ import * as React from "react";
 
 import { cn } from "@/lib/ui/cn";
 
-// Frozen copy of the pre-redesign dialog for the published catalogue, which is themed by
-// `--catalogue-*` and must not follow product `ui/dialog` changes. Its old `max-md:`
-// classes are omitted on purpose: they never compiled, so the catalogue never had them.
+// Dialog parts for the published catalogue, which is themed by `--catalogue-*` and must
+// not follow product `ui/dialog` changes. `CatalogueDialogContent` is a frozen copy of the
+// pre-redesign dialog; its old `max-md:` classes are omitted on purpose: they never
+// compiled, so the catalogue never had them.
 
 const CatalogueDialog = DialogPrimitive.Root;
 
@@ -36,6 +37,72 @@ const CatalogueDialogContent = React.forwardRef<
 	</DialogPrimitive.Portal>
 ));
 CatalogueDialogContent.displayName = "CatalogueDialogContent";
+
+const CatalogueDialogClose = DialogPrimitive.Close;
+
+const catalogueOverlayClass =
+	"catalogue-root fixed inset-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0";
+
+/**
+ * A bottom sheet below `md` and a centred 520px dialog from `md`, in the
+ * redesign's shape but the catalogue's colours. Corners follow the
+ * catalogue's corner setting through `--border-radius`; children use
+ * `--catalogue-sheet-radius` and `--catalogue-pill-radius`. No close button
+ * is built in.
+ */
+const CatalogueSheetContent = React.forwardRef<
+	React.ElementRef<typeof DialogPrimitive.Content>,
+	React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+	<DialogPrimitive.Portal>
+		<DialogPrimitive.Overlay
+			className={cn(
+				catalogueOverlayClass,
+				"z-[1100] bg-black/[0.45] backdrop-blur-[3px]",
+			)}
+		/>
+		<DialogPrimitive.Content
+			className={cn(
+				"catalogue-root fixed z-[1100] flex flex-col overflow-hidden bg-catalogue-card-background font-body text-catalogue-card-text outline-none",
+				"[--catalogue-pill-radius:calc(var(--border-radius,12px)*999)] [--catalogue-sheet-radius:min(calc(var(--border-radius,12px)*2),28px)]",
+				"shadow-[0_2px_4px_rgba(0,0,0,0.06),0_12px_28px_rgba(0,0,0,0.14),0_32px_64px_-20px_rgba(0,0,0,0.35)]",
+				"transition-transform data-[state=open]:animate-in data-[state=closed]:animate-out",
+				"bottom-0 left-0 right-0 max-h-[92dvh] rounded-t-[var(--catalogue-sheet-radius)] duration-300 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full",
+				"md:bottom-auto md:left-1/2 md:right-auto md:top-1/2 md:max-h-[min(88dvh,760px)] md:w-[520px] md:max-w-[calc(100vw-48px)] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--catalogue-sheet-radius)] md:duration-200",
+				"md:data-[state=closed]:fade-out-0 md:data-[state=open]:fade-in-0 md:data-[state=closed]:slide-out-to-bottom-2 md:data-[state=open]:slide-in-from-bottom-2 md:data-[state=closed]:zoom-out-[0.98] md:data-[state=open]:zoom-in-[0.98]",
+				className,
+			)}
+			ref={ref}
+			{...props}
+		>
+			{children}
+		</DialogPrimitive.Content>
+	</DialogPrimitive.Portal>
+));
+CatalogueSheetContent.displayName = "CatalogueSheetContent";
+
+/** Full-screen dark frame for one photo, above a sheet. No close button is built in. */
+const CatalogueLightboxContent = React.forwardRef<
+	React.ElementRef<typeof DialogPrimitive.Content>,
+	React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+	<DialogPrimitive.Portal>
+		<DialogPrimitive.Overlay
+			className={cn(catalogueOverlayClass, "z-[1110] bg-black/95")}
+		/>
+		<DialogPrimitive.Content
+			className={cn(
+				"catalogue-root fixed inset-0 z-[1110] flex items-center justify-center p-4 outline-none duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 md:p-10",
+				className,
+			)}
+			ref={ref}
+			{...props}
+		>
+			{children}
+		</DialogPrimitive.Content>
+	</DialogPrimitive.Portal>
+));
+CatalogueLightboxContent.displayName = "CatalogueLightboxContent";
 
 const CatalogueDialogHeader = ({
 	className,
@@ -79,8 +146,11 @@ CatalogueDialogDescription.displayName = "CatalogueDialogDescription";
 
 export {
 	CatalogueDialog,
+	CatalogueDialogClose,
 	CatalogueDialogContent,
 	CatalogueDialogDescription,
 	CatalogueDialogHeader,
 	CatalogueDialogTitle,
+	CatalogueLightboxContent,
+	CatalogueSheetContent,
 };

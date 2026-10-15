@@ -141,17 +141,19 @@ const Catalogue = ({
 		activeData.heading,
 	]);
 
-	// Set font CSS variables on documentElement so portaled components
+	// Set font and corner CSS variables on documentElement so portaled components
 	// (e.g. ItemDetailModal rendered via DialogPortal) can inherit them
 	useEffect(() => {
 		const root = document.documentElement;
 		root.style.setProperty("--catalogue-font-heading", fontFamily);
 		root.style.setProperty("--catalogue-font-body", fontFamily);
+		root.style.setProperty("--border-radius", borderRadius);
 		return () => {
 			root.style.removeProperty("--catalogue-font-heading");
 			root.style.removeProperty("--catalogue-font-body");
+			root.style.removeProperty("--border-radius");
 		};
-	}, [fontFamily]);
+	}, [fontFamily, borderRadius]);
 
 	const handleEditBlock = (index: number) => {
 		const block = item.content[index];

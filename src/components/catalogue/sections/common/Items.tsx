@@ -171,6 +171,7 @@ const Items = ({
 													: undefined
 											}
 											record={record}
+											sectionName={block.name}
 											theme={theme}
 											variant={currentLayout}
 										/>
@@ -218,6 +219,7 @@ const Items = ({
 												: undefined
 										}
 										record={record}
+										sectionName={block.name}
 										theme={theme}
 										variant={currentLayout}
 									/>

@@ -1,5 +1,6 @@
 "use client";
-import ItemDetailModal from "@/components/catalogue/modals/ItemDetailModal";
+import { ItemDetailModal } from "@/components/catalogue/modals/ItemDetailModal";
+import { formatItemAmount, getItemPrice } from "@/lib/catalogue/item-price";
 import { DEFAULT_IMAGE, Item } from "@quicktalog/common";
 import { useMemo, useState } from "react";
 import CarouselCard from "./CarouselCard";
@@ -29,6 +30,7 @@ const CardsSwitcher = ({
 	isFirst,
 	isLast,
 	blockIndex,
+	sectionName,
 }: {
 	variant: string;
 	record: Item;
@@ -44,6 +46,7 @@ const CardsSwitcher = ({
 	isFirst?: boolean;
 	isLast?: boolean;
 	blockIndex?: number;
+	sectionName?: string;
 }) => {
 	// A missing price is a valid item (a service list, an "ask us" menu); only a
 	// nameless record is unrenderable.
@@ -62,16 +65,13 @@ const CardsSwitcher = ({
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const { validatedRecord, formattedCurrency } = useMemo(() => {
+	const { validatedRecord, formattedCurrency, detailPrice } = useMemo(() => {
 		const hasPrice = record.price !== undefined && record.price !== null;
 		const price = !hasPrice
 			? ""
 			: record.price == 0
 				? "Free"
-				: Number(record.price).toLocaleString(locale, {
-						minimumFractionDigits: Number(record.price) % 1 === 0 ? 0 : 2,
-						maximumFractionDigits: 2,
-					});
+				: formatItemAmount(Number(record.price), locale);
 
 		const formattedCurrency = hasPrice && price !== "Free" ? currency : "";
 
@@ -82,7 +82,11 @@ const CardsSwitcher = ({
 			image: record.image || DEFAULT_IMAGE,
 		};
 
-		return { validatedRecord, formattedCurrency };
+		return {
+			validatedRecord,
+			formattedCurrency,
+			detailPrice: getItemPrice(record, currency, locale),
+		};
 	}, [record, currency, i, locale]);
 
 	const CardComponent = CARD_VARIANTS[variant] || SideImageCard;
@@ -104,12 +108,12 @@ const CardsSwitcher = ({
 				record={validatedRecord}
 			/>
 			<ItemDetailModal
-				currency={formattedCurrency}
 				isOpen={isModalOpen}
-				item={validatedRecord}
+				item={record}
 				onClose={() => setIsModalOpen(false)}
+				price={detailPrice}
+				sectionName={sectionName}
 				theme={theme}
-				variant={variant}
 			/>
 		</>
 	);
