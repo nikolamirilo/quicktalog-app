@@ -13,11 +13,11 @@ export const RETRY_DELAY = 1000;
 export const ACQUISITION_SOURCES = [
 	{ value: "google", label: "Google" },
 	{ value: "social_media", label: "Social media" },
-	{ value: "quicktalog_catalogue", label: "A Quicktalog catalogue" },
 	{ value: "friend_or_colleague", label: "Friend or colleague" },
 	{ value: "youtube", label: "YouTube" },
-	{ value: "linkedin_or_x", label: "LinkedIn or X" },
-	{ value: "ai_assistant", label: "AI assistant (ChatGPT, Claude…)" },
+	{ value: "linkedin", label: "LinkedIn" },
+	{ value: "quicktalog_catalogue", label: "A Quicktalog catalogue" },
+	{ value: "ai_assistant", label: "AI assistant" },
 	{ value: "other", label: "Other" },
 ] as const;
 
