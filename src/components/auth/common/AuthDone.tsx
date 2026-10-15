@@ -38,7 +38,7 @@ export function AuthDone({
 		>
 			<span
 				aria-hidden="true"
-				className="mx-auto mb-5 mt-1.5 grid size-[68px] place-items-center rounded-full bg-product-primary text-product-foreground shadow-[0_6px_18px_-6px_rgba(245,163,0,0.55)] ring-8 ring-product-primary-soft duration-500 ease-[cubic-bezier(0.2,0.9,0.3,1.3)] animate-in zoom-in-50 [&_svg]:size-[30px] [&_svg]:stroke-[2.4]"
+				className="mx-auto mb-5 mt-1.5 grid size-[68px] place-items-center rounded-full bg-product-primary text-product-foreground shadow-[0_6px_18px_-6px_rgba(245,163,0,0.55)] ring-8 ring-product-primary-soft duration-500 [animation-timing-function:cubic-bezier(0.2,0.9,0.3,1.3)] animate-in zoom-in-50 [&_svg]:size-[30px] [&_svg]:stroke-[2.4]"
 			>
 				{icon}
 			</span>

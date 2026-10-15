@@ -55,7 +55,7 @@ export function BenefitFeature() {
 					({ icon: Icon, title, description, highlight }, index) => (
 						<article
 							className={cn(
-								"group relative rounded-product-card border bg-product-card px-[22px] py-6 shadow-product transition-[transform,box-shadow,border-color] duration-[250ms] hover:-translate-y-1 hover:border-product-primary/70 hover:shadow-product-hover",
+								"group relative rounded-product-card border bg-product-card px-[22px] py-6 shadow-product transition-[transform,box-shadow,border-color] [transition-duration:250ms] hover:-translate-y-1 hover:border-product-primary/70 hover:shadow-product-hover",
 								highlight
 									? "border-product-primary/60 shadow-[var(--product-shadow),0_0_0_5px_rgb(var(--product-primary-rgb)/0.08)]"
 									: "border-product-border",
@@ -71,7 +71,7 @@ export function BenefitFeature() {
 							<span
 								aria-hidden="true"
 								className={cn(
-									"grid h-[52px] w-[52px] place-items-center rounded-2xl border transition-colors duration-[250ms] group-hover:border-product-primary group-hover:bg-product-primary group-hover:text-product-foreground [&_svg]:size-6",
+									"grid h-[52px] w-[52px] place-items-center rounded-2xl border transition-colors [transition-duration:250ms] group-hover:border-product-primary group-hover:bg-product-primary group-hover:text-product-foreground [&_svg]:size-6",
 									highlight
 										? "border-product-primary bg-product-primary text-product-foreground"
 										: "border-product-primary/35 bg-product-primary-soft text-product-primary-ink",

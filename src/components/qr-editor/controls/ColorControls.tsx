@@ -100,7 +100,7 @@ function ColorRow({
 
 	return (
 		<div className="flex min-w-0 items-center gap-3 bg-product-card px-3 py-2.5">
-			<label className="relative h-9 w-9 shrink-0 cursor-pointer overflow-hidden rounded-[11px] shadow-[inset_0_0_0_1px_rgb(var(--product-foreground-rgb)/0.14),0_1px_2px_rgb(var(--product-foreground-rgb)/0.08)] focus-within:outline focus-within:outline-[3px] focus-within:outline-offset-2 focus-within:outline-product-secondary">
+			<label className="relative h-9 w-9 shrink-0 cursor-pointer overflow-hidden rounded-[11px] shadow-[inset_0_0_0_1px_rgb(var(--product-foreground-rgb)/0.14),0_1px_2px_rgb(var(--product-foreground-rgb)/0.08)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-product-secondary">
 				<input
 					aria-label={`${name} color`}
 					className="absolute -inset-2 h-[calc(100%+16px)] w-[calc(100%+16px)] cursor-pointer border-0 bg-transparent p-0"

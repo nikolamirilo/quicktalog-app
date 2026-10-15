@@ -47,14 +47,14 @@ export function HowItWorks() {
 						>
 							<span
 								aria-hidden="true"
-								className="absolute -left-[35px] top-4 z-[1] grid h-[30px] w-[30px] place-items-center rounded-full bg-product-primary font-product-heading text-[13px] font-bold text-product-foreground shadow-[0_0_0_5px_var(--product-background),var(--product-shadow-primary)] transition-colors duration-[250ms] group-hover:bg-product-foreground group-hover:text-white min-[900px]:-top-[45px] min-[900px]:left-1/2 min-[900px]:-translate-x-1/2"
+								className="absolute -left-[35px] top-4 z-[1] grid h-[30px] w-[30px] place-items-center rounded-full bg-product-primary font-product-heading text-[13px] font-bold text-product-foreground shadow-[0_0_0_5px_var(--product-background),var(--product-shadow-primary)] transition-colors [transition-duration:250ms] group-hover:bg-product-foreground group-hover:text-white min-[900px]:-top-[45px] min-[900px]:left-1/2 min-[900px]:-translate-x-1/2"
 							>
 								{index + 1}
 							</span>
 							<div className="aspect-[4/3] overflow-hidden rounded-t-product-card border-b border-product-border bg-product-amber-glow">
 								<img
 									alt=""
-									className="h-full w-full object-contain p-3.5 transition-transform duration-[400ms] group-hover:scale-[1.04]"
+									className="h-full w-full object-contain p-3.5 transition-transform [transition-duration:400ms] group-hover:scale-[1.04]"
 									loading="lazy"
 									src={step.image}
 								/>

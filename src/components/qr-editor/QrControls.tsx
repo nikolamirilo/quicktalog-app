@@ -54,7 +54,7 @@ export function QrControls({ risk }: { risk: ScanRisk }) {
 				>
 					<span
 						aria-hidden="true"
-						className="absolute bottom-1 left-1 top-1 w-[calc((100%-8px)/4)] rounded-[11px] bg-product-card shadow-[0_1px_2px_rgb(var(--product-foreground-rgb)/0.08),0_4px_10px_-2px_rgb(var(--product-foreground-rgb)/0.08)] transition-transform duration-300 ease-[cubic-bezier(.3,.9,.3,1)] after:absolute after:bottom-[-1px] after:left-1/2 after:h-[3px] after:w-[26px] after:-translate-x-1/2 after:rounded-t-[3px] after:bg-product-primary"
+						className="absolute bottom-1 left-1 top-1 w-[calc((100%-8px)/4)] rounded-[11px] bg-product-card shadow-[0_1px_2px_rgb(var(--product-foreground-rgb)/0.08),0_4px_10px_-2px_rgb(var(--product-foreground-rgb)/0.08)] transition-transform duration-300 [transition-timing-function:cubic-bezier(.3,.9,.3,1)] after:absolute after:bottom-[-1px] after:left-1/2 after:h-[3px] after:w-[26px] after:-translate-x-1/2 after:rounded-t-[3px] after:bg-product-primary"
 						style={{ transform: `translateX(${index * 100}%)` }}
 					/>
 					{TABS.map(({ value, label, icon: Icon }) => (

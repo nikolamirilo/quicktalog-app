@@ -71,6 +71,8 @@ Three rules worth knowing:
 - **It is a nudge, not a boundary.** A layout is not guaranteed to re-run on every soft navigation. Slipping past means browsing without having accepted, not exposed data; the record on the row is the authoritative artifact, and pages keep their own `requireUser`.
 - **Supabase only.** Clerk hosts its own sign-up terms, so the gate is inert under `AUTH_PROVIDER=clerk`. No Clerk-era row carries a `version`, so enabling it there would gate every existing user at once — that re-consent belongs to the auth cutover.
 
+The route sets `maxDuration = 60`. The default 10s is not enough: the server action POSTs back to this same segment, and `src/utils/db/pool.ts` allows a 10s `connect_timeout` on its own, so one cold connection can spend the whole default budget before a query runs. A `Vercel Runtime Timeout Error` here is not catchable in app code — the function is killed and the user gets a blank error page, then it "fixes itself" once the pool is warm.
+
 `/auth/consent` sits outside `/admin` so the gate cannot redirect to itself, and it is deliberately not a `PROTECTED` path in middleware, so the page checks identity itself. It carries no `next`: a layout does not know its own pathname, and the screen is a once-ever stop, so a deep link costs one redirect to the dashboard.
 
 Declining signs the user out and points at account deletion in settings. Refusing has to be possible.

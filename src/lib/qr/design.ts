@@ -19,7 +19,7 @@ export type QrConfig = Options & {
 };
 
 export const FRAME_TEXT_MAX = 28;
-export const DEFAULT_FRAME_TEXT = "Scan for our menu";
+export const DEFAULT_FRAME_TEXT = "Scan it!";
 
 export const HEX_COLOR = /^#[0-9a-f]{6}$/i;
 
@@ -163,7 +163,7 @@ export function catalogueUrl(catalogue: string): string {
 	return `${process.env.NEXT_PUBLIC_BASE_URL}/catalogues/${catalogue}`;
 }
 
-/** A brand-new design: the redesign's "Ink & amber" look. */
+/** A brand-new design: ink dots, frames and eyes on white. */
 export function defaultQrConfig(data: string): QrConfig {
 	return {
 		width: 300,
@@ -182,8 +182,8 @@ export function defaultQrConfig(data: string): QrConfig {
 		dotsOptions: { color: "#16140F", type: "rounded" },
 		backgroundOptions: { color: "#FFFFFF" },
 		cornersSquareOptions: { color: "#16140F", type: "extra-rounded" },
-		cornersDotOptions: { color: "#C77F00", type: "dot" },
-		frameText: { show: true, text: DEFAULT_FRAME_TEXT },
+		cornersDotOptions: { color: "#16140F", type: "dot" },
+		frameText: { show: false, text: DEFAULT_FRAME_TEXT },
 		showLogo: true,
 	};
 }

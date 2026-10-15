@@ -436,6 +436,15 @@ settled. It now returns `needed` / `satisfied` / `unknown`: the layout gates onl
 on `needed`, the page redirects away only on `satisfied`, and `unknown` renders a
 retry card that navigates rather than redirects, so no automatic loop exists.
 
+Root cause of the blank screen, found 2026-10-15 in the Vercel request logs
+(`error  POST /auth/consent` / `Vercel Runtime Timeout Error: Task timed out
+after 10 seconds`): the route had no `maxDuration`, so it ran on the 10s default
+while a cold `postgres` pool permits a 10s connect by itself. The function was
+killed mid-action, which is not catchable in app code, and it "fixed itself" on
+the retry once the pool was warm. The route now sets `maxDuration = 60`, the
+budget the rest of the project assumes. The two earlier fixes - one shared read,
+then the three-state result - were real defects but not this symptom's cause.
+
 Deviation from §4.2: the gate redirects without a `next` parameter. A Next
 layout cannot read its own pathname, and the alternative was a middleware header
 on a security-sensitive file for a screen each user sees once. `/auth/consent`

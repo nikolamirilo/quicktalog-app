@@ -74,7 +74,7 @@ export function ShowcaseList({
 			>
 				<span
 					aria-hidden="true"
-					className="pointer-events-none absolute left-2 top-0 z-[1] w-1 rounded-full bg-product-primary shadow-[0_0_0_3px_rgb(var(--product-primary-rgb)/0.18)] transition-[transform,height] duration-300 ease-[cubic-bezier(.3,.9,.3,1.1)]"
+					className="pointer-events-none absolute left-2 top-0 z-[1] w-1 rounded-full bg-product-primary shadow-[0_0_0_3px_rgb(var(--product-primary-rgb)/0.18)] transition-[transform,height] duration-300 [transition-timing-function:cubic-bezier(.3,.9,.3,1.1)]"
 					style={{
 						height: indicator.height,
 						transform: `translateY(${indicator.top}px)`,
@@ -88,7 +88,7 @@ export function ShowcaseList({
 								<button
 									aria-current={isActive ? "true" : undefined}
 									className={cn(
-										"group relative flex w-full items-center gap-3 rounded-[14px] py-3 pl-4 pr-3.5 text-left text-[14.5px] font-semibold transition-colors focus-visible:outline-product-primary focus-visible:-outline-offset-[3px]",
+										"group relative flex w-full items-center gap-3 rounded-[14px] py-3 pl-4 pr-3.5 text-left text-[14.5px] font-semibold transition-colors focus-visible:outline-product-primary focus-visible:-outline-offset-2",
 										isActive
 											? "bg-product-primary-soft text-product-foreground"
 											: "text-product-foreground-accent hover:bg-product-background-hero hover:text-product-foreground",

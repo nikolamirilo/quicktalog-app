@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
 import {
-	baseFrameLayout,
-	framedSvgMarkup,
-	frameLayout,
-	SVG_FONT_STACK,
+    baseFrameLayout,
+    framedSvgMarkup,
+    frameLayout,
+    SVG_FONT_STACK,
 } from "@/lib/qr/export";
+import { describe, expect, it } from "vitest";
 
 const frame = {
 	text: `<script>alert("x")</script> & 'co'`,
@@ -59,7 +59,7 @@ describe("framedSvgMarkup", () => {
 
 describe("frameLayout", () => {
 	it("uses the shared ratios without a canvas (server render)", () => {
-		expect(frameLayout("Scan for our menu", 300)).toEqual({
+		expect(frameLayout("Scan it!", 300)).toEqual({
 			bar: 45,
 			fontSize: 17,
 			textWidth: null,

@@ -19,6 +19,13 @@ The page `/admin/[name]/qr-editor` designs the QR code for one catalogue, saves 
 | `src/hooks/useQrActions.ts` | Save and download |
 | `src/hooks/useBeforeUnload.tsx` | `useNavigationGuard` + `NavigationGuard` (unsaved changes) |
 | `src/components/qr-editor/*` | Editor UI |
+| `src/components/modals/PublishQrPanel.tsx` | The publish modal's QR: the default design and its PNG download |
+
+## Outside the editor
+
+The publish success modal (`SuccessModal`) shows the same code through `PublishQrPanel`. A catalogue is new there, so it never has a saved design: the panel always draws `defaultQrConfig` and does not read `qr_configs`. The PNG download goes through the same `downloadQr` path as the editor.
+
+Frame text is never drawn or downloaded here: it is an editor feature, off until someone turns it on there, and the panel passes no frame to `downloadQr` either way.
 
 ## The stored design
 
@@ -26,10 +33,10 @@ The page `/admin/[name]/qr-editor` designs the QR code for one catalogue, saves 
 
 | Field | Meaning |
 |---|---|
-| `frameText` | `{ show, text }`: a label printed under the code, at most 28 characters |
+| `frameText` | `{ show, text }`: a label printed under the code, at most 28 characters. Off in a new design; turned on in the editor |
 | `showLogo` | `false` hides the uploaded logo without forgetting it; missing means shown |
 
-Both are optional, so designs saved before they existed still load: such a design starts with frame text off.
+Both are optional, so designs saved before they existed still load: such a design starts with frame text off, as a brand-new one does.
 
 **The URL is pinned.** `data` is always the catalogue's own `NEXT_PUBLIC_BASE_URL/catalogues/<name>`. The page overwrites it on load (`loadQrConfig`) and the action overwrites it on save (`normalizeQrConfig`), whatever the client sent.
 

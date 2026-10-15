@@ -18,6 +18,10 @@ import { safeNext } from "@/lib/auth/redirects";
 // Reads the session cookie.
 export const dynamic = "force-dynamic";
 
+// The default 10s is not enough: a server action POSTs back to this segment, and
+// a cold `postgres` pool alone allows a 10s connect before any query runs.
+export const maxDuration = 60;
+
 /**
  * Shown when the check itself failed. It offers a way back instead of
  * redirecting: the gate decides again on that request, so a disagreement costs

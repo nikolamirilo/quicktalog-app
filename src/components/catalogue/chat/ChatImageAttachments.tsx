@@ -17,7 +17,7 @@ interface AttachButtonProps {
 export const ChatAttachButton = ({ disabled, onAttach }: AttachButtonProps) => (
 	<label
 		className={cn(
-			"flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-product-foreground-accent transition-colors focus-within:outline focus-within:outline-[3px] focus-within:outline-offset-[3px] focus-within:outline-product-secondary md:h-10 md:w-10",
+			"flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-product-foreground-accent transition-colors focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-product-secondary md:h-10 md:w-10",
 			disabled
 				? "cursor-not-allowed opacity-50"
 				: "cursor-pointer hover:bg-product-background-hero hover:text-product-foreground",

@@ -69,7 +69,7 @@ export function ArticleCover({
 			/>
 			<div
 				className={cn(
-					"relative flex w-full items-center justify-center transition-transform duration-[400ms] ease-out",
+					"relative flex w-full items-center justify-center transition-transform [transition-duration:400ms] ease-out",
 					size === "card" && "group-hover:scale-[1.04]",
 				)}
 			>

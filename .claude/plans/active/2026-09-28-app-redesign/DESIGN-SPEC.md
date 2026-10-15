@@ -451,7 +451,7 @@ Article covers (CSS illustrations):
 | `--restaurants` | tilted phone showing the mini Bean There menu, chip "Menu" |
 | `--salons` | pink service list with durations, chip "Services" |
 | `--ai` | dark chat bubbles, chip "Ask AI" |
-| `--qr` | styled QR card "Scan for our menu", chip "Scan" |
+| `--qr` | styled QR card "Scan it!", chip "Scan" |
 | `--alternatives` | struck-through PDF/Canva/Flipbook/WordPress pills and an amber "Web catalogue" pill |
 | `--businesses` | 4×3 icon grid |
 
@@ -629,7 +629,7 @@ A charting library (ApexCharts is already in the stack) can replace the hand-rol
      - **Colors**: 5 presets (Ink & amber, Coffee, Navy, Organic, Classic) drawn as mini QR glyphs. 4 colour rows (QR Dots / Background / Corner Frames / Corner Dots): swatch + name + hex input (validated `#RRGGBB`). Contrast pill "Contrast x:1 · Good/Low". "Low Contrast Warning" box when ratio < 3, or corner-dot contrast < 1.6, or dots are lighter than the background.
      - **Style**: Dots pattern (Square, Dots, **Rounded**, Extra, Classy, Classy+; 3 columns, 6 at 640+), Corner frames (Square, Dot, **Rounded**), Corner dots (Square, **Dot**). All are radio tiles with SVG glyphs.
      - **Logo**: drop zone "Choose a file or drag & drop · PNG or JPG · max 512 px and 200 KB" (errors toast "Please choose a PNG or JPG image." / "File is too large. Please select a smaller image"). Uploaded row (thumbnail, "Logo uploaded successfully", file meta, "Remove"). Toggles "Show logo" and "Hide dots behind logo"; Logo size slider 0.1×–1.0× (default 0.6).
-     - **Settings**: Error correction L 7% / M 15% / **Q 25%** / H 30%; Margin slider 0–50px (16); "Frame text" with a **New** badge: "Show frame text" toggle + text input (max 28, default "Scan for our menu").
+     - **Settings**: Error correction L 7% / M 15% / **Q 25%** / H 30%; Margin slider 0–50px (16); "Frame text" with a **New** badge: "Show frame text" toggle + text input (max 28, default "Scan it!").
    - Scan-risk rules: warn when the logo area exceeds 35% of ECL capacity, when a logo is used at level L, or when corner-dot contrast is < 3.
 3. Toasts for downloads and save ("QR code configuration saved successfully.").
 

@@ -27,7 +27,7 @@ export const qrCover: CoverDefinition = {
 				</span>
 			</div>
 			<span className="font-product-heading text-[13px] font-extrabold leading-[1.2] text-product-foreground">
-				Scan for our menu
+				Scan it!
 			</span>
 		</div>
 	),

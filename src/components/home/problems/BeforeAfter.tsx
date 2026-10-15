@@ -58,7 +58,7 @@ export function BeforeAfter({
 				>
 					<ArrowRight className="h-5 w-5" />
 				</div>
-				<div className="flex flex-col gap-3.5 rounded-product-card border-[1.5px] border-product-primary/55 bg-product-card px-[22px] pb-[22px] pt-6 shadow-[var(--product-shadow),0_0_0_6px_rgb(var(--product-primary-rgb)/0.08)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[3px] hover:shadow-[var(--product-shadow-hover),0_0_0_6px_rgb(var(--product-primary-rgb)/0.12)] min-[880px]:px-7 min-[880px]:pb-[26px] min-[880px]:pt-7">
+				<div className="flex flex-col gap-3.5 rounded-product-card border-[1.5px] border-product-primary/55 bg-product-card px-[22px] pb-[22px] pt-6 shadow-[var(--product-shadow),0_0_0_6px_rgb(var(--product-primary-rgb)/0.08)] transition-[transform,box-shadow] [transition-duration:250ms] hover:-translate-y-[3px] hover:shadow-[var(--product-shadow-hover),0_0_0_6px_rgb(var(--product-primary-rgb)/0.12)] min-[880px]:px-7 min-[880px]:pb-[26px] min-[880px]:pt-7">
 					<span className="self-start rounded-full bg-product-primary px-[11px] py-[5px] text-[12.5px] font-bold text-product-foreground">
 						With Quicktalog
 					</span>

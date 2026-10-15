@@ -126,8 +126,8 @@
 
 :where(.product)
 	:focus-visible:not(:where(.catalogue-root, .catalogue-root *)) {
-	outline: 3px solid var(--product-secondary);
-	outline-offset: 3px;
+	outline: 2px solid var(--product-secondary);
+	outline-offset: 2px;
 }
 
 /* The catalogue must not inherit product typography: it keeps the look it had

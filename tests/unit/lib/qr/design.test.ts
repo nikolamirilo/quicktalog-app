@@ -1,10 +1,10 @@
-import { describe, expect, it } from "vitest";
 import {
+	DEFAULT_FRAME_TEXT,
 	defaultQrConfig,
 	designKey,
 	isUploadedLogoUrl,
-	LOGO_SIZE_MAX,
 	loadQrConfig,
+	LOGO_SIZE_MAX,
 	mergeQrConfig,
 	normalizeQrConfig,
 	type QrConfig,
@@ -12,14 +12,19 @@ import {
 	visibleFrameText,
 } from "@/lib/qr/design";
 import { assessScanRisk, contrastRatio } from "@/lib/qr/scan-risk";
+import { describe, expect, it } from "vitest";
 
 const URL = "https://example.test/catalogues/bean-there";
 
 describe("loadQrConfig", () => {
-	it("starts a new design from the defaults with frame text on", () => {
+	it("starts a new design from the defaults with frame text off", () => {
 		const config = loadQrConfig(undefined, URL);
 		expect(config.data).toBe(URL);
-		expect(visibleFrameText(config)).toBe("Scan for our menu");
+		expect(visibleFrameText(config)).toBeNull();
+		expect(config.frameText).toEqual({
+			show: false,
+			text: DEFAULT_FRAME_TEXT,
+		});
 	});
 
 	it("loads a design saved before frame text existed without adding it", () => {
