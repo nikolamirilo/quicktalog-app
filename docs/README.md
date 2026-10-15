@@ -33,3 +33,4 @@ How parts of the app work.
 | [architecture/product-theme.md](architecture/product-theme.md) | Product theme tokens, primitives, page frames, and how the published catalogue stays independent of them |
 | [architecture/analytics.md](architecture/analytics.md) | Catalogue analytics: the range, periods and deltas, the two PostHog queries, UTC days and ownership |
 | [architecture/qr-codes.md](architecture/qr-codes.md) | QR editor: the stored design, URL pinning, validation and size limits, export composition and the unsaved-changes guard |
+| [architecture/legal-consent.md](architecture/legal-consent.md) | Accepting the three legal documents: the record on `users.consents`, the one `terms_version` stamp, and the `/admin` gate |

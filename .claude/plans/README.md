@@ -21,6 +21,7 @@ Plans, analyses and investigations produced before implementing something. Human
 | [2026-09-27-repo-cleanup](active/2026-09-27-repo-cleanup/PLAN.md) | In progress: Tier 1 (dead code) and Tier 3 (structure) done - see [RESULTS.md](active/2026-09-27-repo-cleanup/RESULTS.md). Tier 2 (Clerk dual-path removal) blocked on the cutover |
 
 | [2026-10-08-content-block-split](active/2026-10-08-content-block-split/PLAN.md) | In progress: `custom_code` renamed to `custom_visual` (Pro+); analytics moved out of blocks into a General-tab setting (GA4 + Meta Pixel, Growth+) with a consent gate and an inverted frame guard so owner embeds still track. GTM refused pending a separate domain. Code complete and verified locally; not checked in a browser |
+| [2026-10-15-consent-gate](active/2026-10-15-consent-gate/PLAN.md) | In progress: Google sign-ups accept nothing today. Point-of-action notice on the Google button plus a post-auth consent gate that records all three legal documents against `terms_version` via `private.record_consents`; the localStorage sign-up modal goes. Code complete and verified locally 2026-10-15 (§13); waiting on the operator insert of `terms_version`, a TEST deploy and legal wording |
 
 ## Archive
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { authErrorMessage } from "@/components/auth/common/authMessages";
 import { AuthNotice } from "@/components/auth/common/AuthNotice";
+import { LegalLinks } from "@/components/auth/common/LegalLinks";
 import { GoogleLogo } from "@/components/general/GoogleLogo";
 import { cn } from "@/lib/ui/cn";
 import { createClient } from "@/utils/supabase/client";
@@ -53,6 +54,10 @@ export function GoogleButton({
 				<GoogleLogo />
 				{busy ? "Opening Google…" : "Continue with Google"}
 			</button>
+			{/* Clicking the button is the assent; Google's own screen is not ours. */}
+			<p className="text-center text-[12.5px] leading-[1.45] text-product-muted">
+				By continuing you agree to our <LegalLinks />
+			</p>
 			<AuthNotice message={error} />
 		</div>
 	);

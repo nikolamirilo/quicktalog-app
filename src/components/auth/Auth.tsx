@@ -9,9 +9,9 @@ import { AUTH_PROVIDER } from "@/lib/auth/provider";
 /**
  * The `/auth` page, whichever provider is live.
  *
- * It no longer gates rendering on a `localStorage` read: the terms modal is
- * asked for by the sign-up *intent* (see `useSignupConsent`), so the sign-in
- * screen is present in the server HTML instead of appearing on hydration.
+ * Acceptance of the legal documents is not asked for here: the email form has
+ * its own checkbox, and everyone else - Google sign-ups, imported accounts -
+ * meets the gate at `/auth/consent` on the way into `/admin`.
  */
 export function Auth({
 	termsVersion = null,

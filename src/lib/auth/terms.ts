@@ -23,7 +23,17 @@ export async function currentTermsVersion(): Promise<string | null> {
 			),
 		);
 		const version = [...rows][0]?.version;
-		return typeof version === "string" && version.length > 0 ? version : null;
+		if (typeof version !== "string" || version.length === 0) {
+			// A missing row throws nothing, so without this it is reported nowhere:
+			// email sign-up turns itself off, the consent gate goes inert, and
+			// Google sign-ups land with no recorded acceptance of anything.
+			Sentry.captureMessage("private.settings.terms_version is not set", {
+				level: "error",
+				tags: { op: "currentTermsVersion" },
+			});
+			return null;
+		}
+		return version;
 	} catch (err) {
 		Sentry.captureException(err, {
 			level: "warning",

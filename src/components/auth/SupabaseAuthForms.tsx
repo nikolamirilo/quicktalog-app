@@ -7,7 +7,6 @@ import { LANDING_ERRORS } from "@/components/auth/common/authMessages";
 import type { AuthMode } from "@/components/auth/common/AuthModeTabs";
 import { AuthModeTabs } from "@/components/auth/common/AuthModeTabs";
 import { AuthNotice } from "@/components/auth/common/AuthNotice";
-import { useSignupConsent } from "@/components/auth/common/useSignupConsent";
 import { ResetPasswordForm } from "@/components/auth/forms/ResetPasswordForm";
 import { SignInForm } from "@/components/auth/forms/SignInForm";
 import { SignUpForm } from "@/components/auth/forms/SignUpForm";
@@ -39,18 +38,17 @@ export function SupabaseAuthForms({
 	const problem = LANDING_ERRORS[searchParams.get("error") ?? ""] ?? null;
 
 	const showSignUp = useCallback(() => setView("signup"), []);
-	const { modal, request: requestSignUp } = useSignupConsent(showSignUp);
 
-	// A link into `?mode=signup` asks for the sign-up tab, and consent is asked
-	// for the same way a click on the tab would ask.
+	// A link into `?mode=signup` opens the sign-up tab. Acceptance of the legal
+	// documents is the form's checkbox, or the gate at `/auth/consent`.
 	useEffect(() => {
-		if (mode === "signup") requestSignUp();
-	}, [mode, requestSignUp]);
+		if (mode === "signup") showSignUp();
+	}, [mode, showSignUp]);
 
 	const tabs = (
 		<AuthModeTabs
 			onChange={(nextMode) =>
-				nextMode === "signup" ? requestSignUp() : setView("signin")
+				nextMode === "signup" ? showSignUp() : setView("signin")
 			}
 			value={view === "signup" ? "signup" : "signin"}
 		/>
@@ -90,7 +88,7 @@ export function SupabaseAuthForms({
 						New to Quicktalog?{" "}
 						<button
 							className={textLinkClass}
-							onClick={requestSignUp}
+							onClick={showSignUp}
 							type="button"
 						>
 							Create a free account
@@ -98,7 +96,6 @@ export function SupabaseAuthForms({
 					</AuthSwitch>
 				</>
 			)}
-			{modal}
 		</>
 	);
 }

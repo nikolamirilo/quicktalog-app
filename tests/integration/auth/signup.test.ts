@@ -71,6 +71,19 @@ async function publicRow(userId: string) {
 	return row ?? null;
 }
 
+/** One transaction set up the way `withUser` does it: `app_user` plus claims. */
+function asUser<T>(userId: string, run: (tx: typeof sql) => Promise<T>) {
+	return sql.begin(async (tx) => {
+		await tx`select
+			pg_catalog.set_config('role', 'app_user', true),
+			pg_catalog.set_config('request.jwt.claims', ${JSON.stringify({
+				sub: userId,
+				role: "authenticated",
+			})}, true)`;
+		return run(tx as unknown as typeof sql);
+	}) as Promise<T>;
+}
+
 async function track<T extends { data: { user?: { id?: string } | null } }>(
 	result: T,
 ): Promise<T> {
@@ -171,6 +184,52 @@ describe.skipIf(!enabled)("sign-up against a real GoTrue", () => {
 		expect(consents["terms-and-conditions"]).toBe(true);
 		expect(consents.version).toBe(terms.value);
 		expect(consents.accepted_at).toBeTruthy();
+	});
+
+	it("lets the gate record consent for a sign-up that accepted nothing", async (ctx) => {
+		if (!signupsOpen) return;
+		const [terms] = await sql<{ value: string }[]>`
+			select value from private.settings where key = 'terms_version'`;
+		if (!terms) {
+			ctx.skip("private.settings.terms_version is not set on this stack");
+		}
+
+		// No `terms_version` in the metadata is what a Google sign-up looks like
+		// to the trigger: it accepted nothing, and the gate is the second chance.
+		const { data } = await track(
+			await anon.auth.signUp({ email: address("gate"), password: PASSWORD }),
+		);
+		const userId = data.user?.id as string;
+		await admin.auth.admin.updateUserById(userId, { email_confirm: true });
+
+		const before = (await publicRow(userId))?.consents as Record<
+			string,
+			unknown
+		>;
+		expect(before["terms-and-conditions"]).toBe(false);
+		expect(before.version).toBeUndefined();
+
+		// A version that is not the current one is refused, so a terms change
+		// mid-session cannot be recorded as something the user never saw.
+		await expect(
+			asUser(userId, (tx) => tx`select private.record_consents('1999-01-01')`),
+		).rejects.toMatchObject({ code: "22023" });
+
+		await asUser(
+			userId,
+			(tx) => tx`select private.record_consents(${terms.value})`,
+		);
+
+		const after = (await publicRow(userId))?.consents as Record<
+			string,
+			unknown
+		>;
+		expect(after["terms-and-conditions"]).toBe(true);
+		expect(after["privacy-policy"]).toBe(true);
+		expect(after["refund-policy"]).toBe(true);
+		expect(after.version).toBe(terms.value);
+		expect(after.accepted_at).toBeTruthy();
+		expect(after.source).toBe("gate");
 	});
 
 	it("creates no row for an identity that is already claimed in the map", async () => {

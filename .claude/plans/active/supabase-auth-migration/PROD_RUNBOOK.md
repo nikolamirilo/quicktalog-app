@@ -329,10 +329,14 @@ so `getClaims()` verifies locally instead of calling out per request. Wait
 > Three places say migration 3; only this line says M08. It reads as a leftover from the
 > tracker the 2026-09-26 audit corrected, missed because A5 was not rewritten.
 >
-> **Resolve with `supabase migration list --project-ref uhfbapjuzvlyzyodxhqn` before
-> running anything in this section.** The difference is whether M00–M08 still need to
-> land - and pushing them against pre-Phase-0A code is exactly what P0 warns takes the
-> site down. Not checked here: querying PROD needs explicit sign-off.
+> **Resolved 2026-10-15: the migration-3 reading is the correct one.** An operator ran
+> the A5 `insert into private.settings` against PROD and got
+> `42P01: relation "private.settings" does not exist`. That table is created by **M01**
+> (`app_roles_private_schema`), so M01 has not been applied and neither has anything
+> after it. The "PROD is at M08" line below is wrong - treat it as the tracker leftover
+> the 2026-09-26 audit identified. Still confirm the exact position with
+> `supabase migration list --project-ref uhfbapjuzvlyzyodxhqn` before pushing, because
+> pushing M00-M08 against pre-Phase-0A code is what P0 warns takes the site down.
 
 PROD is at M08 and needs **M10 then M09**.
 
@@ -349,17 +353,61 @@ the Vault secret exists (A6).
 **M12 and M13 live in `supabase/phase5/`, deliberately outside the push path.**
 They are T+30 work and M12 refuses to run before the re-key. Do not move them.
 
-Then the setting M10 leaves to an operator:
+### A5.1 `terms_version` - the setting M10 leaves to an operator
+
+**Requires M01** (`app_roles_private_schema`), which creates `private.settings`.
+Running it earlier gives `42P01: relation "private.settings" does not exist`
+(this is how PROD's position was established on 2026-10-15, above).
+
+One value covers all three legal documents - Terms & Conditions, Privacy Policy
+and Refund Policy. There is no per-document version: `private.record_consents`
+writes them as one set against this single stamp.
+
+Use the date the current terms text was last **materially** changed, not the
+date you run this:
 
 ```sql
+-- Idempotent: a re-run with the same value changes nothing, and `do nothing`
+-- means a re-run with a placeholder cannot silently re-ask every user.
 insert into private.settings (key, value)
-values ('terms_version', '<your terms version>')
-on conflict (key) do update set value = excluded.value;
+values ('terms_version', '2026-09-22')      -- replace with the real date
+on conflict (key) do nothing;
+
+-- Verify before moving on. This must return exactly one row.
+select key, value, updated_at from private.settings where key = 'terms_version';
 ```
 
-**Without it the sign-up form disables itself** - `currentTermsVersion()`
-returns null and the form refuses to render rather than record a consent it
-cannot honour.
+To correct a wrong value afterwards, change it deliberately - and know that
+**changing it re-asks every user** on their next visit to `/admin`:
+
+```sql
+update private.settings
+   set value = '<correct date>', updated_at = pg_catalog.now()
+ where key = 'terms_version';
+```
+
+#### What happens if it is missing
+
+Not a crash - and that is the problem. The app fails open in three places at
+once, so the gap is silent:
+
+| Path | Behaviour with no `terms_version` |
+|---|---|
+| Email sign-up | **Blocked.** `currentTermsVersion()` returns null, the form shows "Sign-up is briefly unavailable" and the button stays disabled |
+| Google sign-up | **Succeeds.** `GoogleButton` does not read the version, so the account is created with `consents` all false |
+| The `/admin` consent gate | **Inert.** `needsConsentGate` fails open when the current version is null, so that user is never asked |
+| `acceptLegalTerms` | Refused anyway - `record_consents` raises `22023` with no current version to match |
+
+So the missing row does not break the site; it quietly produces Google accounts
+with no recorded acceptance of anything, while turning email sign-up off. A
+missing row raises no exception, so until 2026-10-15 nothing reported it at all;
+`currentTermsVersion` now sends a Sentry **error** when the read succeeds but
+returns no version. Treat that event as a release blocker, not a warning.
+
+**Ordering invariant:** this row must exist before C3 step 12 reopens
+`disable_signup`, and before `AUTH_PROVIDER` flips to `supabase` in C3 step 10.
+A5 runs in Part A, well ahead of both, so the null state never exists in
+production if the runbook is followed in order.
 
 ## A6. Track K: edge functions
 
@@ -508,7 +556,14 @@ minutes clear of the 03:00 UTC worker cron.
 10. Vercel `AUTH_PROVIDER` = `supabase` → redeploy the tagged commit, with
     maintenance still on.
 11. Smoke-test as an operator using the maintenance bypass cookie.
-12. Reopen: `disable_signup` = `false`, `maintenance_prod` = `false`,
+12. **Re-check `terms_version` before reopening** (A5.1). Without it, every
+    Google sign-up from this moment lands with no recorded consent and email
+    sign-up is dead, and neither shows an error:
+
+    ```sql
+    select value from private.settings where key = 'terms_version';
+    ```
+13. Reopen: `disable_signup` = `false`, `maintenance_prod` = `false`,
     `clerk_frozen_prod` = `false`, `JOBS_PAUSED` = `false`.
 
 ## C4. Rollback (within 72h)

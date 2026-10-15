@@ -1,14 +1,5 @@
 "use client";
 
-import { Inbox } from "lucide-react";
-import Link from "next/link";
-import {
-	type FormEvent,
-	type ReactNode,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
 import {
 	AuthCard,
 	AuthEmphasis,
@@ -21,10 +12,19 @@ import { AuthFine } from "@/components/auth/common/AuthFine";
 import { authErrorMessage } from "@/components/auth/common/authMessages";
 import { AuthNotice } from "@/components/auth/common/AuthNotice";
 import { GoogleButton } from "@/components/auth/common/GoogleButton";
+import { LegalLinks } from "@/components/auth/common/LegalLinks";
 import { SubmitButton } from "@/components/auth/common/SubmitButton";
 import { useTurnstile } from "@/components/auth/common/useTurnstile";
-import { createClient } from "@/utils/supabase/client";
 import { textLinkClass } from "@/components/general/TextLink";
+import { createClient } from "@/utils/supabase/client";
+import { Inbox } from "lucide-react";
+import {
+	type FormEvent,
+	type ReactNode,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 export function SignUpForm({
 	next,
@@ -186,23 +186,7 @@ export function SignUpForm({
 						type="checkbox"
 					/>
 					<span>
-						I agree to the{" "}
-						<Link
-							className={textLinkClass}
-							href="/terms-and-conditions"
-							target="_blank"
-						>
-							Terms and Conditions
-						</Link>{" "}
-						and{" "}
-						<Link
-							className={textLinkClass}
-							href="/privacy-policy"
-							target="_blank"
-						>
-							Privacy Policy
-						</Link>
-						{termsVersion ? ` (version ${termsVersion})` : ""}.
+						I agree to the <LegalLinks />
 					</span>
 				</label>
 				{captcha.element}
