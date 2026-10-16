@@ -1,6 +1,8 @@
 # Legal consent
 
-Acceptance of the Terms & Conditions, Privacy Policy and Refund Policy. Two paths lead to the same record: the sign-up form's checkbox, and the gate that catches everyone the checkbox cannot reach — every Google sign-up, every imported account, and everyone again if the documents are ever rewritten.
+Acceptance of the Terms & Conditions, Privacy Policy and Refund Policy. Two paths lead to the same record: the email sign-up form, where pressing **Create account** under a line naming the three documents is the assent, and the gate that catches everyone that form cannot reach — every Google sign-up, every imported account, and everyone again if the documents are ever rewritten.
+
+The three documents are named **once** per screen. The sign-up card names them under its own button, so `GoogleButton` there is passed `legalNotice={false}`; sign-in keeps the notice, because nothing else on that card names them.
 
 Cookie and analytics choices are a different thing entirely and live in `users.cookie_preferences` (`saveCookiePreferences`). Bundling them with contract acceptance would invalidate the consent, so the two never share a control.
 
@@ -10,8 +12,8 @@ Cookie and analytics choices are a different thing entirely and live in `users.c
 |---|---|
 | `src/constants/legal.ts` | `legalDocuments`: the three documents, their order and their URLs. The single source |
 | `src/components/auth/common/LegalLinks.tsx` | The documents as one inline "A, B and C" link list |
-| `src/components/auth/forms/SignUpForm.tsx` | The email sign-up checkbox; sends `terms_version` in the sign-up metadata |
-| `src/components/auth/common/GoogleButton.tsx` | The notice under the Google button: clicking it is the assent |
+| `src/components/auth/forms/SignUpForm.tsx` | The email sign-up form: the line under its button, and `terms_version` in the sign-up metadata |
+| `src/components/auth/common/GoogleButton.tsx` | The notice under the Google button (`legalNotice`, on by default, off on the sign-up card) |
 | `src/app/admin/layout.tsx` | The gate: holds `/admin` shut until the record matches |
 | `src/lib/auth/consent.ts` | `needsConsentGate` — one statement, the user's stamp against the current version |
 | `src/app/(site)/(with-footer)/auth/consent/page.tsx` | `/auth/consent`, where the gate sends people |
@@ -36,7 +38,7 @@ Cookie and analytics choices are a different thing entirely and live in `users.c
 
 All three documents are written as one set — `private.record_consents` takes no per-document argument — so the UI requires all three before enabling its button. There is no partial state to store.
 
-`source` says which path recorded it: `signup` for the form's checkbox, `gate` for `/auth/consent`, `legacy_default` for rows that predate the contract, `default` for the column default. Only the latest acceptance is kept; `record_consents` replaces the whole object rather than appending.
+`source` says which path recorded it: `signup` for the email sign-up form, `gate` for `/auth/consent`, `legacy_default` for rows that predate the contract, `default` for the column default. Only the latest acceptance is kept; `record_consents` replaces the whole object rather than appending.
 
 ## The version
 

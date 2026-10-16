@@ -39,7 +39,6 @@ export function SignUpForm({
 	const [fullName, setFullName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [acceptedTerms, setAcceptedTerms] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [busy, setBusy] = useState(false);
 	const [sent, setSent] = useState(false);
@@ -127,7 +126,7 @@ export function SignUpForm({
 				subtitle="Build your first catalogue in minutes."
 				title="Create your account"
 			/>
-			<GoogleButton className="mt-6" next={next} />
+			<GoogleButton className="mt-6" legalNotice={false} next={next} />
 			<AuthDivider />
 			<form className="grid grid-cols-1 gap-[18px]" onSubmit={submit}>
 				<AuthNotice
@@ -173,31 +172,21 @@ export function SignUpForm({
 					type="password"
 					value={password}
 				/>
-				<label
-					className="flex items-start gap-2.5 text-[13.5px] leading-normal text-product-foreground-accent"
-					htmlFor="terms"
-				>
-					<input
-						checked={acceptedTerms}
-						className="mt-0.5 size-[18px] shrink-0 accent-product-primary"
-						id="terms"
-						onChange={(e) => setAcceptedTerms(e.target.checked)}
-						required
-						type="checkbox"
-					/>
-					<span>
-						I agree to the <LegalLinks />
-					</span>
-				</label>
 				{captcha.element}
-				<SubmitButton
-					busy={busy}
-					busyLabel="Creating your account…"
-					disabled={captcha.pending || !acceptedTerms || !termsVersion}
-					type="submit"
-				>
-					Create account
-				</SubmitButton>
+				<div>
+					<SubmitButton
+						busy={busy}
+						busyLabel="Creating your account…"
+						disabled={captcha.pending || !termsVersion}
+						type="submit"
+					>
+						Create account
+					</SubmitButton>
+					{/* Pressing the button is the assent, so the documents are named with it. */}
+					<p className="mt-4 text-center text-[13px] leading-[1.5] text-product-foreground-accent">
+						By creating your account you agree to our <LegalLinks />.
+					</p>
+				</div>
 			</form>
 		</AuthCard>
 	);

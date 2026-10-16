@@ -12,10 +12,13 @@ import { createClient } from "@/utils/supabase/client";
 export function GoogleButton({
 	next,
 	className,
+	legalNotice = true,
 }: {
 	next: string;
 	/** Spacing from the element above; the button itself sets none. */
 	className?: string;
+	/** Off where the screen already names the documents somewhere else. */
+	legalNotice?: boolean;
 }) {
 	const [error, setError] = useState<string | null>(null);
 	const [busy, setBusy] = useState(false);
@@ -54,10 +57,12 @@ export function GoogleButton({
 				<GoogleLogo />
 				{busy ? "Opening Google…" : "Continue with Google"}
 			</button>
-			{/* Clicking the button is the assent; Google's own screen is not ours. */}
-			<p className="text-center text-[12.5px] leading-[1.45] text-product-muted">
-				By continuing you agree to our <LegalLinks />
-			</p>
+			{legalNotice ? (
+				/* Clicking the button is the assent; Google's own screen is not ours. */
+				<p className="text-center text-[12.5px] leading-[1.45] text-product-muted">
+					By continuing you agree to our <LegalLinks />
+				</p>
+			) : null}
 			<AuthNotice message={error} />
 		</div>
 	);
