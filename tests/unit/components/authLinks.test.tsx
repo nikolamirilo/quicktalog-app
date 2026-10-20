@@ -28,6 +28,7 @@ import { AuthLinks } from "@/components/navigation/AuthLinks";
 
 describe("AuthLinks", () => {
 	beforeEach(() => {
+		auth.state.isLoaded = true;
 		auth.state.isSignedIn = true;
 		auth.pathname = "/";
 	});
@@ -40,26 +41,26 @@ describe("AuthLinks", () => {
 		expect(screen.queryByText("Log In")).toBeNull();
 	});
 
-	it("keeps Log In and Start free on the consent step", () => {
+	it("renders no auth corner on the consent step", () => {
 		auth.pathname = "/auth/consent";
-		render(<AuthLinks />);
-		expect(screen.getByText("Log In")).toBeTruthy();
-		expect(screen.getByText("Start free")).toBeTruthy();
-		expect(screen.queryByText("Dashboard")).toBeNull();
-		expect(screen.queryByText("Account menu")).toBeNull();
+		const { container } = render(<AuthLinks />);
+		expect(container.firstChild).toBeNull();
 	});
 
-	it("keeps the mobile Start free button on the consent step", () => {
-		auth.pathname = "/auth/consent";
-		render(<AuthLinks variant="mobile-cta" />);
-		expect(screen.getByText("Start free")).toBeTruthy();
-	});
+	it.each(["mobile-cta", "sheet"] as const)(
+		"renders nothing in the %s variant on the consent step",
+		(variant) => {
+			auth.pathname = "/auth/consent";
+			const { container } = render(<AuthLinks variant={variant} />);
+			expect(container.firstChild).toBeNull();
+		},
+	);
 
-	it("keeps the logged-out block in the mobile sheet on the consent step", () => {
+	it("renders no auth corner on the consent step before auth state loads", () => {
 		auth.pathname = "/auth/consent";
-		render(<AuthLinks variant="sheet" />);
-		expect(screen.getByText("Log In")).toBeTruthy();
-		expect(screen.queryByText("Sign out")).toBeNull();
+		auth.state.isLoaded = false;
+		const { container } = render(<AuthLinks />);
+		expect(container.firstChild).toBeNull();
 	});
 
 	it("does not treat other auth routes as part of the consent step", () => {

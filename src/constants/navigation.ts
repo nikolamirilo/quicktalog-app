@@ -89,11 +89,11 @@ export const authLinks = {
 } as const;
 
 /**
- * Routes where a session already exists but sign-up is not finished: the legal
- * consent step a Google sign-up lands on. The navbar keeps Log In / Start free
- * there instead of Dashboard and the account menu.
+ * Routes where a session exists but a required step is unfinished: the legal
+ * consent step, reached both by a new sign-up and by an existing user after the
+ * documents change. The navbar's auth corner is empty there.
  */
-export const preSignupPaths = ["/auth/consent"] as const;
+export const pendingAuthPaths = ["/auth/consent"] as const;
 
 /** Footer link columns. */
 export const footerLinkColumns: { title: string; links: ILinkItem[] }[] = [

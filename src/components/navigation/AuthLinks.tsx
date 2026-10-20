@@ -6,7 +6,7 @@ import {
 } from "@/components/navigation/NavLink";
 import { UserAvatar, UserMenu } from "@/components/navigation/UserMenu";
 import { Button } from "@/components/ui/button";
-import { authLinks, preSignupPaths } from "@/constants/navigation";
+import { authLinks, pendingAuthPaths } from "@/constants/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useSignOut } from "@/hooks/useSignOut";
 import { cn } from "@/lib/ui/cn";
@@ -28,22 +28,21 @@ type AuthLinksProps = {
  * The auth corner of the navbar. It reads the client-side auth state only, so
  * public and ISR pages never touch cookies; until that state is known it holds
  * the logged-out width so the bar does not jump.
- *
- * On the consent step (`preSignupPaths`) a Google sign-up already has a session
- * but has not finished signing up, so the corner stays the logged-out one.
  */
 export const AuthLinks = ({
 	variant = "desktop",
 	onLinkClick,
 }: AuthLinksProps) => {
-	const { isSignedIn: hasSession, user, isLoaded, accountHref } = useAuth();
+	const { isSignedIn, user, isLoaded, accountHref } = useAuth();
 	const { signingOut, handleSignOut } = useSignOut();
 	const pathname = usePathname();
-	const isSignedIn =
-		hasSession &&
-		!preSignupPaths.some(
-			(path) => pathname === path || pathname?.startsWith(`${path}/`),
-		);
+	const onPendingAuthStep = pendingAuthPaths.some(
+		(path) => pathname === path || pathname?.startsWith(`${path}/`),
+	);
+
+	// Accept-or-decline stop: every link here bounces back through the gate or
+	// misdescribes the user, and the form owns both real actions.
+	if (onPendingAuthStep) return null;
 
 	if (variant === "mobile-cta") {
 		if (isLoaded && isSignedIn) return null;
