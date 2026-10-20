@@ -1,9 +1,5 @@
 "use client";
 
-import { FileCheck2 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
 import { acceptLegalTerms } from "@/actions/consent";
 import { AuthCard, AuthHeader } from "@/components/auth/common/AuthCard";
 import { AuthFine } from "@/components/auth/common/AuthFine";
@@ -13,6 +9,9 @@ import { textLinkClass } from "@/components/general/TextLink";
 import { Checkbox } from "@/components/ui/checkbox";
 import { type LegalDocumentKey, legalDocuments } from "@/constants/legal";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState } from "react";
 
 const NOTHING_CHECKED = Object.fromEntries(
 	legalDocuments.map(({ key }) => [key, false]),
@@ -75,7 +74,6 @@ export function ConsentForm({
 	return (
 		<AuthCard>
 			<AuthHeader
-				badge={<FileCheck2 />}
 				subtitle={
 					updated
 						? "We have updated the documents below since you last accepted them. Please review and accept to carry on using your account."

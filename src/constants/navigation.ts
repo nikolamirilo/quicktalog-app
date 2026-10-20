@@ -88,6 +88,13 @@ export const authLinks = {
 	dashboard: "/admin/dashboard",
 } as const;
 
+/**
+ * Routes where a session already exists but sign-up is not finished: the legal
+ * consent step a Google sign-up lands on. The navbar keeps Log In / Start free
+ * there instead of Dashboard and the account menu.
+ */
+export const preSignupPaths = ["/auth/consent"] as const;
+
 /** Footer link columns. */
 export const footerLinkColumns: { title: string; links: ILinkItem[] }[] = [
 	{

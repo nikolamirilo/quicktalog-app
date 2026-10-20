@@ -20,6 +20,7 @@ Cookie and analytics choices are a different thing entirely and live in `users.c
 | `src/components/auth/ConsentForm.tsx` | The three checkboxes, accept, and decline-and-sign-out |
 | `src/actions/consent.ts` | `acceptLegalTerms` — calls `private.record_consents` |
 | `src/lib/auth/terms.ts` | `currentTermsVersion` — reads `private.current_terms_version()` |
+| `src/components/navigation/AuthLinks.tsx` | Keeps the navbar's Log In / Start free on the consent step (`preSignupPaths` in `src/constants/navigation.ts`) |
 
 ## The record
 
@@ -78,3 +79,5 @@ The route sets `maxDuration = 60`. The default 10s is not enough: the server act
 `/auth/consent` sits outside `/admin` so the gate cannot redirect to itself, and it is deliberately not a `PROTECTED` path in middleware, so the page checks identity itself. It carries no `next`: a layout does not know its own pathname, and the screen is a once-ever stop, so a deep link costs one redirect to the dashboard.
 
 Declining signs the user out and points at account deletion in settings. Refusing has to be possible.
+
+The navbar treats the consent step as part of signing up. A Google sign-up reaches `/auth/consent` with a live session, but `AuthLinks` shows Log In / Start free there, not Dashboard and the account menu: Dashboard would only bounce back through the gate, and the account is not finished until the documents are accepted. The routes are listed in `preSignupPaths`.
