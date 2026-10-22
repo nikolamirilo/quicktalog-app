@@ -63,4 +63,16 @@ describe("applyPlanToCatalogue", () => {
 		expect(result.header.type).toBe("custom");
 		expect(result.footer.newsletter).toBe(paid.features.newsletter);
 	});
+
+	it("keeps the default header and footer when the owner chose them on a branded plan", () => {
+		const result = applyPlanToCatalogue(
+			{
+				header: { type: "default" as const },
+				footer: { type: "custom" as const, newsletter: false },
+			} as never,
+			paid,
+		) as { header: { type: string }; footer: { type: string } };
+		expect(result.header.type).toBe("default");
+		expect(result.footer.type).toBe("custom");
+	});
 });
