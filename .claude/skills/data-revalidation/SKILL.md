@@ -67,3 +67,4 @@ Server actions write via **Drizzle**; `src/app/api/items/route.ts` writes the sa
 - **Forgot the draft sync in the action** - the builder reads the draft on top of the database row (`readOwnedDraft`), so the editor keeps showing stale edits even after `revalidateCatalogue`. Write or delete the draft on every write.
 - **Nuclear revalidation** - purging the root layout for a single-catalogue edit. Pass the `name` and target it instead.
 - **Missing `revalidateDashboard()`** - a status change or delete that doesn't refresh dashboard stats.
+- **`router.refresh()` after a sign-in/sign-out navigation** - `SupabaseAuthProvider` already refreshes when the user changes. A second refresh queued behind `router.push/replace` never settles in Next 15's router, so the page hangs (spinner forever). After changing the session, only navigate (see [SignInForm.tsx](../../../src/components/auth/forms/SignInForm.tsx)).

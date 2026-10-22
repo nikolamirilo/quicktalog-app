@@ -68,7 +68,6 @@ export function SupabaseAccount() {
 							return;
 						}
 						router.replace("/");
-						router.refresh();
 					}}
 				/>
 			</SettingsGroup>

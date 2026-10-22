@@ -28,6 +28,10 @@ function toAuthUser(user: User | null) {
  * `onAuthStateChange` fires in every tab, so signing out in one signs out the
  * rest. When the user actually changes, the router is refreshed as well:
  * server components hold the previous user's data until they re-render.
+ *
+ * A flow that signs in or out and then navigates must not call
+ * `router.refresh()` after the navigation: in Next 15 a refresh queued behind
+ * a navigation that cut off this one never settles, and the page hangs.
  */
 export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
 	const supabase = useMemo(() => createClient(), []);
@@ -81,7 +85,6 @@ export function SupabaseAuthProvider({ children }: { children: ReactNode }) {
 		signOut: async () => {
 			await supabase.auth.signOut({ scope: "local" });
 			router.push("/");
-			router.refresh();
 		},
 		accountHref: "/admin/dashboard?tab=settings",
 	};
