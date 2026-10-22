@@ -37,7 +37,7 @@ export const PROJECTS = {
 		ref: "uhfbapjuzvlyzyodxhqn",
 		clerkCsv: "~/Desktop/quicktalog-app/cutover/input/prod-users.csv",
 		outDir: "~/Desktop/quicktalog-app/cutover/output",
-		exportedAt: "2026-10-21T20:19:07Z",
+		exportedAt: "2026-10-22T18:01:07Z",
 	},
 } as const satisfies Record<
 	ProjectName,

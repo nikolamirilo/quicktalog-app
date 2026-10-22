@@ -50,10 +50,8 @@ export function SignInForm({
 			setError(authErrorMessage(signInError));
 			return;
 		}
-		// The session cookie is written by the browser client; refresh so the
-		// server components on the next page see it.
+		// No router.refresh(): the auth provider already refreshes on SIGNED_IN.
 		router.replace(next);
-		router.refresh();
 	};
 
 	return (
