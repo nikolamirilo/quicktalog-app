@@ -1,7 +1,7 @@
 # Database gate (PGlite)
 
 Applies `supabase/migrations` and the remaining Appendix A SQL of
-`.claude/plans/active/supabase-auth-migration/PLAN.md` to an in-memory Postgres
+`.claude/plans/active/2026-09-15-supabase-auth-migration/PLAN.md` to an in-memory Postgres
 and runs 692 RLS and migration scenarios on PostgreSQL 17 and 18. It needs no
 Docker, no network and no Supabase access, so it runs on every PR.
 

@@ -4,7 +4,7 @@
 commands in order. This file explains what each script does and why.
 
 The Clerk → Supabase Auth cutover, run by hand from an operator machine.
-The plan these implement is `.claude/plans/active/supabase-auth-migration/PLAN.md`
+The plan these implement is `.claude/plans/active/2026-09-15-supabase-auth-migration/PLAN.md`
 (section 6 for the identity migration, section 12 for the runbook).
 
 **These scripts never run on Vercel and never run in CI against PROD.** They
@@ -154,12 +154,10 @@ Backend API or a fixture.
 ```sh
 # T-3 rehearsal, then the real thing
 DRY_RUN=1 ALLOW_PROD=1 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts
-DRY_RUN=0 ALLOW_PROD=1 OUT_DIR=/Volumes/cutover/reports \
-  npx tsx scripts/cutover/migrate-clerk-to-supabase.ts
+DRY_RUN=0 ALLOW_PROD=1 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts
 
 # T-0, after the second export
-DRY_RUN=0 ALLOW_PROD=1 OUT_DIR=/Volumes/cutover/reports \
-  npx tsx scripts/cutover/migrate-clerk-to-supabase.ts --delta
+DRY_RUN=0 ALLOW_PROD=1 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts --delta
 ```
 
 Flags: `--delta` (T-0 sync of digests, emails, bans and unlinked Google
@@ -257,8 +255,7 @@ do. This script creates the Clerk user that row points at.
 
 ```sh
 DRY_RUN=1 ALLOW_PROD=1 npx tsx scripts/cutover/push-supabase-users-to-clerk.ts
-DRY_RUN=0 ALLOW_PROD=1 OUT_DIR=/Volumes/cutover/reports \
-  npx tsx scripts/cutover/push-supabase-users-to-clerk.ts
+DRY_RUN=0 ALLOW_PROD=1 npx tsx scripts/cutover/push-supabase-users-to-clerk.ts
 ```
 
 It runs four steps, in order:

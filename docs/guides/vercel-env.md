@@ -181,8 +181,7 @@ never give one to a key that grants more than a visitor already has.
 | `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`, `NEXT_PUBLIC_PADDLE_ENV` | Paddle.js in the browser. |
 | `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Only while `AUTH_PROVIDER=clerk`. Removed at Phase 5. |
 | `DEEPSEEK_API_KEY`, `FIRECRAWL_API_KEY` | The catalogue builder agent and web page fetching. |
-| `NEXT_PUBLIC_BASE_URL` | Canonical origin. Also read by Playwright to decide what it is testing. |
-| `NEXT_PUBLIC_APP_URL` | QR code target. Falls back to `https://quicktalog.com` - note the `.com`, which is not this product's domain; set it explicitly. |
+| `NEXT_PUBLIC_BASE_URL` | Canonical origin: catalogue links, QR codes, sitemap, emails, checkout return URL. Also read by Playwright to decide what it is testing. |
 
 Analytics and monitoring, all optional and inert when unset:
 `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` (build-time source maps),

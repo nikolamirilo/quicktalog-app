@@ -14,6 +14,7 @@
 !.yarn/versions
 .eslintcache
 **/superpowers/
+/cutover
 
 # testing
 /coverage

@@ -3,7 +3,7 @@
 Every command, in order. Run them from the repo root.
 
 For the reasoning behind each step, see
-`.claude/plans/active/supabase-auth-migration/PROD_RUNBOOK.md`. This file is
+`.claude/plans/active/2026-09-15-supabase-auth-migration/PROD_RUNBOOK.md`. This file is
 just what to type.
 
 ---
@@ -144,8 +144,9 @@ If it is missing: `brew install libpq` and add
 
 Clerk dashboard, production instance, Settings, User exports.
 
-Save it to `/Volumes/cutover/users.csv` (an encrypted disk image). The file
-holds password hashes and MFA secrets, so it does not belong in Downloads.
+Save it as `cutover/input/prod-users.csv` at the repo root
+(git-ignored, readable only by you). The file holds emails and password hashes,
+so it does not belong in Downloads or in a tracked file.
 
 Set the export time in `scripts/cutover/config.ts`:
 
@@ -213,7 +214,7 @@ When it finishes, C1 to C8 must all say `ok`.
 
 ### Check the reports
 
-They are in `/Volumes/cutover/reports`.
+They are in `cutover/output`.
 
 | File | What it means |
 |---|---|

@@ -190,7 +190,7 @@ Adding variables changes nothing until a deploy, so this is safe now.
 | `REDIS_KEY_PREFIX` | `prod` | Unset falls back to `"dev"`, sharing a keyspace with local development |
 | `AUTH_PROVIDER` | `clerk` | Set now; C3 flips it |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Turnstile **site** key | A3 |
-| `NEXT_PUBLIC_APP_URL` | `https://www.quicktalog.app` | Falls back to `quicktalog.com` - wrong TLD - in QR codes |
+| `MAINTENANCE_BYPASS_TOKEN` | output of `openssl rand -hex 32`, kept in your password manager | Maintenance blocks you too, so the cutover smoke test (step 11) can't run |
 
 ### The two database URLs, and the order they must be set in
 
@@ -500,9 +500,9 @@ export NEXT_PUBLIC_SUPABASE_URL=https://uhfbapjuzvlyzyodxhqn.supabase.co
 export SUPABASE_SECRET_KEY=<PROD sb_secret_>
 export MIGRATION_DATABASE_URL=<postgres, session pooler 5432 or direct - NOT 6543>
 export CLERK_SECRET_KEY=sk_live_...
-export CLERK_CSV=/Volumes/cutover/users.csv
+export CLERK_CSV=cutover/input/prod-users.csv
 export EXPORTED_AT=<UTC ISO time of the export>
-export OUT_DIR=/Volumes/cutover/reports
+export OUT_DIR=cutover/output
 
 DRY_RUN=1 ALLOW_PROD=1 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts
 DRY_RUN=0 ALLOW_PROD=1 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts
@@ -555,7 +555,10 @@ minutes clear of the 03:00 UTC worker cron.
    sign-ups reopen.
 10. Vercel `AUTH_PROVIDER` = `supabase` → redeploy the tagged commit, with
     maintenance still on.
-11. Smoke-test as an operator using the maintenance bypass cookie.
+11. Smoke-test as an operator using the maintenance bypass cookie. Nothing sets it for you:
+    on `www.quicktalog.app`, run
+    `document.cookie = "qt-maint-bypass=<MAINTENANCE_BYPASS_TOKEN>; path=/; max-age=86400; secure"`
+    in the browser console.
 12. **Re-check `terms_version` before reopening** (A5.1). Without it, every
     Google sign-up from this moment lands with no recorded consent and email
     sign-up is dead, and neither shows an error:

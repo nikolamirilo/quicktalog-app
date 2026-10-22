@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 const PLAN = new URL(
-	"../../../.claude/plans/active/supabase-auth-migration/PLAN.md",
+	"../../../.claude/plans/active/2026-09-15-supabase-auth-migration/PLAN.md",
 	import.meta.url,
 ).pathname;
 const OUT = new URL("../plan-sql", import.meta.url).pathname;

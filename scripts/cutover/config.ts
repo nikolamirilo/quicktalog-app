@@ -17,6 +17,8 @@ import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { resolve } from "node:path";
 
+const REPO_ROOT = new URL("../..", import.meta.url).pathname;
+
 export type ProjectName = "test" | "prod";
 
 /* -------------------------------------------------------------------------- */
@@ -26,18 +28,16 @@ export type ProjectName = "test" | "prod";
 export const PROJECTS = {
 	test: {
 		ref: "imhinsgyzzyblghwnedk",
-		clerkCsv: "~/Downloads/users-test.csv",
-		outDir: "~/Downloads/cutover-reports/test",
+		clerkCsv: "~/Desktop/quicktalog-app/cutover/input/prod-users.csv",
+		outDir: "~/Desktop/quicktalog-app/cutover/output",
 		/** UTC time that CSV was exported; decides whether a password is still current. */
 		exportedAt: "2026-09-22T18:20:32Z",
 	},
 	prod: {
 		ref: "uhfbapjuzvlyzyodxhqn",
-		// The encrypted volume, per scripts/README.md: the PROD export carries
-		// password digests and totp_secret.
-		clerkCsv: "/Volumes/cutover/users.csv",
-		outDir: "/Volumes/cutover/reports",
-		exportedAt: "",
+		clerkCsv: "~/Desktop/quicktalog-app/cutover/input/prod-users.csv",
+		outDir: "~/Desktop/quicktalog-app/cutover/output",
+		exportedAt: "2026-10-21T20:19:07Z",
 	},
 } as const satisfies Record<
 	ProjectName,
@@ -161,14 +161,8 @@ export const config = {
 	},
 } as const;
 
-export const CUTOVER_ENV_FILE = resolve(
-	new URL("../..", import.meta.url).pathname,
-	".env.cutover",
-);
-export const APP_ENV_FILE = resolve(
-	new URL("../..", import.meta.url).pathname,
-	".env.local",
-);
+export const CUTOVER_ENV_FILE = resolve(REPO_ROOT, ".env.cutover");
+export const APP_ENV_FILE = resolve(REPO_ROOT, ".env.local");
 
 /**
  * The only names a dotenv file may supply.
