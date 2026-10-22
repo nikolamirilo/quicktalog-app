@@ -2,10 +2,18 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	env: {
+		// One source for the auth provider switch, inlined for server and client.
+		NEXT_PUBLIC_AUTH_PROVIDER:
+			process.env.AUTH_PROVIDER === "supabase" ? "supabase" : "clerk",
+	},
+	// Keep these heavy native packages out of the webpack bundle so they are
+	// required at runtime instead of being parsed/memoized into the build graph.
+	serverExternalPackages: ["tesseract.js", "playwright"],
 	images: {
 		minimumCacheTTL: 2678400,
 		formats: ["image/webp"],
-		unoptimized: !process.env.NEXT_PUBLIC_BASE_URL.includes("localhost"),
+		unoptimized: !process.env.NEXT_PUBLIC_BASE_URL?.includes("localhost"),
 		remotePatterns: [
 			{
 				protocol: "https",
@@ -17,35 +25,49 @@ const nextConfig: NextConfig = {
 			},
 		],
 	},
+	experimental: {
+		optimizePackageImports: ["react-icons"],
+		// withSentryConfig injects a custom webpack config, which makes Next skip the
+		// build worker by default. Without it the main process keeps the whole webpack
+		// compilation in memory through type-checking and page-data collection, which
+		// OOMs Vercel's 8 GB build container.
+		webpackBuildWorker: true,
+		webpackMemoryOptimizations: true,
+	},
+	/**
+	 * Report-only for now: it collects violations without breaking anything, so
+	 * the allowlist can be corrected before it is enforced. Every third-party
+	 * script the app loads has to be listed, and `unsafe-inline`/`unsafe-eval`
+	 * stay until GTM and the analytics snippets are moved to nonces.
+	 *
+	 * `object-src 'none'`, `base-uri 'self'` and `frame-ancestors 'self'` are
+	 * the parts that already matter: they stop plugin embedding, base-tag
+	 * hijacking and clickjacking.
+	 */
 	async headers() {
+		const csp = [
+			"default-src 'self'",
+			"script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://*.clarity.ms https://challenges.cloudflare.com https://*.paddle.com https://cdn.paddle.com",
+			"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+			"font-src 'self' data: https://fonts.gstatic.com",
+			"img-src 'self' data: blob: https:",
+			"media-src 'self' blob: https:",
+			"connect-src 'self' https://*.facebook.com https://connect.facebook.net https://*.supabase.co wss://*.supabase.co https://*.clerk.accounts.dev https://clerk.quicktalog.app https://*.ingest.sentry.io https://*.posthog.com https://*.clarity.ms https://*.google-analytics.com https://*.googletagmanager.com https://*.paddle.com https://*.uploadthing.com https://uploadthing.com https://api.deepseek.com",
+			"frame-src 'self' https://challenges.cloudflare.com https://*.paddle.com https://*.clerk.accounts.dev",
+			"worker-src 'self' blob:",
+			"object-src 'none'",
+			"base-uri 'self'",
+			"frame-ancestors 'self'",
+			"form-action 'self'",
+		].join("; ");
+
 		return [
 			{
-				source: "/api/:path*", // Apply to all API routes
-				headers: [
-					{ key: "Access-Control-Allow-Credentials", value: "true" },
-					{
-						key: "Access-Control-Allow-Origin",
-						value: "*",
-					},
-					{
-						key: "Access-Control-Allow-Methods",
-						value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",
-					},
-					{
-						key: "Access-Control-Allow-Headers",
-						value:
-							"X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
-					},
-				],
+				source: "/:path*",
+				headers: [{ key: "Content-Security-Policy-Report-Only", value: csp }],
 			},
 		];
 	},
-	experimental: {
-		optimizePackageImports: ["react-icons"],
-	},
-	// turbopack: {
-	// 	root: process.cwd(),
-	// },
 	async rewrites() {
 		return [
 			{
@@ -80,8 +102,9 @@ export default withSentryConfig(nextConfig, {
 	// For all available options, see:
 	// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-	// Upload a larger set of source maps for prettier stack traces (increases build time)
-	widenClientFileUpload: true,
+	// Upload a larger set of source maps for prettier stack traces (increases build time/memory).
+	// Disabled by default to avoid OOMing Vercel's 8 GB Hobby build container; enable on Pro/Enterprise.
+	widenClientFileUpload: process.env.SENTRY_WIDEN_CLIENT_FILE_UPLOAD === "true",
 
 	// Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
 	// This can increase your server load as well as your hosting bill.

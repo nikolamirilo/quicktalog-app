@@ -1,0 +1,99 @@
+import { saveCookiePreferences } from "@/actions/consent";
+import { CookiePreferences } from "@quicktalog/common";
+import { COOKIE_KEY } from "@/constants";
+
+const defaultPreferences: CookiePreferences = {
+	accepted: false,
+	essential: true,
+	analytics: false,
+	marketing: false,
+	timestamp: "",
+	version: "1.1",
+};
+
+export function loadPreferences(): CookiePreferences {
+	if (typeof window === "undefined") return defaultPreferences;
+	const raw = localStorage.getItem(COOKIE_KEY);
+	return raw
+		? { ...defaultPreferences, ...JSON.parse(raw) }
+		: defaultPreferences;
+}
+
+export function savePreferences(
+	prefs: Partial<CookiePreferences>,
+): CookiePreferences {
+	if (typeof window === "undefined") return defaultPreferences;
+	const newPrefs: CookiePreferences = {
+		...defaultPreferences,
+		...loadPreferences(),
+		...prefs,
+		timestamp: new Date().toISOString(),
+	};
+	localStorage.setItem(COOKIE_KEY, JSON.stringify(newPrefs));
+	return newPrefs;
+}
+
+export function updateGTMConsent(analytics: boolean, marketing: boolean) {
+	if (typeof window !== "undefined" && window.dataLayer) {
+		window.dataLayer.push({
+			event: "consent_update",
+			consent: {
+				analytics_storage: analytics ? "granted" : "denied",
+				ad_storage: marketing ? "granted" : "denied",
+				ad_user_data: marketing ? "granted" : "denied",
+				ad_personalization: marketing ? "granted" : "denied",
+				functionality_storage: "granted",
+				security_storage: "granted",
+			},
+		});
+	}
+}
+
+export function initializeGTMConsent() {
+	if (typeof window !== "undefined") {
+		if (!window.dataLayer) {
+			window.dataLayer = [];
+		}
+
+		window.dataLayer.push({
+			event: "consent_default",
+			consent: {
+				analytics_storage: "denied",
+				ad_storage: "denied",
+				ad_user_data: "denied",
+				ad_personalization: "denied",
+				functionality_storage: "granted",
+				security_storage: "granted",
+				wait_for_update: 2000,
+			},
+		});
+	}
+}
+
+export function trackGTMEvent(
+	eventName: string,
+	additionalData?: Record<string, any>,
+) {
+	if (typeof window !== "undefined" && window.dataLayer) {
+		window.dataLayer.push({
+			event: eventName,
+			...additionalData,
+		});
+	}
+}
+
+export async function updateUserConsent(
+	prefs: CookiePreferences,
+	isSignedIn: boolean,
+) {
+	if (!isSignedIn) return;
+	try {
+		// The server derives the user from the session; the browser no longer
+		// says whose consent this is.
+		await saveCookiePreferences(prefs);
+	} catch (error) {
+		// Best-effort write; transient aborts/offline ("Failed to fetch") are
+		// expected and don't need special handling.
+		console.error("Error updating user consent:", error);
+	}
+}

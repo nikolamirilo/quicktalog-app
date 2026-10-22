@@ -1,0 +1,2141 @@
+<title>PROD Cutover Runbook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+/* Layout: one scrolling document, sticky phase bar on top, TOC rail on the left from 1100px.
+   Colour, type, spacing and radius tokens are the Quicktalog design system; the dark theme is
+   derived from that system's own night / night-copy / amber-on-night / success-on-night values. */
+:root {
+  --bg:#FAF8F3; --bg-alt:#F4F1EA; --card:#FFFFFF;
+  --line:#ECE7DC; --line-strong:#DCD5C6;
+  --ink:#16140F; --ink-2:#5E584D; --ink-3:#7A7466;
+  --amber:#FFB020; --amber-hover:#F5A300; --amber-ink:#8A5A00; --amber-soft:#FFF4DC;
+  --amber-tint:rgba(255,176,32,.14);
+  --night:#0E0D0A; --night-copy:#E7E3DA;
+  --go:#22A05B; --go-ink:#1B7040; --go-soft:#E8F6EE; --go-line:#B7E0C8;
+  --stop:#C8322B; --stop-soft:#FDECEA; --stop-line:#F2C4C0; --stop-on-night:#F26B63;
+  --focus:#010e58;
+  --code-bg:#F7F4ED; --code-ink:#2A251C;
+  --font-head:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-body:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r-sm:11px; --r-md:14px; --r-faq:20px; --r-card:22px; --r-lg:28px; --r-pill:999px;
+  --shadow:0 1px 2px rgba(22,20,15,.04),0 4px 12px rgba(22,20,15,.05),0 16px 32px -12px rgba(22,20,15,.08);
+  --gutter:20px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0E0D0A; --bg-alt:#15130F; --card:#1A1813;
+    --line:#2A2720; --line-strong:#3A362C;
+    --ink:#F3EFE6; --ink-2:#C3BCAE; --ink-3:#9A9385;
+    --amber:#FFB020; --amber-hover:#FFC75A; --amber-ink:#FFC75A; --amber-soft:#2A2112;
+    --amber-tint:rgba(255,176,32,.10);
+    --go:#4ADE80; --go-ink:#4ADE80; --go-soft:#132A1C; --go-line:#2A5138;
+    --stop:#F26B63; --stop-soft:#2A1513; --stop-line:#5A2B26;
+    --night:#241F16;
+    --focus:#FFC75A;
+    --code-bg:#121009; --code-ink:#E7E3DA;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0E0D0A; --bg-alt:#15130F; --card:#1A1813;
+  --line:#2A2720; --line-strong:#3A362C;
+  --ink:#F3EFE6; --ink-2:#C3BCAE; --ink-3:#9A9385;
+  --amber:#FFB020; --amber-hover:#FFC75A; --amber-ink:#FFC75A; --amber-soft:#2A2112;
+  --amber-tint:rgba(255,176,32,.10);
+  --go:#4ADE80; --go-ink:#4ADE80; --go-soft:#132A1C; --go-line:#2A5138;
+  --stop:#F26B63; --stop-soft:#2A1513; --stop-line:#5A2B26;
+  --night:#241F16;
+  --focus:#FFC75A;
+  --code-bg:#121009; --code-ink:#E7E3DA;
+  color-scheme: dark;
+}
+
+html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 120px); }
+@media (min-width:1100px) { html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 76px); } }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size:16px; line-height:1.6; -webkit-text-size-adjust:100%; }
+body::before { content:""; position:fixed; inset:0 0 auto; height: env(safe-area-inset-top, 0px); z-index:30; background: var(--bg-alt); }
+* { box-sizing: border-box; }
+h1,h2,h3,h4 { font-family: var(--font-head); font-weight:800; letter-spacing:-.03em; line-height:1.14; text-wrap:balance; margin:0; }
+h3,h4 { letter-spacing:-.02em; font-weight:700; }
+p { margin:0; }
+a { color: var(--amber-ink); text-decoration-thickness:1px; text-underline-offset:2px; }
+:focus-visible { outline:3px solid var(--focus); outline-offset:3px; border-radius:4px; }
+code, kbd { font-family: var(--font-mono); font-size:.88em; }
+:not(pre) > code { background: var(--code-bg); color: var(--code-ink); padding:.12em .36em; border-radius:6px; border:1px solid var(--line); overflow-wrap:break-word; }
+
+/* ---- shell ---- */
+.bar { position:sticky; top: env(safe-area-inset-top, 0px); z-index:20; background: var(--bg-alt); border-bottom:1px solid var(--line); }
+.bar-in { max-width:1280px; margin:0 auto; padding-block:10px;
+  padding-left:max(var(--gutter), env(safe-area-inset-left,0px)); padding-right:max(var(--gutter), env(safe-area-inset-right,0px));
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.bar-id { font-family:var(--font-head); font-weight:800; font-size:15px; letter-spacing:-.02em; margin-right:auto; }
+.bar-id span { color:var(--ink-3); font-family:var(--font-body); font-weight:500; letter-spacing:0; }
+.meter { display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+.meter b { font-weight:600; color:var(--ink); }
+.track { width:70px; height:6px; border-radius:var(--r-pill); background:var(--line-strong); overflow:hidden; }
+.track i { display:block; height:100%; width:0%; background:var(--go-ink); transition:width .25s ease; }
+.track.two i { background:var(--stop); }
+.btn { font-family:var(--font-body); font-size:13px; font-weight:600; border-radius:var(--r-pill);
+  border:1px solid var(--line-strong); background:var(--card); color:var(--ink); padding:6px 13px; cursor:pointer; }
+.btn:hover { background:var(--amber-soft); border-color:var(--amber); }
+
+.wrap { max-width:1280px; margin:0 auto;
+  padding-left:max(var(--gutter), env(safe-area-inset-left,0px)); padding-right:max(var(--gutter), env(safe-area-inset-right,0px));
+  padding-block:34px 90px; display:grid; gap:40px; grid-template-columns:1fr; }
+@media (min-width:1100px) { .wrap { grid-template-columns:232px minmax(0,1fr); gap:48px; align-items:start; } }
+
+/* ---- toc ---- */
+.toc { min-width:0; }
+@media (min-width:1100px) { .toc { position:sticky; top:calc(env(safe-area-inset-top,0px) + 70px); max-height:calc(100vh - 120px); overflow-y:auto; } }
+.toc ol { list-style:none; margin:0; padding:0; display:grid; gap:1px; }
+.toc a { display:block; padding:5px 10px; border-radius:9px; font-size:13.5px; color:var(--ink-2); text-decoration:none; border-left:2px solid transparent; }
+.toc a:hover { background:var(--bg-alt); color:var(--ink); }
+.toc .t-head { font-family:var(--font-head); font-weight:700; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber-ink); padding:14px 10px 5px; }
+.toc .t-head.one { color:var(--go-ink); }
+.toc .t-head.two { color:var(--stop); }
+.toc details { border:1px solid var(--line); border-radius:var(--r-md); background:var(--card); padding:4px 8px; }
+.toc summary { font-family:var(--font-head); font-weight:700; font-size:13.5px; padding:6px 2px; cursor:pointer; }
+@media (min-width:1100px) { .toc details { border:0; background:none; padding:0; } .toc summary { display:none; } .toc .t-body { display:block !important; } }
+
+main { min-width:0; display:grid; gap:34px; }
+
+/* ---- masthead ---- */
+.mast h1 { font-size:clamp(32px,6vw,52px); }
+.kicker { font-family:var(--font-body); font-size:14px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--amber-ink); margin-bottom:12px; }
+.mast .lead { font-size:clamp(17px,2.2vw,20px); color:var(--ink-2); margin-top:14px; max-width:62ch; }
+.facts { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+.chip { font-size:13px; font-weight:500; background:var(--card); border:1px solid var(--line); border-radius:var(--r-pill); padding:5px 12px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+.chip b { color:var(--ink); font-weight:700; }
+.chip.warn { background:var(--stop-soft); border-color:var(--stop-line); color:var(--stop); }
+.chip.warn b { color:var(--stop); }
+
+/* ---- generic blocks ---- */
+section > h2 { font-size:clamp(25px,3.6vw,36px); margin-bottom:6px; }
+.sub { color:var(--ink-2); max-width:70ch; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:var(--r-card); padding:22px; box-shadow:var(--shadow); }
+.flat { background:var(--bg-alt); border:1px solid var(--line); border-radius:var(--r-faq); padding:18px; }
+
+.note { border-radius:var(--r-faq); padding:15px 17px; border:1px solid var(--line); background:var(--bg-alt); display:grid; gap:6px; }
+.note .nh { font-family:var(--font-head); font-weight:700; font-size:15px; letter-spacing:-.015em; }
+.note.stop { background:var(--stop-soft); border-color:var(--stop-line); }
+.note.stop .nh { color:var(--stop); }
+.note.go { background:var(--go-soft); border-color:var(--go-line); }
+.note.go .nh { color:var(--go-ink); }
+.note.amb { background:var(--amber-soft); border-color:var(--amber); }
+.note.amb .nh { color:var(--amber-ink); }
+.note p, .note li { font-size:14.5px; color:var(--ink-2); }
+.note.stop p, .note.stop li, .note.go p, .note.go li, .note.amb p, .note.amb li { color:var(--ink); }
+.note ul { margin:0; padding-left:20px; display:grid; gap:4px; }
+
+/* ---- step cards ---- */
+.steps { display:grid; gap:16px; }
+.step { background:var(--card); border:1px solid var(--line); border-radius:var(--r-card); box-shadow:var(--shadow); overflow:hidden; }
+.step.one { border-left:3px solid var(--go); }
+.step.two { border-left:3px solid var(--stop); }
+.step-h { display:flex; gap:13px; align-items:flex-start; padding:18px 20px; }
+.step-h label { display:flex; align-items:center; cursor:pointer; padding-top:1px; }
+.step-h input[type=checkbox] { width:19px; height:19px; accent-color:var(--go); cursor:pointer; flex:none; }
+.step.two .step-h input[type=checkbox] { accent-color:var(--stop); }
+.step-t { min-width:0; flex:1; }
+.step-n { font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--ink-3); letter-spacing:.02em; }
+.step-t h3 { font-size:19px; margin:2px 0 0; }
+.step-t .why { color:var(--ink-2); font-size:14.5px; margin-top:7px; }
+.step-meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:11px; }
+.tag { font-size:11.5px; font-weight:600; letter-spacing:.03em; text-transform:uppercase; border-radius:var(--r-pill); padding:3px 9px; border:1px solid var(--line-strong); color:var(--ink-3); background:var(--bg-alt); }
+.tag.rev { color:var(--go-ink); border-color:var(--go-line); background:var(--go-soft); }
+.tag.irr { color:var(--stop); border-color:var(--stop-line); background:var(--stop-soft); }
+.tag.time { color:var(--amber-ink); border-color:var(--amber); background:var(--amber-soft); }
+.step-b { padding:0 20px 20px; display:grid; gap:13px; }
+.step:has(input:checked) { opacity:.62; }
+.step:has(input:checked) .step-t h3 { text-decoration:line-through; text-decoration-color:var(--ink-3); }
+
+.done { font-size:14px; display:flex; gap:9px; align-items:baseline; padding:11px 14px; border-radius:var(--r-md); background:var(--go-soft); border:1px solid var(--go-line); }
+.done b { font-family:var(--font-head); font-size:13px; letter-spacing:.04em; text-transform:uppercase; color:var(--go-ink); flex:none; }
+
+/* ---- commands ---- */
+.cmd { position:relative; border-radius:var(--r-md); border:1px solid var(--line); background:var(--code-bg); min-width:0; }
+.cmd-h { display:flex; align-items:center; gap:10px; padding:8px 11px; border-bottom:1px solid var(--line); font-size:12.5px; color:var(--ink-3); }
+.cmd-h span { margin-right:auto; overflow-wrap:anywhere; }
+.copy { font-family:var(--font-body); font-size:11.5px; font-weight:600; border:1px solid var(--line-strong); background:var(--card); color:var(--ink-2); border-radius:var(--r-pill); padding:3px 10px; cursor:pointer; flex:none; }
+.copy:hover { background:var(--amber-soft); border-color:var(--amber); color:var(--amber-ink); }
+.cmd pre { margin:0; padding:13px; overflow-x:auto; }
+.cmd code { font-size:13px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block; }
+.cmd.danger { border-color:var(--stop-line); }
+.cmd.danger .cmd-h { color:var(--stop); border-color:var(--stop-line); }
+
+/* ---- tables ---- */
+.scroll { overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-md); }
+table { border-collapse:collapse; width:100%; font-size:14px; background:var(--card); }
+th,td { text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { font-family:var(--font-head); font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); background:var(--bg-alt); white-space:nowrap; }
+tr:last-child td { border-bottom:0; }
+td code { white-space:nowrap; }
+.num { font-variant-numeric:tabular-nums; }
+.ok { color:var(--go-ink); font-weight:600; }
+.no { color:var(--stop); font-weight:600; }
+
+/* ---- phase banners ---- */
+.phase { border-radius:var(--r-lg); padding:26px; display:grid; gap:12px; }
+.phase.one { background:var(--go-soft); border:1px solid var(--go-line); }
+.phase.two { background:var(--night); border:2px solid var(--stop); }
+.phase h2 { font-size:clamp(26px,4vw,40px); }
+.phase.one h2 { color:var(--ink); }
+.phase.two h2, .phase.two .pl { color:#FFFFFF; }
+.phase .pk { font-family:var(--font-body); font-size:13px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+.phase.one .pk { color:var(--go-ink); }
+.phase.two .pk { color:var(--stop-on-night); }
+.phase .pl { font-size:16px; max-width:66ch; }
+.phase.one .pl { color:var(--ink-2); }
+.phase.two .pl { color:var(--night-copy); }
+.pgrid { display:grid; gap:10px; margin-top:4px; }
+@media (min-width:620px) { .pgrid { grid-template-columns:repeat(3,1fr); } }
+.pbox { border-radius:var(--r-md); padding:12px 14px; font-size:13.5px; }
+.phase.one .pbox { background:var(--card); border:1px solid var(--go-line); color:var(--ink-2); }
+.phase.two .pbox { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.16); color:var(--night-copy); }
+.pbox b { display:block; font-family:var(--font-head); font-size:12px; letter-spacing:.07em; text-transform:uppercase; margin-bottom:3px; }
+.phase.one .pbox b { color:var(--go-ink); }
+.phase.two .pbox b { color:var(--stop-on-night); }
+
+/* the one-way marker */
+.noreturn { border-radius:var(--r-lg); border:2px solid var(--stop); background:var(--stop-soft); padding:26px; display:grid; gap:14px; }
+.noreturn h2 { font-size:clamp(24px,3.8vw,34px); color:var(--stop); }
+.noreturn .rule { display:flex; align-items:center; gap:14px; }
+.noreturn .rule:before, .noreturn .rule:after { content:""; height:2px; background:var(--stop); flex:1; opacity:.4; }
+.noreturn .rule span { font-family:var(--font-head); font-weight:800; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--stop); }
+
+/* ---- details ---- */
+details.more { border:1px solid var(--line); border-radius:var(--r-md); background:var(--bg-alt); }
+details.more > summary { cursor:pointer; padding:11px 14px; font-family:var(--font-head); font-weight:700; font-size:14px; letter-spacing:-.01em; }
+details.more > summary::marker { color:var(--amber-ink); }
+details.more > div { padding:0 14px 14px; display:grid; gap:11px; font-size:14.5px; color:var(--ink-2); }
+details.more ul { margin:0; padding-left:20px; display:grid; gap:5px; }
+
+/* ---- misc ---- */
+ul.plain { list-style:none; margin:0; padding:0; display:grid; gap:9px; }
+ul.plain > li { padding-left:22px; position:relative; font-size:14.5px; color:var(--ink-2); }
+ul.plain > li:before { content:""; position:absolute; left:6px; top:.62em; width:6px; height:6px; border-radius:50%; background:var(--amber); }
+ol.seq { margin:0; padding-left:22px; display:grid; gap:8px; font-size:14.5px; color:var(--ink-2); }
+ol.seq strong, ul.plain strong, .sub strong, .why strong { color:var(--ink); font-weight:600; }
+.gate { display:grid; gap:9px; }
+.gate label { display:flex; gap:10px; align-items:flex-start; font-size:14.5px; cursor:pointer; }
+.gate input { width:18px; height:18px; accent-color:var(--amber); flex:none; margin-top:1px; }
+footer { border-top:1px solid var(--line); padding-top:20px; font-size:13.5px; color:var(--ink-3); display:grid; gap:6px; }
+@media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; } }
+</style>
+
+<style>
+/* ---- step sections: Purpose / To Do / Definition of Done / Notes ---- */
+.step-b { gap:0; }
+.sec { display:grid; gap:9px; padding-block:14px; }
+.sec + .sec { border-top:1px dashed var(--line-strong); }
+.sec:first-child { padding-top:2px; }
+.sec-l { font-family:var(--font-head); font-weight:700; font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); }
+.sec.purpose .sec-l { color:var(--amber-ink); }
+.sec.dod .sec-l { color:var(--go-ink); }
+.sec.notes .sec-l { color:var(--stop); }
+.sec.purpose p { font-size:15px; color:var(--ink); max-width:75ch; }
+.sec.purpose p + p { margin-top:4px; }
+ol.todo { margin:0; padding-left:22px; display:grid; gap:10px; font-size:14.5px; color:var(--ink-2); }
+ol.todo > li::marker { font-family:var(--font-mono); font-weight:600; color:var(--ink-3); }
+ol.todo strong, ul.dod strong, ul.nl strong { color:var(--ink); font-weight:600; }
+ol.todo .cmd, ol.todo .scroll, ol.todo .gate { margin-top:8px; }
+ul.dod { list-style:none; margin:0; padding:12px 14px; display:grid; gap:6px; background:var(--go-soft); border:1px solid var(--go-line); border-radius:var(--r-md); }
+ul.dod li { position:relative; padding-left:24px; font-size:14px; color:var(--ink); }
+ul.dod li:before { content:"\2713"; position:absolute; left:3px; top:0; font-weight:700; color:var(--go-ink); }
+ul.nl { list-style:none; margin:0; padding:0; display:grid; gap:7px; }
+ul.nl > li { position:relative; padding-left:22px; font-size:14px; color:var(--ink-2); }
+ul.nl > li:before { content:""; position:absolute; left:6px; top:.6em; width:7px; height:7px; border-radius:50%; background:var(--amber); }
+ul.nl > li.w { color:var(--ink); }
+ul.nl > li.w:before { background:var(--stop); border-radius:2px; }
+ul.nl .scroll, ul.nl details { margin-top:8px; }
+.toc .t-sub a { padding-left:18px; font-size:13px; }
+.toc a[aria-current] { background:var(--amber-soft); color:var(--ink); font-weight:600; }
+.toc a[aria-current][data-phase="one"] { background:var(--go-soft); color:var(--go-ink); }
+.toc a[aria-current][data-phase="two"] { background:var(--stop-soft); color:var(--stop); }
+</style>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="bar-id">PROD Cutover <span>&middot; Clerk &rarr; Supabase Auth</span></div>
+    <div class="meter" title="Phase 1 steps completed"><span>Phase 1</span><div class="track"><i id="p1bar"></i></div><b id="p1txt">0/12</b></div>
+    <div class="meter" title="Phase 2 steps completed"><span>Phase 2</span><div class="track two"><i id="p2bar"></i></div><b id="p2txt">0/16</b></div>
+    <button class="btn" id="reset" type="button">Reset ticks</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<nav class="toc" aria-label="Contents">
+  <details open>
+    <summary>Contents</summary>
+    <div class="t-body">
+      <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li class="t-head one">Phase 1 &middot; reversible</li>
+        <li><a href="#s11">1.1 The open perimeter</a></li>
+        <li><a href="#s12">1.2 Exposure audit</a></li>
+        <li><a href="#s13">1.3 Clerk export</a></li>
+        <li><a href="#s14">1.4 Fix two blind gates</a></li>
+        <li><a href="#s15">1.5 Local Docker rehearsal</a></li>
+        <li><a href="#s16">1.6 Vercel variables</a></li>
+        <li><a href="#s17">1.7 Turnstile &amp; Auth config</a></li>
+        <li><a href="#s18">1.8 Edge functions</a></li>
+        <li><a href="#s19">1.9 Migrations &amp; deploy</a></li>
+        <li><a href="#s110">1.10 terms_version &amp; app_rls</a></li>
+        <li><a href="#s111">1.11 TEST dress rehearsal</a></li>
+        <li><a href="#s112">1.12 T-3 freeze &amp; dark import</a></li>
+        <li><a href="#gate">Go / no-go at T-1</a></li>
+        <li class="t-head two">Phase 2 &middot; one way</li>
+        <li><a href="#noreturn">Point of no return</a></li>
+        <li><a href="#shell">Shell setup</a></li>
+        <li class="t-sub"><a href="#s21">2.1 Maintenance on</a></li>
+        <li class="t-sub"><a href="#s22">2.2 Pause the worker</a></li>
+        <li class="t-sub"><a href="#s23">2.3 Freeze Clerk</a></li>
+        <li class="t-sub"><a href="#s24">2.4 Second export</a></li>
+        <li class="t-sub"><a href="#s25">2.5 Delta import</a></li>
+        <li class="t-sub"><a href="#s26">2.6 Backup</a></li>
+        <li class="t-sub"><a href="#s27">2.7 Preflight</a></li>
+        <li class="t-sub"><a href="#s28">2.8 accepted_orphans</a></li>
+        <li class="t-sub"><a href="#s29">2.9 The re-key</a></li>
+        <li class="t-sub"><a href="#s210">2.10 Verify</a></li>
+        <li class="t-sub"><a href="#s211">2.11 Flip the provider</a></li>
+        <li class="t-sub"><a href="#s212">2.12 Smoke S1&ndash;S12</a></li>
+        <li class="t-sub"><a href="#s213">2.13 terms_version</a></li>
+        <li class="t-sub"><a href="#s214">2.14 Reopen</a></li>
+        <li class="t-sub"><a href="#s215">2.15 S13 &amp; S14</a></li>
+        <li class="t-sub"><a href="#s216">2.16 Watch it</a></li>
+        <li><a href="#rollback">If it goes wrong</a></li>
+        <li class="t-head">After</li>
+        <li><a href="#after">T+0 to T+30</a></li>
+        <li class="t-head">Reference</li>
+        <li><a href="#ref-ladder">Migration ladder</a></li>
+        <li><a href="#ref-gates">Gate reference</a></li>
+        <li><a href="#ref-env">Variables</a></li>
+        <li><a href="#ref-open">Prove before T-0</a></li>
+      </ol>
+    </div>
+  </details>
+</nav>
+
+<main>
+
+  <!-- ===================== MASTHEAD ===================== -->
+  <section class="mast" id="overview">
+    <div class="kicker">Production runbook</div>
+    <h1>Moving Quicktalog from Clerk to Supabase Auth</h1>
+    <p class="lead">One operator, <code>www.quicktalog.app</code>. Phase 1 can be spread over days and undone (except the schema change in 1.9). Phase 2 is done in one sitting, because there is no going back from the middle of it.</p>
+    <div class="facts">
+      <span class="chip"><b>2171</b> users</span>
+      <span class="chip"><b>72</b> paying</span>
+      <span class="chip">PROD <code>uhfbapjuzvlyzyodxhqn</code></span>
+      <span class="chip">TEST <code>imhinsgyzzyblghwnedk</code></span>
+      <span class="chip warn">PROD at migration <b>3 of 22</b></span>
+      <span class="chip warn"><b>19</b> migrations pending</span>
+    </div>
+    <div class="flat" style="margin-top:20px">
+      <p style="font-size:14.5px; color:var(--ink-2)"><strong>Sequence.</strong> Close the hole &rarr; audit it &rarr; ask Clerk for the export &rarr; rehearse locally on real data &rarr; configure PROD &rarr; migrate and deploy in one short window &rarr; rehearse on TEST &rarr; dark-import the users &rarr; <em>then</em> the cutover window.</p>
+    </div>
+  </section>
+
+  <!-- ===================== PHASE 1 ===================== -->
+  <section>
+    <div class="phase one" style="margin-bottom:22px">
+      <div class="pk">Phase 1 &middot; 12 steps</div>
+      <h2>Preparation. Reversible, at your own pace.</h2>
+      <p class="pl">Clerk keeps serving traffic and nobody has to sign in again. Step 1.3 takes several days, so start it first and do the rest while you wait. Step 1.9 is urgent, because it is what really closes the open perimeter.</p>
+      <div class="pgrid">
+        <div class="pbox"><b>User impact</b>None, except the short window in step 1.9</div>
+        <div class="pbox"><b>Undo</b>Every step except 1.9's schema change &mdash; take its dump</div>
+        <div class="pbox"><b>Ends with</b>Dormant Supabase identities and a green go/no-go list</div>
+      </div>
+    </div>
+
+    <div class="steps">
+
+      <!-- 1.1 -->
+      <article class="step one" id="s11">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s11" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.1</div>
+            <h3>Treat the open perimeter as urgent</h3>
+            <div class="step-meta"><span class="tag rev">Read-only</span><span class="tag time">Do first</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>All 12 public tables have RLS off, and the publishable key in the browser bundle lets anyone read 2171 emails, change <code>plan_id</code> and delete users (risk R1, critical, live now). M00 (migration 5) closes this, but it only reaches PROD with the full push in step 1.9. So don't patch it by hand; keep the time until step 1.9 short.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Leave the grants on PROD alone. M00 revokes <code>anon</code> and turns RLS on during step 1.9.</li>
+              <li>Leave the legacy API keys enabled.</li>
+              <li>Match the <code>anon</code> <code>POST /rest/v1/subscriptions</code> that returned 200 to a Paddle event at that timestamp. If none matches, treat it as a hit in step 1.2.</li>
+              <li>Book step 1.9 as soon as step 1.5 passes.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>No grant on PROD was changed outside the migrations.</li>
+              <li>The <code>anon</code> subscriptions POST is matched to a Paddle event, or logged as a hit for step 1.2.</li>
+              <li>Step 1.9 has a date.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Why no interim revoke.</strong> Grants change only through migration files (<code>.claude/CLAUDE.md</code>), and a new revoke migration can't go out on its own, because <code>supabase db push</code> applies every pending file. A revoke run by hand would also break live code. Every line of <code>PROD_RUNBOOK.md</code>'s P0 list is used by the deployed build:
+                <div class="scroll"><table>
+                  <tr><th>Revoke</th><th>Breaks, per migration 3</th></tr>
+                  <tr><td><code>all on users</code></td><td class="no">Paddle customer lookup and webhook, Clerk user sync, account deletion</td></tr>
+                  <tr><td><code>insert, update on catalogues</code></td><td class="no"><code>/api/items</code> POST and PATCH &mdash; catalogue save and publish</td></tr>
+                  <tr><td><code>select, update on subscriptions</code></td><td class="no">Splits an upsert that has to stay whole: all 72 renewals and plan changes fail 42501</td></tr>
+                  <tr><td><code>insert on analytics</code></td><td class="no"><code>/api/analytics</code> and <code>/all</code></td></tr>
+                  <tr><td><code>insert on job_logs</code></td><td class="no">The same two routes' job records</td></tr>
+                </table></div>
+              </li>
+              <li class="w"><strong>Legacy API keys:</strong> 2198 of 2209 requests use them. They can only go once the app is off PostgREST.</li>
+              <li>The subscriptions POST is probably the Paddle webhook's upsert (migration 3:67&ndash;71), which PostgREST runs as <code>INSERT ... ON CONFLICT DO UPDATE</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.2 -->
+      <article class="step one" id="s12">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s12" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.2</div>
+            <h3>Run the exposure audit before anything renames the tables</h3>
+            <div class="step-meta"><span class="tag rev">Read-only</span><span class="tag irr">Before step 1.9</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>The hole has been open for the project's whole history. The audit tells you whether anyone used it, and that decides whether you owe a GDPR notification. It queries the old column names, so it must run before step 1.9, whose push renames them (migration 21).</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Extract the audit from <code>PLAN.md</code> (no standalone file exists) and run it read-only against PROD:
+                <div class="cmd">
+                  <div class="cmd-h"><span>Lines 3350 and 3380 of PLAN.md are the fences</span><button class="copy" type="button">Copy</button></div>
+<pre><code>sed -n '3351,3379p' \
+  .claude/plans/active/2026-09-15-supabase-auth-migration/PLAN.md \
+  &gt; /tmp/exposure-audit.sql
+
+PROD_DATA=cutover
+mkdir -p "$PROD_DATA/output"
+psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 -f /tmp/exposure-audit.sql \
+  &gt; "$PROD_DATA/output/prod-exposure-pre-m00-$(date -u +%Y%m%dT%H%M%SZ).txt"</code></pre>
+                </div>
+              </li>
+              <li>Run E6 in Studio &rarr; Logs Explorer, one 24-hour window at a time, as far back as retention allows:
+                <div class="cmd">
+                  <div class="cmd-h"><span>ClickHouse, not psql</span><button class="copy" type="button">Copy</button></div>
+<pre><code>select timestamp,
+       log_attributes['request.method'] as method,
+       log_attributes['request.path']   as path,
+       toInt32OrZero(log_attributes['response.status_code']) as status
+  from logs
+ where source = 'edge_logs'
+   and log_attributes['request.path'] like '/rest/v1/%'
+   and log_attributes['request.method'] in ('POST','PATCH','PUT','DELETE')
+ order by timestamp desc limit 1000</code></pre>
+                </div>
+              </li>
+              <li>Write a decision for every hit (see notes).</li>
+              <li>Write down the GDPR decision either way, including "no notification required, because&hellip;".</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>The pre-M00 capture is saved in <code>cutover/output/</code>, not in a tracked file.</li>
+              <li>Every hit has a written decision.</li>
+              <li>The GDPR decision is recorded.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w">After migration 21, E3 breaks and E4/E5 fail with <code>42703</code>: <code>newsletter</code> &rarr; <code>catalogue_subscribers</code> (drops <code>owner_id</code>), <code>catalogues.created_by</code> &rarr; <code>user_id</code>, <code>analytics.pageview_count</code> &rarr; <code>pageviews</code>.</li>
+              <li>E6 inside the file is commented-out ClickHouse SQL. Leave it commented.</li>
+              <li>Any non-GET <code>/rest/v1</code> row from the publishable key is a confirmed write through the open perimeter.</li>
+              <li class="w">There is no remediation script. Take a backup first. <strong>Do not hand-edit <code>plan_id</code></strong>: check against the Paddle API first, because E1 hits include users who are legitimately grandfathered. Remove forged subscription and analytics rows, and keep a copy of the before state.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.3 -->
+      <article class="step one" id="s13">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s13" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.3</div>
+            <h3>Ask Clerk for the password export</h3>
+            <div class="step-meta"><span class="tag time">Do first</span><span class="tag rev">Reversible</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>Users keep their passwords only if we import Clerk's password digests (decision of 2026-09-22). The Clerk Backend API never returns digests, so only an export can provide them. The dashboard export takes a minute, but steps 1.5 and 1.11 need it, so it goes first.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li><strong>Before exporting</strong>, make sure the Clerk production instance has two accounts you control: one with an email and a password you know, and one that signs in with Google. Your own accounts are fine; create a throwaway one only for what you don't have.</li>
+              <li>Clerk dashboard &rarr; <strong>production instance</strong> &rarr; Settings &rarr; <strong>User exports</strong>.</li>
+              <li>If it is not there, open a support request for an export including <code>password_digest</code> and <code>password_hasher</code>.</li>
+              <li>Put the <strong>exact UTC instant of the export</strong> in <code>scripts/cutover/config.ts</code> as <code>PROJECTS.prod.exportedAt</code>. This is <code>EXPORTED_AT</code>; your browser's download time is close enough.</li>
+              <li>Save the CSV as <code>cutover/input/prod-users.csv</code> at the repo root. <code>cutover/</code> is git-ignored and readable only by you. <code>config.ts</code> reads the PROD export from there:
+                <div class="cmd"><div class="cmd-h"><span>From the repo root</span><button class="copy" type="button">Copy</button></div>
+<pre><code>PROD_DATA=cutover
+mkdir -p "$PROD_DATA/input" && chmod 700 "$PROD_DATA"
+mv ~/Downloads/&lt;export&gt;.csv "$PROD_DATA/input/prod-users.csv" &amp;&amp; chmod 600 "$PROD_DATA/input/prod-users.csv"</code></pre></div>
+              </li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>The CSV is at <code>cutover/input/prod-users.csv</code>, git-ignored and readable only by you.</li>
+              <li>Both test accounts are in it, the password one with a password hash.</li>
+              <li>The export instant is in <code>config.ts</code>.</li>
+              <li>You know the row count.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Why test accounts.</strong> Steps 1.5 and 1.11 prove that an imported user can still sign in with their old password, and the canaries in the window repeat it. The CSV only has hashes and you don't know any customer's password, so you need an account whose password you know. Accounts created after the export are not in it; export again after creating one.</li>
+              <li class="w">A password is imported only if <code>password_last_updated_at</code> is <em>older</em> than <code>EXPORTED_AT</code>. If <code>EXPORTED_AT</code> is set too early, people lose their password for no reason.</li>
+              <li class="w">The file holds 2185 emails and 229 password hashes. <code>/home</code> on this laptop is not encrypted, so anyone who gets the disk can read it. Keep it only in <code>cutover/</code>, out of synced or backed-up folders. Never <code>git add -f</code> it, and don't run <code>git clean -x</code>, which deletes ignored files.</li>
+              <li><code>config.ts</code> reads the PROD export from <code>cutover/input/prod-users.csv</code> and writes reports to <code>cutover/output/</code>, so PROD runs need no path overrides.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.4 -->
+      <article class="step one" id="s14">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s14" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.4</div>
+            <h3>Fix the two gates that currently lie to you</h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span><span class="tag time">10 min</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>Two checks report a pass whatever the result: the SQL gate grep and the PGlite corpus suite. Ten minutes of fixing makes every later check trustworthy. Do it before the rehearsal.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li><strong>SQL gate.</strong> Always run gate <code>psql</code> commands with <code>-A -F '|'</code>, and use these patterns:
+                <div class="cmd">
+                  <div class="cmd-h"><span>Unaligned for live runs, aligned for the recorded TEST files</span><button class="copy" type="button">Copy</button></div>
+<pre><code># --- unaligned (psql -A -F '|'): run on T-0 day, after T-0 steps 7 and 9 write these files ---
+grep -c '|f$' verify-t0.txt                                        # expect 0
+grep -cE '^[0-9]+\|[GP][0-9]' preflight-t0.txt                     # expect 11
+grep -cE '^[0-9]+\|[GP][0-9].*\|f$' preflight-t0.txt               # expect 0
+
+# --- aligned (default psql): the recorded TEST artefacts, run now from the repo root ---
+P=.claude/plans/active/2026-09-15-supabase-auth-migration/verification
+grep -cE '\| f$' $P/cutover-test-verify.txt                        # 1: the real V8 failure
+grep -cE '^ *[0-9]+ \| [GP][0-9]' $P/cutover-test-preflight.txt    # 11</code></pre>
+                </div>
+              </li>
+              <li><strong>Corpus gate.</strong> Fix the plan path in <code>tests/db-pglite/tools/extract-plan.mjs</code>, then run the suite:
+                <div class="cmd">
+                  <div class="cmd-h"><span>Line 5: add the date prefix to the plan folder</span><button class="copy" type="button">Copy</button></div>
+<pre><code>#   .claude/plans/active/supabase-auth-migration/PLAN.md
+# becomes
+#   .claude/plans/active/2026-09-15-supabase-auth-migration/PLAN.md
+
+npm run test:db   # 692 scenarios per engine (PG 17 + 18), ~40s</code></pre>
+                </div>
+              </li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li><code>npm run test:db</code> finishes green (one apply failure is expected and asserted).</li>
+              <li>On the recorded TEST files, the preflight grep returns 11 gate rows and the verify grep finds the one real V8 failure.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Why the old gate is blind:</strong> <code>grep -c '|f$'</code> cannot match default <code>psql</code> output, which has a space after the pipe (<code>| f</code>). On the recorded TEST verify file it returns 0 even though there is a real failure. The corrected pattern returns 1.</li>
+              <li>For preflight, filter to gate rows first. Its per-table RLS listing also ends rows with <code>f</code>, and before M00 that noise grows with exactly the problem you are checking for.</li>
+              <li>Today <code>npm run test:db</code> fails with ENOENT before running anything, because <code>run.sh</code> uses <code>set -e</code>.</li>
+              <li>Read the tables by eye too. Never trust a bare count.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.5 -->
+      <article class="step one" id="s15">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s15" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.5</div>
+            <h3>Rehearse the whole thing locally, on a copy of real PROD data</h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span><span class="tag time">Half a day</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>The most valuable step in Phase 1. In Docker on your laptop, recreate PROD's schema at its real migration level with PROD's real rows. Then run the 19 migrations and the whole cutover: import, re-key, verify, rollback, re-key again. Every failure here is one that won't happen at T-0. This is also the only way to measure realistic durations, because TEST has three users.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo" type="a">
+              <li><strong>Check the toolchain.</strong> <code>psql</code> must be installed, or the rehearsal silently skips every psql step.
+                <div class="cmd"><div class="cmd-h"><span>Node 22 is the only version the gates are proven on</span><button class="copy" type="button">Copy</button></div>
+<pre><code>docker --version
+supabase --version
+node --version                      # CI pins 22 in every job
+psql --version &amp;&amp; pg_dump --version &amp;&amp; pg_restore --version
+# missing? brew install libpq  and put /opt/homebrew/opt/libpq/bin on PATH
+npm ci</code></pre></div>
+              </li>
+              <li><strong>Confirm PROD's migration level.</strong> Target PROD with <code>--db-url</code>. These commands have no <code>--project-ref</code>, and the repo is not linked to any project.
+                <div class="cmd"><div class="cmd-h"><span>Read-only &mdash; expect the tail to be 20260912093000</span><button class="copy" type="button">Copy</button></div>
+<pre><code>supabase migration list --db-url "$MIGRATION_DATABASE_URL"</code></pre></div>
+              </li>
+              <li><strong>Audit PROD for anything that will abort the migrations</strong> (Postgres older than 16, bad statuses, non-slug names, oversized JSON, duplicate emails, missing Starter plan). Fix bad rows on PROD before sub-step f.
+                <div class="cmd"><div class="cmd-h"><span>Read-only on PROD &mdash; safe before the renames</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" \
+  -c "show server_version" \
+  -c "select status, count(*) from public.catalogues group by 1 order by 1" \
+  -c "select name from public.catalogues
+       where name !~ '^[a-z0-9]+(-[a-z0-9]+)*\$' or length(name) &gt; 100 order by 1" \
+  -c "select max(octet_length(content::text))                                as content_bytes,
+             (select max(octet_length(colors::text))  from public.user_themes) as colors_bytes,
+             (select max(octet_length(config::text))  from public.qr_configs)  as qr_bytes,
+             (select max(octet_length(cookie_preferences::text)) from public.users)
+                                                                              as cookie_bytes
+        from public.catalogues" \
+  -c "select max(coalesce(pg_column_size(appearance),0)+coalesce(pg_column_size(legal),0)
+                +coalesce(pg_column_size(contact),0)+coalesce(pg_column_size(header),0)
+                +coalesce(pg_column_size(footer),0)+coalesce(pg_column_size(partners),0)
+                +coalesce(pg_column_size(metadata),0)+coalesce(pg_column_size(tags),0))
+             as other_json_bytes from public.catalogues" \
+  -c "select lower(email), count(*) from public.users
+       where email is not null group by 1 having count(*) &gt; 1 order by 2 desc" \
+  -c "select exists (select 1 from public.plans
+                      where id = 'pri_01k27ajepm199twd1x77rpwdrq') as starter_present"</code></pre></div>
+                <p style="margin-top:8px">Server version 16 or higher (M01 needs it; preflight P1 can only run after the push). Limits: content 1&nbsp;MiB, colors 4&nbsp;KiB, QR config 64&nbsp;KiB, cookie preferences 2&nbsp;KiB, other catalogue JSON 1&nbsp;MiB in total. Status must be one of <code>active, inactive, draft, in preparation, error</code>. No duplicate emails. <code>starter_present</code> must be <code>t</code>.</p>
+              </li>
+              <li><strong>Start the local stack</strong> and run pgTAP now. This is the only moment it is safe, on a clean stack before any PROD data arrives.
+                <div class="cmd"><div class="cmd-h"><span>API on 54321, database on 54322</span><button class="copy" type="button">Copy</button></div>
+<pre><code>supabase start
+eval "$(supabase status -o env | sed 's/^/export /')"   # gives $ANON_KEY, $SERVICE_ROLE_KEY
+supabase test db    # perimeter, catalogues, usage, qr/themes, ledger, integrity</code></pre></div>
+              </li>
+              <li><strong>Take the local database down to PROD's level</strong> (first three migrations, no seed).
+                <div class="cmd danger"><div class="cmd-h"><span>Local stack only &mdash; never aim this at a hosted project</span><button class="copy" type="button">Copy</button></div>
+<pre><code>supabase db reset --local --version 20260912093000 --no-seed
+
+psql postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+  -c "select version from supabase_migrations.schema_migrations order by version"
+# must list exactly: 20260911213819, 20260911220341, 20260912093000</code></pre></div>
+              </li>
+              <li><strong>Copy PROD's data in</strong>: public schema only, through the session pooler on 5432, restored with triggers disabled.
+                <div class="cmd"><div class="cmd-h"><span>Read-only on PROD, into cutover/ (from the repo root)</span><button class="copy" type="button">Copy</button></div>
+<pre><code>PROD_DATA=cutover
+pg_dump "postgresql://postgres.uhfbapjuzvlyzyodxhqn:&lt;db-password&gt;@&lt;session-pooler-host&gt;:5432/postgres" \
+  --data-only --schema=public -Fc \
+  -f "$PROD_DATA/prod-public-$(date +%s).dump"</code></pre></div>
+                <div class="cmd"><div class="cmd-h"><span>Restore &mdash; --disable-triggers and --exit-on-error are not optional</span><button class="copy" type="button">Copy</button></div>
+<pre><code>PROD_DATA=cutover
+pg_restore --data-only --disable-triggers --exit-on-error \
+  --no-owner --no-privileges \
+  -d postgresql://postgres:postgres@127.0.0.1:54322/postgres \
+  "$PROD_DATA/prod-public-&lt;ts&gt;.dump"
+
+L=postgresql://postgres:postgres@127.0.0.1:54322/postgres
+
+psql "$L" -c "select count(*) as must_be_zero from vault.secrets"
+
+psql "$L" -c "select count(*) as users,
+                     count(*) filter (where id like 'user\_%') as clerk_ids,
+                     count(*) filter (where customer_id is not null) as paying
+                from public.users"
+# expect 2171 / 2171 / 72 — compare against the same query run on PROD</code></pre></div>
+              </li>
+              <li><strong>Apply the 19 pending migrations over real data</strong>, and time them. Record the total and the times for files 17, 18 and 21. The total is how long step 1.9's maintenance window will be.
+                <div class="cmd danger"><div class="cmd-h"><span>Against the local stack</span><button class="copy" type="button">Copy</button></div>
+<pre><code>time supabase migration up --local</code></pre></div>
+              </li>
+              <li><strong>Apply the operator settings</strong> the skipped seed would have written.
+                <div class="cmd"><div class="cmd-h"><span>Every insert is on conflict do nothing &mdash; restored plans are safe</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$L" -v ON_ERROR_STOP=1 -f supabase/seed.sql
+
+psql "$L" -c "select s.value,
+                     exists(select 1 from public.plans p where p.id = s.value) as plan_exists
+                from private.settings s where s.key = 'default_plan_id'"</code></pre></div>
+              </li>
+              <li><strong>Run the SQL corpus gate.</strong>
+                <div class="cmd"><div class="cmd-h"><span>PGlite, stack-independent &mdash; safe against the restored copy</span><button class="copy" type="button">Copy</button></div>
+<pre><code>npm run test:db           # needs the 1.4 fix</code></pre></div>
+              </li>
+              <li><strong>Point the cutover scripts at the local stack.</strong>
+                <div class="cmd"><div class="cmd-h"><span>Use 127.0.0.1 &mdash; the guard does not recognise ::1</span><button class="copy" type="button">Copy</button></div>
+<pre><code>eval "$(supabase status -o env | sed 's/^/export /')"
+export NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+export MIGRATION_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
+export L=postgresql://postgres:postgres@127.0.0.1:54322/postgres
+export SUPABASE_SECRET_KEY="$SERVICE_ROLE_KEY"
+export PROD_DATA="$PWD/cutover"
+export CLERK_CSV="$PROD_DATA/input/prod-users.csv"
+export EXPORTED_AT=&lt;PROJECTS.prod.exportedAt from config.ts&gt;
+export OUT_DIR="$PROD_DATA/output-local"
+export CLERK_SECRET_KEY=unused-local-rehearsal
+unset DB_CONNECTION_STRING DB_ADMIN_CONNECTION_STRING CUTOVER_PROJECT ALLOW_PROD</code></pre></div>
+              </li>
+              <li><strong>Close sign-ups and run the cutover</strong>: import, preflight, re-key, verify. Write down how long the re-key takes; the target is under 60s.
+                <div class="cmd"><div class="cmd-h"><span>GoTrue reads the flag at boot, so restart (macOS sed)</span><button class="copy" type="button">Copy</button></div>
+<pre><code>sed -i '' 's/^enable_signup = true/enable_signup = false/' supabase/config.toml
+supabase stop &amp;&amp; supabase start</code></pre></div>
+                <div class="cmd danger"><div class="cmd-h"><span>Import &rarr; preflight &rarr; re-key &rarr; verify, on the PROD copy</span><button class="copy" type="button">Copy</button></div>
+<pre><code># dry run writes nothing to the database, but DOES overwrite the report CSVs
+npx tsx scripts/cutover/migrate-clerk-to-supabase.ts --csv-only
+DRY_RUN=0 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts --csv-only
+
+psql "$L" -A -F '|' -f scripts/cutover/preflight.sql &gt; preflight-local.txt
+grep -cE '^[0-9]+\|[GP][0-9]' preflight-local.txt                  # must be 11
+grep -E '^[0-9]+\|[GP][0-9]' preflight-local.txt | grep -c '|f$'   # must be 0
+
+# accepted_orphans: decide BEFORE the re-key
+psql "$L" -t -A -c \
+ "select count(*) from public.users u where u.id like 'user\_%'
+    and not exists (select 1 from migration.clerk_user_map m
+                     where m.clerk_user_id = u.id and m.status = 'migrated')"
+
+# THE NUMBER THAT SIZES THE PROD WINDOW
+time psql "$L" -v ON_ERROR_STOP=1 -f scripts/cutover/remap-user-ids.sql
+
+psql "$L" -v accepted_orphans=&lt;N&gt; -A -F '|' \
+     -f scripts/cutover/verify.sql &gt; verify-local.txt
+grep -c '|f$' verify-local.txt                        # must be 0</code></pre></div>
+              </li>
+              <li><strong>Prove a migrated user can sign in, then drill the rollback</strong> and re-key again.
+                <div class="cmd"><div class="cmd-h"><span>Expect 200 &mdash; type this yourself</span><button class="copy" type="button">Copy</button></div>
+<pre><code>curl -s -o /dev/null -w '%{http_code}\n' \
+  -X POST "http://127.0.0.1:54321/auth/v1/token?grant_type=password" \
+  -H "apikey: $ANON_KEY" -H 'Content-Type: application/json' \
+  -d '{"email":"&lt;a bcrypt user from the CSV&gt;","password":"&lt;their old Clerk password&gt;"}'</code></pre></div>
+                <div class="cmd danger"><div class="cmd-h"><span>Rollback, then re-key again</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$L" -v ON_ERROR_STOP=1 -f scripts/cutover/rollback-remap.sql
+time psql "$L" -v ON_ERROR_STOP=1 -f scripts/cutover/remap-user-ids.sql
+psql "$L" -v accepted_orphans=&lt;N&gt; -A -F '|' \
+     -f scripts/cutover/verify.sql &gt; verify-local-2.txt
+grep -c '|f$' verify-local-2.txt                      # must be 0 again</code></pre></div>
+              </li>
+              <li><strong>Tear it down and leave no trace.</strong>
+                <div class="cmd"><div class="cmd-h"><span>Plain supabase stop keeps a copy of PROD data in a Docker volume</span><button class="copy" type="button">Copy</button></div>
+<pre><code>supabase stop --help
+supabase stop &lt;the volume-deleting flag&gt;
+
+git checkout -- supabase/config.toml        # the sed edited a tracked file
+git status --short -- supabase/             # must be empty
+PROD_DATA=cutover
+rm -f "$PROD_DATA"/prod-public-*.dump
+rm -rf "$PROD_DATA/output-local"
+rm -f preflight-local.txt verify-local*.txt
+# prod-users.csv stays in cutover/input/ until T+30</code></pre></div>
+              </li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>The 19 migrations applied cleanly over real data, and you have their total time plus the times for files 17, 18 and 21.</li>
+              <li>Verify came back clean twice (before and after the rollback round-trip).</li>
+              <li>A bcrypt user signed in with their old password.</li>
+              <li>The re-key duration is written down in seconds.</li>
+              <li>The dump and reports are deleted, the Docker volumes are gone and <code>supabase/</code> is clean in git.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Never dump or restore PROD's <code>vault</code> or <code>auth</code> schema.</strong> Three webhook triggers (Brevo contact, New Lead, Subscription Notification) call PROD's live edge functions URL whenever a <code>service_role_key</code> exists in the local Vault. Dump <code>--schema=public</code> only, restore with <code>--disable-triggers</code>, and check <code>vault.secrets</code> is empty.</li>
+              <li class="w"><strong>Use <code>$L</code>, never <code>$MIGRATION_DATABASE_URL</code>, for the re-key and rollback.</strong> That variable points at PROD in sub-step c and from step 1.9 onward. <code>remap-user-ids.sql</code> has no guard at all: no <code>ALLOW_PROD</code>, no <code>DRY_RUN</code>, no ref prompt, and the wrapper its header mentions does not exist.</li>
+              <li class="w"><strong>Do not <code>unset CLERK_SECRET_KEY</code>.</strong> <code>config.ts</code> then backfills the live <code>sk_live_</code> key from <code>.env.cutover</code>. Export a harmless non-<code>sk_</code> value instead.</li>
+              <li><code>.claude/CLAUDE.md</code> bans <code>supabase db reset</code>, and the agent hook blocks it. The ban is for the hosted projects. The local stack is the one place it is correct, so type it yourself. If the version list comes back wrong, move migrations 4&ndash;22 into a holding folder, run a plain reset, and move them back before step g.</li>
+              <li>The first <code>supabase start</code> applies all 22 migrations and the seed. That is fine, because step e takes it back down. The seed is skipped in e because it needs <code>private.settings</code> (migration 7). Postgres is pinned to 17, and the app roles need 16+.</li>
+              <li>Session pooler is 5432, never the transaction pooler on 6543. The username is <code>&lt;role&gt;.&lt;ref&gt;</code> with exactly one dot. Copy the host from the dashboard.</li>
+              <li>The size limits are checked with <code>pg_column_size</code> (compressed), but sub-step c measures raw <code>octet_length</code>. A reading over the limit means investigate, never edit a customer's live catalogue on that basis.</li>
+              <li>What to expect while migrating: migration 8 prints a harmless notice about <code>edge_functions_base_url</code>. Migration 9 backs deleted rows up into <code>private.backup_*</code>. Migration 17 drops <code>public.ocr</code> with no backup. Migration 21 deletes merged analytics rows with no backup. Migrations 9 and 13 are the ones most likely to stop you.</li>
+              <li>Locally the seed writes <code>default_plan_id</code> and <code>terms_version</code>, so <code>plan_exists</code> is always <code>t</code>. On PROD, M10 writes <code>default_plan_id</code> during the push, but only if the Starter plan exists (that is what <code>starter_present</code> in sub-step c checks). <code>terms_version</code> is step 1.10.</li>
+              <li>Export <code>NEXT_PUBLIC_SUPABASE_URL</code>, or <code>CUTOVER_PROJECT</code>'s default of <code>test</code> supplies TEST's URL and the guard refuses. On a live run the guard asks you to confirm the target; answer <code>local</code> (or prefix <code>CONFIRM_REF=local</code>).</li>
+              <li>The import refuses to run while sign-ups are open. The Google sign-in path cannot be rehearsed locally; that waits for step 1.11.</li>
+              <li>Expect <code>git status</code> to show the step 1.4 fix. Never run <code>git checkout -- .</code> or <code>git stash</code> here.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.6 -->
+      <article class="step one" id="s16">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s16" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.6</div>
+            <h3>Set the Vercel production variables</h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>The new code needs these on Production, and some are not set there yet. Variables do nothing until a deploy, so setting them now is safe.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Set all seven on Vercel &rarr; Production:
+                <div class="scroll"><table>
+                  <tr><th>Variable</th><th>Value</th><th>Without it</th></tr>
+                  <tr><td><code>DB_CONNECTION_STRING</code></td><td><code>postgres.&lt;ref&gt;</code> pooler URL, port 6543</td><td>Every Drizzle query fails</td></tr>
+                  <tr><td><code>DB_ADMIN_CONNECTION_STRING</code></td><td>the same URL, for now</td><td>After M08, every <code>asAdmin</code> path fails with <code>42501</code></td></tr>
+                  <tr><td><code>AUTH_PROVIDER</code></td><td><code>clerk</code></td><td>Phase 2 flips it</td></tr>
+                  <tr><td><code>REVALIDATE_SECRET</code></td><td>same as the Cloudflare worker</td><td>Revalidation rejected</td></tr>
+                  <tr><td><code>REDIS_KEY_PREFIX</code></td><td><code>prod</code></td><td>Falls back to <code>dev</code>, shared with local dev</td></tr>
+                  <tr><td><code>NEXT_PUBLIC_TURNSTILE_SITE_KEY</code></td><td>Turnstile <em>site</em> key</td><td>Step 1.7</td></tr>
+                  <tr><td><code>MAINTENANCE_BYPASS_TOKEN</code></td><td>output of <code>openssl rand -hex 32</code>, kept in your password manager</td><td>Maintenance blocks you too, so you can't test the new sign-in during the cutover (step 2.1)</td></tr>
+                </table></div>
+              </li>
+              <li>Make sure <code>NODE_ENV</code> is exactly <code>production</code>.</li>
+              <li>Connect the <code>GLOBAL_CONFIG</code> store.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>All seven are set on Production.</li>
+              <li><code>DB_ADMIN_CONNECTION_STRING</code> and <code>DB_CONNECTION_STRING</code> are identical <code>postgres</code> URLs on 6543.</li>
+              <li><code>GLOBAL_CONFIG</code> is connected and <code>NODE_ENV</code> is <code>production</code>.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w">Set the admin URL before the user URL ever becomes <code>app_rls</code>. <code>getAdminDb()</code> falls back to <code>DB_CONNECTION_STRING</code>, so the wrong order gives every admin path a role with no privileges.</li>
+              <li>Both DB URLs must use the transaction pooler on <strong>6543</strong>, because the app sets <code>prepare: false</code> for it. A 5432 URL silently defeats that.</li>
+              <li>A wrong <code>NODE_ENV</code> turns Sentry off and makes session cookies non-<code>Secure</code>.</li>
+              <li>Treat every variable as deploy-time only. Global Config exists because env changes are too slow and risky to flip live.</li>
+              <li>Later, remove <code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code>, <code>DATABASE_URL</code> and the misspelt <code>POSTHGOG_API_KEY</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.7 -->
+      <article class="step one" id="s17">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s17" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.7</div>
+            <h3>Turnstile, then Supabase Auth configuration</h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span><span class="tag irr">Order-sensitive</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>Set up Supabase Auth on PROD (captcha, Google, email, redirects, JWT keys) so it is ready when the provider flips. The order matters: if captcha switches on before its secret is in place, every password sign-in, sign-up and reset fails while Google keeps working.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li><strong>Turnstile.</strong> Cloudflare &rarr; Turnstile, domains <code>www.quicktalog.app</code> and <code>quicktalog.app</code>. Put the <em>site</em> key in Vercel and <strong>redeploy</strong>. The secret key goes to Supabase.</li>
+              <li><strong>Google.</strong> Create a separate OAuth client for PROD. Add <code>https://uhfbapjuzvlyzyodxhqn.supabase.co/auth/v1/callback</code> as a redirect URI and <strong>keep Clerk's URI</strong>. Publish the consent screen if it is still in Testing.</li>
+              <li><strong>SMTP.</strong> Verify <code>auth.quicktalog.app</code> in Resend, <strong>turn click and open tracking off</strong>, and create a PROD-only sending key. Enable Custom SMTP: <code>smtp.resend.com</code>, port 465, username <code>resend</code>. Send yourself a test email and wait for it.</li>
+              <li><strong>Redirect URLs.</strong> Redirect apex &rarr; www at the edge, or add <code>https://quicktalog.app/**</code>.</li>
+              <li><strong>Apply the config.</strong> Export the secrets in the shell, then check and apply:
+                <div class="cmd"><div class="cmd-h"><span>Run --check first, every time</span><button class="copy" type="button">Copy</button></div>
+<pre><code>export SUPABASE_ACCESS_TOKEN=sbp_...          # account-wide, treat as root
+export SUPABASE_SMTP_PASS=re_...
+export SUPABASE_CAPTCHA_SECRET=0x...
+export SUPABASE_GOOGLE_CLIENT_ID=...
+export SUPABASE_GOOGLE_SECRET=...
+
+npx tsx scripts/supabase/auth-config.ts --project prod --check
+npx tsx scripts/supabase/auth-config.ts --project prod --apply</code></pre></div>
+              </li>
+              <li>Re-run <code>--check</code> until it reports zero differences. If <code>--apply</code> returns 400, narrow down the bad field with <code>--skip</code> / <code>--only</code>.</li>
+              <li><strong>JWT keys.</strong> Project Settings &rarr; JWT Keys: promote an ES256 key to <em>Current</em>. Wait 1h15m before revoking the legacy secret.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li><code>--check</code> reports zero differences and no go/no-go warnings.</li>
+              <li>A test email arrives within 60 seconds.</li>
+              <li>An ES256 key is Current.</li>
+              <li><code>disable_signup</code> is still <strong>true</strong>. It stays that way until Phase 2.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Captcha last.</strong> <code>auth-config.prod.json</code> sets <code>security_captcha_enabled: true</code>. If <code>SUPABASE_CAPTCHA_SECRET</code> is unset, the secret is silently left out but captcha is still switched on.</li>
+              <li class="w"><strong><code>.env.cutover</code> ignores four of these secrets.</strong> <code>config.ts</code> reads only <code>MIGRATION_DATABASE_URL</code>, <code>DB_ADMIN_CONNECTION_STRING</code>, <code>DB_CONNECTION_STRING</code>, <code>SUPABASE_SECRET_KEY</code>, <code>CLERK_SECRET_KEY</code> and <code>SUPABASE_ACCESS_TOKEN</code>. SMTP, captcha and the two Google values must be <code>export</code>ed.</li>
+              <li class="w"><strong><code>auth-config.ts</code> has no safety rail.</strong> No <code>DRY_RUN</code>, no <code>ALLOW_PROD</code>, no ref prompt. <code>--apply --project prod</code> writes to production immediately.</li>
+              <li><code>NEXT_PUBLIC_</code> values are compiled into the bundle, so they need a redeploy. The widget only appears once the provider is <code>supabase</code>. Both Turnstile keys start <code>0x4AAAAAAA</code>.</li>
+              <li>A Google app still in Testing only lets in test users. Nobody notices until a real customer tries to sign in.</li>
+              <li>Link tracking rewrites links, which uses up the one-time token. Without custom SMTP you are capped at two emails an hour.</li>
+              <li>The return URL comes from <code>window.location.origin</code>, so signing in from an apex domain that isn't allowed fails.</li>
+              <li>The Management API applies the whole PATCH or none of it. One invalid field returns 400 and nothing changes.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.8 -->
+      <article class="step one" id="s18">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s18" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.8</div>
+            <h3>Download and fix the four edge functions</h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span><span class="tag irr">Before step 1.9</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>The four edge functions' source is in no repo. Check they survive M00 and the re-key, especially whether CRM records are keyed by <code>users.id</code> (risk R19). Then get them ready for M09, which step 1.9's push applies. After it, the database webhooks and the Sync Plans cron send an <code>x-webhook-secret</code> header instead of the service_role key.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Download the sources:
+                <div class="cmd"><div class="cmd-h"><span>Before changing anything</span><button class="copy" type="button">Copy</button></div>
+<pre><code>cd supabase
+for fn in create-brevo-contact create-crm-contact \
+          discord-subscription-alert sync-available-plans; do
+  supabase functions download "$fn" --project-ref uhfbapjuzvlyzyodxhqn --use-api
+done</code></pre></div>
+              </li>
+              <li>Read each one and answer: does it use the anon key? Does it store <code>users.id</code> as an external CRM id? Which user columns does it read?</li>
+              <li>If a CRM stores <code>users.id</code>, plan to update those records <strong>by email, before T-0</strong>.</li>
+              <li>Generate one random value and store it as a function secret:
+                <div class="cmd"><div class="cmd-h"><span>The same value goes into the Vault in the last item</span><button class="copy" type="button">Copy</button></div>
+<pre><code>openssl rand -hex 32
+supabase secrets set EDGE_WEBHOOK_SECRET=&lt;value&gt; --project-ref uhfbapjuzvlyzyodxhqn</code></pre></div>
+              </li>
+              <li>Change each function to accept <strong>either</strong> a matching <code>x-webhook-secret</code> header <strong>or</strong> the service_role bearer token the current triggers send. Deploy them without JWT verification:
+                <div class="cmd"><div class="cmd-h"><span>Or set verify_jwt = false per function in config.toml</span><button class="copy" type="button">Copy</button></div>
+<pre><code>supabase functions deploy &lt;name&gt; --project-ref uhfbapjuzvlyzyodxhqn --no-verify-jwt</code></pre></div>
+              </li>
+              <li>Create the Vault secret with the same value:
+                <div class="cmd danger"><div class="cmd-h"><span>PROD SQL editor, after the functions are deployed</span><button class="copy" type="button">Copy</button></div>
+<pre><code>select vault.create_secret('&lt;value&gt;', 'edge_webhook_secret');</code></pre></div>
+              </li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>All four sources are in the repo, and none uses the anon key.</li>
+              <li>Any CRM records keyed by <code>users.id</code> have a plan to update them by email.</li>
+              <li>The functions accept both credentials and run with JWT verification off.</li>
+              <li><code>EDGE_WEBHOOK_SECRET</code> and the Vault secret <code>edge_webhook_secret</code> hold the same value.</li>
+              <li>A test webhook still returns 2xx (the <code>net._http_response</code> query in step 1.9).</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Why both credentials.</strong> Until step 1.9's push, the old trigger function keeps sending the service_role key as a bearer token. If the functions accepted only the new header, every webhook (Brevo contact, new lead, subscription alert) and the plan sync would fail from now until step 1.9.</li>
+              <li>The old trigger function ignores the Vault secret, so creating it now changes nothing yet. M09 switches to the header the moment the push lands; without the secret it would keep sending the bearer token.</li>
+              <li>M09's header requires both before it runs: the functions accept the header, and the Vault secret exists. The bearer fallback comes out at the end of step 1.9, once the webhooks work with the header.</li>
+              <li>A function that uses the anon key breaks as soon as M00 lands. User ids become uuids at the re-key, and migration 21 renames several columns.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.9 -->
+      <article class="step one" id="s19">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s19" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.9</div>
+            <h3>Apply the 19 migrations and deploy</h3>
+            <div class="step-meta"><span class="tag irr">Schema change is one way</span><span class="tag time">Duration from step 1.5</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>Bring PROD from migration 3 to 22 and deploy the current code, together, in one short maintenance window. They cannot be separated: M00 (file 5) breaks the old deployed code, which still serves catalogue reads through <code>/rest/v1</code>, and the new code needs file 21's renames. This step really closes the perimeter, and every cutover script needs migration 21. So do it soon.</p>
+            <p>The push runs all 19 files in one go, so everything they need from you happens before it: bad rows fixed (1.5c), Vercel variables set (1.6), edge functions ready (1.8). The settings they leave to you come after it, in step 1.10.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Finish steps 1.5, 1.6 and 1.8 first, and fix everything 1.5c found on PROD.</li>
+              <li><strong>Take the pre-migrate dump.</strong> It is your only way back from the schema change.
+                <div class="cmd"><div class="cmd-h"><span>public only &mdash; the migration schema does not exist yet</span><button class="copy" type="button">Copy</button></div>
+<pre><code>PROD_DATA=cutover
+pg_dump "$MIGRATION_DATABASE_URL" --data-only --schema=public -Fc \
+  -f "$PROD_DATA/prod-pre-migrate-$(date +%s).dump"
+ls -l "$PROD_DATA"/prod-pre-migrate-*.dump    # must be non-zero</code></pre></div>
+              </li>
+              <li>Tag the current commit <code>pre-migrate-&lt;date&gt;</code> (history only).</li>
+              <li><strong>Maintenance on and worker paused, then push.</strong>
+                <div class="cmd danger"><div class="cmd-h"><span>--db-url is the only explicit target these commands take</span><button class="copy" type="button">Copy</button></div>
+<pre><code># Vercel Global Config: maintenance_prod = true
+#   then WAIT 15 SECONDS and confirm from two separate requests
+# Cloudflare worker:     JOBS_PAUSED = true   (literal string "true")
+
+echo "$MIGRATION_DATABASE_URL" | grep -oE '(postgres|db)\.[a-z]{20}'  # must name uhfbapjuzvlyzyodxhqn
+supabase migration list --db-url "$MIGRATION_DATABASE_URL"       # tail = 20260912093000
+supabase db push --db-url "$MIGRATION_DATABASE_URL" --dry-run    # read the 19 files
+supabase db push --db-url "$MIGRATION_DATABASE_URL"              # M00 included</code></pre></div>
+              </li>
+              <li><strong>Deploy immediately</strong> (merge to main), then tag the deployed commit <code>post-migrate-&lt;date&gt;</code>.</li>
+              <li>While maintenance is still on, check the two settings the migrations seed, run preflight and revalidate:
+                <div class="cmd danger"><div class="cmd-h"><span>Payloads lose created_by, so caches must be rebuilt</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" -c "select key, value from private.settings
+  where key in ('default_plan_id', 'edge_functions_base_url') order by key"
+# default_plan_id         = pri_01k27ajepm199twd1x77rpwdrq                         (M10)
+# edge_functions_base_url = https://uhfbapjuzvlyzyodxhqn.supabase.co/functions/v1  (M02)
+
+F=cutover/output/preflight-post-migrate.txt
+psql "$MIGRATION_DATABASE_URL" -A -F '|' -f scripts/cutover/preflight.sql &gt; "$F"
+grep -cE '^[0-9]+\|[GP][0-9]' "$F"                 # 11 gates evaluated
+grep -E '^[0-9]+\|[GP][0-9]' "$F" | grep -c '|f$'  # 0 failures
+
+curl -fsS -X POST -H "x-revalidate-secret: $REVALIDATE_SECRET" \
+     -d '{"dashboard":true}' https://www.quicktalog.app/api/revalidate</code></pre></div>
+              </li>
+              <li>If <code>edge_functions_base_url</code> is missing, M02 could not read a JWT from the Vault. Insert it by hand:
+                <div class="cmd"><div class="cmd-h"><span>PROD SQL editor &mdash; only if the row is missing</span><button class="copy" type="button">Copy</button></div>
+<pre><code>insert into private.settings (key, value)
+values ('edge_functions_base_url', 'https://uhfbapjuzvlyzyodxhqn.supabase.co/functions/v1');</code></pre></div>
+              </li>
+              <li>Re-run the exposure audit, with E3/E4/E5 rewritten for the new column names.</li>
+              <li><code>maintenance_prod = false</code>, <code>JOBS_PAUSED = false</code>.</li>
+              <li><strong>Check the webhooks use the new secret.</strong> Make a throwaway sign-up (it fires the Brevo webhook; delete the account afterwards), then:
+                <div class="cmd"><div class="cmd-h"><span>pg_net keeps responses for a few hours</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" -c "select status_code, count(*) from net._http_response
+  where created &gt; now() - interval '30 minutes' group by 1 order by 1"
+# only 2xx</code></pre></div>
+                Then remove the bearer-token fallback from the four functions (step 1.8) and redeploy them.
+              </li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>The pre-migrate dump exists and is non-zero.</li>
+              <li><code>supabase migration list --db-url "$MIGRATION_DATABASE_URL"</code> shows all 22 applied.</li>
+              <li><code>default_plan_id</code> and <code>edge_functions_base_url</code> hold the expected values.</li>
+              <li>Webhook responses are 2xx with the new secret, and the functions' bearer fallback is removed.</li>
+              <li>Preflight evaluates 11 gates with 0 failures.</li>
+              <li>Both tags exist.</li>
+              <li>The site works signed out and signed in, and Sentry is quiet.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>The schema change cannot be rolled back.</strong> Files 4, 6 and 17&ndash;22 have no rollback SQL, and <code>rollback_M00.sql</code> is not a true reverse. File 17 drops <code>public.ocr</code>, 18 rewrites <code>catalogues.content</code> in place, and 21 drops <code>analytics.current_url</code> and deletes merged rows. The dump is your only way back.</li>
+              <li class="w"><code>supabase db push</code> has no <code>--target</code>. One run applies <strong>all 19</strong> in order, with no pause for the audit, the <code>app_rls</code> password, <code>terms_version</code> or a deploy.</li>
+              <li class="w"><strong><code>db push</code> and <code>migration list</code> have no <code>--project-ref</code></strong> (CLI 2.109.1). Use <code>--db-url</code>, percent-encoded, on the session pooler (5432) or direct connection. Don't <code>supabase link</code> to PROD: the link persists, and a later plain <code>supabase db push</code> would hit PROD.</li>
+              <li class="w">If <code>default_plan_id</code> is missing, the Starter plan was not there at push time (see 1.5c). New Supabase sign-ups and the re-key both fail without it, so fix it before step 1.12.</li>
+              <li class="w"><strong><code>pre-migrate</code> cannot be deployed</strong> once the push commits: it fails with <code>42703</code> and <code>42501</code>. <code>post-migrate-&lt;date&gt;</code> is the only rollback deploy target.</li>
+              <li>Maintenance only covers <code>/admin</code>, <code>/auth</code>, <code>/api/dashboard</code>, <code>/api/agent</code> and <code>/api/items/uploadthing</code> (<code>src/middleware.ts:38</code>). Between M00 landing and the deploy finishing, uncached public catalogue pages show errors. Keep that gap short.</li>
+              <li>M00 asks for 24 hours of Drizzle-only traffic first, and this order skips that. To keep that check, move <code>20260917133921_perimeter_close.sql</code> aside, push the other 18 and deploy. Once the logs show 24 hours with no app <code>/rest/v1</code> traffic, apply it alone with <code>supabase db push --db-url "$MIGRATION_DATABASE_URL" --include-all</code>. P2/P4 stay red in between.</li>
+              <li>Preflight P2 and P4 are expected to fail before this step. From now on, a red P2 or P4 is a real problem.</li>
+              <li>Migration 21 also revokes <code>active_subscriptions</code> from <code>anon</code>, so any anon consumer of that view breaks here. Full list in the <a href="#ref-ladder">migration ladder</a>.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.10 -->
+      <article class="step one" id="s110">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s110" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.10</div>
+            <h3>Set <code>terms_version</code>, then switch the app to <code>app_rls</code></h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>Two settings the push in step 1.9 does not make. M10 leaves the legal terms version to an operator, and M08 creates the <code>app_rls</code> role without a password. Set the terms version, which the consent flows depend on, then switch the app's database login to <code>app_rls</code> so RLS really applies.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Pick the date the Terms, Privacy and Refund text last <strong>materially</strong> changed (one value covers all three). Insert it and read it back:
+                <div class="cmd"><div class="cmd-h"><span>PROD SQL editor</span><button class="copy" type="button">Copy</button></div>
+<pre><code>insert into private.settings (key, value)
+values ('terms_version', '2026-09-22')      -- replace with the real date
+on conflict (key) do nothing;
+
+select key, value, updated_at from private.settings where key = 'terms_version';
+
+-- to correct an existing value (the insert above will not):
+-- update private.settings set value = '&lt;date&gt;' where key = 'terms_version';</code></pre></div>
+              </li>
+              <li>Set the password: <code>alter role app_rls with password '&lt;generated&gt;'</code> in the PROD SQL editor.</li>
+              <li><strong>On TEST, prove Supavisor accepts it</strong> with a real connection as <code>app_rls.&lt;test-ref&gt;</code>. Don't go on until this works.</li>
+              <li>Vercel Production <code>DB_CONNECTION_STRING</code> &rarr; <code>app_rls.&lt;prod-ref&gt;</code>, then redeploy. Leave <code>DB_ADMIN_CONNECTION_STRING</code> as it is.</li>
+              <li>Run <code>forgotten-wrapper.test.ts</code> with <code>DB_RLS_CONNECTION_STRING</code> pointing at the <code>app_rls</code> login.</li>
+              <li>Watch <code>pg_stat_activity</code> by <code>usename</code> for the first few minutes.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li><code>terms_version</code> returns one row with the value you meant.</li>
+              <li>A real <code>app_rls</code> connection through Supavisor worked on TEST.</li>
+              <li>PROD runs on <code>app_rls</code>, and admin paths (Paddle webhook, provisioning) still work.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>A missing <code>terms_version</code> breaks things silently.</strong> Email sign-up shows "briefly unavailable". Google sign-up succeeds with every consent false. The <code>/admin</code> consent gate does nothing. Nothing throws, but a Sentry <strong>error</strong> is sent: treat it as a release blocker.</li>
+              <li><code>on conflict do nothing</code> means re-running with a different value changes nothing. Always read the value back.</li>
+              <li>Changing the value later asks every user to consent again on their next <code>/admin</code> visit.</li>
+              <li>Keep the password out of the repo, and don't give it a <code>VALID UNTIL</code>. Postgres accepting the role proves nothing about the pooler; this has never been confirmed.</li>
+              <li>Without <code>DB_RLS_CONNECTION_STRING</code> the test falls back, and the M08 checks never run.</li>
+              <li>To roll back, put <code>postgres.&lt;ref&gt;</code> back.</li>
+              <li><code>drizzle-kit pull</code> reads <code>DB_ADMIN_CONNECTION_STRING</code>, because <code>app_rls</code> cannot read <code>pg_catalog</code>. After the switch, that is the only way to regenerate <code>@quicktalog/common</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.11 -->
+      <article class="step one" id="s111">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s111" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.11</div>
+            <h3>Full dress rehearsal on TEST</h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span><span class="tag time">An afternoon</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>The local run proved the SQL on real data. This one proves the cutover on a real hosted Postgres and GoTrue, including Google sign-in and the rollback drill, which can't be rehearsed locally.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Bring TEST up to migration 22:
+                <div class="cmd"><div class="cmd-h"><span>Target TEST explicitly with --db-url</span><button class="copy" type="button">Copy</button></div>
+<pre><code>T="postgresql://postgres.imhinsgyzzyblghwnedk:&lt;db-password&gt;@&lt;session-pooler-host&gt;:5432/postgres"
+supabase db push --db-url "$T" --dry-run
+supabase db push --db-url "$T"
+supabase migration list --db-url "$T"   # all 22 applied</code></pre></div>
+              </li>
+              <li>Rebuild the pre-cutover state. Purge the Phase 2 test accounts (<code>purge-dark-test-users.ts</code>), then seed Clerk-keyed rows from the CSV with <code>--catalogues</code>.</li>
+              <li>Add one paying user on purpose: set <code>customer_id</code> on one user after the import, check that the re-key refuses, clear it, and continue.</li>
+              <li>Import, preflight, re-key, verify, timing every step. Follow <code>TEST_REHEARSAL.md</code>.</li>
+              <li>Sign in as migrated users: the bcrypt user with their <em>old Clerk password</em>, and a Google user, who must land on their existing account with its catalogues.</li>
+              <li>Drill the rollback: sign up a Supabase-only user first, then run <code>push-supabase-users-to-clerk.ts</code>, then <code>rollback-remap.sql</code>.</li>
+              <li>Re-key again to prove it works in both directions.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>Verify is clean twice.</li>
+              <li>The bcrypt user signed in with their old password, and the Google user landed on the right account.</li>
+              <li>Rollback restored Clerk ids, and the second re-key restored uuids.</li>
+              <li>The paying-user refusal fired.</li>
+              <li>Every duration is written down.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w">TEST is at file 16, so without migrations 17&ndash;22 <code>remap-user-ids.sql</code> fails there with <code>42P01</code>.</li>
+              <li class="w"><code>push-supabase-users-to-clerk.ts</code> <strong>has never been run end to end</strong>. This is where to do it, and to check whether Clerk's <code>createUser</code> marks emails as verified in Restricted mode.</li>
+              <li><code>TEST_REHEARSAL.md</code> step 4 still uses <code>c.created_by</code>. Use <code>c.user_id</code>.</li>
+              <li>The paying-user refusal has never been tested against a real database.</li>
+              <li>An empty dashboard after sign-in means the re-key mapped the user to the wrong uuid.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 1.12 -->
+      <article class="step one" id="s112">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="s112" data-p="1"></label>
+          <div class="step-t">
+            <div class="step-n">STEP 1.12</div>
+            <h3>T-3: freeze Clerk, dark-import, reconcile every row</h3>
+            <div class="step-meta"><span class="tag rev">Reversible</span><span class="tag time">T-7 / T-3</span></div>
+          </div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div>
+            <p>Import every user into Supabase Auth three days early. They stay dormant, because the provider is still <code>clerk</code>. Every row is reconciled now, so the window only needs a small delta import.</p>
+          </div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li><strong>T-7: tell people.</strong> The date; that they will be signed out once; the same email and password still work; Google still works; username sign-ins become email sign-ins. Write the <code>banner_prod</code> text now too.</li>
+              <li><strong>T-3: freeze Clerk.</strong> Set Global Config <code>clerk_frozen_prod</code> = <code>true</code>. In Clerk's Account Portal, turn off password reset and profile edits where you can. Sign-up stays public.</li>
+              <li><strong>Close Supabase sign-ups</strong>, aimed at PROD:
+                <div class="cmd"><div class="cmd-h"><span>Default project is "test"</span><button class="copy" type="button">Copy</button></div>
+<pre><code>export CUTOVER_PROJECT=prod
+npx tsx scripts/cutover/signups.ts --status
+npx tsx scripts/cutover/signups.ts --off</code></pre></div>
+              </li>
+              <li><strong>Import</strong>, dry run first, then save the T-3 preflight:
+                <div class="cmd danger"><div class="cmd-h"><span>Operator machine only. Never CI, never Vercel.</span><button class="copy" type="button">Copy</button></div>
+<pre><code>export CUTOVER_PROJECT=prod   # again: without it the project defaults to TEST and the guard refuses
+export SUPABASE_SECRET_KEY=&lt;PROD sb_secret_&gt;
+export MIGRATION_DATABASE_URL=&lt;postgres, session pooler 5432 or direct — NOT 6543&gt;
+export CLERK_SECRET_KEY=sk_live_...
+export EXPORTED_AT=&lt;UTC ISO instant of the export&gt;
+
+DRY_RUN=1 ALLOW_PROD=1 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts
+DRY_RUN=0 ALLOW_PROD=1 npx tsx scripts/cutover/migrate-clerk-to-supabase.ts
+echo $?    # must be 0
+
+psql "$MIGRATION_DATABASE_URL" -A -F '|' \
+     -f scripts/cutover/preflight.sql &gt; preflight-t3.txt</code></pre></div>
+              </li>
+              <li>Read the script's C1&ndash;C8 output: all eight must say ok, with no <code>BLOCKER</code> line.</li>
+              <li><strong>Reconcile.</strong> Write a decision for every row in <code>conflicts.csv</code>, <code>skipped.csv</code> and <code>errors.csv</code>. Ask users with unverified addresses who own data to verify in Clerk, then re-import them.</li>
+              <li>Split Google-only users out of <code>needs-reset.csv</code>. Write the emails for the needs-reset and <code>mfa-users.csv</code> groups.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>C1&ndash;C8 all say ok, there is no <code>BLOCKER</code> line, and the exit code is 0.</li>
+              <li>Every conflict, skip, error and needs-reset row has a written decision, with Google-only users split out.</li>
+              <li>G1, G2 and G3 are green, and <code>preflight-t3.txt</code> is saved.</li>
+              <li>The imported identities are dormant (provider still <code>clerk</code>).</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Freeze before importing.</strong> A password changed after the export goes into Clerk and is missing from your import.</li>
+              <li class="w"><strong>Only <code>DRY_RUN=0</code> writes.</strong> Anything else, including unset, is a dry run. <code>ALLOW_PROD=1</code> is needed even for a dry run. A dry run still overwrites the report CSVs, so copy real reports somewhere else first.</li>
+              <li class="w"><strong>Never overwrite <code>preflight-t3.txt</code>.</strong> In the window, use <code>preflight-t0.txt</code>. <code>&gt;</code> overwrites without warning.</li>
+              <li class="w"><strong>G2 is the hardest gate</strong>: all 72 paying users must have a migrated map row. G2 only checks <code>user_%</code> ids, but the re-key aborts on <em>any</em> <code>customer_id</code> without a migrated map row. The script's <code>BLOCKER: N unmapped public.users row(s) carry a Paddle customer_id</code> line catches this, so check the exit code.</li>
+              <li>C1 checks that the CSV matches Clerk. Set <code>CLERK_DELETED_AFTER_EXPORT</code> if anyone was deleted in Clerk after the export, or C1 fails for a harmless reason. Partial runs (<code>--csv-only</code>, <code>--only</code>) skip reconciliation.</li>
+              <li>The script asks you to type the project ref before it checks much, so you may type the PROD ref and only then hear what is missing.</li>
+              <li><code>needs-reset.csv</code> includes Google-only users who never had a password. Don't email them about a lost password.</li>
+              <li>Set <code>banner_prod</code> about 30 minutes before the window (wait 15s, confirm from two requests).</li>
+              <li>
+                <details class="more">
+                  <summary>If you abandon the migration after this step</summary>
+                  <div>
+                    <p>This step leaves permanent traces in PROD that no tool removes: 2171 <code>auth.users</code> and <code>auth.identities</code> rows, <code>migration.clerk_user_map</code>, and <code>migration.t0_password_digests</code> (password-digest fingerprints). <code>purge-dark-test-users.ts</code> refuses PROD by design.</p>
+                    <p>Clean-up: delete the imported <code>auth.users</code> rows through the admin API (fires <code>handle_auth_user_deleted</code>, marking map rows <code>deleted</code>), then <code>drop table migration.t0_password_digests</code> and truncate <code>migration.clerk_user_map</code>. Write that script before you need it.</p>
+                  </div>
+                </details>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== GATE ===================== -->
+  <section id="gate">
+    <div class="card">
+      <div class="kicker">T-1</div>
+      <h2 style="font-size:clamp(22px,3.2vw,30px)">Go / no-go</h2>
+      <p class="sub" style="margin:10px 0 16px">All yes, or you don't open the window. A no today costs a rescheduled evening. A no at T-0 locks 2171 people out.</p>
+      <div class="gate">
+        <label><input type="checkbox" data-k="g1"><span>The TEST rollback drill passed, and the re-key worked in both directions.</span></label>
+        <label><input type="checkbox" data-k="g2"><span>The PROD dark import is reconciled &mdash; every conflict, skip and error has a written decision.</span></label>
+        <label><input type="checkbox" data-k="g3"><span>All 22 migrations are applied to PROD and preflight evaluates 11 gates with 0 failures.</span></label>
+        <label><input type="checkbox" data-k="g4"><span>Both tags exist: <code>pre-migrate-&lt;date&gt;</code> (history only) and <code>post-migrate-&lt;date&gt;</code> (the rollback deploy target). No deploys since T-7.</span></label>
+        <label><input type="checkbox" data-k="g5"><span><code>MIGRATION_DATABASE_URL</code> works from this machine, on the session pooler, as <code>postgres</code>. If you reset the DB password to get it, that <strong>rotates it</strong>: update Vercel's two DB URLs, GitHub Actions and the worker together, then redeploy.</span></label>
+        <label><input type="checkbox" data-k="g12"><span>The T-7 announcement has gone out, and the needs-reset and MFA emails are ready to send.</span></label>
+        <label><input type="checkbox" data-k="g6"><span>Clerk PROD admin access confirmed. Vercel, Supabase, Cloudflare and Paddle all logged in.</span></label>
+        <label><input type="checkbox" data-k="g7"><span>No open Paddle incident.</span></label>
+        <label><input type="checkbox" data-k="g8"><span>The maintenance toggle was tested on PROD for one minute off-peak, and the bypass cookie works.</span></label>
+        <label><input type="checkbox" data-k="g9"><span>Canary accounts ready: an imported password user, an imported Google user, and a fresh inbox.</span></label>
+        <label><input type="checkbox" data-k="g10"><span>Sentry alert rules are active. You have four hours free.</span></label>
+        <label><input type="checkbox" data-k="g11"><span>Supavisor has been proven to authenticate <code>app_rls</code> with a real connection.</span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PHASE 2 ===================== -->
+  <section id="window">
+    <div class="phase two" style="margin-bottom:22px">
+      <div class="pk">Phase 2 &middot; 16 steps</div>
+      <h2>The cutover window. One way &mdash; finish it.</h2>
+      <p class="pl">A quiet weekday, at least 90 minutes clear of the 03:00 UTC worker cron. About 90 minutes in total, roughly 35 with writes frozen. The delta import, backup, re-key and redeploy have never been timed at this scale; use your step 1.5 numbers.</p>
+      <div class="pgrid">
+        <div class="pbox"><b>User impact</b>Maintenance page, then one forced sign-in each</div>
+        <div class="pbox"><b>Undo</b>Config-only before the re-key; scripted rollback after, 72h at most</div>
+        <div class="pbox"><b>Hard gates</b>Preflight, V12 passwords, the smoke list</div>
+      </div>
+    </div>
+
+    <div class="noreturn" id="noreturn" style="margin-bottom:22px">
+      <div class="rule"><span>Point of no return &middot; step 2.9</span></div>
+      <h2>The re-key changes 2171 user ids</h2>
+      <p style="font-size:15.5px; color:var(--ink)">Up to the backup, stopping costs only a maintenance page. From the re-key on, <code>public.users.id</code> is a uuid, the Clerk ids exist only in <code>migration.clerk_user_map</code>, and going back means running the rollback scripts in order before the window closes.</p>
+      <div class="scroll"><table>
+        <tr><th>Window</th><th>When</th><th>What getting back costs</th></tr>
+        <tr><td><strong>R0</strong></td><td>Before the re-key</td><td>Flip the flags back. Steps 1.9, 1.10 and 1.12 leave permanent traces (see 1.12)</td></tr>
+        <tr><td><strong>R1</strong></td><td>Re-key to T+2h</td><td>Scripted rollback, affected users emailed</td></tr>
+        <tr><td><strong>R2</strong></td><td>T+2h to T+72h</td><td>Same scripts, plus carrying back everyone who signed up meanwhile. Closes at T+7 at the latest</td></tr>
+        <tr><td><strong>R3</strong></td><td>After that</td><td>Fix forward only</td></tr>
+      </table></div>
+      <p style="font-size:14.5px; color:var(--ink-2)">The 72 hours is a rule from the plan; nothing enforces it. It depends on the Clerk instance and the T-0 CSV still being valid. The true point of no return is deleting the Clerk instance at T+30.</p>
+    </div>
+
+    <div class="card" id="shell" style="margin-bottom:22px">
+      <h3 style="font-size:17px">Set the shell up once, before step 2.1</h3>
+      <p class="sub" style="margin:8px 0 12px; font-size:14.5px">Every command below assumes this. <code>CUTOVER_PROJECT</code> defaults to <code>test</code>, so a fresh terminal mid-window can configure the wrong project without warning.</p>
+      <div class="cmd">
+        <div class="cmd-h"><span>Then check the target before you trust it</span><button class="copy" type="button">Copy</button></div>
+<pre><code>export CUTOVER_PROJECT=prod
+export MIGRATION_DATABASE_URL=&lt;postgres, session pooler 5432 or direct — NOT 6543&gt;
+export SUPABASE_SECRET_KEY=&lt;PROD sb_secret_&gt;
+export SUPABASE_ACCESS_TOKEN=sbp_...
+export CLERK_SECRET_KEY=sk_live_...
+export PROD_DATA="$PWD/cutover"   # from the repo root
+export CLERK_CSV="$PROD_DATA/input/prod-users.csv"
+export OUT_DIR="$PROD_DATA/output"
+mkdir -p "$OUT_DIR"
+# Gate files contain customer emails: keep them in $OUT_DIR (git-ignored).
+
+echo "$CUTOVER_PROJECT"                       # must say prod
+psql "$MIGRATION_DATABASE_URL" -c "select current_database(), current_user"
+# must be postgres on the PROD project — not app_rls, not TEST</code></pre>
+      </div>
+    </div>
+
+    <div class="steps">
+
+      <!-- 2.1 -->
+      <article class="step two" id="s21">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w1" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.1 &middot; ~2 min</div><h3>Maintenance on</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Stop users signing in and editing during the cutover, while public catalogues keep serving.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Global Config <code>maintenance_prod</code> = <code>true</code>.</li>
+              <li>Wait 15 seconds, then confirm from two separate requests.</li>
+              <li>Give your own browser the bypass cookie; nothing in the app sets it. On <code>www.quicktalog.app</code>, open DevTools &rarr; Console and run:
+                <div class="cmd"><div class="cmd-h"><span>Browser console, with the token from step 1.6</span><button class="copy" type="button">Copy</button></div>
+<pre><code>document.cookie = "qt-maint-bypass=&lt;MAINTENANCE_BYPASS_TOKEN&gt;; path=/; max-age=86400; secure"</code></pre></div></li>
+              <li>Check that <code>/admin</code> loads in that browser while a private window gets the maintenance message.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>Two separate requests show the maintenance page.</li><li>You get through with the bypass cookie.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li>It takes up to 10 seconds to spread everywhere.</li>
+              <li>Blocked: <code>/admin</code>, <code>/auth</code>, <code>/api/dashboard</code>, <code>/api/agent</code>, <code>/api/items/uploadthing</code> and every server action (<code>src/middleware.ts:38</code>), plus the Paddle webhook, which Paddle retries after the window. Public catalogue pages and <code>/api/items/&lt;slug&gt;</code> stay open on purpose.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.2 -->
+      <article class="step two" id="s22">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w2" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.2 &middot; ~2 min</div><h3>Pause the worker</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Stop the Cloudflare background jobs (analytics, plan enforcement, cleanup) writing during the window.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Cloudflare worker: set <code>JOBS_PAUSED</code> = <code>true</code>.</li><li>Confirm it took effect.</li></ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>The worker reads <code>JOBS_PAUSED</code> as <code>true</code>.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li>It must be the literal string <code>true</code> (it is trimmed and lowercased).</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.3 -->
+      <article class="step two" id="s23">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w3" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.3 &middot; ~1 min</div><h3>Freeze Clerk sign-ups and disable its webhook</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>No new users arrive in Clerk and no Clerk events reach the app, so the next export is final.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Clerk dashboard: restrict sign-ups.</li><li>Disable the Clerk webhook endpoint.</li></ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>Clerk sign-up is closed and the webhook shows disabled.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li>A rollback turns both back on (rollback step 6).</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.4 -->
+      <article class="step two" id="s24">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w4" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.4 &middot; ~2 min</div><h3>Second Clerk CSV export</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Capture everyone who joined or changed since T-3.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Export from the Clerk production instance, as in step 1.3.</li><li>Save it in <code>cutover/input/</code> and point <code>CLERK_CSV</code> at it.</li><li>Write down the new <code>EXPORTED_AT</code> (UTC).</li></ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>The new CSV is on the volume and the new <code>EXPORTED_AT</code> is recorded.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li class="w">The delta import refuses an <code>EXPORTED_AT</code> more than 24 hours old, or in the future.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.5 -->
+      <article class="step two" id="s25">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w5" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.5 &middot; untimed</div><h3>Delta import</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Import the users who joined or changed since the T-3 import.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Run the import with <code>--delta</code>:
+              <div class="cmd danger"><div class="cmd-h"><span>Still needs ALLOW_PROD</span><button class="copy" type="button">Copy</button></div>
+<pre><code>DRY_RUN=0 ALLOW_PROD=1 EXPORTED_AT=&lt;new instant&gt; \
+  npx tsx scripts/cutover/migrate-clerk-to-supabase.ts --delta
+echo $?    # must be 0</code></pre></div></li>
+              <li>Check the new rows in the report CSVs.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>Exit code 0, no <code>BLOCKER</code> line.</li><li>Any new conflict, skip or error row has a decision.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li>This has never been timed at PROD scale. Write the duration down.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.6 -->
+      <article class="step two" id="s26">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w6" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.6 &middot; untimed</div><h3>Backup</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>The last copy of the data before user ids change.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Dump both schemas into <code>cutover/</code>:
+              <div class="cmd"><div class="cmd-h"><span>cutover/ is git-ignored</span><button class="copy" type="button">Copy</button></div>
+<pre><code>pg_dump "$MIGRATION_DATABASE_URL" --data-only \
+  --schema=public --schema=migration -Fc \
+  -f "$PROD_DATA/prod-pre-remap-$(date +%s).dump"
+ls -l "$PROD_DATA"/prod-pre-remap-*.dump    # must be non-zero</code></pre></div></li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>The dump exists and is non-zero.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li><code>migration</code> is included now because it holds the map.</li>
+              <li class="w">PROD's PITR and backup retention are still unknown, so this dump is all you can count on. Restoring it is a <em>repair</em>, not a rollback: restore into a scratch schema and fix rows through the map. Never restore over the live database.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.7 -->
+      <article class="step two" id="s27">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w7" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.7 &middot; ~3 min</div><h3>Preflight again &mdash; this file is the V6 baseline</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>The last check before the re-key. It also records the counts that <code>verify.sql</code> compares against afterwards, so it cannot be skipped or run again later.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Terminate idle-in-transaction sessions holding <code>public.users</code>.</li>
+              <li>Run preflight:
+                <div class="cmd"><div class="cmd-h"><span>Different filename from the T-3 run</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" -A -F '|' \
+     -f scripts/cutover/preflight.sql &gt; "$OUT_DIR/preflight-t0.txt"
+grep -cE '^[0-9]+\|[GP][0-9]' "$OUT_DIR/preflight-t0.txt"                  # must be 11
+grep -E '^[0-9]+\|[GP][0-9]' "$OUT_DIR/preflight-t0.txt" | grep -c '|f$'   # must be 0</code></pre></div>
+              </li>
+              <li>Check the <code>default_plan_id</code> precondition by hand:
+                <div class="cmd"><div class="cmd-h"><span>plan_exists must be t</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" -c "select s.value,
+       exists(select 1 from public.plans p where p.id = s.value) as plan_exists
+  from private.settings s where s.key = 'default_plan_id'"</code></pre></div>
+              </li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>11 gate rows, 0 failures.</li><li><code>plan_exists</code> is <code>t</code>.</li><li><code>preflight-t0.txt</code> is saved.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>P5's label is the wrong way round:</strong> <code>P5 analytics_upsert_trigger present | 0 | 0 | t</code> is the <em>pass</em> case. Green means the trigger is gone.</li>
+              <li class="w"><strong>P6 doesn't check what the re-key needs.</strong> It only checks that the Starter plan exists. M10 wrote <code>default_plan_id</code> during step 1.9's push; confirm it still points at a real plan, or the re-key aborts at the point of no return.</li>
+              <li>Eight gate rows instead of 11 means G1&ndash;G3 never ran, and the file still looks like a pass.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.8 -->
+      <article class="step two" id="s28">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w8" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.8 &middot; ~1 min</div><h3>Decide <code>accepted_orphans</code> now</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Fix in advance how many old <code>user_%</code> rows you are knowingly keeping, so verify has a real number to check against.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Run the count and write down N:
+              <div class="cmd"><div class="cmd-h"><span>Pass a bare integer later; an empty value is a syntax error</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" -t -A -c \
+ "select count(*) from public.users u where u.id like 'user\_%'
+    and not exists (select 1 from migration.clerk_user_map m
+                     where m.clerk_user_id = u.id and m.status = 'migrated')"</code></pre></div></li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>N is written down before the re-key (0 on a clean import).</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li class="w">Never take the number from V1 afterwards. V1 and V5 would then always pass, whatever happened.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.9 -->
+      <article class="step two" id="s29">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w9" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.9 &middot; target &lt; 60s</div><h3>The re-key &mdash; this is the one-way step</h3>
+          <div class="step-meta"><span class="tag irr">Irreversible</span></div></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Rewrite every user id from its Clerk id to its Supabase uuid, in one transaction. Child rows follow through <code>ON UPDATE CASCADE</code>.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Run the re-key:
+                <div class="cmd danger"><div class="cmd-h"><span>Session pooler on 5432 or direct &mdash; never 6543</span><button class="copy" type="button">Copy</button></div>
+<pre><code>time psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 \
+     -f scripts/cutover/remap-user-ids.sql</code></pre></div>
+              </li>
+              <li>Confirm it ended with <code>COMMIT</code>.</li>
+              <li>Check that the cascade fired:
+                <div class="cmd"><div class="cmd-h"><span>The second query must be 0</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" \
+ -c "select count(*) filter (where id like 'user\_%') as clerk_left,
+            count(*) filter (where id ~ '^[0-9a-f]{8}-') as uuid_now
+       from public.users" \
+ -c "select count(*) from public.catalogues c
+      where not exists (select 1 from public.users u where u.id = c.user_id)"</code></pre></div>
+              </li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod">
+              <li>The output ends with <code>COMMIT</code>, and the duration is written down.</li>
+              <li><code>clerk_left</code> equals <code>accepted_orphans</code>.</li>
+              <li>Catalogues without an owner = 0.</li>
+            </ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Lock timeout</strong> (it sets 5s): terminate the blocking sessions and retry <strong>once</strong>.</li>
+              <li class="w"><strong>Any other error</strong>: the whole transaction rolls back and no user is affected. Stop and find the cause. Don't retry blindly.</li>
+              <li class="w">Ownerless catalogues &gt; 0 means the cascade did not fire. That is a real bug, found at the worst moment.</li>
+              <li>Seven preconditions can refuse it, and two are not checked by preflight at all: a target uuid already in <code>public.users</code>, and <code>migrated</code> map rows with no <code>auth.users</code> row.</li>
+              <li>It takes <code>ACCESS EXCLUSIVE</code> on <code>public.users</code> before anything else. It turns off three named triggers, saves the counters to <code>migration.pre_remap_counts</code>, and appends to <code>migration.cutover_log</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.10 -->
+      <article class="step two" id="s210">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w10" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.10 &middot; ~2 min</div><h3>Verify &mdash; V12 is the password go/no-go</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Prove the data and passwords survived the re-key. V12 compares fingerprints of the imported password digests against the T-0 CSV. It must pass before sign-ups reopen.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Run verify:
+                <div class="cmd"><div class="cmd-h"><span>Must run as postgres &mdash; V11 needs set local role</span><button class="copy" type="button">Copy</button></div>
+<pre><code>psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 \
+     -v accepted_orphans=&lt;N from 2.8&gt; -A -F '|' \
+     -f scripts/cutover/verify.sql &gt; "$OUT_DIR/verify-t0.txt"
+grep -c '|f$' "$OUT_DIR/verify-t0.txt"            # must be 0</code></pre></div>
+              </li>
+              <li>Read every row by eye.</li>
+              <li>Compare V6d by hand with the <code>subscriptions</code> number in <code>preflight-t0.txt</code>.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>No <code>f</code> rows (or each one explained, see notes).</li><li>V12 passes.</li><li><code>verify-t0.txt</code> is saved. It is the official record.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li><strong>V6d's pass is always empty</strong>: it is a manual comparison. Expect that one null when <code>accepted_orphans</code> is 0.</li>
+              <li><strong>V8 is a soft check</strong>: it shows <code>f</code> if anything touched a catalogue in the last 30 minutes. In a frozen window it should be 0, so if not, find out what wrote.</li>
+              <li><strong>V5 is null</strong> when <code>accepted_orphans</code> &gt; 0. <strong>V11 is null</strong> if no migrated user owns a catalogue. A count cannot tell them apart, so read the rows.</li>
+              <li><strong>V6a/V6b can show <code>f</code> with no data lost</strong>: a child row whose owner has no user row is only counted on one side. Look for those before suspecting loss.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.11 -->
+      <article class="step two" id="s211">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w11" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.11 &middot; ~1 min</div><h3>Flip the provider and redeploy</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Switch the app from Clerk to Supabase Auth.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Vercel Production: <code>AUTH_PROVIDER</code> = <code>supabase</code>.</li><li>Redeploy the tagged commit, with maintenance still on.</li><li>Wait for the deploy to be live.</li></ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>The new deploy is live, and <code>/auth</code> (through the bypass) shows the Supabase sign-in with the Turnstile widget.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li class="w">This is <strong>build-time</strong>: <code>next.config.ts</code> derives <code>NEXT_PUBLIC_AUTH_PROVIDER</code> from it, so changing the variable alone does nothing. It controls 13 places in the code, including the middleware and the auth callback routes.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.12 -->
+      <article class="step two" id="s212">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w12" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.12 &middot; ~20 min</div><h3>Smoke tests S1&ndash;S12, behind maintenance</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>The third go/no-go: prove sign-in, data and security work before anyone else can get in.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Run each check through the bypass cookie and tick it:
+              <div class="gate">
+                <label><input type="checkbox" data-k="s1"><span><strong>S1</strong> Password sign-in with an imported account lands on <code>/admin/dashboard</code>; the <code>sb-&hellip;-auth-token</code> cookie is set and Clerk cookies are gone.</span></label>
+                <label><input type="checkbox" data-k="s2"><span><strong>S2</strong> Dashboard plan, catalogue count and monthly usage match <code>preflight-t0.txt</code>.</span></label>
+                <label><input type="checkbox" data-k="s3"><span><strong>S3</strong> Continue with Google as an imported Google user gives the same uuid as the map, with no duplicate <code>auth.users</code> row.</span></label>
+                <label><input type="checkbox" data-k="s4"><span><strong>S4</strong> The consent gate appears once and sets <code>consents-&gt;&gt;'version'</code>.</span></label>
+                <label><input type="checkbox" data-k="s5"><span><strong>S5</strong> Edit and publish your own catalogue; another user's slug 404s.</span></label>
+                <label><input type="checkbox" data-k="s6"><span><strong>S6</strong> Public page and <code>/api/items/&lt;slug&gt;</code> signed out return 200, with no <code>Set-Cookie</code> and no owner id in the payload.</span></label>
+                <label><input type="checkbox" data-k="s7"><span><strong>S7</strong> Own draft previews 200 signed in, redirects to <code>/auth</code> signed out.</span></label>
+                <label><input type="checkbox" data-k="s8"><span><strong>S8</strong> An agent turn is charged once; continuing a real plan is free; a forged continuation is charged.</span></label>
+                <label><input type="checkbox" data-k="s9"><span><strong>S9</strong> A cookie-preferences change survives a reload in <code>users.cookie_preferences</code>.</span></label>
+                <label><input type="checkbox" data-k="s10"><span><strong>S10</strong> Forgot password &rarr; email &rarr; interstitial &rarr; new password &rarr; sign in. No <code>token_hash</code> in any PostHog URL.</span></label>
+                <label><input type="checkbox" data-k="s11"><span><strong>S11</strong> A Sentry test event from <code>/admin</code> carries no cookies, authorization header or tokens.</span></label>
+                <label><input type="checkbox" data-k="s12"><span><strong>S12</strong> Sign out clears the cookie and <code>/admin</code> redirects.</span></label>
+              </div></li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>All twelve ticked.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li>A no-go here is an R1 rollback with no user affected: the cheapest bad outcome you can get.</li><li>There is no test file for these. It is a manual list.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.13 -->
+      <article class="step two" id="s213">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w13" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.13 &middot; ~1 min</div><h3>Re-check <code>terms_version</code> before reopening</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Make sure new sign-ups record consent before the public is let in.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo"><li>Run:
+              <div class="cmd"><div class="cmd-h"><span>Must return one row</span><button class="copy" type="button">Copy</button></div>
+<pre><code>select value from private.settings where key = 'terms_version';</code></pre></div></li></ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>One row, with the date set in step 1.10.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li class="w">Without it, every Google sign-up has no recorded consent and email sign-up stops working, and neither shows an error.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.14 -->
+      <article class="step two" id="s214">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w14" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.14 &middot; ~2 min</div><h3>Reopen</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Let users back in, on Supabase Auth.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Open sign-ups and revalidate:
+                <div class="cmd"><div class="cmd-h"><span>It makes you type the PROD ref first</span><button class="copy" type="button">Copy</button></div>
+<pre><code>npx tsx scripts/cutover/signups.ts --on
+npx tsx scripts/cutover/signups.ts --status     # confirm: sign-ups are OPEN
+
+curl -fsS -X POST -H "x-revalidate-secret: $REVALIDATE_SECRET" \
+     -d '{"dashboard":true}' https://www.quicktalog.app/api/revalidate</code></pre></div>
+              </li>
+              <li>In this order: <code>maintenance_prod</code> = <code>false</code>, <code>banner_prod</code> = <code>""</code>, <code>clerk_frozen_prod</code> = <code>false</code>, <code>JOBS_PAUSED</code> = <code>false</code>. Wait 15 seconds after each Global Config write and confirm from two requests.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li><code>signups.ts --status</code> says open.</li><li>All four flags are back, confirmed from two requests.</li><li>Revalidation returned 2xx.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li class="w">Don't reopen by editing <code>auth-config.prod.json</code>. That runs the script with no ref prompt. If the edit is never reverted, the next <code>--apply</code> reopens sign-ups without telling you. Use it only as a fallback, then <code>git checkout --</code> the file.</li><li>Revalidate because the cached payloads no longer include <code>created_by</code>.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.15 -->
+      <article class="step two" id="s215">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w15" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.15 &middot; ~10 min</div><h3>S13 and S14 from a fresh browser</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Prove that a brand-new user can sign up and delete their account, and that the old PostgREST perimeter really is closed to them.</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Open a fresh browser with no bypass cookie.</li>
+              <li><strong>S13:</strong> sign up with a fresh inbox, confirm, reach the dashboard, and check that exactly one welcome email arrives.</li>
+              <li><strong>S14 (before deleting):</strong> with that user's JWT, send read-only requests to PROD's <code>/rest/v1</code>, including <code>/rpc/get_pageview_totals</code>. Each must return 401, 403 or <code>42501</code>.</li>
+              <li>Delete the account. Check that the auth row, the public row and the drafts are all gone.</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>Sign-up, confirm and one welcome email all work.</li><li>Every <code>/rest/v1</code> request is refused.</li><li>Deleting the account removes the auth row, the public row and the drafts.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl"><li>The automated perimeter test the plan mentions does not exist, so S14 is curl by hand.</li></ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.16 -->
+      <article class="step two" id="s216">
+        <div class="step-h">
+          <label><input type="checkbox" data-k="w16" data-p="2"></label>
+          <div class="step-t"><div class="step-n">STEP 2.16 &middot; 4 hours</div><h3>Watch it</h3></div>
+        </div>
+        <div class="step-b">
+          <div class="sec purpose"><div class="sec-l">Purpose</div><p>Catch problems while rollback is still cheap (window R1).</p></div>
+          <div class="sec todo"><div class="sec-l">To Do</div>
+            <ol class="todo">
+              <li>Re-run the canaries at <strong>T+15m</strong>, <strong>T+1h</strong> and <strong>T+4h</strong>. T+1h is when the first access tokens expire (JWTs last 3600s).</li>
+              <li>Run verify every five minutes for four hours:
+                <div class="cmd"><div class="cmd-h"><span>Only V2 and V3 matter on re-runs (no `watch` on macOS)</span><button class="copy" type="button">Copy</button></div>
+<pre><code>while sleep 300; do
+  date -u
+  psql "$MIGRATION_DATABASE_URL" -v accepted_orphans=&lt;N from 2.8&gt; -A -F '|' \
+       -f scripts/cutover/verify.sql | grep -E '^[0-9]+\|V[23] '
+  psql "$MIGRATION_DATABASE_URL" -A -F '|' \
+    -c "select count(*) from public.users where created_at &gt; '&lt;T-0&gt;'" \
+    -c "select count(*) from auth.users where last_sign_in_at &gt; '&lt;T-0&gt;'"
+done</code></pre></div>
+              </li>
+              <li>Watch Supabase &rarr; Logs &rarr; Auth for <code>Database error saving new user</code>, <code>flow_state_not_found</code>, clusters of <code>otp_expired</code>, and <code>over_request_rate_limit</code> on <code>/token</code> and <code>/verify</code>.</li>
+              <li>At T+1h, check the Paddle dashboard for failed deliveries. Keep <code>/api/paddle</code> p95 under 2s (Paddle needs a 200 within 5s).</li>
+            </ol>
+          </div>
+          <div class="sec dod"><div class="sec-l">Definition of Done</div>
+            <ul class="dod"><li>Four hours pass with no rollback trigger.</li><li>All canaries pass at T+15m, T+1h and T+4h.</li><li>No failed Paddle deliveries.</li></ul>
+          </div>
+          <div class="sec notes"><div class="sec-l">Notes</div>
+            <ul class="nl">
+              <li class="w"><strong>Roll back if any of these happen:</strong> V12 fails or a canary cannot sign in its own way. The sign-up trigger fails and can't be fixed within 30 minutes. More than 1% 5xx on <code>/admin/*</code> or <code>/auth/*</code> for 15 minutes with no fix in sight. Paddle events can't be resolved. Any user can see another user's data, at all.</li>
+              <li>The sign-up trigger failure doesn't show in SQL, only in the Auth logs.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== ROLLBACK ===================== -->
+  <section id="rollback">
+    <article class="step two">
+      <div class="step-h">
+        <div class="step-t"><div class="step-n">ROLLBACK &middot; R1 / R2 only</div><h3>If it goes wrong</h3></div>
+      </div>
+      <div class="step-b">
+        <div class="sec purpose"><div class="sec-l">Purpose</div><p>Put user ids back to Clerk ids and the app back on Clerk, without losing anyone who signed up during the window. Do the steps in order: <code>rollback-remap.sql</code> refuses to start until step 4 has run.</p></div>
+        <div class="sec todo"><div class="sec-l">To Do</div>
+          <ol class="todo">
+            <li>Maintenance on, sign-ups off, worker paused.</li>
+            <li>Save a <code>verify.sql</code> output, so you know the state you are leaving.</li>
+            <li><strong>Check <code>migration.auth_user_deletions</code>.</strong> Confirm every <code>clerk_user_id</code> in it is a genuine erasure request.</li>
+            <li><strong>Copy back anyone who signed up during the window:</strong>
+              <div class="cmd danger"><div class="cmd-h"><span>Creates real users in Clerk, and deletes some</span><button class="copy" type="button">Copy</button></div>
+<pre><code>DRY_RUN=1 ALLOW_PROD=1 npx tsx scripts/cutover/push-supabase-users-to-clerk.ts
+DRY_RUN=0 ALLOW_PROD=1 npx tsx scripts/cutover/push-supabase-users-to-clerk.ts</code></pre></div>
+              Then read <code>rollback-dropped.&lt;ts&gt;.csv</code> in <code>OUT_DIR</code>: the window sign-ups it did <em>not</em> copy (unconfirmed, banned, soft-deleted, no address). The report prints the query for their real addresses.
+            </li>
+            <li><code>psql "$MIGRATION_DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/cutover/rollback-remap.sql</code></li>
+            <li>Make Clerk sign-up public again and turn the webhook back on.</li>
+            <li><code>AUTH_PROVIDER</code> = <code>clerk</code>, then redeploy <strong><code>post-migrate-&lt;date&gt;</code></strong>.</li>
+            <li>Revalidate: <code>curl -fsS -X POST -H "x-revalidate-secret: $REVALIDATE_SECRET" -d '{"dashboard":true}' https://www.quicktalog.app/api/revalidate</code></li>
+            <li>Maintenance off, worker resumed. Email affected users, including those in the dropped CSV.</li>
+          </ol>
+        </div>
+        <div class="sec dod"><div class="sec-l">Definition of Done</div>
+          <ul class="dod">
+            <li><code>rollback-remap.sql</code> committed, and <code>public.users</code> ids are Clerk ids again.</li>
+            <li>The site runs on Clerk from <code>post-migrate-&lt;date&gt;</code>, and a canary can sign in.</li>
+            <li>Affected users, including the dropped ones, have been emailed.</li>
+          </ul>
+        </div>
+        <div class="sec notes"><div class="sec-l">Notes</div>
+          <ul class="nl">
+            <li class="w">The push script calls Clerk's <code>deleteUser</code> for every row in <code>auth_user_deletions</code> and <strong>counts a 404 as success</strong>. One wrong row permanently deletes a Clerk account nobody asked to delete.</li>
+            <li class="w">Never redeploy <code>pre-migrate-&lt;date&gt;</code>. It predates the renames, so every query fails with <code>42703</code>.</li>
+            <li class="w"><code>push-supabase-users-to-clerk.ts</code> <strong>has never been run end to end</strong>, not even as a dry run. Whether Clerk's <code>createUser</code> marks emails verified in Restricted mode is unconfirmed. Test it on TEST in step 1.11.</li>
+            <li><code>rollback-remap.sql</code> needs the same three named triggers and the post-migration-21 schema as the re-key. A missing trigger aborts it halfway through the incident. It drops <code>users_id_is_uuid</code> and re-keys back through the map.</li>
+            <li>Users in the dropped CSV end up with no account on either side.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===================== AFTER ===================== -->
+  <section id="after">
+    <article class="step">
+      <div class="step-h">
+        <div class="step-t"><div class="step-n">AFTER &middot; T+0 to T+30</div><h3>Finish and clean up</h3></div>
+      </div>
+      <div class="step-b">
+        <div class="sec purpose"><div class="sec-l">Purpose</div><p>Tell the affected users, keep watching for a week, then remove Clerk for good.</p></div>
+        <div class="sec todo"><div class="sec-l">To Do</div>
+          <div class="scroll"><table>
+            <tr><th>When</th><th>Do</th></tr>
+            <tr><td><strong>T+0</strong></td><td>Send <code>needs-reset.csv</code> <em>minus the Google-only rows</em> the password-reset email, and <code>mfa-users.csv</code> the second-factor email. Clear <code>banner_prod</code></td></tr>
+            <tr><td><strong>T+0 &rarr; T+7</strong></td><td>Sentry alerts on <code>auth.signin_failed</code>, <code>auth.signup_failed</code>, <code>db.42501</code>, <code>db.23514</code>, <code>db.23503</code>, <code>paddle.unresolved</code></td></tr>
+            <tr><td><strong>T+1h</strong></td><td>Paddle dashboard shows no failed deliveries for the window</td></tr>
+            <tr><td><strong>T+14</strong></td><td>Remove the Clerk code, packages, the provider switch and the e2e leg</td></tr>
+            <tr><td><strong>T+30</strong></td><td>Orphan triage, then move <code>supabase/phase5/*.sql</code> into <code>supabase/migrations/</code> one at a time, each with a fresh timestamp so it sorts after migration 22, and push with <code>--db-url</code>. <strong>Export <code>migration.cutover_log</code> before M13 drops it</strong></td></tr>
+            <tr><td><strong>T+30</strong></td><td>Delete the Clerk instance, remove its DNS and Google callback URI, shred <code>cutover/</code>, revoke the cutover secret key</td></tr>
+            <tr><td><strong>Any time</strong></td><td>Write M11, the migration file for the <code>users_id_is_uuid</code> constraint added inside the re-key</td></tr>
+          </table></div>
+        </div>
+        <div class="sec dod"><div class="sec-l">Definition of Done</div>
+          <ul class="dod">
+            <li>Both emails sent, and the banner cleared.</li>
+            <li>The Phase 5 migrations are applied and <code>cutover_log</code> is exported.</li>
+            <li>The Clerk instance, its DNS, its callback URI and <code>cutover/</code> are gone.</li>
+            <li>M11 exists, so the schema and migration history match.</li>
+          </ul>
+        </div>
+        <div class="sec notes"><div class="sec-l">Notes</div>
+          <ul class="nl">
+            <li class="w"><strong>Deleting the Clerk instance is the real point of no return.</strong></li>
+            <li>M12 raises <code>P0001</code> if the constraint is missing or any non-uuid id is left.</li>
+            <li>The Phase 5 files are dated 2026-09-22, before migrations 17&ndash;22. Without a fresh timestamp, <code>db push</code> refuses them unless given <code>--include-all</code>.</li>
+            <li>V10 shows <code>f</code> once M12 validates the constraint, and V12 shows <code>f</code> as soon as anyone changes a password. <code>verify-t0.txt</code> is the official record. Later runs can't be compared with it.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===================== REFERENCE ===================== -->
+  <section id="ref-ladder">
+    <h2>Reference</h2>
+    <p class="sub">Four tables to keep open in another tab during steps 1.5, 1.9 and the window.</p>
+
+    <details class="more" style="margin-top:16px">
+      <summary>The migration ladder &mdash; 22 files, PROD has 3</summary>
+      <div>
+        <div class="scroll"><table>
+          <tr><th>#</th><th>File</th><th>M</th><th>What it does</th></tr>
+          <tr><td class="num ok">1</td><td><code>remote_schema</code></td><td>&mdash;</td><td><strong>Applied.</strong> Baseline, <code>pg_net</code>, and the three webhook triggers with the hard-coded PROD functions URL</td></tr>
+          <tr><td class="num ok">2</td><td><code>add_user_themes</code></td><td>&mdash;</td><td><strong>Applied.</strong> <code>user_themes</code></td></tr>
+          <tr><td class="num ok">3</td><td><code>lockdown_privileges_and_schema_fixes</code></td><td>&mdash;</td><td><strong>Applied.</strong> Revokes, drops <code>analytics_upsert_trigger</code>, schedules the Sync Plans cron at PROD's URL</td></tr>
+          <tr><td class="num">4</td><td><code>fix_newsletter_catalogue_fk_cascade</code></td><td>&mdash;</td><td>FK cascade fix</td></tr>
+          <tr><td class="num">5</td><td><code>perimeter_close</code></td><td><strong>M00</strong></td><td>RLS on 12 tables, revokes <code>anon</code>/<code>authenticated</code>. <span class="no">Breaks any PostgREST caller.</span> Wants the Drizzle-only app live 24h first</td></tr>
+          <tr><td class="num">6</td><td><code>drizzle_pull_compatible_defaults</code></td><td>&mdash;</td><td>Defaults so <code>drizzle-kit pull</code> round-trips</td></tr>
+          <tr><td class="num">7</td><td><code>app_roles_private_schema</code></td><td><strong>M01</strong></td><td>Creates <code>private.settings</code>, <code>app_user</code>, <code>app_public</code>. <span class="no">Needs PG 16+</span></td></tr>
+          <tr><td class="num">8</td><td><code>edge_functions_per_project</code></td><td><strong>M02</strong></td><td>Seeds <code>edge_functions_base_url</code> from the Vault's JWT <code>service_role_key</code>. Check it right after the push; insert by hand if missing</td></tr>
+          <tr><td class="num">9</td><td><code>integrity_constraints_ai_ledger</code></td><td><strong>M03</strong></td><td>Validates <code>catalogues_status_check</code>; moves deleted rows into <code>private.backup_*</code> first</td></tr>
+          <tr><td class="num">10</td><td><code>app_role_grants_policies</code></td><td><strong>M04</strong></td><td>Grants, RLS policies, and the two <code>touch_updated_at</code> triggers the re-key disables</td></tr>
+          <tr><td class="num">11</td><td><code>private_entry_points</code></td><td><strong>M05</strong></td><td>The <code>private.*</code> entry points <code>src/</code> calls</td></tr>
+          <tr><td class="num">12</td><td><code>ai_turn_plan_binding</code></td><td><strong>M06</strong></td><td>AI turn / plan binding</td></tr>
+          <tr><td class="num">13</td><td><code>validate_after_audit</code></td><td><strong>M07</strong></td><td>Validates the slug shape and four size caps. <span class="no">A legacy bad slug or oversized row fails the whole file with 23514</span></td></tr>
+          <tr><td class="num">14</td><td><code>app_rls_login_role</code></td><td><strong>M08</strong></td><td>The <code>app_rls</code> login role. Password is manual; Supavisor auth unverified</td></tr>
+          <tr><td class="num">15</td><td><code>auth_users_sync</code></td><td><strong>M10</strong></td><td><code>auth.users</code> sync triggers, the <code>migration</code> schema and <code>clerk_user_map</code>. Seeds <code>default_plan_id</code>; leaves <code>terms_version</code> to you (step 1.10)</td></tr>
+          <tr><td class="num">16</td><td><code>edge_webhook_secret</code></td><td><strong>M09</strong></td><td>Webhooks and the Sync Plans cron send <code>x-webhook-secret</code> once the Vault secret exists, else the old bearer token. The functions must accept both first (step 1.8)</td></tr>
+          <tr><td class="num">17</td><td><code>ai_credits_ledger</code></td><td>&mdash;</td><td>Prices prompt rows. <span class="no">Drops <code>public.ocr</code> with no backup</span></td></tr>
+          <tr><td class="num">18</td><td><code>merge_category_container_into_items</code></td><td>&mdash;</td><td>Merges the category and container blocks into <code>items</code></td></tr>
+          <tr><td class="num">19</td><td><code>ai_credit_limit_binding</code></td><td>&mdash;</td><td>Makes the credit cap bind during a plan, not only before it</td></tr>
+          <tr><td class="num">20</td><td><code>business_type_backfill</code></td><td>&mdash;</td><td>Retires two business types</td></tr>
+          <tr><td class="num">21</td><td><code>schema_consistency</code></td><td>&mdash;</td><td><strong>The renames every cutover script needs.</strong> <code>prompts</code>&rarr;<code>ai_credits</code>, <code>newsletter</code>&rarr;<code>catalogue_subscribers</code>, <code>product_newsletter</code>&rarr;<code>newsletter_subscribers</code>, <code>created_by</code>&rarr;<code>user_id</code>, <code>pageview_count</code>&rarr;<code>pageviews</code>. Revokes <code>active_subscriptions</code> from <code>anon</code></td></tr>
+          <tr><td class="num">22</td><td><code>user_acquisition_source</code></td><td>&mdash;</td><td><code>users.acquisition_source</code></td></tr>
+          <tr><td class="num">&mdash;</td><td><code>phase5/validate_users_id_uuid</code></td><td><strong>M12</strong></td><td>T+30. Outside the push path on purpose; give it a fresh timestamp before pushing. Raises <code>P0001</code> before the re-key</td></tr>
+          <tr><td class="num">&mdash;</td><td><code>phase5/post_cutover_cleanup</code></td><td><strong>M13</strong></td><td>T+30. Drops the backup tables &mdash; export <code>migration.cutover_log</code> first</td></tr>
+          <tr><td class="num no">&mdash;</td><td><em>no file exists</em></td><td><strong>M11</strong></td><td>The <code>users_id_is_uuid</code> NOT VALID check, added inside the re-key and never recorded as a migration</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <details class="more" style="margin-top:12px" id="ref-gates">
+      <summary>Gate reference &mdash; 11 preflight gates, 15 verify rows</summary>
+      <div>
+        <p><strong>Preflight.</strong> Count the gate rows: there must be <strong>11</strong>. Eight means <code>migration.clerk_user_map</code> was absent and G1&ndash;G3 were never evaluated &mdash; and the file still reads as a pass.</p>
+        <div class="scroll"><table>
+          <tr><th>Gate</th><th>Asserts</th><th>Note</th></tr>
+          <tr><td><strong>G1</strong></td><td><code>auth.users</code> rows outside the map = 0</td><td>Never restore PROD's <code>auth</code> schema anywhere</td></tr>
+          <tr><td><strong>G2</strong></td><td>Paying users with no migrated map row = 0</td><td>Hardest gate. Narrower than the re-key's own rule &mdash; green G2 can still be followed by that abort</td></tr>
+          <tr><td><strong>G3</strong></td><td>Map rows still <code>claimed</code> = 0</td><td></td></tr>
+          <tr><td><strong>P1</strong></td><td>Server version &ge; 16</td><td>Can only run after the push, so step 1.5c checks the version first. M01 needs it</td></tr>
+          <tr><td><strong>P2</strong></td><td><code>anon</code>/<code>authenticated</code> table grants = 0</td><td>Expected to fail until M00 lands</td></tr>
+          <tr><td><strong>P3</strong></td><td>Functions executable by <code>anon</code> = 0</td><td></td></tr>
+          <tr><td><strong>P4</strong></td><td>Public tables without RLS = 0</td><td>Expected to fail until M00 lands</td></tr>
+          <tr><td><strong>P5</strong></td><td><code>analytics_upsert_trigger</code> count = 0</td><td><span class="no">Label is inverted</span> &mdash; green means ABSENT. Migration 3 dropped it; the re-key aborts if it returns</td></tr>
+          <tr><td><strong>P6</strong></td><td>The hard-coded Starter plan id exists</td><td>M10 seeds <code>default_plan_id</code> from this plan, but <span class="no">P6 does not test</span> the setting the re-key reads. Check it in steps 1.9 and 2.7</td></tr>
+          <tr><td><strong>P7</strong></td><td>Duplicate <code>lower(email)</code> = 0</td><td>Breaks the import</td></tr>
+          <tr><td><strong>P8</strong></td><td>Other sessions locking <code>public.users</code> = 0</td><td>Prints the blocking pids; terminate them yourself</td></tr>
+        </table></div>
+        <p style="margin-top:12px"><strong>Verify.</strong> Fourteen numbered rows plus V11 separately. It aborts outright if <code>clerk_user_map</code>, <code>pre_remap_counts</code> or <code>t0_password_digests</code> is missing &mdash; the last is written by the import, so a dry-run-only rehearsal can never reach V12.</p>
+        <div class="scroll"><table>
+          <tr><th>Check</th><th>Asserts</th><th>Note</th></tr>
+          <tr><td><strong>V1</strong></td><td>Legacy <code>user_%</code> rows = <code>accepted_orphans</code></td><td>Decide the number in advance</td></tr>
+          <tr><td><strong>V2 V3</strong></td><td>No uuid user without an auth row, and no confirmed auth user without a public row</td><td>The two that matter on the 4-hour re-runs</td></tr>
+          <tr><td><strong>V4</strong></td><td>Mapped users' emails match <code>auth</code></td><td></td></tr>
+          <tr><td><strong>V5</strong></td><td>No child rows still owned by <code>user_%</code> ids</td><td>Goes null when <code>accepted_orphans</code> &gt; 0</td></tr>
+          <tr><td><strong>V6a&ndash;c</strong></td><td>Catalogues, pageviews and paying users match the pre-re-key snapshot</td><td>Can read <code>f</code> without data loss &mdash; ownerless children are counted on one side only</td></tr>
+          <tr><td><strong>V6d</strong></td><td>Subscriptions unchanged</td><td><span class="no">Pass is always empty.</span> Hand-compare with <code>preflight-t0.txt</code></td></tr>
+          <tr><td><strong>V7</strong></td><td>No mapped user still has a clerk.com image</td><td></td></tr>
+          <tr><td><strong>V8</strong></td><td>Catalogues touched in the last 30 min = 0</td><td>Soft. Reads <code>f</code> whenever anything wrote</td></tr>
+          <tr><td><strong>V9</strong></td><td>The three disabled triggers are enabled again</td><td>Demands exactly 3, names case- and space-exact, <code>tgenabled = 'O'</code>. Never <code>ENABLE ALWAYS</code></td></tr>
+          <tr><td><strong>V10</strong></td><td><code>users_id_is_uuid</code> present and NOT VALID</td><td>Flips to <code>f</code> after M12 at T+30</td></tr>
+          <tr><td><strong>V11</strong></td><td>A migrated user can see their catalogues under RLS</td><td>Separate rolled-back transaction. Null if no eligible user</td></tr>
+          <tr><td><strong>V12</strong></td><td>Imported digests equal the T-0 CSV digests</td><td><strong>The password go/no-go.</strong> Flips to <code>f</code> after the first password change</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <details class="more" style="margin-top:12px" id="ref-env">
+      <summary>Switches, variables and where they actually live</summary>
+      <div>
+        <div class="scroll"><table>
+          <tr><th>Switch</th><th>Where</th><th>How it behaves</th></tr>
+          <tr><td><code>AUTH_PROVIDER</code></td><td>Vercel env &rarr; <code>next.config.ts</code> &rarr; <code>NEXT_PUBLIC_AUTH_PROVIDER</code></td><td><strong>Build-time.</strong> Needs a redeploy. Gates 13 call sites</td></tr>
+          <tr><td><code>maintenance_prod</code></td><td>Vercel Global Config (<code>@vercel/global-config</code>, not edge-config)</td><td>Runtime. Up to 10s propagation. Falls back to <code>MAINTENANCE_MODE=1</code> if no store is connected</td></tr>
+          <tr><td><code>clerk_frozen_prod</code></td><td>Same store</td><td>Runtime. Only rendered by the Clerk account component, which stops shipping once the provider flips</td></tr>
+          <tr><td><code>banner_prod</code></td><td>Same store</td><td>Runtime, via <code>banner()</code> in <code>src/lib/ops/flags.ts</code>. The site-wide notice for T-30m. Env fallback <code>BANNER_MESSAGE</code></td></tr>
+          <tr><td>Bypass cookie</td><td><code>qt-maint-bypass</code></td><td>Value must equal <code>MAINTENANCE_BYPASS_TOKEN</code> exactly, and that must be 32+ characters or nobody gets through</td></tr>
+          <tr><td><code>JOBS_PAUSED</code></td><td>Cloudflare, in <code>../quicktalog-backend</code></td><td>Literal string <code>true</code> after trim and lowercase</td></tr>
+          <tr><td><code>CUTOVER_PROJECT</code></td><td>Shell</td><td>Defaults to <code>test</code>. Forget it and you configure the wrong project with no warning</td></tr>
+          <tr><td><code>DRY_RUN</code></td><td>Shell</td><td>Only <code>0</code> writes. Anything else, including unset, is a dry run &mdash; which still overwrites the report CSVs</td></tr>
+          <tr><td><code>ALLOW_PROD</code></td><td>Shell</td><td>Required for every PROD run, dry runs included. <code>config.ts</code> never supplies it</td></tr>
+          <tr><td><code>MIGRATION_DATABASE_URL</code></td><td>Shell / <code>.env.cutover</code></td><td><code>postgres</code> login, session pooler <strong>5432</strong> or direct. Never 6543. Also the <code>--db-url</code> for <code>supabase db push</code></td></tr>
+          <tr><td><code>DB_CONNECTION_STRING</code></td><td>Vercel</td><td>Transaction pooler <strong>6543</strong>. Becomes <code>app_rls.&lt;ref&gt;</code> after M08</td></tr>
+        </table></div>
+        <p style="margin-top:12px"><strong>Connection string rule.</strong> The username is <code>&lt;role&gt;.&lt;project-ref&gt;</code> with exactly one dot. Supavisor splits at the last dot, so <code>app_rls.postgres.&lt;ref&gt;</code> looks up a role called <code>app_rls.postgres</code> and fails with <code>(EAUTHQUERY) user not found in the database</code> &mdash; which reads like a database fault and is a typo. Copy the host from the dashboard; the <code>aws-N</code> prefix differs per project.</p>
+      </div>
+    </details>
+
+    <details class="more" style="margin-top:12px" id="ref-open">
+      <summary>Prove these before T-0 &mdash; still unverified</summary>
+      <div>
+        <ul>
+          <li><strong>Supavisor authenticates <code>app_rls</code>.</strong> No SQL can prove it; it needs one real connection attempt as <code>app_rls.&lt;test-ref&gt;</code>. Blocks the PROD switch. (R6)</li>
+          <li><strong>PROD's PostgreSQL major version.</strong> M01 needs 16+. Step 1.5c checks it; preflight P1 can only run after the push.</li>
+          <li><strong>Clerk's <code>createUser</code> marks emails verified in Restricted mode.</strong> The rollback push depends on it and nobody has checked.</li>
+          <li><strong>What the four edge functions do</strong> &mdash; anon key, stored <code>users.id</code>, columns read. Step 1.8. (R2, R19)</li>
+          <li><strong>Who consumes <code>public.contacts</code> and <code>active_subscriptions</code>.</strong> Migration 21 revokes the view from <code>anon</code>, so a consumer breaks there, not at M00.</li>
+          <li><strong>Whether legacy rows violate the new CHECKs</strong> &mdash; oversized payloads and non-slug catalogue names. Step 1.5c. (R16)</li>
+          <li><strong>That no unexpected trigger exists on the re-keyed tables.</strong> TEST showed 7 user triggers in <code>public</code>; PROD has never been listed.</li>
+          <li><strong>Durations at 2171 users</strong> for the migration push (step 1.9's whole window, and files 17, 18 and 21 individually), the delta import, the backup, the re-key and the redeploy. Step 1.5 is the only way to get any of them, and until it has run every duration on this page except the re-key target is a guess.</li>
+          <li><strong>PROD's PITR and backup retention.</strong> Unanswered, so the real recovery window behind your <code>pg_dump</code> is unknown.</li>
+          <li><strong>Clerk PROD user counts by type</strong> &mdash; with-password, Google-verified, MFA, banned, unverified. The MFA count decides what you tell those users.</li>
+          <li><strong>The legacy JWT key deletion date.</strong> Still TBC; re-check the dashboard banner monthly.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <p><strong>Sources.</strong> Built from <code>PROD_RUNBOOK.md</code>, <code>PLAN.md</code>, <code>TO_DO.md</code>, <code>TEST_REHEARSAL.md</code>, <code>scripts/cutover/*</code>, <code>supabase/migrations/*</code> and the recorded TEST preflight and verify output, as of 2026-10-21. Where this page disagrees with <code>PROD_RUNBOOK.md</code> (step 1.1's revoke list, step 1.9's reversibility), this page wins.</p>
+    <p>Ticks are saved in this browser only. They are not a record.</p>
+  </footer>
+
+</main>
+</div>
+
+<script>
+(function () {
+  var KEY = "qt-cutover-v2";
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("input[type=checkbox][data-k]"));
+
+  // Namespace by phase so a step key and a smoke-test key can never collide
+  // (step 1.1 and smoke S11 both read "s11" otherwise).
+  function keyOf(box) {
+    var p = box.getAttribute("data-p");
+    return (p ? "p" + p + ":" : "x:") + box.getAttribute("data-k");
+  }
+
+  function read() {
+    try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function write(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* private window, blocked storage */ }
+  }
+
+  function paint() {
+    var phases = { 1: [0, 0], 2: [0, 0] };
+    boxes.forEach(function (b) {
+      var p = b.getAttribute("data-p");
+      if (!p) return;
+      phases[p][1]++;
+      if (b.checked) phases[p][0]++;
+    });
+    [1, 2].forEach(function (p) {
+      var done = phases[p][0], total = phases[p][1];
+      var txt = document.getElementById("p" + p + "txt");
+      var bar = document.getElementById("p" + p + "bar");
+      if (txt) txt.textContent = done + "/" + total;
+      if (bar) bar.style.width = total ? (done / total * 100) + "%" : "0%";
+    });
+  }
+
+  var state = read();
+  boxes.forEach(function (b) {
+    var k = keyOf(b);
+    if (state[k]) b.checked = true;
+    b.addEventListener("change", function () {
+      var s = read();
+      if (b.checked) { s[k] = 1; } else { delete s[k]; }
+      write(s);
+      paint();
+    });
+  });
+  paint();
+
+  var reset = document.getElementById("reset");
+  if (reset) {
+    reset.addEventListener("click", function () {
+      boxes.forEach(function (b) { b.checked = false; });
+      write({});
+      paint();
+      reset.textContent = "Cleared";
+      setTimeout(function () { reset.textContent = "Reset ticks"; }, 1400);
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest ? e.target.closest(".copy") : null;
+    if (!btn) return;
+    var box = btn.closest(".cmd");
+    var code = box && box.querySelector("code");
+    if (!code) return;
+    var text = code.textContent;
+    var ok = function () {
+      var was = btn.textContent;
+      btn.textContent = "Copied";
+      setTimeout(function () { btn.textContent = was; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok, function () { select(code, btn); });
+    } else {
+      select(code, btn);
+    }
+  });
+
+  function select(code, btn) {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(code);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(r);
+      btn.textContent = "Selected — press copy";
+      setTimeout(function () { btn.textContent = "Copy"; }, 2200);
+    } catch (e) { /* nothing more we can do */ }
+  }
+
+  var toc = document.querySelector(".toc");
+  var spots = [];
+  var phase = "";
+  Array.prototype.slice.call(document.querySelectorAll(".toc ol > li")).forEach(function (li) {
+    if (li.classList.contains("t-head")) {
+      phase = li.classList.contains("one") ? "one" : li.classList.contains("two") ? "two" : "";
+      return;
+    }
+    var a = li.querySelector('a[href^="#"]');
+    var el = a && document.getElementById(a.getAttribute("href").slice(1));
+    if (!el) return;
+    if (phase) a.setAttribute("data-phase", phase);
+    spots.push({ a: a, el: el });
+  });
+
+  var here = null, pinned = null, queued = false;
+
+  function mark(spot) {
+    if (spot === here) return;
+    if (here) here.a.removeAttribute("aria-current");
+    here = spot;
+    if (!spot) return;
+    spot.a.setAttribute("aria-current", "location");
+    // scrollIntoView would also scroll the page; move only the rail.
+    if (toc && toc.scrollHeight > toc.clientHeight) {
+      var r = spot.a.getBoundingClientRect(), b = toc.getBoundingClientRect();
+      if (r.top < b.top || r.bottom > b.bottom) toc.scrollTop += r.top - b.top - (b.height - r.height) / 2;
+    }
+  }
+
+  function spy() {
+    queued = false;
+    if (!spots.length) return;
+    if (pinned) {
+      var p = pinned.el.getBoundingClientRect();
+      if (p.bottom > 0 && p.top < window.innerHeight) return;
+      pinned = null;
+    }
+    var line = Math.min(window.innerHeight * 0.35, 220);
+    var spot = spots[0];
+    for (var i = 0; i < spots.length && spots[i].el.getBoundingClientRect().top <= line; i++) spot = spots[i];
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) spot = spots[spots.length - 1];
+    mark(spot);
+  }
+
+  function queue() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(spy);
+  }
+
+  if (toc) {
+    toc.addEventListener("click", function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      for (var i = 0; i < spots.length; i++) {
+        if (spots[i].a === a) { pinned = spots[i]; mark(pinned); return; }
+      }
+    });
+  }
+  // Keep a clicked entry marked: a jump near the page end can't reach the line.
+  ["wheel", "touchstart", "keydown"].forEach(function (type) {
+    window.addEventListener(type, function () { if (pinned) { pinned = null; queue(); } }, { passive: true });
+  });
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
+  document.addEventListener("toggle", queue, true);
+  queue();
+})();
+</script>

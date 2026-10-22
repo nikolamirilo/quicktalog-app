@@ -1,0 +1,29 @@
+name: Trigger release notes routine
+
+# Fires only when a PR is first opened from test into main - a synchronize
+# would re-fire on every push, including the routine's own commit back to
+# test, which would trigger itself in a loop.
+on:
+  pull_request:
+    types: [opened]
+    branches: [main]
+
+jobs:
+  fire-routine:
+    if: github.event.pull_request.head.ref == 'test'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fire the Quicktalog release notes routine
+        env:
+          ROUTINE_FIRE_URL: ${{ secrets.ROUTINE_FIRE_URL }}
+          ROUTINE_FIRE_TOKEN: ${{ secrets.ROUTINE_FIRE_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          curl -X POST "$ROUTINE_FIRE_URL" \
+            --fail-with-body \
+            -H "Authorization: Bearer $ROUTINE_FIRE_TOKEN" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+            -H "Content-Type: application/json" \
+            -d "{\"text\": \"PR #$PR_NUMBER opened from test into main: $PR_URL\"}"

@@ -1,4 +1,4 @@
-project_id = "pro_01k11h4bv62fv5vx936tm5wge0"
+project_id = "quicktalog"
 
 [api]
 enabled = true
@@ -12,15 +12,20 @@ max_rows = 1000
 
 [db]
 port = 54322
-# Use PostgreSQL 15 to match common Supabase deployments
-major_version = 15
+# Must match the hosted projects: the app roles use GRANT ... WITH INHERIT FALSE,
+# SET TRUE, which needs PostgreSQL 16 or newer.
+major_version = 17
+
+[db.seed]
+sql_paths = ["./seed.sql"]
 
 [auth]
 enabled = true
-# Base URL for your production website
-site_url = "https://www.quicktalog.app"
-# Allow redirects to both production and test environments
-additional_redirect_urls = ["https://www.quicktalog.app", "https://test.quicktalog.app"]
+# This file configures the LOCAL stack only; TEST and PROD are configured
+# through scripts/supabase/auth-config.ts.
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/**", "http://127.0.0.1:3000/**"]
+minimum_password_length = 8
 # Token expiry (1 hour default is fine for most use cases)
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
@@ -35,3 +40,7 @@ enable_signup = true
 enable_confirmations = true
 # Prevent frequent email sends to avoid abuse
 max_frequency = "1s"
+# An email change must be confirmed from both the old and the new address, and
+# a password change requires the current password.
+double_confirm_changes = true
+secure_password_change = true

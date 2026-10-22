@@ -4,6 +4,7 @@
 /node_modules
 /shared/node_modules
 /shared/dist
+/supabase/.temp
 /.pnp
 .pnp.*
 .yarn/*
@@ -12,10 +13,18 @@
 !.yarn/releases
 !.yarn/versions
 .eslintcache
-.claude
+**/superpowers/
+/cutover
 
 # testing
 /coverage
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.clerk/
+/playwright/.cache/
 
 # next.js
 /.next/
@@ -36,6 +45,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -46,10 +56,11 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
-.env*.local
-
-.env.local
 /prisma/generated
 
-# Sentry Config File
-.env.sentry-build-plugin
+# Kilo Code agent worktrees (contain their own biome.json)
+.kilo/
+.kilocode/
+
+# claude code session logs (SessionEnd hook)
+/.claude/logs/

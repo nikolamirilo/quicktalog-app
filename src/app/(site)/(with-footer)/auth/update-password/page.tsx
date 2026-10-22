@@ -1,0 +1,27 @@
+import { notFound, redirect } from "next/navigation";
+import { AuthLayout } from "@/components/auth/common/AuthLayout";
+import { UpdatePasswordForm } from "@/components/auth/UpdatePasswordForm";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { AUTH_PROVIDER } from "@/lib/auth/provider";
+
+/**
+ * Reached from a recovery link, after the confirm interstitial has turned the
+ * token into a session. Without that session there is nothing to update, so the
+ * page sends the visitor back to ask for a fresh link.
+ */
+
+// Reads the session cookie.
+export const dynamic = "force-dynamic";
+
+export default async function UpdatePasswordPage() {
+	if (AUTH_PROVIDER !== "supabase") notFound();
+
+	// The page never trusts a user id from the URL: identity comes from the session.
+	if (!(await getVerifiedIdentity())) redirect("/auth?error=recovery");
+
+	return (
+		<AuthLayout>
+			<UpdatePasswordForm />
+		</AuthLayout>
+	);
+}
