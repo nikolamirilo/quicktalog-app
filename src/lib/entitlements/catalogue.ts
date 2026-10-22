@@ -9,18 +9,22 @@ import type { Tx } from "@/utils/db";
 import type { Tier } from "./plan";
 
 /**
- * Forces the plan's limits onto catalogue data before it is stored: branded
- * header/footer only on plans that include branding, newsletter only on plans
- * that include it. Applied on create, update and publish, so a client that
- * sends a branded payload on a free plan cannot buy features for free.
+ * Forces the plan's limits onto catalogue data before it is stored: a custom
+ * header/footer only on plans that include branding (where the owner may still
+ * choose the default one), newsletter only on plans that include it. Applied on
+ * create, update and publish, so a client that sends a branded payload on a
+ * free plan cannot buy features for free.
  */
 export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 	data: T,
 	tier: Tier,
 ): T {
-	const type = tier.features.branding ? "custom" : "default";
+	const allowedType = (type: string | undefined) =>
+		tier.features.branding && type === "custom" ? "custom" : "default";
 	const out = { ...data };
-	if (out.header) out.header = { ...out.header, type };
+	if (out.header) {
+		out.header = { ...out.header, type: allowedType(out.header.type) };
+	}
 	// The client sends the whole `metadata` object back on every save, so both
 	// the plan and the shape are enforced here rather than trusted from the
 	// builder. A malformed id would be dropped at render anyway, but persisting
@@ -34,7 +38,7 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 	if (out.footer) {
 		out.footer = {
 			...out.footer,
-			type,
+			type: allowedType(out.footer.type),
 			newsletter: tier.features.newsletter ? out.footer.newsletter : false,
 		};
 	}
