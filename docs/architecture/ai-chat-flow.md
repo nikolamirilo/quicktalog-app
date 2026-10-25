@@ -62,7 +62,7 @@ flowchart TD
     subgraph SERVER["SERVER ACTION - chatEditCatalogue, actions/ai.ts"]
         B1{"message non-empty<br/>and catalogue present?"}
         B2["authorize(catalogueName)"]
-        B3{"Clerk currentUser"}
+        B3{"Signed in?<br/>getVerifiedIdentity"}
         B4{"Catalogue row exists?"}
         B5{"userId === user.id?"}
         B5a{"fetchUserData ok?"}
@@ -84,13 +84,13 @@ flowchart TD
         D1{"catalogueEditResponseSchema<br/>zod safeParse"}
         D2["toClientOperations<br/>section/item index to stable id"]
         D3["resolveOperationImages<br/>imageQuery to Unsplash URL"]
-        D4["private.settle_ai_turn<br/>adds tasks and page reads<br/>to the charge taken up front"]
+        D4["private.spend_ai_hold / release_ai_hold<br/>moves what was spent from the hold<br/>into the charge, gives back the rest"]
     end
 
     subgraph APPLY["BROWSER - applying the batch"]
         E1["refreshUserData<br/>re-count monthly usage"]
         E2{"operations.length > 0?"}
-        E3["context.applyOperations<br/>with plan limits"]
+        E3["context.applyAiOperations<br/>with the limits from the<br/>message metadata"]
         E4["applyCatalogueOperations<br/>non-mutating, id-addressed<br/>lib/catalogue/operations.ts"]
         E5{"applied.length > 0?"}
         E6["Commit new catalogue<br/>catalogueRef + setCatalogue"]
@@ -233,7 +233,7 @@ There are three silent-drop routes through `toClientOperations`, not one:
 
 1. The section or item index does not exist in the snapshot.
 2. The index points at a block that cannot hold items (`text`, `divider`,
-   `embedding`, `custom_code`) for an item operation.
+   `embedding`, `custom_visual`) for an item operation.
 3. `toItemInputs` filters out every item the model left unnamed, and `add_items`
    then discards the whole operation because nothing survived.
 
@@ -265,7 +265,7 @@ update_catalogue                  update_appearance
 - New thing means `add_section`; only use `update_section` when the user clearly
   points at an existing one.
 - `embedding` code must come from the user; never invent a src or an API key.
-- `custom_code` is original code you write: one self-contained fragment, no CDN,
+- `custom_visual` is original code you write: one self-contained fragment, no CDN,
   no external fonts or images.
 - Never paste catalogue text into a JS string literal - one apostrophe in
   *Chef's Special* silently kills the widget. Put the data in a
@@ -278,7 +278,7 @@ update_catalogue                  update_appearance
 > **These last two rules contradict each other.** One instructs the model to give a
 > `<script>` tag an `id` and read it back with `getElementById`; the next forbids both.
 > A third rule ("prefix your class names and ids") assumes ids are allowed. The model
-> has to violate one of them on every `custom_code` turn. See **H5**.
+> has to violate one of them on every `custom_visual` turn. See **H5**.
 - Run setup at the top level; never wrap it in `DOMContentLoaded` - the script is
   injected after load, so the event has already fired.
 - Section types the plan does not unlock are named explicitly as forbidden.
@@ -320,9 +320,9 @@ it is why the "never repeat an operation, check the snapshot first" rule exists.
 | Item description in snapshot | 80 chars | `catalogueEditor.ts` |
 | Heading in snapshot | 160 chars | `catalogueEditor.ts` |
 | Text-section body in snapshot | 160 chars | `catalogueEditor.ts` |
-| `custom_code` / `embedding` hint in snapshot | 140 chars | `catalogueEditor.ts` |
+| `custom_visual` / `embedding` hint in snapshot | 140 chars | `catalogueEditor.ts` |
 | Operations per turn | 40 | zod `MAX_OPERATIONS` |
-| `custom_code` / `embedding` size | 40 000 chars | zod `MAX_CODE_CHARS` |
+| `custom_visual` / `embedding` size | 40 000 chars | zod `MAX_CODE_CHARS` |
 | Text-section `content` | 4000 chars | zod |
 | Catalogue `heading` | 2000 chars | zod |
 | Items per `add_section` / `add_items` | 40 | zod |
@@ -357,7 +357,7 @@ flowchart TD
     S2 -->|"whole object, every turn"| M
     S3 -->|"gate + section access"| M
     M -->|operations| S2
-    M -->|"begin_ai_turn / settle_ai_turn"| S6
+    M -->|"begin_ai_turn / spend_ai_hold / release_ai_hold"| S6
     S2 -->|"manual Save"| S5
     S2 -->|"manual Publish"| S4
     S4 --> S5
@@ -412,13 +412,13 @@ call, in UTC.
 Either meter only when `operations.length > 0`, or return the metering decision to
 the client and charge after `applied.length > 0` is known.
 
-**H4 - Sanitize `custom_code` before it reaches a published page.** *(pipeline)*
+**H4 - Sanitize `custom_visual` before it reaches a published page.** *(pipeline)*
 Today the only defence is prompt text. The model writes arbitrary HTML, CSS and JS
 that ends up on the customer's live catalogue. A server-side allowlist pass -
 or at minimum stripping `<script src>`, `fetch`, and `XMLHttpRequest` - closes a
 real hole.
 
-**H5 - Resolve the id contradiction in the `custom_code` rules.** *(prompt)*
+**H5 - Resolve the id contradiction in the `custom_visual` rules.** *(prompt)*
 One rule tells the model to put data in a `<script type="application/json" id="...">`
 and read it with `getElementById`; the next forbids ids and `getElementById` outright.
 Every widget the model writes breaks one of them. Pick one: keep the JSON-in-a-script
@@ -532,7 +532,7 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 | `src/hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
 | `lib/ai/catalogueEditor.ts` | System prompt, snapshot, zod schema, index→id, image resolution |
 | `src/lib/catalogue/operations.ts` | Pure operation applier with plan limits |
-| `src/context/CatalogueContext.tsx` | `applyOperations`, holds the unsaved draft |
+| `src/context/CatalogueContext.tsx` | `applyAiOperations` (requires the server's limits), `getCatalogue` (what a plan continuation sends), holds the unsaved draft. Plan limits: see [builder.md](builder.md#plan-limits) |
 | `src/utils/deepseek.ts` | DeepSeek client, JSON mode, `DeepseekResponseError` |
 | `src/types/ai.ts` | `CatalogueOperation` union and result types |
 | `lib/users/fetchUserData.ts` | Plan + monthly usage counts |

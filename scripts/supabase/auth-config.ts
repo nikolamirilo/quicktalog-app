@@ -17,9 +17,23 @@
  * every setting from the local file, including ones this file does not manage.
  */
 
-// Importing this also loads .env.cutover / .env.local, so SUPABASE_ACCESS_TOKEN
-// and the secret fields come from the same place as the cutover scripts.
-import { PROJECT_REFS as PROJECTS } from "../cutover/config";
+import { config as loadEnvFile } from "dotenv";
+
+const PROJECTS = {
+	test: "imhinsgyzzyblghwnedk",
+	prod: "uhfbapjuzvlyzyodxhqn",
+} as const;
+
+// Only the token may come from the app's env file; a shell export still wins.
+const fromFile: Record<string, string> = {};
+loadEnvFile({
+	path: new URL("../../.env.local", import.meta.url).pathname,
+	processEnv: fromFile,
+	quiet: true,
+});
+if (!process.env.SUPABASE_ACCESS_TOKEN && fromFile.SUPABASE_ACCESS_TOKEN) {
+	process.env.SUPABASE_ACCESS_TOKEN = fromFile.SUPABASE_ACCESS_TOKEN;
+}
 
 type ProjectName = keyof typeof PROJECTS;
 

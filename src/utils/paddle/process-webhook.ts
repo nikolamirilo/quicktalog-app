@@ -6,6 +6,7 @@ import {
 import { sendSubscriptionCancelationEmail } from "@/lib/email/transactional";
 import { applyPlanDowngrade } from "@/lib/entitlements/catalogue";
 import { tierForPlanId } from "@/lib/entitlements/plan";
+import { cancelDecision } from "@/lib/paddle/downgrade";
 import {
 	type PaddleCustomData,
 	resolveUserId,
@@ -25,7 +26,7 @@ import {
 } from "@paddle/paddle-node-sdk";
 import { schema, tiers } from "@quicktalog/common";
 import * as Sentry from "@sentry/nextjs";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 
 const { subscriptions, users } = schema;
 
@@ -40,6 +41,7 @@ type SubscriptionEvent =
 type SubscriptionOutcome =
 	| { kind: "unresolved"; reason: "conflict" | "unlinked" }
 	| { kind: "stored" }
+	| { kind: "unexplained"; planId: string }
 	| { kind: "activated"; otherActiveSubscriptionIds: string[] }
 	| {
 			kind: "downgraded";
@@ -158,15 +160,36 @@ export class ProcessWebhook {
 				}
 
 				if (eventData.eventType === EventName.SubscriptionCanceled) {
-					const active = await activeSubscriptions();
-					if (active.length > 0) return { kind: "stored" };
+					const others = await tx
+						.select({ status: subscriptions.subscriptionStatus })
+						.from(subscriptions)
+						.where(
+							and(
+								eq(subscriptions.customerId, subscription.customerId),
+								ne(subscriptions.subscriptionId, subscription.subscriptionId),
+							),
+						);
 
 					const [user] = await tx
-						.select({ name: users.name, email: users.email })
+						.select({
+							name: users.name,
+							email: users.email,
+							planId: users.planId,
+						})
 						.from(users)
 						.where(eq(users.id, userId))
 						.limit(1);
 					if (!user) return { kind: "stored" };
+
+					const decision = cancelDecision({
+						currentPlanId: user.planId,
+						canceledPriceId: subscription.priceId,
+						otherStatuses: others.map((row) => row.status),
+					});
+					if (decision === "keep") return { kind: "stored" };
+					if (decision === "unexplained") {
+						return { kind: "unexplained", planId: user.planId };
+					}
 
 					const freePlanId = tiers[0].priceId.month;
 					await tx
@@ -186,7 +209,11 @@ export class ProcessWebhook {
 						tierForPlanId(freePlanId),
 					);
 
-					return { kind: "downgraded", user, ...downgrade };
+					return {
+						kind: "downgraded",
+						user: { name: user.name, email: user.email },
+						...downgrade,
+					};
 				}
 
 				return { kind: "stored" };
@@ -204,6 +231,23 @@ export class ProcessWebhook {
 					eventType: eventData.eventType,
 				},
 			});
+			return;
+		}
+
+		if (outcome.kind === "unexplained") {
+			Sentry.captureMessage(
+				"Paddle cancel left the user on a plan no live subscription pays for",
+				{
+					level: "warning",
+					tags: { domain: "paddle", op: "cancel" },
+					extra: {
+						customerId: subscription.customerId,
+						subscriptionId: subscription.subscriptionId,
+						canceledPriceId: subscription.priceId,
+						planId: outcome.planId,
+					},
+				},
+			);
 			return;
 		}
 

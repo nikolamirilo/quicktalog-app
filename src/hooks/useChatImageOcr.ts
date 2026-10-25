@@ -1,5 +1,5 @@
 "use client";
-import { buildScannedContext } from "@/agent/attachments";
+import { buildScannedContext } from "@/agent/plugins/attachments";
 import { MAX_CHAT_OCR_IMAGES, MIN_OCR_CONFIDENCE } from "@/constants/ocr";
 import type { ChatScannedImage } from "@/types/ai";
 import { type OcrScan, recognizeImages } from "@/utils/ocr";

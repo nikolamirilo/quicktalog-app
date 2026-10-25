@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/lib/ui/cn";
+import { ArrowRight, Droplet } from "lucide-react";
 import LimitsOverlay from "./LimitsOverlay";
 import {
 	PANEL_TAB_ROOT,
@@ -12,7 +13,14 @@ import {
 	SwitchField,
 } from "./panel";
 
-const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
+const HeaderTab = ({
+	plan,
+	onOpenGlass,
+}: {
+	plan: PricingPlan;
+	/** Switches the panel to Appearance and scrolls to the glass settings. */
+	onOpenGlass: () => void;
+}) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
 	const hasBranding = plan?.features?.branding;
 
@@ -99,6 +107,34 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 					title="Customize header"
 				/>
 
+				<PanelSection
+					description="The header floats above the catalogue and stays at the top while visitors scroll."
+					isNew
+					title="Floating navbar"
+				>
+					<p className="flex gap-2 rounded-xl border border-product-border bg-product-background-hero px-3 py-2 text-[13px] leading-snug text-product-foreground-accent">
+						<Droplet
+							aria-hidden="true"
+							className="mt-px h-4 w-4 shrink-0 text-product-primary-ink"
+						/>
+						<span>
+							How see-through it is comes from{" "}
+							<b className="font-semibold text-product-foreground">
+								Appearance › Glass effect
+							</b>
+							. On phones the icons and button move into a menu.
+						</span>
+					</p>
+					<button
+						className="inline-flex items-center gap-1.5 border-b-[1.5px] border-product-primary/70 pb-px text-[13px] font-semibold text-product-primary-ink hover:text-product-foreground"
+						onClick={onOpenGlass}
+						type="button"
+					>
+						Open glass settings
+						<ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+					</button>
+				</PanelSection>
+
 				<div
 					className={cn(
 						"space-y-4",
@@ -121,6 +157,9 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 							value={logoWidth}
 							valueText={`${logoWidth}px`}
 						/>
+						<p className="-mt-2.5 text-[12.5px] leading-snug text-product-muted">
+							In the floating navbar the logo stops growing at 44 px tall.
+						</p>
 					</PanelSection>
 
 					<PanelSection

@@ -32,7 +32,7 @@ Section menus (`cards/common/BlockMenu`), the edit row of blocks without a heade
   - **Blocks without a header** (text, divider, embed, custom code, items without a heading): `BlockControls` is a row above the block with the type label on the left and the ⋯ on the right. While text or a divider is edited inline, the row shows a Done button instead of the Edit entry.
   - **Visibility:** on devices that can hover, the ⋯ (or the row) shows on hover or focus; on touch it is always visible.
 - **Never over content.** Card tools are one ⋮ menu (edit, move up/down, move to section, delete) that never covers the title.
-- **Checking view mode.** Frozen catalogue pieces must not change: `SectionHeader`'s `headerButtonClasses`, `CatalogueButton` and `CatalogueDialog`. To prove a change leaves view mode alone, render `<Catalogue type="view">` from a fixture and compare every element's classes and computed styles before and after.
+- **Checking view mode.** Frozen catalogue pieces must not change: `SectionHeader`'s `headerButtonClasses` (its `cat-section-header` hook only styles the glass effect, see [catalogue-chrome.md](catalogue-chrome.md)), `CatalogueButton` and `CatalogueDialog`. To prove a change leaves view mode alone, render `<Catalogue type="view">` from a fixture and compare every element's classes and computed styles before and after.
 
 ## Dialogs
 
@@ -45,3 +45,47 @@ Builder dialogs use `modals/content/BuilderDialog`. It has a fixed header and fo
 - **Layout tiles** come from `LayoutPicker`. They are drawn SVGs (`LayoutGlyph`, also used by the section menu); the `image` field on the `@quicktalog/common` `layouts` entries is not used.
 - **Add item on phones** has two footer buttons, Add another and Add item. Cancel is the header ×. When editing, the footer is Cancel and Save item.
 - **Adding a new block type** is covered by the `adding-new-content-block` skill.
+
+## Plan limits
+
+Every plan's limits (items and sections per catalogue, block types, branding, style
+controls, custom themes, the newsletter) become one `OperationLimits` object in
+`operationLimitsFor` (`src/lib/entitlements/operation-limits.ts`). They are checked in
+three places, with the same counters (`countPlanSections`, `countPlanItems` in
+`src/lib/catalogue/content-blocks.ts`):
+
+1. **The agent**, on the server, against the draft the browser sent. The model is told
+   the limits and the current counts as whole-catalogue numbers, and every refusal says
+   what the limit is.
+2. **The browser replay** of the agent's edits. `applyAiOperations` requires limits, and
+   the chat passes the ones the server used (they ride on each agent message's metadata).
+   The draft on screen can never pass the plan.
+3. **The save and publish** (`src/actions/catalogue.ts`), the authority.
+   `applyPlanToCatalogue` resets settings the plan lacks (branding, newsletter, tracking,
+   style controls, custom themes). `contentWithinPlan` refuses a draft that grows past a
+   limit.
+
+Rules:
+
+- **Every block counts** toward `sections_per_catalogue`, text included. The catalogue
+  heading is not a block.
+- **Going live needs a full fit.** `canActivate` refuses publishing or switching a
+  catalogue on until `catalogueFitsPlan` passes, and says what to remove.
+- **After a downgrade**, the plan's settings are reset (`applyPlanDowngrade`). A
+  catalogue that no longer fits is switched off by the backend's subscription job. Until
+  it fits, the owner and the agent can edit, move and delete, but not add. Draft saves
+  stay allowed while it shrinks, and a locked block can be deleted but not edited.
+
+## Unsaved changes
+
+`CatalogueContext` tracks what was last seeded or saved (`seedCatalogue`, `markSaved`,
+`isDirty`).
+
+- **Keep saves.** Keeping the AI's changes (the Keep button, or sending a new ask while
+  a review is open) saves the draft through `useSaveDraft`.
+- **Upgrade saves first.** `useUpgrade` saves before going to `/pricing`. If the save is
+  refused, it opens pricing in a new tab and keeps the builder open.
+- **Leaving warns.** The builder renders `NavigationGuard`. Choosing Leave discards the
+  draft.
+- **Remounts keep the draft.** `useSeedCatalogue` loads the server copy for a new
+  catalogue or a clean draft, and keeps an unsaved draft of the same catalogue.

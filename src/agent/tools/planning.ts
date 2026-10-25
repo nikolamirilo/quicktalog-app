@@ -3,7 +3,7 @@ import {
 	MAX_TASK_NOTE_CHARS,
 	MAX_TASK_TITLE_CHARS,
 	MIN_PLAN_TASKS,
-} from "@/agent/plan";
+} from "@/agent/plugins/plan";
 import type { ToolContext } from "@/agent/tools/types";
 import { tool } from "ai";
 import { z } from "zod";

@@ -31,9 +31,9 @@ function UsageCard({ meter }: { meter: UsageMeter }) {
 					"border-product-error/40 bg-[linear-gradient(180deg,var(--product-error-soft),var(--product-card)_45%)]",
 			)}
 		>
-			<div className="flex w-full items-center gap-2.5 text-left">
+			<div className="flex w-full flex-wrap items-center gap-2.5 text-left">
 				<IconTile size="sm">{meter.icon}</IconTile>
-				<h2 className="flex-1 text-[16.5px] font-bold leading-snug tracking-[-0.015em]">
+				<h2 className="min-w-0 flex-1 text-[16.5px] font-bold leading-snug tracking-[-0.015em]">
 					{meter.title}
 				</h2>
 				{status === "warning" && (

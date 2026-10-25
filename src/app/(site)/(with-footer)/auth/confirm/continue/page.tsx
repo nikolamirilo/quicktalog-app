@@ -1,7 +1,5 @@
-import { notFound } from "next/navigation";
 import { AuthLayout } from "@/components/auth/common/AuthLayout";
 import { ConfirmContinue } from "@/components/auth/ConfirmContinue";
-import { AUTH_PROVIDER } from "@/lib/auth/provider";
 
 /**
  * The interstitial an auth email link lands on. It renders nothing that depends
@@ -13,8 +11,6 @@ import { AUTH_PROVIDER } from "@/lib/auth/provider";
 export const dynamic = "force-dynamic";
 
 export default function ConfirmContinuePage() {
-	if (AUTH_PROVIDER !== "supabase") notFound();
-
 	return (
 		<AuthLayout>
 			<ConfirmContinue />

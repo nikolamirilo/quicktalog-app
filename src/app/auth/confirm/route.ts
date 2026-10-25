@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { AUTH_PROVIDER } from "@/lib/auth/provider";
 
 /**
  * Where every auth email link lands (`{{ .RedirectTo }}/auth/confirm?token_hash=...&type=...`).
@@ -17,10 +16,6 @@ const TYPES = new Set(["email", "recovery", "email_change"]);
 const TOKEN_HASH = /^[A-Za-z0-9_-]{16,128}$/;
 
 export async function GET(req: NextRequest) {
-	if (AUTH_PROVIDER !== "supabase") {
-		return new NextResponse(null, { status: 404 });
-	}
-
 	const { origin, searchParams } = req.nextUrl;
 	const hash = searchParams.get("token_hash");
 	const type = searchParams.get("type");

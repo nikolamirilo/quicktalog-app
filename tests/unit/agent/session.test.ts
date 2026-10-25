@@ -1,4 +1,8 @@
-import { CatalogueSession } from "@/agent/session";
+import { CatalogueSession } from "@/agent/core/session";
+import type { PlanState } from "@/agent/plugins/plan";
+import type { AiPlanLimits } from "@/lib/ai/limits";
+import { CREDITS, estimatePlanCredits } from "@/lib/ai/pricing";
+import type { CatalogueOperation } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
 import { defaultCatalogueData } from "@quicktalog/common";
 import { describe, expect, it } from "vitest";
@@ -106,7 +110,7 @@ describe("CatalogueSession", () => {
 		});
 
 		it("reports a plan limit back as a tool error", () => {
-			// One counted section already exists; `text` blocks are exempt.
+			// The fixture already fills the one-section allowance.
 			const s = new CatalogueSession(catalogue, { sections: 1 });
 			const result = s.run({
 				op: "add_section",
@@ -120,7 +124,7 @@ describe("CatalogueSession", () => {
 			// refused edit never reaches the browser to be counted there.
 			expect(result).toEqual({
 				ok: false,
-				error: expect.stringContaining("Section limit reached"),
+				error: expect.stringContaining("sections in the whole catalogue"),
 				limitReached: true,
 			});
 		});
@@ -183,5 +187,156 @@ describe("web fetch budget", () => {
 			ok: false,
 			error: expect.stringContaining("limit"),
 		});
+	});
+});
+
+describe("partial edits", () => {
+	it("tells the model which items a plan limit left out", () => {
+		const full = new CatalogueSession(
+			{
+				...catalogue,
+				content: [
+					{
+						id: "s1",
+						order: 0,
+						type: "items",
+						name: "Drinks",
+						showHeading: true,
+						isExpanded: true,
+						layout: "variant_1",
+						items: Array.from({ length: 14 }, (_, i) => ({
+							id: `i${i}`,
+							order: i,
+							name: `Item ${i}`,
+							description: "",
+							image: "",
+							price: 1,
+						})),
+					},
+				],
+			} as Catalogue,
+			{ items: 15 },
+		);
+		const result = full.run({
+			op: "add_items",
+			sectionId: "s1",
+			items: [
+				{ name: "A", price: 1 },
+				{ name: "B", price: 1 },
+			],
+		});
+		expect(result.ok).toBe(true);
+		expect(result.ok && result.summary).toMatch(/1 item\(s\) were left out/);
+	});
+});
+
+describe("credits", () => {
+	const budget = (available: number, baseCoversFirstTask: boolean) => ({
+		available,
+		baseCoversFirstTask,
+	});
+	const sessionWith = (
+		b: { available: number; baseCoversFirstTask: boolean },
+		plan: PlanState | null = null,
+		limits: Partial<AiPlanLimits> = {},
+	) =>
+		new CatalogueSession(
+			catalogue,
+			{},
+			undefined,
+			[],
+			"user_1",
+			plan,
+			0,
+			{
+				maxFetches: 3,
+				maxPlanTasks: 12,
+				proModel: true,
+				requireVerifiedEmail: false,
+				...limits,
+			},
+			b,
+		);
+	const addSection = (name: string): CatalogueOperation => ({
+		op: "add_section",
+		sectionType: "items",
+		name,
+		items: [],
+	});
+	const outOfCredits = (result: unknown) =>
+		(result as { outOfCredits?: true }).outOfCredits;
+	const resumed = (): PlanState => ({
+		revision: 2,
+		tasks: [
+			{ title: "Drinks", status: "pending" },
+			{ title: "Food", status: "pending" },
+		],
+	});
+
+	it("refuses an edit for a task the request cannot pay for, and applies nothing", () => {
+		const s = sessionWith(budget(0, false), resumed());
+		const result = s.run(addSection("Drinks"));
+		expect(result.ok).toBe(false);
+		expect(outOfCredits(result)).toBe(true);
+		expect(s.operations).toHaveLength(0);
+	});
+
+	it("lets the base pay for the first task with nothing held", () => {
+		const s = sessionWith(budget(0, true));
+		s.createPlan(["Drinks", "Food"]);
+		expect(s.run(addSection("Drinks")).ok).toBe(true);
+	});
+
+	it("refuses an unplanned edit on a continuation", () => {
+		const s = sessionWith(budget(5, false));
+		const result = s.run(addSection("Drinks"));
+		expect(result.ok).toBe(false);
+		expect(outOfCredits(result)).toBeUndefined();
+		expect(s.operations).toHaveLength(0);
+	});
+
+	it("an edit after the plan is finished on a continuation is not an out-of-credits refusal", () => {
+		const finished: PlanState = {
+			revision: 3,
+			tasks: [
+				{ title: "Drinks", status: "done" },
+				{ title: "Food", status: "done" },
+			],
+		};
+		const s = sessionWith(budget(10, false), finished);
+		const result = s.run(addSection("Extra"));
+		expect(result.ok).toBe(false);
+		expect(outOfCredits(result)).toBeUndefined();
+		expect((result as { error?: string }).error).toMatch(/new ask/);
+	});
+
+	it("refuses a plan longer than the balance pays for, naming what fits", () => {
+		const s = sessionWith(budget(2, true));
+		const refused = s.createPlan(["a", "b", "c", "d"]);
+		expect((refused as { error?: string }).error).toMatch(/3 tasks/);
+		expect(s.createPlan(["a", "b", "c"]).ok).toBe(true);
+	});
+
+	it("Starter at 13 of 15 gets one change, not a checklist", () => {
+		const s = sessionWith(budget(0, true), null, {
+			maxPlanTasks: 4,
+			maxFetches: 0,
+		});
+		const refused = s.createPlan(["a", "b", "c", "d"]);
+		expect((refused as { error?: string }).error).toMatch(
+			/single most important change/,
+		);
+		expect(s.run(addSection("Drinks")).ok).toBe(true);
+		expect(s.credits.billed).toBe(0);
+	});
+
+	it("a 4-task build bills what the price list says", () => {
+		const s = sessionWith(budget(18, true));
+		s.createPlan(["a", "b", "c", "d"]);
+		for (let task = 0; task < 4; task++) {
+			s.run(addSection(`Section ${task}`));
+			s.completeTask(task);
+		}
+		expect(s.credits.billed).toBe(estimatePlanCredits(4) - CREDITS.agentBase);
 	});
 });

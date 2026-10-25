@@ -4,26 +4,6 @@ import { safeNext } from "@/lib/auth/redirects";
 import { sessionCookieName } from "@/lib/auth/cookie-options";
 import { createMiddlewareAuthClient } from "@/utils/supabase/middleware";
 
-/** Clerk's cookies, cleared on the first session-path request after the cutover. */
-const CLERK_COOKIES = [
-	"__session",
-	"__client_uat",
-	"__refresh",
-	"__clerk_db_jwt",
-	"__clerk_handshake",
-	"__clerk_handshake_nonce",
-	"__clerk_redirect_count",
-];
-
-/** Query parameters Clerk adds to redirects; they mean nothing to us. */
-const CLERK_PARAMS = [
-	"__clerk_handshake",
-	"__clerk_help",
-	"__clerk_hs_reason",
-	"__dev_session",
-	"__clerk_synced",
-];
-
 /**
  * Refreshes the Supabase session and, on protected paths, sends signed-out
  * visitors to /auth.
@@ -57,47 +37,6 @@ export async function updateSession(
 	}
 
 	return response;
-}
-
-/**
- * Expires the Clerk cookies a browser still carries. Only the ones actually
- * present are touched, so a visitor who never used Clerk gets no `Set-Cookie`
- * at all.
- *
- * Clerk sets some cookies with a `Domain` on production, and a host-only
- * deletion would leave those behind, so both variants are expired there.
- */
-export function expirePresentClerkCookies(
-	request: NextRequest,
-	response: NextResponse,
-): void {
-	const domain =
-		process.env.VERCEL_ENV === "production" ? "quicktalog.app" : undefined;
-
-	for (const cookie of request.cookies.getAll()) {
-		const base = cookie.name.split("_").slice(0, 3).join("_");
-		const isClerk = CLERK_COOKIES.some(
-			(name) => cookie.name === name || cookie.name.startsWith(`${name}_`),
-		);
-		if (!isClerk && !CLERK_COOKIES.includes(base)) continue;
-
-		response.cookies.set(cookie.name, "", { path: "/", maxAge: 0 });
-		if (domain) {
-			response.cookies.set(cookie.name, "", { path: "/", maxAge: 0, domain });
-		}
-	}
-}
-
-/** Strips Clerk's handshake parameters from a URL, if any are present. */
-export function stripClerkParams(url: URL): boolean {
-	let changed = false;
-	for (const param of CLERK_PARAMS) {
-		if (url.searchParams.has(param)) {
-			url.searchParams.delete(param);
-			changed = true;
-		}
-	}
-	return changed;
 }
 
 /**

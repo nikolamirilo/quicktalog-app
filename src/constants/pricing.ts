@@ -20,42 +20,146 @@ export const isFreeTier = (tier: PricingPlan) => tier.id === FREE_TIER_ID;
 export const priceIdFor = (tier: PricingPlan, cycle: BillingCycle) =>
 	cycle === "monthly" ? tier.priceId.month : tier.priceId.year;
 
-/** Feature lines shown on a plan card, all derived from `tiers`. */
-export function getFeatureList(
-	features: PricingPlan["features"],
-): PlanFeature[] {
-	const list: (PlanFeature | null)[] = [
-		{
-			text: `${features.catalogues} ${features.catalogues > 1 ? "catalogues" : "catalogue"}`,
-			type: "catalogues",
-		},
-		{
-			text:
-				features.sections_per_catalogue === "unlimited"
-					? "Unlimited sections & items"
-					: `Up to ${features.sections_per_catalogue} sections & ${features.items_per_catalogue} items per catalogue`,
-			type: "sections_and_items",
-		},
-		features.branding
-			? { text: "Custom Branding", type: "custom_branding" }
-			: null,
-		{
-			text: `${features.traffic_limit.toLocaleString("en-US")} page views per month`,
-			type: "traffic-limit",
-		},
-		features.ai_credits === 0
-			? null
-			: {
-					text: `${features.ai_credits} AI credits per month`,
-					type: "ai-catalogue-generation",
-				},
-		features.newsletter ? { text: "Newsletter", type: "newsletter" } : null,
-		features.custom_features
-			? { text: "Custom features", type: "custom-features" }
-			: null,
-		{ text: features.support, type: "support" },
-	];
-	return list.filter((feature): feature is PlanFeature => feature !== null);
+type Features = PricingPlan["features"];
+type LimitValue = number | "unlimited" | undefined;
+
+export type PlanLimitRow = {
+	label: string;
+	/** The label as it reads after a number on a plan card. */
+	unit: string;
+	type: string;
+	value: LimitValue;
+};
+
+export type PlanFeatureRow = {
+	label: string;
+	/** `true`/`false` for on/off features, a string for tiered ones ("Basic"). */
+	value: boolean | string;
+	/** Set on the rows a plan card highlights; also the info-dialog key. */
+	type?: string;
+};
+
+export const formatPlanLimit = (value: LimitValue) => {
+	if (value === "unlimited") return "Unlimited";
+	if (value === undefined) return "–";
+	return value.toLocaleString("en-US");
+};
+
+/** Plan limits, shared by the subscription overview and the plan cards. */
+export const planLimitRows = (f: Features): PlanLimitRow[] => [
+	{
+		label: "Catalogues",
+		unit: f.catalogues === 1 ? "catalogue" : "catalogues",
+		type: "catalogues",
+		value: f.catalogues,
+	},
+	{
+		label: "Sections per catalogue",
+		unit: "sections per catalogue",
+		type: "sections_and_items",
+		value: f.sections_per_catalogue,
+	},
+	{
+		label: "Items per catalogue",
+		unit: "items per catalogue",
+		type: "items_per_catalogue",
+		value: f.items_per_catalogue,
+	},
+	{
+		label: "Page views / month",
+		unit: "page views / month",
+		type: "traffic-limit",
+		value: f.traffic_limit,
+	},
+	{
+		label: "AI credits / month",
+		unit: "AI credits / month",
+		type: "ai-catalogue-generation",
+		value: f.ai_credits,
+	},
+];
+
+/** What a plan includes, by area, as the subscription overview lists it. */
+export const planFeatureGroups = (
+	f: Features,
+): { title: string; rows: PlanFeatureRow[] }[] => [
+	{
+		title: "Design",
+		rows: [
+			{ label: "Standard themes", value: f.apperance.standardThemes },
+			{
+				label: "Custom themes",
+				value: f.apperance.customThemes,
+				type: "custom_themes",
+			},
+			{
+				label: "Style controls",
+				value: f.apperance.styles,
+				type: "style_controls",
+			},
+			{ label: "Custom branding", value: f.branding, type: "custom_branding" },
+		],
+	},
+	{
+		title: "Section types",
+		rows: [
+			{ label: "Items", value: true },
+			{ label: "Text", value: true },
+			{ label: "Divider", value: f.sections.divider },
+			{ label: "External content", value: f.sections.embedding },
+			{ label: "Custom visual", value: f.sections.customVisual },
+		],
+	},
+	{
+		title: "Growth & support",
+		rows: [
+			{ label: "Analytics", value: f.analytics, type: "analytics" },
+			// Named "tags" to separate it from the row above, which is the
+			// built-in dashboard analytics tier.
+			{
+				label: "Your own analytics tags",
+				value: f.integrations.tracking,
+				type: "analytics_tags",
+			},
+			{
+				label: "Newsletter sign-ups",
+				value: f.newsletter,
+				type: "newsletter",
+			},
+			{ label: "Support", value: f.support, type: "support" },
+			{
+				label: "Custom features",
+				value: f.custom_features,
+				type: "custom-features",
+			},
+		],
+	},
+];
+
+export const isFeatureIncluded = (value: PlanFeatureRow["value"]) =>
+	typeof value === "string" ? value.toLowerCase() !== "not included" : value;
+
+/** "Basic" analytics → "Basic analytics"; "Email support" stays as it is. */
+const highlightText = ({ label, value }: PlanFeatureRow) => {
+	if (typeof value !== "string") return label;
+	return value.toLowerCase().includes(label.toLowerCase())
+		? value
+		: `${value} ${label.toLowerCase()}`;
+};
+
+/** Feature lines on a plan card: the overview's limits, then its highlights. */
+export function getFeatureList(features: Features): PlanFeature[] {
+	const limits = planLimitRows(features)
+		.filter((row) => row.value !== 0)
+		.map((row) => ({
+			text: `${formatPlanLimit(row.value)} ${row.unit}`,
+			type: row.type,
+		}));
+	const highlights = planFeatureGroups(features)
+		.flatMap((group) => group.rows)
+		.filter((row) => row.type && isFeatureIncluded(row.value))
+		.map((row) => ({ text: highlightText(row), type: row.type as string }));
+	return [...limits, ...highlights];
 }
 
 const explanations: Record<string, string> = {
@@ -78,7 +182,15 @@ const explanations: Record<string, string> = {
 	"custom-features":
 		"Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
 	sections_and_items:
-		"The total number of sections and items allowed in each catalogue. Higher tiers unlock unlimited organization for complex menus or product lists.",
+		"The number of sections allowed in each catalogue. Higher tiers allow more for complex menus or product lists.",
+	items_per_catalogue:
+		"The total number of items allowed in each catalogue, across all its sections.",
+	custom_themes:
+		"Create your own color themes for your catalogues instead of picking a standard one.",
+	style_controls:
+		"Fine-tune fonts, text size, corner radius, shadows and overlays across your catalogue.",
+	analytics_tags:
+		"Connect your own Google Analytics or Meta Pixel to a catalogue to track visits in your own tools.",
 	custom_branding:
 		"Control over the visual branding of your catalogues, including logo upload, legal information, partners and contact information represent your business in the best possible way.",
 };

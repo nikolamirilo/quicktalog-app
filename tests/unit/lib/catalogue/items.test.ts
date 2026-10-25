@@ -2,12 +2,9 @@ import type { CategoryBlock, ContainerBlock, Item } from "@quicktalog/common";
 import { describe, expect, it } from "vitest";
 import {
 	getDisplayItems,
-	getTotalItemCount,
-	INITIAL_ITEM_COUNT,
-	LOAD_MORE_STEP,
 	matchesQuery,
+	normalizeSearch,
 	normalizeText,
-	SEARCH_MIN_ITEMS,
 } from "@/lib/catalogue/items";
 
 const item = (over: Partial<Item>): Item =>
@@ -32,36 +29,25 @@ const block = (items: Item[]): CategoryBlock =>
 		isExpanded: true,
 	}) as CategoryBlock;
 
-describe("constants", () => {
-	it("exposes sensible pagination constants", () => {
-		expect(INITIAL_ITEM_COUNT).toBe(20);
-		expect(LOAD_MORE_STEP).toBe(20);
-		expect(SEARCH_MIN_ITEMS).toBe(20);
-	});
-});
-
-describe("getTotalItemCount", () => {
-	it("sums items across category and container blocks", () => {
-		const blocks = [
-			block([item({ id: "a" }), item({ id: "b" })]),
-			{
-				id: "c",
-				order: 1,
-				type: "container",
-				layout: "variant_1",
-				items: [item({ id: "c1" })],
-			} as unknown as ContainerBlock,
-		];
-		expect(getTotalItemCount(blocks as any)).toBe(3);
+describe("normalizeSearch", () => {
+	it("is off with an empty placeholder when missing", () => {
+		expect(normalizeSearch(undefined)).toEqual({
+			isEnabled: false,
+			placeholder: "",
+		});
 	});
 
-	it("ignores blocks without items and missing input", () => {
-		const blocks = [
-			{ id: "t", order: 0, type: "text", content: "hi" },
-			block([]),
-		];
-		expect(getTotalItemCount(blocks as any)).toBe(0);
-		expect(getTotalItemCount(undefined)).toBe(0);
+	it("keeps an enabled flag and caps the placeholder at 40 characters", () => {
+		const out = normalizeSearch({
+			isEnabled: true,
+			placeholder: "x".repeat(60),
+		});
+		expect(out.isEnabled).toBe(true);
+		expect(out.placeholder).toHaveLength(40);
+	});
+
+	it("only treats a literal true as enabled", () => {
+		expect(normalizeSearch({ isEnabled: "yes" }).isEnabled).toBe(false);
 	});
 });
 

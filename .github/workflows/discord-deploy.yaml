@@ -5,7 +5,7 @@ on:
 jobs:
   notify:
     # Any job with an `environment:` makes GitHub create a deployment and post
-    # deployment_status events, so ci.yaml's e2e job (environment: TEST) was
+    # deployment_status events, so ci.yaml's former e2e job (environment: TEST) was
     # firing this workflow too - twice per push, since CI runs on both `push`
     # and `pull_request`. Those arrived as "Vercel Deployment: Success/Failed"
     # for a deployment that never happened, and read as duplicates because the

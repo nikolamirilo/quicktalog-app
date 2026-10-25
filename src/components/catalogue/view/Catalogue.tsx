@@ -8,16 +8,20 @@ import {
 	titleFontSizeMap,
 } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { localeForLanguage } from "@/lib/catalogue/items";
+import {
+	backgroundLayerStyle,
+	normalizeBackground,
+} from "@/lib/catalogue/background";
+import { glassAttributes, glassStyle } from "@/lib/catalogue/glass";
+import { localeForLanguage, normalizeSearch } from "@/lib/catalogue/items";
 import { kebabToTitle } from "@/lib/format/text";
 import { htmlToText } from "@/lib/html/to-text";
 import {
 	deriveCatalogueVars,
-	isDarkBackground,
+	isDarkTheme as isThemeDark,
 	serializeThemeCss,
 } from "@/lib/themes/custom-theme";
 import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
-import { themes } from "@quicktalog/common";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useEffect, useMemo, useState } from "react";
 import { Overlay } from "@/components/general/Overlay";
@@ -28,6 +32,7 @@ import BuilderSidebar from "@/components/catalogue/inputs/sidebar";
 import { builderFramePadding } from "@/components/catalogue/builder/frame";
 import AddContentModal from "@/components/catalogue/modals/AddContentModal";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
+import { catalogueLogos } from "@/lib/catalogue/logo";
 import CatalogueAnalytics from "./CatalogueAnalytics";
 import CatalogueContent from "./CatalogueContent";
 import CatalogueFooter from "./CatalogueFooter";
@@ -60,12 +65,7 @@ const Catalogue = ({
 		return serializeThemeCss(deriveCatalogueVars(item.appearance.theme.colors));
 	}, [isCustomTheme, item.appearance.theme.colors]);
 
-	const isDarkTheme = isCustomTheme
-		? isDarkBackground(item.appearance.theme.colors?.background)
-		: themes.some(
-				(theme) =>
-					theme.key === item.appearance.theme.name && theme.type === "dark",
-			);
+	const isDarkTheme = isThemeDark(item.appearance.theme);
 
 	const fontFamily =
 		fontFamilyMap[item.appearance.style.fontFamily] || fontFamilyMap.inter;
@@ -75,12 +75,21 @@ const Catalogue = ({
 	const titleFontSize = titleFontSizeMap[contentFontSizeKey];
 	const borderRadius = `${item.appearance.style.borderRadius ?? 12}px`;
 	const boxShadow = shadowMap[item.appearance.style.shadow || "low"];
+	const search = normalizeSearch(item.appearance.search);
+	const background = normalizeBackground(item.appearance.background);
+	const backgroundLayer = backgroundLayerStyle(background);
 
 	const defaultLogo = isDarkTheme
 		? "/images/brand/logo-light.svg"
 		: "/images/brand/logo.svg";
-	const customLogo = item.logo;
-	const logoSrc = item.header.type === "custom" ? customLogo : defaultLogo;
+	const logos = catalogueLogos(
+		{
+			logo: item.logo,
+			headerType: item.header.type,
+			footerType: item.footer.type,
+		},
+		defaultLogo,
+	);
 
 	useEffect(() => {
 		if (typeof window === "undefined") return;
@@ -187,8 +196,11 @@ const Catalogue = ({
 				<style dangerouslySetInnerHTML={{ __html: customThemeCss }} />
 			)}
 			<div
+				{...glassAttributes(item.appearance.glass)}
 				aria-label={`${item.heading} Catalogue`}
 				className={`catalogue-root ${item.appearance.theme.name || "theme-monochrome"} bg-background text-foreground min-h-screen flex flex-col${type === "edit" ? ` ${builderFramePadding(isSidebarOpen)}` : ""}`}
+				data-bg={backgroundLayer ? "" : undefined}
+				data-dark={isDarkTheme ? "" : undefined}
 				role="application"
 				style={
 					{
@@ -201,18 +213,40 @@ const Catalogue = ({
 						"--title-font-size": titleFontSize,
 						"--border-radius": borderRadius,
 						"--box-shadow": boxShadow,
+						// `none` can't sit in a shadow list next to the glass edge highlight.
+						"--box-shadow-safe": boxShadow === "none" ? "0 0 #0000" : boxShadow,
 						"--animation-duration": "0.5s",
 						"--catalogue-category-shadow":
 							boxShadow !== "none" ? boxShadow : undefined,
+						...glassStyle(item.appearance.glass, isDarkTheme),
 					} as React.CSSProperties
 				}
 			>
+				{backgroundLayer && (
+					<div
+						aria-hidden="true"
+						className="cat-bg"
+						data-photo={background.type === "image" ? "" : undefined}
+						style={backgroundLayer}
+					>
+						{background.type === "image" && (
+							<span
+								className="cat-bg-fade"
+								style={{ opacity: background.fade / 100 }}
+							/>
+						)}
+					</div>
+				)}
 				{item.appearance.overlay.isEnabled && (
 					<Overlay emoji={item.appearance.overlay.icon} />
 				)}
 
 				{type !== "demo" && (
-					<CatalogueHeader data={item} logo={logoSrc} type={item.header.type} />
+					<CatalogueHeader
+						data={item}
+						logo={logos.header}
+						type={item.header.type}
+					/>
 				)}
 
 				<main
@@ -243,6 +277,7 @@ const Catalogue = ({
 								locale={localeForLanguage(item.language)}
 								mode={type === "edit" ? "edit" : "view"}
 								onEditBlock={handleEditBlock}
+								search={search}
 								theme={item.appearance.theme.name}
 								type="item"
 								userData={userData}
@@ -266,7 +301,11 @@ const Catalogue = ({
 					</section>
 				</main>
 
-				<CatalogueFooter data={item} logo={logoSrc} type={item.footer.type} />
+				<CatalogueFooter
+					data={item}
+					logo={logos.footer}
+					type={item.footer.type}
+				/>
 
 				{/* Published pages only. The builder and the demo must not report
 				    traffic the owner never received. */}

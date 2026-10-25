@@ -1,79 +1,80 @@
 import { SmartLink } from "@/components/general/SmartLink";
-import { SocialIcon } from "@/components/general/SocialIcon";
-import { footerDetails } from "@/constants/details";
+import { uniqueSocials } from "@/lib/catalogue/socials";
+import type { Catalogue } from "@quicktalog/common";
+import { FiExternalLink } from "react-icons/fi";
+import { SocialIcon } from "./SocialIcon";
 
+/** The footer's first column: logo, tagline, social links and, without a newsletter, the action button. */
 const Brand = ({
-	type,
 	activeData,
 	logo,
-	effectiveSocials,
+	showCta,
 }: {
-	type: string;
-	activeData: any;
+	activeData: Catalogue | undefined;
 	logo: string | undefined;
-	effectiveSocials: Record<string, string>;
+	showCta: boolean;
 }) => {
-	return (
-		<div className="space-y-6">
-			<div className="space-y-4">
-				<div
-					aria-label={`Go to ${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} homepage`}
-					className="flex flex-col items-start space-y-6 mt-2 group transition-transform duration-200 hover:scale-102"
-				>
-					<SmartLink
-						href={type === "default" ? "/" : effectiveSocials?.website || ""}
-					>
-						<img
-							alt={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} logo`}
-							className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
-							src={logo ?? "/images/brand/logo.svg"}
-							style={{
-								width:
-									type === "default"
-										? "160px"
-										: activeData?.footer?.logoSize?.width
-											? `${activeData.footer.logoSize.width}px`
-											: "100px",
-								height: "auto",
-								maxWidth: "100%",
-							}}
-						/>
-					</SmartLink>
+	const contact = activeData?.contact;
+	const name = activeData?.legal?.legalName || "Company";
+	const socials = uniqueSocials(contact?.socials);
+	const cta = activeData?.footer?.cta;
+	const tagline = activeData?.footer?.tagline?.trim();
 
-					{type === "default" && (
-						<p className="text-sm text-catalogue-navigation-text">
-							Digital Catalogue Platform
-						</p>
-					)}
-					{type === "custom" && (
-						<div className="ml-0">
-							<h3 className="text-xl font-semibold font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
-								{activeData?.legal?.legalName}
-							</h3>
-						</div>
-					)}
-				</div>
-				<p className="text-sm leading-relaxed text-catalogue-navigation-text">
-					{type === "default" ? footerDetails.subheading : ""}
-				</p>
-			</div>
-			{type === "custom" && Object.keys(effectiveSocials).length > 0 && (
-				<nav
-					aria-label="Social media links"
-					className="flex items-center space-x-3"
-					role="navigation"
+	return (
+		<div className="cat-foot-wide">
+			{logo ? (
+				<SmartLink
+					ariaLabel={`Go to ${name} homepage`}
+					className="cat-foot-logo"
+					href={contact?.website || ""}
 				>
-					{Object.keys(effectiveSocials).map((platform) => {
-						const socialUrl = effectiveSocials[platform];
-						return (
-							<SocialIcon
-								href={socialUrl || ""}
-								key={platform}
-								platform={platform.startsWith("link-") ? "website" : platform}
-							/>
-						);
-					})}
+					<img
+						alt={`${name} logo`}
+						src={logo}
+						style={{ width: `${activeData?.footer?.logoSize?.width || 100}px` }}
+					/>
+				</SmartLink>
+			) : (
+				// Without a logo the business name stands in for it.
+				activeData?.legal?.legalName && (
+					<h3 className="cat-foot-name">{activeData.legal.legalName}</h3>
+				)
+			)}
+			{tagline && <p className="cat-foot-tag">{tagline}</p>}
+			{(socials.length > 0 || contact?.email || contact?.website) && (
+				<nav aria-label="Social media links" className="cat-foot-social">
+					{socials.map(({ platform, url }) => (
+						<SmartLink
+							ariaLabel={
+								platform === "website"
+									? "Visit our page"
+									: `Follow us on ${platform}`
+							}
+							href={url}
+							key={url}
+						>
+							<SocialIcon platform={platform} />
+						</SmartLink>
+					))}
+					{contact?.email && (
+						<a aria-label="Email us" href={`mailto:${contact.email}`}>
+							<SocialIcon platform="email" />
+						</a>
+					)}
+					{contact?.website && (
+						<SmartLink ariaLabel="Visit our website" href={contact.website}>
+							<SocialIcon platform="website" />
+						</SmartLink>
+					)}
 				</nav>
+			)}
+			{showCta && cta?.url && (
+				<div className="mt-5">
+					<SmartLink className="cat-foot-btn" href={cta.url}>
+						<FiExternalLink aria-hidden="true" />
+						<span className="truncate">{cta.label || "Learn more"}</span>
+					</SmartLink>
+				</div>
 			)}
 		</div>
 	);

@@ -116,10 +116,9 @@ describe("database boundaries", () => {
 				"utils/db/pool",
 				"utils/paddle/**",
 				"app/api/paddle/**",
-				"app/api/clerk/**",
 				"lib/paddle/resolve-user",
 				"lib/paddle/customer",
-				"lib/users/provision",
+				"lib/users/footprint",
 				"lib/entitlements/catalogue",
 				"scripts/**",
 			]),
@@ -132,17 +131,6 @@ describe("database boundaries", () => {
 		}
 	});
 
-	it("only the identity module and the Clerk webhook use Clerk on the server", () => {
-		expect(
-			importersOf("@clerk/nextjs/server", [
-				"lib/auth/identity",
-				"lib/users/provision",
-				"middleware",
-				"app/api/clerk/**",
-			]),
-		).toEqual([]);
-	});
-
 	it("only the wrapper switches database roles", () => {
 		const offenders = files.filter(
 			(f) =>
@@ -153,12 +141,9 @@ describe("database boundaries", () => {
 		expect(offenders.map((f) => f.path)).toEqual([]);
 	});
 
-	it("only the account action and scripts can act as any user", () => {
+	it("only the account action can act as any user", () => {
 		expect(
-			importersOf("utils/supabase/auth-admin", [
-				"actions/account",
-				"scripts/**",
-			]),
+			importersOf("utils/supabase/auth-admin", ["actions/account"]),
 		).toEqual([]);
 	});
 

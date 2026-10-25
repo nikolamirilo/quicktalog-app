@@ -1,6 +1,6 @@
 ---
 name: adding-new-content-block
-description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. VideoBlock, GalleryBlock, TrackingBlock) - covers the type definition, renderer + input components, AddContentModal wiring, SectionTypePicker option, CatalogueContent render branch, the section-count exemption, the plan-gating paths, the agent paths (instructions, snapshot, schema, builder, skills) and the three plan tables that must agree.
+description: Use when adding a new content block / section type to the Quicktalog catalogue (e.g. VideoBlock, GalleryBlock, TrackingBlock) - covers the type definition, renderer + input components, AddContentModal wiring, SectionTypePicker option, CatalogueContent render branch, the section count, the plan-gating paths, the agent paths (instructions, snapshot, schema, builder, skills) and the three plan tables that must agree.
 ---
 
 # Adding a New Content Block
@@ -67,7 +67,7 @@ use `isItemsBlock` / `asItemsBlock` from that helper.
 | # | Area | File(s) | What to do |
 |---|------|---------|------------|
 | 6 | Picker option | [modals/content/SectionTypePicker.tsx](../../../src/components/catalogue/modals/content/SectionTypePicker.tsx) | `OPTIONS` entry (key, label, lucide icon) |
-| 7 | Modal state | [modals/AddContentModal.tsx](../../../src/components/catalogue/modals/AddContentModal.tsx) | `DEFAULT_BLOCK_DATA`, edit-hydration, `handleAdd`, `isFormValid`, `isLocked`, and `checkLimits` if the block is exempt from the section count (see below) |
+| 7 | Modal state | [modals/AddContentModal.tsx](../../../src/components/catalogue/modals/AddContentModal.tsx) | `DEFAULT_BLOCK_DATA`, edit-hydration, `handleAdd`, `isFormValid`, `isLocked` and `checkLimits` (the section count is shared; see below) |
 | 8 | Modal form + copy | [modals/content/BlockConfigForm.tsx](../../../src/components/catalogue/modals/content/BlockConfigForm.tsx), [BlockConfigHeader.tsx](../../../src/components/catalogue/modals/content/BlockConfigHeader.tsx) | Render branch; `ContentOption` union, `LABELS` + `DESCRIPTIONS` entry. The dialog's add button reads `snakeToTitleCase(selectedOption)`, so a two-word type key reads correctly for free |
 
 ### Agent paths - skip all of these if the block stays out of `AiSectionType`
@@ -109,12 +109,11 @@ use `isItemsBlock` / `asItemsBlock` from that helper.
 
 ## The section count
 
-`sections_per_catalogue` counts blocks, but **`text` blocks are exempt** - in
-`countSections` in `operations.ts` *and* in `checkLimits` in `AddContentModal`,
-which each filter `type !== "text"` by hand.
-
-Exempt any block that renders nothing visible, and exempt it in **both** places or
-the builder and the assistant will disagree about whether the catalogue is full.
+`sections_per_catalogue` counts **every block**, `text` included; the catalogue heading
+is not a block. `countPlanSections` and `countPlanItems` in
+`src/lib/catalogue/content-blocks.ts` are the only counters: the agent's applier,
+`AddContentModal`, the item modal and `contentWithinPlan` all call them, so the builder,
+the assistant and the save cannot disagree. A new block type needs no change here.
 
 ## Renaming an existing block type
 
@@ -122,13 +121,15 @@ Know which half of a rename is cheap before you quote one.
 
 **The stored `type` key is expensive.** Rows in the database and drafts in the
 Redis cache still carry the old key, so the only safe route is the one
-`category`/`container` and `custom_code`/`custom_visual` both took: keep the old
-interface in the `ContentBlock` union marked `@deprecated`, map it forward in
-`normalizeBlock`
+`category`/`container` took: keep the old interface in the `ContentBlock` union
+marked `@deprecated`, map it forward in `normalizeBlock`
 ([lib/catalogue/content-blocks.ts](../../../src/lib/catalogue/content-blocks.ts)),
-and read everywhere through a helper instead of matching the key. That mapping is
-permanent - it can never be deleted, because an un-opened catalogue may carry the
-old key for years.
+and read everywhere through a helper instead of matching the key.
+
+The mapping can only be removed once no stored copy is left: count the key in
+`catalogues.content` on TEST and PROD, and rewrite or check the drafts in every
+Redis database (`scripts/redis/rename-custom-code-blocks.ts` is the pattern).
+`custom_code` → `custom_visual` was retired that way on 2026-10-25.
 
 **The `features.sections` plan flag is free.** Plans are not persisted: a user
 row stores only `planId`, and `currentPlan` is resolved by looking that up in the
@@ -153,7 +154,6 @@ rename is not worth the permanent mapping, this is the version to ship.
   compile; before, the `default:` silently produced a divider.
 - **Free on the AI path** → step 10 or 15; check the flag exists on every tier.
 - **Pricing page and dashboard disagree** → step 16; the two tables are separate.
-- **An invisible block eats a section slot** → the section-count exemption, both halves.
 - **The agent cannot edit it** → step 12's `readSection` projection, or the thin
   `else` branch in `snapshot()`.
 - **Matching a legacy key** → use `isItemsBlock`, never `=== "category"`.

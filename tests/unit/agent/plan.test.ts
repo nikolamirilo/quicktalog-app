@@ -1,3 +1,4 @@
+import { CatalogueSession } from "@/agent/core/session";
 import {
 	activeTaskIndex,
 	CONTINUE_PLAN_MARKER,
@@ -7,12 +8,11 @@ import {
 	MAX_PLAN_CONTINUATIONS,
 	MAX_PLAN_TASKS,
 	pendingCount,
-	resumeDecision,
-	type ResumeState,
-	type PlanState,
 	planFromMessages,
-} from "@/agent/plan";
-import { CatalogueSession } from "@/agent/session";
+	resumeDecision,
+	type PlanState,
+	type ResumeState,
+} from "@/agent/plugins/plan";
 import type { Catalogue } from "@quicktalog/common";
 import { defaultCatalogueData } from "@quicktalog/common";
 import { afterEach, describe, expect, it, vi } from "vitest";

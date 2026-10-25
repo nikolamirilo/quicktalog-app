@@ -3,7 +3,7 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { CatalogueContextProvider } from "@/context/CatalogueContext";
 import { MainContextProvider } from "@/context/MainContext";
 import { UserContextProvider } from "@/context/UserContext";
-import { AuthProvider } from "@/components/auth/AuthProvider";
+import { SupabaseAuthProvider } from "@/components/auth/session/SupabaseAuthProvider";
 import { CookieBanner } from "@/components/general/CookieBanner";
 
 export const PageWrapperClient = ({
@@ -12,7 +12,7 @@ export const PageWrapperClient = ({
 	children: React.ReactNode;
 }>) => {
 	return (
-		<AuthProvider>
+		<SupabaseAuthProvider>
 			<UserContextProvider>
 				<CatalogueContextProvider>
 					<MainContextProvider>{children}</MainContextProvider>
@@ -22,6 +22,6 @@ export const PageWrapperClient = ({
 				<CookieBanner />
 			</UserContextProvider>
 			<SonnerToaster />
-		</AuthProvider>
+		</SupabaseAuthProvider>
 	);
 };

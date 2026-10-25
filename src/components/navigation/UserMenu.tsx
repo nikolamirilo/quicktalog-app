@@ -50,9 +50,7 @@ const itemClass =
 	"h-10 min-h-10 gap-2.5 rounded-[12px] px-3 text-[14.5px] font-medium text-product-foreground-accent focus:bg-product-background-hero focus:text-product-foreground [&_svg]:size-4";
 
 /**
- * The signed-in user's menu. Replaces Clerk's `<UserButton/>`, which could only
- * ever render Clerk's own account UI and would have had to be swapped during
- * the cutover; this reads `useAuth()` and works with whichever provider is live.
+ * The signed-in user's menu, read from `useAuth()`.
  */
 export function UserMenu() {
 	const { user, accountHref } = useAuth();

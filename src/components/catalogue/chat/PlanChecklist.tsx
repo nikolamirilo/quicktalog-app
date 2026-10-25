@@ -4,7 +4,7 @@ import {
 	isPlanFinished,
 	type PlanHalt,
 	type PlanState,
-} from "@/agent/plan";
+} from "@/agent/plugins/plan";
 import { estimatePlanCredits } from "@/lib/ai/pricing";
 import { AlertTriangle, Check, ListChecks, Loader2 } from "lucide-react";
 

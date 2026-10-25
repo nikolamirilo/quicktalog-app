@@ -7,7 +7,7 @@
 -- The ledger is public.ai_credits (public.prompts until 20260929120000, which also renamed its
 -- prompts_* constraints to ai_credits_* and replaced the catalogue slug with catalogue_id).
 --
--- Fixtures use uuid-shaped user ids (plan section 11.3), never Clerk `user_...` ids.
+-- Fixtures use uuid-shaped user ids, like `public.users.id`.
 -- Everything runs inside one transaction that is rolled back.
 
 create extension if not exists pgtap with schema extensions;
@@ -131,14 +131,14 @@ select is(
   'M06:16: ai_credits_plan_hash_format only accepts a 64-character lowercase hex digest');
 
 -- M06:18 drops the M05 (text, integer, boolean) form; 20260926120000:12 drops M06's 5-arg
--- form in turn, leaving only the credit-priced one from 20260926190000.
+-- form in turn; 20261024120000 replaces the credit-priced one with the form that takes a hold.
 select is(
   (select pg_catalog.string_agg(pg_catalog.pg_get_function_identity_arguments(p.oid), ' | ' order by p.oid)
      from pg_catalog.pg_proc p
      join pg_catalog.pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'private' and p.proname = 'begin_ai_turn'),
-  'p_catalogue text, p_limit integer, p_kind text, p_continuation_of uuid, p_plan_hash text, p_credits integer, p_require_verified boolean',
-  'only the credit-priced begin_ai_turn remains; the M05 and M06 forms are both dropped');
+  'p_catalogue text, p_limit integer, p_kind text, p_continuation_of uuid, p_plan_hash text, p_credits integer, p_require_verified boolean, p_hold integer',
+  'only the hold-taking begin_ai_turn remains; the M05, M06 and 7-argument forms are all dropped');
 
 -- M06:176-180
 select ok(

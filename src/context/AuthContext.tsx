@@ -6,8 +6,8 @@ import { createContext, type ReactNode, useContext } from "react";
  * What the app needs to know about who is signed in, in terms that belong to
  * Quicktalog rather than to an auth provider.
  *
- * Every component reads this instead of Clerk's or Supabase's hooks, so the
- * cutover switches one provider component rather than rewriting the UI.
+ * Every component reads this instead of Supabase's hooks, so the UI does not
+ * depend on the auth provider.
  */
 export type AuthUser = {
 	id: string;

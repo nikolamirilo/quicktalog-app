@@ -1,4 +1,3 @@
-import { resolveItems } from "@/agent/images";
 import {
 	itemInputSchema,
 	layoutSchema,
@@ -6,7 +5,8 @@ import {
 	MAX_ITEMS_PER_CALL,
 	sectionIndexSchema,
 	sectionTypeSchema,
-} from "@/agent/schemas";
+} from "@/agent/core/schemas";
+import { resolveItems } from "@/agent/plugins/images";
 import type { ToolContext } from "@/agent/tools/types";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";

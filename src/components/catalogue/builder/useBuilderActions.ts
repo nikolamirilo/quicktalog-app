@@ -38,11 +38,8 @@ export const useBuilderActions = ({
 }: {
 	closePanel: () => void;
 }) => {
-	const {
-		catalogue,
-		updateCatalogue: updateContextCatalogue,
-		acceptAiChanges,
-	} = useCatalogueContext();
+	const { catalogue, acceptAiChanges, markSaved, patchSaved } =
+		useCatalogueContext();
 	const { refreshUserData } = useUserContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 	const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
@@ -66,6 +63,7 @@ export const useBuilderActions = ({
 			});
 			const res = await promise;
 			if (!res.success) return null;
+			markSaved(catalogue);
 			return "data" in res ? res.data : null;
 		} catch (err) {
 			console.error(err);
@@ -112,25 +110,29 @@ export const useBuilderActions = ({
 		if (catalogue.status !== "active") {
 			toast.promise(promise, {
 				loading: "Publishing...",
-				success: async (success) => {
+				success: async (result) => {
 					closePanel();
-					if (!success) throw new Error("Failed to update status");
-					updateContextCatalogue({ status: "active" });
+					if (!result.success) {
+						throw new Error(result.error ?? "Failed to update status");
+					}
+					patchSaved({ status: "active" });
 					setIsSuccessModalOpen(true);
 					await refreshDashboardData();
 					await refreshUserData();
 					router.refresh();
 					return "Catalogue published successfully";
 				},
-				error: "Failed to publish catalogue",
+				error: (err: Error) => err.message || "Failed to publish catalogue",
 			});
 		} else {
 			toast.promise(promise, {
 				loading: "Updating...",
-				success: (success) => {
+				success: (result) => {
 					closePanel();
-					if (!success) throw new Error("Failed to update status");
-					updateContextCatalogue({ status: "active" });
+					if (!result.success) {
+						throw new Error(result.error ?? "Failed to update status");
+					}
+					patchSaved({ status: "active" });
 					return "Catalogue updated successfully";
 				},
 				action: {
@@ -139,7 +141,7 @@ export const useBuilderActions = ({
 						window.open(`/catalogues/${catalogue.name}`, "_blank");
 					},
 				},
-				error: "Failed to update catalogue",
+				error: (err: Error) => err.message || "Failed to update catalogue",
 			});
 		}
 	};

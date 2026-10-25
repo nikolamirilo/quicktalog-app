@@ -43,10 +43,6 @@ interface InitCatalogueModalProps {
  * "Create a Catalog" dialog. The values live in CatalogueContext, which the
  * create hook sends to the server; the server derives the slug again and
  * decides whether the name is free.
- *
- * Playwright relies on: role=alertdialog, the "Create a Catalog" title, the
- * ids #catalogName / #language / #currency / #businessType (Radix selects with
- * option roles) and the "Create Catalog" button.
  */
 export function InitCatalogueModal({
 	isOpen,

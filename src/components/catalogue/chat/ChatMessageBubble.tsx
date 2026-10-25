@@ -1,9 +1,9 @@
 "use client";
-import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
 import type { CatalogueAgentUIMessage } from "@/agent";
-import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
-import { CONTINUE_PLAN_MARKER } from "@/agent/plan";
+import { SCANNED_TEXT_MARKER } from "@/agent/plugins/attachments";
+import { CONTINUE_PLAN_MARKER } from "@/agent/plugins/plan";
 import { isHiddenTool, runningLabel } from "@/agent/tools/display";
+import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
 import type { AgentToolResult } from "@/types/ai";
 import { isToolUIPart } from "ai";
 import { AlertTriangle, Check, Globe, Loader2, ScanText } from "lucide-react";

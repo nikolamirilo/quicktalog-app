@@ -6,15 +6,19 @@ import {
 	type PlanState,
 	planFromMessages,
 	resumeDecision,
-} from "@/agent/plan";
+} from "@/agent/plugins/plan";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
-import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useChatImageOcr } from "@/hooks/useChatImageOcr";
+import { useKeepAiChanges } from "@/hooks/useKeepAiChanges";
+import { agentEditLimits, agentTurnId } from "@/lib/ai/message-metadata";
+import { canStartAsk } from "@/lib/ai/pricing";
+import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import type { AgentToolResult } from "@/types/ai";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, isToolUIPart } from "ai";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
 /** Failed responses arrive with the route's JSON body as the error message. */
 function parseErrorCode(error: Error): string | undefined {
@@ -55,6 +59,7 @@ export function useCatalogueChat() {
 	const { userData, refreshUserData } = useUserContext();
 	// Catalogue language is already a Tesseract code, chosen at creation.
 	const attachments = useChatImageOcr(context?.catalogue?.language);
+	const keepAiChanges = useKeepAiChanges();
 	const [showAiLimits, setShowAiLimits] = useState(false);
 	const [contentLimitHit, setContentLimitHit] = useState(false);
 
@@ -91,6 +96,9 @@ export function useCatalogueChat() {
 	useEffect(() => {
 		for (const message of messages) {
 			if (message.role !== "assistant") continue;
+			// Held back until the server says which limits these edits were judged by.
+			const limits = agentEditLimits(message);
+			if (!limits) continue;
 
 			for (const part of message.parts) {
 				if (!isToolUIPart(part)) continue;
@@ -104,12 +112,16 @@ export function useCatalogueChat() {
 				// Plan-ceiling refusals never reach the draft; this is the only signal left to offer an upgrade.
 				if (output.ok === false) {
 					if (output.limitReached) setContentLimitHit(true);
+					if ((output as { outOfCredits?: true }).outOfCredits) {
+						setShowAiLimits(true);
+					}
 					continue;
 				}
 				// Reading tools carry no edit to replay.
 				if (!output.operation) continue;
 				// Lands on the draft right away, held for the owner to keep or undo.
-				context?.applyAiOperations([output.operation]);
+				const outcome = context?.applyAiOperations([output.operation], limits);
+				if (outcome?.limitReached) setContentLimitHit(true);
 			}
 		}
 	}, [messages, context]);
@@ -125,8 +137,7 @@ export function useCatalogueChat() {
 		for (let i = messages.length - 1; i >= 0; i--) {
 			const message = messages[i];
 			if (message.role !== "assistant") continue;
-			const id = (message as { metadata?: { turnId?: string | null } }).metadata
-				?.turnId;
+			const id = agentTurnId(message);
 			if (id) return id;
 		}
 		return null;
@@ -167,7 +178,8 @@ export function useCatalogueChat() {
 			{
 				body: {
 					catalogueName: context.catalogue.name,
-					catalogue: context.catalogue,
+					// The latest draft: this round's last edits may not have rendered yet.
+					catalogue: context.getCatalogue(),
 					continuationOf: rootTurnId,
 				},
 			},
@@ -189,8 +201,7 @@ export function useCatalogueChat() {
 
 	const isOverLimit = (): boolean => {
 		const limit = userData?.currentPlan?.features?.ai_credits;
-		const used = userData?.usage?.credits ?? 0;
-		return typeof limit === "number" && used >= limit;
+		return !canStartAsk(userData?.usage?.credits ?? 0, limit);
 	};
 
 	const send = (input: string) => {
@@ -206,7 +217,13 @@ export function useCatalogueChat() {
 
 		// A new ask keeps whatever the last one changed: a review covers one ask
 		// (with its plan's follow-up requests), not the whole conversation.
-		context.acceptAiChanges();
+		// Kept AI work is saved, so credits spent on it are never lost.
+		if (context.aiReview) {
+			void keepAiChanges().then((saved) => {
+				if (!saved.ok)
+					toast.error(saved.error ?? "Could not save your changes");
+			});
+		}
 
 		// A new ask starts a new plan, so the loop starts over.
 		continuations.current = 0;

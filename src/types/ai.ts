@@ -1,3 +1,4 @@
+import type { OperationLimits } from "@/lib/catalogue/operations";
 import type {
 	ContentLayout,
 	FontSize,
@@ -222,4 +223,12 @@ export type AgentToolResult =
 			 * reference, so the client knows to offer an upgrade.
 			 */
 			limitReached?: boolean;
+			/** The request's credit hold could not pay for this step; the agent stops. */
+			outOfCredits?: true;
 	  };
+
+/** Rides on every agent message: the turn to continue, and the limits the server judged edits by. */
+export type AgentMessageMetadata = {
+	turnId: string | null;
+	limits: OperationLimits;
+};

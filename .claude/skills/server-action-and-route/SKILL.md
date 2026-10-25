@@ -19,7 +19,7 @@ Background: [docs/architecture/data-access.md](../../../docs/architecture/data-a
 
 | Use a **server action** (`src/actions/`) | Use an **API route** (`src/app/api/`) |
 |---|---|
-| Called from React components (the default) | Needs a URL: webhooks (Clerk, Paddle), external callers, `fetch` from SWR hooks |
+| Called from React components (the default) | Needs a URL: webhooks (Paddle), external callers, `fetch` from SWR hooks |
 
 **Prefer a server action for new app mutations.** Reach for an API route only when something outside React must call it. Don't add a second write path for data a server action already owns (see [[data-revalidation]] §"two data layers").
 
@@ -105,7 +105,7 @@ Export named `GET`/`POST`/`PATCH`, add `export const dynamic = "force-dynamic"` 
 
 - **Signed-in routes** do their own identity check and answer 401 - middleware is not enough.
 - **Public routes** (`/api/items*`) use the helpers in `src/lib/catalogue/public.ts` and never read cookies or identity, so their output is the same for every visitor.
-- **Webhooks** (`/api/clerk`, `/api/paddle`) verify their signature, use `asAdmin`, and let errors reach the caller as 5xx so the sender retries.
+- **Webhooks** (`/api/paddle`) verify their signature, use `asAdmin`, and let errors reach the caller as 5xx so the sender retries.
 
 ## Common Mistakes
 

@@ -1,12 +1,8 @@
 // @vitest-environment happy-dom
 import type { ContentBlock, Item } from "@quicktalog/common";
 import { act, cleanup, renderHook } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import type { CatalogueOperation } from "@/types/ai";
-
-vi.mock("@clerk/nextjs", () => ({
-	useUser: () => ({ user: null }),
-}));
 
 import {
 	CatalogueContextProvider,
@@ -178,7 +174,7 @@ describe("CatalogueContext AI review", () => {
 	it("applies AI edits straight away and holds them for review", () => {
 		const hook = setupWithSection();
 		act(() => {
-			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+			hook.result.current?.applyAiOperations([addItemOp("latte")], {});
 		});
 		expect(itemIds(hook)).toEqual(["latte"]);
 		expect(hook.result.current?.aiReview?.changes).toHaveLength(1);
@@ -187,10 +183,10 @@ describe("CatalogueContext AI review", () => {
 	it("puts the catalogue back on reject, across several AI edits", () => {
 		const hook = setupWithSection();
 		act(() => {
-			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+			hook.result.current?.applyAiOperations([addItemOp("latte")], {});
 		});
 		act(() => {
-			hook.result.current?.applyAiOperations([addItemOp("mocha")]);
+			hook.result.current?.applyAiOperations([addItemOp("mocha")], {});
 		});
 		expect(hook.result.current?.aiReview?.changes).toHaveLength(2);
 		act(() => hook.result.current?.rejectAiChanges());
@@ -201,7 +197,7 @@ describe("CatalogueContext AI review", () => {
 	it("keeps the edits on accept", () => {
 		const hook = setupWithSection();
 		act(() => {
-			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+			hook.result.current?.applyAiOperations([addItemOp("latte")], {});
 		});
 		act(() => hook.result.current?.acceptAiChanges());
 		expect(itemIds(hook)).toEqual(["latte"]);
@@ -211,10 +207,142 @@ describe("CatalogueContext AI review", () => {
 	it("treats a hand edit as keeping the AI edits", () => {
 		const hook = setupWithSection();
 		act(() => {
-			hook.result.current?.applyAiOperations([addItemOp("latte")]);
+			hook.result.current?.applyAiOperations([addItemOp("latte")], {});
 		});
 		act(() => hook.result.current?.addItem(0, item("mocha")));
 		expect(hook.result.current?.aiReview).toBeNull();
 		expect(itemIds(hook)).toEqual(["latte", "mocha"]);
+	});
+});
+
+describe("CatalogueContext replay within the plan", () => {
+	const filled = (count: number): ContentBlock =>
+		({
+			...category("drinks"),
+			items: Array.from({ length: count }, (_, i) => item(`d${i}`)),
+		}) as ContentBlock;
+	const addItems = (
+		count: number,
+		sectionId = "drinks",
+	): CatalogueOperation => ({
+		op: "add_items",
+		sectionId,
+		items: Array.from({ length: count }, (_, i) => ({
+			id: `new-${sectionId}-${i}`,
+			name: `New ${i}`,
+			price: 1,
+		})),
+	});
+	const basic = { items: 30, sections: 8 };
+	const total = (hook: ReturnType<typeof setup>) =>
+		hook.result.current!.catalogue.content.reduce(
+			(n, block) => n + ((block as { items?: unknown[] }).items?.length ?? 0),
+			0,
+		);
+
+	it("refuses the 31st item on Basic during replay", () => {
+		const hook = setup();
+		act(() => hook.result.current!.addBlock(filled(30)));
+		let outcome: { applied: string[]; limitReached: boolean } | undefined;
+		act(() => {
+			outcome = hook.result.current!.applyAiOperations([addItems(5)], basic);
+		});
+		expect(outcome?.applied).toEqual([]);
+		expect(outcome?.limitReached).toBe(true);
+		expect(total(hook)).toBe(30);
+	});
+
+	it("skips later edits aimed at a section the replay refused", () => {
+		const hook = setup();
+		for (let i = 0; i < 8; i++) {
+			act(() => hook.result.current!.addBlock(category(`s${i}`)));
+		}
+		act(() => {
+			hook.result.current!.applyAiOperations(
+				[
+					{ op: "add_section", id: "S", sectionType: "items", name: "S" },
+					addItems(3, "S"),
+				],
+				basic,
+			);
+		});
+		const content = hook.result.current!.catalogue.content;
+		expect(content).toHaveLength(8);
+		expect(total(hook)).toBe(0);
+	});
+
+	it("a hand edit mid-turn cannot push the replay over", () => {
+		const hook = setup();
+		act(() => hook.result.current!.addBlock(filled(29)));
+		act(() => hook.result.current!.addItem(0, item("by-hand")));
+		act(() => {
+			hook.result.current!.applyAiOperations([addItems(3)], basic);
+		});
+		expect(total(hook)).toBe(30);
+	});
+
+	it("getCatalogue returns the draft including edits applied in this pass", () => {
+		const hook = setup();
+		act(() => hook.result.current!.addBlock(filled(1)));
+		let seen = 0;
+		act(() => {
+			hook.result.current!.applyAiOperations([addItems(2)], basic);
+			const draft = hook.result.current!.getCatalogue();
+			seen = (draft.content[0] as { items: unknown[] }).items.length;
+		});
+		expect(seen).toBe(3);
+	});
+});
+
+describe("CatalogueContext unsaved changes", () => {
+	const stored = () =>
+		({ id: "cat-1", name: "menu", content: [category("drinks")] }) as never;
+	const addOne: CatalogueOperation = {
+		op: "add_items",
+		sectionId: "drinks",
+		items: [{ id: "latte", name: "latte", price: 3 }],
+	};
+
+	it("isDirty follows seeds, edits and saves", () => {
+		const hook = setup();
+		expect(hook.result.current!.isDirty).toBe(false);
+		act(() => hook.result.current!.seedCatalogue(stored()));
+		expect(hook.result.current!.isDirty).toBe(false);
+		act(() => {
+			hook.result.current!.applyAiOperations([addOne], {});
+		});
+		expect(hook.result.current!.isDirty).toBe(true);
+		act(() => hook.result.current!.markSaved());
+		expect(hook.result.current!.isDirty).toBe(false);
+	});
+
+	it("a change the server already made, like going live, stays saved", () => {
+		const hook = setup();
+		act(() => hook.result.current!.seedCatalogue(stored()));
+		act(() => hook.result.current!.patchSaved({ status: "active" }));
+		expect(hook.result.current!.catalogue.status).toBe("active");
+		expect(hook.result.current!.isDirty).toBe(false);
+	});
+
+	it("is clean again after undoing AI edits back to the seed", () => {
+		const hook = setup();
+		act(() => hook.result.current!.seedCatalogue(stored()));
+		act(() => {
+			hook.result.current!.applyAiOperations([addOne], {});
+		});
+		act(() => hook.result.current!.rejectAiChanges());
+		expect(hook.result.current!.isDirty).toBe(false);
+	});
+
+	it("an edit made while a save was running stays unsaved", () => {
+		const hook = setup();
+		act(() => hook.result.current!.seedCatalogue(stored()));
+		act(() => {
+			hook.result.current!.applyAiOperations([addOne], {});
+		});
+		const sent = hook.result.current!.getCatalogue();
+		act(() => hook.result.current!.addItem(0, item("by-hand")));
+		act(() => hook.result.current!.markSaved(sent));
+		expect(hook.result.current!.isDirty).toBe(true);
 	});
 });

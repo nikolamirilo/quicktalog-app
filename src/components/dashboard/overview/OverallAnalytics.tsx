@@ -54,7 +54,7 @@ function StatCard({
 					<Info aria-hidden="true" className="size-[15px]" />
 				</button>
 			</div>
-			<p className="font-product-heading text-[28px] font-extrabold leading-none tracking-[-0.03em] tabular-nums md:text-[32px]">
+			<p className="font-product-heading text-[22px] font-extrabold leading-none tracking-[-0.03em] tabular-nums [overflow-wrap:anywhere] min-[381px]:pr-9 sm:text-[28px] md:text-[32px]">
 				{Number(value ?? 0).toLocaleString("en-US")}
 			</p>
 			<IconTile

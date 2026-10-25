@@ -19,9 +19,7 @@ guards; it was deleted on 2026-09-28.)
 ## Changing the database
 
 1. Create a migration: `supabase migration new <name>`, then write the SQL in the new file.
-2. Test it locally before it touches a hosted project:
-   - `npm run test:db` applies every migration on an in-memory Postgres (17 and 18) and runs the RLS scenarios. It needs no Docker. When the migration belongs to the auth/RLS plan, add it to `PHASE_MIGRATIONS` in `tests/db-pglite/lib.mjs` (see that folder's README).
-   - `supabase start` then `supabase test db` runs the pgTAP tests in `supabase/tests/database/` against the real Postgres image.
+2. Test it locally before it touches a hosted project: `supabase start` then `supabase test db` runs the pgTAP tests in `supabase/tests/database/` against the real Postgres image.
 3. Apply it to TEST first: `supabase link --project-ref imhinsgyzzyblghwnedk`, then `supabase db push`.
 4. Regenerate types in `../quicktalog-packages`: `npx drizzle-kit pull`, and review the diff.
    That repo's config reads **`DB_ADMIN_CONNECTION_STRING`** (pointing at TEST). It must be the

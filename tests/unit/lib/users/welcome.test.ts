@@ -16,7 +16,7 @@ vi.mock("@sentry/nextjs", () => ({
 
 import { sendWelcomeEmailOnce } from "@/lib/users/welcome";
 
-const me = { userId: "u-1", sessionId: "s-1", provider: "supabase" } as never;
+const me = { userId: "u-1", sessionId: "s-1" } as never;
 
 /** `withUser` hands the callback a tx; the claim's rows are all that matter. */
 const claimReturns = (rows: unknown[]) =>

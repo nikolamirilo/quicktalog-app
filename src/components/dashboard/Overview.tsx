@@ -105,13 +105,14 @@ export function Overview({
 	async function handleUpdateItemStatus(id: string, status: Status) {
 		setStatusBusyId(id);
 		try {
-			const success = await updateItemStatus(id, status);
-			if (!success) {
-				// Activating is a plan decision the server can refuse.
+			const result = await updateItemStatus(id, status);
+			if (!result.success) {
+				// Activating is a plan decision the server can refuse; its reason says what to fix.
 				toast.error(
-					status === "active"
-						? "Could not activate this catalogue. Your plan's limits may not allow it."
-						: "Failed to update status. Please try again.",
+					result.error ??
+						(status === "active"
+							? "Could not activate this catalogue."
+							: "Failed to update status. Please try again."),
 				);
 				return;
 			}

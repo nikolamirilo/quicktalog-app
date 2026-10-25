@@ -1,9 +1,8 @@
 "use client";
 import { headingSizeMap } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { isDarkBackground } from "@/lib/themes/custom-theme";
+import { isDarkTheme } from "@/lib/themes/custom-theme";
 import { HeadingSize } from "@/types/shared";
-import { themes } from "@quicktalog/common";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const HEADING_CHAR_LIMIT = 100;
@@ -239,11 +238,7 @@ export function useHeadingEditor() {
 	}, []);
 
 	useEffect(() => {
-		const isDark =
-			catalogue?.appearance.theme.type === "custom"
-				? isDarkBackground(catalogue?.appearance.theme.colors?.background)
-				: themes.find((t) => t.key === catalogue?.appearance.theme.name)
-						?.type === "dark";
+		const isDark = isDarkTheme(catalogue?.appearance.theme);
 		setPlaceholderColor(isDark ? "#E5E7EB" : "#4A5565");
 	}, [
 		catalogue?.appearance.theme.type,

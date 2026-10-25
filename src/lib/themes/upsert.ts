@@ -2,6 +2,7 @@ import "server-only";
 import * as Sentry from "@sentry/nextjs";
 import { type SavedTheme, schema } from "@quicktalog/common";
 import { and, eq } from "drizzle-orm";
+import { getPlanForUpdate } from "@/lib/entitlements/plan";
 import { sanitizeCustomThemeColors } from "@/lib/themes/custom-theme";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
 import { isUniqueViolation, type Tx, withUser } from "@/utils/db";
@@ -55,6 +56,16 @@ export async function upsertTheme(
 	return { success: true, data: saved as SavedTheme };
 }
 
+const CUSTOM_THEMES_LOCKED: ThemeResult = {
+	success: false,
+	error: "Custom themes are not part of your plan",
+};
+
+async function planHasCustomThemes(tx: Tx, me: VerifiedIdentity) {
+	const tier = await getPlanForUpdate(tx, me);
+	return tier.features.apperance.customThemes === true;
+}
+
 /**
  * The whole save as one transaction. The save action and the chat agent both
  * call this, so the two entry points stay in lockstep. Takes a verified
@@ -67,7 +78,10 @@ export async function saveOwnTheme(
 	colors: unknown,
 ): Promise<ThemeResult> {
 	try {
-		return await withUser(me, (tx) => upsertTheme(tx, me, name, colors));
+		return await withUser(me, async (tx) => {
+			if (!(await planHasCustomThemes(tx, me))) return CUSTOM_THEMES_LOCKED;
+			return upsertTheme(tx, me, name, colors);
+		});
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "saveOwnTheme" } });
 		console.error("Unexpected error while saving theme:", err);
@@ -95,18 +109,21 @@ export async function updateOwnTheme(
 	}
 
 	try {
-		const [saved] = await withUser(me, (tx) =>
-			tx
+		const outcome = await withUser(me, async (tx) => {
+			if (!(await planHasCustomThemes(tx, me))) return CUSTOM_THEMES_LOCKED;
+			const [row] = await tx
 				.update(userThemes)
 				.set({
 					name: trimmedName,
 					colors: sanitizeCustomThemeColors(colors),
 				})
 				.where(and(eq(userThemes.id, id), eq(userThemes.userId, me.userId)))
-				.returning(),
-		);
-		if (!saved) return { success: false, error: "Not found" };
-		return { success: true, data: saved as SavedTheme };
+				.returning();
+			return row
+				? ({ success: true, data: row as SavedTheme } as ThemeResult)
+				: null;
+		});
+		return outcome ?? { success: false, error: "Not found" };
 	} catch (err) {
 		if (isUniqueViolation(err)) {
 			return {

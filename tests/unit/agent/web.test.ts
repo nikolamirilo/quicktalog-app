@@ -5,7 +5,7 @@ import {
 	htmlToText,
 	pictureMarker,
 	resolveSafeUrl,
-} from "@/agent/web";
+} from "@/agent/plugins/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));

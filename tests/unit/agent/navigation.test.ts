@@ -1,4 +1,4 @@
-import { CatalogueSession } from "@/agent/session";
+import { CatalogueSession } from "@/agent/core/session";
 import { buildTools } from "@/agent/tools";
 import {
 	isHiddenTool,

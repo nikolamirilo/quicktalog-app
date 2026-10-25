@@ -1,4 +1,4 @@
-import { aiLimitsFor } from "@/lib/ai/limits";
+import { aiLimitsFor, requestHoldFor } from "@/lib/ai/limits";
 import type { Tier } from "@/lib/entitlements/plan";
 import { tiers } from "@quicktalog/common";
 import { describe, expect, it } from "vitest";
@@ -35,5 +35,13 @@ describe("aiLimitsFor", () => {
 		for (const tier of tiers.filter((t) => t.id !== 0)) {
 			expect(aiLimitsFor(tier).maxFetches).toBeGreaterThan(0);
 		}
+	});
+});
+
+describe("requestHoldFor", () => {
+	it("holds enough for the largest request on each plan", () => {
+		expect(requestHoldFor(aiLimitsFor(tiers[0]))).toBe(4);
+		const pro = tiers.find((t) => t.name === "Pro")!;
+		expect(requestHoldFor(aiLimitsFor(pro))).toBe(18);
 	});
 });

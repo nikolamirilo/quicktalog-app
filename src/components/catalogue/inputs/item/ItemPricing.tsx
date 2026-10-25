@@ -12,6 +12,7 @@ import {
 import { cn } from "@/lib/ui/cn";
 import { Item } from "@quicktalog/common";
 import { useEffect, useState } from "react";
+import { pillToggleClass } from "@/components/catalogue/inputs/sidebar/panel";
 
 interface ItemPricingProps {
 	value: Item;
@@ -28,10 +29,6 @@ const DENOMINATORS = [
 	{ value: "pcs", label: "pcs" },
 	{ value: "portion", label: "portion" },
 ];
-
-/** A checkbox drawn as a pill toggle; the whole pill is its label. */
-const toggleClass =
-	"inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border-[1.5px] border-product-border bg-product-card pl-2.5 pr-3.5 text-[13.5px] font-semibold text-product-foreground-accent transition-colors hover:border-product-border-strong has-[[data-state=checked]]:border-product-primary-accent has-[[data-state=checked]]:bg-product-primary-soft has-[[data-state=checked]]:text-product-foreground has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50";
 
 const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 	const [priceString, setPriceString] = useState(
@@ -184,7 +181,7 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 				</div>
 
 				<div className="flex items-center gap-2 md:h-10">
-					<label className={toggleClass} htmlFor="is-free">
+					<label className={pillToggleClass} htmlFor="is-free">
 						<Checkbox
 							checked={value.isFree}
 							className="h-4 w-4 rounded-[5px]"
@@ -200,7 +197,7 @@ const ItemPricing = ({ value, onChange, currency }: ItemPricingProps) => {
 						Free
 					</label>
 
-					<label className={toggleClass} htmlFor="discount">
+					<label className={pillToggleClass} htmlFor="discount">
 						<Checkbox
 							checked={!!value.discount?.isOnDiscount}
 							className="h-4 w-4 rounded-[5px]"

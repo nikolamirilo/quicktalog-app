@@ -1,10 +1,10 @@
-import { resolveImage, resolveItems } from "@/agent/images";
 import {
 	itemIndexSchema,
 	itemInputSchema,
 	MAX_ITEMS_PER_CALL,
 	sectionIndexSchema,
-} from "@/agent/schemas";
+} from "@/agent/core/schemas";
+import { resolveImage, resolveItems } from "@/agent/plugins/images";
 import type { ToolContext } from "@/agent/tools/types";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";

@@ -2,6 +2,15 @@ import "server-only";
 import { type Catalogue, schema, tiers } from "@quicktalog/common";
 import { count, eq, sql } from "drizzle-orm";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
+import {
+	countPlanItems,
+	countPlanSections,
+} from "@/lib/catalogue/content-blocks";
+import {
+	catalogueFitsPlan,
+	GATED_SECTION_TYPES,
+	misfitMessage,
+} from "@/lib/entitlements/catalogue-fit";
 import type { Tx } from "@/utils/db";
 
 export type Tier = (typeof tiers)[number];
@@ -58,13 +67,22 @@ export async function withinCatalogueQuota(
 }
 
 /**
- * Whether a catalogue may be published or re-activated: the plan's traffic
- * allowance for this month must not be used up. The numbers come from
+ * Whether a catalogue may be published or re-activated: it must fit the plan
+ * completely (no grandfathering after a downgrade), and the plan's traffic
+ * allowance for this month must not be used up. The traffic numbers come from
  * `private.my_usage()`, the same source the dashboard shows.
  */
 export type PlanCheck = { ok: boolean; reason?: string };
 
-export async function canActivate(tx: Tx, tier: Tier): Promise<PlanCheck> {
+export async function canActivate(
+	tx: Tx,
+	tier: Tier,
+	content: unknown,
+): Promise<PlanCheck> {
+	const fit = catalogueFitsPlan(content, tier.features);
+	if ("misfit" in fit)
+		return { ok: false, reason: misfitMessage(fit.misfit, tier.name) };
+
 	const rows = await tx.execute<{ pageviews: string | number }>(
 		sql`select pageviews from private.my_usage()`,
 	);
@@ -83,26 +101,6 @@ export async function canActivate(tx: Tx, tier: Tier): Promise<PlanCheck> {
  * Growth-only: content that is already over the limit (after a downgrade) may
  * be saved again as long as it does not grow.
  */
-/**
- * Which stored `type` keys each `features.sections` flag governs, including the
- * legacy keys a row can still carry. A gated type must be listed here or it is
- * ungated, so the map is the gate.
- */
-const GATED_SECTION_TYPES: {
-	types: string[];
-	label: string;
-	flag: keyof Tier["features"]["sections"];
-}[] = [
-	{ types: ["divider"], label: "Divider", flag: "divider" },
-	{ types: ["embedding"], label: "External content", flag: "embedding" },
-	{
-		// `custom_code` is the pre-rename key; a stored row still has it.
-		types: ["custom_visual", "custom_code"],
-		label: "Custom visual",
-		flag: "customVisual",
-	},
-];
-
 const countOfTypes = (content: unknown, types: string[]): number =>
 	Array.isArray(content)
 		? content.filter((block: any) => types.includes(block?.type)).length
@@ -116,22 +114,12 @@ export function contentWithinPlan(
 	const content = next.content;
 	if (!Array.isArray(content)) return { ok: true };
 
-	const sections = content.length;
-	const items = content.reduce(
-		(total, block: any) =>
-			total + (Array.isArray(block?.items) ? block.items.length : 0),
-		0,
-	);
+	const sections = countPlanSections(content);
+	const items = countPlanItems(content);
 
 	const before = Array.isArray(previous?.content) ? previous.content : null;
-	const sectionsBefore = before ? before.length : 0;
-	const itemsBefore = before
-		? before.reduce(
-				(total, block: any) =>
-					total + (Array.isArray(block?.items) ? block.items.length : 0),
-				0,
-			)
-		: 0;
+	const sectionsBefore = countPlanSections(before);
+	const itemsBefore = countPlanItems(before);
 
 	// "unlimited" means nothing to enforce.
 	const limitOf = (value: number | "unlimited" | undefined) =>

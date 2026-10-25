@@ -1,33 +1,27 @@
-import { FiMapPin } from "react-icons/fi";
-import { MdTitle } from "react-icons/md";
+import type { Catalogue } from "@quicktalog/common";
+import { FiFileText, FiMapPin } from "react-icons/fi";
 
-const CompanyInfo = ({ activeData }: { activeData: any }) => {
-	if (!activeData?.legal?.legalName && !activeData?.legal?.address) return null;
-
+/** "Visit us": address and registered name. Renders nothing when both are empty. */
+const CompanyInfo = ({ legal }: { legal: Catalogue["legal"] | undefined }) => {
+	if (!legal?.legalName && !legal?.address) return null;
 	return (
-		<div className="space-y-6">
-			<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
-				<div
-					aria-hidden="true"
-					className="w-1 h-5 bg-primary rounded-full"
-				></div>
-				<span>Company Information</span>
-			</h4>
-			<ul className="space-y-4">
-				{activeData?.legal?.legalName && (
-					<li className="flex items-center space-x-3">
-						<MdTitle className="w-4 h-4 flex-shrink-0 text-catalogue-navigation-text" />
-						<span className="text-sm text-catalogue-navigation-text">
-							{activeData?.legal?.legalName}
+		<div className="cat-foot-col">
+			<h2>Visit us</h2>
+			<ul className="cat-foot-links">
+				{legal.address && (
+					<li>
+						<span>
+							<FiMapPin aria-hidden="true" />
+							<span>{legal.address}</span>
 						</span>
 					</li>
 				)}
-				{activeData?.legal?.address && (
-					<li className="flex items-start space-x-3">
-						<FiMapPin className="w-4 h-4 mt-1 flex-shrink-0 text-catalogue-navigation-text" />
-						<div className="text-sm text-catalogue-navigation-text">
-							<div>{activeData?.legal?.address}</div>
-						</div>
+				{legal.legalName && (
+					<li>
+						<span>
+							<FiFileText aria-hidden="true" />
+							<span>{legal.legalName}</span>
+						</span>
 					</li>
 				)}
 			</ul>

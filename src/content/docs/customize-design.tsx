@@ -96,6 +96,19 @@ function Body() {
 					competing styles.
 				</p>
 				<p>
+					The glass effect sits with the Style controls too. It makes the
+					navbar, search bar, section headers and item cards see-through, like
+					frosted glass, so the page shows softly behind them as visitors
+					scroll. Pick Clear, Semi-frosted or Frosted, choose which of those
+					surfaces use it, and fine-tune it if you want.
+				</p>
+				<p>
+					You can also replace the theme&apos;s background with your own photo,
+					a ready-made gradient or a single colour. Your cards and text keep the
+					theme&apos;s colours, so pick a light background for a light theme and
+					a dark one for a dark theme; the builder warns you when they clash.
+				</p>
+				<p>
 					There is also an overlay, a small emoji that floats above the page.
 					Used sparingly it is a cheap way to mark a season or a promotion
 					without redesigning anything.
@@ -136,6 +149,8 @@ function Body() {
 					link. On paid plans you can go further: switch the header to a custom
 					layout and you can add a button that points wherever you need, show
 					tap-to-call and tap-to-email icons, and set how large the logo sits.
+					The header floats at the top of the page while visitors scroll, and on
+					phones its icons fold into a small menu.
 				</p>
 
 				<h2>Fill in the footer</h2>
@@ -143,10 +158,10 @@ function Body() {
 					The footer is where the practical details live: your business
 					information, social links, partners, and your legal details if you
 					need them shown. Like the header, it has a custom layout on paid plans
-					with a button of its own. Higher plans can also put a newsletter
-					sign-up here, which turns a one-time visit into a way to reach people
-					again, and you can export the addresses you collect from your
-					dashboard.
+					with a button of its own and a one-line tagline under your logo.
+					Higher plans can also put a newsletter sign-up here, which turns a
+					one-time visit into a way to reach people again, and you can export
+					the addresses you collect from your dashboard.
 				</p>
 			</Prose>
 

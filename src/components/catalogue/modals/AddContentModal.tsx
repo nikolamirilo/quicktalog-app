@@ -5,7 +5,10 @@ import { AlertDialog, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { ContentBlock, ItemsBlock, UserData } from "@quicktalog/common";
-import { normalizeBlock } from "@/lib/catalogue/content-blocks";
+import {
+	countPlanSections,
+	normalizeBlock,
+} from "@/lib/catalogue/content-blocks";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/ui/cn";
@@ -124,17 +127,12 @@ const AddContentModal = ({
 		const sectionsLimit =
 			userData?.currentPlan?.features?.sections_per_catalogue;
 
-		if (selectedOption === "text") return null;
-
 		if (
 			sectionsLimit !== "unlimited" &&
 			sectionsLimit !== undefined &&
 			!editingBlock
 		) {
-			const nonTextSectionsCount = catalogue.content.filter(
-				(block: any) => block.type !== "text",
-			).length;
-			if (nonTextSectionsCount >= sectionsLimit) {
+			if (countPlanSections(catalogue.content) >= sectionsLimit) {
 				return "items";
 			}
 		}

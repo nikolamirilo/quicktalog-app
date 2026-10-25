@@ -1,6 +1,13 @@
-import { tiers } from "@quicktalog/common";
+import { defaultCatalogueData, tiers } from "@quicktalog/common";
+import type { SQL } from "drizzle-orm";
+import { PgDialect } from "drizzle-orm/pg-core";
 import { describe, expect, it } from "vitest";
-import { applyPlanToCatalogue } from "@/lib/entitlements/catalogue";
+import { DEFAULT_BACKGROUND } from "@/lib/catalogue/background";
+import { DEFAULT_GLASS } from "@/lib/catalogue/glass";
+import {
+	applyPlanDowngrade,
+	applyPlanToCatalogue,
+} from "@/lib/entitlements/catalogue";
 import { tierForPlanId } from "@/lib/entitlements/plan";
 import { CATALOGUE_EDITABLE_FIELDS, pickEditable } from "@/utils/db/columns";
 
@@ -74,5 +81,166 @@ describe("applyPlanToCatalogue", () => {
 		) as { header: { type: string }; footer: { type: string } };
 		expect(result.header.type).toBe("default");
 		expect(result.footer.type).toBe("custom");
+	});
+});
+
+describe("applyPlanToCatalogue appearance", () => {
+	const named = (name: string) => tiers.find((t) => t.name === name)!;
+	const styled = {
+		appearance: {
+			theme: { type: "custom", name: "custom", colors: { primary: "#ff0000" } },
+			style: {
+				contentFontSize: "large",
+				fontFamily: "lora",
+				borderRadius: 30,
+				shadow: "high",
+			},
+			overlay: { isEnabled: true, icon: "star" },
+		},
+	} as never;
+	type Appearance = {
+		appearance: {
+			theme: { type: string; name: string; colors?: unknown };
+			style: unknown;
+			overlay: unknown;
+		};
+	};
+
+	it("resets style and overlay to the defaults on a plan without style controls", () => {
+		const { appearance } = applyPlanToCatalogue(
+			styled,
+			named("Basic"),
+		) as Appearance;
+		expect(appearance.style).toEqual(defaultCatalogueData.appearance.style);
+		expect(appearance.overlay).toEqual(defaultCatalogueData.appearance.overlay);
+	});
+
+	it("resets a custom theme to the default theme on Basic", () => {
+		const { appearance } = applyPlanToCatalogue(
+			styled,
+			named("Basic"),
+		) as Appearance;
+		expect(appearance.theme).toEqual(defaultCatalogueData.appearance.theme);
+	});
+
+	it("keeps a standard theme on Basic", () => {
+		const { appearance } = applyPlanToCatalogue(
+			{
+				appearance: { theme: { type: "standard", name: "theme-coffee" } },
+			} as never,
+			named("Basic"),
+		) as Appearance;
+		expect(appearance.theme.name).toBe("theme-coffee");
+	});
+
+	it("leaves appearance alone on Pro", () => {
+		const { appearance } = applyPlanToCatalogue(
+			styled,
+			named("Pro"),
+		) as Appearance;
+		expect(appearance.theme.type).toBe("custom");
+		expect((appearance.style as { shadow: string }).shadow).toBe("high");
+	});
+});
+
+describe("applyPlanToCatalogue glass, search and tagline", () => {
+	const named = (name: string) => tiers.find((t) => t.name === name)!;
+	const glassy = {
+		appearance: {
+			...defaultCatalogueData.appearance,
+			glass: { level: 3, opacity: 200, frost: 10, splay: null, apply: {} },
+			search: { isEnabled: true, placeholder: "y".repeat(80) },
+			background: {
+				isEnabled: true,
+				type: "color",
+				color: "#0F1424",
+				fade: 99,
+			},
+		},
+		footer: {
+			...defaultCatalogueData.footer,
+			tagline: `  a\n  b ${"z".repeat(200)}`,
+		},
+	} as never;
+	type Out = {
+		appearance: {
+			glass: typeof DEFAULT_GLASS;
+			background: typeof DEFAULT_BACKGROUND;
+			search: { isEnabled: boolean; placeholder: string };
+		};
+		footer: { tagline: string };
+	};
+
+	it("turns glass off on a plan without style controls but keeps search", () => {
+		const { appearance } = applyPlanToCatalogue(glassy, named("Basic")) as Out;
+		expect(appearance.glass).toEqual(DEFAULT_GLASS);
+		expect(appearance.background).toEqual(DEFAULT_BACKGROUND);
+		expect(appearance.search.isEnabled).toBe(true);
+		expect(appearance.search.placeholder).toHaveLength(40);
+	});
+
+	it("keeps glass on Pro, clamped", () => {
+		const { appearance } = applyPlanToCatalogue(glassy, named("Pro")) as Out;
+		expect(appearance.glass.level).toBe(3);
+		expect(appearance.glass.opacity).toBe(85);
+		expect(appearance.glass.apply.cards).toBe(true);
+		expect(appearance.background).toMatchObject({
+			isEnabled: true,
+			type: "color",
+			color: "#0f1424",
+			fade: 80,
+		});
+	});
+
+	it("collapses the tagline to one capped line", () => {
+		const { footer } = applyPlanToCatalogue(glassy, named("Pro")) as Out;
+		expect(footer.tagline.startsWith("a b z")).toBe(true);
+		expect(footer.tagline).toHaveLength(120);
+	});
+
+	it("does not add glass or search to a payload without them", () => {
+		const { appearance } = applyPlanToCatalogue(
+			{
+				appearance: { theme: { type: "standard", name: "theme-coffee" } },
+			} as never,
+			named("Pro"),
+		) as Out;
+		expect("glass" in appearance).toBe(false);
+		expect("search" in appearance).toBe(false);
+	});
+});
+
+describe("applyPlanDowngrade appearance", () => {
+	const named = (name: string) => tiers.find((t) => t.name === name)!;
+	const statements = async (tierName: string) => {
+		const dialect = new PgDialect();
+		const seen: { sql: string; params: unknown[] }[] = [];
+		const tx = {
+			execute: async (query: SQL) => {
+				seen.push(dialect.sqlToQuery(query));
+				return [];
+			},
+		};
+		await applyPlanDowngrade(tx as never, "user-1", named(tierName));
+		return seen;
+	};
+
+	it("resets style and custom theme on stored catalogues", async () => {
+		const seen = await statements("Starter");
+		const style = seen.find((q) => q.sql.includes("'{style}'"));
+		expect(style?.params).toContain(
+			JSON.stringify(defaultCatalogueData.appearance.style),
+		);
+		expect(style?.sql).toContain("'{glass}'");
+		expect(style?.params).toContain(JSON.stringify(DEFAULT_GLASS));
+		expect(style?.params).toContain(JSON.stringify(DEFAULT_BACKGROUND));
+		const theme = seen.find((q) => q.sql.includes("'{theme}'"));
+		expect(theme?.sql).toContain("'custom'");
+	});
+
+	it("leaves appearance alone when the plan keeps it", async () => {
+		const seen = await statements("Premium");
+		expect(seen.some((q) => q.sql.includes("'{style}'"))).toBe(false);
+		expect(seen.some((q) => q.sql.includes("'{theme}'"))).toBe(false);
 	});
 });

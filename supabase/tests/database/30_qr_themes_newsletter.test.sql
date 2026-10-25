@@ -21,7 +21,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 
 -- pgTAP lives in `extensions`. M01 1.2 revokes the default PUBLIC EXECUTE on postgres-owned functions, so the
--- app roles need USAGE *and* EXECUTE here to run assertions while the role is switched (PLAN 4.5, PGlite F10).
+-- app roles need USAGE *and* EXECUTE here to run assertions while the role is switched.
 grant usage on schema extensions to app_user, app_public;
 grant execute on all functions in schema extensions to app_user, app_public;
 set local search_path = public, extensions, pg_temp;

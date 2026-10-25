@@ -1,6 +1,6 @@
 /**
  * Removes credentials and personal data from Sentry events before they leave the
- * app: cookies (Clerk `__session`, future `sb-*-auth-token`), auth headers,
+ * app: cookies (`sb-*-auth-token`), auth headers,
  * token-like query parameters and the bound parameters Drizzle adds to error
  * messages (`params: ...`, which can hold emails and user ids).
  * Shared by the server, edge and browser Sentry configs, so no `server-only`.

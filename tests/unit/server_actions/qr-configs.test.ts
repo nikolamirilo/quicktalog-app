@@ -22,7 +22,7 @@ vi.mock("@sentry/nextjs", () => ({ captureException: mocks.captureException }));
 import { upsertQrConfig } from "@/actions/qr-configs";
 import { defaultQrConfig, type QrConfig } from "@/lib/qr/design";
 
-const ME = { userId: "user_1", sessionId: "sess_1", provider: "clerk" };
+const ME = { userId: "user_1", sessionId: "sess_1" };
 
 describe("upsertQrConfig", () => {
 	beforeEach(() => {

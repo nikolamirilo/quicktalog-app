@@ -2,7 +2,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 import { sql } from "drizzle-orm";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
-import { aiLimitsFor } from "@/lib/ai/limits";
+import { aiLimitsFor, requestHoldFor } from "@/lib/ai/limits";
 import { getPlanForUpdate, type Tier } from "@/lib/entitlements/plan";
 import { withinRateLimit } from "@/lib/rate-limit";
 import { type Tx, withUser } from "@/utils/db";
@@ -48,7 +48,7 @@ export function startAiTurn(
 	},
 ): Promise<{
 	plan: Tier;
-	turn: { outcome: AiTurnOutcome; turnId: string | null };
+	turn: { outcome: AiTurnOutcome; turnId: string | null; held: number };
 }> {
 	return withUser(me, async (tx) => {
 		const plan = await getPlanForUpdate(tx, me);
@@ -58,21 +58,24 @@ export function startAiTurn(
 				: null;
 		// Derived from the plan read in this same transaction, so the caller
 		// cannot be out of step with the tier the charge is made against.
-		const { requireVerifiedEmail } = aiLimitsFor(plan);
+		const ai = aiLimitsFor(plan);
 		const rows = await tx.execute<{
 			outcome: AiTurnOutcome;
 			ai_turn_id: string | null;
+			held: number | null;
 		}>(sql`
-			select outcome, ai_turn_id
+			select outcome, ai_turn_id, held
 			  from private.begin_ai_turn(${a.catalogue}, ${limit}::int, ${a.kind},
 			       ${a.continuationOf}::uuid, ${a.plan ? planHash(a.plan) : null}::text,
-			       ${a.credits}::int, ${requireVerifiedEmail}::boolean)`);
+			       ${a.credits}::int, ${ai.requireVerifiedEmail}::boolean,
+			       ${requestHoldFor(ai)}::int)`);
 		const row = [...rows][0];
 		return {
 			plan,
 			turn: {
 				outcome: row?.outcome ?? "not_found",
 				turnId: row?.ai_turn_id ?? null,
+				held: Number(row?.held ?? 0),
 			},
 		};
 	});
@@ -103,19 +106,25 @@ export async function setPlanState(
 }
 
 /**
- * Adds the variable part of the price once the turn is over. The base charge is
- * already on the row, so a turn may finish a few credits past the allowance;
- * that blocks the next ask rather than abandoning a half-applied plan.
+ * Moves what a request spent from its hold into its charge. The database never
+ * moves more than is held, so the balance cannot pass the allowance; the return
+ * value is what it actually moved.
  */
-export async function settleAiTurn(
+export async function spendAiHold(
 	tx: Tx,
 	turnId: string,
-	extraCredits: number,
-): Promise<void> {
-	if (extraCredits <= 0) return;
-	await tx.execute(
-		sql`select private.settle_ai_turn(${turnId}::uuid, ${extraCredits}::int)`,
+	credits: number,
+): Promise<number> {
+	if (credits <= 0) return 0;
+	const rows = await tx.execute<{ moved: number }>(
+		sql`select private.spend_ai_hold(${turnId}::uuid, ${credits}::int) as moved`,
 	);
+	return Number([...rows][0]?.moved ?? 0);
+}
+
+/** Gives back what a request held and did not spend. */
+export async function releaseAiHold(tx: Tx, turnId: string): Promise<void> {
+	await tx.execute(sql`select private.release_ai_hold(${turnId}::uuid)`);
 }
 
 /** Reverses a charge for a turn that produced nothing. Only the owner's own turn. */

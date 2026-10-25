@@ -1,8 +1,10 @@
+"use client";
 import type { PricingPlan } from "@quicktalog/common";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { useUpgrade } from "@/hooks/useUpgrade";
 import {
 	formatLimit,
 	type LimitContentData,
@@ -97,6 +99,7 @@ export const LimitUpgradeComparison = ({
 	].filter(Boolean);
 
 	const contactInstead = content.currentLimit === content.nextLimit;
+	const upgrade = useUpgrade();
 
 	return (
 		<>
@@ -146,17 +149,28 @@ export const LimitUpgradeComparison = ({
 			</div>
 
 			<div className="mt-1 flex justify-end">
-				<Button asChild className="group w-full min-[520px]:w-auto">
-					<Link href={contactInstead ? "/contact" : "/pricing"}>
-						{contactInstead
-							? "Contact us Now"
-							: `Upgrade to ${requiredPlan.name} Now`}
+				{contactInstead ? (
+					<Button asChild className="group w-full min-[520px]:w-auto">
+						<Link href="/contact">
+							Contact us Now
+							<ArrowRight
+								aria-hidden="true"
+								className="transition-transform group-hover:translate-x-0.5"
+							/>
+						</Link>
+					</Button>
+				) : (
+					<Button
+						className="group w-full min-[520px]:w-auto"
+						onClick={() => void upgrade()}
+					>
+						{`Upgrade to ${requiredPlan.name} Now`}
 						<ArrowRight
 							aria-hidden="true"
 							className="transition-transform group-hover:translate-x-0.5"
 						/>
-					</Link>
-				</Button>
+					</Button>
+				)}
 			</div>
 		</>
 	);

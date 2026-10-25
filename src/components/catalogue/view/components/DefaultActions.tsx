@@ -1,39 +1,18 @@
-import { CatalogueButton } from "@/components/catalogue/view/components/CatalogueButton";
-import { footerDetails } from "@/constants/details";
 import Link from "next/link";
 import { FiPlus } from "react-icons/fi";
-import { SocialIcon } from "@/components/general/SocialIcon";
 
-const DefaultActions = () => {
-	const socialLinks = footerDetails.socials;
-
-	return (
-		<div className="space-y-6">
-			<div className="flex items-center space-x-3">
-				{Object.keys(socialLinks).map((platform, index) => (
-					<SocialIcon
-						className="rounded-lg"
-						href={socialLinks[platform as keyof typeof socialLinks]}
-						key={`social-${index}`}
-						platform={platform}
-					/>
-				))}
-			</div>
-
-			<CatalogueButton
-				asChild
-				className="font-heading tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-catalogue-card-heading border-primary footer-cta-button"
-			>
-				<Link
-					aria-label="Create your own digital catalog"
-					href="/auth?mode=signup"
-				>
-					<FiPlus className="w-4 h-4" />
-					Create Your Digital Catalog
-				</Link>
-			</CatalogueButton>
-		</div>
-	);
-};
+/** Last column of the Quicktalog footer: an invitation to build a catalogue. */
+const DefaultActions = () => (
+	<div className="cat-foot-wide">
+		<h2>Create your own</h2>
+		<p className="cat-foot-tag mb-4 mt-0 text-[15px]">
+			Build a catalogue like this one in minutes.
+		</p>
+		<Link className="cat-foot-btn" href="/auth?mode=signup">
+			<FiPlus aria-hidden="true" />
+			Create Your Digital Catalog
+		</Link>
+	</div>
+);
 
 export default DefaultActions;

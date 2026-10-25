@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/lib/ui/cn";
+import { LogoHint } from "@/components/catalogue/inputs/sidebar/general/LogoHint";
+import SearchSection from "@/components/catalogue/inputs/sidebar/general/SearchSection";
 import TrackingSection from "@/components/catalogue/inputs/sidebar/general/TrackingSection";
 import { LockedGroup, PANEL_TAB_ROOT, PanelSection } from "./panel";
 
@@ -54,6 +56,15 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 				<CurrencySelect />
 			</PanelSection>
 
+			<SearchSection
+				onChange={(search) =>
+					updateCatalogue({
+						appearance: { ...catalogue.appearance, search },
+					})
+				}
+				search={catalogue.appearance?.search}
+			/>
+
 			<PanelSection
 				description="Shown in your catalogue's header and footer."
 				title="Logo"
@@ -67,6 +78,11 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 						setIsUploading={setIsUploading}
 						targetSizeKB={400}
 						type="icon"
+					/>
+					<LogoHint
+						footerType={catalogue.footer?.type}
+						headerType={catalogue.header?.type}
+						logo={catalogue.logo}
 					/>
 				</LockedGroup>
 			</PanelSection>

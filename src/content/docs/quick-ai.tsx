@@ -258,7 +258,12 @@ function Body() {
 					</li>
 					<li>
 						<strong>Asking a question is free</strong>, and so is a request that
-						ends up changing nothing.
+						ends up changing nothing and reading no pages.
+					</li>
+					<li>
+						Quick AI never spends more than you have left. If a request would
+						need more, it does what fits, stops before the next item on the
+						list, and tells you.
 					</li>
 				</ul>
 				<p>

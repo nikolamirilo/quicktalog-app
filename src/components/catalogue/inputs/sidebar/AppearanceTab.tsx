@@ -4,16 +4,21 @@ import { useCatalogueContext } from "@/context/CatalogueContext";
 import {
 	customThemeColorsEqual,
 	DEFAULT_CUSTOM_COLORS,
+	isDarkTheme,
 	readPaletteFromElement,
 } from "@/lib/themes/custom-theme";
 import { useSavedThemes } from "@/hooks/useSavedThemes";
 import type {
+	CatalogueBackground,
 	CustomThemeColors,
+	GlassSettings,
 	PricingPlan,
 	SavedTheme,
 } from "@quicktalog/common";
 import { useState } from "react";
+import BackgroundConfiguration from "./appearance/BackgroundConfiguration";
 import CustomThemeConfiguration from "./appearance/CustomThemeConfiguration";
+import GlassConfiguration from "./appearance/GlassConfiguration";
 import OverlayConfiguration from "./appearance/OverlayConfiguration";
 import StyleConfiguration from "./appearance/StyleConfiguration";
 import ThemeSelection from "./appearance/ThemeSelection";
@@ -133,6 +138,14 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 		});
 	};
 
+	const handleBackgroundChange = (background: CatalogueBackground) => {
+		updateCatalogue({ appearance: { ...catalogue.appearance, background } });
+	};
+
+	const handleGlassChange = (glass: GlassSettings) => {
+		updateCatalogue({ appearance: { ...catalogue.appearance, glass } });
+	};
+
 	return (
 		<div className={cn("space-y-4", PANEL_TAB_ROOT)}>
 			<PanelSection
@@ -171,14 +184,35 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 			)}
 
 			<PanelSection
-				info="Customize fonts, rounded corners and shadows."
+				id="panel-background"
+				info="Replace the theme's background with your own photo, a gradient or a single colour. Cards, headers and text keep the theme's colours. Photos and gradients also give the glass effect something to show through."
+				isNew
+				title="Background"
+			>
+				<LockedGroup locked={!hasStyles} overlaySize="default">
+					<BackgroundConfiguration
+						background={catalogue.appearance?.background}
+						onChange={handleBackgroundChange}
+						themeIsDark={isDarkTheme(catalogue.appearance?.theme)}
+					/>
+				</LockedGroup>
+			</PanelSection>
+
+			<PanelSection
+				info="Customize fonts, rounded corners, shadows and the glass effect."
 				title="Style"
 			>
 				<LockedGroup locked={!hasStyles} overlaySize="default">
-					<StyleConfiguration
-						currentStyle={currentStyle}
-						onStyleChange={handleStyleChange}
-					/>
+					<div className="space-y-5">
+						<StyleConfiguration
+							currentStyle={currentStyle}
+							onStyleChange={handleStyleChange}
+						/>
+						<GlassConfiguration
+							glass={catalogue.appearance?.glass}
+							onChange={handleGlassChange}
+						/>
+					</div>
 				</LockedGroup>
 			</PanelSection>
 

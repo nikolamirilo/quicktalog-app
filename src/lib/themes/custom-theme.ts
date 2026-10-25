@@ -1,4 +1,8 @@
-import type { CustomThemeColors } from "@quicktalog/common";
+import {
+	type Appearance,
+	type CustomThemeColors,
+	themes,
+} from "@quicktalog/common";
 
 /**
  * Derivation of a full `--catalogue-*` palette from the six colours an owner
@@ -311,3 +315,9 @@ export const readPaletteFromElement = (
 		cardBackground: read("--catalogue-card-background"),
 	});
 };
+
+/** Whether the catalogue's theme is dark, so its text is light. */
+export const isDarkTheme = (theme: Appearance["theme"] | undefined): boolean =>
+	theme?.type === "custom"
+		? isDarkBackground(theme.colors?.background)
+		: themes.some((t) => t.key === theme?.name && t.type === "dark");

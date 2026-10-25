@@ -5,7 +5,12 @@ import {
 	defaultCatalogueData,
 	type Item,
 } from "@quicktalog/common";
-import { isItemsBlock, normalizeContent } from "@/lib/catalogue/content-blocks";
+import {
+	countPlanItems,
+	countPlanSections,
+	isItemsBlock,
+	normalizeContent,
+} from "@/lib/catalogue/content-blocks";
 import {
 	CUSTOM_THEME_NAME,
 	sanitizeCustomThemeColors,
@@ -29,6 +34,12 @@ export interface OperationLimits {
 	 * assistant must not be a way around a lock the UI applies.
 	 */
 	branding?: boolean;
+	/** `features.apperance.styles`: font, text size, corners and shadow. */
+	styles?: boolean;
+	/** `features.apperance.customThemes`: a custom colour palette. */
+	customThemes?: boolean;
+	/** `features.newsletter`: the footer's newsletter form. */
+	newsletter?: boolean;
 }
 
 export interface OperationOutcome {
@@ -93,17 +104,6 @@ const reorder = <T extends { order: number }>(arr: T[]): T[] =>
 const label = (block: ContentBlock): string =>
 	block.name ? `"${block.name}"` : `${block.type} section`;
 
-const countItems = (content: ContentBlock[]): number =>
-	content.reduce(
-		(total, block) =>
-			total + (isItemBlock(block) ? (block.items?.length ?? 0) : 0),
-		0,
-	);
-
-/** Text blocks are free - they don't count against `sections_per_catalogue`. */
-const countSections = (content: ContentBlock[]): number =>
-	content.filter((block) => block.type !== "text").length;
-
 const remaining = (
 	limit: number | "unlimited" | undefined,
 	used: number,
@@ -111,6 +111,10 @@ const remaining = (
 	typeof limit === "number"
 		? Math.max(0, limit - used)
 		: Number.POSITIVE_INFINITY;
+
+/** Limits are per catalogue; the wording must never read as per section. */
+const itemsLeftOut = (dropped: number, limit: OperationLimits["items"]) =>
+	`${dropped} item(s) were left out: your plan allows ${limit} items in the whole catalogue.`;
 
 const toItem = (input: AiItemInput, order: number): Item => ({
 	id: input.id ?? crypto.randomUUID(),
@@ -219,7 +223,8 @@ export function applyCatalogueOperations(
 		next = { ...next, content };
 	};
 
-	const itemBudget = () => remaining(limits.items, countItems(next.content));
+	const itemBudget = () =>
+		remaining(limits.items, countPlanItems(next.content));
 
 	for (const operation of operations) {
 		switch (operation.op) {
@@ -231,19 +236,23 @@ export function applyCatalogueOperations(
 					);
 					break;
 				}
-				if (
-					operation.sectionType !== "text" &&
-					remaining(limits.sections, countSections(next.content)) < 1
-				) {
+				if (remaining(limits.sections, countPlanSections(next.content)) < 1) {
 					limitReached = true;
-					skipped.push("Section limit reached - new section not added.");
+					skipped.push(
+						`Your plan allows ${limits.sections} sections in the whole catalogue and it already has ${countPlanSections(next.content)}, so the section was not added.`,
+					);
 					break;
 				}
 
 				const requested = operation.items ?? [];
 				const budget = itemBudget();
 				const accepted = requested.slice(0, Math.min(requested.length, budget));
-				if (accepted.length < requested.length) limitReached = true;
+				if (accepted.length < requested.length) {
+					limitReached = true;
+					skipped.push(
+						itemsLeftOut(requested.length - accepted.length, limits.items),
+					);
+				}
 
 				const items = accepted.map((input, index) => toItem(input, index));
 				const content = [...next.content];
@@ -269,6 +278,17 @@ export function applyCatalogueOperations(
 				const block = next.content[index];
 				if (!block) {
 					skipped.push("Could not find the section to update.");
+					break;
+				}
+				// A downgraded owner can delete a block the plan no longer includes, not edit it.
+				if (
+					operation.code !== undefined &&
+					isSectionTypeLocked(block.type, limits.sectionTypes)
+				) {
+					limitReached = true;
+					skipped.push(
+						`${sectionTypeLabel(block.type)} sections are not part of your plan, so this one cannot be edited. It can be deleted.`,
+					);
 					break;
 				}
 
@@ -348,12 +368,21 @@ export function applyCatalogueOperations(
 					0,
 					Math.min(operation.items.length, budget),
 				);
-				if (accepted.length < operation.items.length) limitReached = true;
 				if (accepted.length === 0) {
+					limitReached = true;
 					skipped.push(
-						`Item limit reached - nothing added to ${label(block)}.`,
+						`Your plan allows ${limits.items} items in the whole catalogue and it already has ${countPlanItems(next.content)}, so nothing was added to ${label(block)}.`,
 					);
 					break;
+				}
+				if (accepted.length < operation.items.length) {
+					limitReached = true;
+					skipped.push(
+						itemsLeftOut(
+							operation.items.length - accepted.length,
+							limits.items,
+						),
+					);
 				}
 
 				const existing = block.items ?? [];
@@ -538,6 +567,27 @@ export function applyCatalogueOperations(
 
 			case "update_appearance": {
 				const { fields } = operation;
+				if (
+					limits.customThemes === false &&
+					fields.customColors !== undefined
+				) {
+					limitReached = true;
+					skipped.push("Custom themes are not part of your plan.");
+					break;
+				}
+				if (
+					limits.styles === false &&
+					(fields.fontFamily !== undefined ||
+						fields.contentFontSize !== undefined ||
+						fields.borderRadius !== undefined ||
+						fields.shadow !== undefined)
+				) {
+					limitReached = true;
+					skipped.push(
+						"Font, text size, corner and shadow settings are not part of your plan.",
+					);
+					break;
+				}
 				const changed: string[] = [];
 				const style = { ...next.appearance.style };
 				const theme = { ...next.appearance.theme };
@@ -632,6 +682,14 @@ export function applyCatalogueOperations(
 				if (limits.branding === false) {
 					limitReached = true;
 					skipped.push("Footer settings are not part of your plan.");
+					break;
+				}
+				if (
+					limits.newsletter === false &&
+					operation.fields.newsletter === true
+				) {
+					limitReached = true;
+					skipped.push("The newsletter form is not part of your plan.");
 					break;
 				}
 

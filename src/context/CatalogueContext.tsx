@@ -73,8 +73,24 @@ interface CatalogueContextType {
 	 * the draft straight away and are highlighted; Reject puts back `before`.
 	 */
 	aiReview: AiReview | null;
-	/** `applyOperations` for the AI chat: the edits also go up for review. */
-	applyAiOperations: (operations: CatalogueOperation[]) => OperationOutcome;
+	/**
+	 * `applyOperations` for the AI chat: the edits also go up for review. The
+	 * limits are required, so an agent edit can never land on the draft ungated.
+	 */
+	applyAiOperations: (
+		operations: CatalogueOperation[],
+		limits: OperationLimits,
+	) => OperationOutcome;
+	/** The latest draft, including edits applied earlier in the same render pass. */
+	getCatalogue: () => Omit<Catalogue, "id">;
+	/** Loads a stored catalogue into the builder; it counts as saved. */
+	seedCatalogue: (catalogue: Catalogue) => void;
+	/** Records `saved` (the current draft by default) as what the server holds. */
+	markSaved: (saved?: Omit<Catalogue, "id">) => void;
+	/** Applies a change the server has already stored (going live), keeping the draft saved. */
+	patchSaved: (partial: Partial<Catalogue>) => void;
+	/** The draft differs from what was last seeded or saved. */
+	isDirty: boolean;
 	/** Keeps the edits under review. */
 	acceptAiChanges: () => void;
 	/** Puts the catalogue back to how it was before the edits under review. */
@@ -106,8 +122,30 @@ export const CatalogueContextProvider = ({
 	const catalogueRef = useRef(catalogue);
 	catalogueRef.current = catalogue;
 
+	// Compared by identity: every edit makes a new object, and an undo restores the old one.
+	const [savedCatalogue, setSavedCatalogue] = useState<unknown>(null);
+	const isDirty = savedCatalogue !== null && catalogue !== savedCatalogue;
+
+	const seedCatalogue = (next: Catalogue) => {
+		catalogueRef.current = next;
+		setCatalogue(next);
+		setSavedCatalogue(next);
+	};
+
+	const patchSaved = (partial: Partial<Catalogue>) => {
+		const next = { ...catalogueRef.current, ...partial };
+		catalogueRef.current = next;
+		setCatalogue(next);
+		setSavedCatalogue(next);
+	};
+
+	const markSaved = (saved: Omit<Catalogue, "id"> = catalogueRef.current) => {
+		setSavedCatalogue(saved);
+	};
+
 	const resetCatalogue = () => {
 		setCatalogue(defaultCatalogueData);
+		setSavedCatalogue(null);
 	};
 
 	const updateCatalogue = (partial: Partial<Catalogue>) => {
@@ -321,9 +359,10 @@ export const CatalogueContextProvider = ({
 
 	const applyAiOperations = (
 		operations: CatalogueOperation[],
+		limits: OperationLimits,
 	): OperationOutcome => {
 		const before = catalogueRef.current as Catalogue;
-		const outcome = applyOperations(operations);
+		const outcome = applyOperations(operations, limits);
 		if (outcome.applied.length > 0) {
 			const review: AiReview = {
 				before: aiReviewRef.current?.before ?? before,
@@ -411,6 +450,11 @@ export const CatalogueContextProvider = ({
 				applyOperations,
 				aiReview,
 				applyAiOperations,
+				getCatalogue: () => catalogueRef.current,
+				seedCatalogue,
+				markSaved,
+				patchSaved,
+				isDirty,
 				acceptAiChanges,
 				rejectAiChanges,
 			}}

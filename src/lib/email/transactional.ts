@@ -7,7 +7,6 @@ import {
 	WelcomeEmail,
 } from "@/components/emails";
 import { MAX_RETRIES, RETRY_DELAY } from "@/constants/users";
-import { validateEmail } from "@/lib/users/syncFromClerk";
 import { isUniqueViolation } from "@/utils/db/errors";
 import { getResend } from "@/constants/server";
 import type { ContactData } from "@quicktalog/common";
@@ -123,7 +122,13 @@ export async function sendSubscriptionCancelationEmail(
 	}
 }
 
-/** Welcome email for the Clerk webhook: never throws, never blocks the 200. */
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateEmail(email: string | null): email is string {
+	return Boolean(email && EMAIL.test(email));
+}
+
+/** Welcome email: never throws, so a send failure never fails the caller. */
 export async function sendWelcomeEmailSafely(
 	email: string | null,
 	name: string,
@@ -134,7 +139,7 @@ export async function sendWelcomeEmailSafely(
 	}
 
 	try {
-		await retryOperation(() => sendWelcomeEmail({ email: email!, name }));
+		await retryOperation(() => sendWelcomeEmail({ email, name }));
 		console.log("Welcome email sent successfully to:", email);
 	} catch (error) {
 		Sentry.captureException(error, {

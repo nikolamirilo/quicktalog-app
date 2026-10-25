@@ -1,6 +1,6 @@
 "use client";
 import type { PricingPlan, Usage, User } from "@quicktalog/common";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { lazy, Suspense, useEffect, useState } from "react";
 
 import { TabSkeleton } from "@/components/dashboard/DashboardSkeleton";
@@ -9,12 +9,7 @@ import { DashboardTabBar } from "@/components/dashboard/navigation/DashboardTabB
 import { Overview } from "@/components/dashboard/Overview";
 import { AcquisitionSourceModal } from "@/components/dashboard/overview/AcquisitionSourceModal";
 import { Button } from "@/components/ui/button";
-import {
-	type DashboardTab,
-	dashboardTabFromUrl,
-	isAccountSubRoute,
-	toDashboardTab,
-} from "@/constants/dashboard";
+import { type DashboardTab, toDashboardTab } from "@/constants/dashboard";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import type { DashboardOverview } from "@/lib/dashboard/overview";
 
@@ -72,20 +67,16 @@ export function Dashboard({
 	// `?tab=settings` lets the account menu (and a bookmark) open a tab
 	// directly; anything unknown falls back to the overview.
 	const searchParams = useSearchParams();
-	const pathname = usePathname();
 	const tabParam = searchParams.get("tab");
-	const onSubRoute = isAccountSubRoute(pathname);
 	const [activeTab, setActiveTab] = useState<DashboardTab>(() =>
-		dashboardTabFromUrl(tabParam, pathname),
+		toDashboardTab(tabParam),
 	);
 
 	// A link to `?tab=` while the dashboard is already open (the account menu)
-	// changes the URL without remounting; follow it. A URL without `?tab=` on a
-	// Clerk sub-route is Clerk navigating inside Settings, not a tab change.
+	// changes the URL without remounting; follow it.
 	useEffect(() => {
-		if (tabParam === null && onSubRoute) return;
 		setActiveTab(toDashboardTab(tabParam));
-	}, [tabParam, onSubRoute]);
+	}, [tabParam]);
 
 	const selectTab = (tab: DashboardTab) => {
 		setActiveTab(tab);

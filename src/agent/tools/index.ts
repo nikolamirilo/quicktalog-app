@@ -1,4 +1,4 @@
-import type { CatalogueSession } from "@/agent/session";
+import type { CatalogueSession } from "@/agent/core/session";
 import { appearanceTools } from "@/agent/tools/appearance";
 import { buildContext } from "@/agent/tools/context";
 import { generalTools } from "@/agent/tools/general";
@@ -35,6 +35,11 @@ export function buildTools(session: CatalogueSession) {
 		// discovering it cannot read pages. The key stays in AgentTools so
 		// display.ts's exhaustive record still covers it.
 		delete (tools as { fetchUrl?: unknown }).fetchUrl;
+	}
+
+	if (session.limits.customThemes === false) {
+		// Same pattern as fetchUrl: absent, so the model never tries it and fails.
+		delete (tools as { setCustomTheme?: unknown }).setCustomTheme;
 	}
 
 	return hideOperations(gateCalls(session, tools));

@@ -4,18 +4,20 @@ import {
 	isPlanContinuation,
 	isPlanFinished,
 	planFromMessages,
-} from "@/agent/plan";
+} from "@/agent/plugins/plan";
 import { loadedSkillsFromMessages } from "@/agent/skills";
-import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { sameOrigin } from "@/lib/http/origin";
 import {
 	aiRateLimitOk,
 	refundAiTurn,
+	releaseAiHold,
 	setPlanState,
-	settleAiTurn,
+	spendAiHold,
 } from "@/lib/ai/metering";
-import { CREDITS } from "@/lib/ai/pricing";
-import { openAiTurn } from "@/lib/ai/turn";
+import { createSpendLedger } from "@/lib/ai/spend-ledger";
+import { closingCharge, openAiTurn } from "@/lib/ai/turn";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { sameOrigin } from "@/lib/http/origin";
+import type { AgentMessageMetadata } from "@/types/ai";
 import { withUser } from "@/utils/db";
 import type { Catalogue } from "@quicktalog/common";
 import * as Sentry from "@sentry/nextjs";
@@ -135,6 +137,26 @@ export async function POST(request: Request) {
 		// spanning five requests would get three pages each.
 		fetchesFromMessages(messages),
 		turn.ai,
+		turn.budget,
+	);
+
+	// Spend is written after every step, so a request killed mid-plan still pays
+	// for what it did.
+	const spend = createSpendLedger(
+		(credits) =>
+			rootTurnId
+				? withUser(me, (tx) => spendAiHold(tx, rootTurnId, credits))
+				: Promise.resolve(0),
+		() => session.credits.billed,
+		{
+			onError: (error) =>
+				Sentry.captureException(error, { tags: { op: "catalogueAgentMeter" } }),
+			onShort: () =>
+				Sentry.captureMessage("AI hold expired before the charge was written", {
+					level: "warning",
+					tags: { op: "catalogueAgentMeter" },
+				}),
+		},
 	);
 
 	// Combine the client-side abort (user clicks "Clear conversation") with a
@@ -149,6 +171,7 @@ export async function POST(request: Request) {
 		agent: createCatalogueAgent(session),
 		uiMessages: messages,
 		abortSignal: signal,
+		onStepEnd: () => spend.flush(),
 		onError: (error) => {
 			Sentry.captureException(error, { tags: { op: "catalogueAgent" } });
 			console.error("Catalogue agent failed:", error);
@@ -165,9 +188,14 @@ export async function POST(request: Request) {
 
 			return "Something went wrong while making those changes. Try again.";
 		},
-		messageMetadata: () => ({ turnId: rootTurnId }),
+		messageMetadata: (): AgentMessageMetadata => ({
+			turnId: rootTurnId,
+			limits: turn.limits,
+		}),
 		onFinish: async () => {
 			if (!rootTurnId) return;
+			// Queued behind any step still writing, so no step is charged twice.
+			await spend.flush();
 			try {
 				await withUser(me, async (tx) => {
 					// Record whether the turn left work unfinished: that is what buys
@@ -175,27 +203,27 @@ export async function POST(request: Request) {
 					const unfinished = session.plan && !isPlanFinished(session.plan);
 					await setPlanState(tx, rootTurnId, unfinished ? session.plan : null);
 
-					// A turn that changed nothing and opened no plan is refunded. The
-					// charge was taken up front, so this is the only place a question
+					const close = closingCharge({
+						charged: turn.charged,
+						applied: session.applied.length,
+						planOpen: Boolean(unfinished),
+						billed: session.credits.billed,
+						persisted: spend.persisted,
+					});
+					// The base was taken up front, so a refund is the only way a question
 					// or a fully rejected turn becomes free again.
-					if (turn.charged && session.applied.length === 0 && !unfinished) {
-						await refundAiTurn(tx, rootTurnId);
-						return;
-					}
-
-					// The base was charged up front; this adds what the turn turned out
-					// to cost. The base covers the turn's first task, so only the
-					// request that took the charge discounts one - a continuation
-					// settles onto the same root turn and every task on it is extra.
-					const tasks = session.tasksSettledThisRequest;
-					const extra =
-						(turn.charged ? Math.max(0, tasks - 1) : tasks) *
-							CREDITS.perExtraTask +
-						session.fetchesThisRequest * CREDITS.perPageFetch;
-					await settleAiTurn(tx, rootTurnId, extra);
+					if (close.refund) await refundAiTurn(tx, rootTurnId);
+					// Only when the last flush failed: one more try inside the closing transaction.
+					else if (close.spend > 0)
+						await spendAiHold(tx, rootTurnId, close.spend);
+					await releaseAiHold(tx, rootTurnId);
 				});
 			} catch (error) {
 				Sentry.captureException(error, { tags: { op: "catalogueAgentMeter" } });
+				// An unreleased hold expires on its own; this only frees it sooner.
+				await withUser(me, (tx) => releaseAiHold(tx, rootTurnId)).catch(
+					() => undefined,
+				);
 			}
 		},
 	});

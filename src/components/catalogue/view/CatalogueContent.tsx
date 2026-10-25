@@ -2,22 +2,20 @@
 import { LimitsModal } from "@/components/modals/LimitsModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useMainContext } from "@/context/MainContext";
-import {
+import type {
+	Appearance,
 	ContentBlock,
 	ContentLayout,
 	Item,
 	UserData,
 } from "@quicktalog/common";
-import {
-	SEARCH_MIN_ITEMS,
-	getDisplayItems,
-	getTotalItemCount,
-} from "@/lib/catalogue/items";
+import { getDisplayItems } from "@/lib/catalogue/items";
 import {
 	asItemsBlock,
 	isItemsBlock,
 	normalizeContent,
 } from "@/lib/catalogue/content-blocks";
+import { canAddItem } from "@/lib/entitlements/operation-limits";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -39,6 +37,8 @@ export type CatalogueContentProps = {
 	theme?: string;
 	mode: "edit" | "view";
 	onEditBlock?: (index: number) => void;
+	/** The owner's search bar setting; no bar when missing or off. */
+	search?: NonNullable<Appearance["search"]>;
 };
 
 const CatalogueContent = ({
@@ -49,6 +49,7 @@ const CatalogueContent = ({
 	theme,
 	mode,
 	onEditBlock,
+	search,
 	userData,
 }: CatalogueContentProps & { userData?: UserData }) => {
 	const {
@@ -63,7 +64,7 @@ const CatalogueContent = ({
 	const { layout } = useMainContext();
 	/**
 	 * Legacy keys are mapped here, once, before anything matches on
-	 * `block.type`. Without this a stored `custom_code` or `category` row hits
+	 * `block.type`. Without this a stored `category` or `container` row hits
 	 * no branch and renders nothing - the row is intact, the page is just
 	 * blank, which is the worst way for a rename to fail.
 	 *
@@ -91,17 +92,30 @@ const CatalogueContent = ({
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const pathname = usePathname();
-	const [rawQuery, setQuery] = useState<string>(
-		() => searchParams.get("q") ?? "",
+	const [rawQuery, setQuery] = useState<string>(() =>
+		mode === "view" ? (searchParams.get("q") ?? "") : "",
 	);
-	// Short catalogues are easy enough to scan, so search stays out of the way.
-	const canSearch =
-		mode === "view" && getTotalItemCount(data) > SEARCH_MIN_ITEMS;
+	const canSearch = search?.isEnabled === true;
 	const query = canSearch ? rawQuery : "";
 	const isSearching = query.trim().length > 0;
+	const matchCount = useMemo(
+		() =>
+			isSearching
+				? data.reduce(
+						(total, block) =>
+							isItemsBlock(block)
+								? total + getDisplayItems(block, query).length
+								: total,
+						0,
+					)
+				: 0,
+		[data, query, isSearching],
+	);
 
 	const handleQueryChange = (next: string) => {
 		setQuery(next);
+		// The builder keeps its own URL; only the published page shares `?q=`.
+		if (mode !== "view") return;
 		const params = new URLSearchParams(Array.from(searchParams.entries()));
 		if (next.trim()) params.set("q", next);
 		else params.delete("q");
@@ -114,8 +128,9 @@ const CatalogueContent = ({
 		// Sync from the URL (back/forward) keyed on the query string itself, not
 		// the searchParams object (new identity every render). Returning `prev`
 		// unchanged makes React bail out, which prevents an update loop.
+		if (mode !== "view") return;
 		setQuery((prev) => (prev === urlQuery ? prev : urlQuery));
-	}, [urlQuery]);
+	}, [urlQuery, mode]);
 
 	useEffect(() => {
 		if (!data || data.length === 0) return;
@@ -180,6 +195,14 @@ const CatalogueContent = ({
 			return;
 		}
 
+		// "Add another" keeps the modal open, so the limit is checked on every add.
+		if (checkItemLimits()) {
+			setIsItemModalOpen(false);
+			setActiveCategoryIndex(null);
+			setShowLimitsModal(true);
+			return;
+		}
+
 		if (addItem) {
 			addItem(activeCategoryIndex, newItem);
 		}
@@ -190,15 +213,8 @@ const CatalogueContent = ({
 		}
 	};
 
-	const checkItemLimits = () => {
-		if (!userData || !userData.currentPlan) return false;
-
-		const limit = userData.currentPlan.features.items_per_catalogue;
-		if (limit === "unlimited") return false;
-		if (limit === undefined) return false;
-
-		return getTotalItemCount(data) >= limit;
-	};
+	const checkItemLimits = () =>
+		!canAddItem(data, userData?.currentPlan?.features.items_per_catalogue);
 
 	const openAddItemModal = (index: number) => {
 		if (checkItemLimits()) {
@@ -247,7 +263,12 @@ const CatalogueContent = ({
 	return (
 		<main aria-label="Categories and items" className="max-w-6xl mx-auto px-4">
 			{canSearch && (
-				<CatalogueSearchBar onChange={handleQueryChange} value={query} />
+				<CatalogueSearchBar
+					matchCount={matchCount}
+					onChange={handleQueryChange}
+					placeholder={search?.placeholder}
+					value={query}
+				/>
 			)}
 			{data.map((block, index) => {
 				const isExpanded = expandedSections[`${block.id}-${block.order}`];
@@ -386,20 +407,6 @@ const CatalogueContent = ({
 				}
 				return null;
 			})}
-
-			{isSearching &&
-				data.every((block) => {
-					if (!isItemsBlock(block)) return true;
-					return getDisplayItems(block, query).length === 0;
-				}) && (
-					<div
-						aria-live="polite"
-						className="text-center py-12 text-[var(--catalogue-text)]/70"
-						role="status"
-					>
-						No items match "{query}".
-					</div>
-				)}
 
 			<ItemModal
 				categoryName={

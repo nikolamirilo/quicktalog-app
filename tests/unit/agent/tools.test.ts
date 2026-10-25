@@ -1,14 +1,13 @@
-import { CatalogueSession } from "@/agent/session";
+import { CatalogueSession } from "@/agent/core/session";
+import { UNTRUSTED_OPEN } from "@/agent/plugins/web";
 import { buildTools } from "@/agent/tools";
-import { UNTRUSTED_OPEN } from "@/agent/web";
-import type { AgentToolResult } from "@/types/ai";
-import type { AiSectionAccess } from "@/types/ai";
+import { saveOwnTheme } from "@/lib/themes/upsert";
+import type { AgentToolResult, AiSectionAccess } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
 import {
 	defaultCatalogueData,
 	fetchImageFromUnsplash,
 } from "@quicktalog/common";
-import { saveOwnTheme } from "@/lib/themes/upsert";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));
@@ -27,7 +26,6 @@ vi.mock("@/lib/auth/identity", () => ({
 	getVerifiedIdentity: vi.fn().mockResolvedValue({
 		userId: "user-1",
 		sessionId: null,
-		provider: "clerk",
 	}),
 }));
 

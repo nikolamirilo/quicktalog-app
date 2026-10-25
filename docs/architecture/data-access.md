@@ -42,7 +42,7 @@ Policies read the id through `private.current_user_id()`, so they apply to every
 | Variable | Used by | Role |
 |---|---|---|
 | `DB_CONNECTION_STRING` | `getUserDb()`, i.e. `withUser` and `withPublic` | `postgres` today; the fail-closed `app_rls` login after M08 |
-| `DB_ADMIN_CONNECTION_STRING` | `getAdminDb()`, i.e. `asAdmin`, e2e cleanup, `drizzle-kit pull` | `postgres`, which may bypass RLS |
+| `DB_ADMIN_CONNECTION_STRING` | `getAdminDb()`, i.e. `asAdmin`, `drizzle-kit pull` | `postgres`, which may bypass RLS |
 
 Until M08 both point at the same URL and the admin variable may be left unset;
 the code falls back to the other one. After M08 they must differ, or every
@@ -76,7 +76,6 @@ silent full-table read, and it is what
 
 ## Verifying a change
 
-- `npm run test:db` - applies `supabase/migrations` on an in-memory Postgres (17 and 18) and runs the RLS scenarios. No Docker.
 - `supabase start && supabase test db` - the pgTAP suite in `supabase/tests/database/` against the real Postgres image.
 - `npm test` - includes the architecture boundaries above.
 

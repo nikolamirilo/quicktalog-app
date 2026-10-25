@@ -1,7 +1,6 @@
 import { getCatalogueByName } from "@/actions/catalogue";
 import { getUserData } from "@/actions/users";
 import Builder from "@/components/catalogue/builder/CatalogueBuilder";
-import CatalogueInitializer from "@/components/catalogue/builder/CatalogueInitializer";
 import { requireUser } from "@/lib/auth/session";
 import { Catalogue, UserData } from "@quicktalog/common";
 import { notFound } from "next/navigation";
@@ -19,12 +18,7 @@ const page = async ({ params }: { params: Promise<{ name: string }> }) => {
 
 	const userData: UserData = await getUserData();
 
-	return (
-		<>
-			<CatalogueInitializer catalogue={catalogue} />
-			<Builder item={catalogue} userData={userData} />
-		</>
-	);
+	return <Builder item={catalogue} userData={userData} />;
 };
 
 export default page;

@@ -1,6 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { isAuthorizedWebhook, unauthorized } from "../_shared/webhook.ts";
 
 Deno.serve(async (req) => {
+	if (!isAuthorizedWebhook(req)) return unauthorized();
+
 	try {
 		if (req.method !== "POST") {
 			return new Response(

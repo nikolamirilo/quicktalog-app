@@ -1,10 +1,11 @@
-import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
-import { CONTINUE_PLAN_MARKER, type PlanState } from "@/agent/plan";
-import { buildInstructions } from "@/agent/instructions";
-import { CatalogueSession } from "@/agent/session";
+import { buildInstructions } from "@/agent/core/instructions";
+import { CatalogueSession } from "@/agent/core/session";
+import { SCANNED_TEXT_MARKER } from "@/agent/plugins/attachments";
+import { CONTINUE_PLAN_MARKER, type PlanState } from "@/agent/plugins/plan";
+import { operationLimitsFor } from "@/lib/entitlements/operation-limits";
 import type { AiSectionAccess } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
-import { defaultCatalogueData } from "@quicktalog/common";
+import { defaultCatalogueData, tiers } from "@quicktalog/common";
 import { describe, expect, it } from "vitest";
 
 const catalogue = {
@@ -140,5 +141,105 @@ describe("plan instructions", () => {
 		expect(rendered.indexOf("PLAN (resumed")).toBeLessThan(
 			rendered.indexOf("CATALOGUE:"),
 		);
+	});
+});
+
+describe("plan limits in the instructions", () => {
+	const block = (id: string, items: number) => ({
+		id,
+		order: 0,
+		type: "items",
+		name: id,
+		showHeading: true,
+		isExpanded: true,
+		layout: "variant_1",
+		items: Array.from({ length: items }, (_, i) => ({
+			id: `${id}-${i}`,
+			order: i,
+			name: `Item ${i}`,
+			description: "",
+			image: "",
+			price: 1,
+		})),
+	});
+	const withContent = (content: unknown[]) =>
+		({ ...catalogue, content }) as unknown as Catalogue;
+	const tier = (name: string) => {
+		const found = tiers.find((t) => t.name === name);
+		if (!found) throw new Error(name);
+		return found;
+	};
+	const contextOf = (rendered: string) =>
+		rendered.slice(rendered.indexOf("This catalogue:"));
+	const render = (content: unknown[], name: string) =>
+		buildInstructions(
+			new CatalogueSession(
+				withContent(content),
+				operationLimitsFor(tier(name).features),
+				tier(name).features.sections,
+			),
+		);
+
+	it("states the item and section limits for the whole catalogue", () => {
+		const context = contextOf(
+			render([block("a", 4), block("b", 4), block("c", 4)], "Starter"),
+		);
+		expect(context).toContain("12/15 items");
+		expect(context).toContain("3/5 sections in the whole catalogue");
+	});
+
+	it("tells the model limits are never per section", () => {
+		expect(render([], "Starter")).toMatch(/never per section/);
+	});
+
+	it("names the settings the plan locks", () => {
+		const starter = contextOf(render([], "Starter"));
+		expect(starter).toMatch(/custom themes/);
+		expect(starter).toMatch(/style controls/);
+		expect(starter).toMatch(/newsletter/);
+		const premium = contextOf(render([], "Premium"));
+		expect(premium).not.toMatch(/Not included/);
+	});
+
+	it("tells the model a catalogue over its plan must be trimmed", () => {
+		const context = contextOf(render([block("a", 80)], "Basic"));
+		expect(context).toContain("remove 50 item(s)");
+		expect(context).toContain("never add");
+		expect(context).toContain(
+			"cannot be published or switched on until it fits",
+		);
+		expect(context).not.toContain("inactive");
+	});
+});
+
+describe("credit budget in the instructions", () => {
+	const withBudget = (available: number) =>
+		buildInstructions(
+			new CatalogueSession(
+				catalogue,
+				{},
+				FULL_ACCESS,
+				[],
+				"u",
+				null,
+				0,
+				undefined,
+				{
+					available,
+					baseCoversFirstTask: true,
+				},
+			),
+		);
+
+	it("states the credit budget only when it binds", () => {
+		const bound = withBudget(2);
+		const context = bound.slice(bound.indexOf("This catalogue:"));
+		expect(context).toContain("CREDITS:");
+		expect(context).toContain("up to 3 task");
+		expect(prompt()).not.toContain("CREDITS:");
+	});
+
+	it("always tells the model to stop when it is out of credits", () => {
+		expect(prompt()).toMatch(/out of AI credits, make no more changes/);
 	});
 });

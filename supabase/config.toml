@@ -44,3 +44,21 @@ max_frequency = "1s"
 # a password change requires the current password.
 double_confirm_changes = true
 secure_password_change = true
+# Edge functions check x-webhook-secret themselves (supabase/functions/_shared/webhook.ts).
+[functions.create-brevo-contact]
+verify_jwt = false
+
+[functions.append-catalogue-in-brevo-contact]
+verify_jwt = false
+
+[functions.create-crm-contact]
+verify_jwt = false
+
+[functions.discord-subscription-alert]
+verify_jwt = false
+
+[functions.discord-new-catalogue-alert]
+verify_jwt = false
+
+[functions.sync-available-plans]
+verify_jwt = false

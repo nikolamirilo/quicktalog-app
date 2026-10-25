@@ -15,7 +15,7 @@ const meta = {
 	slug: "create-catalog-with-ai",
 	title: "Build a Product Catalog in Minutes with AI",
 	description:
-		"Two fast ways to skip the blank page: describe your business and let AI draft the catalog, or photograph an existing menu and import it with OCR.",
+		"Two fast ways to skip the blank page: describe your business and let Quick AI draft the catalog, or attach photos of an existing menu and let it read them.",
 	category: "Guides",
 	keywords: [
 		"AI catalog generator",
@@ -48,19 +48,20 @@ function Body() {
 					because the work is hard. They stall because the first line is.
 				</p>
 				<p>
-					There are two ways to skip the blank page. You can describe your
-					business and let AI draft the catalog for you, or you can photograph a
-					menu or price list you already have and let OCR import turn it into a
-					draft. Both get you to something you can edit in a few minutes instead
-					of an afternoon. This guide walks through each route, shows where each
-					one wins, and is honest about the part you still need to do by hand.
+					There are two ways to skip the blank page, and both happen in Quick
+					AI, the assistant inside the builder. You can describe your business
+					and let it draft the catalog for you, or you can attach photos of a
+					menu or price list you already have and let it read them into a draft.
+					Both get you to something you can edit in a few minutes instead of an
+					afternoon. This guide walks through each route, shows where each one
+					wins, and is honest about the part you still need to do by hand.
 				</p>
 			</Prose>
 
 			<KeyTakeaways
 				points={[
-					"Two fast starts: describe your business for an AI draft, or photograph an existing menu for an OCR import.",
-					"Pick OCR when the catalog already exists on paper or as a PDF. Pick AI when you are building something new.",
+					"Two fast starts in Quick AI: describe your business for a draft, or attach photos of an existing menu for it to read.",
+					"Attach photos when the catalog already exists on paper. Describe it when you are building something new.",
 					"Both routes produce a draft, not a finished catalog. Plan on a short human edit afterward.",
 					"AI handles the boring middle. Prices, best sellers, and brand voice are still your job.",
 				]}
@@ -77,11 +78,12 @@ function Body() {
 			<Prose>
 				<h2>Option one: describe it and let AI draft it</h2>
 				<p>
-					Tell the AI generator what your business is and what you offer. A
-					short, clear prompt works best. Something like "a neighbourhood
-					Italian restaurant with antipasti, pasta, mains, and a small dessert
-					list" gives it enough to work with. The more specific you are about
-					categories and tone, the closer the first draft lands.
+					Create a catalogue, pick a template, then open Quick AI in the builder
+					and tell it what your business is and what you offer. A short, clear
+					prompt works best. Something like "a neighbourhood Italian restaurant
+					with antipasti, pasta, mains, and a small dessert list" gives it
+					enough to work with. The more specific you are about categories and
+					tone, the closer the first draft lands.
 				</p>
 				<p>
 					It comes back with a structured draft: categories, sample items, and
@@ -102,7 +104,7 @@ function Body() {
 					{
 						title: "Generate the draft",
 						description:
-							"AI returns a structured catalog: categories, sample items, and short descriptions in a sensible order. Treat it as a first version, not a final one.",
+							"Quick AI proposes categories, sample items, and short descriptions in a sensible order. Review the result, then accept or reject it. Treat it as a first version, not a final one.",
 					},
 					{
 						title: "Trim and correct",
@@ -126,12 +128,13 @@ function Body() {
 			<Prose>
 				<h2>Option two: photograph what you already have</h2>
 				<p>
-					If you have a printed menu, a PDF, or even a clear photo, OCR import
-					is the faster route. Upload the image and the text gets read and
-					sorted into items with names and prices. You scan for the few things
-					it misread, fix them, and move on. This is the route to choose when
-					your catalog already exists on paper and you just want it online
-					without retyping every line.
+					If you have a printed menu or a clear photo of one, this is the faster
+					route. Attach up to 10 photos to a Quick AI message. The text is read
+					in your browser and sorted into items with names and prices. PDFs are
+					not supported, so photograph or screenshot each page first. You scan
+					for the few things it misread, fix them, and move on. This is the
+					route to choose when your catalog already exists on paper and you just
+					want it online without retyping every line.
 				</p>
 				<p>
 					OCR is only as good as the source. A flat, well lit photo of a clean
@@ -143,7 +146,7 @@ function Body() {
 
 			<ProsCons
 				cons={[
-					"The menu already exists on paper, as a PDF, or in a photo.",
+					"The menu already exists on paper or in a photo.",
 					"You mainly want to avoid retyping every line by hand.",
 					"Your prices and item names are already final.",
 					"You can get a clean, well lit image of the source.",
@@ -160,10 +163,10 @@ function Body() {
 			/>
 
 			<Callout title="You can use both" variant="tip">
-				These routes are not exclusive. Plenty of people import the old menu
-				with OCR to capture the items fast, then ask AI to draft descriptions
-				for the rows that came in bare. Start with whatever you already have,
-				then let the other route fill the gaps.
+				These routes are not exclusive. Plenty of people attach photos of the
+				old menu to capture the items fast, then ask Quick AI to draft
+				descriptions for the rows that came in bare. Start with whatever you
+				already have, then let the other route fill the gaps.
 			</Callout>
 
 			<ArticleCTA />
@@ -182,13 +185,13 @@ function Body() {
 				items={[
 					{ label: "Typing it by hand", value: 45, display: "~45 min" },
 					{
-						label: "OCR import from a clean photo",
+						label: "Quick AI reading a clean photo",
 						value: 5,
 						display: "~5 min",
 						highlight: true,
 					},
 					{
-						label: "AI draft from a description",
+						label: "Quick AI draft from a description",
 						value: 4,
 						display: "~4 min",
 						highlight: true,

@@ -20,8 +20,8 @@ import { createClient } from "@/utils/supabase/client";
 type EditableRow = "name" | "email" | "password";
 
 /**
- * The Supabase half of the settings page: everything Clerk's hosted `UserProfile`
- * used to cover, as the app's own forms. Credential calls run in the browser
+ * The account half of the settings page: profile, email, password and sign-in
+ * methods, as the app's own forms. Credential calls run in the browser
  * client on purpose - Supabase rate limits them per end-user IP, and a server
  * would present one shared Vercel egress IP for everybody. Deleting the
  * account is the exception (cancels billing, uses the admin key), so it's a

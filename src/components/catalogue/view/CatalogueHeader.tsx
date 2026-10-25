@@ -1,18 +1,18 @@
 "use client";
 import { SmartLink } from "@/components/general/SmartLink";
-import { CatalogueButton } from "@/components/catalogue/view/components/CatalogueButton";
-import {
-	contentFontSizeMap,
-	fontFamilyMap,
-	shadowMap,
-	titleFontSizeMap,
-} from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import Link from "next/link";
-import React, { useState } from "react";
-import { FiExternalLink, FiMail, FiPhone, FiPlus } from "react-icons/fi";
-import CatalogueSidebar from "./CatalogueSidebar";
 import type { Catalogue } from "@quicktalog/common";
+import Link from "next/link";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+	FiExternalLink,
+	FiMail,
+	FiMenu,
+	FiPhone,
+	FiPlus,
+	FiX,
+} from "react-icons/fi";
 
 export type CatalogueHeaderProps = {
 	type?: "default" | "custom";
@@ -20,6 +20,33 @@ export type CatalogueHeaderProps = {
 	data?: Catalogue;
 };
 
+type ContactLink = {
+	key: string;
+	href: string;
+	icon: React.ReactNode;
+	label: string;
+	value: string;
+};
+
+/** Past this many pixels of scroll the navbar lifts with a stronger shadow. */
+const SCROLLED_AT = 8;
+
+const useScrolled = () => {
+	const [scrolled, setScrolled] = useState(false);
+	useEffect(() => {
+		const onScroll = () => setScrolled(window.scrollY > SCROLLED_AT);
+		onScroll();
+		window.addEventListener("scroll", onScroll, { passive: true });
+		return () => window.removeEventListener("scroll", onScroll);
+	}, []);
+	return scrolled;
+};
+
+/**
+ * The floating navbar: a pill that sticks below the top edge while visitors
+ * scroll. From `md` up the contact icons and the button sit in the pill; on
+ * phones the button stays and the icons move into a menu under it.
+ */
 const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	type = "default",
 	data,
@@ -29,215 +56,177 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	// there, so the context is null and `data` is the only source.
 	const { catalogue } = useCatalogueContext() || {};
 	const activeData = catalogue?.name ? catalogue : data;
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const scrolled = useScrolled();
+	const wrapRef = useRef<HTMLDivElement>(null);
 
-	const themeClass = activeData?.appearance?.theme?.name || "theme-monochrome";
+	useEffect(() => {
+		if (!isMenuOpen) return;
+		const onPointerDown = (e: PointerEvent) => {
+			if (!wrapRef.current?.contains(e.target as Node)) setIsMenuOpen(false);
+		};
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") setIsMenuOpen(false);
+		};
+		document.addEventListener("pointerdown", onPointerDown);
+		document.addEventListener("keydown", onKeyDown);
+		return () => {
+			document.removeEventListener("pointerdown", onPointerDown);
+			document.removeEventListener("keydown", onKeyDown);
+		};
+	}, [isMenuOpen]);
 
-	const fontFamily =
-		fontFamilyMap[activeData?.appearance?.style?.fontFamily] ||
-		fontFamilyMap.inter;
-	const contentFontSizeKey =
-		activeData?.appearance?.style?.contentFontSize || "medium";
-	const contentFontSize = contentFontSizeMap[contentFontSizeKey];
-	const titleFontSize = titleFontSizeMap[contentFontSizeKey];
-	const borderRadius = `${activeData?.appearance?.style?.borderRadius ?? 12}px`;
-	const boxShadow = shadowMap[activeData?.appearance?.style?.shadow || "low"];
-
-	const inlineStyles = {
-		fontFamily,
-		"--catalogue-font-heading": fontFamily,
-		"--catalogue-font-body": fontFamily,
-		"--catalogue-weight-heading": "700",
-		"--catalogue-weight-body": "400",
-		"--content-font-size": contentFontSize,
-		"--title-font-size": titleFontSize,
-		"--border-radius": borderRadius,
-		"--box-shadow": boxShadow,
-		"--animation-duration": "0.5s",
-	} as React.CSSProperties;
-
-	const createContactLink = (
-		href: string,
-		icon: React.ReactNode,
-		label: string,
-	) => ({
-		href,
-		icon,
-		label,
-		className:
-			"font-heading tracking-heading px-2 h-9 rounded-lg border hover:scale-105 transition-all duration-200 group text-xs sm:text-sm lg:text-sm flex items-center justify-center !bg-catalogue-navigation-background !text-catalogue-navigation-text !border-primary footer-cta-button",
-	});
-
-	const getContactLinks = () => {
-		const links = [];
-
-		if (type === "default") {
-			links.push(
-				createContactLink(
-					"mailto:quicktalog@outlook.com",
-					<FiMail
-						aria-hidden="true"
-						className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
-					/>,
-					"Email",
-				),
-			);
-		} else if (type === "custom" && activeData) {
-			if (activeData?.contact?.email && activeData?.header?.emailCta) {
-				links.push(
-					createContactLink(
-						`mailto:${activeData?.contact?.email}`,
-						<FiMail
-							aria-hidden="true"
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
-						/>,
-						`Email`,
-					),
-				);
-			}
-			if (activeData?.contact?.phone && activeData?.header?.phoneCta) {
-				links.push(
-					createContactLink(
-						`tel:${activeData?.contact?.phone}`,
-						<FiPhone
-							aria-hidden="true"
-							className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform duration-200"
-						/>,
-						`Phone`,
-					),
-				);
-			}
+	const contactLinks: ContactLink[] = [];
+	if (type === "default") {
+		contactLinks.push({
+			key: "email",
+			href: "mailto:quicktalog@outlook.com",
+			icon: <FiMail aria-hidden="true" />,
+			label: "Email",
+			value: "quicktalog@outlook.com",
+		});
+	} else if (activeData) {
+		const { contact, header } = activeData;
+		if (contact?.email && header?.emailCta) {
+			contactLinks.push({
+				key: "email",
+				href: `mailto:${contact.email}`,
+				icon: <FiMail aria-hidden="true" />,
+				label: "Email",
+				value: contact.email,
+			});
 		}
-
-		return links;
-	};
-
-	const getCTAProps = () => {
-		if (type === "default") {
-			return {
-				href: "/auth?mode=signup",
-				label: "Create Your Catalog",
-				shortLabel: "Get Started",
-				icon: <FiPlus aria-hidden="true" className="w-4 h-4 mr-2" />,
-				ariaLabel: "Create your own digital catalog",
-			};
+		if (contact?.phone && header?.phoneCta) {
+			contactLinks.push({
+				key: "phone",
+				href: `tel:${contact.phone}`,
+				icon: <FiPhone aria-hidden="true" />,
+				label: "Phone",
+				value: contact.phone,
+			});
 		}
+	}
 
-		if (
-			type === "custom" &&
-			activeData?.header?.cta?.isEnabled &&
-			activeData?.header?.cta.url
-		) {
-			return {
-				href: activeData?.header?.cta.url,
-				label: activeData?.header?.cta.label || "Learn more",
-				shortLabel: activeData?.header?.cta.label || "Learn more",
-				icon: <FiExternalLink aria-hidden="true" className="w-4 h-4 lg:mr-1" />,
-				ariaLabel: activeData?.header?.cta.label || "Learn more",
-			};
-		}
+	const cta =
+		type === "default"
+			? {
+					href: "/auth?mode=signup",
+					label: "Create Your Catalog",
+					shortLabel: "Get Started",
+					icon: <FiPlus aria-hidden="true" />,
+				}
+			: activeData?.header?.cta?.isEnabled && activeData.header.cta.url
+				? {
+						href: activeData.header.cta.url,
+						label: activeData.header.cta.label || "Learn more",
+						shortLabel: activeData.header.cta.label || "Learn more",
+						icon: <FiExternalLink aria-hidden="true" />,
+					}
+				: null;
 
-		return null;
-	};
-
-	const contactLinks = getContactLinks();
-	const ctaProps = getCTAProps();
 	const companyName = type === "default" ? "Quicktalog" : "Company";
-	const hasSidebarContent = contactLinks.length > 0 || ctaProps !== null;
+	const hasActions = contactLinks.length > 0 || cta !== null;
+	const logoWidth =
+		type === "default" ? 160 : activeData?.header?.logoSize?.width || 100;
 
 	return (
 		<header
 			aria-label={`${companyName} header navigation`}
-			className="border-b shadow-lg z-50 !bg-catalogue-navigation-background flex flex-row justify-between items-center !text-catalogue-navigation-text !border-catalogue-card-border font-body min-h-[48px] sm:min-h-[56px]"
+			className="cat-nav-wrap"
+			ref={wrapRef}
 			role="banner"
 		>
-			<div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-row justify-between items-center h-full w-full">
-				<div className="flex items-center justify-between py-2 sm:py-4 w-full">
-					<div className="flex items-center">
-						<SmartLink
-							ariaLabel={`Go to ${companyName} homepage`}
-							className="flex items-center space-x-2 group transition-transform duration-200 hover:scale-105"
-							href={activeData?.contact?.website || "/"}
-						>
-							{logo && (
-								<img
-									alt={`${companyName} logo`}
-									className={`rounded-sm object-contain object-left ${logo ? "" : "hidden"}`}
-									fetchPriority="high"
-									src={logo}
-									style={{
-										width:
-											type === "default"
-												? "160px"
-												: activeData?.header?.logoSize?.width
-													? `${activeData.header.logoSize.width}px`
-													: "100px",
-										height: "auto",
-										maxWidth: "100%",
-									}}
-								/>
-							)}
-						</SmartLink>
+			<nav
+				aria-label="Contact and actions"
+				className="cat-nav"
+				data-scrolled={scrolled ? "" : undefined}
+			>
+				<SmartLink
+					ariaLabel={`Go to ${companyName} homepage`}
+					className="cat-nav-brand"
+					href={activeData?.contact?.website || "/"}
+				>
+					{logo && (
+						<img
+							alt={`${companyName} logo`}
+							fetchPriority="high"
+							src={logo}
+							style={{ width: `${logoWidth}px` }}
+						/>
+					)}
+				</SmartLink>
+
+				{hasActions && (
+					<div className="cat-nav-actions">
+						{contactLinks.map((link) => (
+							<Link
+								aria-label={link.label}
+								className="cat-nav-icon"
+								href={link.href}
+								key={link.key}
+								title={link.value}
+							>
+								{link.icon}
+							</Link>
+						))}
+						{cta && (
+							<SmartLink className="cat-nav-cta" href={cta.href}>
+								{cta.icon}
+								<span>{cta.label}</span>
+							</SmartLink>
+						)}
 					</div>
+				)}
 
-					{/* Desktop Navigation */}
-					<nav
-						aria-label="Contact and actions"
-						className="hidden md:flex items-center space-x-2 md:space-x-4"
-						role="navigation"
-					>
+				{hasActions && (
+					<div className="cat-nav-mobile">
+						{cta && (
+							<SmartLink className="cat-nav-cta" href={cta.href}>
+								<span>{cta.shortLabel}</span>
+							</SmartLink>
+						)}
 						{contactLinks.length > 0 && (
-							<div
-								aria-label="Contact options"
-								className="flex items-center space-x-2 md:space-x-4"
-								role="group"
+							<button
+								aria-controls="catalogue-nav-menu"
+								aria-expanded={isMenuOpen}
+								aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+								className="cat-nav-burger"
+								onClick={() => setIsMenuOpen((open) => !open)}
+								type="button"
 							>
-								{contactLinks.map((linkProps, index) => (
-									<Link
-										aria-label={linkProps.label}
-										className={linkProps.className}
-										href={linkProps.href}
-										key={`contact-${index}`}
-										title={linkProps.label}
-									>
-										{linkProps.icon}
-									</Link>
-								))}
-							</div>
+								{isMenuOpen ? (
+									<FiX aria-hidden="true" />
+								) : (
+									<FiMenu aria-hidden="true" />
+								)}
+							</button>
 						)}
+					</div>
+				)}
+			</nav>
 
-						{ctaProps && (
-							<CatalogueButton
-								asChild
-								className="font-heading hover:!bg-primary/10 hover:!text-primary !bg-catalogue-card-background !text-foreground !border-primary tracking-heading text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border footer-cta-button"
-							>
-								<SmartLink
-									aria-label={ctaProps.ariaLabel}
-									className="flex items-center"
-									href={ctaProps.href}
-								>
-									{ctaProps.icon}
-									<span>{ctaProps.label}</span>
-								</SmartLink>
-							</CatalogueButton>
-						)}
-					</nav>
-
-					{/* Mobile Navigation (Hamburger) */}
-					{hasSidebarContent && (
-						<div className="md:hidden flex items-center">
-							<CatalogueSidebar
-								contactLinks={contactLinks}
-								ctaProps={ctaProps}
-								inlineStyles={inlineStyles}
-								isOpen={isMobileMenuOpen}
-								onOpenChange={setIsMobileMenuOpen}
-								themeClass={themeClass}
-							/>
-						</div>
+			{isMenuOpen && (
+				<div className="cat-nav-sheet" id="catalogue-nav-menu">
+					<p className="cat-nav-sheet-title">Contact us</p>
+					{contactLinks.map((link) => (
+						<Link
+							className="cat-nav-row"
+							href={link.href}
+							key={link.key}
+							onClick={() => setIsMenuOpen(false)}
+						>
+							{link.icon}
+							<span>{link.value}</span>
+						</Link>
+					))}
+					{cta && (
+						<SmartLink className="cat-nav-cta" href={cta.href}>
+							{cta.icon}
+							<span>{cta.label}</span>
+						</SmartLink>
 					)}
 				</div>
-			</div>
+			)}
 		</header>
 	);
 };

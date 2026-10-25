@@ -17,6 +17,7 @@ import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
+import { useKeepAiChanges } from "@/hooks/useKeepAiChanges";
 import { usePastedImages } from "@/hooks/usePastedImages";
 import { useVisualViewport } from "@/hooks/useVisualViewport";
 import { cn } from "@/lib/ui/cn";
@@ -30,6 +31,7 @@ import {
 	RotateCcw,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 /** Deliberately industry-neutral (a cuisine-specific suggestion reads as "not for me" to everyone else); each exercises a different tool group. */
 const SUGGESTIONS = [
@@ -201,9 +203,15 @@ const CatalogueChat = ({
 	// AI edits waiting to be kept or undone. The bar sits over the composer, or
 	// floats bottom-left while the chat is minimised.
 	const review = context?.aiReview ?? null;
-	const acceptChanges = () => {
-		context?.acceptAiChanges();
-		setAnnouncement("Kept the AI changes.");
+	const keepAiChanges = useKeepAiChanges();
+	const acceptChanges = async () => {
+		const saved = await keepAiChanges();
+		if (saved.ok) {
+			setAnnouncement("Kept and saved the AI changes.");
+			return;
+		}
+		setAnnouncement("Kept the AI changes, but they are not saved yet.");
+		toast.error(saved.error ?? "Could not save your changes");
 	};
 	const rejectChanges = () => {
 		context?.rejectAiChanges();
@@ -338,6 +346,10 @@ const CatalogueChat = ({
 											items, rewrite text, adjust prices or restyle the whole
 											catalogue. Attach or paste photos of a printed menu or
 											price list and it will read them for you.
+										</p>
+										<p className="text-sm leading-relaxed text-product-foreground-accent">
+											Tip: the more detail you give - item names, prices, sizes
+											and the order you want them in - the better the result.
 										</p>
 									</div>
 									<div className="space-y-2">

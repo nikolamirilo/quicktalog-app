@@ -1,10 +1,11 @@
-import { CatalogueSession } from "@/agent/session";
+import { CatalogueSession } from "@/agent/core/session";
 import { buildTools } from "@/agent/tools";
 import { aiLimitsFor } from "@/lib/ai/limits";
 import { CREDITS } from "@/lib/ai/pricing";
+import { operationLimitsFor } from "@/lib/entitlements/operation-limits";
 import type { Tier } from "@/lib/entitlements/plan";
-import { defaultCatalogueData, tiers } from "@quicktalog/common";
 import type { Catalogue } from "@quicktalog/common";
+import { defaultCatalogueData, tiers } from "@quicktalog/common";
 import { describe, expect, it } from "vitest";
 
 const catalogue = {
@@ -87,14 +88,16 @@ describe("what a turn is charged for", () => {
 		session.createPlan(["Add drinks", "Add food"]);
 		session.applied.push("Added item 1", "Added item 2", "Added item 3");
 		session.completeTask(0);
-		expect(session.tasksSettledThisRequest).toBe(1);
+		session.completeTask(1);
+		// The base pays for the first task; the second is one credit, not three edits.
+		expect(session.credits.billed).toBe(1);
 	});
 
 	it("does not charge for a skipped task", () => {
 		const session = sessionOn(pro);
 		session.createPlan(["Add drinks", "Add food"]);
 		session.skipTask(0, "nothing to add");
-		expect(session.tasksSettledThisRequest).toBe(0);
+		expect(session.credits.billed).toBe(0);
 	});
 
 	it("keeps a free build inside the free allowance", () => {
@@ -102,8 +105,62 @@ describe("what a turn is charged for", () => {
 		session.createPlan(["a", "b", "c", "d"]);
 		for (let i = 0; i < 4; i++) session.completeTask(i);
 		// base 2 + (4 settled - 1), no page reads on the free plan.
-		const cost = CREDITS.agentBase + (session.tasksSettledThisRequest - 1);
+		const cost = CREDITS.agentBase + session.credits.billed;
 		expect(cost).toBe(5);
 		expect(cost).toBeLessThan(tiers[0].features.ai_credits);
+	});
+});
+
+describe("custom theme tool", () => {
+	const sessionWithLimits = (tier: Tier) =>
+		new CatalogueSession(
+			catalogue,
+			operationLimitsFor(tier.features),
+			tier.features.sections,
+			[],
+			"user_1",
+			null,
+			0,
+			aiLimitsFor(tier),
+		);
+	const named = (name: string) => tiers.find((t) => t.name === name) as Tier;
+
+	it("drops setCustomTheme on plans without custom themes", () => {
+		expect(buildTools(sessionWithLimits(named("Starter")))).not.toHaveProperty(
+			"setCustomTheme",
+		);
+		expect(buildTools(sessionWithLimits(named("Basic")))).not.toHaveProperty(
+			"setCustomTheme",
+		);
+		expect(buildTools(sessionWithLimits(named("Pro")))).toHaveProperty(
+			"setCustomTheme",
+		);
+	});
+});
+
+describe("credits on the session", () => {
+	const budgeted = (
+		tier: Tier,
+		available: number,
+		baseCoversFirstTask = true,
+	) =>
+		new CatalogueSession(
+			catalogue,
+			{},
+			undefined,
+			[],
+			"user_1",
+			null,
+			0,
+			aiLimitsFor(tier),
+			{ available, baseCoversFirstTask },
+		);
+
+	it("refuses a page read the budget cannot pay for", () => {
+		const result = budgeted(pro, 1).allowWebFetch();
+		expect(result?.ok).toBe(false);
+		expect(result && "error" in result ? result.error : "").toMatch(
+			/2 credits/,
+		);
 	});
 });
