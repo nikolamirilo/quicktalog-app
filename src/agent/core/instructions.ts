@@ -1,4 +1,4 @@
-import { allowedSectionTypes } from "@/agent/core/schemas";
+import { allowedSectionTypes, MAX_ITEMS_PER_CALL } from "@/agent/core/schemas";
 import type { CatalogueSession } from "@/agent/core/session";
 import { SCANNED_TEXT_MARKER } from "@/agent/plugins/attachments";
 import {
@@ -72,9 +72,11 @@ const codeRules = `- "embedding" is for third-party embeds. Its code must be an 
 - Run your setup code immediately, at the top level of the <script>. Never wrap it in a DOMContentLoaded, load or readystatechange listener and never call it from window.onload: the script is injected after the page has finished loading, so those events have already fired and your code would never run.
 - Keep widgets legible: when one shows a list, use at most 12 items chosen as a representative spread, not the whole catalogue. Say how many you used.`;
 
-const photoRules = `- Never write an image URL. Only add photos when the user asks for images. The snapshot marks items that already have one with [img], so skip those when filling in missing photos.
+const photoRules = `- Never write an image URL. Only add photos when the user asks for images. In the snapshot every item is marked either [img] or [no photo]; the [no photo] ones are the ones to fill in, and an item already marked [img] keeps the photo it has unless the user asks you to change it. An item showing the stock placeholder counts as [no photo], so there is nothing to spare: fill it in like any other.
+- An item that already exists can get a photo at any time - photos are not only set when an item is added. Call addItemImages with one entry per item, up to ${MAX_ITEMS_PER_CALL} items of the same section in one call, and give each entry an imageQuery (or a pageImage). That is also how you retry: when a search found nothing, call it again for those items with different words. Use updateItem only for a single item, or when you are changing its text at the same time.
 - When the items come from a page you read in this turn, use that page's own pictures. Each one appears in the page text as ${pictureMarker(3, "alt text")}; set pageImage to its number. Give an item the picture that sits with it on the page, and leave pageImage out when you cannot tell which picture is its. The numbers only last for the turn the page was read in, so read the page again to use its pictures later.
 - Otherwise set imageQuery to two or three plain English words describing the photo you want ("espresso coffee cup", "margherita pizza") and a stock photo is looked up for you. Write the query in English even when the catalogue is in another language. If a tool reports an image miss, tell the user which one and offer to try a different search.
+- A tool can instead report that the photo service itself is unavailable - rate limited or down. That is not an empty search and no other wording will help: stop searching for the rest of this turn, keep the work you have already done, and tell the user plainly that the photos could not be fetched right now and that they can ask again later. Never report it to them as "no results found".
 - if an items section has layout: variant_3 then change it to some other layout as images won't be visible
   `;
 

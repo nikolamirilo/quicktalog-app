@@ -1,26 +1,25 @@
 import type { ItemInput } from "@/agent/core/schemas";
+import { findStockPhoto } from "@/lib/images/stock-photo";
 import type { AiItemInput } from "@/types/ai";
-import { fetchImageFromUnsplash } from "@quicktalog/common";
 
 /** A search still running by now is a miss: the whole turn has 60 seconds. */
 const LOOKUP_TIMEOUT_MS = 5000;
 /** Plenty for a long listing, and a bound on a page made of nothing but pictures. */
 const MAX_PICTURES = 300;
 
-/** What Unsplash resolves to on an empty search; treat it as "not found". */
-const UNSPLASH_MISS =
-	"https://static1.squarespace.com/static/5898e29c725e25e7132d5a5a/58aa11bc9656ca13c4524c68/58aa11e99656ca13c45253e2/1487540713345/600x400-Image-Placeholder.jpg?format=original";
-
 export interface ImageCache {
 	/** Stock photo searches by query, null when one found nothing. */
 	searches: Map<string, string | null>;
 	/** Pictures on pages read this turn: marker N is `pictures[N - 1]`. */
 	pictures: string[];
+	/** Why no search can succeed this turn, once one has proved it. */
+	unavailable: string | null;
 }
 
 export const createImageCache = (): ImageCache => ({
 	searches: new Map(),
 	pictures: [],
+	unavailable: null,
 });
 
 /** The same address keeps its number, so a page read twice still points right. */
@@ -61,14 +60,53 @@ async function lookup(
 ): Promise<string | null> {
 	const cached = cache.searches.get(query);
 	if (cached !== undefined) return cached;
+	// Every further request would be refused the same way, and a rate limit the
+	// agent keeps hammering is how one ask spends the whole hour's quota.
+	if (cache.unavailable) return null;
 
-	const url = await withTimeout(
-		fetchImageFromUnsplash(query),
-		LOOKUP_TIMEOUT_MS,
-	);
-	const resolved = url && url !== UNSPLASH_MISS ? url : null;
+	const result = await withTimeout(findStockPhoto(query), LOOKUP_TIMEOUT_MS);
+	if (!result) {
+		cache.unavailable = "The stock photo service did not answer in time.";
+		return null;
+	}
+	if (result.status === "unavailable") {
+		cache.unavailable = result.reason;
+		return null;
+	}
+
+	const resolved = result.status === "found" ? result.url : null;
 	cache.searches.set(query, resolved);
 	return resolved;
+}
+
+type ImageRequest = Pick<ItemInput, "pageImage" | "imageQuery">;
+
+/**
+ * Runs every search a batch needs, each distinct query once. The schema caps
+ * the batch size, so all of them run rather than a silent first few.
+ */
+async function warmSearches(
+	cache: ImageCache,
+	requests: ImageRequest[],
+): Promise<void> {
+	// A page picture needs no search.
+	const queries = [
+		...new Set(
+			requests
+				.filter((request) => !pictureFor(cache, request.pageImage))
+				.map((request) => request.imageQuery)
+				.filter((query): query is string => !!query),
+		),
+	];
+
+	// The first search goes alone: a rate-limited service then costs one refused
+	// request, not one per item, and the rest of the batch never leaves.
+	const [probe, ...rest] = queries;
+	if (probe === undefined) return;
+	await lookup(cache, probe);
+	if (cache.unavailable) return;
+
+	await Promise.all(rest.map((query) => lookup(cache, query)));
 }
 
 /** Resolves pictures and queries to URLs and mints the ids the browser will reuse. */
@@ -76,18 +114,7 @@ export async function resolveItems(
 	cache: ImageCache,
 	items: ItemInput[],
 ): Promise<{ items: AiItemInput[]; misses: string[] }> {
-	// A page picture needs no search. The schema caps the item count, so every
-	// remaining query runs rather than a silent first few.
-	const queries = [
-		...new Set(
-			items
-				.filter((item) => !pictureFor(cache, item.pageImage))
-				.map((item) => item.imageQuery)
-				.filter((q): q is string => !!q),
-		),
-	];
-
-	await Promise.all(queries.map((query) => lookup(cache, query)));
+	await warmSearches(cache, items);
 
 	const misses: string[] = [];
 	// `strict: false` makes zod infer every field optional, so rebuild explicitly.
@@ -118,9 +145,31 @@ export async function resolveItems(
 
 export async function resolveImage(
 	cache: ImageCache,
-	{ pageImage, imageQuery }: Pick<ItemInput, "pageImage" | "imageQuery">,
+	{ pageImage, imageQuery }: ImageRequest,
 ): Promise<string | null> {
 	const picture = pictureFor(cache, pageImage);
 	if (picture) return picture;
 	return imageQuery ? lookup(cache, imageQuery) : null;
+}
+
+/**
+ * What a tool result says about photos that did not land. A service that could
+ * not be searched is said once, instead of a miss per item that reads as
+ * "nothing matched" and invites the agent to retry with other words.
+ */
+export const photoTrouble = (
+	cache: ImageCache,
+	misses: string[],
+): { imagesUnavailable?: string; imageMisses?: string[] } => {
+	if (cache.unavailable) return { imagesUnavailable: cache.unavailable };
+	return misses.length > 0 ? { imageMisses: misses } : {};
+};
+
+/** One photo per request, in the order asked, for filling in a whole section at once. */
+export async function resolveImages(
+	cache: ImageCache,
+	requests: ImageRequest[],
+): Promise<(string | null)[]> {
+	await warmSearches(cache, requests);
+	return Promise.all(requests.map((request) => resolveImage(cache, request)));
 }

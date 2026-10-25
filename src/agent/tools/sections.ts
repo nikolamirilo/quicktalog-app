@@ -6,7 +6,8 @@ import {
 	sectionIndexSchema,
 	sectionTypeSchema,
 } from "@/agent/core/schemas";
-import { resolveItems } from "@/agent/plugins/images";
+import { photoTrouble, resolveItems } from "@/agent/plugins/images";
+import { hasItemPhoto } from "@/lib/catalogue/item-image";
 import type { ToolContext } from "@/agent/tools/types";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
@@ -33,7 +34,7 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 								description: item.description ?? "",
 								price: item.price ?? 0,
 								isFree: item.isFree ?? false,
-								hasImage: Boolean(item.image),
+								hasImage: hasItemPhoto(item.image),
 							})),
 						}
 					: {}),
@@ -101,7 +102,7 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 			return {
 				...result,
 				section: session.sectionIndex(id),
-				...(resolved.misses.length > 0 ? { imageMisses: resolved.misses } : {}),
+				...photoTrouble(images, resolved.misses),
 			};
 		},
 	}),

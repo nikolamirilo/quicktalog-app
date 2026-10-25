@@ -436,6 +436,34 @@ export function applyCatalogueOperations(
 				break;
 			}
 
+			case "set_item_images": {
+				const index = sectionIndex(operation.sectionId);
+				const block = itemBlockAt(index);
+				if (!block) {
+					skipped.push("Could not find the section to add photos to.");
+					break;
+				}
+
+				const items = [...block.items];
+				let changed = 0;
+				for (const { itemId, image } of operation.images) {
+					const itemIndex = items.findIndex((item) => item.id === itemId);
+					if (itemIndex < 0) continue;
+					items[itemIndex] = { ...items[itemIndex], image };
+					changed += 1;
+				}
+				if (changed === 0) {
+					skipped.push("Could not find any of those items to add photos to.");
+					break;
+				}
+
+				writeBlock(index, { ...block, items } as ContentBlock);
+				applied.push(
+					`Added ${changed} photo${changed === 1 ? "" : "s"} in ${label(block)}`,
+				);
+				break;
+			}
+
 			case "delete_item": {
 				const index = sectionIndex(operation.sectionId);
 				const block = itemBlockAt(index);

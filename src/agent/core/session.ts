@@ -20,6 +20,7 @@ import { activeSkills, findSkill } from "@/agent/skills";
 import type { SkillGateCall } from "@/agent/skills/types";
 import type { AiPlanLimits } from "@/lib/ai/limits";
 import { isItemsBlock, normalizeContent } from "@/lib/catalogue/content-blocks";
+import { hasItemPhoto } from "@/lib/catalogue/item-image";
 import {
 	applyCatalogueOperations,
 	type OperationLimits,
@@ -407,7 +408,9 @@ export class CatalogueSession {
 			const description = item.description
 				? ` - ${truncate(stripHtml(item.description), 80)}`
 				: "";
-			const image = item.image ? " [img]" : "";
+			// Spelled out both ways: the template image reads as a photo in the
+			// builder but is not one, and "no [img]" was too easy to miss.
+			const image = hasItemPhoto(item.image) ? " [img]" : " [no photo]";
 			return `    [${index}] "${item.name}" ${price}${image}${description}`;
 		});
 		if (items.length > MAX_SNAPSHOT_ITEMS) {

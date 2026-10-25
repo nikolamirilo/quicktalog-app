@@ -169,6 +169,9 @@ const ChatMessageBubble = ({
 				key={key}
 			>
 				<Change text={output.summary} />
+				{output.imagesUnavailable && (
+					<Skipped text={output.imagesUnavailable} />
+				)}
 				{output.imageMisses?.map((miss) => (
 					<Skipped
 						key={`${key}-${miss}`}

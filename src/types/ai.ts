@@ -180,6 +180,12 @@ export type CatalogueOperation =
 			denominator?: string;
 			image?: string;
 	  }
+	| {
+			/** Photos for several items in one section, so filling in a whole section is one edit. */
+			op: "set_item_images";
+			sectionId: string;
+			images: { itemId: string; image: string }[];
+	  }
 	| { op: "delete_item"; sectionId: string; itemId: string }
 	| {
 			op: "move_item";
@@ -207,6 +213,12 @@ export type AgentToolResult =
 			 * that does not exist - so the model can say so.
 			 */
 			imageMisses?: string[];
+			/**
+			 * The photo service itself could not be searched - rate limited, down
+			 * or unconfigured - so no search this turn can succeed. Said once,
+			 * instead of a miss per item that reads as "nothing matched".
+			 */
+			imagesUnavailable?: string;
 			/**
 			 * Name of the saved theme when setCustomTheme wrote one to the
 			 * library, so the model can confirm it to the user.

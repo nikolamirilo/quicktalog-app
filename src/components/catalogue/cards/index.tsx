@@ -1,5 +1,6 @@
 "use client";
 import { ItemDetailModal } from "@/components/catalogue/modals/ItemDetailModal";
+import { hasItemPhoto } from "@/lib/catalogue/item-image";
 import { formatItemAmount, getItemPrice } from "@/lib/catalogue/item-price";
 import { DEFAULT_IMAGE, Item } from "@quicktalog/common";
 import { useMemo, useState } from "react";
@@ -79,7 +80,7 @@ const CardsSwitcher = ({
 			...record,
 			order: i,
 			price: price,
-			image: record.image || DEFAULT_IMAGE,
+			image: hasItemPhoto(record.image) ? record.image : DEFAULT_IMAGE,
 		};
 
 		return {

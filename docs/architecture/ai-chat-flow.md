@@ -283,10 +283,39 @@ update_catalogue                  update_appearance
   injected after load, so the event has already fired.
 - Section types the plan does not unlock are named explicitly as forbidden.
 - Photos: never write a URL, only an English `imageQuery` of two or three words.
+  Every item in the snapshot is marked `[img]` or `[no photo]`, and the template
+  stand-in (`DEFAULT_IMAGE`) counts as `[no photo]` - see `hasItemPhoto` in
+  `src/lib/catalogue/item-image.ts`. An item that already exists gets a photo
+  through `addItemImages` (one entry per item, up to 40 of one section per call,
+  applied as a single `set_item_images` operation), or through `updateItem` for a
+  single item.
+- The lookup itself is `findStockPhoto` in `src/lib/images/stock-photo.ts`, and
+  it separates three outcomes: `found`, `none` (searched, matched nothing) and
+  `unavailable` (rate limited, down, or no key). Unsplash answers an exhausted
+  quota with **403 and a plain-text body**; reading that as "no results" is what
+  made the agent reword its searches and spend the rest of the hour's quota. The
+  first search of a batch therefore runs alone as a probe, an `unavailable`
+  answer stops every search for the rest of the turn (`ImageCache.unavailable`),
+  and the tool result says so once as `imagesUnavailable` instead of one
+  `imageMisses` entry per item. Results are cached in Redis by query
+  (`<prefix>:stock-photo:<query>`, 30 days for a hit, 1 day for a miss), so a
+  query any catalogue has already searched costs no quota.
+- A **demo** Unsplash app allows 50 searches an hour for the whole deployment -
+  one menu import. Production approval raises it to 1000/hour; more than that is
+  a conversation with partnerships@unsplash.com. Approval is reviewed against the
+  [API guidelines](https://help.unsplash.com/api-guidelines/unsplash-api-guidelines),
+  and two of them this app does not meet yet: every displayed photo must credit
+  the photographer with a link to their Unsplash profile carrying
+  `?utm_source=<app>&utm_medium=referral`, and choosing a photo for an item must
+  send a GET to the photo's `links.download_location`. Neither is possible with
+  what we store - only `urls.regular` is kept, not `user.name`, the profile link
+  or `download_location`.
+
+  This photo section is current as of 2026-10-25.
 
 **4. The snapshot** - `buildCatalogueSnapshot()` renders the catalogue as a compact
 position-indexed outline. HTML is stripped, descriptions truncated to 80 chars,
-items that already have a photo are tagged `[img]`:
+items carry `[img]` or `[no photo]`:
 
 ```
 SLUG: my-cafe
@@ -296,8 +325,8 @@ APPEARANCE: theme=theme-coffee font=Inter size=medium radius=12 shadow=low
 SECTIONS (2):
   [0] category "Coffee" layout=variant_1 items=3
     [0] "Espresso" 2.5 [img] - Single shot, dark roast
-    [1] "Flat White" 3.2 - Double shot with steamed milk
-    [2] "Cold Brew" 3.8
+    [1] "Flat White" 3.2 [no photo] - Double shot with steamed milk
+    [2] "Cold Brew" 3.8 [no photo]
   [1] text "About" - "We roast in small batches every Tuesday."
 ```
 

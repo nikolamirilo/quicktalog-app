@@ -64,7 +64,6 @@ export async function readOwnedDraft(
 		id: row.id,
 		name: row.name,
 		status: row.status,
-		source: row.source,
 		userId: row.userId,
 		createdAt: row.createdAt,
 		updatedAt: row.updatedAt,

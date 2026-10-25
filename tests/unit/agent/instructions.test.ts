@@ -41,6 +41,16 @@ describe("buildInstructions", () => {
 		}
 	});
 
+	// Without this the model reads the photo rules as add-time only and skips a
+	// "fill in the missing images" ask as impossible.
+	it("tells the model existing items can be given a photo", () => {
+		const rendered = prompt();
+
+		expect(rendered).toContain("[no photo]");
+		expect(rendered).toContain("addItemImages");
+		expect(rendered).toContain("photos are not only set when an item is added");
+	});
+
 	// The rules are useless if they describe a marker the client never sends,
 	// so both sides read the constant rather than repeating the string.
 	it("names the scanned-text marker the client actually appends", () => {

@@ -1,25 +1,17 @@
 import { CatalogueSession } from "@/agent/core/session";
 import { UNTRUSTED_OPEN } from "@/agent/plugins/web";
 import { buildTools } from "@/agent/tools";
+import { findStockPhoto } from "@/lib/images/stock-photo";
 import { saveOwnTheme } from "@/lib/themes/upsert";
 import type { AgentToolResult, AiSectionAccess } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
-import {
-	defaultCatalogueData,
-	fetchImageFromUnsplash,
-} from "@quicktalog/common";
+import { DEFAULT_IMAGE, defaultCatalogueData } from "@quicktalog/common";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const { lookup } = vi.hoisted(() => ({ lookup: vi.fn() }));
 vi.mock("node:dns/promises", () => ({ lookup }));
 
-vi.mock("@quicktalog/common", async () => {
-	const actual =
-		await vi.importActual<typeof import("@quicktalog/common")>(
-			"@quicktalog/common",
-		);
-	return { ...actual, fetchImageFromUnsplash: vi.fn() };
-});
+vi.mock("@/lib/images/stock-photo", () => ({ findStockPhoto: vi.fn() }));
 
 vi.mock("@/lib/themes/upsert", () => ({ saveOwnTheme: vi.fn() }));
 vi.mock("@/lib/auth/identity", () => ({
@@ -207,13 +199,24 @@ describe("fetchUrl", () => {
 });
 
 describe("photos", () => {
-	const unsplash = vi.mocked(fetchImageFromUnsplash);
+	const search = vi.mocked(findStockPhoto);
+
+	const found = (url: string) => ({ status: "found" as const, url });
+	const NONE = { status: "none" as const };
 
 	const WATCHES = `${PAGE}\n\n[![Tissot PRX](https://cdn.shop.test/prx.jpg)](https://shop.test/prx)\n\nTissot PRX 84900`;
 
 	const itemsOf = (result: AgentToolResult) =>
 		(result as unknown as { operation: { items: Record<string, unknown>[] } })
 			.operation.items;
+
+	/** The items as they stand on the session, after every edit of the turn. */
+	const itemsIn = (session: CatalogueSession, index: number) =>
+		(
+			session.working.content[index] as {
+				items: { id: string; image: string }[];
+			}
+		).items;
 
 	it("puts the picture from a page read this turn on the item", async () => {
 		mockScrape(WATCHES);
@@ -246,9 +249,9 @@ describe("photos", () => {
 	});
 
 	it("runs every item's photo search, not just the first few", async () => {
-		unsplash.mockReset();
-		unsplash.mockImplementation(
-			async (query) => `https://images.test/${query}`,
+		search.mockReset();
+		search.mockImplementation(async (query) =>
+			found(`https://images.test/${query}`),
 		);
 		const tools = buildTools(new CatalogueSession(catalogue));
 
@@ -261,14 +264,132 @@ describe("photos", () => {
 			})),
 		});
 
-		expect(unsplash).toHaveBeenCalledTimes(30);
+		expect(search).toHaveBeenCalledTimes(30);
 		expect(result).not.toHaveProperty("imageMisses");
+	});
+
+	it("fills in photos for items that already exist", async () => {
+		search.mockReset();
+		search.mockImplementation(async (query) =>
+			found(`https://images.test/${query}`),
+		);
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Watches",
+			items: [{ name: "Tissot PRX" }, { name: "Seiko 5" }],
+		});
+
+		const result = await run(tools, "addItemImages", {
+			section: 0,
+			items: [
+				{ item: 0, imageQuery: "steel wrist watch" },
+				{ item: 1, imageQuery: "automatic wrist watch" },
+			],
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(result).not.toHaveProperty("imageMisses");
+		expect(itemsIn(session, 0).map((item) => item.image)).toEqual([
+			"https://images.test/steel wrist watch",
+			"https://images.test/automatic wrist watch",
+		]);
+	});
+
+	// The whole point of the bulk tool: a missed search is retried with new
+	// words, on items that are already in the catalogue.
+	it("takes a second search for an item a first search missed", async () => {
+		search.mockReset();
+		search.mockResolvedValueOnce(NONE);
+		search.mockResolvedValue(found("https://images.test/found.jpg"));
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Watches",
+			items: [{ name: "Tissot PRX", imageQuery: "prx" }],
+		});
+
+		const result = await run(tools, "addItemImages", {
+			section: 0,
+			items: [{ item: 0, imageQuery: "steel wrist watch" }],
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(itemsIn(session, 0)[0].image).toBe("https://images.test/found.jpg");
+	});
+
+	it("keeps the photos it found when one item's index is wrong", async () => {
+		search.mockReset();
+		search.mockResolvedValue(found("https://images.test/found.jpg"));
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Watches",
+			items: [{ name: "Tissot PRX" }],
+		});
+
+		const result = await run(tools, "addItemImages", {
+			section: 0,
+			items: [
+				{ item: 0, imageQuery: "steel wrist watch" },
+				{ item: 9, imageQuery: "gold wrist watch" },
+			],
+		});
+
+		expect(result).toMatchObject({ ok: true, imageMisses: ["item [9]"] });
+		expect(itemsIn(session, 0)[0].image).toBe("https://images.test/found.jpg");
+	});
+
+	it("reports a section whose searches all missed instead of editing it", async () => {
+		search.mockReset();
+		search.mockResolvedValue(NONE);
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Watches",
+			items: [{ name: "Tissot PRX" }],
+		});
+
+		const result = await run(tools, "addItemImages", {
+			section: 0,
+			items: [{ item: 0, imageQuery: "steel wrist watch" }],
+		});
+
+		expect(result).toMatchObject({ ok: false });
+		expect(itemsIn(session, 0)[0].image).toBe("");
+	});
+
+	it("does not count the template photo as a photo", async () => {
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Watches",
+			items: [{ name: "Tissot PRX" }],
+		});
+		session.run({
+			op: "set_item_images",
+			sectionId: session.working.content[0].id,
+			images: [{ itemId: itemsIn(session, 0)[0].id, image: DEFAULT_IMAGE }],
+		});
+
+		const read = (await run(tools, "readSection", {
+			section: 0,
+		})) as unknown as {
+			items: { hasImage: boolean }[];
+		};
+
+		expect(read.items[0].hasImage).toBe(false);
 	});
 
 	it("gives up on a photo search that hangs", async () => {
 		vi.useFakeTimers();
-		unsplash.mockReset();
-		unsplash.mockReturnValue(new Promise(() => {}));
+		search.mockReset();
+		search.mockReturnValue(new Promise(() => {}));
 		const tools = buildTools(new CatalogueSession(catalogue));
 
 		const pending = run(tools, "addSection", {
@@ -278,10 +399,62 @@ describe("photos", () => {
 		});
 		await vi.advanceTimersByTimeAsync(5000);
 
-		expect(await pending).toMatchObject({
-			ok: true,
-			imageMisses: ["steel wrist watch"],
+		// The item still lands; a service that will not answer is said once,
+		// not as a miss per item.
+		expect(await pending).toMatchObject({ ok: true });
+		expect(await pending).toHaveProperty("imagesUnavailable");
+	});
+
+	// The bug this path exists for: Unsplash answered "Rate Limit Exceeded",
+	// every item came back a miss, and the agent kept rewording the searches.
+	it("stops searching once the photo service refuses, and says why", async () => {
+		search.mockReset();
+		search.mockResolvedValue({
+			status: "unavailable",
+			reason: "The stock photo service is rate limited right now.",
 		});
+		const tools = buildTools(new CatalogueSession(catalogue));
+
+		const result = await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Breakfast",
+			items: Array.from({ length: 12 }, (_, i) => ({
+				name: `Dish ${i}`,
+				imageQuery: `dish ${i}`,
+			})),
+		});
+
+		expect(search).toHaveBeenCalledTimes(1);
+		expect(result).toMatchObject({
+			ok: true,
+			imagesUnavailable: "The stock photo service is rate limited right now.",
+		});
+		// Misses would read as "nothing matched" and invite another 12 searches.
+		expect(result).not.toHaveProperty("imageMisses");
+	});
+
+	it("tells the agent to stop rather than retry when a retry cannot work", async () => {
+		search.mockReset();
+		search.mockResolvedValue({
+			status: "unavailable",
+			reason: "The stock photo service is rate limited right now.",
+		});
+		const tools = buildTools(new CatalogueSession(catalogue));
+		await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Breakfast",
+			items: [{ name: "Croissant" }],
+		});
+
+		const result = await run(tools, "addItemImages", {
+			section: 0,
+			items: [{ item: 0, imageQuery: "butter croissant" }],
+		});
+
+		expect(result).toMatchObject({ ok: false });
+		expect((result as { error: string }).error).toContain(
+			"Do not search again on this turn",
+		);
 	});
 });
 

@@ -24,6 +24,7 @@ export const TOOL_DISPLAY: Record<AgentToolName, ToolDisplay> = {
 	deleteSection: { label: "Deleting a section" },
 	moveSection: { label: "Moving a section" },
 	addItems: { label: "Adding items" },
+	addItemImages: { label: "Finding photos" },
 	updateItem: { label: "Updating an item" },
 	deleteItem: { label: "Deleting an item" },
 	moveItem: { label: "Moving an item" },

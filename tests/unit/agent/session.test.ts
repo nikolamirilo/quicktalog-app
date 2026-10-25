@@ -4,7 +4,7 @@ import type { AiPlanLimits } from "@/lib/ai/limits";
 import { CREDITS, estimatePlanCredits } from "@/lib/ai/pricing";
 import type { CatalogueOperation } from "@/types/ai";
 import type { Catalogue } from "@quicktalog/common";
-import { defaultCatalogueData } from "@quicktalog/common";
+import { DEFAULT_IMAGE, defaultCatalogueData } from "@quicktalog/common";
 import { describe, expect, it } from "vitest";
 
 const catalogue = {
@@ -164,6 +164,24 @@ describe("CatalogueSession", () => {
 			// HTML is stripped so the model reads prose, not markup.
 			expect(snapshot).toContain("We roast every Tuesday.");
 			expect(snapshot).not.toContain("<p>");
+		});
+
+		it("marks an item with no photo so the model can fill it in", () => {
+			expect(session().snapshot()).toContain('[0] "Espresso" 2.5 [no photo]');
+		});
+
+		// The reason a "retry the missing images" ask used to be skipped: the
+		// template photo made every item look like it already had one.
+		it("counts the template photo as no photo", () => {
+			const s = session();
+			s.run({
+				op: "update_item",
+				sectionId: "sec-1",
+				itemId: "it-1",
+				image: DEFAULT_IMAGE,
+			});
+
+			expect(s.snapshot()).toContain('[0] "Espresso" 2.5 [no photo]');
 		});
 
 		it("reflects edits made earlier in the same turn", () => {
