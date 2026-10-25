@@ -1,7 +1,6 @@
 import { Catalogue } from "@quicktalog/common";
 import {
 	InfoTip,
-	NewBadge,
 	PanelSection,
 } from "@/components/catalogue/inputs/sidebar/panel";
 import { Textarea } from "@/components/ui/textarea";
@@ -54,10 +53,7 @@ const BusinessInfoSection = ({
 		title="Business information"
 	>
 		<div className="space-y-2">
-			<div className="flex items-center gap-1">
-				<Label htmlFor="footer-tagline">Footer tagline</Label>
-				<NewBadge />
-			</div>
+			<Label htmlFor="footer-tagline">Footer tagline</Label>
 			<Textarea
 				aria-describedby="footer-tagline-hint"
 				className="min-h-[72px] resize-none"

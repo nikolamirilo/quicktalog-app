@@ -141,6 +141,37 @@ describe("applyPlanToCatalogue appearance", () => {
 		expect(appearance.theme.type).toBe("custom");
 		expect((appearance.style as { shadow: string }).shadow).toBe("high");
 	});
+
+	// One flag now gates all five, so one call must clear all five.
+	it("resets theme, style, overlay, glass and background together on Basic", () => {
+		const everything = {
+			appearance: {
+				...(styled as unknown as Appearance).appearance,
+				glass: { level: 3, opacity: 40, frost: 18, splay: 6, apply: {} },
+				background: {
+					isEnabled: true,
+					type: "color",
+					gradient: "oat",
+					color: "#123456",
+					image: null,
+					fade: 50,
+				},
+			},
+		} as never;
+
+		const { appearance } = applyPlanToCatalogue(
+			everything,
+			named("Basic"),
+		) as Appearance & {
+			appearance: { glass: unknown; background: unknown };
+		};
+
+		expect(appearance.theme).toEqual(defaultCatalogueData.appearance.theme);
+		expect(appearance.style).toEqual(defaultCatalogueData.appearance.style);
+		expect(appearance.overlay).toEqual(defaultCatalogueData.appearance.overlay);
+		expect(appearance.glass).toEqual(DEFAULT_GLASS);
+		expect(appearance.background).toEqual(DEFAULT_BACKGROUND);
+	});
 });
 
 describe("applyPlanToCatalogue glass, search and tagline", () => {

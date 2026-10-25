@@ -140,8 +140,10 @@ const LOCKED_SETTINGS: [keyof OperationLimits, string][] = [
 		"branding",
 		"branding (logo, contact details, SEO, legal, custom header and footer)",
 	],
-	["styles", "style controls (font, text size, corners, shadow)"],
-	["customThemes", "custom themes"],
+	[
+		"advancedAppearance",
+		"advanced styling (custom themes, font, text size, corners, shadow)",
+	],
 	["newsletter", "the newsletter form"],
 ];
 

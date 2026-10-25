@@ -80,8 +80,8 @@ function Body() {
 					move up you get more catalogues, more sections and items in each one,
 					higher page view and AI credit allowances, and then feature by
 					feature: custom branding and dividers, then external content, custom
-					visuals, style controls and your own saved themes, then newsletter
-					sign-ups and connecting your own Google Analytics or Meta Pixel.
+					visuals and advanced styling, then newsletter sign-ups and connecting
+					your own Google Analytics or Meta Pixel.
 				</p>
 				<p>
 					The pricing page lays out every plan side by side with the exact

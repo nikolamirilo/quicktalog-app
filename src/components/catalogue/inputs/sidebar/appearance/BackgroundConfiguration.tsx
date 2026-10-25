@@ -58,8 +58,16 @@ const BackgroundConfiguration = ({
 	const textIsDark = !themeIsDark;
 	const bgDark = bg.isEnabled ? backgroundIsDark(bg) : null;
 	const clash = bgDark !== null && bgDark === textIsDark;
-	// The group that suits the theme comes first.
-	const groups = textIsDark ? [false, true] : [true, false];
+	// The group that suits the theme comes first; a group with no gradients is skipped.
+	const groups = (textIsDark ? [false, true] : [true, false]).filter((dark) =>
+		BACKGROUND_GRADIENTS.some((g) => g.dark === dark),
+	);
+	const textTone = textIsDark ? "dark" : "light";
+	const otherTone = textIsDark ? "light" : "dark";
+	// A clash is only fixable in place when a gradient of the other tone exists.
+	const canRepick =
+		bg.type !== "gradient" ||
+		BACKGROUND_GRADIENTS.some((g) => g.dark !== textIsDark);
 
 	const onTypeKeys = (e: KeyboardEvent<HTMLDivElement>) => {
 		const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[
@@ -80,7 +88,6 @@ const BackgroundConfiguration = ({
 		<div className="space-y-5">
 			<SwitchField
 				checked={bg.isEnabled}
-				hint="Replaces the theme background."
 				id="bg-enabled"
 				label="Customize background"
 				onCheckedChange={(isEnabled) => set({ isEnabled })}
@@ -126,10 +133,11 @@ const BackgroundConfiguration = ({
 								aria-hidden="true"
 								className="mt-px h-4 w-4 shrink-0 text-product-primary-ink"
 							/>
-							Your theme's text is {textIsDark ? "dark" : "light"}, so it will
-							be hard to read on this {textIsDark ? "dark" : "light"}{" "}
-							background. Pick a {textIsDark ? "light" : "dark"} one, or a{" "}
-							{textIsDark ? "dark" : "light"} theme.
+							Your theme's text is {textTone}, so it will be hard to read on
+							this {textTone} background.{" "}
+							{canRepick
+								? `Pick a ${otherTone} one, or a ${textTone} theme.`
+								: `Pick a ${textTone} theme.`}
 						</p>
 					)}
 
@@ -175,19 +183,6 @@ const BackgroundConfiguration = ({
 							const labelId = `bg-gradients-${dark ? "dark" : "light"}`;
 							return (
 								<div className="space-y-2" key={labelId}>
-									<div className="flex items-center gap-1.5">
-										<p
-											className="text-[13.5px] font-semibold leading-none text-product-foreground"
-											id={labelId}
-										>
-											{dark ? "Dark gradients" : "Light gradients"}
-										</p>
-										{dark === themeIsDark && (
-											<span className="rounded-full bg-product-background-hero px-2 py-0.5 text-[11px] font-semibold text-product-muted">
-												Suits your theme
-											</span>
-										)}
-									</div>
 									<ul
 										aria-labelledby={labelId}
 										className="grid grid-cols-[repeat(auto-fill,minmax(82px,1fr))] gap-2.5"

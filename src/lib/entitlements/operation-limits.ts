@@ -19,8 +19,7 @@ export function operationLimitsFor(features: TierFeatures): OperationLimits {
 			customVisual: features.sections.customVisual,
 		},
 		branding: features.branding,
-		styles: features.apperance.styles,
-		customThemes: features.apperance.customThemes,
+		advancedAppearance: features.advancedAppearance,
 		newsletter: features.newsletter,
 	};
 }

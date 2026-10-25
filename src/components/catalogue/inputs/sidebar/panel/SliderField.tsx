@@ -2,7 +2,6 @@ import { type ReactNode, useId } from "react";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { InfoTip } from "./InfoTip";
-import { NewBadge } from "./NewBadge";
 
 interface SliderFieldProps {
 	label: string;
@@ -17,7 +16,6 @@ interface SliderFieldProps {
 	marks?: string[];
 	/** Text for an (i) popover after the label. */
 	info?: ReactNode;
-	isNew?: boolean;
 	disabled?: boolean;
 }
 
@@ -32,7 +30,6 @@ export const SliderField = ({
 	onValueChange,
 	marks,
 	info,
-	isNew,
 	disabled,
 }: SliderFieldProps) => {
 	const labelId = useId();
@@ -41,7 +38,6 @@ export const SliderField = ({
 			<div className="flex items-baseline justify-between gap-3">
 				<div className="flex items-center gap-1">
 					<Label id={labelId}>{label}</Label>
-					{isNew && <NewBadge />}
 					{info && <InfoTip label={label}>{info}</InfoTip>}
 				</div>
 				<span className="text-[13px] font-semibold tabular-nums text-product-foreground-accent capitalize">

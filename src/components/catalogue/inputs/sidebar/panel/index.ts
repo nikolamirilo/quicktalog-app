@@ -4,5 +4,4 @@ export { PanelSection } from "./PanelSection";
 export { SliderField } from "./SliderField";
 export { SwitchField } from "./SwitchField";
 export { PANEL_TAB_ROOT } from "./tabRoot";
-export { NewBadge } from "./NewBadge";
 export { PillToggle, pillToggleClass } from "./PillToggle";

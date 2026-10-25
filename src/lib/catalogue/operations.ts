@@ -34,10 +34,11 @@ export interface OperationLimits {
 	 * assistant must not be a way around a lock the UI applies.
 	 */
 	branding?: boolean;
-	/** `features.apperance.styles`: font, text size, corners and shadow. */
-	styles?: boolean;
-	/** `features.apperance.customThemes`: a custom colour palette. */
-	customThemes?: boolean;
+	/**
+	 * `features.advancedAppearance`: a custom colour palette, font, text size,
+	 * corners and shadow.
+	 */
+	advancedAppearance?: boolean;
 	/** `features.newsletter`: the footer's newsletter form. */
 	newsletter?: boolean;
 }
@@ -568,23 +569,16 @@ export function applyCatalogueOperations(
 			case "update_appearance": {
 				const { fields } = operation;
 				if (
-					limits.customThemes === false &&
-					fields.customColors !== undefined
-				) {
-					limitReached = true;
-					skipped.push("Custom themes are not part of your plan.");
-					break;
-				}
-				if (
-					limits.styles === false &&
-					(fields.fontFamily !== undefined ||
+					limits.advancedAppearance === false &&
+					(fields.customColors !== undefined ||
+						fields.fontFamily !== undefined ||
 						fields.contentFontSize !== undefined ||
 						fields.borderRadius !== undefined ||
 						fields.shadow !== undefined)
 				) {
 					limitReached = true;
 					skipped.push(
-						"Font, text size, corner and shadow settings are not part of your plan.",
+						"Custom themes and the font, text size, corner and shadow settings are not part of your plan.",
 					);
 					break;
 				}

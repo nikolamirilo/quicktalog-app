@@ -86,16 +86,11 @@ export const planFeatureGroups = (
 	{
 		title: "Design",
 		rows: [
-			{ label: "Standard themes", value: f.apperance.standardThemes },
+			{ label: "Standard themes", value: true },
 			{
-				label: "Custom themes",
-				value: f.apperance.customThemes,
-				type: "custom_themes",
-			},
-			{
-				label: "Style controls",
-				value: f.apperance.styles,
-				type: "style_controls",
+				label: "Advanced styling",
+				value: f.advancedAppearance,
+				type: "advanced_styling",
 			},
 			{ label: "Custom branding", value: f.branding, type: "custom_branding" },
 		],
@@ -185,10 +180,8 @@ const explanations: Record<string, string> = {
 		"The number of sections allowed in each catalogue. Higher tiers allow more for complex menus or product lists.",
 	items_per_catalogue:
 		"The total number of items allowed in each catalogue, across all its sections.",
-	custom_themes:
-		"Create your own color themes for your catalogues instead of picking a standard one.",
-	style_controls:
-		"Fine-tune fonts, text size, corner radius, shadows and overlays across your catalogue.",
+	advanced_styling:
+		"Create your own color themes instead of picking a standard one, and fine-tune fonts, text size, corner radius, shadows, overlays, the glass effect and a custom page background (photo, gradient or colour).",
 	analytics_tags:
 		"Connect your own Google Analytics or Meta Pixel to a catalogue to track visits in your own tools.",
 	custom_branding:
@@ -245,7 +238,7 @@ export const comparisonGroups: ComparisonGroup[] = [
 		rows: [
 			{
 				label: `Standard themes (${themes.length})`,
-				value: (tier) => tier.features.apperance.standardThemes,
+				value: () => true,
 			},
 			{
 				label: "Custom branding",
@@ -253,9 +246,9 @@ export const comparisonGroups: ComparisonGroup[] = [
 				value: (tier) => tier.features.branding,
 			},
 			{
-				label: "Style controls",
-				hint: "Font, size, radius, shadow, overlay",
-				value: (tier) => tier.features.apperance.styles,
+				label: "Advanced styling",
+				hint: "Your own colour themes, fonts, shapes, glass & background",
+				value: (tier) => tier.features.advancedAppearance,
 			},
 		],
 	},
@@ -336,9 +329,7 @@ export const comparisonGroups: ComparisonGroup[] = [
 
 /** Extra lines on the pricing page's starter card that are not plan limits. */
 export const starterExtraFeatures = [
-	...(starterTier.features.apperance.standardThemes
-		? [`All ${themes.length} standard themes`]
-		: []),
+	`All ${themes.length} standard themes`,
 	"QR code editor & shareable link",
 ];
 

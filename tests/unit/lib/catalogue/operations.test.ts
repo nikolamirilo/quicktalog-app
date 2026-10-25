@@ -505,29 +505,27 @@ describe("plan flags in the applier", () => {
 		return result;
 	};
 
-	it("refuses a custom palette without custom themes", () => {
+	it("refuses a custom palette without advanced appearance", () => {
 		const result = refused(
 			[{ op: "update_appearance", fields: { customColors: palette } }],
-			{ customThemes: false },
+			{ advancedAppearance: false },
 		);
-		expect(result.skipped[0]).toMatch(
-			/Custom themes are not part of your plan/,
-		);
+		expect(result.skipped[0]).toMatch(/Custom themes and the font/);
 	});
 
-	it("refuses style changes without style controls", () => {
+	it("refuses style changes without advanced appearance", () => {
 		const result = refused(
 			[{ op: "update_appearance", fields: { borderRadius: 12 } }],
-			{ styles: false },
+			{ advancedAppearance: false },
 		);
 		expect(result.skipped[0]).toMatch(/not part of your plan/);
 	});
 
-	it("still switches to a standard theme without style controls", () => {
+	it("still switches to a standard theme without advanced appearance", () => {
 		const result = applyCatalogueOperations(
 			base(),
 			[{ op: "update_appearance", fields: { theme: "theme-dark" } }],
-			{ styles: false, customThemes: false },
+			{ advancedAppearance: false },
 		);
 		expect(result.applied).toHaveLength(1);
 		expect(result.catalogue.appearance.theme.name).toBe("theme-dark");

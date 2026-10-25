@@ -18,16 +18,14 @@ describe("operationLimitsFor", () => {
 			items: 15,
 			sectionTypes: { divider: false, embedding: false, customVisual: false },
 			branding: false,
-			styles: false,
-			customThemes: false,
+			advancedAppearance: false,
 			newsletter: false,
 		});
 	});
 
-	it("unlocks styles and custom themes on Pro but not the newsletter", () => {
+	it("unlocks advanced appearance on Pro but not the newsletter", () => {
 		const limits = operationLimitsFor(tier("Pro").features);
-		expect(limits.styles).toBe(true);
-		expect(limits.customThemes).toBe(true);
+		expect(limits.advancedAppearance).toBe(true);
 		expect(limits.newsletter).toBe(false);
 	});
 

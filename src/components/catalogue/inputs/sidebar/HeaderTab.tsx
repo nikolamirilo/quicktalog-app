@@ -109,7 +109,6 @@ const HeaderTab = ({
 
 				<PanelSection
 					description="The header floats above the catalogue and stays at the top while visitors scroll."
-					isNew
 					title="Floating navbar"
 				>
 					<p className="flex gap-2 rounded-xl border border-product-border bg-product-background-hero px-3 py-2 text-[13px] leading-snug text-product-foreground-accent">

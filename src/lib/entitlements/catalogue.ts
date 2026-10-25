@@ -18,9 +18,9 @@ import type { Tier } from "./plan";
 /**
  * Forces the plan's limits onto catalogue data before it is stored: a custom
  * header/footer only on plans that include branding (where the owner may still
- * choose the default one); newsletter, style controls (glass and background
- * included) and custom themes only on plans that include them, reset to the
- * defaults otherwise. Glass, background, search and the footer tagline arrive
+ * choose the default one); newsletter and advanced appearance (custom themes,
+ * style, overlay, glass and background) only on plans that include them, reset
+ * to the defaults otherwise. Glass, background, search and the footer tagline arrive
  * from the client, so their shape is normalized here as well. Applied on create,
  * update and publish, so a client that sends a branded payload on a free plan
  * cannot buy features for free.
@@ -46,26 +46,26 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 				: stripTrackingIds(out.metadata);
 	}
 	if (out.appearance) {
-		const { apperance } = tier.features;
+		const { advancedAppearance } = tier.features;
 		const appearance = { ...out.appearance };
-		if (!apperance.styles) {
+		if (!advancedAppearance) {
 			appearance.style = defaultCatalogueData.appearance.style;
 			appearance.overlay = defaultCatalogueData.appearance.overlay;
 		}
 		if ("glass" in appearance) {
-			appearance.glass = apperance.styles
+			appearance.glass = advancedAppearance
 				? normalizeGlass(appearance.glass)
 				: DEFAULT_GLASS;
 		}
 		if ("background" in appearance) {
-			appearance.background = apperance.styles
+			appearance.background = advancedAppearance
 				? normalizeBackground(appearance.background)
 				: DEFAULT_BACKGROUND;
 		}
 		if ("search" in appearance) {
 			appearance.search = normalizeSearch(appearance.search);
 		}
-		if (!apperance.customThemes && appearance.theme?.type === "custom") {
+		if (!advancedAppearance && appearance.theme?.type === "custom") {
 			appearance.theme = defaultCatalogueData.appearance.theme;
 		}
 		out.appearance = appearance;
@@ -132,8 +132,7 @@ export async function applyPlanDowngrade(
 		`);
 	}
 
-	const { apperance } = tier.features;
-	if (!apperance.styles) {
+	if (!tier.features.advancedAppearance) {
 		await tx.execute(sql`
 			update public.catalogues
 			   set appearance = jsonb_set(
@@ -144,9 +143,7 @@ export async function applyPlanDowngrade(
 			         || jsonb_build_object('background', ${JSON.stringify(DEFAULT_BACKGROUND)}::jsonb)
 			 where user_id = ${userId}
 		`);
-	}
 
-	if (!apperance.customThemes) {
 		await tx.execute(sql`
 			update public.catalogues
 			   set appearance = jsonb_set(appearance, '{theme}', ${JSON.stringify(defaultCatalogueData.appearance.theme)}::jsonb)

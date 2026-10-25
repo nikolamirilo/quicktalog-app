@@ -41,7 +41,6 @@ const GlassConfiguration = ({ glass, onChange }: GlassConfigurationProps) => {
 		>
 			<SliderField
 				info="Makes the navbar, search bar, section headers and item cards see-through, like frosted glass. What sits behind them shows through softly, most of all under the navbar while visitors scroll."
-				isNew
 				label="Glass effect"
 				marks={["Off", "Clear", "Semi", "Frosted"]}
 				max={3}

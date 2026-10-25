@@ -30,7 +30,6 @@ const SearchSection = ({ search, onChange }: SearchSectionProps) => {
 			}
 			id="panel-search"
 			info="A search bar under the catalogue heading. Visitors type part of an item's name or description and the items filter as they type."
-			isNew
 			title="Search"
 		>
 			{current.isEnabled && (

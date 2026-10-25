@@ -31,8 +31,7 @@ describe("plan card features", () => {
 			(group) => group.rows.map((row) => row.label),
 		);
 		for (const label of [
-			"Custom themes",
-			"Style controls",
+			"Advanced styling",
 			"Your own analytics tags",
 			"Newsletter sign-ups",
 			"Custom features",

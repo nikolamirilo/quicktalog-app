@@ -44,6 +44,12 @@ describe("normalizeBackground", () => {
 	});
 });
 
+describe("BACKGROUND_GRADIENTS", () => {
+	it("offers only gradients that light text would not suit", () => {
+		expect(BACKGROUND_GRADIENTS.every((g) => g.dark === false)).toBe(true);
+	});
+});
+
 describe("backgroundLayerStyle", () => {
 	it("is null when off, or a photo type without a photo", () => {
 		expect(backgroundLayerStyle(DEFAULT_BACKGROUND)).toBeNull();
@@ -59,8 +65,8 @@ describe("backgroundLayerStyle", () => {
 	it("paints the chosen gradient, colour or photo", () => {
 		const on = { ...DEFAULT_BACKGROUND, isEnabled: true };
 		expect(
-			backgroundLayerStyle({ ...on, gradient: "midnight" })?.background,
-		).toBe(BACKGROUND_GRADIENTS.find((g) => g.key === "midnight")?.css);
+			backgroundLayerStyle({ ...on, gradient: "sunset" })?.background,
+		).toBe(BACKGROUND_GRADIENTS.find((g) => g.key === "sunset")?.css);
 		expect(
 			backgroundLayerStyle({ ...on, type: "color", color: "#0f1424" }),
 		).toEqual({
@@ -78,9 +84,6 @@ describe("backgroundLayerStyle", () => {
 
 describe("backgroundIsDark", () => {
 	it("reads gradients and colours, and leaves photos undecided", () => {
-		expect(
-			backgroundIsDark({ ...DEFAULT_BACKGROUND, gradient: "midnight" }),
-		).toBe(true);
 		expect(backgroundIsDark({ ...DEFAULT_BACKGROUND, gradient: "oat" })).toBe(
 			false,
 		);
@@ -91,6 +94,13 @@ describe("backgroundIsDark", () => {
 				color: "#ffffff",
 			}),
 		).toBe(false);
+		expect(
+			backgroundIsDark({
+				...DEFAULT_BACKGROUND,
+				type: "color",
+				color: "#0f1424",
+			}),
+		).toBe(true);
 		expect(
 			backgroundIsDark({ ...DEFAULT_BACKGROUND, type: "image" }),
 		).toBeNull();

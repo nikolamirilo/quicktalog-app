@@ -194,8 +194,8 @@ describe("plan limits in the instructions", () => {
 
 	it("names the settings the plan locks", () => {
 		const starter = contextOf(render([], "Starter"));
+		expect(starter).toMatch(/advanced styling/);
 		expect(starter).toMatch(/custom themes/);
-		expect(starter).toMatch(/style controls/);
 		expect(starter).toMatch(/newsletter/);
 		const premium = contextOf(render([], "Premium"));
 		expect(premium).not.toMatch(/Not included/);

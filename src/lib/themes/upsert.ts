@@ -56,14 +56,14 @@ export async function upsertTheme(
 	return { success: true, data: saved as SavedTheme };
 }
 
-const CUSTOM_THEMES_LOCKED: ThemeResult = {
+const ADVANCED_APPEARANCE_LOCKED: ThemeResult = {
 	success: false,
 	error: "Custom themes are not part of your plan",
 };
 
-async function planHasCustomThemes(tx: Tx, me: VerifiedIdentity) {
+async function planHasAdvancedAppearance(tx: Tx, me: VerifiedIdentity) {
 	const tier = await getPlanForUpdate(tx, me);
-	return tier.features.apperance.customThemes === true;
+	return tier.features.advancedAppearance === true;
 }
 
 /**
@@ -79,7 +79,8 @@ export async function saveOwnTheme(
 ): Promise<ThemeResult> {
 	try {
 		return await withUser(me, async (tx) => {
-			if (!(await planHasCustomThemes(tx, me))) return CUSTOM_THEMES_LOCKED;
+			if (!(await planHasAdvancedAppearance(tx, me)))
+				return ADVANCED_APPEARANCE_LOCKED;
 			return upsertTheme(tx, me, name, colors);
 		});
 	} catch (err) {
@@ -110,7 +111,8 @@ export async function updateOwnTheme(
 
 	try {
 		const outcome = await withUser(me, async (tx) => {
-			if (!(await planHasCustomThemes(tx, me))) return CUSTOM_THEMES_LOCKED;
+			if (!(await planHasAdvancedAppearance(tx, me)))
+				return ADVANCED_APPEARANCE_LOCKED;
 			const [row] = await tx
 				.update(userThemes)
 				.set({

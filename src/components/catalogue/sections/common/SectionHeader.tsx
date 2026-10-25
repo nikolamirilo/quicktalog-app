@@ -3,7 +3,7 @@ import { BlockMenu } from "@/components/catalogue/cards/common/BlockMenu";
 
 // Catalogue-owned so product Button restyles never reach the published catalogue.
 const headerButtonClasses =
-	"cat-section-header gap-2 whitespace-nowrap outline-none focus:outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 w-full group relative flex items-center justify-between text-xl sm:text-2xl md:text-3xl font-semibold border-2 border-catalogue-category-border rounded-2xl shadow-catalogue-category-shadow transition-all duration-300 ease-in-out hover:scale-[1.02] hover:transform hover:-translate-y-1 backdrop-blur-sm overflow-hidden !px-3 !py-3 !h-auto !min-h-0 h-9 px-4 py-2 will-change-transform";
+	"cat-section-header gap-2 whitespace-nowrap outline-none focus:outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 w-full group relative flex items-center justify-between text-xl sm:text-2xl md:text-3xl font-semibold border border-catalogue-card-border rounded-2xl shadow-catalogue-category-shadow transition-all duration-300 ease-in-out hover:scale-[1.02] hover:transform hover:-translate-y-1 backdrop-blur-sm overflow-hidden !px-3 !py-3 !h-auto !min-h-0 h-9 px-4 py-2 will-change-transform";
 
 const SectionHeader = ({
 	title,

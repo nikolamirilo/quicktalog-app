@@ -1,7 +1,6 @@
 import { type ReactNode, useId } from "react";
 import { cn } from "@/lib/ui/cn";
 import { InfoTip } from "./InfoTip";
-import { NewBadge } from "./NewBadge";
 
 interface PanelSectionProps {
 	title: string;
@@ -14,8 +13,6 @@ interface PanelSectionProps {
 	children?: ReactNode;
 	className?: string;
 	id?: string;
-	/** Shows a "New" badge after the title. */
-	isNew?: boolean;
 }
 
 /** A titled group of fields in the editor panel: one white card per topic. */
@@ -27,7 +24,6 @@ export const PanelSection = ({
 	children,
 	className,
 	id,
-	isNew,
 }: PanelSectionProps) => {
 	const headingId = useId();
 	return (
@@ -48,7 +44,6 @@ export const PanelSection = ({
 						>
 							{title}
 						</h3>
-						{isNew && <NewBadge />}
 						{info && <InfoTip label={title}>{info}</InfoTip>}
 					</div>
 					{description && (

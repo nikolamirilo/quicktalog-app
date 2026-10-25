@@ -7,7 +7,11 @@ import { isDarkBackground } from "@/lib/themes/custom-theme";
 const mesh = (base: string, a: string, b: string, c: string) =>
 	`radial-gradient(60% 55% at 12% 8%, ${a} 0, transparent 70%), radial-gradient(55% 50% at 88% 30%, ${b} 0, transparent 70%), radial-gradient(75% 60% at 40% 100%, ${c} 0, transparent 72%), ${base}`;
 
-/** Soft mesh gradients, grouped by whether text on top should be light (`dark: true`) or dark. */
+/**
+ * Soft mesh gradients; `dark: true` means text on top should be light.
+ * Two presets never share a hue unless their saturation differs sharply, or
+ * they read as the same wash in the picker.
+ */
 export const BACKGROUND_GRADIENTS = [
 	{
 		key: "oat",
@@ -22,10 +26,28 @@ export const BACKGROUND_GRADIENTS = [
 		css: mesh("#fde9dd", "#ffc29f", "#ffd6c0", "#f8b49c"),
 	},
 	{
+		key: "sunset",
+		name: "Sunset",
+		dark: false,
+		css: "linear-gradient(160deg, #ffe0b8 0%, #ffbfb0 48%, #d9c6ff 100%)",
+	},
+	{
 		key: "sage",
 		name: "Sage",
 		dark: false,
 		css: mesh("#eef2e6", "#c9d9ae", "#e0e9cc", "#b3c79a"),
+	},
+	{
+		key: "meadow",
+		name: "Meadow",
+		dark: false,
+		css: mesh("#edf7ec", "#b4e2b0", "#d7eed3", "#98d49a"),
+	},
+	{
+		key: "seaglass",
+		name: "Sea glass",
+		dark: false,
+		css: mesh("#e6f4f1", "#afddd2", "#d1ede6", "#98d0c3"),
 	},
 	{
 		key: "sky",
@@ -40,70 +62,28 @@ export const BACKGROUND_GRADIENTS = [
 		css: mesh("#f2eef9", "#d5c6f0", "#e8e0f7", "#c4b2e9"),
 	},
 	{
+		key: "orchid",
+		name: "Orchid",
+		dark: false,
+		css: mesh("#f8eef7", "#e6c2e4", "#f0dcef", "#d8a9d6"),
+	},
+	{
 		key: "blush",
 		name: "Blush",
 		dark: false,
 		css: mesh("#fcedf0", "#f4c1cd", "#fadbe2", "#ecadbd"),
 	},
 	{
-		key: "lemon",
-		name: "Lemon sorbet",
+		key: "stone",
+		name: "Stone",
 		dark: false,
-		css: mesh("#fdf8e1", "#f7e39a", "#fbf0c4", "#f0d77f"),
+		css: mesh("#f4f1ec", "#ddd5c8", "#eae5db", "#cdc3b2"),
 	},
 	{
-		key: "seaglass",
-		name: "Sea glass",
+		key: "mist",
+		name: "Mist",
 		dark: false,
-		css: mesh("#e6f4f1", "#afddd2", "#d1ede6", "#98d0c3"),
-	},
-	{
-		key: "sunset",
-		name: "Sunset",
-		dark: false,
-		css: "linear-gradient(160deg, #ffe0b8 0%, #ffbfb0 48%, #d9c6ff 100%)",
-	},
-	{
-		key: "espresso",
-		name: "Espresso",
-		dark: true,
-		css: mesh("#1f1712", "#5a3a26", "#33241b", "#7a5233"),
-	},
-	{
-		key: "midnight",
-		name: "Midnight",
-		dark: true,
-		css: mesh("#0f1424", "#26346a", "#161d36", "#43357a"),
-	},
-	{
-		key: "aurora",
-		name: "Aurora",
-		dark: true,
-		css: mesh("#0b181d", "#1f6460", "#3d2f72", "#16584b"),
-	},
-	{
-		key: "ember",
-		name: "Ember",
-		dark: true,
-		css: mesh("#1c0f0c", "#7a2f18", "#3d1b12", "#a8501f"),
-	},
-	{
-		key: "forest",
-		name: "Deep forest",
-		dark: true,
-		css: mesh("#0f1a14", "#275139", "#182b20", "#467a52"),
-	},
-	{
-		key: "plum",
-		name: "Plum night",
-		dark: true,
-		css: mesh("#1a1020", "#55295c", "#2c1832", "#7a4068"),
-	},
-	{
-		key: "dusk",
-		name: "Dusk",
-		dark: true,
-		css: "linear-gradient(160deg, #2b1d3a 0%, #4a2c4f 50%, #1b2a49 100%)",
+		css: mesh("#eef1f4", "#ccd6e0", "#dfe6ec", "#b9c7d4"),
 	},
 ] as const;
 

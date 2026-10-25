@@ -9,11 +9,11 @@ Stored in the catalogue's JSONB columns, typed in `@quicktalog/common` (1.71.0+)
 | Setting | Where | Default | Plan |
 |---|---|---|---|
 | `appearance.search` `{ isEnabled, placeholder }` | General tab, Search | off | every plan |
-| `appearance.glass` `{ level, opacity, frost, splay, apply }` | Appearance tab, Style | level 0 (off) | plans with `apperance.styles` |
-| `appearance.background` `{ isEnabled, type, gradient, color, image, fade }` | Appearance tab, Background | off | plans with `apperance.styles` |
+| `appearance.glass` `{ level, opacity, frost, splay, apply }` | Appearance tab, Style | level 0 (off) | plans with `advancedAppearance` |
+| `appearance.background` `{ isEnabled, type, gradient, color, image, fade }` | Appearance tab, Background | off | plans with `advancedAppearance` |
 | `footer.tagline` | Footer tab, Business information | empty | custom footer (branding) |
 
-`applyPlanToCatalogue` ([`lib/entitlements/catalogue.ts`](../../src/lib/entitlements/catalogue.ts)) normalizes them on create, save and publish: glass is clamped and background is cleaned (known gradient key, `#rrggbb` colour, http(s) photo URL without quotes, fade 0-80), and both reset to off without style controls; the placeholder is capped at 40 characters and the tagline is collapsed to one line of at most 120. `applyPlanDowngrade` resets stored glass and background with the other style settings.
+`applyPlanToCatalogue` ([`lib/entitlements/catalogue.ts`](../../src/lib/entitlements/catalogue.ts)) normalizes them on create, save and publish: glass is clamped and background is cleaned (known gradient key, `#rrggbb` colour, http(s) photo URL without quotes, fade 0-80), and both reset to off without advanced appearance; the placeholder is capped at 40 characters and the tagline is collapsed to one line of at most 120. `applyPlanDowngrade` resets stored glass and background with the other style settings.
 
 ## Navbar
 
@@ -37,4 +37,4 @@ When `appearance.search.isEnabled`, `CatalogueContent` renders `CatalogueSearchB
 
 ## Background
 
-[`lib/catalogue/background.ts`](../../src/lib/catalogue/background.ts) holds the gradient library (light and dark groups) and turns the setting into the style of one fixed layer, `.cat-bg`, rendered first inside `.catalogue-root`. With a layer present the root gets `data-bg`, which drops the theme background and isolates the root so the layer sits behind its content. Each type keeps its own value, so switching type and back keeps the owner's pick. A photo gets a fade layer in the theme background colour (0-80 %) to keep text readable. Cards, headers and text keep the theme's colours, so the builder warns when the background's lightness matches the theme text (a dark gradient under a light theme). Photos are UploadThing uploads; the worker's image cleanup scans the whole `appearance` value, so they count as in use.
+[`lib/catalogue/background.ts`](../../src/lib/catalogue/background.ts) holds the gradient library (all light today, each flagged with the text tone it suits) and turns the setting into the style of one fixed layer, `.cat-bg`, rendered first inside `.catalogue-root`. With a layer present the root gets `data-bg`, which drops the theme background and isolates the root so the layer sits behind its content. Each type keeps its own value, so switching type and back keeps the owner's pick. A photo gets a fade layer in the theme background colour (0-80 %) to keep text readable. Cards, headers and text keep the theme's colours, so the builder warns when the background's lightness matches the theme text (a light gradient or colour under a dark theme), and only offers to re-pick when a background of the other tone exists for that type. The library is curated for the business types in the create dropdown, so no two presets share a hue unless their saturation differs sharply enough to read as a different wash. Photos are UploadThing uploads; the worker's image cleanup scans the whole `appearance` value, so they count as in use.

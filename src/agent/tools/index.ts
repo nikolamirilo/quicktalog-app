@@ -37,7 +37,7 @@ export function buildTools(session: CatalogueSession) {
 		delete (tools as { fetchUrl?: unknown }).fetchUrl;
 	}
 
-	if (session.limits.customThemes === false) {
+	if (session.limits.advancedAppearance === false) {
 		// Same pattern as fetchUrl: absent, so the model never tries it and fails.
 		delete (tools as { setCustomTheme?: unknown }).setCustomTheme;
 	}
