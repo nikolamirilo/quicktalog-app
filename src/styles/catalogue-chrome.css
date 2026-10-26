@@ -431,7 +431,6 @@
 	line-height: 1.6;
 	color: var(--catalogue-navigation-text);
 	background: var(--catalogue-navigation-background);
-	border-top: 1px solid var(--catalogue-navigation-border);
 }
 .cat-foot-in {
 	max-width: 1280px;
