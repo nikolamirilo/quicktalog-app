@@ -45,7 +45,7 @@ const useScrolled = () => {
 /**
  * The floating navbar: a pill that sticks below the top edge while visitors
  * scroll. From `md` up the contact icons and the button sit in the pill; on
- * phones the button stays and the icons move into a menu under it.
+ * phones they all move into a menu that opens under it.
  */
 const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 	type = "default",
@@ -112,14 +112,12 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 			? {
 					href: "/auth?mode=signup",
 					label: "Create Your Catalog",
-					shortLabel: "Get Started",
 					icon: <FiPlus aria-hidden="true" />,
 				}
 			: activeData?.header?.cta?.isEnabled && activeData.header.cta.url
 				? {
 						href: activeData.header.cta.url,
 						label: activeData.header.cta.label || "Learn more",
-						shortLabel: activeData.header.cta.label || "Learn more",
 						icon: <FiExternalLink aria-hidden="true" />,
 					}
 				: null;
@@ -136,37 +134,81 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 			ref={wrapRef}
 			role="banner"
 		>
-			<nav
-				aria-label="Contact and actions"
-				className="cat-nav"
-				data-scrolled={scrolled ? "" : undefined}
-			>
-				<SmartLink
-					ariaLabel={`Go to ${companyName} homepage`}
-					className="cat-nav-brand"
-					href={activeData?.contact?.website || "/"}
+			<div className="cat-nav-inner">
+				<nav
+					aria-label="Contact and actions"
+					className="cat-nav"
+					data-scrolled={scrolled ? "" : undefined}
 				>
-					{logo && (
-						<img
-							alt={`${companyName} logo`}
-							fetchPriority="high"
-							src={logo}
-							style={{ width: `${logoWidth}px` }}
-						/>
-					)}
-				</SmartLink>
+					<SmartLink
+						ariaLabel={`Go to ${companyName} homepage`}
+						className="cat-nav-brand"
+						href={activeData?.contact?.website || "/"}
+					>
+						{logo && (
+							<img
+								alt={`${companyName} logo`}
+								fetchPriority="high"
+								src={logo}
+								style={{ width: `${logoWidth}px` }}
+							/>
+						)}
+					</SmartLink>
 
-				{hasActions && (
-					<div className="cat-nav-actions">
+					{hasActions && (
+						<div className="cat-nav-actions">
+							{contactLinks.map((link) => (
+								<Link
+									aria-label={link.label}
+									className="cat-nav-icon"
+									href={link.href}
+									key={link.key}
+									title={link.value}
+								>
+									{link.icon}
+								</Link>
+							))}
+							{cta && (
+								<SmartLink className="cat-nav-cta" href={cta.href}>
+									{cta.icon}
+									<span>{cta.label}</span>
+								</SmartLink>
+							)}
+						</div>
+					)}
+
+					{hasActions && (
+						<button
+							aria-controls="catalogue-nav-menu"
+							aria-expanded={isMenuOpen}
+							aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+							className="cat-nav-burger"
+							onClick={() => setIsMenuOpen((open) => !open)}
+							type="button"
+						>
+							{isMenuOpen ? (
+								<FiX aria-hidden="true" />
+							) : (
+								<FiMenu aria-hidden="true" />
+							)}
+						</button>
+					)}
+				</nav>
+
+				{isMenuOpen && (
+					<div className="cat-nav-sheet" id="catalogue-nav-menu">
+						{contactLinks.length > 0 && (
+							<p className="cat-nav-sheet-title">Contact us</p>
+						)}
 						{contactLinks.map((link) => (
 							<Link
-								aria-label={link.label}
-								className="cat-nav-icon"
+								className="cat-nav-row"
 								href={link.href}
 								key={link.key}
-								title={link.value}
+								onClick={() => setIsMenuOpen(false)}
 							>
 								{link.icon}
+								<span>{link.value}</span>
 							</Link>
 						))}
 						{cta && (
@@ -177,56 +219,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 						)}
 					</div>
 				)}
-
-				{hasActions && (
-					<div className="cat-nav-mobile">
-						{cta && (
-							<SmartLink className="cat-nav-cta" href={cta.href}>
-								<span>{cta.shortLabel}</span>
-							</SmartLink>
-						)}
-						{contactLinks.length > 0 && (
-							<button
-								aria-controls="catalogue-nav-menu"
-								aria-expanded={isMenuOpen}
-								aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-								className="cat-nav-burger"
-								onClick={() => setIsMenuOpen((open) => !open)}
-								type="button"
-							>
-								{isMenuOpen ? (
-									<FiX aria-hidden="true" />
-								) : (
-									<FiMenu aria-hidden="true" />
-								)}
-							</button>
-						)}
-					</div>
-				)}
-			</nav>
-
-			{isMenuOpen && (
-				<div className="cat-nav-sheet" id="catalogue-nav-menu">
-					<p className="cat-nav-sheet-title">Contact us</p>
-					{contactLinks.map((link) => (
-						<Link
-							className="cat-nav-row"
-							href={link.href}
-							key={link.key}
-							onClick={() => setIsMenuOpen(false)}
-						>
-							{link.icon}
-							<span>{link.value}</span>
-						</Link>
-					))}
-					{cta && (
-						<SmartLink className="cat-nav-cta" href={cta.href}>
-							{cta.icon}
-							<span>{cta.label}</span>
-						</SmartLink>
-					)}
-				</div>
-			)}
+			</div>
 		</header>
 	);
 };
