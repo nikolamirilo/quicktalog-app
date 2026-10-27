@@ -25,6 +25,38 @@ export type ReleaseNote = {
  */
 export const releaseNotes: ReleaseNote[] = [
 	{
+		slug: "glass-effect-and-custom-backgrounds",
+		version: "v2.1.0",
+		date: "2026-10-27",
+		title: "Glass effect and custom backgrounds",
+		items: [
+			{
+				tag: "New",
+				text: "A glass effect for the navbar, search bar, section headers and item cards, and a custom page background: a photo, a gradient or a color.",
+			},
+			{
+				tag: "New",
+				text: "An optional search bar on published catalogues, so visitors can find items faster.",
+			},
+			{
+				tag: "Improved",
+				text: "The AI builder can add photos to items you already have, and tells you when the photo service is busy.",
+			},
+			{
+				tag: "Improved",
+				text: "Plan limits now work the same in the AI builder, the editor and when you publish. If a catalogue is over your plan, you see what to remove.",
+			},
+			{
+				tag: "Improved",
+				text: "AI credits never go over your monthly allowance, and changes you keep from the AI builder are saved right away.",
+			},
+			{
+				tag: "Fixed",
+				text: "Layout issues in the catalogue header and footer.",
+			},
+		],
+	},
+	{
 		slug: "builder-2-0",
 		version: "v2.0",
 		date: "2026-05-01",
