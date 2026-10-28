@@ -20,7 +20,7 @@ import {
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useRadioKeys } from "@/hooks/useRadioKeys";
 import { cn } from "@/lib/ui/cn";
-import { ContentBlock, defaultCatalogueData } from "@quicktalog/common";
+import { defaultCatalogueData } from "@quicktalog/common";
 import { Layout, Plus, Zap } from "lucide-react";
 import { useState } from "react";
 
@@ -50,7 +50,7 @@ const templates = [
 		details: ["4 categories", "15 items"],
 		icon: Layout,
 		visual: "monitor-standard",
-		value: standardTemplate, // Per user instruction
+		value: standardTemplate,
 	},
 	{
 		id: "scratch",
@@ -60,7 +60,7 @@ const templates = [
 		details: ["Blank Catalogue"],
 		icon: Plus,
 		visual: "dash",
-		value: defaultCatalogueData.content, // Per user instruction
+		value: () => defaultCatalogueData.content,
 	},
 ];
 
@@ -71,17 +71,17 @@ export default function TemplatesInput({
 	const { catalogue, updateCatalogue } = useCatalogueContext();
 	const [selectedId, setSelectedId] = useState<string>("quick-start");
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
-	const [pendingTemplate, setPendingTemplate] = useState<any>(null);
+	const [pendingTemplate, setPendingTemplate] = useState<
+		(typeof templates)[number] | null
+	>(null);
 	const { onKeyDown, itemProps } = useRadioKeys(
 		templates.map((t) => t.id),
 		selectedId,
 		setSelectedId,
 	);
 
-	const executeSelect = (templateToUse: any) => {
-		updateCatalogue({
-			content: templateToUse.value as unknown as ContentBlock[],
-		});
+	const executeSelect = (templateToUse: (typeof templates)[number]) => {
+		updateCatalogue({ content: templateToUse.value() });
 		if (onComplete) {
 			onComplete();
 		}

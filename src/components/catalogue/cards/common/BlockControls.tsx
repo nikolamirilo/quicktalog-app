@@ -67,7 +67,6 @@ const BlockControls = ({
 				)}
 				<BlockMenu
 					{...menu}
-					className="[@media(hover:hover)]:opacity-100"
 					editLabel={editLabel}
 					name={name || label}
 					onEdit={isEditing ? undefined : onEdit}

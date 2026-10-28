@@ -36,7 +36,7 @@ export type CatalogueContentProps = {
 	type: "demo" | "item";
 	theme?: string;
 	mode: "edit" | "view";
-	onEditBlock?: (index: number) => void;
+	onEditBlock?: (blockId: string) => void;
 	/** The owner's search bar setting; no bar when missing or off. */
 	search?: NonNullable<Appearance["search"]>;
 };
@@ -76,14 +76,13 @@ const CatalogueContent = ({
 	const [expandedSections, setExpandedSections] = useState<
 		Record<string, boolean>
 	>({});
-	const [activeCategoryIndex, setActiveCategoryIndex] = useState<number | null>(
-		null,
-	);
+	// Ids, not positions: the agent's edits land on the draft while this dialog
+	// is open, so a position read when it opened can point at another section.
+	const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
 	const [activeBlockLayout, setActiveBlockLayout] =
 		useState<ContentLayout | null>(null);
 	const [activeEditingItem, setActiveEditingItem] = useState<{
-		categoryIndex: number;
-		itemIndex: number;
+		itemId: string;
 		item: Item;
 	} | null>(null);
 
@@ -159,74 +158,71 @@ const CatalogueContent = ({
 		}));
 	};
 
-	const handleDeleteItem = (categoryIndex: number, itemIndex: number) => {
-		if (removeItem) {
-			removeItem(categoryIndex, itemIndex);
-		}
+	/** The item a card's control points at, resolved while that card is on screen. */
+	const itemAt = (block: ContentBlock, itemIndex: number): Item | undefined =>
+		asItemsBlock(block)?.items?.[itemIndex];
+
+	const handleDeleteItem = (block: ContentBlock, itemIndex: number) => {
+		const item = itemAt(block, itemIndex);
+		if (item) removeItem?.(block.id, item.id);
 	};
 
-	const handleEditItem = (categoryIndex: number, itemIndex: number) => {
-		const targetBlock = data[categoryIndex];
-		if (
-			isItemsBlock(targetBlock) &&
-			targetBlock.items &&
-			targetBlock.items[itemIndex]
-		) {
-			setActiveCategoryIndex(categoryIndex);
-			setActiveBlockLayout(targetBlock.layout);
-			setActiveEditingItem({
-				categoryIndex,
-				itemIndex,
-				item: targetBlock.items[itemIndex],
-			});
-			setIsItemModalOpen(true);
-		}
+	const handleMoveItem = (
+		block: ContentBlock,
+		itemIndex: number,
+		direction: "up" | "down",
+	) => {
+		const item = itemAt(block, itemIndex);
+		if (item) moveItem?.(block.id, item.id, direction);
+	};
+
+	const closeItemModal = () => {
+		setIsItemModalOpen(false);
+		setActiveBlockId(null);
+		setActiveEditingItem(null);
+		setActiveBlockLayout(null);
+	};
+
+	const handleEditItem = (block: ContentBlock, itemIndex: number) => {
+		const itemsBlock = asItemsBlock(block);
+		const item = itemAt(block, itemIndex);
+		if (!itemsBlock || !item) return;
+		setActiveBlockId(block.id);
+		setActiveBlockLayout(itemsBlock.layout);
+		setActiveEditingItem({ itemId: item.id, item });
+		setIsItemModalOpen(true);
 	};
 
 	const handleSaveItem = (newItem: Item, addAnother: boolean) => {
-		if (activeCategoryIndex === null) return;
+		if (!activeBlockId) return;
 		if (activeEditingItem) {
-			if (updateItem) {
-				updateItem(activeCategoryIndex, activeEditingItem.itemIndex, newItem);
-				setIsItemModalOpen(false);
-				setActiveEditingItem(null);
-				setActiveCategoryIndex(null);
-			}
+			updateItem?.(activeBlockId, activeEditingItem.itemId, newItem);
+			closeItemModal();
 			return;
 		}
 
 		// "Add another" keeps the modal open, so the limit is checked on every add.
 		if (checkItemLimits()) {
-			setIsItemModalOpen(false);
-			setActiveCategoryIndex(null);
+			closeItemModal();
 			setShowLimitsModal(true);
 			return;
 		}
 
-		if (addItem) {
-			addItem(activeCategoryIndex, newItem);
-		}
-
-		if (!addAnother) {
-			setIsItemModalOpen(false);
-			setActiveCategoryIndex(null);
-		}
+		addItem?.(activeBlockId, newItem);
+		if (!addAnother) closeItemModal();
 	};
 
 	const checkItemLimits = () =>
 		!canAddItem(data, userData?.currentPlan?.features.items_per_catalogue);
 
-	const openAddItemModal = (index: number) => {
+	const openAddItemModal = (block: ContentBlock) => {
 		if (checkItemLimits()) {
 			setShowLimitsModal(true);
 			return;
 		}
 
-		const targetBlock = data[index];
-		if (isItemsBlock(targetBlock)) {
-			setActiveBlockLayout(targetBlock.layout);
-		}
-		setActiveCategoryIndex(index);
+		setActiveBlockLayout(asItemsBlock(block)?.layout ?? null);
+		setActiveBlockId(block.id);
 		setActiveEditingItem(null);
 		setIsItemModalOpen(true);
 	};
@@ -273,11 +269,7 @@ const CatalogueContent = ({
 			{data.map((block, index) => {
 				const isExpanded = expandedSections[`${block.id}-${block.order}`];
 
-				const handleDeleteClick = () => {
-					if (removeBlock) {
-						removeBlock(index);
-					}
-				};
+				const handleDeleteClick = () => removeBlock?.(block.id);
 
 				const itemsBlock = asItemsBlock(block);
 				if (itemsBlock) {
@@ -289,7 +281,6 @@ const CatalogueContent = ({
 					return (
 						<ItemsSection
 							block={itemsBlock}
-							blockIndex={index}
 							currency={currency}
 							currentLayout={currentLayout}
 							isExpanded={isSearching ? true : isExpanded}
@@ -298,36 +289,38 @@ const CatalogueContent = ({
 							key={`${block.id}-${block.order}`}
 							locale={locale}
 							mode={mode}
-							onAddItem={isSearching ? undefined : openAddItemModal}
+							onAddItem={
+								isSearching ? undefined : () => openAddItemModal(block)
+							}
 							onDelete={handleDeleteClick}
 							onDeleteItem={
 								isSearching
 									? undefined
-									: (itemIndex) => handleDeleteItem(index, itemIndex)
+									: (itemIndex) => handleDeleteItem(block, itemIndex)
 							}
-							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
+							onEdit={onEditBlock ? () => onEditBlock(block.id) : undefined}
 							onEditItem={
 								isSearching
 									? undefined
-									: (itemIndex) => handleEditItem(index, itemIndex)
+									: (itemIndex) => handleEditItem(block, itemIndex)
 							}
 							onMoveDown={
-								moveBlock ? () => moveBlock(index, "down") : undefined
+								moveBlock ? () => moveBlock(block.id, "down") : undefined
 							}
 							onMoveItemDown={
 								isSearching || !moveItem
 									? undefined
-									: (itemIndex) => moveItem(index, itemIndex, "down")
+									: (itemIndex) => handleMoveItem(block, itemIndex, "down")
 							}
 							onMoveItemUp={
 								isSearching || !moveItem
 									? undefined
-									: (itemIndex) => moveItem(index, itemIndex, "up")
+									: (itemIndex) => handleMoveItem(block, itemIndex, "up")
 							}
-							onMoveUp={moveBlock ? () => moveBlock(index, "up") : undefined}
+							onMoveUp={moveBlock ? () => moveBlock(block.id, "up") : undefined}
 							onToggle={handleToggleSection}
 							onUpdateBlock={
-								updateBlock ? (data) => updateBlock(index, data) : undefined
+								updateBlock ? (data) => updateBlock(block.id, data) : undefined
 							}
 							query={query}
 							slug={block.id}
@@ -343,9 +336,9 @@ const CatalogueContent = ({
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onDelete={handleDeleteClick}
-							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
-							onMoveDown={() => moveBlock(index, "down")}
-							onMoveUp={() => moveBlock(index, "up")}
+							onEdit={onEditBlock ? () => onEditBlock(block.id) : undefined}
+							onMoveDown={() => moveBlock(block.id, "down")}
+							onMoveUp={() => moveBlock(block.id, "up")}
 							slug={block.id}
 						/>
 					);
@@ -358,9 +351,9 @@ const CatalogueContent = ({
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onDelete={handleDeleteClick}
-							onEdit={onEditBlock ? () => onEditBlock(index) : undefined}
-							onMoveDown={() => moveBlock(index, "down")}
-							onMoveUp={() => moveBlock(index, "up")}
+							onEdit={onEditBlock ? () => onEditBlock(block.id) : undefined}
+							onMoveDown={() => moveBlock(block.id, "down")}
+							onMoveUp={() => moveBlock(block.id, "up")}
 							slug={block.id}
 						/>
 					);
@@ -374,11 +367,11 @@ const CatalogueContent = ({
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onDelete={handleDeleteClick}
-							onMoveDown={() => moveBlock(index, "down")}
-							onMoveUp={() => moveBlock(index, "up")}
+							onMoveDown={() => moveBlock(block.id, "down")}
+							onMoveUp={() => moveBlock(block.id, "up")}
 							onUpdateBlock={
 								updateBlock
-									? (newData) => updateBlock(index, newData)
+									? (newData) => updateBlock(block.id, newData)
 									: undefined
 							}
 							slug={block.id}
@@ -394,11 +387,11 @@ const CatalogueContent = ({
 							key={`${block.id}-${block.order}`}
 							mode={mode}
 							onDelete={handleDeleteClick}
-							onMoveDown={() => moveBlock(index, "down")}
-							onMoveUp={() => moveBlock(index, "up")}
+							onMoveDown={() => moveBlock(block.id, "down")}
+							onMoveUp={() => moveBlock(block.id, "up")}
 							onUpdateBlock={
 								updateBlock
-									? (newData) => updateBlock(index, newData)
+									? (newData) => updateBlock(block.id, newData)
 									: undefined
 							}
 							slug={block.id}
@@ -410,21 +403,14 @@ const CatalogueContent = ({
 
 			<ItemModal
 				categoryName={
-					activeCategoryIndex !== null
-						? ((data[activeCategoryIndex] as any)?.name ?? undefined)
-						: undefined
+					data.find((block) => block.id === activeBlockId)?.name ?? undefined
 				}
 				checkItemLimits={checkItemLimits}
 				currency={currency}
 				initialItem={activeEditingItem ? activeEditingItem.item : undefined}
 				isOpen={isItemModalOpen}
 				layout={activeBlockLayout}
-				onClose={() => {
-					setIsItemModalOpen(false);
-					setActiveCategoryIndex(null);
-					setActiveEditingItem(null);
-					setActiveBlockLayout(null);
-				}}
+				onClose={closeItemModal}
 				onSave={handleSaveItem}
 				onShowLimits={() => setShowLimitsModal(true)}
 			/>

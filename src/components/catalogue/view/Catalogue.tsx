@@ -21,7 +21,7 @@ import {
 	isDarkTheme as isThemeDark,
 	serializeThemeCss,
 } from "@/lib/themes/custom-theme";
-import type { Catalogue, ContentBlock, UserData } from "@quicktalog/common";
+import type { Catalogue, UserData } from "@quicktalog/common";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useEffect, useMemo, useState } from "react";
 import { Overlay } from "@/components/general/Overlay";
@@ -31,6 +31,7 @@ import ContentBlockButton from "@/components/catalogue/inputs/ContentBlockButton
 import BuilderSidebar from "@/components/catalogue/inputs/sidebar";
 import { builderFramePadding } from "@/components/catalogue/builder/frame";
 import AddContentModal from "@/components/catalogue/modals/AddContentModal";
+import { useSectionDialog } from "@/components/catalogue/view/useSectionDialog";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
 import { catalogueLogos } from "@/lib/catalogue/logo";
 import CatalogueAnalytics from "./CatalogueAnalytics";
@@ -51,11 +52,7 @@ const Catalogue = ({
 	const { catalogue, isSidebarOpen = false } = useCatalogueContext() || {};
 	const activeData = catalogue?.name ? catalogue : item;
 
-	const [isAddContentOpen, setIsAddContentOpen] = useState(false);
-	const [editingBlock, setEditingBlock] = useState<{
-		block: ContentBlock;
-		index: number;
-	} | null>(null);
+	const sectionDialog = useSectionDialog();
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
 
 	const isCustomTheme = item.appearance.theme.type === "custom";
@@ -164,12 +161,9 @@ const Catalogue = ({
 		};
 	}, [fontFamily, borderRadius]);
 
-	const handleEditBlock = (index: number) => {
-		const block = item.content[index];
-		if (block) {
-			setEditingBlock({ block, index });
-			setIsAddContentOpen(true);
-		}
+	const handleEditBlock = (blockId: string) => {
+		const block = item.content.find((entry) => entry.id === blockId);
+		if (block) sectionDialog.openEdit(block);
 	};
 	if (!userData && type === "edit") return null;
 	return (
@@ -294,7 +288,7 @@ const Catalogue = ({
 											return;
 										}
 									}
-									setIsAddContentOpen(true);
+									sectionDialog.openAdd();
 								}}
 							/>
 						)}
@@ -320,14 +314,9 @@ const Catalogue = ({
 
 				{userData && (
 					<AddContentModal
-						blockIndex={editingBlock?.index}
-						editingBlock={editingBlock?.block}
-						isOpen={isAddContentOpen}
-						onClose={() => {
-							setIsAddContentOpen(false);
-							setEditingBlock(null);
-						}}
-						setIsOpen={setIsAddContentOpen}
+						editingBlock={sectionDialog.editingBlock}
+						isOpen={sectionDialog.isOpen}
+						onClose={sectionDialog.close}
 						userData={userData}
 					/>
 				)}

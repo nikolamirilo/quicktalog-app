@@ -1,5 +1,10 @@
 import HeadingInput from "@/components/catalogue/inputs/HeadingInput";
 import { HtmlContent } from "@/components/general/HtmlContent";
+import {
+	DEFAULT_HEADING_SIZE,
+	parseHeading,
+	wrapHeading,
+} from "@/lib/catalogue/heading";
 import { Catalogue } from "@quicktalog/common";
 
 const Heading = ({
@@ -11,17 +16,16 @@ const Heading = ({
 }) => {
 	if (type === "edit") return <HeadingInput />;
 	if (!item.heading) return null;
-	const isHtml = item.heading.includes("<h1");
-	let headingHtml = isHtml
+	// No `data-size` means the heading never went through the builder's wrapper -
+	// an older row, or an assistant edit from before it was normalized - and
+	// without the wrapper's classes the page would draw it at body size.
+	const parsed = parseHeading(item.heading);
+	let headingHtml = parsed.size
 		? item.heading
-		: `<h1 class="text-3xl md:text-4xl lg:text-5xl font-heading text-heading drop-shadow-sm text-center break-words w-full max-w-[98%] mx-auto" data-size="large">${item.heading}</h1>`;
-	if (isHtml && headingHtml.includes("line-clamp-")) {
-		headingHtml = headingHtml.replace(/line-clamp-\d+/g, "");
-	}
+		: wrapHeading(parsed.inner, DEFAULT_HEADING_SIZE);
+	headingHtml = headingHtml.replace(/line-clamp-\d+/g, "");
 	// Strip whitespace-nowrap so long headings wrap like they do in edit mode
-	if (isHtml && headingHtml.includes("whitespace-nowrap")) {
-		headingHtml = headingHtml.replace(/whitespace-nowrap\s*/g, "");
-	}
+	headingHtml = headingHtml.replace(/whitespace-nowrap\s*/g, "");
 
 	return (
 		<div className="flex flex-col items-center w-full px-0 mt-8 lg:mt-4">

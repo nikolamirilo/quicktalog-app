@@ -10,9 +10,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/lib/ui/cn";
 import { LogoHint } from "@/components/catalogue/inputs/sidebar/general/LogoHint";
+import QrSection from "@/components/catalogue/inputs/sidebar/general/QrSection";
 import SearchSection from "@/components/catalogue/inputs/sidebar/general/SearchSection";
 import TrackingSection from "@/components/catalogue/inputs/sidebar/general/TrackingSection";
 import { LockedGroup, PANEL_TAB_ROOT, PanelSection } from "./panel";
+
+/** The logo upload, for shortcuts from the Header and Footer tabs. */
+export const LOGO_PANEL_ID = "panel-logo";
 
 const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
@@ -67,6 +71,7 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 
 			<PanelSection
 				description="Shown in your catalogue's header and footer."
+				id={LOGO_PANEL_ID}
 				title="Logo"
 			>
 				<LockedGroup locked={!hasBranding}>
@@ -180,6 +185,8 @@ const GeneralTab = ({ plan }: { plan: PricingPlan }) => {
 					</div>
 				</LockedGroup>
 			</PanelSection>
+
+			<QrSection name={catalogue.name} />
 
 			<TrackingSection
 				handleChange={handleChange}

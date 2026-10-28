@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
+import { continueList } from "@/lib/format/list-input";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
 import { useKeepAiChanges } from "@/hooks/useKeepAiChanges";
@@ -113,6 +114,8 @@ const CatalogueChat = ({
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const panelRef = useRef<HTMLElement>(null);
+	/** Where the caret goes once a list-continuation edit has rendered. */
+	const pendingCaret = useRef<number | null>(null);
 	/** Whatever had focus when the chat opened (the rail or bar button), to hand focus back on close. */
 	const returnFocusRef = useRef<HTMLElement | null>(null);
 	const wasLoading = useRef(false);
@@ -180,6 +183,10 @@ const CatalogueChat = ({
 		if (!field) return;
 		field.style.height = "auto";
 		field.style.height = `${field.scrollHeight}px`;
+
+		if (pendingCaret.current === null) return;
+		field.setSelectionRange(pendingCaret.current, pendingCaret.current);
+		pendingCaret.current = null;
 	}, [draft]);
 
 	const canSubmit = (text: string) =>
@@ -197,6 +204,22 @@ const CatalogueChat = ({
 		if (event.key === "Enter" && !event.shiftKey) {
 			event.preventDefault();
 			submit(draft);
+			return;
+		}
+
+		const field = event.currentTarget;
+		if (
+			event.key === "Enter" &&
+			field.selectionStart === field.selectionEnd &&
+			field.selectionStart !== null
+		) {
+			const next = continueList(draft, field.selectionStart);
+			if (!next) return;
+			event.preventDefault();
+			// A controlled textarea puts the caret at the end after a programmatic
+			// change, so it is restored once the new value has rendered.
+			pendingCaret.current = next.caret;
+			setDraft(next.value);
 		}
 	};
 

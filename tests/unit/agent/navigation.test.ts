@@ -1,3 +1,4 @@
+import { logoScaleOf } from "@/lib/catalogue/logo";
 import { CatalogueSession } from "@/agent/core/session";
 import { buildTools } from "@/agent/tools";
 import {
@@ -41,16 +42,13 @@ describe("header and footer tools", () => {
 		expect(session.working.header.phoneCta).toBe(catalogue.header.phoneCta);
 	});
 
-	it("keeps the logo height when only the width is set", async () => {
+	it("sets the logo size as a share of what the footer allows", async () => {
 		const session = new CatalogueSession(catalogue);
 		const tools = buildTools(session);
 
-		await run(tools, "updateFooter", { fields: { logoWidth: 240 } });
+		await run(tools, "updateFooter", { fields: { logoScale: 40 } });
 
-		expect(session.working.footer.logoSize).toEqual({
-			width: 240,
-			height: catalogue.footer.logoSize.height,
-		});
+		expect(logoScaleOf(session.working.footer)).toBe(40);
 	});
 
 	it("tells the model when a call changed nothing", async () => {

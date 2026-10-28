@@ -28,9 +28,10 @@ Section menus (`cards/common/BlockMenu`), the edit row of blocks without a heade
 - **Set product typography explicitly.** Controls must set it themselves (`font-product-body` plus a size) and use tokens.
 - **Only in edit mode.** They render only in edit mode. Section renderers add `BLOCK_CONTROLS_GROUP` (the `group/block` class) to their outer element only when `mode === "edit"`.
 - **One ⋯ menu per section.** `BlockMenu` holds Edit, Layout (a row of four drawn tiles, items sections only), Move up, Move down and Delete (after a confirm prompt).
-  - **Sections with a header:** the ⋯ sits inside the header on the right, where the collapse chevron is in view mode. The header button gets extra right padding in edit mode only, so the title never runs under it.
+  - **Sections with a header:** the ⋯ sits inside the header on the right, where the collapse chevron is in view mode. The header gets extra right padding in edit mode only, so the title never runs under it. In edit mode the header is a `div` rather than a button - the section is open either way, so there is nothing to toggle, and the heading holds a rename input.
   - **Blocks without a header** (text, divider, embed, custom code, items without a heading): `BlockControls` is a row above the block with the type label on the left and the ⋯ on the right. While text or a divider is edited inline, the row shows a Done button instead of the Edit entry.
-  - **Visibility:** on devices that can hover, the ⋯ (or the row) shows on hover or focus; on touch it is always visible.
+  - **Visibility:** a section's ⋯ is always visible, on every device. The `BlockControls` row and a card's ⋯ still show on hover or focus where the device hovers, and are always visible on touch: three dots at rest on every card in a grid read as clutter, and a card already opens its item on click.
+- **Rename a heading by clicking it.** In edit mode an items section's heading is an `EditableSectionName` (`sections/common/`): click it, or focus it and press Enter, to rename in place. Enter and clicking away save through the block's `onUpdateBlock`, Escape reverts, and an empty name keeps the old one - the name is required, and it labels the section in "Move to section" and to the AI assistant. Only sections with `showHeading` have one; `Edit section` in the ⋯ still renames too.
 - **Never over content.** Card tools are one ⋮ menu (edit, move up/down, move to section, delete) that never covers the title.
 - **Checking view mode.** Frozen catalogue pieces must not change: `SectionHeader`'s `headerButtonClasses` (its `cat-section-header` hook only styles the glass effect, see [catalogue-chrome.md](catalogue-chrome.md)), `CatalogueButton` and `CatalogueDialog`. To prove a change leaves view mode alone, render `<Catalogue type="view">` from a fixture and compare every element's classes and computed styles before and after.
 
@@ -75,6 +76,31 @@ Rules:
   catalogue that no longer fits is switched off by the backend's subscription job. Until
   it fits, the owner and the agent can edit, move and delete, but not add. Draft saves
   stay allowed while it shrinks, and a locked block can be deleted but not edited.
+
+## How an edit finds its target
+
+The agent's edits land on the draft while the owner works - that is what the review
+bar is for - so a section's position is never a safe handle. Everything that edits
+content says *which* section and *which* item it means:
+
+- **`CatalogueContext`'s content methods take ids** (`updateBlock(blockId, …)`,
+  `addItem(blockId, …)`, `updateItem(blockId, itemId, …)`, and the rest). The id is
+  resolved inside the state updater, against the draft React is holding. An id that
+  is no longer there is a no-op: the edit is dropped, nothing else moves.
+- **A dialog keeps ids, not positions.** `useSectionDialog` holds the section being
+  edited (and clears it on both open-to-add and close, so a saved edit cannot leak
+  into the next "Add section"); `CatalogueContent` keeps the item dialog's section
+  and item id. A card's control resolves the item from the block it is rendered in,
+  at click time.
+- **An edit saved from the Add/Edit dialog is a patch**, so a section keeps the
+  items it has now rather than the ones the form snapshotted when it opened.
+- **One writer.** Every change - hand edit, agent replay, seed, reject - goes
+  through the provider's `commit`, which computes from `catalogueRef` and writes
+  both it and the state. The ref is the draft, not a mirror of the last render, so
+  two edits in the same tick compose instead of one overwriting the other, and
+  `getCatalogue()` (autosave, plan continuation) always sees the latest.
+- **A template is instantiated, not shared.** `catalogueTemplates.ts` mints fresh
+  ids and 0-based order per application.
 
 ## Unsaved changes
 

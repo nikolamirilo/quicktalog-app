@@ -15,7 +15,7 @@ import { GLASS_PANEL_ID } from "./appearance/GlassConfiguration";
 import { BuilderActionModals, BuilderBottomBar } from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";
 import FooterTab from "./FooterTab";
-import GeneralTab from "./GeneralTab";
+import GeneralTab, { LOGO_PANEL_ID } from "./GeneralTab";
 import HeaderTab from "./HeaderTab";
 
 export type TabKey =
@@ -48,17 +48,20 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const setIsChatOpen = context?.setIsChatOpen ?? (() => {});
 	const closePanel = () => setIsOpen(false);
 	const [tab, setTab] = useState<TabKey>("general");
-	const openGlassSettings = () => {
-		setTab("appearance");
-		// The Appearance tab mounts on the next frame; scroll once it is there.
+	const openPanelSection = (key: TabKey, panelId: string) => {
+		setTab(key);
+		// The tab mounts on the next frame; scroll once it is there.
 		requestAnimationFrame(() =>
 			requestAnimationFrame(() =>
 				document
-					.getElementById(GLASS_PANEL_ID)
+					.getElementById(panelId)
 					?.scrollIntoView({ behavior: "smooth", block: "start" }),
 			),
 		);
 	};
+	const openGlassSettings = () =>
+		openPanelSection("appearance", GLASS_PANEL_ID);
+	const openLogoUpload = () => openPanelSection("general", LOGO_PANEL_ID);
 	const { actions, catalogueName, ...modals } = useBuilderActions({
 		closePanel,
 	});
@@ -82,6 +85,7 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 			content: (
 				<HeaderTab
 					onOpenGlass={openGlassSettings}
+					onOpenLogo={openLogoUpload}
 					plan={userData.currentPlan}
 				/>
 			),
@@ -90,7 +94,9 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 			key: "footer",
 			icon: FileText,
 			label: "Footer",
-			content: <FooterTab plan={userData.currentPlan} />,
+			content: (
+				<FooterTab onOpenLogo={openLogoUpload} plan={userData.currentPlan} />
+			),
 		},
 		{
 			key: "appearance",
@@ -128,6 +134,7 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 					actions.save,
 					actions.templates,
 					actions.preview,
+					actions.qr,
 					actions.publish,
 				]}
 				isPanelOpen={isOpen}

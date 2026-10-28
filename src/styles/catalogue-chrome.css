@@ -247,6 +247,9 @@
 	.cat-nav-sheet {
 		display: none;
 	}
+	.cat-nav-brand img {
+		max-height: 56px;
+	}
 }
 
 /* ---------- Builder: the add-section tile ---------- */

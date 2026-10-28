@@ -30,7 +30,7 @@ const CardsSwitcher = ({
 	onMoveDown,
 	isFirst,
 	isLast,
-	blockIndex,
+	blockId,
 	sectionName,
 }: {
 	variant: string;
@@ -46,7 +46,7 @@ const CardsSwitcher = ({
 	onMoveDown?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
-	blockIndex?: number;
+	blockId?: string;
 	sectionName?: string;
 }) => {
 	// A missing price is a valid item (a service list, an "ask us" menu); only a
@@ -95,11 +95,10 @@ const CardsSwitcher = ({
 	return (
 		<>
 			<CardComponent
-				blockIndex={blockIndex}
+				blockId={blockId}
 				currency={formattedCurrency}
 				isFirst={isFirst}
 				isLast={isLast}
-				itemIndex={i}
 				mode={mode === "edit" ? "edit" : "view"}
 				onClick={() => setIsModalOpen(true)}
 				onDelete={onDelete}

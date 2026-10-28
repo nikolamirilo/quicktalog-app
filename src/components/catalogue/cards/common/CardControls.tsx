@@ -28,8 +28,8 @@ interface CardControlsProps {
 	onMoveDown?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
-	blockIndex?: number;
-	itemIndex?: number;
+	blockId?: string;
+	itemId?: string;
 }
 
 /**
@@ -40,6 +40,10 @@ interface CardControlsProps {
  * top-image and carousel cards) have the pill over the image instead, so their
  * title keeps its full width. This only renders in edit mode, so the published
  * card is untouched.
+ *
+ * Unlike a section's menu this one stays hover-revealed: a grid of cards each
+ * wearing three dots at rest reads as clutter, and a card already opens its
+ * item on click.
  */
 const wrapperClasses = [
 	"absolute right-1 top-1 z-20 font-product-body text-sm font-normal not-italic leading-none tracking-normal sm:right-2 sm:top-2",
@@ -55,22 +59,19 @@ const CardControls = ({
 	onMoveDown,
 	isFirst,
 	isLast,
-	blockIndex,
-	itemIndex,
+	blockId,
+	itemId,
 }: CardControlsProps) => {
 	const catalogueContext = useCatalogueContext();
 	const sections = catalogueContext?.catalogue?.content || [];
 	const moveItemToBlock = catalogueContext?.moveItemToBlock;
 
-	const availableSections = sections
-		.map((block, index) => ({ block, index }))
-		.filter(({ block, index }) => isItemsBlock(block) && index !== blockIndex);
+	const availableSections = sections.filter(
+		(block) => isItemsBlock(block) && block.id !== blockId,
+	);
 
 	const canMoveToSection =
-		availableSections.length > 0 &&
-		blockIndex !== undefined &&
-		itemIndex !== undefined &&
-		!!moveItemToBlock;
+		availableSections.length > 0 && !!blockId && !!itemId && !!moveItemToBlock;
 
 	return (
 		<div
@@ -87,7 +88,7 @@ const CardControls = ({
 						title="More options"
 						type="button"
 					>
-						<MoreHorizontal aria-hidden="true" />
+						<MoreHorizontal aria-hidden="true" strokeWidth={3} />
 					</button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
@@ -124,14 +125,14 @@ const CardControls = ({
 									className="max-w-[260px] min-w-[200px]"
 									onClick={(e) => e.stopPropagation()}
 								>
-									{availableSections.map(({ block, index }) => (
+									{availableSections.map((block) => (
 										<DropdownMenuItem
 											key={block.id}
 											onSelect={() =>
 												moveItemToBlock?.(
-													blockIndex as number,
-													itemIndex as number,
-													index,
+													blockId as string,
+													itemId as string,
+													block.id,
 												)
 											}
 										>

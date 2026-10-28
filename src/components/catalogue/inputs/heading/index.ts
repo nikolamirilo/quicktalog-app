@@ -1,4 +1,5 @@
 export { default as FormattingToolbar } from "./FormattingToolbar";
 export { default as EditableHeading } from "./EditableHeading";
 export { default as CharacterCount } from "./CharacterCount";
-export { useHeadingEditor, HEADING_CHAR_LIMIT } from "./useHeadingEditor";
+export { useHeadingEditor } from "./useHeadingEditor";
+export { HEADING_CHAR_LIMIT } from "@/lib/catalogue/heading";

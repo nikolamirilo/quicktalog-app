@@ -4,22 +4,26 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/lib/ui/cn";
-import { ArrowRight, Droplet } from "lucide-react";
+import { Droplet } from "lucide-react";
+import LogoSection from "./logo/LogoSection";
 import LimitsOverlay from "./LimitsOverlay";
 import {
 	PANEL_TAB_ROOT,
 	PanelSection,
-	SliderField,
+	PanelShortcut,
 	SwitchField,
 } from "./panel";
 
 const HeaderTab = ({
 	plan,
 	onOpenGlass,
+	onOpenLogo,
 }: {
 	plan: PricingPlan;
 	/** Switches the panel to Appearance and scrolls to the glass settings. */
 	onOpenGlass: () => void;
+	/** Switches the panel to General and scrolls to the logo upload. */
+	onOpenLogo: () => void;
 }) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
 	const hasBranding = plan?.features?.branding;
@@ -65,8 +69,6 @@ const HeaderTab = ({
 			});
 		}
 	};
-
-	const logoWidth = catalogue.header?.logoSize?.width || 160;
 
 	return (
 		<div
@@ -124,14 +126,7 @@ const HeaderTab = ({
 							. On phones the icons and button move into a menu.
 						</span>
 					</p>
-					<button
-						className="inline-flex items-center gap-1.5 border-b-[1.5px] border-product-primary/70 pb-px text-[13px] font-semibold text-product-primary-ink hover:text-product-foreground"
-						onClick={onOpenGlass}
-						type="button"
-					>
-						Open glass settings
-						<ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
-					</button>
+					<PanelShortcut label="Open glass settings" onClick={onOpenGlass} />
 				</PanelSection>
 
 				<div
@@ -141,25 +136,12 @@ const HeaderTab = ({
 					)}
 					inert={!isCustom || undefined}
 				>
-					<PanelSection
-						info="Configure the size of the logo in your header."
-						title="Logo size"
-					>
-						<SliderField
-							label="Logo width"
-							max={300}
-							min={20}
-							onValueChange={(value) =>
-								handleChange("header.logoSize.width", value)
-							}
-							step={2}
-							value={logoWidth}
-							valueText={`${logoWidth}px`}
-						/>
-						<p className="-mt-2.5 text-[12.5px] leading-snug text-product-muted">
-							In the floating navbar the logo stops growing at 44 px tall.
-						</p>
-					</PanelSection>
+					<LogoSection
+						catalogue={catalogue}
+						handleChange={handleChange}
+						onOpenLogo={onOpenLogo}
+						scope="header"
+					/>
 
 					<PanelSection
 						info="Manage the call-to-action button in your header."

@@ -12,6 +12,12 @@ import {
 	normalizeContent,
 } from "@/lib/catalogue/content-blocks";
 import {
+	DEFAULT_HEADING_SIZE,
+	parseHeading,
+	wrapHeading,
+} from "@/lib/catalogue/heading";
+import { withLogoScale } from "@/lib/catalogue/logo";
+import {
 	CUSTOM_THEME_NAME,
 	sanitizeCustomThemeColors,
 } from "@/lib/themes/custom-theme";
@@ -552,7 +558,17 @@ export function applyCatalogueOperations(
 				}
 
 				if (fields.heading !== undefined) {
-					patch.heading = fields.heading;
+					// The assistant writes words; the builder's `<h1>` wrapper carries the
+					// size and the classes the page draws the heading with, and the size
+					// the owner chose is kept unless the new value states one.
+					const incoming = parseHeading(fields.heading);
+					const current = parseHeading(next.heading);
+					patch.heading = incoming.inner
+						? wrapHeading(
+								incoming.inner,
+								incoming.size ?? current.size ?? DEFAULT_HEADING_SIZE,
+							)
+						: "";
 					changed.push("heading");
 				}
 				if (fields.currency !== undefined) {
@@ -668,7 +684,7 @@ export function applyCatalogueOperations(
 
 				const { fields } = operation;
 				const changed: string[] = [];
-				const header = { ...defaultCatalogueData.header, ...next.header };
+				let header = { ...defaultCatalogueData.header, ...next.header };
 
 				if (fields.type !== undefined) {
 					header.type = fields.type;
@@ -686,8 +702,8 @@ export function applyCatalogueOperations(
 					header.emailCta = fields.emailCta;
 					changed.push("header email icon");
 				}
-				if (fields.logoWidth !== undefined) {
-					header.logoSize = { ...header.logoSize, width: fields.logoWidth };
+				if (fields.logoScale !== undefined) {
+					header = withLogoScale(header, fields.logoScale);
 					changed.push("header logo size");
 				}
 
@@ -717,7 +733,7 @@ export function applyCatalogueOperations(
 
 				const { fields } = operation;
 				const changed: string[] = [];
-				const footer = { ...defaultCatalogueData.footer, ...next.footer };
+				let footer = { ...defaultCatalogueData.footer, ...next.footer };
 
 				if (fields.type !== undefined) {
 					footer.type = fields.type;
@@ -735,8 +751,8 @@ export function applyCatalogueOperations(
 					footer.showPartners = fields.showPartners;
 					changed.push("partners");
 				}
-				if (fields.logoWidth !== undefined) {
-					footer.logoSize = { ...footer.logoSize, width: fields.logoWidth };
+				if (fields.logoScale !== undefined) {
+					footer = withLogoScale(footer, fields.logoScale);
 					changed.push("footer logo size");
 				}
 

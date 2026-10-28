@@ -1,6 +1,13 @@
 "use client";
 import { SmartLink } from "@/components/general/SmartLink";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import {
+	catalogueLogoHref,
+	logoHeightFor,
+	logoRadiusOf,
+	logoRadiusStyle,
+	logoScaleOf,
+} from "@/lib/catalogue/logo";
 import type { Catalogue } from "@quicktalog/common";
 import Link from "next/link";
 import type React from "react";
@@ -124,8 +131,15 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 
 	const companyName = type === "default" ? "Quicktalog" : "Company";
 	const hasActions = contactLinks.length > 0 || cta !== null;
-	const logoWidth =
-		type === "default" ? 160 : activeData?.header?.logoSize?.width || 100;
+	const isCustom = type === "custom";
+	// Ours is a wordmark drawn to a fixed width; the owner's is sized by height,
+	// which is what the navbar actually limits.
+	const logoStyle: React.CSSProperties = isCustom
+		? {
+				height: `${logoHeightFor("header", logoScaleOf(activeData?.header))}px`,
+				borderRadius: logoRadiusStyle(logoRadiusOf(activeData?.header)),
+			}
+		: { width: "160px" };
 
 	return (
 		<header
@@ -143,14 +157,17 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 					<SmartLink
 						ariaLabel={`Go to ${companyName} homepage`}
 						className="cat-nav-brand"
-						href={activeData?.contact?.website || "/"}
+						href={catalogueLogoHref({
+							type,
+							website: activeData?.contact?.website,
+						})}
 					>
 						{logo && (
 							<img
 								alt={`${companyName} logo`}
 								fetchPriority="high"
 								src={logo}
-								style={{ width: `${logoWidth}px` }}
+								style={logoStyle}
 							/>
 						)}
 					</SmartLink>

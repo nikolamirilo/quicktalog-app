@@ -1,6 +1,14 @@
 import { SmartLink } from "@/components/general/SmartLink";
+import {
+	catalogueLogoHref,
+	logoHeightFor,
+	logoRadiusOf,
+	logoRadiusStyle,
+	logoScaleOf,
+} from "@/lib/catalogue/logo";
 import { uniqueSocials } from "@/lib/catalogue/socials";
 import type { Catalogue } from "@quicktalog/common";
+import type { CSSProperties } from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { SocialIcon } from "./SocialIcon";
 
@@ -15,7 +23,17 @@ const Brand = ({
 	showCta: boolean;
 }) => {
 	const contact = activeData?.contact;
-	const name = activeData?.legal?.legalName || "Company";
+	const type = activeData?.footer?.type;
+	const isCustom = type === "custom";
+	const name = isCustom
+		? activeData?.legal?.legalName || "Company"
+		: "Quicktalog";
+	const logoStyle: CSSProperties = isCustom
+		? {
+				height: `${logoHeightFor("footer", logoScaleOf(activeData?.footer))}px`,
+				borderRadius: logoRadiusStyle(logoRadiusOf(activeData?.footer)),
+			}
+		: { width: "100px" };
 	const socials = uniqueSocials(contact?.socials);
 	const cta = activeData?.footer?.cta;
 	const tagline = activeData?.footer?.tagline?.trim();
@@ -26,13 +44,9 @@ const Brand = ({
 				<SmartLink
 					ariaLabel={`Go to ${name} homepage`}
 					className="cat-foot-logo"
-					href={contact?.website || ""}
+					href={catalogueLogoHref({ type, website: contact?.website })}
 				>
-					<img
-						alt={`${name} logo`}
-						src={logo}
-						style={{ width: `${activeData?.footer?.logoSize?.width || 100}px` }}
-					/>
+					<img alt={`${name} logo`} src={logo} style={logoStyle} />
 				</SmartLink>
 			) : (
 				// Without a logo the business name stands in for it.

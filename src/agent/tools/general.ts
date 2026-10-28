@@ -1,12 +1,19 @@
 import type { ToolContext } from "@/agent/tools/types";
 import { MAX_SOCIALS } from "@/constants";
+import { HEADING_CHAR_LIMIT } from "@/lib/catalogue/heading";
 import { BUSINESS_TYPE_VALUES } from "@quicktalog/common";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
 import { z } from "zod";
 
 export const catalogueFieldsSchema = z.object({
-	heading: z.string().max(2000).optional(),
+	heading: z
+		.string()
+		.max(HEADING_CHAR_LIMIT * 4)
+		.optional()
+		.describe(
+			`The big title at the top of the page. Plain text, at most ${HEADING_CHAR_LIMIT} characters - the builder owns its size and styling, so do not write an <h1> or classes. <strong> and <em> are allowed inside it. An empty string removes it.`,
+		),
 	currency: z.string().trim().max(10).optional(),
 	language: z.string().trim().max(10).optional(),
 	businessType: z.enum(BUSINESS_TYPE_VALUES).optional(),

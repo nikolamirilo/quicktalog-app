@@ -42,6 +42,23 @@ change anything:
 against the array *as it stands mid-batch*. Two positioned `add_section`s in one
 turn - or one following a `delete_section` - will not land where the model meant.
 
+**The reply is Markdown.** The agent is told to write in it (bold, italics, inline
+code, bullet and numbered lists, a short heading, a link, a fenced code block, a
+small table) and the bubble renders it: `lib/format/markdown.ts` parses the text to
+a small tree and `chat/MarkdownText.tsx` renders that tree as React elements. No
+HTML string is built, so the chat is not one of the author-HTML sinks in
+[catalogue-html-safety.md](catalogue-html-safety.md). Two properties to keep: an
+unfinished marker reads as literal text, because a reply is re-parsed on every
+stream chunk, and anything the grammar does not cover stays the text it was. The
+user's own message is rendered the same way, on the dark bubble's palette.
+
+**The catalogue heading is normalized, not stored as written.** `update_catalogue`
+puts `fields.heading` through `lib/catalogue/heading.ts`, which wraps the words in
+the same `<h1 ... data-size>` the builder writes and keeps the size the owner
+chose. Without it an assistant heading drew at body size on the published page, and
+the builder's heading box - which syncs from the draft - had nothing to read a size
+from.
+
 ---
 
 ## 2. The whole flow
@@ -557,7 +574,10 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 | File | Role |
 |---|---|
 | `src/components/catalogue/chat/CatalogueChat.tsx` | Floating panel from `md`, full-height sheet on a phone (kept above the keyboard by `useVisualViewport`); opened from the builder rail or phone bar through `isChatOpen`, not a button of its own. Suggestions, input, both limit modals |
-| `src/components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text, applied changes, skipped reasons |
+| `src/components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text (through `MarkdownText`), applied changes, skipped reasons |
+| `src/components/catalogue/chat/MarkdownText.tsx` | Renders a parsed message as React elements, on the light or dark bubble |
+| `src/lib/format/markdown.ts` | The Markdown subset a reply uses, parsed to blocks and inline nodes |
+| `src/lib/format/list-input.ts` | Carries a typed list on in the composer; the draft stays a plain string |
 | `src/hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
 | `lib/ai/catalogueEditor.ts` | System prompt, snapshot, zod schema, index→id, image resolution |
 | `src/lib/catalogue/operations.ts` | Pure operation applier with plan limits |

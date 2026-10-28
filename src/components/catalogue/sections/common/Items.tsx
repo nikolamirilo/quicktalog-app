@@ -65,7 +65,6 @@ const contentVariants = {
 interface Props {
 	block: AnyItemsBlock;
 	displayItems: DisplayItem[];
-	blockIndex: number;
 	/** Referenced by the section header's `aria-controls`. */
 	contentId?: string;
 	currentLayout: string;
@@ -74,7 +73,7 @@ interface Props {
 	mode: string;
 	showContent: boolean;
 	theme: string;
-	onAddItem?: (blockIndex: number) => void;
+	onAddItem?: () => void;
 	onDeleteItem?: (itemIndex: number) => void;
 	onEditItem?: (itemIndex: number) => void;
 	onMoveItemUp?: (itemIndex: number) => void;
@@ -84,7 +83,6 @@ interface Props {
 const Items = ({
 	block,
 	displayItems,
-	blockIndex,
 	contentId,
 	currentLayout,
 	currency,
@@ -145,7 +143,7 @@ const Items = ({
 										role="group"
 									>
 										<CardsSwitcher
-											blockIndex={blockIndex}
+											blockId={block.id}
 											currency={getCurrencySymbol(currency)}
 											i={originalIndex}
 											isFirst={originalIndex === 0}
@@ -181,7 +179,7 @@ const Items = ({
 									<SwiperSlide className="!w-[220px] md:!w-[240px] py-2 flex-shrink-0 flex flex-col !h-auto">
 										<AddItemTile
 											className="h-full min-h-[300px] w-full"
-											onClick={() => onAddItem(blockIndex)}
+											onClick={onAddItem}
 										/>
 									</SwiperSlide>
 								)}
@@ -192,7 +190,7 @@ const Items = ({
 							<div className={getGridStyle(currentLayout)}>
 								{visible.map(({ item: record, originalIndex }) => (
 									<CardsSwitcher
-										blockIndex={blockIndex}
+										blockId={block.id}
 										currency={getCurrencySymbol(currency)}
 										i={originalIndex}
 										isFirst={originalIndex === 0}
@@ -226,10 +224,7 @@ const Items = ({
 								))}
 
 								{mode === "edit" && onAddItem && (
-									<AddItemTile
-										className={addCardSize}
-										onClick={() => onAddItem(blockIndex)}
-									/>
+									<AddItemTile className={addCardSize} onClick={onAddItem} />
 								)}
 							</div>
 						</div>

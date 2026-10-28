@@ -8,6 +8,7 @@ import {
 import { normalizeTagline } from "@/lib/catalogue/footer";
 import { DEFAULT_GLASS, normalizeGlass } from "@/lib/catalogue/glass";
 import { normalizeSearch } from "@/lib/catalogue/items";
+import { normalizeLogoRadius } from "@/lib/catalogue/logo";
 import {
 	dropInvalidTrackingIds,
 	stripTrackingIds,
@@ -20,10 +21,10 @@ import type { Tier } from "./plan";
  * header/footer only on plans that include branding (where the owner may still
  * choose the default one); newsletter and advanced appearance (custom themes,
  * style, overlay, glass and background) only on plans that include them, reset
- * to the defaults otherwise. Glass, background, search and the footer tagline arrive
- * from the client, so their shape is normalized here as well. Applied on create,
- * update and publish, so a client that sends a branded payload on a free plan
- * cannot buy features for free.
+ * to the defaults otherwise. Glass, background, search, the footer tagline and
+ * the logo's corner rounding arrive from the client, so their shape is
+ * normalized here as well. Applied on create, update and publish, so a client
+ * that sends a branded payload on a free plan cannot buy features for free.
  */
 export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 	data: T,
@@ -33,7 +34,13 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 		tier.features.branding && type === "custom" ? "custom" : "default";
 	const out = { ...data };
 	if (out.header) {
-		out.header = { ...out.header, type: allowedType(out.header.type) };
+		out.header = {
+			...out.header,
+			type: allowedType(out.header.type),
+			...("logoRadius" in out.header
+				? { logoRadius: normalizeLogoRadius(out.header.logoRadius) }
+				: {}),
+		};
 	}
 	// The client sends the whole `metadata` object back on every save, so both
 	// the plan and the shape are enforced here rather than trusted from the
@@ -77,6 +84,9 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 			newsletter: tier.features.newsletter ? out.footer.newsletter : false,
 			...("tagline" in out.footer
 				? { tagline: normalizeTagline(out.footer.tagline) }
+				: {}),
+			...("logoRadius" in out.footer
+				? { logoRadius: normalizeLogoRadius(out.footer.logoRadius) }
 				: {}),
 		};
 	}

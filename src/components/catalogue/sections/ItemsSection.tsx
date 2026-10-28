@@ -19,8 +19,7 @@ interface ItemsSectionProps {
 	theme?: string;
 	mode: "edit" | "view";
 	currentLayout: "variant_1" | "variant_2" | "variant_3" | "variant_4";
-	onAddItem?: (blockIndex: number) => void;
-	blockIndex: number;
+	onAddItem?: () => void;
 	onDelete?: () => void;
 	onDeleteItem?: (itemIndex: number) => void;
 	onEdit?: () => void;
@@ -41,7 +40,6 @@ interface ItemsSectionProps {
  */
 const ItemsSection = ({
 	block,
-	blockIndex,
 	currency,
 	currentLayout,
 	locale,
@@ -95,6 +93,9 @@ const ItemsSection = ({
 
 	const showContent = showHeading ? mode === "edit" || isExpanded : true;
 	const displayItems = getDisplayItems(block, query ?? "");
+	const renameSection = onUpdateBlock
+		? (name: string) => onUpdateBlock({ name })
+		: undefined;
 
 	return (
 		<section
@@ -123,6 +124,7 @@ const ItemsSection = ({
 					}
 					onMoveDown={onMoveDown}
 					onMoveUp={onMoveUp}
+					onRename={renameSection}
 					onToggle={onToggle}
 					title={block.name}
 				/>
@@ -147,7 +149,6 @@ const ItemsSection = ({
 
 			<Items
 				block={block}
-				blockIndex={blockIndex}
 				contentId={contentId}
 				currency={currency}
 				currentLayout={currentLayout}

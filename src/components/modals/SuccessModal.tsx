@@ -22,7 +22,10 @@ import {
 	ExternalLink,
 	LayoutDashboard,
 	PartyPopper,
+	Pencil,
+	QrCode,
 } from "lucide-react";
+import Link from "next/link";
 import type * as React from "react";
 import { useEffect, useState } from "react";
 
@@ -74,6 +77,30 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 		</DialogHeader>
 	);
 
+	// The update path lands here too, where the full QR panel would be wrong: a
+	// catalogue this old may already have a saved design this cannot draw.
+	const qrRow = (
+		<div className="order-3 flex items-center gap-2.5 rounded-product-card border border-product-border bg-product-background p-2.5 sm:gap-3 sm:p-3.5">
+			<IconTile size="sm">
+				<QrCode />
+			</IconTile>
+			<div className="min-w-0 flex-1">
+				<p className="text-[13.5px] font-semibold leading-tight text-product-foreground sm:text-sm">
+					QR code
+				</p>
+				<p className="hidden text-xs leading-relaxed text-product-foreground-accent sm:block">
+					Design it and download it for print.
+				</p>
+			</div>
+			<Button asChild className="flex-none px-3.5 text-sm" variant="outline">
+				<Link href={`/admin/${slug}/qr-editor`}>
+					<Pencil aria-hidden="true" />
+					Customize
+				</Link>
+			</Button>
+		</div>
+	);
+
 	const footer = (
 		<AppDialogFooter className="order-5 mt-0 border-t border-product-border pt-3.5">
 			<Button
@@ -103,6 +130,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 				{type === "edit" ? (
 					<>
 						{header}
+						{qrRow}
 						{footer}
 					</>
 				) : (

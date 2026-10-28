@@ -1,11 +1,8 @@
 import type { ToolContext } from "@/agent/tools/types";
+import { LOGO_SCALE } from "@/lib/catalogue/logo";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
 import { z } from "zod";
-
-/** Matches the sliders in HeaderTab and the footer's LogoSizeSection. */
-const HEADER_LOGO_WIDTH = { min: 20, max: 300 } as const;
-const FOOTER_LOGO_WIDTH = { min: 20, max: 400 } as const;
 
 const layoutTypeSchema = z
 	.enum(["default", "custom"])
@@ -47,13 +44,13 @@ export const headerFieldsSchema = z.object({
 		.boolean()
 		.optional()
 		.describe("Show the email icon. Needs an email in the contact details."),
-	logoWidth: z.coerce
+	logoScale: z.coerce
 		.number()
-		.min(HEADER_LOGO_WIDTH.min)
-		.max(HEADER_LOGO_WIDTH.max)
+		.min(LOGO_SCALE.min)
+		.max(LOGO_SCALE.max)
 		.optional()
 		.describe(
-			`Logo width in pixels, ${HEADER_LOGO_WIDTH.min} to ${HEADER_LOGO_WIDTH.max}.`,
+			`How big the logo draws, as a percentage of what the navbar allows: ${LOGO_SCALE.min} to ${LOGO_SCALE.max}, where ${LOGO_SCALE.max} is the biggest it goes.`,
 		),
 });
 
@@ -68,13 +65,13 @@ export const footerFieldsSchema = z.object({
 		.boolean()
 		.optional()
 		.describe("Show the partners the user has added."),
-	logoWidth: z.coerce
+	logoScale: z.coerce
 		.number()
-		.min(FOOTER_LOGO_WIDTH.min)
-		.max(FOOTER_LOGO_WIDTH.max)
+		.min(LOGO_SCALE.min)
+		.max(LOGO_SCALE.max)
 		.optional()
 		.describe(
-			`Logo width in pixels, ${FOOTER_LOGO_WIDTH.min} to ${FOOTER_LOGO_WIDTH.max}.`,
+			`How big the logo draws, as a percentage of what the footer allows: ${LOGO_SCALE.min} to ${LOGO_SCALE.max}, where ${LOGO_SCALE.max} is the biggest it goes.`,
 		),
 });
 

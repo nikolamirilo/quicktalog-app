@@ -42,9 +42,9 @@ export interface BlockMenuProps {
 const stop = (e: MouseEvent) => e.stopPropagation();
 
 /**
- * The ⋯ menu of a catalogue section: edit, layout, move and delete. On devices
- * that hover it shows when the section is hovered or focused; on touch it is
- * always shown. Drawn inside `.catalogue-root`, so it sets its own type.
+ * The ⋯ menu of a catalogue section: edit, layout, move and delete. Always
+ * visible, on every device, so no section action has to be hunted for. Drawn
+ * inside `.catalogue-root`, so it sets its own type.
  */
 export function BlockMenu({
 	name,
@@ -68,7 +68,7 @@ export function BlockMenu({
 				<button
 					aria-label={`${name} options`}
 					className={cn(
-						"relative flex flex-none items-center justify-center rounded-full border border-product-border bg-product-card font-product-body text-product-foreground-accent shadow-product transition-[opacity,background-color,color] duration-200 before:absolute before:content-[''] hover:bg-product-background-hero hover:text-product-foreground focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary data-[state=open]:bg-product-background-hero data-[state=open]:text-product-foreground data-[state=open]:opacity-100 group-hover/block:opacity-100 [@media(hover:hover)]:opacity-0",
+						"relative flex flex-none items-center justify-center rounded-full border border-product-border bg-product-card font-product-body text-product-foreground-accent shadow-product transition-colors duration-200 before:absolute before:content-[''] hover:bg-product-background-hero hover:text-product-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary data-[state=open]:bg-product-background-hero data-[state=open]:text-product-foreground",
 						size === "md"
 							? "h-9 w-9 before:-inset-1 [&_svg]:size-[18px]"
 							: "h-8 w-8 before:-inset-1.5 [&_svg]:size-4",
@@ -79,7 +79,7 @@ export function BlockMenu({
 					title={`${name} options`}
 					type="button"
 				>
-					<MoreHorizontal aria-hidden="true" />
+					<MoreHorizontal aria-hidden="true" strokeWidth={3} />
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" className="w-60" onClick={stop}>

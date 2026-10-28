@@ -91,16 +91,12 @@ interface AiCtaFields {
 	url?: string;
 }
 
-/**
- * The builder exposes only the width; height is left as it is, so the two
- * header/footer field shapes flatten `logoSize` to one number.
- */
 interface AiHeaderFields {
 	type?: "default" | "custom";
 	cta?: AiCtaFields;
 	phoneCta?: boolean;
 	emailCta?: boolean;
-	logoWidth?: number;
+	logoScale?: number;
 }
 
 interface AiFooterFields {
@@ -108,7 +104,7 @@ interface AiFooterFields {
 	cta?: AiCtaFields;
 	newsletter?: boolean;
 	showPartners?: boolean;
-	logoWidth?: number;
+	logoScale?: number;
 }
 
 interface AiAppearanceFields {

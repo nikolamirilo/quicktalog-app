@@ -1,15 +1,15 @@
 "use client";
 import type { Catalogue, PricingPlan, Status, Usage } from "@quicktalog/common";
 import {
-	CircleCheck,
-	Code,
-	Copy,
-	EllipsisVertical,
-	Pencil,
-	QrCode,
-	RefreshCw,
-	Share2,
-	Trash2,
+    CircleCheck,
+    Code,
+    Copy,
+    EllipsisVertical,
+    Pencil,
+    QrCode,
+    RefreshCw,
+    Share2,
+    Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment, type ReactNode, useState } from "react";
@@ -18,15 +18,15 @@ import { DuplicateCatalogueDialog } from "@/components/dashboard/overview/Duplic
 import { parseTimestamp } from "@/components/dashboard/overview/timestamps";
 import { LimitsModal } from "@/components/modals/LimitsModal";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuPortal,
-	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
-	DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCopyLink } from "@/hooks/useCopyLink";
 import { useDuplicateCatalogue } from "@/hooks/useDuplicateCatalogue";
@@ -141,7 +141,7 @@ export function ItemDropdownMenu({
 		{
 			key: "qr",
 			icon: <QrCode />,
-			label: "QR Code",
+			label: "QR Editor",
 			disabled,
 			onSelect: () => router.push(`/admin/${catalogue.name}/qr-editor`),
 		},
