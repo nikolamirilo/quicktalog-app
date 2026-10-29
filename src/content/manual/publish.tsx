@@ -111,8 +111,8 @@ function Body() {
 					<p>
 						A catalogue with more sections or items than your plan allows cannot
 						be published, and neither can one belonging to an account that has
-						gone over its traffic limit for the month. The reason appears in the
-						toast.
+						gone over its traffic limit for the period. The reason appears in
+						the toast.
 					</p>
 				</Note>
 			</ManualSection>
@@ -229,7 +229,7 @@ function Body() {
 					<Rule>
 						<PlaceName>Activate</PlaceName> is greyed out with the tooltip{" "}
 						<q>Traffic limit reached</q> when your catalogues have been opened
-						more times this month than your plan allows.
+						more times this period than your plan allows.
 					</Rule>
 					<Rule>
 						Dropping to a smaller plan can switch catalogues off for you,
@@ -261,10 +261,10 @@ function Body() {
 							fix: "Add a heading and one section.",
 						},
 						{
-							text: "This month's traffic limit for your plan is reached",
+							text: "Your plan's page view limit for this period is reached",
 							cause:
-								"Your catalogues have been opened more times this month than your plan allows.",
-							fix: "Wait for the next month, or move to a bigger plan to switch them back on.",
+								"Your catalogues have been opened more times this period than your plan allows.",
+							fix: "Wait for your next 30-day period, or move to a bigger plan to switch them back on.",
 						},
 						{
 							text: "Could not retrieve catalogue data. Please try again.",

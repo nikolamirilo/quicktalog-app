@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { GaugeChart, getGaugeStatus } from "@/components/charts/GaugeChart";
 import { AppLead, AppTitle } from "@/components/dashboard/common/AppHeadings";
 import { IconTile } from "@/components/general/IconTile";
+import { formatIsoDay } from "@/lib/format/date";
 import { cn } from "@/lib/ui/cn";
 
 type UsageMeter = {
@@ -59,7 +60,7 @@ function UsageCard({ meter }: { meter: UsageMeter }) {
 	);
 }
 
-export const MonthlyUsage = ({
+export const UsageOverview = ({
 	usage,
 	currentPlan,
 }: {
@@ -97,7 +98,7 @@ export const MonthlyUsage = ({
 		<div>
 			<AppTitle icon={<ChartColumn />}>Usage Overview</AppTitle>
 			<AppLead>
-				Monitor your resource consumption and track usage across all features
+				{`Traffic and AI credits are counted over 30 days from the day you signed up, so your allowance resets on ${formatIsoDay(usage.period.end)}`}
 			</AppLead>
 			<section
 				aria-label="Usage against your plan limits"

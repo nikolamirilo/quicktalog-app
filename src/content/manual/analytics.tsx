@@ -135,7 +135,7 @@ function Body() {
 					</Rule>
 					<Rule>
 						Visits to the private preview address do not appear here, but they
-						do count towards your monthly <Term name="traffic limit" />.
+						do count towards your <Term name="traffic limit" />.
 					</Rule>
 					<Rule>
 						There is no breakdown by item, country, device or where people came
@@ -184,7 +184,7 @@ function Body() {
 							<>
 								Dashboard <TabName>Usage</TabName> traffic meter
 							</>,
-							"All catalogues together, this month, against your plan.",
+							"All catalogues together, this 30-day period, against your plan.",
 							"From the same daily figures as the totals.",
 						],
 					]}
@@ -200,14 +200,15 @@ function Body() {
 			<ManualSection kind="info" title="The traffic limit">
 				<ManualText className="mb-4">
 					<p>
-						Your plan includes a number of page views a month, counted across
-						all your catalogues together and reset at the start of each UTC
-						month.
+						Your plan includes a number of page views per 30 days, counted
+						across all your catalogues together. The count resets 30 days after
+						the day you signed up, and every 30 days after that, in UTC. The{" "}
+						<TabName>Usage</TabName> tab names your next reset date.
 					</p>
 				</ManualText>
 				<ManualTable
-					caption="Page views included each month with each plan"
-					columns={["Plan", "Page views a month"]}
+					caption="Page views included per 30 days with each plan"
+					columns={["Plan", "Page views per 30 days"]}
 					rows={[
 						["Starter", "500"],
 						["Basic", "2,000"],
@@ -222,8 +223,8 @@ function Body() {
 						<PlaceName>Traffic</PlaceName> meter that warns you at{" "}
 						<PlaceName>Near limit</PlaceName> once you pass four fifths of it,
 						and reads <PlaceName>Limit reached</PlaceName> after that. Going
-						over can take your catalogues offline until the month turns over or
-						you move to a bigger plan.
+						over can take your catalogues offline until your period turns over
+						or you move to a bigger plan.
 					</p>
 				</ManualText>
 			</ManualSection>
@@ -244,8 +245,8 @@ function Body() {
 						{
 							text: "You've reached your traffic limit",
 							cause:
-								"Your catalogues were opened more times this month than your plan allows.",
-							fix: "Wait for the next month, or move to a bigger plan to switch your catalogues back on.",
+								"Your catalogues were opened more times this period than your plan allows.",
+							fix: "Wait for your next 30-day period, or move to a bigger plan to switch your catalogues back on.",
 						},
 						{
 							text: "Traffic limit reached",

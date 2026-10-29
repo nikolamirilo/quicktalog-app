@@ -355,8 +355,8 @@ function Body() {
 				<Note kind="warn" title="Publishing is real">
 					<p>
 						Your catalogue is public from this moment, and your own visits count
-						in your numbers and towards your monthly traffic allowance. If you
-						are only practising, stop at{" "}
+						in your numbers and towards your traffic allowance. If you are only
+						practising, stop at{" "}
 						<ButtonName variant="secondary">Preview</ButtonName> and leave it as
 						a draft.
 					</p>

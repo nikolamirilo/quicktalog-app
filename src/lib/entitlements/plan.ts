@@ -69,8 +69,9 @@ export async function withinCatalogueQuota(
 /**
  * Whether a catalogue may be published or re-activated: it must fit the plan
  * completely (no grandfathering after a downgrade), and the plan's traffic
- * allowance for this month must not be used up. The traffic numbers come from
- * `private.my_usage()`, the same source the dashboard shows.
+ * allowance for the account's current 30-day period must not be used up. The
+ * traffic numbers come from `private.my_usage()`, the same source the dashboard
+ * shows.
  */
 export type PlanCheck = { ok: boolean; reason?: string };
 
@@ -90,7 +91,7 @@ export async function canActivate(
 	if (pageviews >= tier.features.traffic_limit) {
 		return {
 			ok: false,
-			reason: "This month's traffic limit for your plan is reached",
+			reason: "Your plan's page view limit for this period is reached",
 		};
 	}
 	return { ok: true };

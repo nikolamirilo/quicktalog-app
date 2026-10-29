@@ -71,7 +71,7 @@ export function BlockMenu({
 						"relative flex flex-none items-center justify-center rounded-full border border-product-border bg-product-card font-product-body text-product-foreground-accent shadow-product transition-colors duration-200 before:absolute before:content-[''] hover:bg-product-background-hero hover:text-product-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary data-[state=open]:bg-product-background-hero data-[state=open]:text-product-foreground",
 						size === "md"
 							? "h-9 w-9 before:-inset-1 [&_svg]:size-[18px]"
-							: "h-8 w-8 before:-inset-1.5 [&_svg]:size-4",
+							: "h-7 w-7 before:-inset-2 [&_svg]:size-4",
 						className,
 					)}
 					onClick={stop}

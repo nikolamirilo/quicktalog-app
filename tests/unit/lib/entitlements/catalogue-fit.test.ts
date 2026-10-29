@@ -78,6 +78,6 @@ describe("canActivate", () => {
 			items("a", 1),
 		]);
 		expect(result.ok).toBe(false);
-		expect(result.reason).toMatch(/traffic/);
+		expect(result.reason).toMatch(/page view limit for this period/);
 	});
 });

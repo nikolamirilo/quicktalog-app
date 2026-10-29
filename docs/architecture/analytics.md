@@ -24,12 +24,12 @@ Both helpers keep the explicit `user_id = me` predicate even though RLS enforces
 
 ## The `analytics` table
 
-This page reads PostHog live. The `analytics` table is a daily rollup kept for the dashboard totals and the monthly traffic limit:
+This page reads PostHog live. The `analytics` table is a daily rollup kept for the dashboard totals and the traffic limit:
 
 - **Rows.** One row per catalogue per UTC day: `catalogue_id`, `day`, `pageviews`, `unique_visitors`, and the owner's `user_id`. Unique on `(catalogue_id, day)`.
 - **Writer.** The Cloudflare worker's daily job (`quicktalog-backend`, `analyticsProcessingJob`) queries PostHog, maps each `/catalogues/<slug>` URL to its catalogue, and sums URL variants (query strings, trailing slash) into that catalogue's day. Summed visitors are therefore an upper bound.
-- **Deleted catalogues.** When a catalogue is deleted its rows keep `user_id` and get a null `catalogue_id`, so the month's traffic still counts against the limit.
-- **Readers.** `private.my_usage()` (the usage meters) and the worker's plan-limit check both sum `pageviews` by `user_id` over the UTC month.
+- **Deleted catalogues.** When a catalogue is deleted its rows keep `user_id` and get a null `catalogue_id`, so that traffic still counts against the limit.
+- **Readers.** `private.my_usage()` (the usage meters) and the worker's plan-limit check both sum `pageviews` by `user_id` over the account's current 30-day period, anchored on its signup day ([ai-credits.md §4](./ai-credits.md#4-the-period-boundary)).
 
 ## Range, periods and deltas
 

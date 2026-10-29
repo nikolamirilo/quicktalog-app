@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ManualShell } from "@/components/manual/ManualShell";
 import { generateManualMetadata } from "@/constants/metadata";
+import { getPageSchema } from "@/constants/schemas";
 import {
 	MANUAL_BASE,
 	getManualHomeSlug,
@@ -26,8 +27,16 @@ export default function ManualHomePage() {
 	const { meta, Body } = page;
 
 	return (
-		<ManualShell meta={meta}>
-			<Body />
-		</ManualShell>
+		<>
+			<script
+				dangerouslySetInnerHTML={{
+					__html: JSON.stringify(getPageSchema("docs")),
+				}}
+				type="application/ld+json"
+			/>
+			<ManualShell meta={meta}>
+				<Body />
+			</ManualShell>
+		</>
 	);
 }

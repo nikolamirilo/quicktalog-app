@@ -73,7 +73,7 @@ export function QuickAiScreen() {
 			height={660}
 			legend={[
 				"Quick AI's name and what it does: ask for any change to this catalogue",
-				"The AI credits you have left this month. Select the ring for the full breakdown",
+				"The AI credits you have left this period. Select the ring for the full breakdown",
 				"Minimize the panel. Your conversation is kept",
 				"What you can ask for, in your own words, and a tip on giving detail",
 				"Four ready made asks. Selecting one sends it straight away",

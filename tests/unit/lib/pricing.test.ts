@@ -17,8 +17,8 @@ describe("plan card features", () => {
 			"1 catalogue",
 			"8 sections per catalogue",
 			"30 items per catalogue",
-			"2,000 page views / month",
-			"50 AI credits / month",
+			"2,000 page views / 30 days",
+			"50 AI credits / 30 days",
 			"Custom branding",
 			"Basic analytics",
 			"Email support",
@@ -53,8 +53,8 @@ describe("plan card features", () => {
 			"Catalogues",
 			"Sections per catalogue",
 			"Items per catalogue",
-			"Page views / month",
-			"AI credits / month",
+			"Page views / 30 days",
+			"AI credits / 30 days",
 		]);
 	});
 });

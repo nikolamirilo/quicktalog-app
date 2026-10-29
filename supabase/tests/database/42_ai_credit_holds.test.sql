@@ -1,8 +1,9 @@
 -- 42_ai_credit_holds.test.sql
 --
 -- 20261024120000_ai_credit_holds: AI credits are a hard cap. A request holds the most it
--- may spend under the users-row lock, live holds count against the month's balance, a
--- request spends only from its own hold, and an unreleased hold expires on its own.
+-- may spend under the users-row lock, live holds count against the balance of the account's
+-- current 30-day period (20261029120000), a request spends only from its own hold, and an
+-- unreleased hold expires on its own.
 --
 -- Runs inside one transaction that is rolled back. Limits are passed explicitly (20 unless
 -- a row says otherwise), so the fixture plan does not matter.
@@ -190,10 +191,12 @@ reset role;
 
 select is((select outcome from pgtap_holds.obs where label = 'f15'), 'limit', 'after a downgrade the continuation is refused under the lower limit');
 
--- Last month's hold does not reduce this month's allowance.
+-- A hold from the previous usage period does not reduce this period's allowance. The
+-- fixture users were created now(), so their period starts today at 00:00 UTC.
 insert into public.ai_credits (user_id, catalogue_id, turn_id, kind, credits, held, held_until, created_at)
 values ('a2a2a2a2-0000-4000-8000-00000000001a', (select id from public.catalogues where name = 'pgtap-hold-g'), pg_catalog.gen_random_uuid(), 'agent', 0, 10,
-        pg_catalog.now() + interval '1 hour', pg_catalog.date_trunc('month', pg_catalog.now(), 'UTC') - interval '1 second');
+        pg_catalog.now() + interval '1 hour',
+        ((pg_catalog.now() at time zone 'UTC')::date::timestamp at time zone 'UTC') - interval '1 second');
 do $$ begin perform set_config('request.jwt.claims',
   '{"sub":"a2a2a2a2-0000-4000-8000-00000000001a","role":"app_user"}', true); end $$;
 set local role app_user;
@@ -202,7 +205,7 @@ select 'g16', t.outcome, t.ai_turn_id, t.held
   from private.begin_ai_turn('pgtap-hold-g', 20, 'agent', null::uuid, null::text, 2, false, 18) t;
 reset role;
 
-select is((select num from pgtap_holds.obs where label = 'g16'), 18, 'a hold from last month is not counted');
+select is((select num from pgtap_holds.obs where label = 'g16'), 18, 'a hold from the previous period is not counted');
 
 -- Out-of-range holds and spends are rejected.
 do $$ begin perform set_config('request.jwt.claims',

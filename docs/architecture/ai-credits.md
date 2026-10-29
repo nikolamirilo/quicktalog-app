@@ -1,7 +1,7 @@
 # AI credits
 
 What an AI turn costs, where the balance is enforced, and what happens at the
-month boundary. This is the page the pricing copy should be written from.
+period boundary. This is the page the pricing copy should be written from.
 
 Credits replaced a per-prompt row count: plan mode turned one user ask into up to
 nine HTTP requests, so "prompts per month" no longer described anything a user
@@ -35,7 +35,7 @@ the smallest useful action**.
 
 `ai_credits` on each tier in `@quicktalog/common` (`src/constants/pricing.ts`).
 
-| Plan | Credits / month | ≈ asks |
+| Plan | Credits / 30 days | ≈ asks |
 |---|---|---|
 | Starter (free) | 15 | ~5 |
 | Basic | 50 | ~17 |
@@ -45,13 +45,13 @@ the smallest useful action**.
 | German Silva (custom) | 50 | ~17 |
 
 "≈ asks" assumes an average ask of 3 credits. **No rollover and no signup bonus** -
-unused credits expire at the month boundary.
+unused credits expire at the period boundary.
 
 ## 3. Where the balance is enforced
 
 In the database, not in TypeScript, and as a **hard cap**: at every moment, confirmed
-credits plus live holds stay at or below `ai_credits` for the UTC month, however many
-requests run at once. `private.begin_ai_turn` is a definer function called through
+credits plus live holds stay at or below `ai_credits` for the account's current 30-day
+period, however many requests run at once. `private.begin_ai_turn` is a definer function called through
 `withUser`, so the caller's identity comes from the session, not the request body.
 
 ```
@@ -106,12 +106,30 @@ younger than 15 minutes, under its continuation budget. Anything that is not a p
 continuation falls through and is charged. A continuation refused for want of credits
 becomes the checklist's `credits` halt.
 
-## 4. The month boundary
+## 4. The period boundary
 
-`date_trunc('month', now(), 'UTC')`, computed in SQL on every call - in both
-`begin_ai_turn` and `private.my_usage`. It is never computed in Node: a warm
-serverless instance would keep using the month it started in, and balances would
-stop resetting.
+Allowances reset every 30 days from the day the account was created, not on the 1st:
+a signup on the 28th used to get three days of its first allowance. The window is
+`private.usage_period_start(users.created_at)` - whole 30-day steps from the signup
+day, in UTC days, so a period starts at 00:00 UTC and lines up with `analytics.day`.
+`private.usage_period_end` is when it resets.
+
+Computed in SQL on every call - in `begin_ai_turn`, `refund_ai_turn` and
+`private.my_usage`, which also returns the window so the dashboard can name the reset
+date from the source that enforces it. It is never computed in Node: a warm serverless
+instance would keep using the window it started in, and balances would stop resetting.
+
+Two mirrors of the same rule exist deliberately:
+
+| Where | Why |
+|---|---|
+| `private.usage_period_*` (`supabase/migrations/20261029120000_usage_period_from_signup.sql`) | the authority; every charge and every count |
+| `usagePeriod()` / `usagePeriodDays()` in `@quicktalog/common` | the traffic job in the Cloudflare Worker, which reads over REST and cannot call a `private.*` function |
+
+`USAGE_PERIOD_EPOCH` (2026-11-01, the month the change was applied) exists for the
+switch-over only: no period reaches back past it, so turning this on could not make an
+account's counted usage go up and take its catalogues offline. It is a literal in both
+places above and must be kept in step.
 
 ## 5. Free-plan guards
 
@@ -145,7 +163,8 @@ limit is not what bounds the cap (it lets requests through when Redis is down); 
 holds are.
 
 Not implemented, worth revisiting if abuse shows up: a disposable-email-domain
-blocklist, and a global monthly ceiling on free-tier spend with a kill switch.
+blocklist, and a global monthly ceiling on free-tier spend with a kill switch (that one
+is a cost ceiling on Quicktalog's own spend, so it stays on calendar months).
 
 ## 6. What the user sees
 
@@ -174,6 +193,6 @@ blocklist, and a global monthly ceiling on free-tier spend with a kill switch.
 | `held_until` | when the hold lapses if the request never releases it |
 | `metadata` | analysis only, never billing |
 
-Usage (the dashboard, `private.my_usage`) is `coalesce(sum(credits), 0)` over the UTC
-month where `refunded_at is null`. The balance `begin_ai_turn` judges by adds every live
-hold to that.
+Usage (the dashboard, `private.my_usage`) is `coalesce(sum(credits), 0)` over the
+account's current 30-day period where `refunded_at is null`. The balance
+`begin_ai_turn` judges by adds every live hold to that.

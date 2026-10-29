@@ -14,9 +14,9 @@ const meta = {
 	title: "AI credits",
 	inShort:
 		"Understand what an ask to Quick AI costs, how many you get, and when they come back.",
-	result: "You can tell how far your credits will go this month.",
+	result: "You can tell how far your credits will go this period.",
 	where: ["Builder", "Quick AI", "The ring in the header"],
-	keywords: ["credits", "ai credits", "limit", "cost", "monthly", "reset"],
+	keywords: ["credits", "ai credits", "limit", "cost", "30 days", "reset"],
 	synonyms: [
 		"tokens",
 		"quota",
@@ -53,10 +53,10 @@ function Body() {
 				</ManualText>
 			</ManualSection>
 
-			<ManualSection kind="opts" title="How many you get each month">
+			<ManualSection kind="opts" title="How many you get each period">
 				<ManualTable
 					caption="AI credits included with each plan"
-					columns={["Plan", "Credits a month"]}
+					columns={["Plan", "Credits per 30 days"]}
 					rows={[
 						["Starter", "15"],
 						["Basic", "50"],
@@ -67,9 +67,10 @@ function Body() {
 				/>
 				<Note kind="info" title="They do not roll over">
 					<p>
-						Credits reset at the start of each calendar month, counted in UTC.
-						Anything you have not used is gone at the turn of the month, and
-						there is no bonus for a new account beyond the monthly allowance.
+						Credits reset 30 days after the day you signed up, and every 30 days
+						after that, counted in UTC. Anything you have not used is gone when
+						the period turns over, and there is no bonus for a new account
+						beyond the one allowance.
 					</p>
 				</Note>
 			</ManualSection>
@@ -117,12 +118,12 @@ function Body() {
 							"As you send",
 							<>
 								A red line in the chat reads{" "}
-								<q>You have reached your monthly AI limit.</q>
+								<q>You have reached your AI credit limit for this period.</q>
 							</>,
 						],
 						[
 							"Part way through a long ask",
-							"Quick AI stops, tells you which tasks it finished, and reminds you that credits come back at the start of the month. The finished work stays in your draft.",
+							"Quick AI stops, tells you which tasks it finished, and reminds you that credits come back when your 30-day period turns over. The finished work stays in your draft.",
 						],
 						[
 							"When a page read cannot be paid for",
@@ -134,7 +135,7 @@ function Body() {
 					<p>
 						Everything ticked off before the stop is already in your draft.
 						Select <ButtonName>Accept</ButtonName> to keep it rather than
-						starting again next month.
+						starting again in your next period.
 					</p>
 				</Note>
 			</ManualSection>
@@ -167,17 +168,17 @@ function Body() {
 							text: "Need More AI Credits?",
 							cause:
 								"You tried to send an ask you cannot pay for, on a plan that includes some credits.",
-							fix: "Look at the comparison in the dialog, then either wait for the month to reset or move to a bigger plan.",
+							fix: "Look at the comparison in the dialog, then either wait for your period to reset or move to a bigger plan.",
 						},
 						{
 							text: "Running low - the assistant still works.",
-							cause: "You have used three quarters of this month's credits.",
+							cause: "You have used three quarters of this period's credits.",
 							fix: "Nothing to do. It is a heads up, not a block.",
 						},
 						{
-							text: "You are out until the month resets.",
-							cause: "Every credit for this month is spent.",
-							fix: "Wait for the start of next month, or move to a bigger plan.",
+							text: "You are out until your period resets.",
+							cause: "Every credit for this period is spent.",
+							fix: "Wait for your next period, or move to a bigger plan.",
 						},
 					]}
 				/>

@@ -24,7 +24,7 @@ const meta = {
 			text: "You have a catalogue open in the builder.",
 			href: "builder-basics",
 		},
-		{ text: "You have AI credits left this month.", href: "ai-credits" },
+		{ text: "You have AI credits left this period.", href: "ai-credits" },
 	],
 	keywords: [
 		"ai",
@@ -259,9 +259,9 @@ function Body() {
 				<Messages
 					messages={[
 						{
-							text: "You have reached your monthly AI limit.",
-							cause: "Your credits for this month are used up.",
-							fix: "Wait for the month to turn over, or move to a bigger plan.",
+							text: "You have reached your AI credit limit for this period.",
+							cause: "Your credits for this period are used up.",
+							fix: "Wait for your period to turn over, or move to a bigger plan.",
 						},
 						{
 							text: "Confirm your email address to use Quick AI.",
@@ -285,10 +285,10 @@ function Body() {
 							fix: "Nothing to do. Your catalogue is back as it was.",
 						},
 						{
-							text: "Stopped - you are out of AI credits for this month. Everything ticked above is already in your draft.",
+							text: "Stopped - you are out of AI credits for this period. Everything ticked above is already in your draft.",
 							cause:
 								"A long ask ran out of credits part way through its list of tasks.",
-							fix: "The finished tasks are yours to keep. Accept them, then come back next month or move to a bigger plan.",
+							fix: "The finished tasks are yours to keep. Accept them, then come back next period or move to a bigger plan.",
 						},
 					]}
 				/>

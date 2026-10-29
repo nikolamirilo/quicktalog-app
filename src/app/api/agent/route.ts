@@ -94,7 +94,7 @@ export async function POST(request: Request) {
 		);
 	}
 
-	// Ahead of the ledger, so a script cannot spend a month of credits in seconds.
+	// Ahead of the ledger, so a script cannot spend a whole allowance in seconds.
 	if (!(await aiRateLimitOk(me.userId))) {
 		return Response.json(
 			{ error: "Too many requests. Give it a moment.", code: "rate_limited" },

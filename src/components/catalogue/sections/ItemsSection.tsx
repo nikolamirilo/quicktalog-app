@@ -5,6 +5,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import BlockControls, {
 	BLOCK_CONTROLS_GROUP,
+	BLOCK_FRAME,
 } from "@/components/catalogue/cards/common/BlockControls";
 import Items from "./common/Items";
 import SectionHeader from "./common/SectionHeader";
@@ -103,7 +104,7 @@ const ItemsSection = ({
 				mode === "edit"
 					? showHeading
 						? BLOCK_CONTROLS_GROUP
-						: `${BLOCK_CONTROLS_GROUP} relative rounded-lg border-2 border-dashed border-product-border-strong p-2 sm:p-4 transition-colors hover:border-product-muted`
+						: `${BLOCK_CONTROLS_GROUP} relative ${BLOCK_FRAME} outline-product-border-strong hover:outline-product-muted`
 					: ""
 			}`}
 			id={code}

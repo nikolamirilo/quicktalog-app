@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ManualShell } from "@/components/manual/ManualShell";
 import { generateManualMetadata } from "@/constants/metadata";
+import { generateManualSchema } from "@/constants/schemas";
 import {
 	getManualPage,
 	getManualSubSlugs,
@@ -37,10 +38,17 @@ export default async function ManualPage({
 	if (!page) notFound();
 
 	const { meta, Body } = page;
+	const schema = generateManualSchema(meta, manualHref(slug));
 
 	return (
-		<ManualShell meta={meta}>
-			<Body />
-		</ManualShell>
+		<>
+			<script
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+				type="application/ld+json"
+			/>
+			<ManualShell meta={meta}>
+				<Body />
+			</ManualShell>
+		</>
 	);
 }

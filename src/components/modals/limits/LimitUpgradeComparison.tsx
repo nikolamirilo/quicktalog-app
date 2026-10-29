@@ -79,8 +79,8 @@ export const LimitUpgradeComparison = ({
 		</span>,
 		requiredPlan.features.ai_credits > 0 && (
 			<span key="ai">
-				<b>{formatLimit(requiredPlan.features.ai_credits)}</b> AI credits per
-				month
+				<b>{formatLimit(requiredPlan.features.ai_credits)}</b> AI credits every
+				30 days
 			</span>
 		),
 		currentPlan.features.branding === false &&
@@ -89,7 +89,7 @@ export const LimitUpgradeComparison = ({
 			),
 		<span key="traffic">
 			<b>{requiredPlan.features.traffic_limit.toLocaleString("en-US")}</b> page
-			views per month to reach more customers
+			views every 30 days to reach more customers
 		</span>,
 		requiredPlan.features.newsletter && (
 			<span key="newsletter">

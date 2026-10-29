@@ -66,8 +66,15 @@ function Body() {
 						["Catalogues", "1", "1", "6", "20", "50"],
 						["Sections per catalogue", "5", "8", "15", "30", "50"],
 						["Items per catalogue", "15", "30", "100", "200", "300"],
-						["Page views a month", "500", "2,000", "5,000", "15,000", "40,000"],
-						["AI credits a month", "15", "50", "150", "300", "600"],
+						[
+							"Page views per 30 days",
+							"500",
+							"2,000",
+							"5,000",
+							"15,000",
+							"40,000",
+						],
+						["AI credits per 30 days", "15", "50", "150", "300", "600"],
 					]}
 				/>
 				<Note kind="info" title="Nothing is unlimited">
@@ -120,7 +127,7 @@ function Body() {
 						],
 						[
 							<Term key="t" name="traffic limit" />,
-							"Your catalogues can be switched off until the month turns over. Your own visits and previews count towards it.",
+							"Your catalogues can be switched off until your 30-day period turns over. Your own visits and previews count towards it.",
 						],
 						[
 							<Term key="t" name="AI credits" />,

@@ -2,7 +2,7 @@ import { ArrowUp, ChevronDown, CornerDownLeft, ImagePlus } from "lucide-react";
 
 import { Screen, SpotMarker } from "@/components/manual/Screen";
 
-/** Starter's monthly allowance, and what this drawing has spent of it. */
+/** Starter's allowance for one period, and what this drawing has spent of it. */
 const LIMIT = 15;
 const USED = 6;
 
@@ -90,13 +90,13 @@ function CreditRing({
 export function CreditMeterScreen() {
 	return (
 		<Screen
-			caption="The Quick AI panel in the builder with the credit ring selected, showing the credits left this month and what a change costs."
+			caption="The Quick AI panel in the builder with the credit ring selected, showing the credits left this period and what a change costs."
 			height={700}
 			legend={[
 				"The credit ring sits in the Quick AI header. Select it to open the details",
-				"The arc fills clockwise from the top with the share of this month's credits already spent",
+				"The arc fills clockwise from the top with the share of this period's credits already spent",
 				"The big number is credits remaining, not credits used",
-				"The exact count against your plan's monthly allowance",
+				"The exact count against your plan's allowance for the period",
 				"At 75% used an amber note appears here, and a red one once you run out",
 				"What a turn costs: a question is free, a change costs 2 plus one per extra task",
 			]}
@@ -231,7 +231,7 @@ export function CreditMeterScreen() {
 						<p className="relative text-xs leading-relaxed text-product-foreground-accent">
 							<SpotMarker className="-bottom-2 -left-2 top-auto" n={6} />A
 							question is free. A change costs 2 plus one per extra task. Resets
-							at the start of each month.
+							every 30 days.
 						</p>
 					</div>
 				</div>

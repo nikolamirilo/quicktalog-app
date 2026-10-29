@@ -40,29 +40,31 @@ function StatCard({
 	onInfo: () => void;
 }) {
 	return (
-		<article className="relative flex min-w-0 flex-col gap-3 rounded-product-card border border-product-border bg-product-card p-4 shadow-product md:p-5">
-			<div className="flex items-start gap-1.5">
-				<h3 className="min-w-0 flex-1 font-product-body text-[13.5px] font-semibold leading-snug text-product-foreground-accent">
+		<article className="flex min-w-0 flex-col gap-3 rounded-product-card border border-product-border bg-product-card p-3.5 shadow-product sm:p-4 md:p-5">
+			<div className="flex items-center gap-1.5 sm:gap-2">
+				{/* Two cards per row on a phone: every pixel here is width the name needs. */}
+				<IconTile
+					className="h-8 w-8 rounded-[10px] sm:h-9 sm:w-9 sm:rounded-[11px]"
+					size="sm"
+				>
+					{icon}
+				</IconTile>
+				<h3 className="min-w-0 flex-1 pr-1 font-product-body text-[12.5px] font-semibold leading-snug text-product-foreground-accent sm:text-[13.5px]">
 					{label}
 				</h3>
 				<button
 					aria-label={`About ${label}`}
-					className="-mr-1.5 -mt-[5px] grid h-7 w-7 flex-none place-items-center rounded-full text-product-muted transition-colors hover:bg-product-background-hero hover:text-product-foreground"
+					className="-mr-1 grid h-6 w-6 flex-none place-items-center rounded-full text-product-muted transition-colors hover:bg-product-background-hero hover:text-product-foreground sm:-mr-1.5 sm:h-7 sm:w-7"
 					onClick={onInfo}
 					type="button"
 				>
-					<Info aria-hidden="true" className="size-[15px]" />
+					<Info aria-hidden="true" className="size-[14px] sm:size-[15px]" />
 				</button>
 			</div>
-			<p className="font-product-heading text-[22px] font-extrabold leading-none tracking-[-0.03em] tabular-nums [overflow-wrap:anywhere] min-[381px]:pr-9 sm:text-[28px] md:text-[32px]">
+			{/* Bottom-aligned, so a name that wraps to two lines leaves the numbers in a row level with each other. */}
+			<p className="mt-auto font-product-heading text-[26px] font-extrabold leading-none tracking-[-0.03em] tabular-nums [overflow-wrap:anywhere] sm:text-[32px] md:text-[38px]">
 				{Number(value ?? 0).toLocaleString("en-US")}
 			</p>
-			<IconTile
-				className="absolute bottom-3.5 right-3.5 hidden min-[381px]:grid"
-				size="sm"
-			>
-				{icon}
-			</IconTile>
 		</article>
 	);
 }

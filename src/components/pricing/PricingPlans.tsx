@@ -133,7 +133,7 @@ export function PricingPlans() {
 			>
 				<Container>
 					<SectionHeading
-						description="All limits apply per account. Page views are counted across all your catalogues each month."
+						description="All limits apply per account. Page views are counted across all your catalogues, and reset every 30 days from the day you signed up."
 						eyebrow="Compare plans"
 						title={
 							<span id="pricing-compare-heading">

@@ -57,7 +57,7 @@ function Body() {
 						],
 						[
 							<TabName key="t">Usage</TabName>,
-							"How much of your plan you have used this month, including traffic and AI credits.",
+							"How much of your plan you have used this 30-day period, including traffic and AI credits.",
 						],
 						[
 							<TabName key="t">Settings</TabName>,
@@ -232,8 +232,8 @@ function Body() {
 						{
 							text: "You've reached your traffic limit",
 							cause:
-								"Your catalogues were opened more times this month than your plan allows.",
-							fix: "Wait for the next month to start, or move to a bigger plan to switch them back on.",
+								"Your catalogues were opened more times this period than your plan allows.",
+							fix: "Wait for your next 30-day period to start, or move to a bigger plan to switch them back on.",
 						},
 					]}
 				/>

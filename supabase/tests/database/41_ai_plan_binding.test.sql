@@ -77,7 +77,7 @@ values ('pgtap-plan-c', '33333333-3333-4333-8333-333333333333', 'draft', '{}'::t
        ('pgtap-plan-d', '44444444-4444-4444-8444-444444444444', 'draft', '{}'::text[]),
        ('pgtap-plan-e', '55555555-5555-4555-8555-555555555555', 'draft', '{}'::text[]);
 
--- Owner E already has two charged turns this month; the limit tests read them back out of the DB.
+-- Owner E already has two charged turns in its current period; the limit tests read them back out of the DB.
 insert into public.ai_credits (user_id, catalogue_id, turn_id)
 values ('55555555-5555-4555-8555-555555555555', (select id from public.catalogues where name = 'pgtap-plan-e'),
         '5e000000-0000-4000-8000-000000000001'::uuid),
@@ -354,7 +354,7 @@ select is(
   'M06:67: free continuations stop at the stored plan_budget (3)');
 
 -- ===========================================================================
--- 5. The monthly limit is counted in the database
+-- 5. The period limit is counted in the database
 -- ===========================================================================
 -- p_limit comes from `tiers` via users.plan_id read in the same transaction (M05 5.5 header);
 -- the usage it is compared against is counted from public.ai_credits, not supplied by the caller.
@@ -397,7 +397,7 @@ select ok(
 select is(
   (select outcome from pgtap_fixtures.obs where label = 'e_after_refund'),
   'charged',
-  'M06:78-79: refunded rows drop out of the monthly count, so the same limit now allows a charge');
+  'M06:78-79: refunded rows drop out of the period count, so the same limit now allows a charge');
 
 select is(
   (select code from pgtap_fixtures.obs where label = 'e_negative_limit'),

@@ -33,8 +33,15 @@ function Body() {
 						["Catalogues", "1", "1", "6", "20", "50"],
 						["Sections per catalogue", "5", "8", "15", "30", "50"],
 						["Items per catalogue", "15", "30", "100", "200", "300"],
-						["Page views a month", "500", "2,000", "5,000", "15,000", "40,000"],
-						["AI credits a month", "15", "50", "150", "300", "600"],
+						[
+							"Page views per 30 days",
+							"500",
+							"2,000",
+							"5,000",
+							"15,000",
+							"40,000",
+						],
+						["AI credits per 30 days", "15", "50", "150", "300", "600"],
 					]}
 				/>
 				<Rules>
@@ -44,8 +51,9 @@ function Body() {
 					</Rule>
 					<Rule>Items count across the whole catalogue, not per section.</Rule>
 					<Rule>
-						Page views are counted across all your catalogues together, by UTC
-						month. Your own visits and your previews both count.
+						Page views are counted across all your catalogues together, over the
+						30 days since your last reset, in UTC. Your own visits and your
+						previews both count.
 					</Rule>
 				</Rules>
 			</ManualSection>

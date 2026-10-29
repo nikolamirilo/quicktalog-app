@@ -23,10 +23,10 @@ const groups: MessageGroup[] = [
 				fix: "Add at least one section.",
 			},
 			{
-				text: "This month's traffic limit for your plan is reached",
+				text: "Your plan's page view limit for this period is reached",
 				cause:
-					"Your catalogues were opened more times this month than your plan allows.",
-				fix: "Wait for the next month, or move to a bigger plan.",
+					"Your catalogues were opened more times this period than your plan allows.",
+				fix: "Wait for your next 30-day period, or move to a bigger plan.",
 			},
 			{
 				text: "Catalogue Not Found",
@@ -116,9 +116,9 @@ const groups: MessageGroup[] = [
 		area: "Quick AI",
 		messages: [
 			{
-				text: "You have reached your monthly AI limit.",
-				cause: "This month's credits are used up.",
-				fix: "Wait for the month to turn over, or move to a bigger plan.",
+				text: "You have reached your AI credit limit for this period.",
+				cause: "This period's credits are used up.",
+				fix: "Wait for your period to turn over, or move to a bigger plan.",
 			},
 			{
 				text: "Confirm your email address to use Quick AI.",
@@ -132,7 +132,7 @@ const groups: MessageGroup[] = [
 				fix: "Select Save in the rail. The changes are still in your draft.",
 			},
 			{
-				text: "Stopped - you are out of AI credits for this month. Everything ticked above is already in your draft.",
+				text: "Stopped - you are out of AI credits for this period. Everything ticked above is already in your draft.",
 				cause: "A long ask ran out of credits part way through.",
 				fix: "Accept what it finished rather than starting again later.",
 			},

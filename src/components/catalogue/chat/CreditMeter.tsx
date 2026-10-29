@@ -24,7 +24,7 @@ const STATUS_NOTE_CLASS: Record<GaugeStatus, string> = {
 const STATUS_NOTE: Record<GaugeStatus, string> = {
 	normal: "",
 	warning: "Running low - the assistant still works.",
-	critical: "You are out until the month resets.",
+	critical: "You are out until your period resets.",
 };
 
 function statusFor(percent: number): GaugeStatus {
@@ -157,7 +157,7 @@ const CreditMeter = ({ used, limit }: { used: number; limit: number }) => {
 
 					<p className="text-xs leading-relaxed text-product-foreground-accent">
 						A question is free. A change costs {CREDITS.agentBase} plus one per
-						extra task. Resets at the start of each month.
+						extra task. Resets every 30 days.
 					</p>
 				</div>
 			</PopoverContent>

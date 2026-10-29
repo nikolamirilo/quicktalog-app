@@ -18,9 +18,9 @@ const Subscription = lazy(() =>
 		default: m.Subscription,
 	})),
 );
-const MonthlyUsage = lazy(() =>
-	import("@/components/dashboard/MonthlyUsage").then((m) => ({
-		default: m.MonthlyUsage,
+const UsageOverview = lazy(() =>
+	import("@/components/dashboard/UsageOverview").then((m) => ({
+		default: m.UsageOverview,
 	})),
 );
 const Settings = lazy(() =>
@@ -139,7 +139,7 @@ export function Dashboard({
 						<Subscription currentPlan={currentPlan} />
 					)}
 					{activeTab === "usage" && (
-						<MonthlyUsage currentPlan={currentPlan} usage={usage} />
+						<UsageOverview currentPlan={currentPlan} usage={usage} />
 					)}
 					{activeTab === "settings" && <Settings />}
 					{activeTab === "support" && <Support />}

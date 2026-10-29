@@ -9,7 +9,7 @@ export type RequestBudget = {
 
 /** The tool error a refused billable step returns. The model must stop and say so. */
 export const OUT_OF_CREDITS =
-	"The user is out of AI credits for this request. Make no more changes. Tell them which tasks are done, which are left, and that credits reset on the 1st of the month or come with a bigger plan.";
+	"The user is out of AI credits for this request. Make no more changes. Tell them which tasks are done, which are left, and that credits reset 30 days after their account was created, and every 30 days after that, or come with a bigger plan.";
 
 /** No ledger behind it: tests and code paths that never meter. */
 export const UNMETERED: RequestBudget = {

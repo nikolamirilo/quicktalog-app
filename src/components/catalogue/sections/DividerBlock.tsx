@@ -4,6 +4,8 @@ import type { DividerBlock } from "@quicktalog/common";
 import { useState } from "react";
 import BlockControls, {
 	BLOCK_CONTROLS_GROUP,
+	BLOCK_FRAME,
+	BLOCK_FRAME_IDLE,
 } from "@/components/catalogue/cards/common/BlockControls";
 import DividerInput from "@/components/catalogue/inputs/DividerInput";
 
@@ -54,7 +56,7 @@ const DividerBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className={`${BLOCK_CONTROLS_GROUP} relative rounded-lg border-2 border-dashed transition-colors ${isEditing ? "border-product-primary bg-product-card p-4 font-product-body text-sm text-product-foreground" : "border-transparent p-2 hover:border-product-border-strong [@media(hover:none)]:border-product-border"}`}
+			className={`${BLOCK_CONTROLS_GROUP} relative ${BLOCK_FRAME} ${isEditing ? "outline-product-primary bg-product-card p-4 font-product-body text-sm text-product-foreground" : BLOCK_FRAME_IDLE}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
 			<BlockControls

@@ -29,10 +29,11 @@ export type TurnDenial = {
 
 /**
  * Opens an AI turn: proves the caller owns the catalogue, charges the turn
- * against their monthly allowance and returns the limits the agent must work
- * within. All of it happens in the database, in one transaction, **before** any
- * model call, so a request killed mid-flight is still accounted for and two
- * parallel requests cannot both pass the same allowance check.
+ * against the allowance of their current 30-day period and returns the limits
+ * the agent must work within. All of it happens in the database, in one
+ * transaction, **before** any model call, so a request killed mid-flight is
+ * still accounted for and two parallel requests cannot both pass the same
+ * allowance check.
  *
  * Ownership is never taken from the request: the catalogue payload comes from
  * the browser so unsaved builder edits are in context, and that payload cannot
@@ -68,7 +69,7 @@ export async function openAiTurn(
 	if (start.turn.outcome === "limit") {
 		return {
 			ok: false,
-			error: "You have reached your monthly AI limit.",
+			error: "You have reached your AI credit limit for this period.",
 			code: "limit",
 		};
 	}

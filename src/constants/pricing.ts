@@ -66,14 +66,14 @@ export const planLimitRows = (f: Features): PlanLimitRow[] => [
 		value: f.items_per_catalogue,
 	},
 	{
-		label: "Page views / month",
-		unit: "page views / month",
+		label: "Page views / 30 days",
+		unit: "page views / 30 days",
 		type: "traffic-limit",
 		value: f.traffic_limit,
 	},
 	{
-		label: "AI credits / month",
-		unit: "AI credits / month",
+		label: "AI credits / 30 days",
+		unit: "AI credits / 30 days",
 		type: "ai-catalogue-generation",
 		value: f.ai_credits,
 	},
@@ -165,7 +165,7 @@ const explanations: Record<string, string> = {
 	analytics:
 		"Track visitor engagement on your catalogs. Basic analytics show page views and visitor counts. Advanced analytics provide detailed insights on popular services and visitor behavior patterns.",
 	"traffic-limit":
-		"Monthly page view allowance across all your catalogs. This counts every time someone visits your catalog pages. Higher limits accommodate more customer traffic.",
+		"Page view allowance across all your catalogs for one 30-day period, counted from the day you signed up. This counts every time someone visits your catalog pages. Higher limits accommodate more customer traffic.",
 	custom_features:
 		"Branding control for your catalogs. Basic includes themes and colors. Moderate adds logo upload. Advanced provides full branding with legal information, contact details, and action buttons.",
 	"ocr-ai-import":
@@ -228,7 +228,7 @@ export const comparisonGroups: ComparisonGroup[] = [
 				value: (tier) => limit(tier.features.items_per_catalogue),
 			},
 			{
-				label: "Page views per month",
+				label: "Page views per 30 days",
 				value: (tier) => tier.features.traffic_limit.toLocaleString("en-US"),
 			},
 		],
@@ -286,7 +286,7 @@ export const comparisonGroups: ComparisonGroup[] = [
 		title: "Quick AI",
 		rows: [
 			{
-				label: "AI credits per month",
+				label: "AI credits per 30 days",
 				hint: "Quick AI in the builder and the description writer",
 				value: (tier) => tier.features.ai_credits,
 			},

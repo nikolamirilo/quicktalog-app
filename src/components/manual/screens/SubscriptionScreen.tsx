@@ -37,8 +37,8 @@ const limits: [string, string][] = [
 	["Catalogues", "1"],
 	["Sections per catalogue", "5"],
 	["Items per catalogue", "15"],
-	["Page views / month", "500"],
-	["AI credits / month", "15"],
+	["Page views / 30 days", "500"],
+	["AI credits / 30 days", "15"],
 ];
 
 type FeatureRow = { included: boolean; label: string; value?: string };

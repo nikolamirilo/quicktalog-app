@@ -105,7 +105,7 @@ flowchart TD
     end
 
     subgraph APPLY["BROWSER - applying the batch"]
-        E1["refreshUserData<br/>re-count monthly usage"]
+        E1["refreshUserData<br/>re-count period usage"]
         E2{"operations.length > 0?"}
         E3["context.applyAiOperations<br/>with the limits from the<br/>message metadata"]
         E4["applyCatalogueOperations<br/>non-mutating, id-addressed<br/>lib/catalogue/operations.ts"]
@@ -374,7 +374,7 @@ it is why the "never repeat an operation, check the snapshot first" rule exists.
 | Items per `add_section` / `add_items` | 40 | zod |
 | `reply` length | 1200 chars | zod |
 | Unsplash lookups per turn | 24, deduped | `MAX_IMAGE_LOOKUPS` |
-| Monthly AI credits | `plan.features.ai_credits` | decided in the database; see [ai-credits.md](./ai-credits.md) |
+| AI credits per 30 days | `plan.features.ai_credits` | decided in the database; see [ai-credits.md](./ai-credits.md) |
 | Sections per catalogue | `plan.features.sections_per_catalogue` | applied client-side; **`text` blocks are exempt** |
 | Items per catalogue | `plan.features.items_per_catalogue` | applied client-side |
 | Model temperature | 0.3 | `ai.ts` |
@@ -407,7 +407,7 @@ flowchart TD
     S2 -->|"manual Save"| S5
     S2 -->|"manual Publish"| S4
     S4 --> S5
-    S6 -->|"COUNT for this month"| S3
+    S6 -->|"COUNT for this period"| S3
 
     N1["Lost on refresh.<br/>Clear conversation wipes it<br/>but does NOT undo edits"] -.-> S1
     N2["Lost on refresh<br/>and on Builder unmount"] -.-> S2
@@ -451,7 +451,7 @@ highest ratio of user trust to lines of code.
 `startOfMonth` and `endOfMonth` were module-level constants computed once at import,
 so in a long-lived server process they never rolled over and they mixed local-time
 boundaries with a UTC `timestamptz` column. Nothing read them by the time the repo
-cleanup ran, and they were deleted. Any future month window must be computed per
+cleanup ran, and they were deleted. Any future usage window must be computed per
 call, in UTC.
 
 **H3 - Don't charge for turns that changed nothing.** *(server, `meter`)*
@@ -493,7 +493,7 @@ The OpenAI client is created with no `timeout` and no `maxRetries` override. A h
 DeepSeek request currently hangs the whole turn with no ceiling.
 
 **H10 - Rate-limit per user per minute.** *(server, before `authorize`)*
-The monthly count is the only throttle. `@upstash/redis` is already a dependency;
+The period count is the only throttle. `@upstash/redis` is already a dependency;
 adding `@upstash/ratelimit` in front of `chatEditCatalogue` is a small change.
 
 **H11 - Cache Unsplash lookups.** *(pipeline)*
@@ -584,7 +584,7 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 | `src/context/CatalogueContext.tsx` | `applyAiOperations` (requires the server's limits), `getCatalogue` (what a plan continuation sends), holds the unsaved draft. Plan limits: see [builder.md](builder.md#plan-limits) |
 | `src/utils/deepseek.ts` | DeepSeek client, JSON mode, `DeepseekResponseError` |
 | `src/types/ai.ts` | `CatalogueOperation` union and result types |
-| `lib/users/fetchUserData.ts` | Plan + monthly usage counts |
+| `lib/users/fetchUserData.ts` | Plan + period usage counts |
 | `tests/unit/lib/ai/catalogueEditor.test.ts` | Snapshot, index→id, image resolution |
 | `tests/unit/lib/catalogue/operations.test.ts` | Apply semantics and limit skips |
 

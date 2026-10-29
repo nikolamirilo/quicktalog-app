@@ -191,8 +191,8 @@ function Body() {
 					</Rule>
 					<Rule>
 						<PlaceName>Activate</PlaceName> is greyed out with the tooltip{" "}
-						<q>Traffic limit reached</q> when you have used up this month&apos;s
-						page views.
+						<q>Traffic limit reached</q> when you have used up this
+						period&apos;s page views.
 					</Rule>
 					<Rule>
 						At your catalogue limit, <PlaceName>Duplicate</PlaceName> opens the

@@ -77,6 +77,6 @@ describe("CreditMeter", () => {
 		await open();
 		expect(document.body.textContent).toContain("16 of 15 used");
 		expect(document.body.textContent).toContain("1 over");
-		expect(document.body.textContent).toMatch(/out until the month resets/i);
+		expect(document.body.textContent).toMatch(/out until your period resets/i);
 	});
 });

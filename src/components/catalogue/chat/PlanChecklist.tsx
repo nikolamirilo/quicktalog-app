@@ -17,7 +17,7 @@ const HALT_NOTICES: Record<PlanHalt, string> = {
 	failed:
 		"Stopped after an error. Everything ticked above is already in your draft.",
 	credits:
-		"Stopped - you are out of AI credits for this month. Everything ticked above is already in your draft.",
+		"Stopped - you are out of AI credits for this period. Everything ticked above is already in your draft.",
 };
 
 const Marker = ({
