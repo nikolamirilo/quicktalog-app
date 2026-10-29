@@ -7,12 +7,12 @@ Settled with the owner on 2026-10-28, before research started.
 | Audience | People running the business who use Quicktalog. Not developers. |
 | Product name | Quicktalog |
 | Coverage | How to use Quicktalog: everything a signed-in user can see and do. |
-| Delivery | Next.js route `/docs/new`, real React components and a content registry. Not a generated HTML file. |
-| Shell | Site `Navbar` on top, then a docs frame (left module sidebar, search, breadcrumb, "On this page"). No marketing `Footer`. Route lives outside `(with-footer)`. |
+| Delivery | Next.js route `/docs`, real React components and a content registry. Not a generated HTML file. Built at `/docs/new` first, moved onto `/docs` on 2026-10-29. |
+| Shell | Site `Navbar` on top, then a docs frame (left module sidebar, search, breadcrumb, "On this page"). No marketing `Footer`. Route lives outside `(with-footer)` - restored 2026-10-29, after the move onto `/docs` had put it back inside. |
 | Intent | The next version of `/docs`. Generic, reusable component and content names so `/docs` can be switched over later. |
 | Feature flags | None exist in the codebase (no flag client, no env toggles). Nothing to decide. |
 | Deprecated, hidden, internal | Left out. |
-| Existing `/docs` | Untouched. `/docs/new` is a static segment, so it wins over `/docs/[slug]` without a route conflict. |
+| Existing `/docs` | Replaced on 2026-10-29: the manual took over `/docs`, and the old pages, components (`components/docs/`), content (`content/docs/`) and data layer (`lib/content/docs.ts`) were deleted. The Help Center and the sitemap now read the manual's registry. |
 
 ## Facts that apply everywhere
 

@@ -1,5 +1,4 @@
 import type { ArticleMeta } from "@/content/articles/_types";
-import type { DocMeta } from "@/content/docs/_types";
 import type { ManualPageMeta } from "@/content/manual/_types";
 import { KEYWORDS } from "@/constants";
 import { Metadata } from "next";
@@ -138,39 +137,6 @@ export function generatePageMetadata(
 			description: pageData.description,
 			creator: siteMetadata.creator,
 			site: pageData.url,
-		},
-	};
-}
-
-export function generateDocMetadata(meta: DocMeta): Metadata {
-	const url = `https://www.quicktalog.app/docs/${meta.slug}`;
-	const title = `${meta.title} | Quicktalog Docs`;
-	return {
-		title,
-		description: meta.description,
-		generator: "Quicktalog",
-		applicationName: "Quicktalog",
-		keywords: [...siteMetadata.keywords, ...meta.keywords],
-		authors: siteMetadata.authors,
-		creator: siteMetadata.creator,
-		publisher: siteMetadata.publisher,
-		metadataBase: siteMetadata.metadataBase,
-		alternates: {
-			canonical: url,
-		},
-		openGraph: {
-			...siteMetadata.openGraph,
-			type: "article",
-			url,
-			title,
-			description: meta.description,
-		},
-		twitter: {
-			...siteMetadata.twitter,
-			title,
-			description: meta.description,
-			creator: siteMetadata.creator,
-			site: url,
 		},
 	};
 }

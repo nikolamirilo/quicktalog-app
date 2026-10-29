@@ -1,10 +1,10 @@
 import type {
-    ManualGroup,
-    ManualPage,
-    ManualPageMeta,
+	ManualGroup,
+	ManualPage,
+	ManualPageMeta,
 } from "@/content/manual/_types";
 import { manualGroups } from "@/content/manual/groups";
-import { manualPages } from "@/content/manual/registry";
+import { manualPages, manualPopularSlugs } from "@/content/manual/registry";
 
 /** Where the manual lives. The first page is served at this path itself. */
 export const MANUAL_BASE = "/docs";
@@ -27,6 +27,12 @@ export const getManualSubSlugs = (): string[] =>
 
 export const getManualPage = (slug: string): ManualPage | undefined =>
 	manualPages.find((page) => page.meta.slug === slug);
+
+/** The pages worth offering first, for the search box and the Help Center. */
+export const getManualPopularPages = (): ManualPage[] =>
+	manualPopularSlugs
+		.map(getManualPage)
+		.filter((page): page is ManualPage => page !== undefined);
 
 export interface ManualNavGroup {
 	group: ManualGroup;

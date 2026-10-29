@@ -1,7 +1,7 @@
 import { Catalogue } from "@quicktalog/common";
 import { MetadataRoute } from "next";
 import { getAllArticles } from "@/lib/content/articles";
-import { getAllDocSlugs } from "@/lib/content/docs";
+import { getManualSubSlugs } from "@/lib/content/manual";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
@@ -108,7 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		}),
 	);
 
-	const docUrls: MetadataRoute.Sitemap = getAllDocSlugs().map((slug) => ({
+	const docUrls: MetadataRoute.Sitemap = getManualSubSlugs().map((slug) => ({
 		url: `${baseUrl}/docs/${slug}`,
 		lastModified: new Date(),
 		changeFrequency: "monthly",

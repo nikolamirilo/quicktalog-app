@@ -15,10 +15,10 @@ import { cn } from "@/lib/ui/cn";
 
 /**
  * The Header tab of the builder editor panel, drawn at the panel's real size:
- * a 440px column with a white header and tab strip over a #FAF8F3 body of
- * white cards. The kit's EditorPanel, PanelSection, Toggle, Input and SliderRow
- * are drawn at older sizes, so the parts below are rebuilt here from the real
- * components (see the note in the task report).
+ * a 440px column with a white header and tab strip over a sand-coloured body
+ * of white cards, unrolled so nothing is cut off. The shared EditorPanel,
+ * PanelSection, Toggle, Input and SliderRow are drawn at older, smaller sizes,
+ * so the parts below are rebuilt here at the sizes the real panel uses.
  */
 
 const tabs = [
@@ -302,47 +302,53 @@ export function ChromeScreen() {
 							</div>
 						</PanelCard>
 
-						{/* Cards 3 to 5 share one wrapper: all three dim together when the
-						    master switch above is off. */}
+						{/* In the product, Logo, Interaction and Icons sit in one wrapper
+						    and dim together when the master switch above is off. */}
 						<PanelCard info title="Logo">
-							<div className="relative space-y-4">
+							<div className="relative">
 								<SpotMarker className="-bottom-2 -left-2 top-auto" n={4} />
-								<SliderRow fill={100} label="Logo size" valueText="100%" />
-								<SliderRow
-									fill={0}
-									label="Corner rounding"
-									valueText="Square"
-								/>
+								<div className="space-y-4">
+									<SliderRow fill={100} label="Logo size" valueText="100%" />
+									<SliderRow
+										fill={0}
+										label="Corner rounding"
+										valueText="Square"
+									/>
+								</div>
 							</div>
 						</PanelCard>
 
 						<PanelCard info title="Interaction">
 							<SwitchRow info label="Header action link" on />
-							<div className="relative space-y-4 border-t border-product-border pt-4">
+							<div className="relative">
 								<SpotMarker className="-bottom-2 -left-2 top-auto" n={5} />
-								<TextField label="Button label" value="Book a table" />
-								<TextField
-									label="Button link"
-									value="https://brightsidecafe.co/book"
-								/>
+								<div className="space-y-4 border-t border-product-border pt-4">
+									<TextField label="Button label" value="Book a table" />
+									<TextField
+										label="Button link"
+										value="https://brightsidecafe.co/book"
+									/>
+								</div>
 							</div>
 						</PanelCard>
 
 						<PanelCard info title="Icons">
-							<div className="relative -my-2 divide-y divide-product-border">
+							<div className="relative -my-2">
 								<SpotMarker className="-right-2 -top-2 left-auto" n={6} />
-								<SwitchRow
-									className="py-2"
-									hint="Show a phone icon in the header."
-									label="Phone number icon"
-									on
-								/>
-								<SwitchRow
-									className="py-2"
-									hint="Show an email icon in the header."
-									label="Email icon"
-									on
-								/>
+								<div className="divide-y divide-product-border">
+									<SwitchRow
+										className="py-2"
+										hint="Show a phone icon in the header."
+										label="Phone number icon"
+										on
+									/>
+									<SwitchRow
+										className="py-2"
+										hint="Show an email icon in the header."
+										label="Email icon"
+										on
+									/>
+								</div>
 							</div>
 						</PanelCard>
 					</div>

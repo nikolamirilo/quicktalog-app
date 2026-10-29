@@ -10,7 +10,7 @@ import Link from "next/link";
 import { IconTile } from "@/components/general/IconTile";
 import { Section } from "@/components/general/Section";
 import { footerDetails } from "@/constants/details";
-import { getAllDocs } from "@/lib/content/docs";
+import { getManualPages } from "@/lib/content/manual";
 
 type Card = {
 	icon: LucideIcon;
@@ -42,7 +42,7 @@ const countWord = (count: number) => numberWords[count] ?? String(count);
 /** "Still need help?" cards: contact form, docs, and email. */
 export function SupportCards() {
 	const email = footerDetails.email;
-	const lessons = getAllDocs().length;
+	const pages = getManualPages().length;
 	const cards: Card[] = [
 		{
 			icon: MessageSquare,
@@ -54,7 +54,7 @@ export function SupportCards() {
 		{
 			icon: BookOpen,
 			title: "Read the docs",
-			body: `${countWord(lessons)} short ${lessons === 1 ? "lesson" : "lessons"}, from a new account to a live catalogue you can share.`,
+			body: `${countWord(pages)} short ${pages === 1 ? "page" : "pages"}, from a new account to a live catalogue you can share.`,
 			action: "Browse the docs",
 			href: "/docs",
 		},
