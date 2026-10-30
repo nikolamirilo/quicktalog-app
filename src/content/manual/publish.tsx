@@ -264,7 +264,7 @@ function Body() {
 							text: "Your plan's page view limit for this period is reached",
 							cause:
 								"Your catalogues have been opened more times this period than your plan allows.",
-							fix: "Wait for your next 30-day period, or move to a bigger plan to switch them back on.",
+							fix: "They go back online by themselves when your next 30-day period starts. A bigger plan brings them back right away.",
 						},
 						{
 							text: "Could not retrieve catalogue data. Please try again.",

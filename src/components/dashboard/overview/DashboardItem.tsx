@@ -9,6 +9,7 @@ import { ItemDropdownMenu } from "@/components/dashboard/overview/ItemDropdownMe
 import { StatusBadge } from "@/components/dashboard/overview/StatusBadge";
 import { parseTimestamp } from "@/components/dashboard/overview/timestamps";
 import { Button } from "@/components/ui/button";
+import { formatIsoDay } from "@/lib/format/date";
 import { htmlToText } from "@/lib/html/to-text";
 
 type DashboardItemProps = {
@@ -146,6 +147,14 @@ export function DashboardItem({
 					</dt>
 					<dd>{formatDateTime(catalogue.createdAt)}</dd>
 				</div>
+				{catalogue.status === "inactive" && catalogue.trafficOffAt && (
+					<div className="flex gap-1.5">
+						<dt className="font-semibold text-product-foreground-accent">
+							Back online:
+						</dt>
+						<dd>{formatIsoDay(usage.period.end)}</dd>
+					</div>
+				)}
 			</dl>
 
 			<div className="mt-auto flex flex-wrap gap-2 pt-1 [&>*]:flex-[1_1_auto]">

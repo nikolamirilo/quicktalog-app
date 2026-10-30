@@ -127,7 +127,7 @@ function Body() {
 						],
 						[
 							<Term key="t" name="traffic limit" />,
-							"Your catalogues can be switched off until your 30-day period turns over. Your own visits and previews count towards it.",
+							"Your catalogues are switched off until your 30-day period turns over, then go back online by themselves. Your own visits and previews count towards it.",
 						],
 						[
 							<Term key="t" name="AI credits" />,

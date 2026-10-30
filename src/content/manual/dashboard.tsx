@@ -233,7 +233,7 @@ function Body() {
 							text: "You've reached your traffic limit",
 							cause:
 								"Your catalogues were opened more times this period than your plan allows.",
-							fix: "Wait for your next 30-day period to start, or move to a bigger plan to switch them back on.",
+							fix: "They go back online by themselves when your next 30-day period starts - the card says on which day. A bigger plan brings them back right away.",
 						},
 					]}
 				/>

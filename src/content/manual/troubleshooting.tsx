@@ -26,7 +26,7 @@ const groups: MessageGroup[] = [
 				text: "Your plan's page view limit for this period is reached",
 				cause:
 					"Your catalogues were opened more times this period than your plan allows.",
-				fix: "Wait for your next 30-day period, or move to a bigger plan.",
+				fix: "Your catalogues go back online by themselves when your next 30-day period starts. A bigger plan brings them back right away.",
 			},
 			{
 				text: "Catalogue Not Found",
