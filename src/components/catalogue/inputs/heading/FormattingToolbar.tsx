@@ -45,9 +45,10 @@ const FormattingToolbar = ({
 	onToggleItalic,
 	onSizeChange,
 }: FormattingToolbarProps) => {
+	// Floats above the heading box, so appearing never pushes the heading down.
 	return (
 		<div
-			className={`flex w-full justify-center font-product-body text-sm font-normal not-italic leading-none tracking-normal transition-opacity duration-200 ${showToolbar ? "mb-2 opacity-100" : "pointer-events-none mb-0 h-0 overflow-hidden opacity-0"}`}
+			className={`absolute bottom-full left-0 z-[60] mb-2 flex w-full justify-center font-product-body text-sm font-normal not-italic leading-none tracking-normal transition-opacity duration-200 ${showToolbar ? "opacity-100" : "pointer-events-none opacity-0"}`}
 		>
 			<div
 				aria-label="Heading formatting"

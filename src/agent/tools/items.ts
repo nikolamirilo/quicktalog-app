@@ -1,10 +1,15 @@
-import { resolveImage, resolveItems } from "@/agent/images";
 import {
 	itemIndexSchema,
 	itemInputSchema,
 	MAX_ITEMS_PER_CALL,
 	sectionIndexSchema,
-} from "@/agent/schemas";
+} from "@/agent/core/schemas";
+import {
+	photoTrouble,
+	resolveImage,
+	resolveImages,
+	resolveItems,
+} from "@/agent/plugins/images";
 import type { ToolContext } from "@/agent/tools/types";
 import type { AgentToolResult } from "@/types/ai";
 import { tool } from "ai";
@@ -29,15 +34,84 @@ export const itemTools = ({ session, images, fail }: ToolContext) => ({
 				items: resolved.items,
 			});
 
-			return result.ok && resolved.misses.length > 0
-				? { ...result, imageMisses: resolved.misses }
+			return result.ok
+				? { ...result, ...photoTrouble(images, resolved.misses) }
+				: result;
+		},
+	}),
+
+	addItemImages: tool({
+		description:
+			"Find and set the photos of items that already exist, several at a time. This is how an item that has no photo of its own gets one: the snapshot marks those [no photo]. Pass one entry per item, each with an imageQuery (or a pageImage from a page read this turn).",
+		inputSchema: z.object({
+			section: sectionIndexSchema,
+			items: z
+				.array(
+					z.object({
+						item: itemIndexSchema,
+						pageImage: itemInputSchema.shape.pageImage,
+						imageQuery: itemInputSchema.shape.imageQuery,
+					}),
+				)
+				.min(1)
+				.max(MAX_ITEMS_PER_CALL),
+		}),
+		execute: async ({ section, items }): Promise<AgentToolResult> => {
+			const sectionTarget = session.resolveItemSection(section);
+			if ("error" in sectionTarget) return fail(sectionTarget.error);
+
+			const targets = items.map((entry) => ({
+				entry,
+				item: session.resolveItem(section, entry.item),
+			}));
+			// One bad index must not cost the other nineteen their photos, so it is
+			// reported as a miss rather than refusing the whole batch.
+			const resolvable = targets.flatMap(({ entry, item }) =>
+				"error" in item ? [] : [{ entry, item }],
+			);
+
+			const resolved = await resolveImages(
+				images,
+				resolvable.map(({ entry }) => entry),
+			);
+
+			const misses: string[] = [];
+			const addMiss = (name: string) => {
+				if (name && !misses.includes(name)) misses.push(name);
+			};
+			const patches: { itemId: string; image: string }[] = [];
+			resolvable.forEach(({ entry, item }, index) => {
+				const image = resolved[index];
+				if (image) patches.push({ itemId: item.itemId, image });
+				else addMiss(entry.imageQuery || item.name);
+			});
+			for (const { entry, item } of targets) {
+				if ("error" in item) addMiss(`item [${entry.item}]`);
+			}
+
+			if (patches.length === 0) {
+				return fail(
+					images.unavailable
+						? `${images.unavailable} Nothing was changed. Do not search again on this turn: tell the user the photos could not be fetched right now and that they can ask again later.`
+						: `No photo was found for any of those items (${misses.join(", ")}). Tell the user, and offer to try different searches.`,
+				);
+			}
+
+			const result = session.run({
+				op: "set_item_images",
+				sectionId: sectionTarget.id,
+				images: patches,
+			});
+
+			return result.ok
+				? { ...result, ...photoTrouble(images, misses) }
 				: result;
 		},
 	}),
 
 	updateItem: tool({
 		description:
-			"Change one item. Include only the fields you actually want to change.",
+			"Change one item: its name, price, description or its photo. Include only the fields you actually want to change. For photos on more than one item, call addItemImages instead.",
 		inputSchema: z.object({
 			section: sectionIndexSchema,
 			item: itemIndexSchema,
@@ -75,8 +149,8 @@ export const itemTools = ({ session, images, fail }: ToolContext) => ({
 				...(image ? { image } : {}),
 			});
 
-			return result.ok && misses.length > 0
-				? { ...result, imageMisses: misses }
+			return result.ok
+				? { ...result, ...photoTrouble(images, misses) }
 				: result;
 		},
 	}),

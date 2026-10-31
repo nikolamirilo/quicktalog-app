@@ -1,3 +1,4 @@
+import type { OperationLimits } from "@/lib/catalogue/operations";
 import type {
 	ContentLayout,
 	FontSize,
@@ -90,16 +91,12 @@ interface AiCtaFields {
 	url?: string;
 }
 
-/**
- * The builder exposes only the width; height is left as it is, so the two
- * header/footer field shapes flatten `logoSize` to one number.
- */
 interface AiHeaderFields {
 	type?: "default" | "custom";
 	cta?: AiCtaFields;
 	phoneCta?: boolean;
 	emailCta?: boolean;
-	logoWidth?: number;
+	logoScale?: number;
 }
 
 interface AiFooterFields {
@@ -107,7 +104,7 @@ interface AiFooterFields {
 	cta?: AiCtaFields;
 	newsletter?: boolean;
 	showPartners?: boolean;
-	logoWidth?: number;
+	logoScale?: number;
 }
 
 interface AiAppearanceFields {
@@ -179,6 +176,12 @@ export type CatalogueOperation =
 			denominator?: string;
 			image?: string;
 	  }
+	| {
+			/** Photos for several items in one section, so filling in a whole section is one edit. */
+			op: "set_item_images";
+			sectionId: string;
+			images: { itemId: string; image: string }[];
+	  }
 	| { op: "delete_item"; sectionId: string; itemId: string }
 	| {
 			op: "move_item";
@@ -207,6 +210,12 @@ export type AgentToolResult =
 			 */
 			imageMisses?: string[];
 			/**
+			 * The photo service itself could not be searched - rate limited, down
+			 * or unconfigured - so no search this turn can succeed. Said once,
+			 * instead of a miss per item that reads as "nothing matched".
+			 */
+			imagesUnavailable?: string;
+			/**
 			 * Name of the saved theme when setCustomTheme wrote one to the
 			 * library, so the model can confirm it to the user.
 			 */
@@ -222,4 +231,12 @@ export type AgentToolResult =
 			 * reference, so the client knows to offer an upgrade.
 			 */
 			limitReached?: boolean;
+			/** The request's credit hold could not pay for this step; the agent stops. */
+			outOfCredits?: true;
 	  };
+
+/** Rides on every agent message: the turn to continue, and the limits the server judged edits by. */
+export type AgentMessageMetadata = {
+	turnId: string | null;
+	limits: OperationLimits;
+};

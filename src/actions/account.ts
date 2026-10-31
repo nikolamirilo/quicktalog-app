@@ -2,6 +2,7 @@
 import * as Sentry from "@sentry/nextjs";
 import { schema } from "@quicktalog/common";
 import { eq } from "drizzle-orm";
+import { after } from "next/server";
 import { z } from "zod";
 import { cancelSubscription } from "@/actions/paddle";
 import {
@@ -15,7 +16,7 @@ import {
 } from "@/lib/auth/identity";
 import { deleteDrafts } from "@/lib/catalogue/draft-cache";
 import { withinRateLimit } from "@/lib/rate-limit";
-import { loadUserFootprint } from "@/lib/users/provision";
+import { loadUserFootprint } from "@/lib/users/footprint";
 import { withUser } from "@/utils/db";
 import { authAdmin } from "@/utils/supabase/auth-admin";
 
@@ -88,15 +89,6 @@ export async function updateProfile(name: string): Promise<AccountResult> {
 export async function deleteAccount(): Promise<AccountResult> {
 	try {
 		const me = await requireFreshUser();
-
-		// Admin auth API only knows Supabase users; Clerk accounts manage this in Clerk.
-		if (me.provider !== "supabase") {
-			return {
-				success: false,
-				error: "Account deletion is not available for this account.",
-			};
-		}
-
 		const footprint = await loadUserFootprint(me.userId);
 
 		for (const subscriptionId of footprint.activeSubscriptionIds) {
@@ -135,12 +127,14 @@ export async function deleteAccount(): Promise<AccountResult> {
 				tags: { op: "deleteAccount", step: "redis" },
 			}),
 		);
-		for (const name of footprint.catalogueNames) revalidateCatalogue(name);
-		revalidateCatalogue();
-		// No revalidateDashboard(): the user is gone, so there's no dashboard left to
-		// refresh for them, and doing it here re-renders the still-mounted dashboard
-		// page mid-delete with the now-deleted session, throwing a benign but noisy
-		// not_found from getUserData.
+		// Any revalidation inside the action makes Next re-render the still-mounted
+		// dashboard with the deleted user's token (getUserData: not_found), so it
+		// runs in `after`, once the response is sent. No revalidateDashboard(): the
+		// user is gone.
+		after(() => {
+			for (const name of footprint.catalogueNames) revalidateCatalogue(name);
+			revalidateCatalogue();
+		});
 
 		return { success: true };
 	} catch (err) {

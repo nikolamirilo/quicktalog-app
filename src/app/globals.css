@@ -2,7 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@layer theme, base, clerk, components, utilities;
+@layer theme, base, components, utilities;
 
 *,
 button,
@@ -25,6 +25,10 @@ body {
 }
 
 ::-webkit-scrollbar {
+	width: 4px;
+}
+
+html::-webkit-scrollbar {
 	width: 8px;
 }
 

@@ -47,22 +47,24 @@ interface CatalogueContextType {
 	 */
 	isTemplatePickerOpen: boolean;
 	setIsTemplatePickerOpen: (open: boolean) => void;
+	/**
+	 * Content edits address a section and an item by id, never by position: the
+	 * agent's edits land on the draft while a dialog is open, so a position read
+	 * when it opened can be pointing at a different section by the time it
+	 * saves. An id that is no longer there is dropped.
+	 */
 	addBlock: (block: ContentBlock, index?: number) => void;
-	removeBlock: (index: number) => void;
-	updateBlock: (index: number, data: Partial<ContentBlock>) => void;
-	moveBlock: (index: number, direction: "up" | "down") => void;
-	addItem: (blockIndex: number, item: Item) => void;
-	updateItem: (blockIndex: number, itemIndex: number, item: Item) => void;
-	removeItem: (blockIndex: number, itemIndex: number) => void;
-	moveItem: (
-		blockIndex: number,
-		itemIndex: number,
-		direction: "up" | "down",
-	) => void;
+	removeBlock: (blockId: string) => void;
+	updateBlock: (blockId: string, data: Partial<ContentBlock>) => void;
+	moveBlock: (blockId: string, direction: "up" | "down") => void;
+	addItem: (blockId: string, item: Item) => void;
+	updateItem: (blockId: string, itemId: string, item: Item) => void;
+	removeItem: (blockId: string, itemId: string) => void;
+	moveItem: (blockId: string, itemId: string, direction: "up" | "down") => void;
 	moveItemToBlock: (
-		fromBlockIndex: number,
-		itemIndex: number,
-		toBlockIndex: number,
+		fromBlockId: string,
+		itemId: string,
+		toBlockId: string,
 	) => void;
 	applyOperations: (
 		operations: CatalogueOperation[],
@@ -73,8 +75,24 @@ interface CatalogueContextType {
 	 * the draft straight away and are highlighted; Reject puts back `before`.
 	 */
 	aiReview: AiReview | null;
-	/** `applyOperations` for the AI chat: the edits also go up for review. */
-	applyAiOperations: (operations: CatalogueOperation[]) => OperationOutcome;
+	/**
+	 * `applyOperations` for the AI chat: the edits also go up for review. The
+	 * limits are required, so an agent edit can never land on the draft ungated.
+	 */
+	applyAiOperations: (
+		operations: CatalogueOperation[],
+		limits: OperationLimits,
+	) => OperationOutcome;
+	/** The latest draft, including edits applied earlier in the same render pass. */
+	getCatalogue: () => Omit<Catalogue, "id">;
+	/** Loads a stored catalogue into the builder; it counts as saved. */
+	seedCatalogue: (catalogue: Catalogue) => void;
+	/** Records `saved` (the current draft by default) as what the server holds. */
+	markSaved: (saved?: Omit<Catalogue, "id">) => void;
+	/** Applies a change the server has already stored (going live), keeping the draft saved. */
+	patchSaved: (partial: Partial<Catalogue>) => void;
+	/** The draft differs from what was last seeded or saved. */
+	isDirty: boolean;
 	/** Keeps the edits under review. */
 	acceptAiChanges: () => void;
 	/** Puts the catalogue back to how it was before the edits under review. */
@@ -101,187 +119,187 @@ export const CatalogueContextProvider = ({
 	const [isChatOpen, setIsChatOpen] = useState(false);
 	const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false);
 
-	// Mirrors the latest committed catalogue so `applyOperations` can compute and
-	// return its outcome synchronously instead of only inside a state updater.
+	/**
+	 * The draft itself, not a mirror of the last render: every writer reads and
+	 * writes it through `commit`, so two edits in the same tick - a hand edit and
+	 * an agent edit arriving on the same stream chunk - compose instead of one
+	 * overwriting the other, and `applyOperations` can still return its outcome
+	 * synchronously.
+	 */
 	const catalogueRef = useRef(catalogue);
-	catalogueRef.current = catalogue;
+
+	const commit = (
+		next: (prev: Omit<Catalogue, "id">) => Omit<Catalogue, "id">,
+	): Omit<Catalogue, "id"> => {
+		const value = next(catalogueRef.current);
+		if (value === catalogueRef.current) return value;
+		catalogueRef.current = value;
+		setCatalogue(value);
+		return value;
+	};
+
+	/** A content edit, or `null` from `change` when the target is gone. */
+	const commitContent = (
+		change: (content: ContentBlock[]) => ContentBlock[] | null,
+	) =>
+		commit((prev) => {
+			const content = change(prev.content);
+			return content ? { ...prev, content } : prev;
+		});
+
+	const commitItems = (
+		blockId: string,
+		change: (items: Item[]) => Item[] | null,
+	) =>
+		commitContent((content) => {
+			const index = content.findIndex((block) => block.id === blockId);
+			const block = index < 0 ? undefined : content[index];
+			if (!block || !isItemsBlock(block)) return null;
+			const items = change(block.items ?? []);
+			if (!items) return null;
+			const next = [...content];
+			next[index] = { ...block, items } as ContentBlock;
+			return next;
+		});
+
+	// Compared by identity: every edit makes a new object, and an undo restores the old one.
+	const [savedCatalogue, setSavedCatalogue] = useState<unknown>(null);
+	const isDirty = savedCatalogue !== null && catalogue !== savedCatalogue;
+
+	const seedCatalogue = (next: Catalogue) => {
+		commit(() => next);
+		setSavedCatalogue(next);
+	};
+
+	const patchSaved = (partial: Partial<Catalogue>) => {
+		setSavedCatalogue(commit((prev) => ({ ...prev, ...partial })));
+	};
+
+	const markSaved = (saved: Omit<Catalogue, "id"> = catalogueRef.current) => {
+		setSavedCatalogue(saved);
+	};
 
 	const resetCatalogue = () => {
-		setCatalogue(defaultCatalogueData);
+		commit(() => defaultCatalogueData);
+		setSavedCatalogue(null);
 	};
 
 	const updateCatalogue = (partial: Partial<Catalogue>) => {
-		setCatalogue((prev) => ({
-			...prev,
-			...partial,
-		}));
+		commit((prev) => ({ ...prev, ...partial }));
 	};
 
 	const addBlock = (block: ContentBlock, index?: number) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			const blockWithOrder = { ...block, order: newContent.length };
-			if (index !== undefined && index >= 0 && index <= newContent.length) {
-				newContent.splice(index, 0, blockWithOrder);
-			} else {
-				newContent.push(blockWithOrder);
-			}
-			return { ...prev, content: reorderArray(newContent) };
+		commitContent((content) => {
+			const next = [...content];
+			const at =
+				index !== undefined && index >= 0 && index <= next.length
+					? index
+					: next.length;
+			next.splice(at, 0, { ...block, order: at });
+			return reorderArray(next);
 		});
 	};
 
-	const removeBlock = (index: number) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			newContent.splice(index, 1);
-			return { ...prev, content: reorderArray(newContent) };
+	const removeBlock = (blockId: string) => {
+		commitContent((content) => {
+			const next = content.filter((block) => block.id !== blockId);
+			return next.length === content.length ? null : reorderArray(next);
 		});
 	};
 
-	const updateBlock = (index: number, data: Partial<ContentBlock>) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			if (newContent[index]) {
-				newContent[index] = { ...newContent[index], ...data } as ContentBlock;
-			}
-			return { ...prev, content: newContent };
+	const updateBlock = (blockId: string, data: Partial<ContentBlock>) => {
+		commitContent((content) => {
+			const index = content.findIndex((block) => block.id === blockId);
+			if (index < 0) return null;
+			const next = [...content];
+			next[index] = { ...next[index], ...data } as ContentBlock;
+			return next;
 		});
 	};
 
-	const moveBlock = (index: number, direction: "up" | "down") => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			const targetIndex = direction === "up" ? index - 1 : index + 1;
-
-			if (targetIndex < 0 || targetIndex >= newContent.length) {
-				return prev;
-			}
-
-			[newContent[index], newContent[targetIndex]] = [
-				newContent[targetIndex],
-				newContent[index],
-			];
-
-			return { ...prev, content: reorderArray(newContent) };
+	const moveBlock = (blockId: string, direction: "up" | "down") => {
+		commitContent((content) => {
+			const index = content.findIndex((block) => block.id === blockId);
+			const target = direction === "up" ? index - 1 : index + 1;
+			if (index < 0 || target < 0 || target >= content.length) return null;
+			const next = [...content];
+			[next[index], next[target]] = [next[target], next[index]];
+			return reorderArray(next);
 		});
 	};
 
-	const addItem = (blockIndex: number, item: Item) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			const originalBlock = newContent[blockIndex];
+	const addItem = (blockId: string, item: Item) => {
+		commitItems(blockId, (items) => [
+			...items,
+			{ ...item, order: items.length },
+		]);
+	};
 
-			if (originalBlock && isItemsBlock(originalBlock)) {
-				const block = { ...originalBlock };
-				const itemWithOrder = { ...item, order: block.items?.length || 0 };
-				block.items = block.items
-					? [...block.items, itemWithOrder]
-					: [itemWithOrder];
-				newContent[blockIndex] = block;
-			}
-			return { ...prev, content: newContent };
+	const updateItem = (blockId: string, itemId: string, item: Item) => {
+		commitItems(blockId, (items) => {
+			const index = items.findIndex((entry) => entry.id === itemId);
+			if (index < 0) return null;
+			const next = [...items];
+			next[index] = { ...item, id: itemId, order: items[index].order };
+			return next;
 		});
 	};
 
-	const updateItem = (blockIndex: number, itemIndex: number, item: Item) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			const originalBlock = newContent[blockIndex];
-			if (
-				originalBlock &&
-				isItemsBlock(originalBlock) &&
-				originalBlock.items &&
-				originalBlock.items[itemIndex]
-			) {
-				const block = { ...originalBlock };
-				const newItems = [...block.items];
-				newItems[itemIndex] = item;
-				block.items = newItems;
-				newContent[blockIndex] = block;
-			}
-			return { ...prev, content: newContent };
-		});
-	};
-
-	const removeItem = (blockIndex: number, itemIndex: number) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			const originalBlock = newContent[blockIndex];
-			if (originalBlock && isItemsBlock(originalBlock) && originalBlock.items) {
-				const block = { ...originalBlock };
-				const newItems = [...block.items];
-				newItems.splice(itemIndex, 1);
-				block.items = reorderArray(newItems);
-				newContent[blockIndex] = block;
-			}
-			return { ...prev, content: newContent };
+	const removeItem = (blockId: string, itemId: string) => {
+		commitItems(blockId, (items) => {
+			const next = items.filter((entry) => entry.id !== itemId);
+			return next.length === items.length ? null : reorderArray(next);
 		});
 	};
 
 	const moveItem = (
-		blockIndex: number,
-		itemIndex: number,
+		blockId: string,
+		itemId: string,
 		direction: "up" | "down",
 	) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			const originalBlock = newContent[blockIndex];
-
-			if (originalBlock && isItemsBlock(originalBlock) && originalBlock.items) {
-				const block = { ...originalBlock };
-				const newItems = [...block.items];
-				const targetIndex = direction === "up" ? itemIndex - 1 : itemIndex + 1;
-
-				if (targetIndex < 0 || targetIndex >= newItems.length) {
-					return prev;
-				}
-
-				[newItems[itemIndex], newItems[targetIndex]] = [
-					newItems[targetIndex],
-					newItems[itemIndex],
-				];
-
-				block.items = reorderArray(newItems);
-				newContent[blockIndex] = block;
-			}
-			return { ...prev, content: newContent };
+		commitItems(blockId, (items) => {
+			const index = items.findIndex((entry) => entry.id === itemId);
+			const target = direction === "up" ? index - 1 : index + 1;
+			if (index < 0 || target < 0 || target >= items.length) return null;
+			const next = [...items];
+			[next[index], next[target]] = [next[target], next[index]];
+			return reorderArray(next);
 		});
 	};
 
 	const moveItemToBlock = (
-		fromBlockIndex: number,
-		itemIndex: number,
-		toBlockIndex: number,
+		fromBlockId: string,
+		itemId: string,
+		toBlockId: string,
 	) => {
-		setCatalogue((prev) => {
-			const newContent = [...prev.content];
-			const fromBlock = newContent[fromBlockIndex];
-			const toBlock = newContent[toBlockIndex];
-
+		commitContent((content) => {
+			const fromIndex = content.findIndex((block) => block.id === fromBlockId);
+			const toIndex = content.findIndex((block) => block.id === toBlockId);
+			const from = fromIndex < 0 ? undefined : content[fromIndex];
+			const to = toIndex < 0 ? undefined : content[toIndex];
 			if (
-				!fromBlock ||
-				!toBlock ||
-				!isItemsBlock(fromBlock) ||
-				!isItemsBlock(toBlock) ||
-				!fromBlock.items ||
-				!fromBlock.items[itemIndex]
+				!from ||
+				!to ||
+				fromIndex === toIndex ||
+				!isItemsBlock(from) ||
+				!isItemsBlock(to)
 			) {
-				return prev;
+				return null;
 			}
 
-			const fromBlockCopy = { ...fromBlock, items: [...fromBlock.items] };
-			const toBlockCopy = { ...toBlock, items: [...(toBlock.items || [])] };
+			const fromItems = [...(from.items ?? [])];
+			const index = fromItems.findIndex((entry) => entry.id === itemId);
+			if (index < 0) return null;
+			const [moved] = fromItems.splice(index, 1);
+			const toItems = [...(to.items ?? []), moved];
 
-			const [movedItem] = fromBlockCopy.items.splice(itemIndex, 1);
-			toBlockCopy.items.push({ ...movedItem, order: toBlockCopy.items.length });
-
-			fromBlockCopy.items = reorderArray(fromBlockCopy.items);
-			toBlockCopy.items = reorderArray(toBlockCopy.items);
-
-			newContent[fromBlockIndex] = fromBlockCopy as ContentBlock;
-			newContent[toBlockIndex] = toBlockCopy as ContentBlock;
-
-			return { ...prev, content: newContent };
+			const next = [...content];
+			next[fromIndex] = {
+				...from,
+				items: reorderArray(fromItems),
+			} as ContentBlock;
+			next[toIndex] = { ...to, items: reorderArray(toItems) } as ContentBlock;
+			return next;
 		});
 	};
 
@@ -299,10 +317,7 @@ export const CatalogueContextProvider = ({
 			operations,
 			limits,
 		);
-		if (outcome.applied.length > 0) {
-			catalogueRef.current = outcome.catalogue;
-			setCatalogue(outcome.catalogue);
-		}
+		if (outcome.applied.length > 0) commit(() => outcome.catalogue);
 		return outcome;
 	};
 
@@ -321,9 +336,10 @@ export const CatalogueContextProvider = ({
 
 	const applyAiOperations = (
 		operations: CatalogueOperation[],
+		limits: OperationLimits,
 	): OperationOutcome => {
 		const before = catalogueRef.current as Catalogue;
-		const outcome = applyOperations(operations);
+		const outcome = applyOperations(operations, limits);
 		if (outcome.applied.length > 0) {
 			const review: AiReview = {
 				before: aiReviewRef.current?.before ?? before,
@@ -344,8 +360,7 @@ export const CatalogueContextProvider = ({
 		const review = aiReviewRef.current;
 		if (!review) return;
 		clearAiReview();
-		catalogueRef.current = review.before;
-		setCatalogue(review.before);
+		commit(() => review.before);
 	};
 
 	// A hand edit made while a review is open keeps the AI edits: undoing them
@@ -359,28 +374,21 @@ export const CatalogueContextProvider = ({
 	const updateAppearance = (
 		partial: Partial<Catalogue["appearance"]["style"]>,
 	) => {
-		setCatalogue((prev) => ({
+		commit((prev) => ({
 			...prev,
 			appearance: {
 				...prev.appearance,
-				style: {
-					...prev.appearance.style,
-					...partial,
-				},
+				style: { ...prev.appearance.style, ...partial },
 			},
 		}));
 	};
 
 	const updateThemeColors = (colors: CustomThemeColors) => {
-		setCatalogue((prev) => ({
+		commit((prev) => ({
 			...prev,
 			appearance: {
 				...prev.appearance,
-				theme: {
-					type: "custom",
-					name: CUSTOM_THEME_NAME,
-					colors,
-				},
+				theme: { type: "custom", name: CUSTOM_THEME_NAME, colors },
 			},
 		}));
 	};
@@ -411,6 +419,11 @@ export const CatalogueContextProvider = ({
 				applyOperations,
 				aiReview,
 				applyAiOperations,
+				getCatalogue: () => catalogueRef.current,
+				seedCatalogue,
+				markSaved,
+				patchSaved,
+				isDirty,
 				acceptAiChanges,
 				rejectAiChanges,
 			}}

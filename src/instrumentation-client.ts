@@ -55,9 +55,6 @@ if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
 			"__firefox__",
 			/window\.ethereum/,
 			"NS_ERROR_FAILURE",
-			// Clerk CDN script-load failures (transient / blockers).
-			/Failed to load Clerk/i,
-			"failed_to_load_clerk_js",
 			// Paddle price-preview transient network failures.
 			"PricePreview.failed",
 		],

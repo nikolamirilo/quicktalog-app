@@ -7,7 +7,6 @@ import {
 	LegalSection,
 	type LegalSectionContent,
 } from "@/components/legal/LegalSection";
-import { LegalToc } from "@/components/legal/LegalToc";
 import { readingMinutes } from "@/components/legal/readingTime";
 import type { LegalDocumentKey } from "@/constants/legal";
 import { cn } from "@/lib/ui/cn";
@@ -27,8 +26,8 @@ const PROSE = cn(
 
 /**
  * The shared layout of the Terms, Privacy and Refund pages: a hero with the
- * document tabs and meta pills, a sticky table of contents, numbered sections
- * at a 70ch measure, and a closing contact box. The reading time is counted
+ * document tabs and meta pills, full-width numbered sections, and a closing
+ * contact box. The reading time is counted
  * from the document's own text.
  */
 export function LegalPage({
@@ -65,14 +64,8 @@ export function LegalPage({
 			/>
 
 			<Container>
-				<div className="grid max-w-[1180px] grid-cols-[minmax(0,1fr)] gap-7 pb-[72px] pt-7 lg:grid-cols-[260px_minmax(0,1fr)] lg:gap-16 lg:pb-24 lg:pt-14">
-					<LegalToc
-						items={sections.map((section, index) => ({
-							id: section.id,
-							label: `${index + 1}. ${section.title}`,
-						}))}
-					/>
-					<article className="min-w-0 max-w-[70ch]">
+				<div className="max-w-[1180px] pb-[72px] pt-7 lg:pb-24 lg:pt-14">
+					<article className="min-w-0">
 						<div className={PROSE}>
 							<p className="text-[clamp(18px,1.6vw,20px)] leading-[1.6] text-product-foreground">
 								{lead}

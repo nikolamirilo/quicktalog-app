@@ -11,7 +11,6 @@ import {
 	toStylingOptions,
 	visibleFrameText,
 } from "@/lib/qr/design";
-import { assessScanRisk, contrastRatio } from "@/lib/qr/scan-risk";
 import { describe, expect, it } from "vitest";
 
 const URL = "https://example.test/catalogues/bean-there";
@@ -97,38 +96,6 @@ describe("designKey", () => {
 		expect(designKey({ margin: 1, data: "a" })).toBe(
 			designKey({ data: "a", margin: 1, image: undefined }),
 		);
-	});
-});
-
-describe("assessScanRisk", () => {
-	it("passes the default design", () => {
-		const risk = assessScanRisk(defaultQrConfig(URL));
-		expect(risk.scannable).toBe(true);
-		expect(risk.ratio).toBeGreaterThan(15);
-	});
-
-	it("flags light dots, a logo at level L and light corner dots", () => {
-		const base = defaultQrConfig(URL);
-		expect(
-			assessScanRisk({ ...base, dotsOptions: { color: "#EEEEEE" } })
-				.lowContrast,
-		).toBe(true);
-		expect(
-			assessScanRisk({
-				...base,
-				image: "https://cdn.test/logo.png",
-				qrOptions: { errorCorrectionLevel: "L" },
-			}).logoAtL,
-		).toBe(true);
-		expect(
-			assessScanRisk({ ...base, cornersDotOptions: { color: "#FFD27A" } })
-				.cornerDotsLow,
-		).toBe(true);
-	});
-
-	it("computes WCAG contrast", () => {
-		expect(contrastRatio("#000000", "#FFFFFF")).toBeCloseTo(21, 5);
-		expect(contrastRatio("#FFFFFF", "#FFFFFF")).toBe(1);
 	});
 });
 

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/ui/cn";
 import { ChevronUp, SlidersHorizontal, X } from "lucide-react";
+import Link from "next/link";
 
 /**
  * A bar item: icon over label, at least 52px tall. Neutral ink until pressed,
@@ -25,8 +26,8 @@ const barLabelClass = "max-w-full truncate text-[11px] font-semibold";
 /**
  * The phone bottom bar (below `md`). Quick AI and Templates, then the editor
  * button in the middle, then Save and a Publish slot whose menu also holds
- * Preview. The editor button sits in the bar rather than floating over it, so
- * it never covers the catalogue.
+ * Preview and the QR code. The editor button sits in the bar rather than
+ * floating over it, so it never covers the catalogue.
  */
 export const BuilderBottomBar = ({
 	isPanelOpen,
@@ -43,9 +44,10 @@ export const BuilderBottomBar = ({
 	isChatOpen: boolean;
 	actions: Record<BuilderAction["key"], BuilderAction>;
 }) => {
-	const { templates, save, preview, publish } = actions;
+	const { templates, save, preview, publish, qr } = actions;
 	const PublishIcon = publish.icon;
 	const PreviewIcon = preview.icon;
+	const QrIcon = qr.icon;
 
 	return (
 		<div
@@ -135,6 +137,15 @@ export const BuilderBottomBar = ({
 						<PreviewIcon className="mr-2 h-4 w-4" />
 						{preview.label}
 					</DropdownMenuItem>
+					{qr.href && (
+						<DropdownMenuItem asChild>
+							{/* A new tab: the guard ignores it, so the draft stays put. */}
+							<Link href={qr.href} rel="noreferrer" target="_blank">
+								<QrIcon className="mr-2 h-4 w-4" />
+								{qr.label}
+							</Link>
+						</DropdownMenuItem>
+					)}
 					<DropdownMenuItem onClick={publish.onClick}>
 						<PublishIcon className="mr-2 h-4 w-4" />
 						{publish.label}
@@ -149,12 +160,14 @@ export const BuilderBottomBar = ({
 export const BuilderActionModals = ({
 	catalogueName,
 	isSuccessModalOpen,
+	successType,
 	closeSuccessModal,
 	isTemplateModalOpen,
 	closeTemplateModal,
 }: {
 	catalogueName: string;
 	isSuccessModalOpen: boolean;
+	successType: "regular" | "edit";
 	closeSuccessModal: () => void;
 	isTemplateModalOpen: boolean;
 	closeTemplateModal: () => void;
@@ -164,7 +177,7 @@ export const BuilderActionModals = ({
 			catalogueUrl={`/catalogues/${catalogueName}`}
 			isOpen={isSuccessModalOpen}
 			onClose={closeSuccessModal}
-			type="regular"
+			type={successType}
 		/>
 		{isTemplateModalOpen && (
 			<SelectTemplateModal

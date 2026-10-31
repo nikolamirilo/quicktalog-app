@@ -34,7 +34,7 @@ Enable small businesses to launch elegant, mobile-first catalogues in minutes, w
 - **Tailwind CSS** - styling
 - **Supabase** - database & edge functions (monitoring & alerting system)
 - **UploadThing** - static files hosting
-- **Clerk** - authentication and user management
+- **Supabase Auth** - authentication and user management
 - **Posthog** - analytics service
 - **Paddle** - payment and tax handling service
 - **Redis** - caching layer

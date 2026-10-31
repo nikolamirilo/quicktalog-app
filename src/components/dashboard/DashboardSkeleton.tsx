@@ -1,9 +1,9 @@
 "use client";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { DashboardSidebar } from "@/components/dashboard/navigation/DashboardSidebar";
 import { DashboardTabBar } from "@/components/dashboard/navigation/DashboardTabBar";
-import { dashboardTabFromUrl } from "@/constants/dashboard";
+import { toDashboardTab } from "@/constants/dashboard";
 
 /** Placeholder while a dashboard tab's data or code loads. */
 export function TabSkeleton() {
@@ -25,10 +25,7 @@ const noop = () => {};
  * are disabled until the dashboard mounts.
  */
 export function DashboardSkeleton() {
-	const activeTab = dashboardTabFromUrl(
-		useSearchParams().get("tab"),
-		usePathname(),
-	);
+	const activeTab = toDashboardTab(useSearchParams().get("tab"));
 	return (
 		<div className="flex items-start gap-6 lg:gap-7">
 			<DashboardSidebar activeTab={activeTab} disabled onSelect={noop} />

@@ -16,7 +16,7 @@ create extension if not exists pgtap with schema extensions;
 
 begin;
 
--- PGlite finding F10: the app roles cannot reach the pgTAP helper functions
+-- The app roles cannot reach the pgTAP helper functions
 -- unless they get USAGE on `extensions` *and* EXECUTE on its functions.
 grant usage on schema extensions to app_user, app_public;
 grant execute on all functions in schema extensions to app_user, app_public;

@@ -1,17 +1,55 @@
 import { describe, expect, it } from "vitest";
 import { defaultQrConfig, type QrConfig } from "@/lib/qr/design";
-import { assessScanRisk } from "@/lib/qr/scan-risk";
+import { assessScanRisk, contrastRatio } from "@/lib/qr/scan-risk";
+
+const URL = "https://example.test/catalogues/a";
 
 const withLogo = (
 	errorCorrectionLevel: "L" | "M" | "Q" | "H",
 	imageSize: number,
 	showLogo = true,
 ): QrConfig => ({
-	...defaultQrConfig("https://example.test/catalogues/a"),
+	...defaultQrConfig(URL),
 	image: "https://abc.ufs.sh/f/logo",
 	showLogo,
 	qrOptions: { errorCorrectionLevel },
 	imageOptions: { imageSize },
+});
+
+describe("assessScanRisk", () => {
+	it("passes the default design", () => {
+		const risk = assessScanRisk(defaultQrConfig(URL));
+		expect(risk.scannable).toBe(true);
+		expect(risk.ratio).toBeGreaterThan(15);
+	});
+
+	it("computes WCAG contrast", () => {
+		expect(contrastRatio("#000000", "#FFFFFF")).toBeCloseTo(21, 5);
+		expect(contrastRatio("#FFFFFF", "#FFFFFF")).toBe(1);
+	});
+
+	it("flags light dots and light corner dots", () => {
+		const base = defaultQrConfig(URL);
+		expect(
+			assessScanRisk({ ...base, dotsOptions: { color: "#EEEEEE" } })
+				.lowContrast,
+		).toBe(true);
+		expect(
+			assessScanRisk({ ...base, cornersDotOptions: { color: "#FFD27A" } })
+				.cornerDotsLow,
+		).toBe(true);
+	});
+
+	it("treats light dots on a dark background as low contrast", () => {
+		const inverted = {
+			...defaultQrConfig("x"),
+			dotsOptions: { color: "#FFFFFF" },
+			cornersSquareOptions: { color: "#FFFFFF" },
+			cornersDotOptions: { color: "#FFFFFF" },
+			backgroundOptions: { color: "#000000" },
+		};
+		expect(assessScanRisk(inverted).lowContrast).toBe(true);
+	});
 });
 
 describe("assessScanRisk logo thresholds per error correction level", () => {
@@ -40,16 +78,5 @@ describe("assessScanRisk logo thresholds per error correction level", () => {
 		expect(assessScanRisk(withLogo("L", 0.9)).tip).toMatch(/too large/);
 		expect(assessScanRisk(withLogo("L", 0.2)).tip).toMatch(/M or higher/);
 		expect(assessScanRisk(withLogo("Q", 0.4)).tip).toBeNull();
-	});
-
-	it("treats light dots on a dark background as low contrast", () => {
-		const inverted = {
-			...defaultQrConfig("x"),
-			dotsOptions: { color: "#FFFFFF" },
-			cornersSquareOptions: { color: "#FFFFFF" },
-			cornersDotOptions: { color: "#FFFFFF" },
-			backgroundOptions: { color: "#000000" },
-		};
-		expect(assessScanRisk(inverted).lowContrast).toBe(true);
 	});
 });

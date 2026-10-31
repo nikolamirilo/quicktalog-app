@@ -1,18 +1,39 @@
+import { isItemsBlock } from "@/lib/catalogue/content-blocks";
 import { type ContentBlock, DEFAULT_IMAGE } from "@quicktalog/common";
 
-export const standardTemplate: ContentBlock[] = [
+/**
+ * Applying a template gives the catalogue its own copy: fresh ids, so two
+ * catalogues built from the same template in one session do not share them,
+ * and 0-based order, so a section added afterwards cannot collide with one of
+ * these. The blocks below are a module constant and are never handed out as is.
+ */
+const instantiate = (blocks: ContentBlock[]): ContentBlock[] =>
+	blocks.map((block, order) => {
+		const copy = { ...block, id: crypto.randomUUID(), order };
+		if (!isItemsBlock(copy)) return copy;
+		return {
+			...copy,
+			items: (copy.items ?? []).map((item, index) => ({
+				...item,
+				id: crypto.randomUUID(),
+				order: index,
+			})),
+		};
+	});
+
+const standardBlocks: ContentBlock[] = [
 	{
 		type: "items",
 		showHeading: true,
 		isExpanded: true,
 		order: 1,
-		id: crypto.randomUUID(),
+		id: "",
 		name: "Featured Collection",
 		layout: "variant_1",
 		items: [
 			{
 				order: 0,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Signature Selection",
 				description:
 					"A flagship item designed to represent the core value of the catalogue, featuring a well-rounded description that showcases how prominent offerings appear within the layout.",
@@ -27,7 +48,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 1,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Classic Choice",
 				description:
 					"A dependable, widely appreciated option that illustrates how standard items render alongside richer content, useful for demonstrating balance and consistency across the catalogue.",
@@ -42,7 +63,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 2,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Specialty Pick",
 				description:
 					"A distinctive example item intended to highlight variety within the catalogue, showing how more specialised offerings can be presented with detail and clarity.",
@@ -57,7 +78,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 3,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Premium Highlight",
 				description:
 					"A top-tier placeholder representing elevated offerings, useful for illustrating how higher-value items sit within the overall collection.",
@@ -77,13 +98,13 @@ export const standardTemplate: ContentBlock[] = [
 		showHeading: true,
 		isExpanded: true,
 		order: 2,
-		id: crypto.randomUUID(),
+		id: "",
 		name: "Main Offerings",
 		layout: "variant_2",
 		items: [
 			{
 				order: 0,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Standard Package",
 				description:
 					"A general-purpose offering designed to demonstrate how mid-range items appear in a different layout variant, balancing descriptive length with visual presentation.",
@@ -98,7 +119,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 1,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Popular Bundle",
 				description:
 					"A commonly selected example item, useful for showing how frequently chosen offerings can be highlighted within a category without industry-specific assumptions.",
@@ -113,7 +134,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 2,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Complete Set",
 				description:
 					"A comprehensive placeholder representing bundled or combined offerings, illustrating how layered items display within the catalogue structure.",
@@ -133,13 +154,13 @@ export const standardTemplate: ContentBlock[] = [
 		showHeading: true,
 		isExpanded: true,
 		order: 3,
-		id: crypto.randomUUID(),
+		id: "",
 		name: "Limited Additions",
 		layout: "variant_4",
 		items: [
 			{
 				order: 0,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Seasonal Option",
 				description:
 					"A rotating placeholder intended to demonstrate time-limited or occasion-based items, shown in a compact layout variant suitable for shorter selections.",
@@ -154,7 +175,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 1,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Exclusive Item",
 				description:
 					"A restricted-availability example used to illustrate how special or limited offerings can be presented within a smaller category group.",
@@ -174,13 +195,13 @@ export const standardTemplate: ContentBlock[] = [
 		showHeading: true,
 		isExpanded: true,
 		order: 4,
-		id: crypto.randomUUID(),
+		id: "",
 		name: "Premium Range",
 		layout: "variant_1",
 		items: [
 			{
 				order: 0,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Signature Premium",
 				description:
 					"A refined placeholder representing elevated offerings, designed to show how flagship premium items appear in a richer layout configuration.",
@@ -195,7 +216,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 1,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Deluxe Option",
 				description:
 					"An upgraded example item used to demonstrate how higher-tier selections can be showcased with detail and clear positioning.",
@@ -210,7 +231,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 2,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Exclusive Edition",
 				description:
 					"A specialised placeholder illustrating limited or curated offerings, suitable for presenting items with elevated perceived value.",
@@ -225,7 +246,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 3,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Luxury Pick",
 				description:
 					"A high-tier example item representing the upper end of the range, useful for demonstrating how prestige offerings fit into the broader catalogue.",
@@ -245,13 +266,13 @@ export const standardTemplate: ContentBlock[] = [
 		showHeading: false,
 		isExpanded: true,
 		order: 5,
-		id: crypto.randomUUID(),
+		id: "",
 		name: "Complementary Extras",
 		layout: "variant_3",
 		items: [
 			{
 				order: 0,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Essential Add-On",
 				description:
 					"A neutral placeholder representing supporting items that pair with primary selections.",
@@ -266,7 +287,7 @@ export const standardTemplate: ContentBlock[] = [
 			},
 			{
 				order: 1,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Optional Upgrade",
 				description:
 					"A small supplementary example used to showcase minor add-on items.",
@@ -283,9 +304,9 @@ export const standardTemplate: ContentBlock[] = [
 	},
 ];
 
-export const placeholderTemplate: ContentBlock[] = [
+const placeholderBlocks: ContentBlock[] = [
 	{
-		id: crypto.randomUUID(),
+		id: "",
 		type: "items",
 		showHeading: true,
 		isExpanded: true,
@@ -295,7 +316,7 @@ export const placeholderTemplate: ContentBlock[] = [
 		items: [
 			{
 				order: 0,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Standard Option",
 				description:
 					"A versatile default offering designed to showcase how a typical item appears within the catalogue layout.",
@@ -310,7 +331,7 @@ export const placeholderTemplate: ContentBlock[] = [
 			},
 			{
 				order: 1,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Enhanced Option",
 				description:
 					"An upgraded example item with additional details, useful for demonstrating richer descriptions and longer content.",
@@ -325,7 +346,7 @@ export const placeholderTemplate: ContentBlock[] = [
 			},
 			{
 				order: 2,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Premium Option",
 				description:
 					"A high-level placeholder item intended to represent top-tier offerings or advanced configurations.",
@@ -341,7 +362,7 @@ export const placeholderTemplate: ContentBlock[] = [
 		],
 	},
 	{
-		id: crypto.randomUUID(),
+		id: "",
 		type: "items",
 		showHeading: true,
 		isExpanded: true,
@@ -351,7 +372,7 @@ export const placeholderTemplate: ContentBlock[] = [
 		items: [
 			{
 				order: 0,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Flexible Choice",
 				description:
 					"A neutral placeholder item intended to represent optional or supplementary selections within the catalogue.",
@@ -366,7 +387,7 @@ export const placeholderTemplate: ContentBlock[] = [
 			},
 			{
 				order: 1,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Customizable Choice",
 				description:
 					"An example item used to illustrate customization, variants, or future expansion without industry-specific assumptions.",
@@ -381,7 +402,7 @@ export const placeholderTemplate: ContentBlock[] = [
 			},
 			{
 				order: 2,
-				id: crypto.randomUUID(),
+				id: "",
 				name: "Optional Add-On",
 				description:
 					"A lightweight placeholder representing add-ons, extras, or complementary selections.",
@@ -397,3 +418,9 @@ export const placeholderTemplate: ContentBlock[] = [
 		],
 	},
 ];
+
+export const standardTemplate = (): ContentBlock[] =>
+	instantiate(standardBlocks);
+
+export const placeholderTemplate = (): ContentBlock[] =>
+	instantiate(placeholderBlocks);

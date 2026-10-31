@@ -9,7 +9,6 @@ import { useQr } from "@/context/QRContext";
 import { useQrActions } from "@/hooks/useQrActions";
 import { colorsOf, toStylingOptions, visibleFrameText } from "@/lib/qr/design";
 import type { ScanRisk } from "@/lib/qr/scan-risk";
-import { moduleCount, qrVersion } from "@/lib/qr/version";
 import { cn } from "@/lib/ui/cn";
 
 /** The scan line moves by transform only: its wrapper spans the travel. */
@@ -38,11 +37,6 @@ export function QrPreview({
 
 	const colors = colorsOf(options);
 	const frameText = visibleFrameText(options);
-	const level = options.qrOptions?.errorCorrectionLevel ?? "Q";
-	const version = qrVersion(options.data ?? "", level, {
-		typeNumber: options.qrOptions?.typeNumber,
-		mode: options.qrOptions?.mode,
-	});
 
 	useEffect(() => {
 		const instance = new QRCodeStyling(toStylingOptions(options));
@@ -153,19 +147,13 @@ export function QrPreview({
 				</div>
 			</div>
 
-			<p className="mb-3.5 mt-3 text-center text-[12.5px] font-medium leading-normal text-product-muted tabular-nums">
-				{version
-					? `Version ${version} · ${moduleCount(version)}×${moduleCount(version)} modules · error correction ${level}`
-					: `Error correction ${level}`}
-				{risk.tip && (
-					<>
-						<br />
-						<b className="font-semibold text-product-primary-ink">{risk.tip}</b>
-					</>
-				)}
-			</p>
+			{risk.tip && (
+				<p className="mb-3.5 mt-3 text-center text-[12.5px] font-semibold leading-normal text-product-primary-ink">
+					{risk.tip}
+				</p>
+			)}
 
-			<div className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2">
+			<div className="mt-3.5 grid grid-cols-[minmax(0,1fr)_auto_auto] gap-2">
 				<Button
 					className="min-w-0 px-4"
 					disabled={downloading !== null}

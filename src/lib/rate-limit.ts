@@ -13,7 +13,7 @@ const RULES = {
 	confirm: { requests: 20, window: "10 m" }, // auth email links, keyed by IP
 	profile: { requests: 5, window: "1 h" }, // renames fire the CRM sync trigger
 	// Two windows on the AI entry points: the burst stops a script draining a
-	// month of credits in seconds, the hourly one bounds a patient script.
+	// whole allowance in seconds, the hourly one bounds a patient script.
 	aiBurst: { requests: 10, window: "1 m" },
 	aiHourly: { requests: 60, window: "1 h" },
 } satisfies Record<string, { requests: number; window: Window }>;

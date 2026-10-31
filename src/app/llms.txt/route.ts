@@ -17,15 +17,15 @@ Quicktalog empowers businesses to create, manage, and share interactive digital 
 
 ## Key Features
 
-- **AI-Powered Creation**: Let our AI build your entire catalog for you. Just describe your business and watch the magic happen.
-- **OCR Import Technology**: Convert existing paper catalogs instantly with AI technology.
+- **Quick AI**: An assistant in the builder that drafts and edits your catalog from a description. You see what it changed and accept or reject it.
+- **Photo import**: Attach up to 10 photos of a printed menu or price list to a Quick AI message and it reads the items and prices into your catalog.
 - **Mobile-First Design**: Your catalog will look amazing on smartphones, tablets, and desktops, guaranteed.
 - **Real-Time Analytics**: See what's popular, what's not, and what your customers are looking for to make data-driven decisions.
 - **Professional Templates**: Choose from a variety of professionally designed catalog templates.
 
 ## How It Works
 
-1. **Create**: Use our intuitive editor or AI generation tools.
+1. **Create**: Use the builder, with Quick AI to draft or edit for you.
 2. **Go Live**: Publish in minutes and get a unique link.
 3. **Grow**: Share via QR code and track performance with analytics.
 
@@ -39,8 +39,7 @@ Start with our **Free Plan**.
 
 Upgrade for:
 - More catalogs
-- AI features
-- OCR import
+- More AI credits per month
 - Advanced analytics
 
 ## Common Questions

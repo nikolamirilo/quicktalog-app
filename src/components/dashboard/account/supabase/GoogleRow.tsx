@@ -46,6 +46,9 @@ export function GoogleRow({ supabase }: { supabase: SupabaseBrowserClient }) {
 
 	const google = identities?.find((identity) => identity.provider === "google");
 	const googleEmail = google?.identity_data?.email as string | undefined;
+	// GoTrue keeps a Google-only user at one identity even after they set a
+	// password, so this can stay true for them.
+	const onlySignInMethod = Boolean(google) && (identities?.length ?? 0) < 2;
 
 	const connect = async () => {
 		setBusy(true);
@@ -86,7 +89,7 @@ export function GoogleRow({ supabase }: { supabase: SupabaseBrowserClient }) {
 				(google ? (
 					<Button
 						// The last identity cannot be removed; GoTrue refuses it too.
-						disabled={busy || identities.length < 2}
+						disabled={busy || onlySignInMethod}
 						onClick={() => disconnect(google)}
 						size="sm"
 						variant="outline"
@@ -98,6 +101,11 @@ export function GoogleRow({ supabase }: { supabase: SupabaseBrowserClient }) {
 						Connect Google
 					</Button>
 				))
+			}
+			description={
+				onlySignInMethod
+					? "Google is the only sign-in provider linked to this account, so it can't be disconnected. A password you have set still works."
+					: undefined
 			}
 			label="Google"
 			value={

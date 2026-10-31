@@ -1,4 +1,5 @@
 import "server-only";
+import { CREDITS } from "@/lib/ai/pricing";
 import type { Tier } from "@/lib/entitlements/plan";
 
 /**
@@ -33,4 +34,12 @@ const PAID: AiPlanLimits = {
 
 export function aiLimitsFor(plan: Tier): AiPlanLimits {
 	return plan.id === FREE_PLAN_ID ? FREE : PAID;
+}
+
+/** The most one request can spend: every task of the largest plan, and every page read. */
+export function requestHoldFor(ai: AiPlanLimits): number {
+	return (
+		ai.maxPlanTasks * CREDITS.perExtraTask +
+		ai.maxFetches * CREDITS.perPageFetch
+	);
 }

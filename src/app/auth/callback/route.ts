@@ -1,6 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
 import { type NextRequest, NextResponse } from "next/server";
-import { AUTH_PROVIDER } from "@/lib/auth/provider";
 import { safeNext } from "@/lib/auth/redirects";
 import {
 	AuthConfigError,
@@ -21,10 +20,6 @@ export const dynamic = "force-dynamic";
 const CODE = /^[A-Za-z0-9._~-]{16,1024}$/;
 
 export async function GET(req: NextRequest) {
-	if (AUTH_PROVIDER !== "supabase") {
-		return new NextResponse(null, { status: 404 });
-	}
-
 	const { origin, searchParams } = req.nextUrl;
 	const fail = NextResponse.redirect(new URL("/auth?error=link", origin));
 

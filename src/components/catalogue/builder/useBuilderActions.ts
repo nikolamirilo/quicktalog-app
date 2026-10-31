@@ -7,10 +7,12 @@ import {
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { refreshDashboardData } from "@/hooks/useDashboardData";
+import { isHeadingEmpty } from "@/lib/catalogue/heading";
 import {
 	Eye,
 	LayoutTemplate,
 	type LucideIcon,
+	QrCode,
 	RefreshCw,
 	Rocket,
 	Save,
@@ -19,17 +21,20 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export type BuilderAction = {
-	key: "save" | "templates" | "preview" | "publish";
+type BuilderActionCore = {
+	key: "save" | "templates" | "preview" | "publish" | "qr";
 	icon: LucideIcon;
 	label: string;
-	onClick: () => void;
 	disabled: boolean;
 	primary: boolean;
 };
 
+/** A button or a link, never both: a link has to stay an anchor (see `qr`). */
+export type BuilderAction = BuilderActionCore &
+	({ onClick: () => void; href?: never } | { href: string; onClick?: never });
+
 /**
- * The builder's save / templates / preview / publish actions and the modals
+ * The builder's save / templates / preview / QR / publish actions and the modals
  * they open. The rail (desktop) and the bottom bar (phone) both read these, so
  * the behaviour lives in one place and the two layouts only differ in markup.
  */
@@ -38,13 +43,11 @@ export const useBuilderActions = ({
 }: {
 	closePanel: () => void;
 }) => {
-	const {
-		catalogue,
-		updateCatalogue: updateContextCatalogue,
-		acceptAiChanges,
-	} = useCatalogueContext();
+	const { catalogue, acceptAiChanges, markSaved, patchSaved } =
+		useCatalogueContext();
 	const { refreshUserData } = useUserContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+	const [successType, setSuccessType] = useState<"regular" | "edit">("regular");
 	const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 	const router = useRouter();
 
@@ -66,6 +69,7 @@ export const useBuilderActions = ({
 			});
 			const res = await promise;
 			if (!res.success) return null;
+			markSaved(catalogue);
 			return "data" in res ? res.data : null;
 		} catch (err) {
 			console.error(err);
@@ -73,17 +77,10 @@ export const useBuilderActions = ({
 		}
 	};
 
-	const isHeadingEmpty =
-		!catalogue.heading ||
-		catalogue.heading
-			.replace(/<[^>]*>/g, "")
-			.replace(/&nbsp;/g, " ")
-			.trim().length === 0;
-
 	const isPublishDisabled =
 		catalogue.content.length === 0 ||
 		catalogue.name.length === 0 ||
-		isHeadingEmpty;
+		isHeadingEmpty(catalogue.heading);
 
 	const handlePreview = async () => {
 		// Open window synchronously so Safari doesn't block it as a popup
@@ -112,25 +109,32 @@ export const useBuilderActions = ({
 		if (catalogue.status !== "active") {
 			toast.promise(promise, {
 				loading: "Publishing...",
-				success: async (success) => {
+				success: async (result) => {
 					closePanel();
-					if (!success) throw new Error("Failed to update status");
-					updateContextCatalogue({ status: "active" });
+					if (!result.success) {
+						throw new Error(result.error ?? "Failed to update status");
+					}
+					patchSaved({ status: "active" });
+					setSuccessType("regular");
 					setIsSuccessModalOpen(true);
 					await refreshDashboardData();
 					await refreshUserData();
 					router.refresh();
 					return "Catalogue published successfully";
 				},
-				error: "Failed to publish catalogue",
+				error: (err: Error) => err.message || "Failed to publish catalogue",
 			});
 		} else {
 			toast.promise(promise, {
 				loading: "Updating...",
-				success: (success) => {
+				success: (result) => {
 					closePanel();
-					if (!success) throw new Error("Failed to update status");
-					updateContextCatalogue({ status: "active" });
+					if (!result.success) {
+						throw new Error(result.error ?? "Failed to update status");
+					}
+					patchSaved({ status: "active" });
+					setSuccessType("edit");
+					setIsSuccessModalOpen(true);
 					return "Catalogue updated successfully";
 				},
 				action: {
@@ -139,7 +143,7 @@ export const useBuilderActions = ({
 						window.open(`/catalogues/${catalogue.name}`, "_blank");
 					},
 				},
-				error: "Failed to update catalogue",
+				error: (err: Error) => err.message || "Failed to update catalogue",
 			});
 		}
 	};
@@ -175,6 +179,14 @@ export const useBuilderActions = ({
 			disabled: isPublishDisabled,
 			primary: false,
 		},
+		qr: {
+			key: "qr",
+			icon: QrCode,
+			label: "QR code",
+			href: `/admin/${catalogue.name}/qr-editor`,
+			disabled: false,
+			primary: false,
+		},
 		publish: {
 			key: "publish",
 			icon: isPublished ? RefreshCw : Rocket,
@@ -189,6 +201,7 @@ export const useBuilderActions = ({
 		actions,
 		catalogueName: catalogue.name,
 		isSuccessModalOpen,
+		successType,
 		closeSuccessModal: () => setIsSuccessModalOpen(false),
 		isTemplateModalOpen,
 		closeTemplateModal: () => setIsTemplateModalOpen(false),

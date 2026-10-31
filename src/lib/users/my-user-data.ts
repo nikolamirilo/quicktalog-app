@@ -21,19 +21,25 @@ type UsageRow = {
 	credits: string | number;
 	pageviews: string | number;
 	unique_visitors: string | number;
+	period_start: string | Date;
+	period_end: string | Date;
 };
 
 const asNumber = (value: string | number | null | undefined) =>
 	typeof value === "number" ? value : Number(value ?? 0);
 
+const asIso = (value: string | Date) => new Date(value).toISOString();
+
 /**
- * Profile, plan and this month's usage of the caller. Both statements run in
+ * Profile, plan and current-period usage of the caller. Both statements run in
  * one `app_user` transaction, so RLS decides what is visible and no user id is
  * accepted from the caller.
  *
- * The usage numbers come from `private.my_usage()`, which computes the month
- * boundary in SQL (a long-lived server instance would otherwise keep using the
- * month it started in) and leaves out refunded AI turns.
+ * The usage numbers come from `private.my_usage()`, which works out the account's
+ * 30-day period from its signup date in SQL (a long-lived server instance would
+ * otherwise keep using the window it started in) and leaves out refunded AI
+ * turns. It returns that window too, so the dashboard names the reset date from
+ * the same source the limits are enforced against.
  */
 export async function getMyUserData(
 	me: VerifiedIdentity,
@@ -95,6 +101,11 @@ export async function loadInTx(
 				},
 				credits: asNumber(usage?.credits),
 				catalogues: asNumber(usage?.catalogues),
+				// Always present: the users row was just read above.
+				period: {
+					start: asIso(usage.period_start),
+					end: asIso(usage.period_end),
+				},
 			},
 		},
 	};

@@ -4,13 +4,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 /**
  * The M10 sign-up triggers against a real GoTrue. pgTAP already proves the
- * trigger bodies work on a hand-inserted row; what it can't prove is how
- * GoTrue actually writes those rows - and that's the interesting bug:
- * `admin.createUser` sets `app_metadata` in a *second* UPDATE, so a trigger
- * that only looked at `app_metadata` would fire on the INSERT and give every
- * imported user a second, empty `public.users` row, losing everything they
- * own at the re-key. PATCH P5 consults `migration.clerk_user_map` instead,
- * and this is where that's checked against the real thing.
+ * trigger bodies work on a hand-inserted row; this checks them against the
+ * rows GoTrue actually writes.
  *
  * Creates and deletes only its own users, but still refuses anything that
  * isn't a local stack.
@@ -108,7 +103,6 @@ describe.skipIf(!enabled)("sign-up against a real GoTrue", () => {
 		for (const id of created) {
 			await admin.auth.admin.deleteUser(id).catch(() => {});
 		}
-		await sql`delete from migration.clerk_user_map where clerk_user_id like 'user_2signuptest%'`;
 		await sql.end({ timeout: 5 });
 	});
 
@@ -232,38 +226,7 @@ describe.skipIf(!enabled)("sign-up against a real GoTrue", () => {
 		expect(after.source).toBe("gate");
 	});
 
-	it("creates no row for an identity that is already claimed in the map", async () => {
-		// This is the import's central invariant. GoTrue writes app_metadata in a
-		// later UPDATE than the INSERT the trigger fires on, so the claim in
-		// migration.clerk_user_map is the only thing that can stop it in time.
-		const email = address("claimed");
-		const uuid = crypto.randomUUID();
-		const clerkId = `user_2signuptest${Date.now()}`;
-
-		await sql`
-			insert into migration.clerk_user_map (clerk_user_id, supabase_user_id, status, email)
-			values (${clerkId}, ${uuid}::uuid, 'claimed', ${email})`;
-
-		const { data, error } = await track(
-			await admin.auth.admin.createUser({
-				email,
-				email_confirm: true,
-				// `id`, not `user_id`: GoTrue silently ignores an unknown field and
-				// allocates its own uuid, which is what this test caught the first
-				// time it ran. `migrate-clerk-to-supabase.ts` uses `id` too, and it
-				// has to - a generated uuid would not match the claimed map row and
-				// the imported user would get a second, empty public.users row.
-				id: uuid,
-				password: PASSWORD,
-			}),
-		);
-		expect(error).toBe(null);
-		expect(data.user?.id).toBe(uuid);
-
-		expect(await publicRow(uuid)).toBe(null);
-	});
-
-	it("removes the public.users row and logs the deletion when the account goes", async () => {
+	it("removes the public.users row when the account goes", async () => {
 		const email = address("deleted");
 		const { data } = await track(
 			await admin.auth.admin.createUser({
@@ -278,10 +241,5 @@ describe.skipIf(!enabled)("sign-up against a real GoTrue", () => {
 		await admin.auth.admin.deleteUser(userId);
 
 		expect(await publicRow(userId)).toBe(null);
-		const [logged] = await sql<{ supabase_user_id: string }[]>`
-			select supabase_user_id::text as supabase_user_id
-			  from migration.auth_user_deletions where supabase_user_id = ${userId}::uuid`;
-		// The log is what lets a rollback delete the matching Clerk user.
-		expect(logged?.supabase_user_id).toBe(userId);
 	});
 });

@@ -413,11 +413,11 @@ const sections: LegalSectionContent[] = [
 			<>
 				<p>
 					Quicktalog relies on third-party service providers, including but not
-					limited to Supabase, Vercel, Clerk, AWS, Cloudflare and Paddle, for
-					hosting, authentication, data storage, payment processing, and other
-					platform functionality. While we take reasonable steps to maintain a
-					reliable service, we do not control the availability, performance, or
-					security of these external providers.
+					limited to Supabase, Vercel, AWS, Cloudflare and Paddle, for hosting,
+					authentication, data storage, payment processing, and other platform
+					functionality. While we take reasonable steps to maintain a reliable
+					service, we do not control the availability, performance, or security
+					of these external providers.
 				</p>
 				<p>
 					In the event of downtime, service interruption, degraded performance,

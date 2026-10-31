@@ -7,11 +7,15 @@ export const DEFAULT_SITE_URL =
 
 export const SUPPORT_EMAIL = "quicktalog@outlook.com";
 
+// Always prod and PNG: inboxes can't load localhost or preview origins, and Gmail and Outlook block SVG.
+export const LOGO_URL =
+	"https://www.quicktalog.app/images/brand/logo-email.png";
+
 type EmailShellProps = {
 	/** Inbox preview text shown after the subject. */
 	preview: string;
 	children: ReactNode;
-	/** Origin for the logo and footer links; auth templates pass `{{ .SiteURL }}`. */
+	/** Origin for the logo link and footer links; auth templates pass `{{ .SiteURL }}`. */
 	siteUrl?: string;
 };
 
@@ -56,8 +60,8 @@ export function EmailShell({
 												<a href={siteUrl}>
 													<img
 														alt="Quicktalog"
-														height="43"
-														src={`${siteUrl}/images/brand/email-logo@2x.png`}
+														height="35"
+														src={LOGO_URL}
 														style={s.logo}
 														width="118"
 													/>

@@ -14,6 +14,43 @@ const RailDivider = () => (
 	<span aria-hidden="true" className="my-1 h-px w-10 bg-product-border" />
 );
 
+/** One action: a button, or an anchor when the action is a link. */
+const RailAction = ({ action }: { action: BuilderAction }) => {
+	const { icon: Icon, label, href, onClick, disabled, primary } = action;
+	const className = cn(
+		railItemClass,
+		primary && "mt-1 shadow-none hover:shadow-none",
+	);
+	const variant = primary ? "default" : "ghost";
+	const body = (
+		<>
+			<Icon />
+			<span>{label}</span>
+		</>
+	);
+
+	if (href) {
+		return (
+			<Button asChild className={className} variant={variant}>
+				{/* A new tab: the guard ignores it, so the draft stays put. */}
+				<Link href={href} rel="noreferrer" target="_blank">
+					{body}
+				</Link>
+			</Button>
+		);
+	}
+	return (
+		<Button
+			className={className}
+			disabled={disabled}
+			onClick={onClick}
+			variant={variant}
+		>
+			{body}
+		</Button>
+	);
+};
+
 /**
  * The builder's desktop rail (from `md`): the editor toggle, the catalogue
  * actions, and the way out (dashboard). Every item carries a
@@ -54,20 +91,8 @@ export const BuilderRail = ({
 
 		<RailDivider />
 
-		{actions.map(({ key, icon: Icon, label, onClick, disabled, primary }) => (
-			<Button
-				className={cn(
-					railItemClass,
-					primary && "mt-1 shadow-none hover:shadow-none",
-				)}
-				disabled={disabled}
-				key={key}
-				onClick={onClick}
-				variant={primary ? "default" : "ghost"}
-			>
-				<Icon />
-				<span>{label}</span>
-			</Button>
+		{actions.map((action) => (
+			<RailAction action={action} key={action.key} />
 		))}
 
 		<span aria-hidden="true" className="flex-1" />

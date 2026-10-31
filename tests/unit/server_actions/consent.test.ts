@@ -21,7 +21,6 @@ import { acceptLegalTerms } from "@/actions/consent";
 const ME = {
 	userId: "11111111-1111-1111-1111-111111111111",
 	sessionId: "sess_1",
-	provider: "supabase",
 };
 
 const pgThrow = (code: string) =>

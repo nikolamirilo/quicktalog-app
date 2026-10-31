@@ -2,14 +2,9 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-	env: {
-		// One source for the auth provider switch, inlined for server and client.
-		NEXT_PUBLIC_AUTH_PROVIDER:
-			process.env.AUTH_PROVIDER === "supabase" ? "supabase" : "clerk",
-	},
-	// Keep these heavy native packages out of the webpack bundle so they are
+	// Keep this heavy native package out of the webpack bundle so it is
 	// required at runtime instead of being parsed/memoized into the build graph.
-	serverExternalPackages: ["tesseract.js", "playwright"],
+	serverExternalPackages: ["tesseract.js"],
 	images: {
 		minimumCacheTTL: 2678400,
 		formats: ["image/webp"],
@@ -52,8 +47,8 @@ const nextConfig: NextConfig = {
 			"font-src 'self' data: https://fonts.gstatic.com",
 			"img-src 'self' data: blob: https:",
 			"media-src 'self' blob: https:",
-			"connect-src 'self' https://*.facebook.com https://connect.facebook.net https://*.supabase.co wss://*.supabase.co https://*.clerk.accounts.dev https://clerk.quicktalog.app https://*.ingest.sentry.io https://*.posthog.com https://*.clarity.ms https://*.google-analytics.com https://*.googletagmanager.com https://*.paddle.com https://*.uploadthing.com https://uploadthing.com https://api.deepseek.com",
-			"frame-src 'self' https://challenges.cloudflare.com https://*.paddle.com https://*.clerk.accounts.dev",
+			"connect-src 'self' https://*.facebook.com https://connect.facebook.net https://*.supabase.co wss://*.supabase.co https://*.ingest.sentry.io https://*.posthog.com https://*.clarity.ms https://*.google-analytics.com https://*.googletagmanager.com https://*.paddle.com https://*.uploadthing.com https://uploadthing.com https://api.deepseek.com",
+			"frame-src 'self' https://challenges.cloudflare.com https://*.paddle.com",
 			"worker-src 'self' blob:",
 			"object-src 'none'",
 			"base-uri 'self'",

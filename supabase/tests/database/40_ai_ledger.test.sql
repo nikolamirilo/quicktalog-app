@@ -7,11 +7,11 @@
 -- Note on signatures: M05 5.5 defined private.begin_ai_turn(text, integer, boolean), M06 line 18
 -- dropped it for a 5-arg form, and 20260926120000:12 dropped that one in turn. At the end of the
 -- migration chain the callable forms are
--- private.begin_ai_turn(text, integer, text, uuid, text, integer, boolean) - whose last two
+-- private.begin_ai_turn(text, integer, text, uuid, text, integer, boolean, integer) (20261024120000) - whose last three
 -- arguments are defaulted, so the 5-arg calls below still resolve - and private.refund_ai_turn(uuid).
 -- This file exercises those. The plan binding added by M06 is covered by 41_ai_plan_binding.test.sql.
 --
--- Fixtures use uuid-shaped user ids (plan section 11.3), never Clerk `user_...` ids.
+-- Fixtures use uuid-shaped user ids, like `public.users.id`.
 --
 -- Everything runs inside one transaction that is rolled back, so the fixture schema,
 -- the fixture rows and the extra grants never survive the test.
@@ -143,7 +143,7 @@ select is(
 -- M06:176-180
 select ok(
   pg_catalog.has_function_privilege(
-    'app_user', 'private.begin_ai_turn(text, integer, text, uuid, text, integer, boolean)'::regprocedure, 'EXECUTE'),
+    'app_user', 'private.begin_ai_turn(text, integer, text, uuid, text, integer, boolean, integer)'::regprocedure, 'EXECUTE'),
   'M06 grants: app_user may execute private.begin_ai_turn');
 
 select ok(

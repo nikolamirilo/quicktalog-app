@@ -1,5 +1,6 @@
 "use client";
-import { DEFAULT_IMAGE, type Item } from "@quicktalog/common";
+import { hasItemPhoto } from "@/lib/catalogue/item-image";
+import { type Item } from "@quicktalog/common";
 import { Maximize2, X } from "lucide-react";
 import { useState } from "react";
 import {
@@ -47,8 +48,7 @@ export function ItemDetailModal({
 	const isSheet = useMediaQuery(SHEET_QUERY);
 	const swipe = useSwipeToClose({ open: isOpen, onClose, enabled: isSheet });
 
-	const photo =
-		item.image && item.image !== DEFAULT_IMAGE ? item.image : undefined;
+	const photo = hasItemPhoto(item.image) ? item.image : undefined;
 	const hasTopRow = Boolean(sectionName) || !photo;
 
 	return (

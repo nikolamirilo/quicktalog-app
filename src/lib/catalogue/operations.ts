@@ -5,7 +5,18 @@ import {
 	defaultCatalogueData,
 	type Item,
 } from "@quicktalog/common";
-import { isItemsBlock, normalizeContent } from "@/lib/catalogue/content-blocks";
+import {
+	countPlanItems,
+	countPlanSections,
+	isItemsBlock,
+	normalizeContent,
+} from "@/lib/catalogue/content-blocks";
+import {
+	DEFAULT_HEADING_SIZE,
+	parseHeading,
+	wrapHeading,
+} from "@/lib/catalogue/heading";
+import { withLogoScale } from "@/lib/catalogue/logo";
 import {
 	CUSTOM_THEME_NAME,
 	sanitizeCustomThemeColors,
@@ -29,6 +40,13 @@ export interface OperationLimits {
 	 * assistant must not be a way around a lock the UI applies.
 	 */
 	branding?: boolean;
+	/**
+	 * `features.advancedAppearance`: a custom colour palette, font, text size,
+	 * corners and shadow.
+	 */
+	advancedAppearance?: boolean;
+	/** `features.newsletter`: the footer's newsletter form. */
+	newsletter?: boolean;
 }
 
 export interface OperationOutcome {
@@ -93,17 +111,6 @@ const reorder = <T extends { order: number }>(arr: T[]): T[] =>
 const label = (block: ContentBlock): string =>
 	block.name ? `"${block.name}"` : `${block.type} section`;
 
-const countItems = (content: ContentBlock[]): number =>
-	content.reduce(
-		(total, block) =>
-			total + (isItemBlock(block) ? (block.items?.length ?? 0) : 0),
-		0,
-	);
-
-/** Text blocks are free - they don't count against `sections_per_catalogue`. */
-const countSections = (content: ContentBlock[]): number =>
-	content.filter((block) => block.type !== "text").length;
-
 const remaining = (
 	limit: number | "unlimited" | undefined,
 	used: number,
@@ -111,6 +118,10 @@ const remaining = (
 	typeof limit === "number"
 		? Math.max(0, limit - used)
 		: Number.POSITIVE_INFINITY;
+
+/** Limits are per catalogue; the wording must never read as per section. */
+const itemsLeftOut = (dropped: number, limit: OperationLimits["items"]) =>
+	`${dropped} item(s) were left out: your plan allows ${limit} items in the whole catalogue.`;
 
 const toItem = (input: AiItemInput, order: number): Item => ({
 	id: input.id ?? crypto.randomUUID(),
@@ -219,7 +230,8 @@ export function applyCatalogueOperations(
 		next = { ...next, content };
 	};
 
-	const itemBudget = () => remaining(limits.items, countItems(next.content));
+	const itemBudget = () =>
+		remaining(limits.items, countPlanItems(next.content));
 
 	for (const operation of operations) {
 		switch (operation.op) {
@@ -231,19 +243,23 @@ export function applyCatalogueOperations(
 					);
 					break;
 				}
-				if (
-					operation.sectionType !== "text" &&
-					remaining(limits.sections, countSections(next.content)) < 1
-				) {
+				if (remaining(limits.sections, countPlanSections(next.content)) < 1) {
 					limitReached = true;
-					skipped.push("Section limit reached - new section not added.");
+					skipped.push(
+						`Your plan allows ${limits.sections} sections in the whole catalogue and it already has ${countPlanSections(next.content)}, so the section was not added.`,
+					);
 					break;
 				}
 
 				const requested = operation.items ?? [];
 				const budget = itemBudget();
 				const accepted = requested.slice(0, Math.min(requested.length, budget));
-				if (accepted.length < requested.length) limitReached = true;
+				if (accepted.length < requested.length) {
+					limitReached = true;
+					skipped.push(
+						itemsLeftOut(requested.length - accepted.length, limits.items),
+					);
+				}
 
 				const items = accepted.map((input, index) => toItem(input, index));
 				const content = [...next.content];
@@ -269,6 +285,17 @@ export function applyCatalogueOperations(
 				const block = next.content[index];
 				if (!block) {
 					skipped.push("Could not find the section to update.");
+					break;
+				}
+				// A downgraded owner can delete a block the plan no longer includes, not edit it.
+				if (
+					operation.code !== undefined &&
+					isSectionTypeLocked(block.type, limits.sectionTypes)
+				) {
+					limitReached = true;
+					skipped.push(
+						`${sectionTypeLabel(block.type)} sections are not part of your plan, so this one cannot be edited. It can be deleted.`,
+					);
 					break;
 				}
 
@@ -348,12 +375,21 @@ export function applyCatalogueOperations(
 					0,
 					Math.min(operation.items.length, budget),
 				);
-				if (accepted.length < operation.items.length) limitReached = true;
 				if (accepted.length === 0) {
+					limitReached = true;
 					skipped.push(
-						`Item limit reached - nothing added to ${label(block)}.`,
+						`Your plan allows ${limits.items} items in the whole catalogue and it already has ${countPlanItems(next.content)}, so nothing was added to ${label(block)}.`,
 					);
 					break;
+				}
+				if (accepted.length < operation.items.length) {
+					limitReached = true;
+					skipped.push(
+						itemsLeftOut(
+							operation.items.length - accepted.length,
+							limits.items,
+						),
+					);
 				}
 
 				const existing = block.items ?? [];
@@ -402,6 +438,34 @@ export function applyCatalogueOperations(
 					Object.keys(patch).length === 1 && patch.image
 						? `Added a photo to "${current.name}"`
 						: `Updated "${current.name}" in ${label(block)}`,
+				);
+				break;
+			}
+
+			case "set_item_images": {
+				const index = sectionIndex(operation.sectionId);
+				const block = itemBlockAt(index);
+				if (!block) {
+					skipped.push("Could not find the section to add photos to.");
+					break;
+				}
+
+				const items = [...block.items];
+				let changed = 0;
+				for (const { itemId, image } of operation.images) {
+					const itemIndex = items.findIndex((item) => item.id === itemId);
+					if (itemIndex < 0) continue;
+					items[itemIndex] = { ...items[itemIndex], image };
+					changed += 1;
+				}
+				if (changed === 0) {
+					skipped.push("Could not find any of those items to add photos to.");
+					break;
+				}
+
+				writeBlock(index, { ...block, items } as ContentBlock);
+				applied.push(
+					`Added ${changed} photo${changed === 1 ? "" : "s"} in ${label(block)}`,
 				);
 				break;
 			}
@@ -494,7 +558,17 @@ export function applyCatalogueOperations(
 				}
 
 				if (fields.heading !== undefined) {
-					patch.heading = fields.heading;
+					// The assistant writes words; the builder's `<h1>` wrapper carries the
+					// size and the classes the page draws the heading with, and the size
+					// the owner chose is kept unless the new value states one.
+					const incoming = parseHeading(fields.heading);
+					const current = parseHeading(next.heading);
+					patch.heading = incoming.inner
+						? wrapHeading(
+								incoming.inner,
+								incoming.size ?? current.size ?? DEFAULT_HEADING_SIZE,
+							)
+						: "";
 					changed.push("heading");
 				}
 				if (fields.currency !== undefined) {
@@ -538,6 +612,20 @@ export function applyCatalogueOperations(
 
 			case "update_appearance": {
 				const { fields } = operation;
+				if (
+					limits.advancedAppearance === false &&
+					(fields.customColors !== undefined ||
+						fields.fontFamily !== undefined ||
+						fields.contentFontSize !== undefined ||
+						fields.borderRadius !== undefined ||
+						fields.shadow !== undefined)
+				) {
+					limitReached = true;
+					skipped.push(
+						"Custom themes and the font, text size, corner and shadow settings are not part of your plan.",
+					);
+					break;
+				}
 				const changed: string[] = [];
 				const style = { ...next.appearance.style };
 				const theme = { ...next.appearance.theme };
@@ -596,7 +684,7 @@ export function applyCatalogueOperations(
 
 				const { fields } = operation;
 				const changed: string[] = [];
-				const header = { ...defaultCatalogueData.header, ...next.header };
+				let header = { ...defaultCatalogueData.header, ...next.header };
 
 				if (fields.type !== undefined) {
 					header.type = fields.type;
@@ -614,8 +702,8 @@ export function applyCatalogueOperations(
 					header.emailCta = fields.emailCta;
 					changed.push("header email icon");
 				}
-				if (fields.logoWidth !== undefined) {
-					header.logoSize = { ...header.logoSize, width: fields.logoWidth };
+				if (fields.logoScale !== undefined) {
+					header = withLogoScale(header, fields.logoScale);
 					changed.push("header logo size");
 				}
 
@@ -634,10 +722,18 @@ export function applyCatalogueOperations(
 					skipped.push("Footer settings are not part of your plan.");
 					break;
 				}
+				if (
+					limits.newsletter === false &&
+					operation.fields.newsletter === true
+				) {
+					limitReached = true;
+					skipped.push("The newsletter form is not part of your plan.");
+					break;
+				}
 
 				const { fields } = operation;
 				const changed: string[] = [];
-				const footer = { ...defaultCatalogueData.footer, ...next.footer };
+				let footer = { ...defaultCatalogueData.footer, ...next.footer };
 
 				if (fields.type !== undefined) {
 					footer.type = fields.type;
@@ -655,8 +751,8 @@ export function applyCatalogueOperations(
 					footer.showPartners = fields.showPartners;
 					changed.push("partners");
 				}
-				if (fields.logoWidth !== undefined) {
-					footer.logoSize = { ...footer.logoSize, width: fields.logoWidth };
+				if (fields.logoScale !== undefined) {
+					footer = withLogoScale(footer, fields.logoScale);
 					changed.push("footer logo size");
 				}
 

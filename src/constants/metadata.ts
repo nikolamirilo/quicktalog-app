@@ -1,5 +1,5 @@
 import type { ArticleMeta } from "@/content/articles/_types";
-import type { DocMeta } from "@/content/docs/_types";
+import type { ManualPageMeta } from "@/content/manual/_types";
 import { KEYWORDS } from "@/constants";
 import { Metadata } from "next";
 
@@ -141,39 +141,6 @@ export function generatePageMetadata(
 	};
 }
 
-export function generateDocMetadata(meta: DocMeta): Metadata {
-	const url = `https://www.quicktalog.app/docs/${meta.slug}`;
-	const title = `${meta.title} | Quicktalog Docs`;
-	return {
-		title,
-		description: meta.description,
-		generator: "Quicktalog",
-		applicationName: "Quicktalog",
-		keywords: [...siteMetadata.keywords, ...meta.keywords],
-		authors: siteMetadata.authors,
-		creator: siteMetadata.creator,
-		publisher: siteMetadata.publisher,
-		metadataBase: siteMetadata.metadataBase,
-		alternates: {
-			canonical: url,
-		},
-		openGraph: {
-			...siteMetadata.openGraph,
-			type: "article",
-			url,
-			title,
-			description: meta.description,
-		},
-		twitter: {
-			...siteMetadata.twitter,
-			title,
-			description: meta.description,
-			creator: siteMetadata.creator,
-			site: url,
-		},
-	};
-}
-
 export function generateCatalogueMetadata(
 	itemTitle: string,
 	itemSubtitle: string,
@@ -254,6 +221,42 @@ export function generateArticleMetadata(meta: ArticleMeta): Metadata {
 			title: meta.title,
 			description: meta.description,
 			images: [meta.heroImage],
+		},
+	};
+}
+
+export function generateManualMetadata(
+	meta: ManualPageMeta,
+	path: string,
+): Metadata {
+	const url = `https://www.quicktalog.app${path}`;
+	const title = `${meta.title} | Quicktalog Manual`;
+	return {
+		title,
+		description: meta.inShort,
+		generator: "Quicktalog",
+		applicationName: "Quicktalog",
+		keywords: [...siteMetadata.keywords, ...(meta.keywords ?? [])],
+		authors: siteMetadata.authors,
+		creator: siteMetadata.creator,
+		publisher: siteMetadata.publisher,
+		metadataBase: siteMetadata.metadataBase,
+		alternates: {
+			canonical: url,
+		},
+		openGraph: {
+			...siteMetadata.openGraph,
+			type: "article",
+			url,
+			title,
+			description: meta.inShort,
+		},
+		twitter: {
+			...siteMetadata.twitter,
+			title,
+			description: meta.inShort,
+			creator: siteMetadata.creator,
+			site: url,
 		},
 	};
 }

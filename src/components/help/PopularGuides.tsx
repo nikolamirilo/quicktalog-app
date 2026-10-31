@@ -6,21 +6,16 @@ import { IconTile } from "@/components/general/IconTile";
 import { SectionHeading } from "@/components/general/SectionHeading";
 import { TextLink } from "@/components/general/TextLink";
 import { linkCardClass } from "@/components/resources/LinkCard";
-import { getDocBySlug } from "@/lib/content/docs";
+import {
+	getManualGroup,
+	getManualPopularPages,
+	manualHref,
+} from "@/lib/content/manual";
 import { cn } from "@/lib/ui/cn";
 
-const popularSlugs = [
-	"getting-started",
-	"create-a-catalogue",
-	"quick-ai",
-	"plans-and-billing",
-];
-
-/** Short list of the most useful docs, shown under the Help Center FAQs. */
+/** Short list of the most useful manual pages, shown under the Help Center FAQs. */
 export function PopularGuides() {
-	const docs = popularSlugs
-		.map((slug) => getDocBySlug(slug))
-		.filter((doc) => doc !== undefined);
+	const pages = getManualPopularPages();
 
 	return (
 		<section aria-labelledby="popular-guides-heading" className="pb-10 pt-2">
@@ -42,26 +37,28 @@ export function PopularGuides() {
 					</TextLink>
 				</div>
 				<ul className="grid grid-cols-1 gap-2.5 md:grid-cols-2">
-					{docs.map((doc) => {
-						const Icon = doc.meta.icon;
+					{pages.map(({ meta }) => {
+						const Icon = getManualGroup(meta)?.icon;
 						return (
-							<li key={doc.meta.slug}>
+							<li key={meta.slug}>
 								<Link
 									className={cn(
 										linkCardClass,
 										"flex items-center gap-3 px-3.5 py-3",
 									)}
-									href={`/docs/${doc.meta.slug}`}
+									href={manualHref(meta.slug)}
 								>
-									<IconTile size="sm">
-										<Icon />
-									</IconTile>
+									{Icon && (
+										<IconTile size="sm">
+											<Icon />
+										</IconTile>
+									)}
 									<span className="min-w-0 flex-1">
 										<b className="block text-[15px] leading-[1.3] text-product-foreground">
-											{doc.meta.title}
+											{meta.title}
 										</b>
-										<small className="text-[13px] text-product-muted">
-											{doc.meta.readingTimeMinutes} min read
+										<small className="line-clamp-1 text-[13px] text-product-muted">
+											{meta.inShort}
 										</small>
 									</span>
 									<ChevronRight

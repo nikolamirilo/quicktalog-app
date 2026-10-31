@@ -17,28 +17,9 @@ export const DASHBOARD_TABS = [
 
 export type DashboardTab = (typeof DASHBOARD_TABS)[number]["value"];
 
-export const DASHBOARD_PATH = "/admin/dashboard";
-
 /** Any `?tab=` value that is not a known tab opens the overview. */
 export function toDashboardTab(value: string | null): DashboardTab {
 	return DASHBOARD_TABS.some((tab) => tab.value === value)
 		? (value as DashboardTab)
 		: "overview";
-}
-
-/**
- * The tab a dashboard URL opens. Below `/admin/dashboard/` Clerk's
- * `<UserProfile/>` routes its own pages without a `?tab=`; those belong to
- * the settings tab.
- */
-export function dashboardTabFromUrl(
-	tabParam: string | null,
-	pathname: string,
-): DashboardTab {
-	if (tabParam === null && isAccountSubRoute(pathname)) return "settings";
-	return toDashboardTab(tabParam);
-}
-
-export function isAccountSubRoute(pathname: string) {
-	return pathname.startsWith(`${DASHBOARD_PATH}/`);
 }

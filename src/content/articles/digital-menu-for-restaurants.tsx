@@ -139,13 +139,12 @@ function Body() {
 			/>
 
 			<Callout title="Already have a printed menu?">
-				You do not have to retype it. Take a clear photo of each page and let
-				OCR import pull the dishes and prices into a draft for you. Fix the few
-				things it gets wrong, and you are most of the way there. If you would
-				rather start from a description of your restaurant, the{" "}
-				<TextLink href="/articles/create-catalog-with-ai">
-					AI generator
-				</TextLink>{" "}
+				You do not have to retype it. Take a clear photo of each page and attach
+				them to a Quick AI message in the builder; it reads the dishes and
+				prices into a draft for you. Fix the few things it gets wrong, and you
+				are most of the way there. If you would rather start from a description
+				of your restaurant,{" "}
+				<TextLink href="/articles/create-catalog-with-ai">Quick AI</TextLink>{" "}
 				can draft a first version for you to edit.
 			</Callout>
 
@@ -162,7 +161,7 @@ function Body() {
 					{
 						title: "Add your dishes",
 						description:
-							"Start a new catalog and add your items, grouped the way your menu already reads: starters, mains, drinks, desserts. Give each a name, a price, and a short description, and add photos if you have them. In a hurry, let the AI generator draft a first version, or import a photo of your current menu with OCR.",
+							"Start a new catalog and add your items, grouped the way your menu already reads: starters, mains, drinks, desserts. Give each a name, a price, and a short description, and add photos if you have them. In a hurry, ask Quick AI to draft a first version, or attach photos of your current menu for it to read.",
 					},
 					{
 						title: "Pick a template",

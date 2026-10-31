@@ -25,7 +25,7 @@ export function describeAuthError(
 		case "over_request_rate_limit":
 			return "Too many attempts. Please wait a few minutes.";
 		case "manual_linking_disabled":
-			return "Connecting accounts is not available yet.";
+			return "Google connections are turned off right now. Please try again later.";
 		case "identity_already_exists":
 			return "That Google account is already connected to an account.";
 		case "single_identity_not_deletable":

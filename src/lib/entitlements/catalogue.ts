@@ -1,6 +1,14 @@
 import "server-only";
-import type { Catalogue } from "@quicktalog/common";
+import { type Catalogue, defaultCatalogueData } from "@quicktalog/common";
 import { sql } from "drizzle-orm";
+import {
+	DEFAULT_BACKGROUND,
+	normalizeBackground,
+} from "@/lib/catalogue/background";
+import { normalizeTagline } from "@/lib/catalogue/footer";
+import { DEFAULT_GLASS, normalizeGlass } from "@/lib/catalogue/glass";
+import { normalizeSearch } from "@/lib/catalogue/items";
+import { normalizeLogoRadius } from "@/lib/catalogue/logo";
 import {
 	dropInvalidTrackingIds,
 	stripTrackingIds,
@@ -11,9 +19,12 @@ import type { Tier } from "./plan";
 /**
  * Forces the plan's limits onto catalogue data before it is stored: a custom
  * header/footer only on plans that include branding (where the owner may still
- * choose the default one), newsletter only on plans that include it. Applied on
- * create, update and publish, so a client that sends a branded payload on a
- * free plan cannot buy features for free.
+ * choose the default one); newsletter and advanced appearance (custom themes,
+ * style, overlay, glass and background) only on plans that include them, reset
+ * to the defaults otherwise. Glass, background, search, the footer tagline and
+ * the logo's corner rounding arrive from the client, so their shape is
+ * normalized here as well. Applied on create, update and publish, so a client
+ * that sends a branded payload on a free plan cannot buy features for free.
  */
 export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 	data: T,
@@ -23,7 +34,13 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 		tier.features.branding && type === "custom" ? "custom" : "default";
 	const out = { ...data };
 	if (out.header) {
-		out.header = { ...out.header, type: allowedType(out.header.type) };
+		out.header = {
+			...out.header,
+			type: allowedType(out.header.type),
+			...("logoRadius" in out.header
+				? { logoRadius: normalizeLogoRadius(out.header.logoRadius) }
+				: {}),
+		};
 	}
 	// The client sends the whole `metadata` object back on every save, so both
 	// the plan and the shape are enforced here rather than trusted from the
@@ -35,11 +52,42 @@ export function applyPlanToCatalogue<T extends Partial<Catalogue>>(
 				? dropInvalidTrackingIds(out.metadata)
 				: stripTrackingIds(out.metadata);
 	}
+	if (out.appearance) {
+		const { advancedAppearance } = tier.features;
+		const appearance = { ...out.appearance };
+		if (!advancedAppearance) {
+			appearance.style = defaultCatalogueData.appearance.style;
+			appearance.overlay = defaultCatalogueData.appearance.overlay;
+		}
+		if ("glass" in appearance) {
+			appearance.glass = advancedAppearance
+				? normalizeGlass(appearance.glass)
+				: DEFAULT_GLASS;
+		}
+		if ("background" in appearance) {
+			appearance.background = advancedAppearance
+				? normalizeBackground(appearance.background)
+				: DEFAULT_BACKGROUND;
+		}
+		if ("search" in appearance) {
+			appearance.search = normalizeSearch(appearance.search);
+		}
+		if (!advancedAppearance && appearance.theme?.type === "custom") {
+			appearance.theme = defaultCatalogueData.appearance.theme;
+		}
+		out.appearance = appearance;
+	}
 	if (out.footer) {
 		out.footer = {
 			...out.footer,
 			type: allowedType(out.footer.type),
 			newsletter: tier.features.newsletter ? out.footer.newsletter : false,
+			...("tagline" in out.footer
+				? { tagline: normalizeTagline(out.footer.tagline) }
+				: {}),
+			...("logoRadius" in out.footer
+				? { logoRadius: normalizeLogoRadius(out.footer.logoRadius) }
+				: {}),
 		};
 	}
 	return out;
@@ -91,6 +139,26 @@ export async function applyPlanDowngrade(
 			update public.catalogues
 			   set footer = jsonb_set(footer, '{newsletter}', 'false')
 			 where user_id = ${userId}
+		`);
+	}
+
+	if (!tier.features.advancedAppearance) {
+		await tx.execute(sql`
+			update public.catalogues
+			   set appearance = jsonb_set(
+			         jsonb_set(
+			           jsonb_set(appearance, '{style}', ${JSON.stringify(defaultCatalogueData.appearance.style)}::jsonb),
+			           '{overlay}', ${JSON.stringify(defaultCatalogueData.appearance.overlay)}::jsonb),
+			         '{glass}', ${JSON.stringify(DEFAULT_GLASS)}::jsonb)
+			         || jsonb_build_object('background', ${JSON.stringify(DEFAULT_BACKGROUND)}::jsonb)
+			 where user_id = ${userId}
+		`);
+
+		await tx.execute(sql`
+			update public.catalogues
+			   set appearance = jsonb_set(appearance, '{theme}', ${JSON.stringify(defaultCatalogueData.appearance.theme)}::jsonb)
+			 where user_id = ${userId}
+			   and appearance -> 'theme' ->> 'type' = 'custom'
 		`);
 	}
 

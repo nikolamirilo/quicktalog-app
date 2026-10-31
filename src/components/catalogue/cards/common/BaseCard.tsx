@@ -21,8 +21,7 @@ const BaseCard = ({
 	onMoveDown,
 	isFirst,
 	isLast,
-	blockIndex,
-	itemIndex,
+	blockId,
 	className,
 	children,
 	discountPosition = "left",
@@ -40,10 +39,10 @@ const BaseCard = ({
 		>
 			{mode === "edit" && onEdit && onDelete && (
 				<CardControls
-					blockIndex={blockIndex}
+					blockId={blockId}
 					isFirst={isFirst}
 					isLast={isLast}
-					itemIndex={itemIndex}
+					itemId={record?.id}
 					onDelete={onDelete}
 					onEdit={onEdit}
 					onMoveDown={onMoveDown}

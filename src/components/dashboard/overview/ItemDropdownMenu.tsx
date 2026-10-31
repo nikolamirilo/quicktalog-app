@@ -141,7 +141,7 @@ export function ItemDropdownMenu({
 		{
 			key: "qr",
 			icon: <QrCode />,
-			label: "QR Code",
+			label: "QR Editor",
 			disabled,
 			onSelect: () => router.push(`/admin/${catalogue.name}/qr-editor`),
 		},

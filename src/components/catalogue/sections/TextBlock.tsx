@@ -4,6 +4,8 @@ import type { TextBlock } from "@quicktalog/common";
 import { useState } from "react";
 import BlockControls, {
 	BLOCK_CONTROLS_GROUP,
+	BLOCK_FRAME,
+	BLOCK_FRAME_IDLE,
 } from "@/components/catalogue/cards/common/BlockControls";
 import RichTextEditor from "./common/RichTextEditor";
 
@@ -43,7 +45,7 @@ const TextBlockComponent = ({
 	return (
 		<section
 			aria-label={block.name || undefined}
-			className={`mb-5 ${BLOCK_CONTROLS_GROUP} relative min-h-[50px] rounded-lg border-2 border-dashed p-2 transition-colors ${isEditing ? "border-product-primary" : "border-transparent hover:border-product-border-strong [@media(hover:none)]:border-product-border"}`}
+			className={`mb-5 ${BLOCK_CONTROLS_GROUP} relative ${BLOCK_FRAME} ${isEditing ? "outline-product-primary" : BLOCK_FRAME_IDLE}`}
 			id={slug ? `${slug}-${block.order}` : undefined}
 		>
 			<BlockControls
@@ -69,7 +71,9 @@ const TextBlockComponent = ({
 				/>
 			) : (
 				<div
-					className="cursor-text min-h-[30px]"
+					// A height only while empty: with content the block must measure
+					// exactly what the published catalogue measures.
+					className={`cursor-text ${block.content ? "" : "min-h-[50px]"}`}
 					onClick={() => setIsEditing(true)}
 				>
 					{block.content && <HtmlContent className="" html={block.content} />}

@@ -4,15 +4,27 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/lib/ui/cn";
+import { Droplet } from "lucide-react";
+import LogoSection from "./logo/LogoSection";
 import LimitsOverlay from "./LimitsOverlay";
 import {
 	PANEL_TAB_ROOT,
 	PanelSection,
-	SliderField,
+	PanelShortcut,
 	SwitchField,
 } from "./panel";
 
-const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
+const HeaderTab = ({
+	plan,
+	onOpenGlass,
+	onOpenLogo,
+}: {
+	plan: PricingPlan;
+	/** Switches the panel to Appearance and scrolls to the glass settings. */
+	onOpenGlass: () => void;
+	/** Switches the panel to General and scrolls to the logo upload. */
+	onOpenLogo: () => void;
+}) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
 	const hasBranding = plan?.features?.branding;
 
@@ -58,8 +70,6 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 		}
 	};
 
-	const logoWidth = catalogue.header?.logoSize?.width || 160;
-
 	return (
 		<div
 			className={cn(
@@ -99,6 +109,26 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 					title="Customize header"
 				/>
 
+				<PanelSection
+					description="The header floats above the catalogue and stays at the top while visitors scroll."
+					title="Floating navbar"
+				>
+					<p className="flex gap-2 rounded-xl border border-product-border bg-product-background-hero px-3 py-2 text-[13px] leading-snug text-product-foreground-accent">
+						<Droplet
+							aria-hidden="true"
+							className="mt-px h-4 w-4 shrink-0 text-product-primary-ink"
+						/>
+						<span>
+							How see-through it is comes from{" "}
+							<b className="font-semibold text-product-foreground">
+								Appearance › Glass effect
+							</b>
+							. On phones the icons and button move into a menu.
+						</span>
+					</p>
+					<PanelShortcut label="Open glass settings" onClick={onOpenGlass} />
+				</PanelSection>
+
 				<div
 					className={cn(
 						"space-y-4",
@@ -106,22 +136,12 @@ const HeaderTab = ({ plan }: { plan: PricingPlan }) => {
 					)}
 					inert={!isCustom || undefined}
 				>
-					<PanelSection
-						info="Configure the size of the logo in your header."
-						title="Logo size"
-					>
-						<SliderField
-							label="Logo width"
-							max={300}
-							min={20}
-							onValueChange={(value) =>
-								handleChange("header.logoSize.width", value)
-							}
-							step={2}
-							value={logoWidth}
-							valueText={`${logoWidth}px`}
-						/>
-					</PanelSection>
+					<LogoSection
+						catalogue={catalogue}
+						handleChange={handleChange}
+						onOpenLogo={onOpenLogo}
+						scope="header"
+					/>
 
 					<PanelSection
 						info="Manage the call-to-action button in your header."

@@ -15,8 +15,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
+import { continueList } from "@/lib/format/list-input";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
+import { useKeepAiChanges } from "@/hooks/useKeepAiChanges";
 import { usePastedImages } from "@/hooks/usePastedImages";
 import { useVisualViewport } from "@/hooks/useVisualViewport";
 import { cn } from "@/lib/ui/cn";
@@ -30,6 +32,7 @@ import {
 	RotateCcw,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 /** Deliberately industry-neutral (a cuisine-specific suggestion reads as "not for me" to everyone else); each exercises a different tool group. */
 const SUGGESTIONS = [
@@ -111,6 +114,8 @@ const CatalogueChat = ({
 	const scrollRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const panelRef = useRef<HTMLElement>(null);
+	/** Where the caret goes once a list-continuation edit has rendered. */
+	const pendingCaret = useRef<number | null>(null);
 	/** Whatever had focus when the chat opened (the rail or bar button), to hand focus back on close. */
 	const returnFocusRef = useRef<HTMLElement | null>(null);
 	const wasLoading = useRef(false);
@@ -178,6 +183,10 @@ const CatalogueChat = ({
 		if (!field) return;
 		field.style.height = "auto";
 		field.style.height = `${field.scrollHeight}px`;
+
+		if (pendingCaret.current === null) return;
+		field.setSelectionRange(pendingCaret.current, pendingCaret.current);
+		pendingCaret.current = null;
 	}, [draft]);
 
 	const canSubmit = (text: string) =>
@@ -195,15 +204,37 @@ const CatalogueChat = ({
 		if (event.key === "Enter" && !event.shiftKey) {
 			event.preventDefault();
 			submit(draft);
+			return;
+		}
+
+		const field = event.currentTarget;
+		if (
+			event.key === "Enter" &&
+			field.selectionStart === field.selectionEnd &&
+			field.selectionStart !== null
+		) {
+			const next = continueList(draft, field.selectionStart);
+			if (!next) return;
+			event.preventDefault();
+			// A controlled textarea puts the caret at the end after a programmatic
+			// change, so it is restored once the new value has rendered.
+			pendingCaret.current = next.caret;
+			setDraft(next.value);
 		}
 	};
 
 	// AI edits waiting to be kept or undone. The bar sits over the composer, or
 	// floats bottom-left while the chat is minimised.
 	const review = context?.aiReview ?? null;
-	const acceptChanges = () => {
-		context?.acceptAiChanges();
-		setAnnouncement("Kept the AI changes.");
+	const keepAiChanges = useKeepAiChanges();
+	const acceptChanges = async () => {
+		const saved = await keepAiChanges();
+		if (saved.ok) {
+			setAnnouncement("Kept and saved the AI changes.");
+			return;
+		}
+		setAnnouncement("Kept the AI changes, but they are not saved yet.");
+		toast.error(saved.error ?? "Could not save your changes");
 	};
 	const rejectChanges = () => {
 		context?.rejectAiChanges();
@@ -338,6 +369,10 @@ const CatalogueChat = ({
 											items, rewrite text, adjust prices or restyle the whole
 											catalogue. Attach or paste photos of a printed menu or
 											price list and it will read them for you.
+										</p>
+										<p className="text-sm leading-relaxed text-product-foreground-accent">
+											Tip: the more detail you give - item names, prices, sizes
+											and the order you want them in - the better the result.
 										</p>
 									</div>
 									<div className="space-y-2">

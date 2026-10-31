@@ -5,7 +5,7 @@ import { getAdminDb, type Tx } from "./pool";
 export type { Tx };
 
 /**
- * Runs system writes (Paddle webhook, Clerk user sync) in one transaction on the
+ * Runs system writes (Paddle webhook, account deletion) in one transaction on the
  * admin connection, which bypasses RLS. Only webhooks, provisioning, scripts and
  * tests may import this. `op` labels the connection for logs and pg_stat_activity.
  */

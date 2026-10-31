@@ -79,8 +79,11 @@ SelectScrollDownButton.displayName =
 
 const SelectContent = React.forwardRef<
 	React.ElementRef<typeof SelectPrimitive.Content>,
-	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+	React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & {
+		/** Stays pinned above the scrolling list, e.g. a search field. */
+		header?: React.ReactNode;
+	}
+>(({ className, children, header, position = "popper", ...props }, ref) => (
 	<SelectPrimitive.Portal>
 		<SelectPrimitive.Content
 			className={cn(
@@ -96,6 +99,7 @@ const SelectContent = React.forwardRef<
 			translate="no"
 			{...props}
 		>
+			{header}
 			<SelectScrollUpButton />
 			<SelectPrimitive.Viewport
 				className={cn(

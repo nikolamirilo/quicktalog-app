@@ -60,6 +60,6 @@ export type CardProps = {
 	onMoveDown?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
-	blockIndex?: number;
-	itemIndex?: number;
+	/** The section this card belongs to; edits address it by id, never by position. */
+	blockId?: string;
 };

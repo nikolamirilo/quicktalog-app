@@ -51,11 +51,6 @@ jobs:
   #     - name: Install dependencies
   #       run: npm ci
 
-  #     # Fast gate: applies supabase/migrations plus the remaining plan SQL on
-  #     # PGlite (PostgreSQL 17 and 18) and runs the RLS scenarios. No Docker.
-  #     - name: Run migration and RLS scenarios (PGlite)
-  #       run: npm run test:db
-
   #     - name: Setup Supabase CLI
   #       uses: supabase/setup-cli@v1
   #       with:
@@ -69,8 +64,7 @@ jobs:
   #     - name: Run pgTAP tests
   #       run: supabase test db
 
-  #     # Sign-ups are still open here, which the sign-up test needs; the
-  #     # rehearsal below closes them.
+  #     # Sign-ups are open on the local stack, which the sign-up test needs.
   #     - name: Run integration tests
   #       run: |
   #         eval "$(supabase status -o env | sed 's/^/export /')"
@@ -81,103 +75,6 @@ jobs:
   #         DB_RLS_CONNECTION_STRING=postgresql://app_rls:postgres@127.0.0.1:54322/postgres \
   #         npm run test:integration
 
-  #     # Plan 3.1: the cutover rehearsal runs the real import, re-key, verify and
-  #     # rollback scripts against this stack. It rewrites every user, so it runs
-  #     # after the other integration tests, and it needs sign-ups off - the
-  #     # import refuses to run while a real person could claim a pre-claimed
-  #     # email. GoTrue reads that flag at boot, hence the restart.
-  #     - name: Turn sign-ups off for the rehearsal
-  #       run: |
-  #         sed -i 's/^enable_signup = true/enable_signup = false/' supabase/config.toml
-  #         supabase stop
-  #         supabase start
-
-  #     - name: Run the cutover fixture rehearsal
-  #       run: |
-  #         eval "$(supabase status -o env | sed 's/^/export /')"
-  #         REHEARSAL=1 \
-  #         SUPABASE_SECRET_KEY="$SERVICE_ROLE_KEY" \
-  #         NEXT_PUBLIC_SUPABASE_ANON_KEY="$ANON_KEY" \
-  #         NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321 \
-  #         DB_CONNECTION_STRING=postgresql://postgres:postgres@127.0.0.1:54322/postgres \
-  #         npm run test:rehearsal
-
   #     - name: Stop local Supabase stack
   #       if: always()
   #       run: supabase stop
-
-  # e2e-tests:
-  #   runs-on: ubuntu-latest
-  #   environment: TEST
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       # Both providers exist between Phase 2 and the cutover; the suite has to
-  #       # pass on each. The `supabase` leg is skipped until its secrets exist.
-  #       auth: [clerk, supabase]
-  #   env:
-  #     AUTH_PROVIDER: ${{ matrix.auth }}
-  #     E2E_SUPABASE_USER_EMAIL: ${{ secrets.E2E_SUPABASE_USER_EMAIL }}
-  #     SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
-  #     NEXT_PUBLIC_BASE_URL: http://localhost:3000
-  #     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-  #     CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-  #     E2E_CLERK_USER_USERNAME: ${{ secrets.E2E_CLERK_USER_USERNAME }}
-  #     E2E_CLERK_USER_PASSWORD: ${{ secrets.E2E_CLERK_USER_PASSWORD }}
-  #     # The app reads DB_CONNECTION_STRING (utils/db/pool.ts,
-  #     # tests/e2e/helpers/cleanup.ts), so the variable name stays. The
-  #     # repository secret is still the older DATABASE_URL, so fall back to it:
-  #     # an unset secret is an empty string, which is falsy here.
-  #     # Without this the e2e job gets no database, every Drizzle query fails
-  #     # ECONNREFUSED, and the builder never renders for the specs to drive.
-  #     DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING || secrets.DATABASE_URL }}
-  #     # After M08 the line above is the fail-closed `app_rls` login, which
-  #     # cannot delete another user's rows; e2e cleanup and the webhooks need
-  #     # this one. Before M08 it is the same URL, so the fallback is normal.
-  #     DB_ADMIN_CONNECTION_STRING: ${{ secrets.DB_ADMIN_CONNECTION_STRING || secrets.DB_CONNECTION_STRING || secrets.DATABASE_URL }}
-  #     REDIS_KEY_PREFIX: ci
-  #     UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
-  #     UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-  #     NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-  #     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-  #     BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
-  #     RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 22
-
-  #     - name: Install dependencies
-  #       run: npm ci
-
-  #     # The supabase leg is inert until its test user and key exist; skipping is
-  #     # better than a red build that says nothing.
-  #     - name: Check provider secrets
-  #       id: provider
-  #       run: |
-  #         if [ "$AUTH_PROVIDER" = "supabase" ] && [ -z "$E2E_SUPABASE_USER_EMAIL" ]; then
-  #           echo "run=false" >> "$GITHUB_OUTPUT"
-  #           echo "Skipping: no Supabase e2e user configured yet."
-  #         else
-  #           echo "run=true" >> "$GITHUB_OUTPUT"
-  #         fi
-
-  #     - name: Install Playwright browsers
-  #       if: steps.provider.outputs.run == 'true'
-  #       run: npx playwright install --with-deps chromium
-
-  #     - name: Run e2e tests
-  #       if: steps.provider.outputs.run == 'true'
-  #       run: npm run test:e2e
-
-  #     - name: Upload Playwright report
-  #       if: ${{ !cancelled() && steps.provider.outputs.run == 'true' }}
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: playwright-report-${{ matrix.auth }}
-  #         path: playwright-report/
-  #         retention-days: 7

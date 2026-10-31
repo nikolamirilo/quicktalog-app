@@ -1,6 +1,6 @@
-import type { ImageCache } from "@/agent/images";
-import type { CatalogueSession } from "@/agent/session";
-import type { PageResult } from "@/agent/web";
+import type { CatalogueSession } from "@/agent/core/session";
+import type { ImageCache } from "@/agent/plugins/images";
+import type { PageResult } from "@/agent/plugins/web";
 import type { AgentToolResult } from "@/types/ai";
 
 /**

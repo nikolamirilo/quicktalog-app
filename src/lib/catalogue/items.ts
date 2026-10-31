@@ -1,10 +1,7 @@
-import type { AnyItemsBlock, ContentBlock, Item } from "@quicktalog/common";
-import { isItemsBlock } from "@/lib/catalogue/content-blocks";
+import type { AnyItemsBlock, Appearance, Item } from "@quicktalog/common";
 
 export const INITIAL_ITEM_COUNT = 20;
 export const LOAD_MORE_STEP = 20;
-/** Below this many items a catalogue is short enough to scan without search. */
-export const SEARCH_MIN_ITEMS = 20;
 
 export interface DisplayItem {
 	item: Item;
@@ -44,12 +41,19 @@ export function getDisplayItems(
 	return result;
 }
 
-export function getTotalItemCount(blocks: ContentBlock[] | undefined): number {
-	if (!Array.isArray(blocks)) return 0;
-	return blocks.reduce((total, block) => {
-		if (!isItemsBlock(block)) return total;
-		return total + (block.items?.length ?? 0);
-	}, 0);
+export const SEARCH_PLACEHOLDER_MAX = 40;
+
+export function normalizeSearch(
+	search: unknown,
+): NonNullable<Appearance["search"]> {
+	const raw = (search ?? {}) as Partial<NonNullable<Appearance["search"]>>;
+	return {
+		isEnabled: raw.isEnabled === true,
+		placeholder:
+			typeof raw.placeholder === "string"
+				? raw.placeholder.slice(0, SEARCH_PLACEHOLDER_MAX)
+				: "",
+	};
 }
 
 /**

@@ -13,7 +13,6 @@ export const PUBLIC_CATALOGUE_COLUMNS = {
 	logo: catalogues.logo,
 	heading: catalogues.heading,
 	status: catalogues.status,
-	source: catalogues.source,
 	language: catalogues.language,
 	currency: catalogues.currency,
 	businessType: catalogues.businessType,
@@ -31,9 +30,9 @@ export const PUBLIC_CATALOGUE_COLUMNS = {
 };
 
 /**
- * Catalogue fields a client may change. `id`, `name`, `userId`, `status`,
- * `source` and the timestamps are server-owned: the client sends them back in
- * the full `Catalogue` object, and they must never reach an UPDATE.
+ * Catalogue fields a client may change. `id`, `name`, `userId`, `status` and
+ * the timestamps are server-owned: the client sends them back in the full
+ * `Catalogue` object, and they must never reach an UPDATE.
  */
 export const CATALOGUE_EDITABLE_FIELDS = [
 	"logo",

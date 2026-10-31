@@ -5,6 +5,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import BlockControls, {
 	BLOCK_CONTROLS_GROUP,
+	BLOCK_FRAME,
 } from "@/components/catalogue/cards/common/BlockControls";
 import Items from "./common/Items";
 import SectionHeader from "./common/SectionHeader";
@@ -19,8 +20,7 @@ interface ItemsSectionProps {
 	theme?: string;
 	mode: "edit" | "view";
 	currentLayout: "variant_1" | "variant_2" | "variant_3" | "variant_4";
-	onAddItem?: (blockIndex: number) => void;
-	blockIndex: number;
+	onAddItem?: () => void;
 	onDelete?: () => void;
 	onDeleteItem?: (itemIndex: number) => void;
 	onEdit?: () => void;
@@ -41,7 +41,6 @@ interface ItemsSectionProps {
  */
 const ItemsSection = ({
 	block,
-	blockIndex,
 	currency,
 	currentLayout,
 	locale,
@@ -95,6 +94,9 @@ const ItemsSection = ({
 
 	const showContent = showHeading ? mode === "edit" || isExpanded : true;
 	const displayItems = getDisplayItems(block, query ?? "");
+	const renameSection = onUpdateBlock
+		? (name: string) => onUpdateBlock({ name })
+		: undefined;
 
 	return (
 		<section
@@ -102,7 +104,7 @@ const ItemsSection = ({
 				mode === "edit"
 					? showHeading
 						? BLOCK_CONTROLS_GROUP
-						: `${BLOCK_CONTROLS_GROUP} relative rounded-lg border-2 border-dashed border-product-border-strong p-2 sm:p-4 transition-colors hover:border-product-muted`
+						: `${BLOCK_CONTROLS_GROUP} relative ${BLOCK_FRAME} outline-product-border-strong hover:outline-product-muted`
 					: ""
 			}`}
 			id={code}
@@ -123,6 +125,7 @@ const ItemsSection = ({
 					}
 					onMoveDown={onMoveDown}
 					onMoveUp={onMoveUp}
+					onRename={renameSection}
 					onToggle={onToggle}
 					title={block.name}
 				/>
@@ -147,7 +150,6 @@ const ItemsSection = ({
 
 			<Items
 				block={block}
-				blockIndex={blockIndex}
 				contentId={contentId}
 				currency={currency}
 				currentLayout={currentLayout}

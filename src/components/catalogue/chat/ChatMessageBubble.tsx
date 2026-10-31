@@ -1,9 +1,10 @@
 "use client";
-import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
 import type { CatalogueAgentUIMessage } from "@/agent";
-import { SCANNED_TEXT_MARKER } from "@/agent/attachments";
-import { CONTINUE_PLAN_MARKER } from "@/agent/plan";
+import { SCANNED_TEXT_MARKER } from "@/agent/plugins/attachments";
+import { CONTINUE_PLAN_MARKER } from "@/agent/plugins/plan";
 import { isHiddenTool, runningLabel } from "@/agent/tools/display";
+import { MarkdownText } from "@/components/catalogue/chat/MarkdownText";
+import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
 import type { AgentToolResult } from "@/types/ai";
 import { isToolUIPart } from "ai";
 import { AlertTriangle, Check, Globe, Loader2, ScanText } from "lucide-react";
@@ -106,9 +107,11 @@ const ChatMessageBubble = ({
 			return part.text.startsWith(SCANNED_TEXT_MARKER) ? (
 				<ScannedText key={key} text={part.text} />
 			) : (
-				<p className="whitespace-pre-wrap" key={key}>
-					{part.text}
-				</p>
+				<MarkdownText
+					key={key}
+					text={part.text}
+					tone={isUser ? "onDark" : "default"}
+				/>
 			);
 		}
 
@@ -169,6 +172,9 @@ const ChatMessageBubble = ({
 				key={key}
 			>
 				<Change text={output.summary} />
+				{output.imagesUnavailable && (
+					<Skipped text={output.imagesUnavailable} />
+				)}
 				{output.imageMisses?.map((miss) => (
 					<Skipped
 						key={`${key}-${miss}`}

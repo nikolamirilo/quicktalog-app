@@ -1,12 +1,11 @@
 import { TriangleAlert } from "lucide-react";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { AuthCard, AuthHeader } from "@/components/auth/common/AuthCard";
 import { AuthLayout } from "@/components/auth/common/AuthLayout";
 import { ConsentForm } from "@/components/auth/ConsentForm";
 import { TextLink } from "@/components/general/TextLink";
 import { needsConsentGate } from "@/lib/auth/consent";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { AUTH_PROVIDER } from "@/lib/auth/provider";
 import { safeNext } from "@/lib/auth/redirects";
 
 /**
@@ -47,8 +46,6 @@ export default async function ConsentPage({
 }: {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-	if (AUTH_PROVIDER !== "supabase") notFound();
-
 	// Not a protected path in middleware, so the page checks for itself.
 	const me = await getVerifiedIdentity();
 	if (!me) redirect("/auth?next=/auth/consent");

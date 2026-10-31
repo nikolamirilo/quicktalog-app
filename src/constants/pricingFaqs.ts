@@ -20,20 +20,20 @@ const pageViewAllowances = standardTiers
 export const pricingFaqs: IFAQ[] = [
 	{
 		question: `Is the ${starterTier.name} plan really free?`,
-		answer: `Yes. ${starterTier.name} includes ${starter.catalogues} catalogue with up to ${starter.sections_per_catalogue} sections and ${starter.items_per_catalogue} items, ${starter.traffic_limit.toLocaleString("en-US")} page views a month, all ${themes.length} standard themes, the QR code editor and ${starter.support.toLowerCase()}, with no time limit. You don't need a credit card to sign up.`,
+		answer: `Yes. ${starterTier.name} includes ${starter.catalogues} catalogue with up to ${starter.sections_per_catalogue} sections and ${starter.items_per_catalogue} items, ${starter.traffic_limit.toLocaleString("en-US")} page views every 30 days, all ${themes.length} standard themes, the QR code editor and ${starter.support.toLowerCase()}, with no time limit. You don't need a credit card to sign up.`,
 	},
 	{
 		question: "Which plans include Quick AI?",
-		answer: `Every plan comes with a monthly allowance of AI credits for Quick AI in the builder: ${credits}. Asking the assistant a question is free.`,
+		answer: `Every plan comes with an allowance of AI credits for Quick AI in the builder, renewed every 30 days: ${credits}. Asking the assistant a question is free.`,
 	},
 	{
 		question: "What counts as a page view?",
 		answer:
-			"Every time someone opens one of your catalogue pages. The allowance is shared across all your catalogues and resets each month. You can follow your usage from the Usage tab in your dashboard.",
+			"Every time someone opens one of your catalogue pages. The allowance is shared across all your catalogues and resets every 30 days, counted from the day you signed up. You can follow your usage, and see your next reset date, in the Usage tab of your dashboard.",
 	},
 	{
 		question: "What happens when I reach a limit?",
-		answer: `It depends on the limit. Page views: once your catalogues together reach your plan's monthly allowance (${pageViewAllowances}), they are paused and go offline. You can publish them again from your dashboard once the allowance resets next month, or right away after upgrading. Catalogues, sections and items: when you try to add more than your plan allows, Quicktalog shows you what the next plan unlocks so you can decide whether to upgrade, and everything you have already published stays as it is.`,
+		answer: `It depends on the limit. Page views: once your catalogues together reach your plan's allowance for the period (${pageViewAllowances}), they are paused and go offline. You can publish them again from your dashboard once the allowance resets at the end of your 30-day period, or right away after upgrading. Catalogues, sections and items: when you try to add more than your plan allows, Quicktalog shows you what the next plan unlocks so you can decide whether to upgrade, and everything you have already published stays as it is.`,
 	},
 	{
 		question: "Can I change or cancel my plan?",

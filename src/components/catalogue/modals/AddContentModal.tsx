@@ -4,8 +4,11 @@ import { AppDialogContent } from "@/components/modals/AppDialog";
 import { AlertDialog, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { ContentBlock, ItemsBlock, UserData } from "@quicktalog/common";
-import { normalizeBlock } from "@/lib/catalogue/content-blocks";
+import { ContentBlock, UserData } from "@quicktalog/common";
+import {
+	countPlanSections,
+	normalizeBlock,
+} from "@/lib/catalogue/content-blocks";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/ui/cn";
@@ -23,10 +26,9 @@ import { SectionTypePicker } from "./content/SectionTypePicker";
 
 interface AddContentModalProps {
 	isOpen: boolean;
+	/** Also clears the edit target, so the dialog always closes empty. */
 	onClose: () => void;
-	setIsOpen: (open: boolean) => void;
 	editingBlock?: ContentBlock | null;
-	blockIndex?: number | null;
 	userData: UserData;
 }
 
@@ -53,12 +55,10 @@ const DEFAULT_BLOCK_DATA = {
 const AddContentModal = ({
 	isOpen,
 	onClose,
-	setIsOpen,
 	editingBlock,
-	blockIndex,
 	userData,
 }: AddContentModalProps) => {
-	const { catalogue, updateCatalogue, updateBlock, setIsSidebarOpen } =
+	const { catalogue, addBlock, updateBlock, setIsSidebarOpen } =
 		useCatalogueContext() || {};
 	const [selectedOption, setSelectedOption] = useState<ContentOption>("items");
 	const [showLimitsModal, setShowLimitsModal] = useState(false);
@@ -124,17 +124,12 @@ const AddContentModal = ({
 		const sectionsLimit =
 			userData?.currentPlan?.features?.sections_per_catalogue;
 
-		if (selectedOption === "text") return null;
-
 		if (
 			sectionsLimit !== "unlimited" &&
 			sectionsLimit !== undefined &&
 			!editingBlock
 		) {
-			const nonTextSectionsCount = catalogue.content.filter(
-				(block: any) => block.type !== "text",
-			).length;
-			if (nonTextSectionsCount >= sectionsLimit) {
+			if (countPlanSections(catalogue.content) >= sectionsLimit) {
 				return "items";
 			}
 		}
@@ -142,7 +137,7 @@ const AddContentModal = ({
 	};
 
 	const handleAdd = () => {
-		if (!catalogue || !updateCatalogue) return;
+		if (!catalogue || !addBlock || !updateBlock) return;
 
 		const limitReached = checkLimits();
 		if (limitReached) {
@@ -150,25 +145,23 @@ const AddContentModal = ({
 			return;
 		}
 
-		let newBlock: any = {
-			id: editingBlock?.id || crypto.randomUUID(),
-			order: editingBlock?.order ?? catalogue.content.length,
-			type: selectedOption,
-		};
+		// An edit is a patch on the live section, so it carries no id or order and
+		// no items: the items in this form are a snapshot from when the dialog
+		// opened, and the section may have gained some since.
+		const existing = editingBlock ? normalizeBlock(editingBlock) : null;
+		let newBlock: any = editingBlock
+			? { type: selectedOption }
+			: { id: crypto.randomUUID(), type: selectedOption };
 
 		if (selectedOption === "items") {
-			const existing = editingBlock ? normalizeBlock(editingBlock) : null;
 			newBlock = {
 				...newBlock,
 				name: blockData.name,
 				showHeading: blockData.showHeading,
 				isExpanded: blockData.isExpanded,
 				layout: blockData.layout,
-				items:
-					existing?.type === "items"
-						? (existing as ItemsBlock).items
-						: (blockData.items ?? []),
-			} satisfies ItemsBlock;
+				...(existing?.type === "items" ? {} : { items: blockData.items ?? [] }),
+			};
 		} else if (selectedOption === "embedding") {
 			newBlock = {
 				...newBlock,
@@ -196,14 +189,12 @@ const AddContentModal = ({
 			};
 		}
 
-		if (blockIndex !== undefined && blockIndex !== null && updateBlock) {
-			updateBlock(blockIndex, newBlock);
-		} else {
-			updateCatalogue({
-				content: [...catalogue.content, newBlock],
-			});
-		}
-		setIsOpen(false);
+		// By id, and appended by the context: a position read when this dialog
+		// opened can belong to another section by now, and the whole array
+		// rebuilt from here would drop whatever else has changed since.
+		if (editingBlock) updateBlock(editingBlock.id, newBlock);
+		else addBlock(newBlock);
+		onClose();
 	};
 
 	const isFormValid = () => {

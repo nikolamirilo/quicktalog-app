@@ -78,13 +78,9 @@ function isBlockedContext(): boolean {
 	if (window.location.pathname.endsWith("/preview")) return true;
 
 	// A browser holding a Quicktalog session is the owner or a colleague, not a
-	// customer. Their visits would skew the owner's numbers, and both providers'
-	// session cookies are script-readable by design (see `cookie-options.ts`),
-	// so keeping third-party tags away from them is worth the few lost views.
-	//
-	// Both names are checked because the auth provider is switchable
-	// (`NEXT_PUBLIC_AUTH_PROVIDER`) and a browser can still hold the other
-	// provider's cookie from before a switch.
+	// customer. Their visits would skew the owner's numbers, and the session
+	// cookie is script-readable by design (see `cookie-options.ts`), so keeping
+	// third-party tags away from them is worth the few lost views.
 	try {
 		const base = sessionCookieName();
 		const names = document.cookie
@@ -95,8 +91,7 @@ function isBlockedContext(): boolean {
 		// so matching only `<base>` misses every chunked session.
 		// `src/utils/supabase/session.ts` matches the same two shapes.
 		const signedIn = names.some(
-			(name) =>
-				name === base || name.startsWith(`${base}.`) || name === "__session",
+			(name) => name === base || name.startsWith(`${base}.`),
 		);
 		if (signedIn) return true;
 	} catch {

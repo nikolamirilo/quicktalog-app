@@ -9,6 +9,19 @@ import { cn } from "@/lib/ui/cn";
  */
 export const BLOCK_CONTROLS_GROUP = "group/block";
 
+/**
+ * The dashed frame an editable block wears. An outline, not a border, and no
+ * padding: the block keeps the exact box the published catalogue gives it, so
+ * the builder reads 1:1 with the real page. The 8px offset is the line the
+ * `BlockControls` row is centred on.
+ */
+export const BLOCK_FRAME =
+	"rounded-lg outline-dashed outline-2 outline-offset-8 transition-colors";
+
+/** Frame of a block that is not being edited: shown on hover, or always on touch. */
+export const BLOCK_FRAME_IDLE =
+	"outline-transparent hover:outline-product-border-strong [@media(hover:none)]:outline-product-border";
+
 interface BlockControlsProps {
 	/** Short name of the block type, shown at the start of the row. */
 	label: string;
@@ -30,8 +43,9 @@ interface BlockControlsProps {
 /**
  * The edit row of a block without a section header (text, divider, embed,
  * custom code, items without a heading): its type on the left and the ⋯ menu
- * on the right. It sits above the block, never on top of it. Edit-only product
- * chrome inside `.catalogue-root`, so type is set explicitly.
+ * on the right. It floats on the block's dashed frame instead of taking space
+ * in the flow, so edit mode and the published catalogue space blocks alike.
+ * Edit-only product chrome inside `.catalogue-root`, so type is set explicitly.
  */
 const BlockControls = ({
 	label,
@@ -44,20 +58,20 @@ const BlockControls = ({
 	return (
 		<div
 			className={cn(
-				"relative z-20 mb-2 flex items-center justify-between gap-2 font-product-body text-sm font-normal not-italic leading-none tracking-normal transition-opacity duration-200",
-				"focus-within:opacity-100 has-[[data-state=open]]:opacity-100 group-hover/block:opacity-100 [@media(hover:hover)]:opacity-0",
+				"pointer-events-none absolute inset-x-0 -top-2 z-20 flex -translate-y-1/2 items-center justify-between gap-2 font-product-body text-sm font-normal not-italic leading-none tracking-normal transition-opacity duration-200",
+				"focus-within:opacity-100 has-[:hover]:opacity-100 has-[[data-state=open]]:opacity-100 group-hover/block:opacity-100 [@media(hover:hover)]:opacity-0",
 				isEditing && "[@media(hover:hover)]:opacity-100",
 			)}
 			onClick={(e) => e.stopPropagation()}
 			onPointerDown={(e) => e.stopPropagation()}
 		>
-			<span className="inline-flex h-7 min-w-0 items-center truncate rounded-full border border-product-border bg-product-card px-2.5 text-xs font-semibold text-product-muted">
+			<span className="pointer-events-auto inline-flex h-7 min-w-0 items-center truncate rounded-full border border-product-border bg-product-card px-2.5 text-xs font-semibold text-product-muted">
 				{label}
 			</span>
-			<div className="flex flex-none items-center gap-1.5">
+			<div className="pointer-events-auto flex flex-none items-center gap-1.5">
 				{isEditing && onEdit && (
 					<button
-						className="inline-flex h-8 items-center gap-1.5 rounded-full bg-product-primary px-3 text-xs font-semibold text-product-foreground shadow-product-primary transition-colors hover:bg-product-primary-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary"
+						className="inline-flex h-7 items-center gap-1.5 rounded-full bg-product-primary px-3 text-xs font-semibold text-product-foreground shadow-product-primary transition-colors hover:bg-product-primary-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-product-secondary"
 						onClick={onEdit}
 						type="button"
 					>
@@ -67,7 +81,6 @@ const BlockControls = ({
 				)}
 				<BlockMenu
 					{...menu}
-					className="[@media(hover:hover)]:opacity-100"
 					editLabel={editLabel}
 					name={name || label}
 					onEdit={isEditing ? undefined : onEdit}

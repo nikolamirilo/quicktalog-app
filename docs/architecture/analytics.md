@@ -24,12 +24,35 @@ Both helpers keep the explicit `user_id = me` predicate even though RLS enforces
 
 ## The `analytics` table
 
-This page reads PostHog live. The `analytics` table is a daily rollup kept for the dashboard totals and the monthly traffic limit:
+This page reads PostHog live. The `analytics` table is a daily rollup kept for the dashboard totals and the traffic limit:
 
 - **Rows.** One row per catalogue per UTC day: `catalogue_id`, `day`, `pageviews`, `unique_visitors`, and the owner's `user_id`. Unique on `(catalogue_id, day)`.
 - **Writer.** The Cloudflare worker's daily job (`quicktalog-backend`, `analyticsProcessingJob`) queries PostHog, maps each `/catalogues/<slug>` URL to its catalogue, and sums URL variants (query strings, trailing slash) into that catalogue's day. Summed visitors are therefore an upper bound.
-- **Deleted catalogues.** When a catalogue is deleted its rows keep `user_id` and get a null `catalogue_id`, so the month's traffic still counts against the limit.
-- **Readers.** `private.my_usage()` (the usage meters) and the worker's plan-limit check both sum `pageviews` by `user_id` over the UTC month.
+- **Deleted catalogues.** When a catalogue is deleted its rows keep `user_id` and get a null `catalogue_id`, so that traffic still counts against the limit.
+- **Readers.** `private.my_usage()` (the usage meters) and the worker's plan-limit check both sum `pageviews` by `user_id` over the account's current 30-day period, anchored on its signup day ([ai-credits.md §4](./ai-credits.md#4-the-period-boundary)).
+
+## The traffic limit
+
+The worker's plan check (`subscriptionProcessingJob`, 03:00 / 11:00 / 19:00 UTC) decides what
+goes offline, and the app refuses to publish or re-activate over the limit (`canActivate`).
+Both read the same window.
+
+- **Every plan is checked**, the free one included. The job reads all accounts in pages and
+  sums each one's page views in a single pass over `analytics` from the earliest live period
+  start - one query per account would spend the Worker's subrequest budget.
+- **An account at or over its allowance** has every active catalogue switched off, and each
+  one is stamped `catalogues.traffic_off_at`.
+- **The stamp is the promise to switch it back on.** In the first run after the account's
+  period start passes that stamp, the job makes one attempt: back online if the catalogue
+  still fits the plan, otherwise the stamp is cleared and it waits for the owner. Either way
+  the stamp is resolved in that run, so nothing is retried indefinitely.
+- **An owner's own decision wins.** `private.catalogue_status_clears_traffic_off`, a `before
+  update` trigger, clears the stamp on any status change that does not set it in the same
+  statement - so the job keeps its own stamp and every other writer cancels the automatic
+  return. `app_user` may read the column and not write it.
+- **Misfits are not stamped.** A catalogue switched off for being over its plan needs the
+  owner to change something; it never returns on its own.
+- No email is sent, before or after.
 
 ## Range, periods and deltas
 

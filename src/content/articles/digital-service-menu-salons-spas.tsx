@@ -165,10 +165,11 @@ function Body() {
 
 			<Prose>
 				<p>
-					If typing it all out feels like a chore, describe your salon and let
-					the AI generator draft the structure for you, then adjust the prices
-					and wording. You are editing instead of starting from nothing. Either
-					way, you end up with a real menu rather than another flat image.
+					If typing it all out feels like a chore, describe your salon to Quick
+					AI in the builder and let it draft the structure for you, then adjust
+					the prices and wording. You are editing instead of starting from
+					nothing. Either way, you end up with a real menu rather than another
+					flat image.
 				</p>
 			</Prose>
 

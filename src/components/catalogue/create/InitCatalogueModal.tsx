@@ -20,6 +20,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import {
+	SearchableSelect,
+	type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
+import {
 	Select,
 	SelectContent,
 	SelectItem,
@@ -30,6 +34,18 @@ import { CURRENCIES } from "@/constants";
 import { LANGUAGE_OPTIONS } from "@/constants/ocr";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useCatalogueNameField } from "@/hooks/useCatalogueNameField";
+
+const LANGUAGE_SELECT_OPTIONS: SearchableSelectOption[] = LANGUAGE_OPTIONS.map(
+	(lang) => ({ value: lang.code, label: lang.name }),
+);
+
+const CURRENCY_SELECT_OPTIONS: SearchableSelectOption[] = CURRENCIES.map(
+	(currency) => ({
+		value: currency.value,
+		label: currency.label,
+		keywords: currency.value,
+	}),
+);
 
 interface InitCatalogueModalProps {
 	isOpen: boolean;
@@ -43,10 +59,6 @@ interface InitCatalogueModalProps {
  * "Create a Catalog" dialog. The values live in CatalogueContext, which the
  * create hook sends to the server; the server derives the slug again and
  * decides whether the name is free.
- *
- * Playwright relies on: role=alertdialog, the "Create a Catalog" title, the
- * ids #catalogName / #language / #currency / #businessType (Radix selects with
- * option roles) and the "Create Catalog" button.
  */
 export function InitCatalogueModal({
 	isOpen,
@@ -126,42 +138,28 @@ export function InitCatalogueModal({
 
 					<div className="flex min-w-0 flex-col gap-1.5">
 						<Label htmlFor="language">Language</Label>
-						<Select
+						<SearchableSelect
 							disabled={loading}
+							id="language"
 							onValueChange={(value) => updateCatalogue({ language: value })}
+							options={LANGUAGE_SELECT_OPTIONS}
+							placeholder="Select language"
+							searchPlaceholder="Search languages"
 							value={catalogue.language}
-						>
-							<SelectTrigger id="language">
-								<SelectValue placeholder="Select language" />
-							</SelectTrigger>
-							<SelectContent>
-								{LANGUAGE_OPTIONS.map((lang) => (
-									<SelectItem key={lang.code} value={lang.code}>
-										{lang.name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+						/>
 					</div>
 
 					<div className="flex min-w-0 flex-col gap-1.5">
 						<Label htmlFor="currency">Currency</Label>
-						<Select
+						<SearchableSelect
 							disabled={loading}
+							id="currency"
 							onValueChange={(value) => updateCatalogue({ currency: value })}
+							options={CURRENCY_SELECT_OPTIONS}
+							placeholder="Select currency"
+							searchPlaceholder="Search currencies"
 							value={catalogue.currency}
-						>
-							<SelectTrigger id="currency">
-								<SelectValue placeholder="Select currency" />
-							</SelectTrigger>
-							<SelectContent>
-								{CURRENCIES.map((currency) => (
-									<SelectItem key={currency.value} value={currency.value}>
-										{currency.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+						/>
 					</div>
 
 					<div className="flex min-w-0 flex-col gap-1.5">

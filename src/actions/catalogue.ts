@@ -31,6 +31,8 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 
 const catalogues = schema.catalogues;
 
+type ActionResult<T> = { success: boolean; data?: T; error?: string };
+
 /** The statuses a client may set; anything else is rejected. */
 const CLIENT_STATUSES: Status[] = ["active", "inactive", "draft"];
 
@@ -124,17 +126,25 @@ export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 export async function updateItemStatus(
 	id: string,
 	status: Status,
-): Promise<boolean> {
+): Promise<ActionResult<void>> {
 	try {
 		const me = await getVerifiedIdentity();
-		if (!me) return false;
-		if (!CLIENT_STATUSES.includes(status)) return false;
+		if (!me) return { success: false, error: "Unauthorized" };
+		if (!CLIENT_STATUSES.includes(status)) {
+			return { success: false, error: "Invalid status" };
+		}
 
 		const result = await withUser(me, async (tx) => {
 			// Re-activating is a plan decision, not just a status flip.
 			if (status === "active") {
 				const tier = await getPlanForUpdate(tx, me);
-				const allowed = await canActivate(tx, tier);
+				const [stored] = await tx
+					.select({ content: catalogues.content })
+					.from(catalogues)
+					.where(and(eq(catalogues.id, id), eq(catalogues.userId, me.userId)))
+					.limit(1);
+				if (!stored) return { ok: false as const, reason: "Not found" };
+				const allowed = await canActivate(tx, tier, stored.content);
 				if (!allowed.ok) {
 					return {
 						ok: false as const,
@@ -165,15 +175,15 @@ export async function updateItemStatus(
 				: { ok: false as const, reason: "Not found" };
 		});
 
-		if (!result.ok) return false;
+		if (!result.ok) return { success: false, error: result.reason };
 
 		revalidateCatalogue(result.row.name);
 		revalidateDashboard();
-		return true;
+		return { success: true };
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "updateItemStatus" } });
 		console.error("Unexpected error while updating status:", err);
-		return false;
+		return { success: false, error: "Failed to update status" };
 	}
 }
 
@@ -247,8 +257,6 @@ export async function duplicateItem(id: string, name?: string) {
 		return null;
 	}
 }
-
-type ActionResult<T> = { success: boolean; data?: T; error?: string };
 
 export async function createCatalogue(
 	catalogueData: Catalogue,
@@ -330,6 +338,11 @@ export async function updateCatalogue(
 		const me = await getVerifiedIdentity();
 		if (!me) return { success: false, error: "Unauthorized" };
 
+		// The last saved draft, read before the transaction so Redis never holds a
+		// connection. Judging growth against it (not the published row) is what lets
+		// an over-limit catalogue be trimmed one save at a time after a downgrade.
+		const saved = await readOwnedDraft(me, catalogueData.name);
+
 		const prepared = await withUser(me, async (tx) => {
 			const row = await loadOwnedCatalogue(tx, me, catalogueData.name);
 			if (!row) return null;
@@ -339,7 +352,7 @@ export async function updateCatalogue(
 				sanitizeAppearance(catalogueData),
 				tier,
 			);
-			const withinPlan = contentWithinPlan(shaped, row, tier);
+			const withinPlan = contentWithinPlan(shaped, saved ?? row, tier);
 			if (!withinPlan.ok) {
 				return { error: withinPlan.reason ?? "Plan limit reached" };
 			}
@@ -424,22 +437,25 @@ export async function checkCatalogueName(
 	return { available };
 }
 
-export async function publishCatalogue(data: Catalogue): Promise<boolean> {
+export async function publishCatalogue(
+	data: Catalogue,
+): Promise<ActionResult<void>> {
 	try {
 		const me = await getVerifiedIdentity();
-		if (!me) return false;
+		if (!me) return { success: false, error: "Unauthorized" };
 
 		const published = await withUser(me, async (tx) => {
 			const current = await loadOwnedCatalogue(tx, me, data.name);
-			if (!current) return null;
+			if (!current) return { error: "Not found" };
 
 			const tier = await getPlanForUpdate(tx, me);
-			const allowed = await canActivate(tx, tier);
-			if (!allowed.ok) return null;
-
 			const shaped = applyPlanToCatalogue(sanitizeAppearance(data), tier);
+			const allowed = await canActivate(tx, tier, shaped.content);
+			if (!allowed.ok) return { error: allowed.reason ?? "Not allowed" };
+
 			const withinPlan = contentWithinPlan(shaped, current, tier);
-			if (!withinPlan.ok) return null;
+			if (!withinPlan.ok)
+				return { error: withinPlan.reason ?? "Plan limit reached" };
 
 			const [row] = await tx
 				.update(catalogues)
@@ -454,23 +470,24 @@ export async function publishCatalogue(data: Catalogue): Promise<boolean> {
 					and(eq(catalogues.id, current.id), eq(catalogues.userId, me.userId)),
 				)
 				.returning();
-			return row ?? null;
+			return row ? { row } : { error: "Not found" };
 		});
 
-		if (!published) return false;
+		if ("error" in published) return { success: false, error: published.error };
 
-		await writeOwnedDraft(published as Catalogue).catch((err) =>
+		const row = published.row as Catalogue;
+		await writeOwnedDraft(row).catch((err) =>
 			Sentry.captureException(err, {
 				level: "warning",
 				tags: { op: "publishCatalogue", step: "redis" },
 			}),
 		);
-		revalidateCatalogue(published.name);
+		revalidateCatalogue(row.name);
 		revalidateDashboard();
-		return true;
+		return { success: true };
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "publishCatalogue" } });
 		console.error("Unexpected error while publishing catalogue:", err);
-		return false;
+		return { success: false, error: "Failed to publish catalogue" };
 	}
 }

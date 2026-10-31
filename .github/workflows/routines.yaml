@@ -1,0 +1,55 @@
+name: Trigger routines
+
+# Fires only when a PR is first opened from test into main - a synchronize
+# would re-fire on every push, including a routine's own commit back to
+# test, which would trigger itself in a loop.
+on:
+  pull_request:
+    types: [opened]
+    branches: [main]
+
+jobs:
+  fire-routine:
+    # head.ref is only a branch name, so a fork branch named test would match too.
+    if: >-
+      github.event.pull_request.head.ref == 'test' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        routine:
+          - name: release notes
+            url_secret: RELEASE_NOTES_ROUTINE_FIRE_URL
+            token_secret: RELEASE_NOTES_ROUTINE_FIRE_TOKEN
+          - name: dashboard update
+            url_secret: DASHBOARD_ROUTINE_FIRE_URL
+            token_secret: DASHBOARD_ROUTINE_FIRE_TOKEN
+    steps:
+      - name: Fire the Quicktalog ${{ matrix.routine.name }} routine
+        env:
+          ROUTINE_FIRE_URL: ${{ secrets[matrix.routine.url_secret] }}
+          ROUTINE_FIRE_TOKEN: ${{ secrets[matrix.routine.token_secret] }}
+          URL_SECRET_NAME: ${{ matrix.routine.url_secret }}
+          TOKEN_SECRET_NAME: ${{ matrix.routine.token_secret }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          if [ -z "$ROUTINE_FIRE_URL" ]; then
+            echo "::error::Secret $URL_SECRET_NAME is not set"
+            exit 1
+          fi
+          if [ -z "$ROUTINE_FIRE_TOKEN" ]; then
+            echo "::error::Secret $TOKEN_SECRET_NAME is not set"
+            exit 1
+          fi
+          # Nothing re-fires a lost trigger, so ride out transient failures here.
+          curl -X POST "$ROUTINE_FIRE_URL" \
+            --fail-with-body \
+            --retry 3 \
+            --retry-connrefused \
+            -H "Authorization: Bearer $ROUTINE_FIRE_TOKEN" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+            -H "Content-Type: application/json" \
+            -d "{\"text\": \"PR #$PR_NUMBER opened from test into main: $PR_URL\"}"

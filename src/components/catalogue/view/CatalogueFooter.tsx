@@ -1,9 +1,13 @@
 "use client";
 import { newsletterSignup } from "@/actions/newsletter";
-import { CatalogueButton } from "@/components/catalogue/view/components/CatalogueButton";
+import { footerDetails } from "@/constants/details";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import React, { useState } from "react";
-import { FiExternalLink } from "react-icons/fi";
+import { socialPlatform } from "@/lib/catalogue/socials";
+import type { Catalogue } from "@quicktalog/common";
+import Link from "next/link";
+import type React from "react";
+import { useState } from "react";
+import { FiExternalLink, FiMail } from "react-icons/fi";
 import { SmartLink } from "@/components/general/SmartLink";
 import Brand from "./components/Brand";
 import CompanyInfo from "./components/CompanyInfo";
@@ -13,7 +17,7 @@ import Features from "./components/Features";
 import LegalLinks from "./components/LegalLinks";
 import Newsletter from "./components/Newsletter";
 import Partners from "./components/Partners";
-import type { Catalogue } from "@quicktalog/common";
+import { SocialIcon } from "./components/SocialIcon";
 
 export type CatalogueFooterProps = {
 	type?: "default" | "custom";
@@ -21,6 +25,61 @@ export type CatalogueFooterProps = {
 	logo: string;
 };
 
+/** Columns of the Quicktalog footer: brand, contact, platform, create your own. */
+const DEFAULT_COLUMNS = "1.2fr 1fr 1fr 1.3fr";
+
+const QuicktalogColumns = ({ logo }: { logo: string }) => (
+	<>
+		<div className="cat-foot-wide">
+			<Link
+				aria-label="Go to Quicktalog homepage"
+				className="cat-foot-logo"
+				href="/"
+			>
+				<img alt="Quicktalog logo" src={logo} style={{ width: "160px" }} />
+			</Link>
+			<p className="cat-foot-tag">{footerDetails.subheading}</p>
+			<nav aria-label="Social media links" className="cat-foot-social">
+				{Object.values(footerDetails.socials).map((url) => (
+					<SmartLink
+						ariaLabel={`Follow Quicktalog on ${socialPlatform(url)}`}
+						href={url}
+						key={url}
+					>
+						<SocialIcon platform={socialPlatform(url)} />
+					</SmartLink>
+				))}
+				<a aria-label="Email us" href={`mailto:${footerDetails.email}`}>
+					<SocialIcon platform="email" />
+				</a>
+			</nav>
+		</div>
+		<div className="cat-foot-col">
+			<h2>Contact & Support</h2>
+			<ul className="cat-foot-links">
+				<li>
+					<a href={`mailto:${footerDetails.email}`}>
+						<FiMail aria-hidden="true" />
+						{footerDetails.email}
+					</a>
+				</li>
+				<li>
+					<Link href="/contact">
+						<FiExternalLink aria-hidden="true" />
+						Contact Us
+					</Link>
+				</li>
+			</ul>
+		</div>
+		<Features />
+		<DefaultActions />
+	</>
+);
+
+/**
+ * The site footer's structure in catalogue colours. A custom footer shows only
+ * the columns the owner filled in, so the grid template is built from them.
+ */
 const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	type = "default",
 	data,
@@ -34,7 +93,6 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitError, setSubmitError] = useState("");
 	const [submitSuccess, setSubmitSuccess] = useState(false);
-	const [alreadySubscribed, setAlreadySubscribed] = useState(false);
 
 	const handleNewsletterSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -42,7 +100,6 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 		setIsSubmitting(true);
 		setSubmitError("");
 		setSubmitSuccess(false);
-		setAlreadySubscribed(false);
 
 		try {
 			const result = await newsletterSignup(newsletterEmail, activeData?.id);
@@ -62,117 +119,72 @@ const CatalogueFooter: React.FC<CatalogueFooterProps> = ({
 		}
 	};
 
-	const getEffectiveSocials = () => {
-		if (
-			activeData?.contact?.socials &&
-			Array.isArray(activeData.contact.socials)
-		) {
-			const links: Record<string, string> = {};
-			activeData.contact.socials.forEach((url, i) => {
-				if (!url) return;
-				let platform = "link";
-				const lowerUrl = url.toLowerCase();
-				if (lowerUrl.includes("instagram")) platform = "instagram";
-				else if (lowerUrl.includes("facebook")) platform = "facebook";
-				else if (lowerUrl.includes("twitter") || lowerUrl.includes("x.com"))
-					platform = "twitter";
-				else if (lowerUrl.includes("linkedin")) platform = "linkedin";
-				else if (lowerUrl.includes("tiktok")) platform = "tiktok";
-				else if (lowerUrl.includes("youtube")) platform = "youtube";
-				else if (lowerUrl.includes("pinterest")) platform = "pinterest";
-				else platform = `link-${i}`;
-
-				if (!links[platform]) links[platform] = url;
-			});
-			return links;
-		}
-		return {};
-	};
-
-	const effectiveSocials = getEffectiveSocials();
+	const footer = activeData?.footer;
+	const contact = activeData?.contact;
+	const legal = activeData?.legal;
+	const isCustom = type === "custom";
+	const hasContact = !!(contact?.email || contact?.phone || contact?.website);
+	const hasVisit = !!(legal?.legalName || legal?.address);
+	const hasNewsletter = isCustom && !!footer?.newsletter;
+	const ctaOn = !!(footer?.cta?.isEnabled && footer.cta.url);
+	const columns = isCustom
+		? [
+				"1.2fr",
+				...(hasContact ? ["1fr"] : []),
+				...(hasVisit ? ["1fr"] : []),
+				...(hasNewsletter ? ["1.3fr"] : []),
+			].join(" ")
+		: DEFAULT_COLUMNS;
+	const partners =
+		isCustom && footer?.showPartners ? (activeData?.partners ?? []) : [];
+	const ownerName = isCustom
+		? legal?.legalName || "Your Company"
+		: "Quicktalog";
 
 	return (
 		<footer
-			aria-label={`${type === "default" ? "Quicktalog" : activeData?.legal?.legalName || "Custom"} footer`}
-			className="border-t mt-auto font-body pb-24 sm:pb-0 font-weight-body bg-catalogue-navigation-background text-catalogue-navigation-text border-catalogue-navigation-border"
+			aria-label={`${isCustom ? legal?.legalName || "Custom" : "Quicktalog"} footer`}
+			className="cat-foot pb-24 sm:pb-8"
 			role="contentinfo"
 		>
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="py-12 sm:py-16">
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-						{logo && (
+			<div className="cat-foot-in">
+				<div
+					className="cat-foot-grid"
+					style={{ "--cat-foot-cols": columns } as React.CSSProperties}
+				>
+					{isCustom ? (
+						<>
 							<Brand
 								activeData={activeData}
-								effectiveSocials={effectiveSocials}
 								logo={logo}
-								type={type}
+								showCta={ctaOn && !hasNewsletter}
 							/>
-						)}
-
-						{(type === "default" || activeData?.contact?.email) && (
-							<Contact activeData={activeData} type={type} />
-						)}
-
-						<div className="space-y-6">
-							{type === "default" ? (
-								<Features />
-							) : (
-								<CompanyInfo activeData={activeData} />
+							<Contact contact={contact} />
+							<CompanyInfo legal={legal} />
+							{hasNewsletter && (
+								<Newsletter
+									cta={footer?.cta}
+									handleNewsletterSubmit={handleNewsletterSubmit}
+									isSubmitting={isSubmitting}
+									newsletterEmail={newsletterEmail}
+									setNewsletterEmail={setNewsletterEmail}
+									submitError={submitError}
+									submitSuccess={submitSuccess}
+								/>
 							)}
-						</div>
-
-						<div className="space-y-6">
-							{type === "default" ? (
-								<DefaultActions />
-							) : (
-								<Partners activeData={activeData} />
-							)}
-						</div>
-					</div>
+						</>
+					) : (
+						<QuicktalogColumns logo={logo} />
+					)}
 				</div>
 
-				<div className="border-t py-6 border-catalogue-navigation-border">
-					<div
-						className={`flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-catalogue-navigation-text ${data.footer.newsletter ? "md:justify-between" : "md:justify-center"}`}
-					>
-						<span>
-							© {new Date().getFullYear()}{" "}
-							{type === "default"
-								? "Quicktalog"
-								: activeData?.legal?.legalName || "Your Company"}
-							. All rights reserved.
-						</span>
-						<LegalLinks activeData={activeData} type={type} />
+				<Partners partners={partners} />
 
-						{type === "custom" && activeData?.footer.newsletter && (
-							<Newsletter
-								alreadySubscribed={alreadySubscribed}
-								handleNewsletterSubmit={handleNewsletterSubmit}
-								isSubmitting={isSubmitting}
-								newsletterEmail={newsletterEmail}
-								setNewsletterEmail={setNewsletterEmail}
-								submitError={submitError}
-								submitSuccess={submitSuccess}
-							/>
-						)}
-
-						{type === "custom" &&
-							activeData?.footer?.cta?.isEnabled &&
-							activeData?.footer?.cta?.url && (
-								<CatalogueButton
-									asChild
-									className="font-heading tracking-heading min-w-[50%] max-w-[96%] sm:min-w-fit lg:w-fit text-xs sm:text-sm lg:text-sm transition-all duration-200 hover:scale-105 border hover:bg-primary/10 hover:text-primary bg-catalogue-card-background text-catalogue-card-heading border-primary flex items-center gap-2"
-								>
-									<SmartLink
-										aria-label={activeData?.footer?.cta?.label}
-										href={activeData?.footer?.cta?.url || ""}
-									>
-										<FiExternalLink className="w-4 h-4" />
-										{activeData?.footer?.cta?.label}
-									</SmartLink>
-								</CatalogueButton>
-							)}
-					</div>
+				<div className="cat-foot-bottom">
+					<span>
+						© {new Date().getFullYear()} {ownerName}. All rights reserved.
+					</span>
+					<LegalLinks legal={legal} type={type} />
 				</div>
 			</div>
 		</footer>

@@ -2,11 +2,10 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { needsConsentGate } from "@/lib/auth/consent";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { AUTH_PROVIDER } from "@/lib/auth/provider";
 
 /**
  * Holds `/admin` shut until the signed-in user has accepted the current legal
- * documents. Clerk hosts its own sign-up terms, so the gate is Supabase-only.
+ * documents.
  *
  * A nudge rather than a boundary: a layout is not guaranteed to re-run on every
  * soft navigation, and the consequence of slipping past is someone browsing
@@ -21,14 +20,12 @@ export default async function AdminLayout({
 }: {
 	children: ReactNode;
 }) {
-	if (AUTH_PROVIDER === "supabase") {
-		const me = await getVerifiedIdentity();
-		// Signed out: middleware already redirects, and each page re-checks with
-		// the `next` it can actually build. `unknown` lets them through rather
-		// than gate on a reading we do not trust.
-		if (me && (await needsConsentGate(me)).status === "needed") {
-			redirect("/auth/consent");
-		}
+	const me = await getVerifiedIdentity();
+	// Signed out: middleware already redirects, and each page re-checks with
+	// the `next` it can actually build. `unknown` lets them through rather
+	// than gate on a reading we do not trust.
+	if (me && (await needsConsentGate(me)).status === "needed") {
+		redirect("/auth/consent");
 	}
 
 	return <>{children}</>;

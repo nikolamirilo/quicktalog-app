@@ -42,6 +42,23 @@ change anything:
 against the array *as it stands mid-batch*. Two positioned `add_section`s in one
 turn - or one following a `delete_section` - will not land where the model meant.
 
+**The reply is Markdown.** The agent is told to write in it (bold, italics, inline
+code, bullet and numbered lists, a short heading, a link, a fenced code block, a
+small table) and the bubble renders it: `lib/format/markdown.ts` parses the text to
+a small tree and `chat/MarkdownText.tsx` renders that tree as React elements. No
+HTML string is built, so the chat is not one of the author-HTML sinks in
+[catalogue-html-safety.md](catalogue-html-safety.md). Two properties to keep: an
+unfinished marker reads as literal text, because a reply is re-parsed on every
+stream chunk, and anything the grammar does not cover stays the text it was. The
+user's own message is rendered the same way, on the dark bubble's palette.
+
+**The catalogue heading is normalized, not stored as written.** `update_catalogue`
+puts `fields.heading` through `lib/catalogue/heading.ts`, which wraps the words in
+the same `<h1 ... data-size>` the builder writes and keeps the size the owner
+chose. Without it an assistant heading drew at body size on the published page, and
+the builder's heading box - which syncs from the draft - had nothing to read a size
+from.
+
 ---
 
 ## 2. The whole flow
@@ -62,7 +79,7 @@ flowchart TD
     subgraph SERVER["SERVER ACTION - chatEditCatalogue, actions/ai.ts"]
         B1{"message non-empty<br/>and catalogue present?"}
         B2["authorize(catalogueName)"]
-        B3{"Clerk currentUser"}
+        B3{"Signed in?<br/>getVerifiedIdentity"}
         B4{"Catalogue row exists?"}
         B5{"userId === user.id?"}
         B5a{"fetchUserData ok?"}
@@ -84,13 +101,13 @@ flowchart TD
         D1{"catalogueEditResponseSchema<br/>zod safeParse"}
         D2["toClientOperations<br/>section/item index to stable id"]
         D3["resolveOperationImages<br/>imageQuery to Unsplash URL"]
-        D4["private.settle_ai_turn<br/>adds tasks and page reads<br/>to the charge taken up front"]
+        D4["private.spend_ai_hold / release_ai_hold<br/>moves what was spent from the hold<br/>into the charge, gives back the rest"]
     end
 
     subgraph APPLY["BROWSER - applying the batch"]
-        E1["refreshUserData<br/>re-count monthly usage"]
+        E1["refreshUserData<br/>re-count period usage"]
         E2{"operations.length > 0?"}
-        E3["context.applyOperations<br/>with plan limits"]
+        E3["context.applyAiOperations<br/>with the limits from the<br/>message metadata"]
         E4["applyCatalogueOperations<br/>non-mutating, id-addressed<br/>lib/catalogue/operations.ts"]
         E5{"applied.length > 0?"}
         E6["Commit new catalogue<br/>catalogueRef + setCatalogue"]
@@ -233,7 +250,7 @@ There are three silent-drop routes through `toClientOperations`, not one:
 
 1. The section or item index does not exist in the snapshot.
 2. The index points at a block that cannot hold items (`text`, `divider`,
-   `embedding`, `custom_code`) for an item operation.
+   `embedding`, `custom_visual`) for an item operation.
 3. `toItemInputs` filters out every item the model left unnamed, and `add_items`
    then discards the whole operation because nothing survived.
 
@@ -265,7 +282,7 @@ update_catalogue                  update_appearance
 - New thing means `add_section`; only use `update_section` when the user clearly
   points at an existing one.
 - `embedding` code must come from the user; never invent a src or an API key.
-- `custom_code` is original code you write: one self-contained fragment, no CDN,
+- `custom_visual` is original code you write: one self-contained fragment, no CDN,
   no external fonts or images.
 - Never paste catalogue text into a JS string literal - one apostrophe in
   *Chef's Special* silently kills the widget. Put the data in a
@@ -278,15 +295,44 @@ update_catalogue                  update_appearance
 > **These last two rules contradict each other.** One instructs the model to give a
 > `<script>` tag an `id` and read it back with `getElementById`; the next forbids both.
 > A third rule ("prefix your class names and ids") assumes ids are allowed. The model
-> has to violate one of them on every `custom_code` turn. See **H5**.
+> has to violate one of them on every `custom_visual` turn. See **H5**.
 - Run setup at the top level; never wrap it in `DOMContentLoaded` - the script is
   injected after load, so the event has already fired.
 - Section types the plan does not unlock are named explicitly as forbidden.
 - Photos: never write a URL, only an English `imageQuery` of two or three words.
+  Every item in the snapshot is marked `[img]` or `[no photo]`, and the template
+  stand-in (`DEFAULT_IMAGE`) counts as `[no photo]` - see `hasItemPhoto` in
+  `src/lib/catalogue/item-image.ts`. An item that already exists gets a photo
+  through `addItemImages` (one entry per item, up to 40 of one section per call,
+  applied as a single `set_item_images` operation), or through `updateItem` for a
+  single item.
+- The lookup itself is `findStockPhoto` in `src/lib/images/stock-photo.ts`, and
+  it separates three outcomes: `found`, `none` (searched, matched nothing) and
+  `unavailable` (rate limited, down, or no key). Unsplash answers an exhausted
+  quota with **403 and a plain-text body**; reading that as "no results" is what
+  made the agent reword its searches and spend the rest of the hour's quota. The
+  first search of a batch therefore runs alone as a probe, an `unavailable`
+  answer stops every search for the rest of the turn (`ImageCache.unavailable`),
+  and the tool result says so once as `imagesUnavailable` instead of one
+  `imageMisses` entry per item. Results are cached in Redis by query
+  (`<prefix>:stock-photo:<query>`, 30 days for a hit, 1 day for a miss), so a
+  query any catalogue has already searched costs no quota.
+- A **demo** Unsplash app allows 50 searches an hour for the whole deployment -
+  one menu import. Production approval raises it to 1000/hour; more than that is
+  a conversation with partnerships@unsplash.com. Approval is reviewed against the
+  [API guidelines](https://help.unsplash.com/api-guidelines/unsplash-api-guidelines),
+  and two of them this app does not meet yet: every displayed photo must credit
+  the photographer with a link to their Unsplash profile carrying
+  `?utm_source=<app>&utm_medium=referral`, and choosing a photo for an item must
+  send a GET to the photo's `links.download_location`. Neither is possible with
+  what we store - only `urls.regular` is kept, not `user.name`, the profile link
+  or `download_location`.
+
+  This photo section is current as of 2026-10-25.
 
 **4. The snapshot** - `buildCatalogueSnapshot()` renders the catalogue as a compact
 position-indexed outline. HTML is stripped, descriptions truncated to 80 chars,
-items that already have a photo are tagged `[img]`:
+items carry `[img]` or `[no photo]`:
 
 ```
 SLUG: my-cafe
@@ -296,8 +342,8 @@ APPEARANCE: theme=theme-coffee font=Inter size=medium radius=12 shadow=low
 SECTIONS (2):
   [0] category "Coffee" layout=variant_1 items=3
     [0] "Espresso" 2.5 [img] - Single shot, dark roast
-    [1] "Flat White" 3.2 - Double shot with steamed milk
-    [2] "Cold Brew" 3.8
+    [1] "Flat White" 3.2 [no photo] - Double shot with steamed milk
+    [2] "Cold Brew" 3.8 [no photo]
   [1] text "About" - "We roast in small batches every Tuesday."
 ```
 
@@ -320,15 +366,15 @@ it is why the "never repeat an operation, check the snapshot first" rule exists.
 | Item description in snapshot | 80 chars | `catalogueEditor.ts` |
 | Heading in snapshot | 160 chars | `catalogueEditor.ts` |
 | Text-section body in snapshot | 160 chars | `catalogueEditor.ts` |
-| `custom_code` / `embedding` hint in snapshot | 140 chars | `catalogueEditor.ts` |
+| `custom_visual` / `embedding` hint in snapshot | 140 chars | `catalogueEditor.ts` |
 | Operations per turn | 40 | zod `MAX_OPERATIONS` |
-| `custom_code` / `embedding` size | 40 000 chars | zod `MAX_CODE_CHARS` |
+| `custom_visual` / `embedding` size | 40 000 chars | zod `MAX_CODE_CHARS` |
 | Text-section `content` | 4000 chars | zod |
 | Catalogue `heading` | 2000 chars | zod |
 | Items per `add_section` / `add_items` | 40 | zod |
 | `reply` length | 1200 chars | zod |
 | Unsplash lookups per turn | 24, deduped | `MAX_IMAGE_LOOKUPS` |
-| Monthly AI credits | `plan.features.ai_credits` | decided in the database; see [ai-credits.md](./ai-credits.md) |
+| AI credits per 30 days | `plan.features.ai_credits` | decided in the database; see [ai-credits.md](./ai-credits.md) |
 | Sections per catalogue | `plan.features.sections_per_catalogue` | applied client-side; **`text` blocks are exempt** |
 | Items per catalogue | `plan.features.items_per_catalogue` | applied client-side |
 | Model temperature | 0.3 | `ai.ts` |
@@ -357,11 +403,11 @@ flowchart TD
     S2 -->|"whole object, every turn"| M
     S3 -->|"gate + section access"| M
     M -->|operations| S2
-    M -->|"begin_ai_turn / settle_ai_turn"| S6
+    M -->|"begin_ai_turn / spend_ai_hold / release_ai_hold"| S6
     S2 -->|"manual Save"| S5
     S2 -->|"manual Publish"| S4
     S4 --> S5
-    S6 -->|"COUNT for this month"| S3
+    S6 -->|"COUNT for this period"| S3
 
     N1["Lost on refresh.<br/>Clear conversation wipes it<br/>but does NOT undo edits"] -.-> S1
     N2["Lost on refresh<br/>and on Builder unmount"] -.-> S2
@@ -405,20 +451,20 @@ highest ratio of user trust to lines of code.
 `startOfMonth` and `endOfMonth` were module-level constants computed once at import,
 so in a long-lived server process they never rolled over and they mixed local-time
 boundaries with a UTC `timestamptz` column. Nothing read them by the time the repo
-cleanup ran, and they were deleted. Any future month window must be computed per
+cleanup ran, and they were deleted. Any future usage window must be computed per
 call, in UTC.
 
 **H3 - Don't charge for turns that changed nothing.** *(server, `meter`)*
 Either meter only when `operations.length > 0`, or return the metering decision to
 the client and charge after `applied.length > 0` is known.
 
-**H4 - Sanitize `custom_code` before it reaches a published page.** *(pipeline)*
+**H4 - Sanitize `custom_visual` before it reaches a published page.** *(pipeline)*
 Today the only defence is prompt text. The model writes arbitrary HTML, CSS and JS
 that ends up on the customer's live catalogue. A server-side allowlist pass -
 or at minimum stripping `<script src>`, `fetch`, and `XMLHttpRequest` - closes a
 real hole.
 
-**H5 - Resolve the id contradiction in the `custom_code` rules.** *(prompt)*
+**H5 - Resolve the id contradiction in the `custom_visual` rules.** *(prompt)*
 One rule tells the model to put data in a `<script type="application/json" id="...">`
 and read it with `getElementById`; the next forbids ids and `getElementById` outright.
 Every widget the model writes breaks one of them. Pick one: keep the JSON-in-a-script
@@ -447,7 +493,7 @@ The OpenAI client is created with no `timeout` and no `maxRetries` override. A h
 DeepSeek request currently hangs the whole turn with no ceiling.
 
 **H10 - Rate-limit per user per minute.** *(server, before `authorize`)*
-The monthly count is the only throttle. `@upstash/redis` is already a dependency;
+The period count is the only throttle. `@upstash/redis` is already a dependency;
 adding `@upstash/ratelimit` in front of `chatEditCatalogue` is a small change.
 
 **H11 - Cache Unsplash lookups.** *(pipeline)*
@@ -528,14 +574,17 @@ says *"…and N more"*, but there is no operation for *show me the rest*.
 | File | Role |
 |---|---|
 | `src/components/catalogue/chat/CatalogueChat.tsx` | Floating panel from `md`, full-height sheet on a phone (kept above the keyboard by `useVisualViewport`); opened from the builder rail or phone bar through `isChatOpen`, not a button of its own. Suggestions, input, both limit modals |
-| `src/components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text, applied changes, skipped reasons |
+| `src/components/catalogue/chat/ChatMessageBubble.tsx` | One bubble: text (through `MarkdownText`), applied changes, skipped reasons |
+| `src/components/catalogue/chat/MarkdownText.tsx` | Renders a parsed message as React elements, on the light or dark bubble |
+| `src/lib/format/markdown.ts` | The Markdown subset a reply uses, parsed to blocks and inline nodes |
+| `src/lib/format/list-input.ts` | Carries a typed list on in the composer; the draft stays a plain string |
 | `src/hooks/useCatalogueChat.ts` | Orchestrates a turn: history, send, apply, append |
 | `lib/ai/catalogueEditor.ts` | System prompt, snapshot, zod schema, index→id, image resolution |
 | `src/lib/catalogue/operations.ts` | Pure operation applier with plan limits |
-| `src/context/CatalogueContext.tsx` | `applyOperations`, holds the unsaved draft |
+| `src/context/CatalogueContext.tsx` | `applyAiOperations` (requires the server's limits), `getCatalogue` (what a plan continuation sends), holds the unsaved draft. Plan limits: see [builder.md](builder.md#plan-limits) |
 | `src/utils/deepseek.ts` | DeepSeek client, JSON mode, `DeepseekResponseError` |
 | `src/types/ai.ts` | `CatalogueOperation` union and result types |
-| `lib/users/fetchUserData.ts` | Plan + monthly usage counts |
+| `lib/users/fetchUserData.ts` | Plan + period usage counts |
 | `tests/unit/lib/ai/catalogueEditor.test.ts` | Snapshot, index→id, image resolution |
 | `tests/unit/lib/catalogue/operations.test.ts` | Apply semantics and limit skips |
 

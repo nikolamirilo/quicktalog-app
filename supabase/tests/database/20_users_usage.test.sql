@@ -6,6 +6,7 @@
 --   M01  supabase/migrations/20260921181101_app_roles_private_schema.sql   (1.3 private.current_user_id)
 --   M04  supabase/migrations/20260921181104_app_role_grants_policies.sql   (4.1 users grants + policies)
 --   M05  supabase/migrations/20260921181105_private_entry_points.sql       (5.4 my_usage, 5.7 EXECUTE)
+--   M12  supabase/migrations/20261029120000_usage_period_from_signup.sql   (30-day periods from signup)
 --
 -- Run by `supabase test db` on the local stack, with every migration in supabase/migrations/ applied.
 
@@ -14,7 +15,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 
 -- pgTAP lives in `extensions`. M01 1.2 revokes the default PUBLIC EXECUTE on postgres-owned functions, so the
--- app roles need USAGE *and* EXECUTE here to run assertions while the role is switched (PLAN 4.5, PGlite F10).
+-- app roles need USAGE *and* EXECUTE here to run assertions while the role is switched.
 -- These grants are part of the transaction and disappear with the rollback.
 grant usage on schema extensions to app_user, app_public;
 grant execute on all functions in schema extensions to app_user, app_public;
@@ -37,25 +38,29 @@ insert into public.catalogues (id, name, user_id, status, tags) values
   ('c0000000-0000-0000-0000-000000000002', 'alice-two', '11111111-1111-1111-1111-111111111111', 'draft',  '{}'),
   ('c0000000-0000-0000-0000-000000000003', 'bob-one',   '22222222-2222-2222-2222-222222222222', 'active', '{}');
 
--- AI ledger: my_usage() sums this month's unrefunded credits only. The credits differ
--- per row on purpose, so a regression to count(*) fails here instead of passing quietly.
+-- AI ledger: my_usage() sums the unrefunded credits of the caller's current 30-day period
+-- only (M12). The fixture users were created now(), so their period starts today at 00:00
+-- UTC. The credits differ per row on purpose, so a regression to count(*) fails here
+-- instead of passing quietly.
 insert into public.ai_credits (user_id, catalogue_id, created_at, refunded_at, credits) values
   ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001', now(), null, 2),   -- counted
   ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001', now(), now(), 9),  -- refunded
   ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000002', now(), null, 3),   -- counted
   ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001',
-                                           date_trunc('month', now(), 'UTC') - interval '1 second', null, 7), -- last month
+                                           ((now() at time zone 'UTC')::date::timestamp at time zone 'UTC')
+                                             - interval '1 second', null, 7), -- the period before
   ('22222222-2222-2222-2222-222222222222', 'c0000000-0000-0000-0000-000000000003', now(), null, 4);
 
--- One row per catalogue per day (analytics_catalogue_id_day_key); day is a UTC date. The last-month
--- row has no catalogue (a deleted one keeps user_id and a null catalogue_id) and must not count.
+-- One row per catalogue per day (analytics_catalogue_id_day_key); day is a UTC date. The row
+-- from before the period has no catalogue (a deleted one keeps user_id and a null
+-- catalogue_id) and must not count.
 insert into public.analytics (user_id, catalogue_id, day, pageviews, unique_visitors) values
   ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000001',
                                            (now() at time zone 'UTC')::date, 10, 4),
   ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-000000000002',
                                            (now() at time zone 'UTC')::date,  5, 2),
   ('11111111-1111-1111-1111-111111111111', null,
-   ((date_trunc('month', now(), 'UTC') - interval '1 second') at time zone 'UTC')::date, 99, 99),
+   (now() at time zone 'UTC')::date - 1, 99, 99),
   ('22222222-2222-2222-2222-222222222222', 'c0000000-0000-0000-0000-000000000003',
                                            (now() at time zone 'UTC')::date, 100, 50);
 
@@ -144,11 +149,13 @@ select throws_ok(
   'app_user cannot DELETE from users'
 );
 
--- catalogues, this month's unrefunded credits, pageviews, unique visitors.
--- Alice: 2 catalogues, 2+3 credits (the refunded 9 and last month's 7 excluded),
+-- catalogues, the period's unrefunded credits, pageviews, unique visitors. The window
+-- columns my_usage() also returns are covered by 21_usage_period, so the counts are named
+-- here rather than selected with *.
+-- Alice: 2 catalogues, 2+3 credits (the refunded 9 and the earlier period's 7 excluded),
 -- 10+5 pageviews, 4+2 unique visitors.
 select results_eq(
-  $$ select * from private.my_usage() $$,
+  $$ select catalogues, credits, pageviews, unique_visitors from private.my_usage() $$,
   $$ values (2::bigint, 5::bigint, 15::bigint, 6::bigint) $$,
   'private.my_usage() returns the caller''s own numbers'
 );
@@ -162,7 +169,7 @@ do $$ begin perform set_config('request.jwt.claims',
 set local role app_user;
 
 select results_eq(
-  $$ select * from private.my_usage() $$,
+  $$ select catalogues, credits, pageviews, unique_visitors from private.my_usage() $$,
   $$ values (1::bigint, 4::bigint, 100::bigint, 50::bigint) $$,
   'private.my_usage() is per caller: Bob gets only Bob''s numbers'
 );

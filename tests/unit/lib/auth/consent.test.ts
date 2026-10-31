@@ -15,7 +15,6 @@ import type { VerifiedIdentity } from "@/lib/auth/identity";
 const ME = {
 	userId: "11111111-1111-1111-1111-111111111111",
 	sessionId: "sess_1",
-	provider: "supabase",
 } as unknown as VerifiedIdentity;
 
 /** The literal SQL of a drizzle template; parameters are separate chunks. */

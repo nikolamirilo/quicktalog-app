@@ -1,5 +1,7 @@
 import {
 	asItemsBlock,
+	countPlanItems,
+	countPlanSections,
 	isItemsBlock,
 	normalizeBlock,
 	normalizeContent,
@@ -42,25 +44,10 @@ const text = {
 } as ContentBlock;
 
 describe("normalizeBlock", () => {
-	it("renames a legacy custom_code block to custom_visual, keeping its code", () => {
+	it("no longer maps the retired custom_code key, so it can never render as a custom visual", () => {
+		// Retired 2026-10-25 after TEST and PROD rows and drafts were checked clean.
 		const block = normalizeBlock(legacyCustomCode);
-
-		expect(block.type).toBe("custom_visual");
-		expect((block as { code: string }).code).toBe("<div>widget</div>");
-		expect((block as { name?: string }).name).toBe("Spin the wheel");
-		expect(block.id).toBe("sec-4");
-		expect(block.order).toBe(3);
-	});
-
-	it("leaves a custom_code block with no code as an empty custom_visual", () => {
-		const block = normalizeBlock({
-			id: "sec-5",
-			order: 0,
-			type: "custom_code",
-		} as unknown as ContentBlock);
-
-		expect(block.type).toBe("custom_visual");
-		expect((block as { code: string }).code).toBe("");
+		expect(block.type).toBe("custom_code");
 	});
 
 	it("turns a legacy category into an items block that still shows its heading", () => {
@@ -139,5 +126,38 @@ describe("asItemsBlock", () => {
 		expect(asItemsBlock(legacyCategory)?.showHeading).toBe(true);
 		expect(asItemsBlock(legacyContainer)?.showHeading).toBe(false);
 		expect(asItemsBlock(text)).toBeNull();
+	});
+});
+
+describe("plan counts", () => {
+	const block = (type: string, items = 0) =>
+		({
+			id: `${type}-${Math.random()}`,
+			order: 0,
+			type,
+			items: Array.from({ length: items }, (_, i) => ({ id: `i${i}` })),
+		}) as unknown as ContentBlock;
+
+	it("countPlanSections counts every block, text included", () => {
+		const content = [
+			block("items"),
+			block("items"),
+			block("items"),
+			block("text"),
+			block("text"),
+			block("divider"),
+		];
+		expect(countPlanSections(content)).toBe(6);
+	});
+
+	it("countPlanItems counts only items blocks, legacy keys included", () => {
+		expect(
+			countPlanItems([block("items", 3), block("category", 2), block("text")]),
+		).toBe(5);
+	});
+
+	it("counts nothing for content that is not an array", () => {
+		expect(countPlanSections(undefined)).toBe(0);
+		expect(countPlanItems(null)).toBe(0);
 	});
 });

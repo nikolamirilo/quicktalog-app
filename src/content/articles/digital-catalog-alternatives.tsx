@@ -63,7 +63,7 @@ function Body() {
 					"WordPress is the right answer when you need a full website, and overkill when a catalog is all you need.",
 					"An interactive web catalog is built to be read and edited on a phone, with a live link that updates the second you save.",
 					"Match the tool to the job: how often does it change, and where will people read it?",
-					"Already have a PDF or a Canva export? OCR import pulls the items and prices into a live catalog without rebuilding.",
+					"Already have a PDF or a Canva export? Attach screenshots of its pages to Quick AI and it pulls the items and prices into your draft without rebuilding.",
 				]}
 			/>
 
@@ -149,10 +149,10 @@ function Body() {
 					and edits go live the moment you save, with nothing to export and
 					nothing to re-share. You can begin from an{" "}
 					<TextLink href="/articles/create-catalog-with-ai">AI draft</TextLink>{" "}
-					or an OCR import of what you already have, watch how people use it
-					with built-in analytics, and publish your first one for free. This is
-					the route to choose when the catalog changes often and lives on a
-					phone screen, which is most{" "}
+					or photos of what you already have, watch how people use it with
+					built-in analytics, and publish your first one for free. This is the
+					route to choose when the catalog changes often and lives on a phone
+					screen, which is most{" "}
 					<TextLink href="/articles/digital-menu-for-restaurants">
 						menus and price lists
 					</TextLink>
@@ -174,7 +174,7 @@ function Body() {
 					"Mobile-first to read and to build",
 					"One live link and a QR code that never need reprinting",
 					"Edits go live the second you save",
-					"Start from an AI draft or an OCR import of what you already have",
+					"Start from an AI draft or photos of what you already have",
 					"Built-in analytics, with a free plan to begin",
 				]}
 				title="Quicktalog at a glance"
@@ -215,7 +215,7 @@ function Body() {
 						values: [true, false, false, true, "Plugin"],
 					},
 					{
-						label: "AI or OCR quick start",
+						label: "AI quick start (from a description or photos)",
 						values: [true, false, "Partial", false, false],
 					},
 					{
@@ -256,11 +256,12 @@ function Body() {
 
 				<h2>Already have a PDF or a Canva export?</h2>
 				<p>
-					You do not have to rebuild from scratch. Take what you already have, a
-					PDF or even a photo of a printed page, and use OCR import to pull the
-					items and prices into a draft. Tidy up the wording, publish, and you
-					have a live catalog with a link and a QR code, usually inside an
-					afternoon. If you want to see how the build itself goes, the{" "}
+					You do not have to rebuild from scratch. Take a screenshot of each PDF
+					page, or a photo of a printed one, and attach them to a Quick AI
+					message to pull the items and prices into a draft. Tidy up the
+					wording, publish, and you have a live catalog with a link and a QR
+					code, usually inside an afternoon. If you want to see how the build
+					itself goes, the{" "}
 					<TextLink href="/articles/create-catalog-with-ai">
 						guide to starting with AI
 					</TextLink>{" "}

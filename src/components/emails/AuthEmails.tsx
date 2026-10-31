@@ -12,10 +12,10 @@ import {
 
 /**
  * Supabase Auth emails. They are rendered once into supabase/templates/*.html by
- * scripts/emails/render-auth-templates.ts, with GoTrue placeholders as the props.
+ * scripts/supabase/render-email-templates.ts, with GoTrue placeholders as the props.
  */
 type AuthEmailProps = {
-	/** Origin for the logo and footer links. */
+	/** Origin for the logo link and footer links. */
 	siteUrl: string;
 	/** The app's /auth/confirm interstitial, never GoTrue's verify endpoint. */
 	confirmUrl: string;

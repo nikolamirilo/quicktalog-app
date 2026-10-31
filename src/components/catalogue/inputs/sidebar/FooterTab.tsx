@@ -4,13 +4,20 @@ import { useCatalogueContext } from "@/context/CatalogueContext";
 import { cn } from "@/lib/ui/cn";
 import BusinessInfoSection from "./footer/BusinessInfoSection";
 import InteractionSection from "./footer/InteractionSection";
-import LogoSizeSection from "./footer/LogoSizeSection";
 import PartnersSection from "./footer/PartnersSection";
+import LogoSection from "./logo/LogoSection";
 import SocialLinksSection from "./footer/SocialLinksSection";
 import LimitsOverlay from "./LimitsOverlay";
 import { PANEL_TAB_ROOT, PanelSection } from "./panel";
 
-const FooterTab = ({ plan }: { plan: PricingPlan }) => {
+const FooterTab = ({
+	plan,
+	onOpenLogo,
+}: {
+	plan: PricingPlan;
+	/** Switches the panel to General and scrolls to the logo upload. */
+	onOpenLogo: () => void;
+}) => {
 	const { catalogue, updateCatalogue } = useCatalogueContext() || {};
 	const hasBranding = plan?.features?.branding;
 
@@ -110,7 +117,12 @@ const FooterTab = ({ plan }: { plan: PricingPlan }) => {
 					)}
 					inert={!isCustom || undefined}
 				>
-					<LogoSizeSection catalogue={catalogue} handleChange={handleChange} />
+					<LogoSection
+						catalogue={catalogue}
+						handleChange={handleChange}
+						onOpenLogo={onOpenLogo}
+						scope="footer"
+					/>
 
 					<InteractionSection
 						catalogue={catalogue}

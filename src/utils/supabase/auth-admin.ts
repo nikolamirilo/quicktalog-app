@@ -4,9 +4,8 @@ import "server-only";
 /**
  * The admin auth API: creating, updating and deleting `auth.users`.
  *
- * Only two callers are allowed - the account-deletion action and the cutover
- * scripts - and the architecture test enforces that, because this key can act
- * as any user. It carries no session and must never be handed a request's
+ * Only the account-deletion action may call it, and the architecture test
+ * enforces that, because this key can act as any user. It carries no session and must never be handed a request's
  * cookies.
  */
 export function authAdmin() {

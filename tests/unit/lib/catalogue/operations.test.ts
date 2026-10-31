@@ -281,15 +281,15 @@ describe("applyCatalogueOperations", () => {
 		expect(result.limitReached).toBe(true);
 	});
 
-	it("lets text sections through when the section allowance is spent", () => {
+	it("refuses a text block once the section allowance is spent", () => {
 		const result = applyCatalogueOperations(
 			base(),
 			[{ op: "add_section", sectionType: "text", content: "<p>Hi</p>" }],
 			{ sections: 2 },
 		);
 
-		expect(result.catalogue.content).toHaveLength(3);
-		expect(result.limitReached).toBe(false);
+		expect(result.catalogue.content).toHaveLength(2);
+		expect(result.limitReached).toBe(true);
 	});
 
 	it("merges catalogue and appearance patches without dropping siblings", () => {
@@ -476,5 +476,211 @@ describe("applyCatalogueOperations", () => {
 			expect(result.applied).toHaveLength(1);
 			expect((result.catalogue.content[0] as any).showHeading).toBe(false);
 		});
+	});
+});
+
+describe("plan flags in the applier", () => {
+	const palette = {
+		background: "#ffffff",
+		heading: "#000000",
+		text: "#111111",
+		primary: "#2563eb",
+		secondary: "#444444",
+		cardBackground: "#ffffff",
+	};
+
+	const refused = (
+		operations: CatalogueOperation[],
+		limits: Parameters<typeof applyCatalogueOperations>[2],
+		content: ContentBlock[] = [starters()],
+	) => {
+		const before = catalogue(content);
+		const result = applyCatalogueOperations(before, operations, limits);
+		expect(result.applied).toEqual([]);
+		expect(result.limitReached).toBe(true);
+		expect(result.catalogue).toEqual({
+			...before,
+			content: result.catalogue.content,
+		});
+		return result;
+	};
+
+	it("refuses a custom palette without advanced appearance", () => {
+		const result = refused(
+			[{ op: "update_appearance", fields: { customColors: palette } }],
+			{ advancedAppearance: false },
+		);
+		expect(result.skipped[0]).toMatch(/Custom themes and the font/);
+	});
+
+	it("refuses style changes without advanced appearance", () => {
+		const result = refused(
+			[{ op: "update_appearance", fields: { borderRadius: 12 } }],
+			{ advancedAppearance: false },
+		);
+		expect(result.skipped[0]).toMatch(/not part of your plan/);
+	});
+
+	it("still switches to a standard theme without advanced appearance", () => {
+		const result = applyCatalogueOperations(
+			base(),
+			[{ op: "update_appearance", fields: { theme: "theme-dark" } }],
+			{ advancedAppearance: false },
+		);
+		expect(result.applied).toHaveLength(1);
+		expect(result.catalogue.appearance.theme.name).toBe("theme-dark");
+	});
+
+	it("refuses turning the newsletter on without it", () => {
+		const result = refused(
+			[{ op: "update_footer", fields: { newsletter: true } }],
+			{ branding: true, newsletter: false },
+		);
+		expect(result.skipped[0]).toMatch(
+			/newsletter form is not part of your plan/,
+		);
+	});
+
+	it("allows turning the newsletter off on any plan", () => {
+		const result = applyCatalogueOperations(
+			base(),
+			[{ op: "update_footer", fields: { newsletter: false } }],
+			{ branding: true, newsletter: false },
+		);
+		expect(result.applied).toHaveLength(1);
+	});
+
+	it("refuses editing the code of a block type the plan no longer includes", () => {
+		const embed = {
+			id: "emb-1",
+			order: 1,
+			type: "embedding",
+			code: "<iframe></iframe>",
+		} as ContentBlock;
+		const result = refused(
+			[{ op: "update_section", sectionId: "emb-1", code: "<iframe src=x>" }],
+			{
+				sectionTypes: { divider: false, embedding: false, customVisual: false },
+			},
+			[starters(), embed],
+		);
+		expect(result.skipped[0]).toMatch(/can be deleted/);
+	});
+
+	it("still deletes such a block", () => {
+		const embed = {
+			id: "emb-1",
+			order: 1,
+			type: "embedding",
+			code: "<iframe></iframe>",
+		} as ContentBlock;
+		const result = applyCatalogueOperations(
+			catalogue([starters(), embed]),
+			[{ op: "delete_section", sectionId: "emb-1" }],
+			{
+				sectionTypes: { divider: false, embedding: false, customVisual: false },
+			},
+		);
+		expect(result.catalogue.content).toHaveLength(1);
+	});
+
+	it("gates nothing when no limits are given", () => {
+		const result = applyCatalogueOperations(base(), [
+			{
+				op: "update_appearance",
+				fields: { customColors: palette, shadow: "high" },
+			},
+			{ op: "update_footer", fields: { newsletter: true } },
+		]);
+		expect(result.applied).toHaveLength(2);
+	});
+});
+
+describe("limit messages", () => {
+	const itemsBlock = (id: string, count: number): ContentBlock => ({
+		id,
+		order: 0,
+		type: "items",
+		name: id,
+		showHeading: true,
+		isExpanded: true,
+		layout: "variant_1",
+		items: Array.from({ length: count }, (_, i) =>
+			item(`${id}-${i}`, `Item ${i}`, i),
+		),
+	});
+	const inputs = (count: number) =>
+		Array.from({ length: count }, (_, i) => ({ name: `New ${i}`, price: 1 }));
+
+	it("says the item limit is for the whole catalogue", () => {
+		const result = applyCatalogueOperations(
+			catalogue([itemsBlock("a", 5), itemsBlock("b", 5), itemsBlock("c", 5)]),
+			[{ op: "add_items", sectionId: "a", items: inputs(1) }],
+			{ items: 15 },
+		);
+		expect(result.applied).toEqual([]);
+		expect(result.skipped[0]).toMatch(/15 items in the whole catalogue/);
+		expect(result.skipped[0]).toMatch(/already has 15/);
+	});
+
+	it("reports items left out of a new section", () => {
+		const result = applyCatalogueOperations(
+			catalogue([itemsBlock("a", 27)]),
+			[
+				{
+					op: "add_section",
+					sectionType: "items",
+					name: "Desserts",
+					items: inputs(20),
+				},
+			],
+			{ items: 30 },
+		);
+		const added = result.catalogue.content[1] as { items: unknown[] };
+		expect(added.items).toHaveLength(3);
+		expect(result.skipped[0]).toMatch(/17 item\(s\) were left out/);
+		expect(result.skipped[0]).toMatch(/30 items in the whole catalogue/);
+		expect(result.limitReached).toBe(true);
+	});
+
+	it("reports items left out of add_items", () => {
+		const result = applyCatalogueOperations(
+			catalogue([itemsBlock("a", 28)]),
+			[{ op: "add_items", sectionId: "a", items: inputs(5) }],
+			{ items: 30 },
+		);
+		expect(result.applied[0]).toMatch(/Added 2 items/);
+		expect(result.skipped[0]).toMatch(/3 item\(s\) were left out/);
+	});
+
+	it("says the section limit and its count", () => {
+		const result = applyCatalogueOperations(
+			base(),
+			[{ op: "add_section", sectionType: "items", name: "Desserts" }],
+			{ sections: 2 },
+		);
+		expect(result.skipped[0]).toMatch(
+			/allows 2 sections in the whole catalogue and it already has 2/,
+		);
+	});
+
+	it("a catalogue already over its limit can still be edited, moved and trimmed", () => {
+		const over = () => catalogue([itemsBlock("a", 80)]);
+		const limits = { items: 30 };
+		const ops: CatalogueOperation[] = [
+			{ op: "update_item", sectionId: "a", itemId: "a-0", price: 9 },
+			{ op: "move_item", sectionId: "a", itemId: "a-1", direction: "down" },
+			{ op: "delete_item", sectionId: "a", itemId: "a-2" },
+		];
+		expect(applyCatalogueOperations(over(), ops, limits).applied).toHaveLength(
+			3,
+		);
+		const add = applyCatalogueOperations(
+			over(),
+			[{ op: "add_items", sectionId: "a", items: inputs(1) }],
+			limits,
+		);
+		expect(add.applied).toEqual([]);
+		expect(add.limitReached).toBe(true);
 	});
 });

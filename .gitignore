@@ -14,17 +14,9 @@
 !.yarn/versions
 .eslintcache
 **/superpowers/
-/cutover
 
 # testing
 /coverage
-
-# playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.clerk/
-/playwright/.cache/
 
 # next.js
 /.next/
@@ -54,8 +46,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# clerk configuration (can include secrets)
-/.clerk/
 /prisma/generated
 
 # Kilo Code agent worktrees (contain their own biome.json)

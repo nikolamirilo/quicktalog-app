@@ -1,4 +1,4 @@
-import { CREDITS, estimatePlanCredits } from "@/lib/ai/pricing";
+import { canStartAsk, CREDITS, estimatePlanCredits } from "@/lib/ai/pricing";
 import { describe, expect, it } from "vitest";
 
 describe("estimatePlanCredits", () => {
@@ -18,5 +18,13 @@ describe("estimatePlanCredits", () => {
 	it("keeps a description the smallest useful action", () => {
 		// "1 credit is one AI-written description" is what the pricing page sells.
 		expect(CREDITS.describe).toBe(1);
+	});
+});
+
+describe("canStartAsk", () => {
+	it("matches the server's base check", () => {
+		expect(canStartAsk(13, 15)).toBe(true);
+		expect(canStartAsk(14, 15)).toBe(false);
+		expect(canStartAsk(0, undefined)).toBe(true);
 	});
 });

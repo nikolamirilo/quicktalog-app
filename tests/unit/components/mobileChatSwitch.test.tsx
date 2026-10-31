@@ -1,8 +1,6 @@
 // @vitest-environment happy-dom
-import { act, cleanup, render, screen, within } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-vi.mock("@clerk/nextjs", () => ({ useUser: () => ({ user: null }) }));
 
 /**
  * next/font only runs inside Next's compiler. The sidebar reaches it through
@@ -141,64 +139,6 @@ describe("the builder bar and the AI chat share one thumb zone", () => {
 		act(() => context.current?.setIsChatOpen(false));
 		expect(classesOf(aside())).toContain("flex");
 		expect(classesOf(aside())).not.toContain("hidden");
-	});
-
-	/**
-	 * A colour of its own made Quick AI look like the selected tab on a bar where
-	 * nothing is selected until it is tapped.
-	 */
-	it("gives no bar item a selected look before anything is tapped", () => {
-		setup();
-		// Scoped to the phone bar: the desktop row renders the same actions, and
-		// happy-dom applies no media queries, so both are in the document.
-		const bar = within(
-			screen.getByRole("toolbar", { name: "Builder actions" }),
-		);
-
-		for (const label of [
-			"Quick AI",
-			"Templates",
-			"Save",
-			"Publish or preview",
-		]) {
-			const item = bar.getByRole("button", { name: label });
-			expect(item.className).not.toMatch(/text-product-primary/);
-		}
-	});
-
-	it("puts Templates beside Quick AI, the editor in the middle, and publish/preview in one slot", () => {
-		setup();
-		const bar = screen.getByRole("toolbar", { name: "Builder actions" });
-
-		const labels = [...bar.querySelectorAll("button")]
-			.map((b) => b.textContent?.trim())
-			.filter((text) => text);
-		// The editor button is an item of the bar itself, between the two pairs,
-		// rather than a button floating over the bar and the catalogue.
-		expect(labels).toEqual([
-			"Quick AI",
-			"Templates",
-			"Editor",
-			"Save",
-			"Publish",
-		]);
-
-		// Preview moved into the grouped button's menu, which is closed.
-		expect(within(bar).queryByRole("button", { name: "Preview" })).toBeNull();
-	});
-
-	/**
-	 * Four equal items, two either side of the fixed-width editor button, keep
-	 * the editor button centred in the bar, so the count is load-bearing.
-	 */
-	it("keeps the bar at four items either side of the editor button", () => {
-		setup();
-		const bar = screen.getByRole("toolbar", { name: "Builder actions" });
-
-		const items = [...bar.querySelectorAll("button")].filter((b) =>
-			b.className.includes("flex-1"),
-		);
-		expect(items).toHaveLength(4);
 	});
 
 	it("toggles the editor panel from the button in the bar", () => {

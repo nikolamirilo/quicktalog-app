@@ -1,14 +1,13 @@
 "use client";
-import { headingSizeMap } from "@/constants/builder";
 import { useCatalogueContext } from "@/context/CatalogueContext";
-import { isDarkBackground } from "@/lib/themes/custom-theme";
+import {
+	HEADING_CHAR_LIMIT,
+	parseHeading,
+	wrapHeading,
+} from "@/lib/catalogue/heading";
+import { isDarkTheme } from "@/lib/themes/custom-theme";
 import { HeadingSize } from "@/types/shared";
-import { themes } from "@quicktalog/common";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-const HEADING_CHAR_LIMIT = 100;
-
-export { HEADING_CHAR_LIMIT };
 
 export function useHeadingEditor() {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
@@ -24,32 +23,35 @@ export function useHeadingEditor() {
 	const [charCount, setCharCount] = useState(0);
 
 	const lastValidHtml = useRef("");
-	const isInitialized = useRef(false);
+	/** What this editor last wrote to the draft, to tell its own echo from an outside change. */
+	const lastWrittenHtml = useRef<string | null>(null);
 
+	const write = useCallback(
+		(inner: string, size: HeadingSize) => {
+			const wrapped = wrapHeading(inner, size);
+			lastWrittenHtml.current = wrapped;
+			updateCatalogue({ heading: wrapped });
+		},
+		[updateCatalogue],
+	);
+
+	// The draft owns the heading, not this box: the assistant and the templates
+	// write to it too. A change made here comes back as its own echo and is
+	// ignored; one from anywhere else is rendered, and waits for the caret to
+	// leave rather than interrupting someone mid-word.
 	useEffect(() => {
-		if (editorRef.current && catalogue?.heading && !isInitialized.current) {
-			isInitialized.current = true;
+		const editor = editorRef.current;
+		const stored = catalogue?.heading ?? "";
+		if (!editor || stored === lastWrittenHtml.current || isFocused) return;
 
-			const sizeMatch = catalogue.heading.match(/data-size="([^"]+)"/);
-			if (sizeMatch) {
-				const size = sizeMatch[1] as HeadingSize;
-				if (["extraLarge", "large", "medium", "small"].includes(size)) {
-					setHeadingSize(size);
-				}
-			}
-
-			let content = catalogue.heading;
-			const innerMatch = content.match(/<h1[^>]*>([\s\S]*)<\/h1>/);
-			if (innerMatch) {
-				content = innerMatch[1];
-			}
-			const parsed = content || "";
-			editorRef.current.innerHTML = parsed;
-			lastValidHtml.current = parsed;
-			setIsEmpty(!parsed || parsed === "<br>");
-			setCharCount(editorRef.current.textContent?.length || 0);
-		}
-	}, [catalogue?.heading]);
+		const { inner, size } = parseHeading(stored);
+		if (size) setHeadingSize(size);
+		editor.innerHTML = inner;
+		lastValidHtml.current = inner;
+		lastWrittenHtml.current = stored;
+		setIsEmpty(!inner || inner === "<br>");
+		setCharCount(editor.textContent?.length || 0);
+	}, [catalogue?.heading, isFocused]);
 
 	const updateSelection = useCallback(() => {
 		const selection = window.getSelection();
@@ -158,11 +160,9 @@ export function useHeadingEditor() {
 			const html = editorRef.current.innerHTML;
 			setIsEmpty(!html || html === "<br>" || html === "");
 			setCharCount(textLen);
-			const sizeClass = headingSizeMap[headingSize];
-			const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${headingSize}">${html}</h1>`;
-			updateCatalogue({ heading: wrappedHtml });
+			write(html, headingSize);
 		}
-	}, [updateCatalogue, headingSize, saveSelection, restoreSelection]);
+	}, [write, headingSize, saveSelection, restoreSelection]);
 
 	const execCommand = useCallback(
 		(command: string) => {
@@ -180,14 +180,9 @@ export function useHeadingEditor() {
 	const handleSizeChange = useCallback(
 		(size: HeadingSize) => {
 			setHeadingSize(size);
-			if (editorRef.current) {
-				const html = editorRef.current.innerHTML;
-				const sizeClass = headingSizeMap[size];
-				const wrappedHtml = `<h1 class="${sizeClass} font-heading text-heading drop-shadow-sm mb-4 text-center break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${size}">${html}</h1>`;
-				updateCatalogue({ heading: wrappedHtml });
-			}
+			if (editorRef.current) write(editorRef.current.innerHTML, size);
 		},
-		[updateCatalogue],
+		[write],
 	);
 
 	const handleKeyDown = useCallback(
@@ -232,18 +227,13 @@ export function useHeadingEditor() {
 	}, []);
 
 	const handleFocus = useCallback(() => {
-		isInitialized.current = true;
 		setIsFocused(true);
 		setIsBold(false);
 		setIsItalic(false);
 	}, []);
 
 	useEffect(() => {
-		const isDark =
-			catalogue?.appearance.theme.type === "custom"
-				? isDarkBackground(catalogue?.appearance.theme.colors?.background)
-				: themes.find((t) => t.key === catalogue?.appearance.theme.name)
-						?.type === "dark";
+		const isDark = isDarkTheme(catalogue?.appearance.theme);
 		setPlaceholderColor(isDark ? "#E5E7EB" : "#4A5565");
 	}, [
 		catalogue?.appearance.theme.type,

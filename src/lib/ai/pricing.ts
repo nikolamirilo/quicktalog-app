@@ -17,3 +17,8 @@ export const CREDITS = {
 export function estimatePlanCredits(taskCount: number): number {
 	return CREDITS.agentBase + Math.max(0, taskCount - 1) * CREDITS.perExtraTask;
 }
+
+/** The browser's version of the server's check: a new ask must be able to pay its base. */
+export function canStartAsk(used: number, limit: number | undefined): boolean {
+	return typeof limit !== "number" || used + CREDITS.agentBase <= limit;
+}

@@ -59,8 +59,9 @@ type SettingsRowProps = {
 };
 
 /**
- * Label, value and action on one line from `md`; on phones the label sits above
- * the value and the actions wrap below when they do not fit beside it.
+ * Label, value and action on one line from `lg`; below that the label sits above
+ * the value and the actions wrap below when they do not fit beside it. `md` is
+ * too early: the dashboard sidebar appears there and leaves too little width.
  */
 export function SettingsRow({
 	label,
@@ -101,27 +102,27 @@ export function SettingsRow({
 		>
 			<div
 				className={cn(
-					"flex flex-wrap items-center gap-x-3 gap-y-2.5 md:grid md:gap-4",
+					"flex flex-wrap items-center gap-x-3 gap-y-2.5 lg:grid lg:gap-4",
 					open
-						? "items-start md:grid-cols-[180px_minmax(0,1fr)]"
-						: "md:grid-cols-[180px_minmax(0,1fr)_auto]",
+						? "items-start lg:grid-cols-[180px_minmax(0,1fr)]"
+						: "lg:grid-cols-[180px_minmax(0,1fr)_auto]",
 				)}
 			>
-				<div className="flex min-w-0 flex-[1_1_180px] flex-col gap-0.5 md:contents">
+				<div className="flex min-w-0 flex-[1_1_180px] flex-col gap-0.5 lg:contents">
 					<span
 						className={cn(
-							"md:text-sm md:font-semibold md:text-product-foreground",
+							"lg:text-sm lg:font-semibold lg:text-product-foreground",
 							description && !open
 								? "text-[15px] font-medium text-product-foreground"
 								: "text-[13px] text-product-muted",
-							tone === "danger" && "text-product-error md:text-product-error",
+							tone === "danger" && "text-product-error lg:text-product-error",
 						)}
 					>
 						{label}
 					</span>
 					{open ? (
 						<div
-							className="flex w-full max-w-[480px] flex-col gap-3 pt-1.5 md:pt-0"
+							className="flex w-full max-w-[480px] flex-col gap-3 pt-1.5 lg:pt-0"
 							id={editorId}
 							ref={editorRef}
 						>
@@ -132,13 +133,13 @@ export function SettingsRow({
 							{description}
 						</p>
 					) : (
-						<div className="min-w-0 text-[15px] font-medium text-product-foreground [overflow-wrap:anywhere] md:font-normal md:text-product-foreground-accent">
+						<div className="min-w-0 text-[15px] font-medium text-product-foreground [overflow-wrap:anywhere] lg:font-normal lg:text-product-foreground-accent">
 							{value}
 						</div>
 					)}
 				</div>
 				{hasActions && (
-					<div className="flex flex-wrap gap-2 md:justify-end">
+					<div className="flex w-full flex-col gap-2 sm:w-auto">
 						{action}
 						{editLabel && (
 							<Button

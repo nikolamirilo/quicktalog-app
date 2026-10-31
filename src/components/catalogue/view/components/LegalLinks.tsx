@@ -1,64 +1,30 @@
-import Link from "next/link";
 import { SmartLink } from "@/components/general/SmartLink";
+import type { Catalogue } from "@quicktalog/common";
+import Link from "next/link";
 
 const LegalLinks = ({
 	type,
-	activeData,
+	legal,
 }: {
-	type: string;
-	activeData: any;
+	type: "default" | "custom";
+	legal: Catalogue["legal"] | undefined;
 }) => {
+	if (type === "default")
+		return (
+			<nav aria-label="Legal links" className="cat-foot-legal">
+				<Link href="/privacy-policy">Privacy Policy</Link>
+				<Link href="/terms-and-conditions">Terms of Service</Link>
+				<Link href="/refund-policy">Refund Policy</Link>
+			</nav>
+		);
+	if (!legal?.privacyPolicy && !legal?.termsAndConditions) return null;
 	return (
-		<nav
-			aria-label="Legal links"
-			className="flex items-center space-x-6"
-			role="navigation"
-		>
-			{type === "default" ? (
-				<>
-					<Link
-						aria-label="Privacy Policy"
-						className="hover:text-primary transition-colors duration-200"
-						href="/privacy-policy"
-					>
-						Privacy Policy
-					</Link>
-					<Link
-						aria-label="Terms of Service"
-						className="hover:text-primary transition-colors duration-200"
-						href="/terms-and-conditions"
-					>
-						Terms of Service
-					</Link>
-					<Link
-						aria-label="Refund Policy"
-						className="hover:text-primary transition-colors duration-200"
-						href="/refund-policy"
-					>
-						Refund Policy
-					</Link>
-				</>
-			) : (
-				<>
-					{activeData?.legal?.privacyPolicy && (
-						<SmartLink
-							aria-label="Privacy Policy"
-							className="hover:text-primary transition-colors duration-200"
-							href={activeData?.legal?.privacyPolicy}
-						>
-							Privacy Policy
-						</SmartLink>
-					)}
-					{activeData?.legal?.termsAndConditions && (
-						<SmartLink
-							aria-label="Terms of Service"
-							className="hover:text-primary transition-colors duration-200"
-							href={activeData?.legal?.termsAndConditions}
-						>
-							Terms of Service
-						</SmartLink>
-					)}
-				</>
+		<nav aria-label="Legal links" className="cat-foot-legal">
+			{legal.privacyPolicy && (
+				<SmartLink href={legal.privacyPolicy}>Privacy Policy</SmartLink>
+			)}
+			{legal.termsAndConditions && (
+				<SmartLink href={legal.termsAndConditions}>Terms of Service</SmartLink>
 			)}
 		</nav>
 	);

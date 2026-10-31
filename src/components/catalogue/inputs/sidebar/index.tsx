@@ -10,10 +10,12 @@ import { cn } from "@/lib/ui/cn";
 import type { UserData } from "@quicktalog/common";
 import { FileText, Home, Layout, Palette } from "lucide-react";
 import type React from "react";
+import { useState } from "react";
+import { GLASS_PANEL_ID } from "./appearance/GlassConfiguration";
 import { BuilderActionModals, BuilderBottomBar } from "./ActionButtons";
 import AppearanceTab from "./AppearanceTab";
 import FooterTab from "./FooterTab";
-import GeneralTab from "./GeneralTab";
+import GeneralTab, { LOGO_PANEL_ID } from "./GeneralTab";
 import HeaderTab from "./HeaderTab";
 
 export type TabKey =
@@ -45,6 +47,21 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const isChatOpen = context?.isChatOpen ?? false;
 	const setIsChatOpen = context?.setIsChatOpen ?? (() => {});
 	const closePanel = () => setIsOpen(false);
+	const [tab, setTab] = useState<TabKey>("general");
+	const openPanelSection = (key: TabKey, panelId: string) => {
+		setTab(key);
+		// The tab mounts on the next frame; scroll once it is there.
+		requestAnimationFrame(() =>
+			requestAnimationFrame(() =>
+				document
+					.getElementById(panelId)
+					?.scrollIntoView({ behavior: "smooth", block: "start" }),
+			),
+		);
+	};
+	const openGlassSettings = () =>
+		openPanelSection("appearance", GLASS_PANEL_ID);
+	const openLogoUpload = () => openPanelSection("general", LOGO_PANEL_ID);
 	const { actions, catalogueName, ...modals } = useBuilderActions({
 		closePanel,
 	});
@@ -65,13 +82,21 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 			key: "header",
 			icon: Layout,
 			label: "Header",
-			content: <HeaderTab plan={userData.currentPlan} />,
+			content: (
+				<HeaderTab
+					onOpenGlass={openGlassSettings}
+					onOpenLogo={openLogoUpload}
+					plan={userData.currentPlan}
+				/>
+			),
 		},
 		{
 			key: "footer",
 			icon: FileText,
 			label: "Footer",
-			content: <FooterTab plan={userData.currentPlan} />,
+			content: (
+				<FooterTab onOpenLogo={openLogoUpload} plan={userData.currentPlan} />
+			),
 		},
 		{
 			key: "appearance",
@@ -109,6 +134,7 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 					actions.save,
 					actions.templates,
 					actions.preview,
+					actions.qr,
 					actions.publish,
 				]}
 				isPanelOpen={isOpen}
@@ -123,7 +149,11 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 					onClose={closePanel}
 					title="Edit catalogue"
 				>
-					<Tabs className="flex min-h-0 flex-1 flex-col" defaultValue="general">
+					<Tabs
+						className="flex min-h-0 flex-1 flex-col"
+						onValueChange={(value) => setTab(value as TabKey)}
+						value={tab}
+					>
 						<div className="shrink-0 border-b border-product-border bg-product-card px-3 py-3 md:px-4">
 							<TabsList className="grid h-auto w-full grid-cols-4 gap-1 rounded-2xl p-1">
 								{TABS.map(({ key, icon: Icon, label }) => (

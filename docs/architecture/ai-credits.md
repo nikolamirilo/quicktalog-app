@@ -1,7 +1,7 @@
 # AI credits
 
 What an AI turn costs, where the balance is enforced, and what happens at the
-month boundary. This is the page the pricing copy should be written from.
+period boundary. This is the page the pricing copy should be written from.
 
 Credits replaced a per-prompt row count: plan mode turned one user ask into up to
 nine HTTP requests, so "prompts per month" no longer described anything a user
@@ -24,6 +24,10 @@ server charge, the builder's plan estimate and the tests all move together.
 | a turn that applied nothing and fetched nothing | **0** | refunded; asking a question stays free |
 | OCR scan | **0** | runs in the user's browser; only the chat turn that uses the text is charged |
 
+A task is billed when it is completed, or when it is skipped after one of its edits
+landed. A task skipped before any edit is free. A request that read a page is never
+refunded, even if it changed nothing.
+
 Two properties to preserve when tuning: **a question is free**, and **1 credit is
 the smallest useful action**.
 
@@ -31,7 +35,7 @@ the smallest useful action**.
 
 `ai_credits` on each tier in `@quicktalog/common` (`src/constants/pricing.ts`).
 
-| Plan | Credits / month | ≈ asks |
+| Plan | Credits / 30 days | ≈ asks |
 |---|---|---|
 | Starter (free) | 15 | ~5 |
 | Basic | 50 | ~17 |
@@ -41,77 +45,91 @@ the smallest useful action**.
 | German Silva (custom) | 50 | ~17 |
 
 "≈ asks" assumes an average ask of 3 credits. **No rollover and no signup bonus** -
-unused credits expire at the month boundary.
+unused credits expire at the period boundary.
 
 ## 3. Where the balance is enforced
 
-In the database, not in TypeScript. `private.begin_ai_turn` is a definer function
-called through `withUser`, so the caller's identity comes from the session rather
-than the request body.
+In the database, not in TypeScript, and as a **hard cap**: at every moment, confirmed
+credits plus live holds stay at or below `ai_credits` for the account's current 30-day
+period, however many requests run at once. `private.begin_ai_turn` is a definer function called through
+`withUser`, so the caller's identity comes from the session, not the request body.
 
 ```
-openAiTurn            lib/ai/turn.ts     picks the base price for the kind of turn
+openAiTurn            lib/ai/turn.ts     base price, hold size, the request's budget
   startAiTurn         lib/ai/metering.ts one transaction, users row locked
-    private.begin_ai_turn                ownership, floor test, insert
+    private.begin_ai_turn                ownership, balance test, charge + hold
+route onStepEnd       spendAiHold        what the steps spent, moved from hold to charge
+route onFinish        closingCharge      refund or the rest of the spend, then release
 ```
 
-It does four things in one transaction:
+### Holding
+
+`begin_ai_turn`, in one transaction:
 
 1. Refuses a catalogue the caller does not own (`not_found`).
 2. Takes `for no key update` on the caller's `users` row, so two parallel requests
    cannot both pass the same check.
-3. Floor test: `sum(credits)` for the current UTC month against the plan's
-   `ai_credits`. This asks "has this user got anything left", **not** "can they
-   afford what is coming".
-4. Inserts the row with the base price **before** any model call.
+3. Reads the balance: `sum(credits)` plus every hold still live (`held_until > now()`),
+   over the current UTC month.
+4. **A new turn** must be able to pay its base (`used + base <= limit`). It is charged
+   the base and holds `least(requestHoldFor, limit - used - base)`.
+5. **A continuation** needs one credit of room. It takes no base and holds
+   `least(requestHoldFor, limit - used)`. Only one request per turn can hold at a
+   time; a parallel copy is not a continuation and is charged as a new turn.
 
-Charging up front is deliberate: a turn killed at the 60s platform ceiling stays
-charged, after the model spend has already happened.
+`requestHoldFor` (`lib/ai/limits.ts`) is the largest request a plan allows: every task
+of the longest plan plus every page read (18 on paid plans, 4 on Starter). A hold lasts
+90 seconds (`maxDuration` plus margin), so a request that was killed gives its hold back
+on its own.
 
-### Settling and refunding
+### Spending
 
-- `private.settle_ai_turn` adds the variable part in the route's `onFinish`:
-  one credit per task settled this request, two per page read this request.
-- `private.refund_ai_turn` marks `refunded_at` when a turn changed nothing and
-  opened no plan. The balance query skips refunded rows, so that is a zero charge.
+The agent spends only from its own hold (`agent/credits.ts`, `RequestCredits`):
 
-The floor test is `used + base > limit`, not `used >= limit`: a turn that cannot
-pay its base price never starts. One credit can therefore be left stranded at the
-end of a month, which is the honest reading of a cap.
+- A **page read** is paid before Firecrawl is called (2 credits).
+- A **task** is paid before its first edit lands (1 credit; the base covers the first
+  task of a charged request). If the hold cannot pay, the edit is refused, the model gets
+  one text-only step to tell the user what landed, and the loop ends.
+- The model is told the budget when it binds ("CREDITS: this request can pay for up to
+  N tasks"), so it plans what fits instead of stopping half way.
 
-**A turn can still finish slightly over**, because the settle price is not known
-until the turn ends - at most one task's worth. It cannot run far over: a
-continuation is refused as soon as the balance is spent (below), so a long plan
-stops on a task boundary rather than spending the month.
-
-The billable unit is a **completed task**, counted from `completeTask` - not
-`session.applied`, which holds one entry per edit. Charging per edit is what put a
-free user on 16 of 15 credits from a single catalogue build. Skipped tasks are free,
-so the model cannot skip its way to a cheap turn.
+After every step the route moves what was spent into the charge (`spend_ai_hold`, which
+never moves more than is held). When the request ends it charges the rest, or refunds a
+question (`closingCharge`), and releases the hold (`release_ai_hold`).
 
 ### Continuations
 
-A plan spanning several requests is one charge. `begin_ai_turn` returns
+A plan spanning several requests is one base charge. `begin_ai_turn` returns
 `continued` when the client presents the turn id it was given plus the hash of the
-plan it is resuming, and the database holds that user's open plan on that
-catalogue, younger than 15 minutes, under its continuation budget. Anything that
-is not a proven continuation falls through and is charged.
+plan it is resuming, and the database holds that user's open plan on that catalogue,
+younger than 15 minutes, under its continuation budget. Anything that is not a proven
+continuation falls through and is charged. A continuation refused for want of credits
+becomes the checklist's `credits` halt.
 
-A continuation takes no charge up front but settles one credit per task when it
-ends, so it is **refused once the balance is spent**. The browser turns that
-refusal into a `credits` plan halt, and the checklist says which tasks landed.
-Without this the cap did not bind at all mid-plan: `continued` returns before the
-floor test is reached.
+## 4. The period boundary
 
-The base price covers the turn's first task, so only the request that took the
-charge discounts one. Every task settled by a later continuation is extra.
+Allowances reset every 30 days from the day the account was created, not on the 1st:
+a signup on the 28th used to get three days of its first allowance. The window is
+`private.usage_period_start(users.created_at)` - whole 30-day steps from the signup
+day, in UTC days, so a period starts at 00:00 UTC and lines up with `analytics.day`.
+`private.usage_period_end` is when it resets.
 
-## 4. The month boundary
+Computed in SQL on every call - in `begin_ai_turn`, `refund_ai_turn` and
+`private.my_usage`, which also returns the window so the dashboard can name the reset
+date from the source that enforces it. It is never computed in Node: a warm serverless
+instance would keep using the window it started in, and balances would stop resetting.
 
-`date_trunc('month', now(), 'UTC')`, computed in SQL on every call - in both
-`begin_ai_turn` and `private.my_usage`. It is never computed in Node: a warm
-serverless instance would keep using the month it started in, and balances would
-stop resetting.
+Two mirrors of the same rule exist deliberately:
+
+| Where | Why |
+|---|---|
+| `private.usage_period_*` (`supabase/migrations/20261029120000_usage_period_from_signup.sql`) | the authority; every charge and every count |
+| `usagePeriod()` / `usagePeriodDays()` in `@quicktalog/common` | the traffic job in the Cloudflare Worker, which reads over REST and cannot call a `private.*` function |
+
+`USAGE_PERIOD_EPOCH` (2026-11-01, the month the change was applied) exists for the
+switch-over only: no period reaches back past it, so turning this on could not make an
+account's counted usage go up and take its catalogues offline. It is a literal in both
+places above and must be kept in step.
 
 ## 5. Free-plan guards
 
@@ -140,10 +158,13 @@ The check costs nothing extra: it runs inside the transaction that already reads
 the plan and takes the row lock.
 
 Plus, for everyone: two rate-limit windows on both AI entry points (`aiBurst`
-10/min, `aiHourly` 60/hour, keyed by user id), and the row-level lock above.
+10/min, `aiHourly` 60/hour, keyed by user id), and the row-level lock above. The rate
+limit is not what bounds the cap (it lets requests through when Redis is down); the
+holds are.
 
 Not implemented, worth revisiting if abuse shows up: a disposable-email-domain
-blocklist, and a global monthly ceiling on free-tier spend with a kill switch.
+blocklist, and a global monthly ceiling on free-tier spend with a kill switch (that one
+is a cost ceiling on Quicktalog's own spend, so it stays on calendar months).
 
 ## 6. What the user sees
 
@@ -168,7 +189,10 @@ blocklist, and a global monthly ceiling on free-tier spend with a kill switch.
 | `refunded_at` | set by a refund; refunded rows leave the balance |
 | `kind` | `agent` or `describe` |
 | `plan_open`, `plan_budget`, `plan_hash` | continuation binding |
+| `held` | credits a running request has reserved, 0-100; counts against the balance while live |
+| `held_until` | when the hold lapses if the request never releases it |
 | `metadata` | analysis only, never billing |
 
-Balance is `coalesce(sum(credits), 0)` over the UTC month where
-`refunded_at is null`.
+Usage (the dashboard, `private.my_usage`) is `coalesce(sum(credits), 0)` over the
+account's current 30-day period where `refunded_at is null`. The balance
+`begin_ai_turn` judges by adds every live hold to that.

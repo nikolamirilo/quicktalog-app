@@ -1,6 +1,6 @@
-import { registerPicture } from "@/agent/images";
+import { registerPicture } from "@/agent/plugins/images";
+import { fetchPage, type PageResult } from "@/agent/plugins/web";
 import type { ToolContext } from "@/agent/tools/types";
-import { fetchPage, type PageResult } from "@/agent/web";
 import { tool } from "ai";
 import { z } from "zod";
 

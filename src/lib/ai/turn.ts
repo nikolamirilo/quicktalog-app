@@ -1,10 +1,12 @@
-import "server-only";
-import type { OperationLimits } from "@/lib/catalogue/operations";
-import type { VerifiedIdentity } from "@/lib/auth/identity";
+import type { RequestBudget } from "@/agent/core/credits";
 import { type AiPlanLimits, aiLimitsFor } from "@/lib/ai/limits";
 import { type Plan, startAiTurn } from "@/lib/ai/metering";
 import { CREDITS } from "@/lib/ai/pricing";
+import type { VerifiedIdentity } from "@/lib/auth/identity";
+import type { OperationLimits } from "@/lib/catalogue/operations";
+import { operationLimitsFor } from "@/lib/entitlements/operation-limits";
 import type { AiActionResult, AiSectionAccess } from "@/types/ai";
+import "server-only";
 
 export type TurnGrant = {
 	ok: true;
@@ -15,6 +17,8 @@ export type TurnGrant = {
 	limits: OperationLimits;
 	/** What this plan lets one turn spend; see lib/ai/limits.ts. */
 	ai: AiPlanLimits;
+	/** What the database holds for this request beyond the base. */
+	budget: RequestBudget;
 };
 
 export type TurnDenial = {
@@ -25,10 +29,11 @@ export type TurnDenial = {
 
 /**
  * Opens an AI turn: proves the caller owns the catalogue, charges the turn
- * against their monthly allowance and returns the limits the agent must work
- * within. All of it happens in the database, in one transaction, **before** any
- * model call, so a request killed mid-flight is still accounted for and two
- * parallel requests cannot both pass the same allowance check.
+ * against the allowance of their current 30-day period and returns the limits
+ * the agent must work within. All of it happens in the database, in one
+ * transaction, **before** any model call, so a request killed mid-flight is
+ * still accounted for and two parallel requests cannot both pass the same
+ * allowance check.
  *
  * Ownership is never taken from the request: the catalogue payload comes from
  * the browser so unsaved builder edits are in context, and that payload cannot
@@ -64,7 +69,7 @@ export async function openAiTurn(
 	if (start.turn.outcome === "limit") {
 		return {
 			ok: false,
-			error: "You have reached your monthly AI limit.",
+			error: "You have reached your AI credit limit for this period.",
 			code: "limit",
 		};
 	}
@@ -75,12 +80,29 @@ export async function openAiTurn(
 		turnId: start.turn.turnId,
 		charged: start.turn.outcome === "charged",
 		sectionAccess: features.sections,
-		limits: {
-			sections: features.sections_per_catalogue,
-			items: features.items_per_catalogue,
-			sectionTypes: features.sections,
-			branding: features.branding,
-		},
+		limits: operationLimitsFor(features),
 		ai: aiLimitsFor(start.plan),
+		budget: {
+			available: start.turn.held,
+			baseCoversFirstTask: start.turn.outcome === "charged",
+		},
 	};
+}
+
+/**
+ * What a request owes when it ends. A turn that changed nothing, opened no plan
+ * and bought nothing (no page read, no task) is refunded, so a question stays
+ * free; otherwise whatever the steps have not written yet is charged now.
+ */
+export function closingCharge(a: {
+	charged: boolean;
+	applied: number;
+	planOpen: boolean;
+	billed: number;
+	persisted: number;
+}): { refund: boolean; spend: number } {
+	if (a.charged && a.applied === 0 && !a.planOpen && a.billed === 0) {
+		return { refund: true, spend: 0 };
+	}
+	return { refund: false, spend: Math.max(0, a.billed - a.persisted) };
 }

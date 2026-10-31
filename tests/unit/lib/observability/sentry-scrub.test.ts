@@ -10,9 +10,9 @@ describe("sentry scrubbing", () => {
 	it("removes cookies, auth headers, bodies and query strings from requests", () => {
 		const event = scrubEvent({
 			request: {
-				cookies: { __session: "jwt", "sb-ref-auth-token": "base64-token" },
+				cookies: { "sb-ref-auth-token": "base64-token" },
 				headers: {
-					cookie: "__session=jwt",
+					cookie: "sb-ref-auth-token=base64-token",
 					authorization: "Bearer token",
 					"x-revalidate-secret": "secret",
 					"user-agent": "Mozilla",

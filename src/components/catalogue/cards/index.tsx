@@ -1,5 +1,6 @@
 "use client";
 import { ItemDetailModal } from "@/components/catalogue/modals/ItemDetailModal";
+import { hasItemPhoto } from "@/lib/catalogue/item-image";
 import { formatItemAmount, getItemPrice } from "@/lib/catalogue/item-price";
 import { DEFAULT_IMAGE, Item } from "@quicktalog/common";
 import { useMemo, useState } from "react";
@@ -29,7 +30,7 @@ const CardsSwitcher = ({
 	onMoveDown,
 	isFirst,
 	isLast,
-	blockIndex,
+	blockId,
 	sectionName,
 }: {
 	variant: string;
@@ -45,7 +46,7 @@ const CardsSwitcher = ({
 	onMoveDown?: () => void;
 	isFirst?: boolean;
 	isLast?: boolean;
-	blockIndex?: number;
+	blockId?: string;
 	sectionName?: string;
 }) => {
 	// A missing price is a valid item (a service list, an "ask us" menu); only a
@@ -79,7 +80,7 @@ const CardsSwitcher = ({
 			...record,
 			order: i,
 			price: price,
-			image: record.image || DEFAULT_IMAGE,
+			image: hasItemPhoto(record.image) ? record.image : DEFAULT_IMAGE,
 		};
 
 		return {
@@ -94,11 +95,10 @@ const CardsSwitcher = ({
 	return (
 		<>
 			<CardComponent
-				blockIndex={blockIndex}
+				blockId={blockId}
 				currency={formattedCurrency}
 				isFirst={isFirst}
 				isLast={isLast}
-				itemIndex={i}
 				mode={mode === "edit" ? "edit" : "view"}
 				onClick={() => setIsModalOpen(true)}
 				onDelete={onDelete}

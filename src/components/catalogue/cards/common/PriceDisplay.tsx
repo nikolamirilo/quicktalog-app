@@ -55,7 +55,7 @@ const PriceDisplay = ({
 				aria-label={`Price: ${finalPrice} ${currency}${delimiterText}`}
 				className={cn(
 					"font-heading tracking-heading",
-					isOnDiscount ? "text-price font-bold" : "font-thin text-price",
+					isOnDiscount ? "text-price font-bold" : "font-semibold text-price",
 				)}
 			>
 				{finalPrice} {currency}

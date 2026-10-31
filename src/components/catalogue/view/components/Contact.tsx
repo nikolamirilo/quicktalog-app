@@ -1,65 +1,44 @@
-import { footerDetails } from "@/constants/details";
-import Link from "next/link";
-import { FiExternalLink, FiMail, FiPhone } from "react-icons/fi";
+import { SmartLink } from "@/components/general/SmartLink";
+import { extractDomain } from "@/lib/http/domain";
+import type { Catalogue } from "@quicktalog/common";
+import { FiGlobe, FiMail, FiPhone } from "react-icons/fi";
 
-const Contact = ({ type, activeData }: { type: string; activeData: any }) => {
-	if (type !== "default" && !activeData?.contact?.email) return null;
-
+/** Email, phone and website of a custom footer. Renders nothing when all are empty. */
+const Contact = ({
+	contact,
+}: {
+	contact: Catalogue["contact"] | undefined;
+}) => {
+	if (!contact?.email && !contact?.phone && !contact?.website) return null;
 	return (
-		<div className="space-y-6">
-			<h4 className="text-lg font-semibold flex items-center space-x-2 font-heading font-weight-heading tracking-heading text-catalogue-navigation-text">
-				<div
-					aria-hidden="true"
-					className="w-1 h-5 bg-primary rounded-full"
-				></div>
-				<span>Contact & Support</span>
-			</h4>
-			<ul className="space-y-4">
-				<li>
-					<a
-						aria-label={`Send email to ${type === "default" ? footerDetails.email : activeData?.contact.email || "contact"}`}
-						className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
-						href={`mailto:${type === "default" ? footerDetails.email : activeData?.contact.email}`}
-					>
-						<FiMail
-							aria-hidden="true"
-							className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
-						/>
-						<span>
-							{type === "default"
-								? footerDetails.email
-								: activeData?.contact.email}
-						</span>
-					</a>
-				</li>
-				{activeData?.contact?.phone && (
+		<div className="cat-foot-col">
+			<h2>Contact</h2>
+			<ul className="cat-foot-links">
+				{contact.email && (
 					<li>
-						<a
-							aria-label={`Call ${activeData?.contact?.phone}`}
-							className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
-							href={`tel:${activeData?.contact?.phone}`}
-						>
-							<FiPhone
-								aria-hidden="true"
-								className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
-							/>
-							<span>{activeData?.contact.phone}</span>
+						<a href={`mailto:${contact.email}`}>
+							<FiMail aria-hidden="true" />
+							{contact.email}
 						</a>
 					</li>
 				)}
-				{type === "default" && (
+				{contact.phone && (
 					<li>
-						<Link
-							aria-label="Contact us"
-							className="flex items-center space-x-3 text-sm hover:text-primary transition-colors duration-200 group text-catalogue-navigation-text"
-							href="/contact"
-						>
-							<FiExternalLink
-								aria-hidden="true"
-								className="w-4 h-4 group-hover:scale-110 transition-transform duration-200"
-							/>
-							<span>Contact Us</span>
-						</Link>
+						<a href={`tel:${contact.phone}`}>
+							<FiPhone aria-hidden="true" />
+							{contact.phone}
+						</a>
+					</li>
+				)}
+				{contact.website && (
+					<li>
+						<SmartLink href={contact.website}>
+							<FiGlobe aria-hidden="true" />
+							{(extractDomain(contact.website) || contact.website).replace(
+								/^www\./,
+								"",
+							)}
+						</SmartLink>
 					</li>
 				)}
 			</ul>

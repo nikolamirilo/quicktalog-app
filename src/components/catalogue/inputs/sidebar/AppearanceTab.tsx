@@ -1,25 +1,30 @@
 "use client";
 
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { useSavedThemes } from "@/hooks/useSavedThemes";
 import {
 	customThemeColorsEqual,
 	DEFAULT_CUSTOM_COLORS,
+	isDarkTheme,
 	readPaletteFromElement,
 } from "@/lib/themes/custom-theme";
-import { useSavedThemes } from "@/hooks/useSavedThemes";
+import { cn } from "@/lib/ui/cn";
 import type {
+	CatalogueBackground,
 	CustomThemeColors,
+	GlassSettings,
 	PricingPlan,
 	SavedTheme,
 } from "@quicktalog/common";
 import { useState } from "react";
+import { toast } from "sonner";
+import BackgroundConfiguration from "./appearance/BackgroundConfiguration";
 import CustomThemeConfiguration from "./appearance/CustomThemeConfiguration";
+import GlassConfiguration from "./appearance/GlassConfiguration";
 import OverlayConfiguration from "./appearance/OverlayConfiguration";
 import StyleConfiguration from "./appearance/StyleConfiguration";
 import ThemeSelection from "./appearance/ThemeSelection";
 import { LockedGroup, PANEL_TAB_ROOT, PanelSection } from "./panel";
-import { cn } from "@/lib/ui/cn";
-import { toast } from "sonner";
 
 const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	const { catalogue, updateCatalogue, updateAppearance, updateThemeColors } =
@@ -36,8 +41,7 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	const [editingThemeId, setEditingThemeId] = useState<
 		string | null | undefined
 	>(undefined);
-	const hasStyles = plan?.features?.apperance?.styles;
-	const hasCustomThemes = plan?.features?.apperance?.customThemes;
+	const hasAdvancedAppearance = plan?.features?.advancedAppearance;
 
 	if (!catalogue || !updateCatalogue || !updateAppearance || !updateThemeColors)
 		return null;
@@ -77,9 +81,9 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 	};
 
 	const handleCustomSelect = () => {
-		// The Custom tile only shows on plans with custom themes. Checking again
+		// The Custom tile only shows on plans with advanced appearance. Checking again
 		// here keeps the "Started a new custom theme" toast off every other plan.
-		if (!hasCustomThemes) return;
+		if (!hasAdvancedAppearance) return;
 		// From a standard theme, seed from what's on screen so it looks intentional.
 		// From a custom theme, the DOM already reflects it, so reset to neutral
 		// defaults instead - "Custom" always starts fresh.
@@ -133,6 +137,14 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 		});
 	};
 
+	const handleBackgroundChange = (background: CatalogueBackground) => {
+		updateCatalogue({ appearance: { ...catalogue.appearance, background } });
+	};
+
+	const handleGlassChange = (glass: GlassSettings) => {
+		updateCatalogue({ appearance: { ...catalogue.appearance, glass } });
+	};
+
 	return (
 		<div className={cn("space-y-4", PANEL_TAB_ROOT)}>
 			<PanelSection
@@ -141,7 +153,7 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 			>
 				<ThemeSelection
 					activeSavedThemeId={editingTheme?.id}
-					allowCustom={Boolean(hasCustomThemes)}
+					allowCustom={Boolean(hasAdvancedAppearance)}
 					currentThemeName={currentThemeName}
 					isCustomActive={isCustomActive}
 					onCustomSelect={handleCustomSelect}
@@ -159,7 +171,7 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 					info="Pick each color of your theme, then save it to reuse it on other catalogues."
 					title="Custom colors"
 				>
-					<LockedGroup locked={!hasCustomThemes} overlaySize="default">
+					<LockedGroup locked={!hasAdvancedAppearance} overlaySize="default">
 						<CustomThemeConfiguration
 							colors={customColors || {}}
 							editingTheme={editingTheme}
@@ -171,14 +183,34 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 			)}
 
 			<PanelSection
-				info="Customize fonts, rounded corners and shadows."
+				id="panel-background"
+				info="Replace the theme's background with your own photo, a gradient or a single colour. Cards, headers and text keep the theme's colours. Photos and gradients also give the glass effect something to show through."
+				title="Background"
+			>
+				<LockedGroup locked={!hasAdvancedAppearance} overlaySize="default">
+					<BackgroundConfiguration
+						background={catalogue.appearance?.background}
+						onChange={handleBackgroundChange}
+						themeIsDark={isDarkTheme(catalogue.appearance?.theme)}
+					/>
+				</LockedGroup>
+			</PanelSection>
+
+			<PanelSection
+				info="Customize fonts, rounded corners, shadows and the glass effect."
 				title="Style"
 			>
-				<LockedGroup locked={!hasStyles} overlaySize="default">
-					<StyleConfiguration
-						currentStyle={currentStyle}
-						onStyleChange={handleStyleChange}
-					/>
+				<LockedGroup locked={!hasAdvancedAppearance} overlaySize="default">
+					<div className="space-y-5">
+						<StyleConfiguration
+							currentStyle={currentStyle}
+							onStyleChange={handleStyleChange}
+						/>
+						<GlassConfiguration
+							glass={catalogue.appearance?.glass}
+							onChange={handleGlassChange}
+						/>
+					</div>
 				</LockedGroup>
 			</PanelSection>
 
@@ -186,7 +218,7 @@ const AppearanceTab = ({ plan }: { plan: PricingPlan }) => {
 				info="Add a floating icon overlay to your catalogue."
 				title="Overlay"
 			>
-				<LockedGroup locked={!hasStyles}>
+				<LockedGroup locked={!hasAdvancedAppearance}>
 					<OverlayConfiguration
 						currentOverlay={currentOverlay}
 						onOverlayChange={handleOverlayChange}

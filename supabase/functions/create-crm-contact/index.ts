@@ -1,7 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { tiers } from "https://unpkg.com/@quicktalog/common@1.15.0/dist/pricing.js";
+import { isAuthorizedWebhook, unauthorized } from "../_shared/webhook.ts";
 
 Deno.serve(async (req) => {
+	if (!isAuthorizedWebhook(req)) return unauthorized();
+
 	try {
 		const raw = await req.text();
 		if (!raw.trim()) {

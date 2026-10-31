@@ -59,6 +59,12 @@ describe("BlockMenu", () => {
 		).toBeTruthy();
 	});
 
+	it("keeps the trigger visible without hover", () => {
+		setup();
+		const trigger = screen.getByRole("button", { name: "Breakfast options" });
+		expect(trigger.className).not.toContain("opacity-0");
+	});
+
 	it("edits the section", async () => {
 		const { onEdit } = setup();
 		await openMenu(/Breakfast options/);
@@ -137,17 +143,39 @@ describe("BlockControls", () => {
 });
 
 describe("SectionHeader", () => {
-	const header = (mode: "edit" | "view") =>
+	const header = (mode: "edit" | "view", onRename = vi.fn()) => {
 		render(
 			<SectionHeader
 				code="s-1"
 				isExpanded
 				mode={mode}
 				onDelete={vi.fn()}
+				onRename={onRename}
 				onToggle={vi.fn()}
 				title="Breakfast"
 			/>,
 		);
+		return onRename;
+	};
+
+	const startRename = async () => {
+		await act(async () => {
+			fireEvent.click(screen.getByRole("button", { name: "Breakfast" }));
+		});
+		return screen.getByRole("textbox", { name: "Section heading" });
+	};
+
+	const type = async (input: HTMLElement, value: string) => {
+		await act(async () => {
+			fireEvent.change(input, { target: { value } });
+		});
+	};
+
+	const press = async (input: HTMLElement, key: string) => {
+		await act(async () => {
+			fireEvent.keyDown(input, { key });
+		});
+	};
 
 	it("puts the section menu in the header in edit mode", () => {
 		header("edit");
@@ -161,5 +189,70 @@ describe("SectionHeader", () => {
 		expect(
 			screen.queryByRole("button", { name: "Breakfast options" }),
 		).toBeNull();
+	});
+
+	it("renames the section from the heading on Enter", async () => {
+		const onRename = header("edit");
+		const input = await startRename();
+		await type(input, "Brunch");
+		await press(input, "Enter");
+		expect(onRename).toHaveBeenCalledWith("Brunch");
+		expect(screen.queryByRole("textbox")).toBeNull();
+	});
+
+	it("saves the heading when the owner clicks away", async () => {
+		const onRename = header("edit");
+		const input = await startRename();
+		await type(input, "  Brunch  ");
+		await act(async () => {
+			fireEvent.blur(input);
+		});
+		expect(onRename).toHaveBeenCalledWith("Brunch");
+	});
+
+	it("reverts the heading on Escape", async () => {
+		const onRename = header("edit");
+		const input = await startRename();
+		await type(input, "Brunch");
+		await press(input, "Escape");
+		expect(onRename).not.toHaveBeenCalled();
+		expect(screen.getByRole("button", { name: "Breakfast" })).toBeTruthy();
+	});
+
+	it("keeps the old heading when the name is emptied", async () => {
+		const onRename = header("edit");
+		const input = await startRename();
+		await type(input, "   ");
+		await press(input, "Enter");
+		expect(onRename).not.toHaveBeenCalled();
+		expect(screen.getByRole("button", { name: "Breakfast" })).toBeTruthy();
+	});
+
+	it("commits once when Enter is followed by the blur it causes", async () => {
+		const onRename = header("edit");
+		const input = await startRename();
+		await type(input, "Brunch");
+		await press(input, "Enter");
+		await act(async () => {
+			fireEvent.blur(input);
+		});
+		expect(onRename).toHaveBeenCalledTimes(1);
+	});
+
+	it("leaves the heading read-only in view mode", () => {
+		render(
+			<SectionHeader
+				code="s-2"
+				isExpanded
+				mode="view"
+				onRename={vi.fn()}
+				onToggle={vi.fn()}
+				title="Breakfast"
+			/>,
+		);
+		expect(
+			screen.getByRole("button", { name: /Collapse Breakfast section/ }),
+		).toBeTruthy();
+		expect(screen.queryByTitle("Rename this section")).toBeNull();
 	});
 });

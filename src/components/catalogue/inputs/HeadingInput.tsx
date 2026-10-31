@@ -35,7 +35,7 @@ const HeadingInput = () => {
 
 	return (
 		<div
-			className="flex flex-col mt-8 lg:mt-4 mb-4 items-center w-full px-0"
+			className="relative flex flex-col mt-8 lg:mt-4 mb-4 items-center w-full px-0"
 			onBlur={handleBlur}
 			ref={containerRef}
 		>

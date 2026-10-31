@@ -113,18 +113,18 @@ export const faqs: IFAQ[] = [
 	{
 		category: "billing",
 		question: `What is included in the free ${starterTier.name} plan?`,
-		answer: `The free plan gives you ${starter.catalogues} catalogue with up to ${starter.sections_per_catalogue} sections and ${starter.items_per_catalogue} items, ${starter.traffic_limit.toLocaleString("en-US")} page views a month, ${starter.ai_credits} AI credits a month, all ${themes.length} themes, the QR code editor, analytics and ${starter.support.toLowerCase()}. There is no time limit and no credit card required. Branding controls like your logo, contact details and a custom header and footer start on the first paid plan.`,
+		answer: `The free plan gives you ${starter.catalogues} catalogue with up to ${starter.sections_per_catalogue} sections and ${starter.items_per_catalogue} items, ${starter.traffic_limit.toLocaleString("en-US")} page views and ${starter.ai_credits} AI credits every 30 days, all ${themes.length} themes, the QR code editor, analytics and ${starter.support.toLowerCase()}. There is no time limit and no credit card required. Branding controls like your logo, contact details and a custom header and footer start on the first paid plan.`,
 	},
 	{
 		category: "billing",
 		question: "How do AI credits work?",
-		answer: `Every plan includes a monthly allowance of credits for Quick AI, from ${starter.ai_credits} on the free plan up to ${topTier.features.ai_credits} on ${topTier.name}. Asking for a change costs ${CREDITS.agentBase} credits however many edits it takes, and asking a question costs nothing. The allowance resets at the start of each month and unused credits do not carry over. You can see what is left in the chat panel and in the Usage tab of your dashboard.`,
+		answer: `Every plan includes an allowance of credits for Quick AI, from ${starter.ai_credits} on the free plan up to ${topTier.features.ai_credits} on ${topTier.name}. Asking for a change costs ${CREDITS.agentBase} credits however many edits it takes, and asking a question costs nothing. The allowance resets 30 days after you signed up, and every 30 days after that; unused credits do not carry over. You can see what is left in the chat panel and in the Usage tab of your dashboard.`,
 	},
 	{
 		category: "billing",
 		question: "What happens when I reach a limit?",
 		answer:
-			"It depends on the limit. Page views are the only one your customers notice: when your catalogues together use the month's allowance they go offline, and you can put them back online next month or straight away after upgrading. Running out of catalogues, sections or items simply stops you adding more, and everything already published stays as it is. Running out of AI credits pauses Quick AI, while the rest of the builder keeps working.",
+			"It depends on the limit. Page views are the only one your customers notice: when your catalogues together use the period's allowance they go offline, and you can put them back online when the next 30-day period starts or straight away after upgrading. Running out of catalogues, sections or items simply stops you adding more, and everything already published stays as it is. Running out of AI credits pauses Quick AI, while the rest of the builder keeps working.",
 	},
 	{
 		category: "billing",

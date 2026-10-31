@@ -93,8 +93,8 @@ export const getLimitContent = (
 				// told what they already get rather than only what they are missing.
 				description:
 					currentLimit === 0 || currentPlan?.id === 0
-						? `You get ${currentLimit} free AI credits a month. ${nextLimit === "unlimited" ? "Upgrading" : `Upgrading gives you ${nextLimit}`} - enough to build and refine a full catalogue by chatting.`
-						: `You have used all ${currentLimit} AI credits this month. Upgrade to ${nextLimit === "unlimited" ? "unlimited" : nextLimit} and keep going.`,
+						? `You get ${currentLimit} free AI credits every 30 days. ${nextLimit === "unlimited" ? "Upgrading" : `Upgrading gives you ${nextLimit}`} - enough to build and refine a full catalogue by chatting.`
+						: `You have used all ${currentLimit} AI credits for this period. Upgrade to ${nextLimit === "unlimited" ? "unlimited" : nextLimit} and keep going.`,
 				upgradeText: "AI credits",
 				currentLimit,
 				nextLimit,
@@ -141,7 +141,7 @@ export const getLimitContent = (
 			return {
 				feature: "Traffic",
 				icon: FolderTree,
-				description: `Your catalogue is getting noticed! Upgrade to get ${nextLimit === "unlimited" ? "unlimited" : nextLimit.toLocaleString("en-US")} page views per month and keep serving customers without interruption.`,
+				description: `Your catalogue is getting noticed! Upgrade to get ${nextLimit === "unlimited" ? "unlimited" : nextLimit.toLocaleString("en-US")} page views every 30 days and keep serving customers without interruption.`,
 				upgradeText: "traffic",
 				currentLimit,
 				nextLimit,

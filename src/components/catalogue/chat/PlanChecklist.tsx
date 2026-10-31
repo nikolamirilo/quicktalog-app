@@ -4,7 +4,7 @@ import {
 	isPlanFinished,
 	type PlanHalt,
 	type PlanState,
-} from "@/agent/plan";
+} from "@/agent/plugins/plan";
 import { estimatePlanCredits } from "@/lib/ai/pricing";
 import { AlertTriangle, Check, ListChecks, Loader2 } from "lucide-react";
 
@@ -17,7 +17,7 @@ const HALT_NOTICES: Record<PlanHalt, string> = {
 	failed:
 		"Stopped after an error. Everything ticked above is already in your draft.",
 	credits:
-		"Stopped - you are out of AI credits for this month. Everything ticked above is already in your draft.",
+		"Stopped - you are out of AI credits for this period. Everything ticked above is already in your draft.",
 };
 
 const Marker = ({

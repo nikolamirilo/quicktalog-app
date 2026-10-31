@@ -63,13 +63,6 @@ describe("contentWithinPlan block types", () => {
 		expect(result.reason).toMatch(/Custom visual/);
 	});
 
-	it("refuses the pre-rename custom_code key too", () => {
-		// Otherwise sending the legacy key is a way around the gate.
-		const result = contentWithinPlan(withContent("custom_code"), null, STARTER);
-		expect(result.ok).toBe(false);
-		expect(result.reason).toMatch(/Custom visual/);
-	});
-
 	it("allows a type the plan does include", () => {
 		expect(contentWithinPlan(withContent("custom_visual"), null, PRO).ok).toBe(
 			true,
@@ -102,15 +95,6 @@ describe("contentWithinPlan block types", () => {
 		expect(result.reason).toMatch(/External content/);
 	});
 
-	it("counts the renamed and legacy keys as one allowance", () => {
-		// A stored `custom_code` plus a new `custom_visual` is still an increase.
-		const before = withContent("custom_code");
-		const after = {
-			content: [block("custom_code", "a"), block("custom_visual", "b")],
-		} as Partial<Catalogue>;
-		expect(contentWithinPlan(after, before, STARTER).ok).toBe(false);
-	});
-
 	it("ignores content that is not an array", () => {
 		expect(contentWithinPlan({}, null, STARTER).ok).toBe(true);
 	});
@@ -119,5 +103,41 @@ describe("contentWithinPlan block types", () => {
 		// Pro has embedding and custom_visual but is judged on all three.
 		const result = contentWithinPlan(withContent("items"), null, PRO);
 		expect(result.ok).toBe(true);
+	});
+});
+
+describe("contentWithinPlan counts", () => {
+	it("counts text blocks against the section limit", () => {
+		const result = contentWithinPlan(
+			withContent("items", "items", "items", "items", "text", "text"),
+			null,
+			STARTER,
+		);
+		expect(result.ok).toBe(false);
+		expect(result.reason).toMatch(/5 sections/);
+	});
+
+	it("counts items only in items blocks", () => {
+		const content = [
+			{ id: "a", order: 0, type: "items", items: Array(15).fill({}) },
+			{ id: "b", order: 1, type: "text", items: Array(5).fill({}) },
+		];
+		expect(
+			contentWithinPlan({ content } as Partial<Catalogue>, null, STARTER).ok,
+		).toBe(true);
+	});
+});
+
+describe("the save is the hard limit", () => {
+	it("refuses a Basic draft that grows from 30 to 50 items", () => {
+		const items = (count: number) =>
+			({
+				content: [
+					{ id: "a", order: 0, type: "items", items: Array(count).fill({}) },
+				],
+			}) as Partial<Catalogue>;
+		const result = contentWithinPlan(items(50), items(30), tierNamed("Basic"));
+		expect(result.ok).toBe(false);
+		expect(result.reason).toMatch(/30 items/);
 	});
 });

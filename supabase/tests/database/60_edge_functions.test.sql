@@ -20,7 +20,7 @@ begin;
 -- pg_temp stays implicit (and therefore first) so pgTAP finds its own result tables.
 set local search_path to extensions, public;
 
-select plan(28);
+select plan(29);
 
 -- ---------------------------------------------------------------------------
 -- Fixture scaffolding
@@ -115,6 +115,14 @@ select is(
     where p.oid = 'public.call_edge_function_with_vault_secret()'::regprocedure),
   'postgres',
   'M02:88: the webhook trigger function is owned by postgres');
+
+-- 20261024220000: the functions reject any body without `table` and `record`.
+select matches(
+  (select p.prosrc
+     from pg_catalog.pg_proc p
+    where p.oid = 'public.call_edge_function_with_vault_secret()'::regprocedure),
+  '''record'',\s*pg_catalog\.to_jsonb\(new\)',
+  'edge_webhook_envelope: the webhook body is the {type, table, record} envelope, not the bare row');
 
 -- ===========================================================================
 -- 2. It is executable only by the intended roles

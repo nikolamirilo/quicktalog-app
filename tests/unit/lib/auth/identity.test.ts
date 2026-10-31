@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mocks = vi.hoisted(() => ({ auth: vi.fn() }));
+const mocks = vi.hoisted(() => ({ getClaims: vi.fn() }));
 
-vi.mock("@clerk/nextjs/server", () => ({ auth: mocks.auth }));
+vi.mock("@/utils/supabase/server", () => ({
+	createClient: async () => ({ auth: { getClaims: mocks.getClaims } }),
+}));
 
 import {
 	getVerifiedIdentity,
@@ -11,37 +13,35 @@ import {
 	UnauthorizedError,
 } from "@/lib/auth/identity";
 
-describe("getVerifiedIdentity (Clerk)", () => {
+const USER_ID = "3f1a7c9e-2b4d-4a6f-8c1e-5d9b7a2f4e60";
+
+describe("getVerifiedIdentity", () => {
 	beforeEach(() => {
-		mocks.auth.mockReset();
+		mocks.getClaims.mockReset();
 	});
 
-	it("returns the Clerk user id and session", async () => {
-		mocks.auth.mockResolvedValue({
-			userId: "user_3JKGwhqCeeGEfYNS0vLEbDUmECk",
-			sessionId: "sess_1",
+	it("returns the user id and session from the verified claims", async () => {
+		mocks.getClaims.mockResolvedValue({
+			data: {
+				claims: { sub: USER_ID, role: "authenticated", session_id: "sess_1" },
+			},
+			error: null,
 		});
 		await expect(getVerifiedIdentity()).resolves.toEqual({
-			userId: "user_3JKGwhqCeeGEfYNS0vLEbDUmECk",
+			userId: USER_ID,
 			sessionId: "sess_1",
-			provider: "clerk",
 		});
 	});
 
 	it("returns null when signed out", async () => {
-		mocks.auth.mockResolvedValue({ userId: null, sessionId: null });
-		await expect(getVerifiedIdentity()).resolves.toBeNull();
-	});
-
-	it("rejects ids that are not Clerk user ids", async () => {
-		mocks.auth.mockResolvedValue({ userId: "admin", sessionId: null });
+		mocks.getClaims.mockResolvedValue({ data: null, error: null });
 		await expect(getVerifiedIdentity()).resolves.toBeNull();
 	});
 
 	it("returns a frozen identity", async () => {
-		mocks.auth.mockResolvedValue({
-			userId: "user_3JKGwhqCeeGEfYNS0vLEbDUmECk",
-			sessionId: null,
+		mocks.getClaims.mockResolvedValue({
+			data: { claims: { sub: USER_ID, role: "authenticated" } },
+			error: null,
 		});
 		const me = await getVerifiedIdentity();
 		expect(Object.isFrozen(me)).toBe(true);
@@ -50,7 +50,7 @@ describe("getVerifiedIdentity (Clerk)", () => {
 
 describe("requireIdentity", () => {
 	it("throws UnauthorizedError when signed out", async () => {
-		mocks.auth.mockResolvedValue({ userId: null, sessionId: null });
+		mocks.getClaims.mockResolvedValue({ data: null, error: null });
 		await expect(requireIdentity()).rejects.toBeInstanceOf(UnauthorizedError);
 	});
 });
@@ -75,7 +75,6 @@ describe("identityFromSupabaseAuth", () => {
 		await expect(identityFromSupabaseAuth(auth(claims()))).resolves.toEqual({
 			userId: "3f1a7c9e-2b4d-4a6f-8c1e-5d9b7a2f4e60",
 			sessionId: "sess_sb",
-			provider: "supabase",
 		});
 	});
 
@@ -93,7 +92,9 @@ describe("identityFromSupabaseAuth", () => {
 
 	it("refuses a subject that is not a uuid", async () => {
 		await expect(
-			identityFromSupabaseAuth(auth(claims({ sub: "user_clerkish" }))),
+			identityFromSupabaseAuth(
+				auth(claims({ sub: "user_2aAaaaaaaaaaaaaaaaaaaaa1" })),
+			),
 		).resolves.toBeNull();
 	});
 

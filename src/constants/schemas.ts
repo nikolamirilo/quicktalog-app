@@ -1,5 +1,5 @@
 import type { ArticleMeta } from "@/content/articles/_types";
-import type { DocMeta } from "@/content/docs/_types";
+import type { ManualPageMeta } from "@/content/manual/_types";
 import { z } from "zod";
 import {
 	FRAME_TEXT_MAX,
@@ -198,58 +198,9 @@ const docsPageSchema = {
 		"@type": "ItemList",
 		name: "Quicktalog docs topics",
 		description:
-			"Lessons that take you from a new account to a live catalogue you can share.",
+			"Pages that take you from a new account to a live catalogue you can share.",
 	},
 };
-
-export function generateDocSchema(meta: DocMeta) {
-	const url = `https://www.quicktalog.app/docs/${meta.slug}`;
-	return {
-		"@context": "https://schema.org",
-		"@graph": [
-			{
-				"@type": "TechArticle",
-				headline: meta.title,
-				description: meta.description,
-				datePublished: "2026-06-20",
-				author: { "@type": "Organization", name: "Quicktalog" },
-				publisher: {
-					"@type": "Organization",
-					name: "Quicktalog",
-					logo: {
-						"@type": "ImageObject",
-						url: "https://www.quicktalog.app/images/brand/logo.svg",
-					},
-				},
-				mainEntityOfPage: { "@type": "WebPage", "@id": url },
-				keywords: meta.keywords.join(", "),
-			},
-			{
-				"@type": "BreadcrumbList",
-				itemListElement: [
-					{
-						"@type": "ListItem",
-						position: 1,
-						name: "Home",
-						item: "https://www.quicktalog.app",
-					},
-					{
-						"@type": "ListItem",
-						position: 2,
-						name: "Docs",
-						item: "https://www.quicktalog.app/docs",
-					},
-					{
-						"@type": "ListItem",
-						position: 3,
-						name: meta.title,
-						item: url,
-					},
-				],
-			},
-		],
-	};
-}
 
 const authenticationPageSchema = {
 	"@context": "https://schema.org",
@@ -284,6 +235,56 @@ const articlesPageSchema = {
 			"Guides and use cases for digital menus and catalogs created with Quicktalog.",
 	},
 };
+
+export function generateManualSchema(meta: ManualPageMeta, path: string) {
+	const url = `https://www.quicktalog.app${path}`;
+	return {
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "TechArticle",
+				headline: meta.title,
+				description: meta.inShort,
+				author: { "@type": "Organization", name: "Quicktalog" },
+				publisher: {
+					"@type": "Organization",
+					name: "Quicktalog",
+					logo: {
+						"@type": "ImageObject",
+						url: "https://www.quicktalog.app/images/brand/logo.svg",
+					},
+				},
+				mainEntityOfPage: { "@type": "WebPage", "@id": url },
+				...(meta.keywords?.length
+					? { keywords: meta.keywords.join(", ") }
+					: {}),
+			},
+			{
+				"@type": "BreadcrumbList",
+				itemListElement: [
+					{
+						"@type": "ListItem",
+						position: 1,
+						name: "Home",
+						item: "https://www.quicktalog.app",
+					},
+					{
+						"@type": "ListItem",
+						position: 2,
+						name: "Docs",
+						item: "https://www.quicktalog.app/docs",
+					},
+					{
+						"@type": "ListItem",
+						position: 3,
+						name: meta.title,
+						item: url,
+					},
+				],
+			},
+		],
+	};
+}
 
 export function generateArticleSchema(meta: ArticleMeta) {
 	const url = `https://www.quicktalog.app/articles/${meta.slug}`;

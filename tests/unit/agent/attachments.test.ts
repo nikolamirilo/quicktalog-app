@@ -1,4 +1,7 @@
-import { SCANNED_TEXT_MARKER, buildScannedContext } from "@/agent/attachments";
+import {
+	SCANNED_TEXT_MARKER,
+	buildScannedContext,
+} from "@/agent/plugins/attachments";
 import type { ChatScannedImage } from "@/types/ai";
 import { describe, expect, it } from "vitest";
 

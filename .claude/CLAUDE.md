@@ -30,12 +30,13 @@
 
 ### Verification
 - Before finishing code changes run `npx tsc --noEmit`, `npm run check` and `npm test`; say plainly what was not run or failed.
-- Playwright e2e runs only against TEST.
+- Integration tests never run against PROD.
 
 ### Docs and plans
 - `docs/` is human documentation of the system as it is now: `guides/` (how to work on the project), `standards/` (coding rules), `architecture/` (how features work). Update it when behaviour changes.
 - `/.claude/plans/` is for AI work done before implementation: plans, analyses, investigations, research. Never put these in `docs/`.
 - Create every new plan in `/.claude/plans/active/YYYY-MM-DD-<slug>/` with a `PLAN.md` that starts with a status line (`Status: proposed | approved | in progress | done`). Supporting files (research, verification) go in the same folder.
+- Every plan has two versions: the detailed `PLAN.md` and a plain-language `OVERVIEW.md` for the owner and non-engineers, written with the `writing-plan-overviews` skill. Update both whenever the plan changes.
 - When a plan is fully implemented or dropped, move it to `/.claude/plans/archive/`, update `/.claude/plans/README.md`, and move any lasting knowledge into `docs/`.
 - Code, skills and `CLAUDE.md` link to `docs/`, not to plans (except while a plan is actively being implemented).
 - When a pattern changes, update the matching skill in `.claude/skills/`.
@@ -50,9 +51,9 @@
 | Data access | Drizzle ORM (`drizzle-orm` + `postgres`) through `utils/db` | All app queries; camelCase in the app, snake_case in the DB. Runs as the private roles `app_user`/`app_public` so RLS applies; `asAdmin` (postgres) is for webhooks and provisioning only |
 | Migrations | Supabase CLI (`supabase/migrations/*.sql`) | Schema, RLS policies, grants, functions, triggers; applied to TEST first, then PROD. Never `drizzle-kit push/generate/migrate` |
 | DB types | `drizzle-kit pull` in `@quicktalog/common` | Regenerates TypeScript schema/types after each migration |
-| Auth | Clerk (current, behind `AuthProvider`/`useAuth`) → Supabase Auth via `@supabase/ssr` / supabase-js (planned) | Sign-in, sign-up, Google login, sessions. After migration supabase-js is used for auth only, never data queries |
+| Auth | Supabase Auth via `@supabase/ssr` / supabase-js, read through `useAuth()` | Sign-in, sign-up, Google login, sessions. supabase-js is used for auth only, never data queries |
 | Shared package | `@quicktalog/common` (`../quicktalog-packages`) | Shared types, constants (pricing `tiers`), Drizzle schema |
-| Background jobs | Cloudflare Worker (`../quicktalog-backend`) | Daily cron: analytics ingestion, plan/traffic enforcement, image cleanup |
+| Background jobs | Cloudflare Worker (`../quicktalog-backend`) | Cron at 03:00 UTC (analytics ingestion, then plan checks) and 11:00 + 19:00 UTC (plan checks only): traffic limit, switching off catalogues that no longer fit their plan; image cleanup |
 | Cache | Upstash Redis | Catalogue draft cache for the builder and preview |
 | Payments | Paddle (Billing) | Checkout, subscriptions, webhooks that set the user's plan |
 | File uploads | UploadThing | Catalogue images |
@@ -64,6 +65,6 @@
 | Client data | SWR, React Context | Dashboard data fetching, app state; forms are plain `useState` + Zod schemas from `src/constants/schemas.ts` |
 | Analytics | PostHog, Microsoft Clarity, Google Tag Manager | Product analytics and catalogue traffic |
 | Monitoring | Sentry | Error tracking |
-| Testing | Vitest (+ Testing Library, happy-dom), Playwright | Unit tests, end-to-end tests |
+| Testing | Vitest (+ Testing Library, happy-dom) | Unit and integration tests (`docs/guides/testing.md`) |
 | Code quality | Biome, Husky | Lint and format, git hooks |
 

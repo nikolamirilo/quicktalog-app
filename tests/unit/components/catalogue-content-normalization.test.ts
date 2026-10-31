@@ -6,12 +6,9 @@ import { describe, expect, it } from "vitest";
 
 /**
  * `CatalogueContent` is the one place a `block.type` decides what renders, and
- * stored rows still carry three legacy keys: `category`, `container` and
- * `custom_code`. No read path - not the public page, not the API route, not the
- * builder - normalizes before this component, so it has to do it itself.
- *
- * The items branches survive a rename only because `asItemsBlock` normalizes
- * inline at the match site. `custom_code` had no such thing: without the
+ * stored rows can still carry two legacy keys: `category` and `container`. No
+ * read path - not the public page, not the API route, not the builder -
+ * normalizes before this component, so it has to do it itself. Without the
  * normalize call a stored block hits no branch and the section renders blank,
  * with the row perfectly intact in the database.
  *
@@ -33,12 +30,6 @@ describe("CatalogueContent legacy keys", () => {
 		expect(source).toContain("normalizeContent");
 	});
 
-	it("does not match the renamed custom_code key directly", () => {
-		// If this ever comes back, it means someone matched the stored key
-		// instead of normalizing - which works until the next rename.
-		expect(source).not.toContain('"custom_code"');
-	});
-
 	it("renders the canonical key", () => {
 		expect(source).toContain('block.type === "custom_visual"');
 	});
@@ -46,12 +37,12 @@ describe("CatalogueContent legacy keys", () => {
 
 describe("normalizeContent covers every legacy key the renderer can meet", () => {
 	const legacy = [
-		{ id: "a", order: 0, type: "custom_code", code: "<b>x</b>" },
+		{ id: "a", order: 0, type: "custom_visual", code: "<b>x</b>" },
 		{ id: "b", order: 1, type: "category", name: "Drinks", items: [] },
 		{ id: "c", order: 2, type: "container", name: "Internal", items: [] },
 	] as unknown as ContentBlock[];
 
-	it("maps all three to keys the renderer branches on", () => {
+	it("maps the legacy keys to ones the renderer branches on", () => {
 		const types = normalizeContent(legacy).map((block) => block.type);
 		expect(types).toEqual(["custom_visual", "items", "items"]);
 	});

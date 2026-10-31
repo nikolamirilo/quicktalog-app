@@ -1,6 +1,7 @@
-import { useId } from "react";
+import { type ReactNode, useId } from "react";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { InfoTip } from "./InfoTip";
 
 interface SliderFieldProps {
 	label: string;
@@ -13,6 +14,9 @@ interface SliderFieldProps {
 	onValueChange: (value: number) => void;
 	/** Labels under the two ends (or evenly across) of the track. */
 	marks?: string[];
+	/** Text for an (i) popover after the label. */
+	info?: ReactNode;
+	disabled?: boolean;
 }
 
 /** Label, current value and a slider whose hit area is 44px tall. */
@@ -25,12 +29,17 @@ export const SliderField = ({
 	step,
 	onValueChange,
 	marks,
+	info,
+	disabled,
 }: SliderFieldProps) => {
 	const labelId = useId();
 	return (
 		<div className="space-y-1">
 			<div className="flex items-baseline justify-between gap-3">
-				<Label id={labelId}>{label}</Label>
+				<div className="flex items-center gap-1">
+					<Label id={labelId}>{label}</Label>
+					{info && <InfoTip label={label}>{info}</InfoTip>}
+				</div>
 				<span className="text-[13px] font-semibold tabular-nums text-product-foreground-accent capitalize">
 					{valueText}
 				</span>
@@ -38,6 +47,7 @@ export const SliderField = ({
 			<Slider
 				aria-labelledby={labelId}
 				className="h-11"
+				disabled={disabled}
 				max={max}
 				min={min}
 				onValueChange={(vals) => onValueChange(vals[0])}
