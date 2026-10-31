@@ -126,7 +126,14 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 			}}
 			open={isOpen}
 		>
-			<DialogContent className="flex max-h-[calc(100dvh-24px)] w-[calc(100vw-24px)] max-w-[720px] flex-col gap-4 p-[18px] sm:p-7">
+			<DialogContent
+				className="flex max-h-[calc(100dvh-24px)] w-[calc(100vw-24px)] max-w-[720px] flex-col gap-4 p-[18px] outline-none sm:p-7"
+				onOpenAutoFocus={(event) => {
+					// Radix would focus the link input and select its text.
+					event.preventDefault();
+					(event.currentTarget as HTMLElement).focus();
+				}}
+			>
 				{type === "edit" ? (
 					<>
 						{header}
