@@ -41,7 +41,7 @@ export function EditableSectionName({
 	if (!isEditing) {
 		return (
 			<button
-				className="group/rename inline-flex max-w-full cursor-text items-center gap-2 border-b-2 border-dashed border-catalogue-category-accent/80 text-left hover:border-solid focus-visible:border-solid focus-visible:outline-none"
+				className="group/rename inline-flex max-w-full cursor-text items-center gap-2 text-left focus-visible:outline-none"
 				onClick={() => {
 					settled.current = false;
 					setDraft(name);
@@ -49,7 +49,13 @@ export function EditableSectionName({
 				title="Rename this section"
 				type="button"
 			>
-				<span className="min-w-0 truncate">{name}</span>
+				<span className="relative min-w-0 truncate">
+					{name}
+					<span
+						aria-hidden="true"
+						className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-catalogue-category-accent"
+					/>
+				</span>
 				<Pencil
 					aria-hidden="true"
 					className="size-[0.5em] min-w-3.5 flex-none opacity-60 group-hover/rename:opacity-100"
