@@ -306,6 +306,15 @@ update_catalogue                  update_appearance
   through `addItemImages` (one entry per item, up to 40 of one section per call,
   applied as a single `set_item_images` operation), or through `updateItem` for a
   single item.
+- Sales: a discount never goes into `price`. `setItemDiscount` puts items on sale
+  (one entry per item, up to 40 of one section per call, applied as a single
+  `set_item_discounts` operation), taking either `percentOff` or `salePrice` - the
+  applier works the other half out from the item's list price in
+  `resolveDiscount` (`src/lib/catalogue/operations.ts`), so the struck-through
+  price and the badge can never disagree - or `clear: true` to end a sale. An item
+  with no price, or marked free, is refused. The snapshot marks an item already
+  reduced with `[sale <price>, <n>% off]`, so a second percentage off comes off the
+  list price rather than compounding.
 - The lookup itself is `findStockPhoto` in `src/lib/images/stock-photo.ts`, and
   it separates three outcomes: `found`, `none` (searched, matched nothing) and
   `unavailable` (rate limited, down, or no key). Unsplash answers an exhausted

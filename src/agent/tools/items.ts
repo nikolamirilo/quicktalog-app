@@ -11,7 +11,7 @@ import {
 	resolveItems,
 } from "@/agent/plugins/images";
 import type { ToolContext } from "@/agent/tools/types";
-import type { AgentToolResult } from "@/types/ai";
+import type { AgentToolResult, AiItemDiscount } from "@/types/ai";
 import { tool } from "ai";
 import { z } from "zod";
 
@@ -151,6 +151,95 @@ export const itemTools = ({ session, images, fail }: ToolContext) => ({
 
 			return result.ok
 				? { ...result, ...photoTrouble(images, misses) }
+				: result;
+		},
+	}),
+
+	setItemDiscount: tool({
+		description:
+			"Put items on sale, or take them off sale, several at a time. For each item give either percentOff or salePrice - never both, the other one is worked out from the item's own price - or clear: true to end the sale and show the normal price again. The snapshot marks an item already on sale with [sale]. Items with no price, or marked free, cannot go on sale.",
+		inputSchema: z.object({
+			section: sectionIndexSchema,
+			items: z
+				.array(
+					z.object({
+						item: itemIndexSchema,
+						percentOff: z.coerce
+							.number()
+							.int()
+							.min(1)
+							.max(99)
+							.optional()
+							.describe(
+								"How much to take off, as a percentage of the normal price, e.g. 20 for 20% off.",
+							),
+						salePrice: z.coerce
+							.number()
+							.min(0)
+							.optional()
+							.describe(
+								"What the item sells for while on sale, as a plain number below its normal price. Use this instead of percentOff when the user names the sale price itself.",
+							),
+						clear: z.coerce
+							.boolean()
+							.optional()
+							.describe("True to take this item off sale."),
+					}),
+				)
+				.min(1)
+				.max(MAX_ITEMS_PER_CALL),
+		}),
+		execute: async ({ section, items }): Promise<AgentToolResult> => {
+			const sectionTarget = session.resolveItemSection(section);
+			if ("error" in sectionTarget) return fail(sectionTarget.error);
+
+			const misses: string[] = [];
+			const discounts: AiItemDiscount[] = [];
+			for (const entry of items) {
+				const target = session.resolveItem(section, entry.item);
+				// One bad index must not cost the rest of the sale, the same way
+				// addItemImages keeps the photos it did find.
+				if ("error" in target) {
+					misses.push(`item [${entry.item}]`);
+					continue;
+				}
+				if (entry.percentOff !== undefined && entry.salePrice !== undefined) {
+					return fail(
+						`For "${target.name}" you gave both percentOff and salePrice. Send one of the two: the other is worked out from the item's price.`,
+					);
+				}
+				discounts.push({
+					itemId: target.itemId,
+					...(entry.clear
+						? { clear: true }
+						: {
+								...(entry.percentOff !== undefined
+									? { percentOff: entry.percentOff }
+									: {}),
+								...(entry.salePrice !== undefined
+									? { salePrice: entry.salePrice }
+									: {}),
+							}),
+				});
+			}
+
+			if (discounts.length === 0) {
+				return fail(
+					`There is no item ${misses.join(", ")} in section [${section}]. Read the section again and use the indices it gives.`,
+				);
+			}
+
+			const result = session.run({
+				op: "set_item_discounts",
+				sectionId: sectionTarget.id,
+				discounts,
+			});
+
+			return result.ok && misses.length > 0
+				? {
+						...result,
+						itemMisses: `Not found, so left alone: ${misses.join(", ")}.`,
+					}
 				: result;
 		},
 	}),

@@ -62,6 +62,21 @@ export interface AiItemInput {
 	image?: string;
 }
 
+/**
+ * One item's sale, as the agent asks for it. Exactly one of `percentOff`,
+ * `salePrice` or `clear` is meant; the applier works out the other half of the
+ * pair from the item's own list price, so the two never disagree.
+ */
+export interface AiItemDiscount {
+	itemId: string;
+	/** Percentage off the list price, 1-99. */
+	percentOff?: number;
+	/** What the item sells for while on sale. Must be under the list price. */
+	salePrice?: number;
+	/** Take the item off sale and put the list price back. */
+	clear?: boolean;
+}
+
 interface AiCatalogueFields {
 	heading?: string;
 	currency?: string;
@@ -182,6 +197,12 @@ export type CatalogueOperation =
 			sectionId: string;
 			images: { itemId: string; image: string }[];
 	  }
+	| {
+			/** Sale prices for several items in one section, so a whole sale is one edit. */
+			op: "set_item_discounts";
+			sectionId: string;
+			discounts: AiItemDiscount[];
+	  }
 	| { op: "delete_item"; sectionId: string; itemId: string }
 	| {
 			op: "move_item";
@@ -215,6 +236,12 @@ export type AgentToolResult =
 			 * instead of a miss per item that reads as "nothing matched".
 			 */
 			imagesUnavailable?: string;
+			/**
+			 * Items an edit could not be applied to - a wrong index in a batch -
+			 * so the rest of the batch still lands and the model can say which
+			 * ones it missed.
+			 */
+			itemMisses?: string;
 			/**
 			 * Name of the saved theme when setCustomTheme wrote one to the
 			 * library, so the model can confirm it to the user.

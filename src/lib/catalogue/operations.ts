@@ -4,6 +4,7 @@ import {
 	type ContentBlock,
 	defaultCatalogueData,
 	type Item,
+	type ItemDiscount,
 } from "@quicktalog/common";
 import {
 	countPlanItems,
@@ -22,6 +23,7 @@ import {
 	sanitizeCustomThemeColors,
 } from "@/lib/themes/custom-theme";
 import type {
+	AiItemDiscount,
 	AiItemInput,
 	AiSectionAccess,
 	CatalogueOperation,
@@ -133,6 +135,59 @@ const toItem = (input: AiItemInput, order: number): Item => ({
 	isFree: input.isFree ?? false,
 	...(input.denominator ? { denominator: input.denominator } : {}),
 });
+
+/** Two decimals, so a computed sale price is a real money amount. */
+const money = (value: number): number => Math.round(value * 100) / 100;
+
+/**
+ * The sale price and the percentage off always get stored as a matching pair,
+ * whichever of the two was asked for - the card shows both, and a pair that
+ * disagrees reads as a mistake to the visitor.
+ */
+const resolveDiscount = (
+	item: Item,
+	entry: AiItemDiscount,
+): { discount: ItemDiscount } | { error: string } => {
+	const price = Number(item.price ?? 0);
+	if (item.isFree || !(price > 0)) {
+		return {
+			error: `"${item.name}" has no price to discount, so it was left as it is.`,
+		};
+	}
+
+	let salePrice: number;
+	let percentOff: number;
+
+	if (entry.salePrice !== undefined) {
+		salePrice = money(Number(entry.salePrice));
+		if (!(salePrice > 0) || salePrice >= price) {
+			return {
+				error: `A sale price of ${entry.salePrice} does not work for "${item.name}", which costs ${price}: it has to be above 0 and below the normal price.`,
+			};
+		}
+		percentOff = Math.round(((price - salePrice) / price) * 100);
+	} else if (entry.percentOff !== undefined) {
+		percentOff = Math.round(Number(entry.percentOff));
+		if (!(percentOff >= 1 && percentOff <= 99)) {
+			return {
+				error: `${entry.percentOff}% off does not work for "${item.name}": the discount has to be between 1 and 99 percent. For something given away, make the item free instead.`,
+			};
+		}
+		salePrice = money(price * (1 - percentOff / 100));
+	} else {
+		return {
+			error: `Nothing was said about how much to take off "${item.name}", so it was left as it is.`,
+		};
+	}
+
+	return {
+		discount: {
+			isOnDiscount: true,
+			discountPercentage: percentOff,
+			discountedPrice: salePrice,
+		},
+	};
+};
 
 const buildSection = (
 	op: Extract<CatalogueOperation, { op: "add_section" }>,
@@ -467,6 +522,59 @@ export function applyCatalogueOperations(
 				applied.push(
 					`Added ${changed} photo${changed === 1 ? "" : "s"} in ${label(block)}`,
 				);
+				break;
+			}
+
+			case "set_item_discounts": {
+				const index = sectionIndex(operation.sectionId);
+				const block = itemBlockAt(index);
+				if (!block) {
+					skipped.push("Could not find the section to put on sale.");
+					break;
+				}
+
+				const items = [...block.items];
+				let onSale = 0;
+				let cleared = 0;
+				for (const entry of operation.discounts) {
+					const itemIndex = items.findIndex((item) => item.id === entry.itemId);
+					if (itemIndex < 0) continue;
+					const item = items[itemIndex];
+
+					if (entry.clear) {
+						if (!item.discount) continue;
+						items[itemIndex] = { ...item, discount: undefined };
+						cleared += 1;
+						continue;
+					}
+
+					const discount = resolveDiscount(item, entry);
+					if ("error" in discount) {
+						skipped.push(discount.error);
+						continue;
+					}
+					items[itemIndex] = { ...item, discount: discount.discount };
+					onSale += 1;
+				}
+
+				if (onSale === 0 && cleared === 0) {
+					if (skipped.length === 0) {
+						skipped.push("Could not find any of those items to put on sale.");
+					}
+					break;
+				}
+
+				writeBlock(index, { ...block, items } as ContentBlock);
+				if (onSale > 0) {
+					applied.push(
+						`Put ${onSale} item${onSale === 1 ? "" : "s"} on sale in ${label(block)}`,
+					);
+				}
+				if (cleared > 0) {
+					applied.push(
+						`Took ${cleared} item${cleared === 1 ? "" : "s"} off sale in ${label(block)}`,
+					);
+				}
 				break;
 			}
 

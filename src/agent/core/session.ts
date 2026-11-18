@@ -404,7 +404,13 @@ export class CatalogueSession {
 		if (!isItemBlock(block)) return [];
 		const items = block.items ?? [];
 		const lines = items.slice(0, MAX_SNAPSHOT_ITEMS).map((item, index) => {
-			const price = item.isFree ? "free" : String(item.price ?? 0);
+			// The sale shows as the pair the card draws, so an item already
+			// reduced is never discounted a second time off its own sale price.
+			const sale =
+				!item.isFree && item.discount?.isOnDiscount
+					? ` [sale ${item.discount.discountedPrice}, ${item.discount.discountPercentage}% off]`
+					: "";
+			const price = item.isFree ? "free" : `${item.price ?? 0}${sale}`;
 			const description = item.description
 				? ` - ${truncate(stripHtml(item.description), 80)}`
 				: "";
