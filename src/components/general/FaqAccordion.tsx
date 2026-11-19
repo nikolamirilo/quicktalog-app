@@ -83,7 +83,10 @@ export function FaqAccordion({
 
 	const collapsed =
 		!showAll && initialCount !== undefined && items.length > initialCount;
-	const visible = collapsed ? items.slice(0, initialCount) : items;
+	// Every question is rendered, always: the extras past `initialCount` are only
+	// hidden with CSS. The answers have to be in the HTML itself - crawlers, link
+	// previews and AI search read the page without running any of this.
+	const visible = items;
 
 	const toggle = (question: string) =>
 		setOpen((current) => {
@@ -100,6 +103,7 @@ export function FaqAccordion({
 				const isOpen = open.has(item.question);
 				const buttonId = `${baseId}-q-${index}`;
 				const panelId = `${baseId}-a-${index}`;
+				const isExtra = initialCount !== undefined && index >= initialCount;
 				return (
 					<div
 						className={cn(
@@ -107,6 +111,7 @@ export function FaqAccordion({
 							isOpen
 								? "border-product-primary/60 shadow-product"
 								: "border-product-border shadow-[0_1px_2px_rgba(22,20,15,0.04),0_6px_16px_-10px_rgba(22,20,15,0.12)]",
+							isExtra && collapsed && "hidden",
 						)}
 						key={item.question}
 					>
@@ -142,14 +147,25 @@ export function FaqAccordion({
 								</span>
 							</button>
 						</h3>
+						{/*
+						 * Collapsed with CSS rather than the `hidden` attribute: the
+						 * answer stays in the HTML, which is what a text fetcher reads.
+						 */}
 						<div
+							aria-hidden={!isOpen}
 							aria-labelledby={buttonId}
-							className="px-[22px] pb-[22px] text-base leading-[1.7] text-product-foreground-accent"
-							hidden={!isOpen}
+							className={cn(
+								"grid transition-[grid-template-rows] duration-300 motion-reduce:transition-none",
+								isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+							)}
 							id={panelId}
 							role="region"
 						>
-							{highlightText(item.answer, highlight)}
+							<div className="overflow-hidden">
+								<div className="px-[22px] pb-[22px] text-base leading-[1.7] text-product-foreground-accent">
+									{highlightText(item.answer, highlight)}
+								</div>
+							</div>
 						</div>
 					</div>
 				);

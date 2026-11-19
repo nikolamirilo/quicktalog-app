@@ -1,7 +1,7 @@
 import "server-only";
 import * as Sentry from "@sentry/nextjs";
 import { schema, tiers } from "@quicktalog/common";
-import { eq, sql } from "drizzle-orm";
+import { eq, getTableColumns, sql } from "drizzle-orm";
 import type { VerifiedIdentity } from "@/lib/auth/identity";
 import { type Tx, withUser } from "@/utils/db";
 
@@ -63,7 +63,19 @@ export async function loadInTx(
 	me: VerifiedIdentity,
 ): Promise<MyUserDataResult> {
 	const [user] = await tx
-		.select()
+		.select({
+			...getTableColumns(users),
+			// Named explicitly until the next `drizzle-kit pull` release puts the
+			// column on `schema.users`; the dashboard question is asked while it is
+			// null, and `acquisition_source` is the tracked channel now, not the answer.
+			//
+			// Read through `to_jsonb` rather than as a column: a missing key is null,
+			// where a missing column would make this statement throw and take every
+			// signed-in page down with it if the app ever ships ahead of its migration.
+			selfReportedSource: sql<
+				string | null
+			>`to_jsonb(${users}.*) ->> 'self_reported_source'`,
+		})
 		.from(users)
 		.where(eq(users.id, me.userId))
 		.limit(1);

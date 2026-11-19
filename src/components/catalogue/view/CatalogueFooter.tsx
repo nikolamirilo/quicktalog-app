@@ -1,6 +1,7 @@
 "use client";
 import { newsletterSignup } from "@/actions/newsletter";
 import { footerDetails } from "@/constants/details";
+import { CATALOGUE_BADGE_UTM } from "@/constants/marketing";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { socialPlatform } from "@/lib/catalogue/socials";
 import type { Catalogue } from "@quicktalog/common";
@@ -34,7 +35,7 @@ const QuicktalogColumns = ({ logo }: { logo: string }) => (
 			<Link
 				aria-label="Go to Quicktalog homepage"
 				className="cat-foot-logo"
-				href="/"
+				href={`/?${CATALOGUE_BADGE_UTM}`}
 			>
 				<img alt="Quicktalog logo" src={logo} style={{ width: "160px" }} />
 			</Link>

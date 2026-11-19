@@ -5,6 +5,8 @@
 	--catalogue-text: #080808;
 	--catalogue-button-text: #1a1a1a;
 	--catalogue-price: #8b6914;
+	--catalogue-sale: #8b2635;
+	--catalogue-sale-foreground: #fff8e7;
 
 	--catalogue-primary: #d3af37;
 	--catalogue-secondary: #856d3d;
@@ -42,6 +44,8 @@
 	--catalogue-text: #1a1a1a;
 	--catalogue-button-text: #ffffff;
 	--catalogue-price: #000000;
+	--catalogue-sale: #1a1a1a;
+	--catalogue-sale-foreground: #ffffff;
 
 	--catalogue-primary: #000000;
 	--catalogue-secondary: #4d4d4d;
@@ -79,6 +83,8 @@
 	--catalogue-text: #aab7d4;
 	--catalogue-button-text: #f8f8f1;
 	--catalogue-price: #ff8fa3;
+	--catalogue-sale: #ffd166;
+	--catalogue-sale-foreground: #1d1e28;
 
 	--catalogue-primary: #ff6b6b;
 	--catalogue-secondary: #6b8bff;
@@ -116,6 +122,8 @@
 	--catalogue-text: #2d3a2a;
 	--catalogue-button-text: #f5f2de;
 	--catalogue-price: #5d4a28;
+	--catalogue-sale: #9c4221;
+	--catalogue-sale-foreground: #f5f2de;
 
 	--catalogue-primary: #5c7453;
 	--catalogue-secondary: #cba463;
@@ -153,6 +161,8 @@
 	--catalogue-text: #b3b3b3;
 	--catalogue-button-text: #1a1a1a;
 	--catalogue-price: #00bcd4;
+	--catalogue-sale: #f2545b;
+	--catalogue-sale-foreground: #2a0f11;
 
 	--catalogue-primary: #6699cc;
 	--catalogue-secondary: #2c2c2c;
@@ -192,6 +202,8 @@
 	--catalogue-text: #f3f3f3;
 	--catalogue-button-text: #1a1a1a;
 	--catalogue-price: #ff8fa3;
+	--catalogue-sale: #d92d20;
+	--catalogue-sale-foreground: #ffffff;
 
 	--catalogue-primary: #8b6cb3;
 	--catalogue-secondary: #33334d;
@@ -229,6 +241,8 @@
 	--catalogue-text: #233a57;
 	--catalogue-button-text: #ffffff;
 	--catalogue-price: #1565c0;
+	--catalogue-sale: #d92d20;
+	--catalogue-sale-foreground: #ffffff;
 
 	--catalogue-primary: #1e88e5;
 	--catalogue-secondary: #e6eef5;
@@ -306,6 +320,8 @@
 	--catalogue-text: #fff7f1;
 	--catalogue-button-text: #fffdf9;
 	--catalogue-price: #f5cf9f;
+	--catalogue-sale: #ffe9c6;
+	--catalogue-sale-foreground: #7a1d1d;
 
 	--catalogue-primary: #e73b3b;
 	--catalogue-secondary: #c89156;
@@ -366,6 +382,8 @@
 	--catalogue-text: #f8efe6;
 	--catalogue-button-text: #253630;
 	--catalogue-price: #e3c58f;
+	--catalogue-sale: #b8392b;
+	--catalogue-sale-foreground: #f8efe6;
 
 	--catalogue-primary: #e3b67a;
 	--catalogue-secondary: #557b6c;
@@ -428,6 +446,8 @@
 	--catalogue-text: #3d2e1f;
 	--catalogue-button-text: #f5f0e8;
 	--catalogue-price: #6b4c20;
+	--catalogue-sale: #8c3a1f;
+	--catalogue-sale-foreground: #f5f0e8;
 
 	--catalogue-primary: #8b6914;
 	--catalogue-secondary: #a0522d;

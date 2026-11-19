@@ -2,13 +2,13 @@
 import { useCard } from "@/hooks/useCard";
 import { CardProps } from "@/types/shared";
 import CardControls from "./CardControls";
-import DiscountBadge from "./DiscountBadge";
+import { SalePill } from "./SalePill";
 
 interface BaseCardProps extends CardProps {
 	className: string;
 	children: (slugId: string) => React.ReactNode;
-	discountPosition?: "left" | "right";
-	discountSize?: "normal" | "small";
+	/** A card with no photo shows the pill in its price row instead. */
+	showSalePill?: boolean;
 }
 
 const BaseCard = ({
@@ -24,8 +24,8 @@ const BaseCard = ({
 	blockId,
 	className,
 	children,
-	discountPosition = "left",
-	discountSize = "normal",
+	percentOff,
+	showSalePill = true,
 }: BaseCardProps) => {
 	const { slugId, rootProps } = useCard(record);
 
@@ -49,13 +49,12 @@ const BaseCard = ({
 					onMoveUp={onMoveUp}
 				/>
 			)}
-			{record.discount?.isOnDiscount && record.discount?.discountPercentage && (
-				<DiscountBadge
-					discountPercentage={record.discount.discountPercentage}
-					position={discountPosition}
-					size={discountSize}
+			{showSalePill && percentOff ? (
+				<SalePill
+					className="pointer-events-none absolute left-2 top-2 z-10 shadow-[0_1px_6px_rgba(0,0,0,0.28)]"
+					percentOff={percentOff}
 				/>
-			)}
+			) : null}
 			{children(slugId)}
 		</article>
 	);

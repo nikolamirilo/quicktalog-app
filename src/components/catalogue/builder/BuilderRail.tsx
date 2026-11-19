@@ -1,5 +1,6 @@
 "use client";
 
+import { SaveStatus } from "@/components/catalogue/builder/SaveStatus";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/ui/cn";
 import { ArrowLeft, SlidersHorizontal } from "lucide-react";
@@ -16,16 +17,22 @@ const RailDivider = () => (
 
 /** One action: a button, or an anchor when the action is a link. */
 const RailAction = ({ action }: { action: BuilderAction }) => {
-	const { icon: Icon, label, href, onClick, disabled, primary } = action;
+	const { icon: Icon, label, href, onClick, disabled, primary, badge } = action;
 	const className = cn(
 		railItemClass,
 		primary && "mt-1 shadow-none hover:shadow-none",
+		badge && "relative",
 	);
 	const variant = primary ? "default" : "ghost";
 	const body = (
 		<>
 			<Icon />
 			<span>{label}</span>
+			{badge && (
+				<span className="absolute right-2 top-2 size-2 rounded-full bg-product-error">
+					<span className="sr-only">Unpublished changes</span>
+				</span>
+			)}
 		</>
 	);
 
@@ -53,17 +60,20 @@ const RailAction = ({ action }: { action: BuilderAction }) => {
 
 /**
  * The builder's desktop rail (from `md`): the editor toggle, the catalogue
- * actions, and the way out (dashboard). Every item carries a
- * visible label, so nothing needs a tooltip to be understood.
+ * actions, the autosave status and the way out (dashboard). Every item carries
+ * a visible label, so nothing needs a tooltip to be understood. There is no
+ * Save: edits are written by themselves and the status says so.
  */
 export const BuilderRail = ({
 	isPanelOpen,
 	onTogglePanel,
+	onOpenHistory,
 	panelId,
 	actions,
 }: {
 	isPanelOpen: boolean;
 	onTogglePanel: () => void;
+	onOpenHistory: () => void;
 	panelId: string;
 	actions: BuilderAction[];
 }) => (
@@ -96,6 +106,8 @@ export const BuilderRail = ({
 		))}
 
 		<span aria-hidden="true" className="flex-1" />
+
+		<SaveStatus onOpenHistory={onOpenHistory} variant="rail" />
 
 		<RailDivider />
 

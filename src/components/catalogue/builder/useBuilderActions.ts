@@ -1,12 +1,11 @@
 "use client";
 
-import {
-	publishCatalogue,
-	updateCatalogue as updateCatalogueAction,
-} from "@/actions/catalogue";
+import { publishCatalogue } from "@/actions/catalogue";
+import { useBuilderStatus } from "@/context/BuilderStatusContext";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
 import { refreshDashboardData } from "@/hooks/useDashboardData";
+import { captureEvent, PRODUCT_EVENTS } from "@/lib/analytics/events";
 import { isHeadingEmpty } from "@/lib/catalogue/heading";
 import {
 	Eye,
@@ -15,18 +14,19 @@ import {
 	QrCode,
 	RefreshCw,
 	Rocket,
-	Save,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 type BuilderActionCore = {
-	key: "save" | "templates" | "preview" | "publish" | "qr";
+	key: "templates" | "preview" | "publish" | "qr";
 	icon: LucideIcon;
 	label: string;
 	disabled: boolean;
 	primary: boolean;
+	/** Marks the action as having something waiting (unpublished changes). */
+	badge?: boolean;
 };
 
 /** A button or a link, never both: a link has to stay an anchor (see `qr`). */
@@ -43,38 +43,24 @@ export const useBuilderActions = ({
 }: {
 	closePanel: () => void;
 }) => {
-	const { catalogue, acceptAiChanges, markSaved, patchSaved } =
+	const { catalogue, acceptAiChanges, getCatalogue, patchSaved } =
 		useCatalogueContext();
+	const status = useBuilderStatus();
 	const { refreshUserData } = useUserContext();
 	const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 	const [successType, setSuccessType] = useState<"regular" | "edit">("regular");
 	const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 	const router = useRouter();
 
-	const handleSave = async () => {
-		// Saving (and Preview, which saves first) keeps AI edits still under review.
+	/**
+	 * Everything that has to show the catalogue as it is now - Preview, Publish -
+	 * writes the draft first instead of waiting out the autosave debounce. Keeping
+	 * AI edits still under review is part of that: they are what the owner is about
+	 * to look at or publish.
+	 */
+	const saveNow = async () => {
 		acceptAiChanges?.();
-		try {
-			const promise = updateCatalogueAction(catalogue);
-			toast.promise(promise, {
-				loading: "Saving...",
-				success: (res) => {
-					if (!res.success) {
-						throw new Error(res.error ?? "Failed to save catalogue");
-					}
-					return "Catalogue saved successfully";
-				},
-				error: (err) =>
-					err instanceof Error ? err.message : "Failed to save catalogue",
-			});
-			const res = await promise;
-			if (!res.success) return null;
-			markSaved(catalogue);
-			return "data" in res ? res.data : null;
-		} catch (err) {
-			console.error(err);
-			return null;
-		}
+		await status?.flush();
 	};
 
 	const isPublishDisabled =
@@ -85,27 +71,28 @@ export const useBuilderActions = ({
 	const handlePreview = async () => {
 		// Open window synchronously so Safari doesn't block it as a popup
 		const previewWindow = window.open("about:blank", "_blank");
-		const savedCatalogue = await handleSave();
-		if (!savedCatalogue || !savedCatalogue.name) {
+		await saveNow();
+		if (!catalogue.name) {
 			previewWindow?.close();
-			if (savedCatalogue && !savedCatalogue.name) {
-				toast.error("Catalogue has no name/slug");
-			}
+			toast.error("Catalogue has no name/slug");
 			return;
 		}
 		if (previewWindow) {
 			previewWindow.opener = null;
-			previewWindow.location.href = `/catalogues/${savedCatalogue.name}/preview`;
+			previewWindow.location.href = `/catalogues/${catalogue.name}/preview`;
 		}
 	};
 
 	const handlePublish = async () => {
 		if (!catalogue?.id) {
-			toast.error("Please save the catalogue first");
+			toast.error("This catalogue is not ready to publish yet");
 			return;
 		}
-		acceptAiChanges?.();
-		const promise = publishCatalogue(catalogue);
+		// The draft is written first, so publishing a catalogue the owner has just
+		// edited can never go live with the previous draft. What goes live is read
+		// from the context afterwards, not from this render's snapshot.
+		await saveNow();
+		const promise = publishCatalogue(getCatalogue() as typeof catalogue);
 		if (catalogue.status !== "active") {
 			toast.promise(promise, {
 				loading: "Publishing...",
@@ -115,6 +102,11 @@ export const useBuilderActions = ({
 						throw new Error(result.error ?? "Failed to update status");
 					}
 					patchSaved({ status: "active" });
+					status?.markPublished();
+					// The branch a catalogue only ever takes once: it was not active before.
+					captureEvent(PRODUCT_EVENTS.firstPublish, {
+						catalogue_id: catalogue.id,
+					});
 					setSuccessType("regular");
 					setIsSuccessModalOpen(true);
 					await refreshDashboardData();
@@ -133,6 +125,7 @@ export const useBuilderActions = ({
 						throw new Error(result.error ?? "Failed to update status");
 					}
 					patchSaved({ status: "active" });
+					status?.markPublished();
 					setSuccessType("edit");
 					setIsSuccessModalOpen(true);
 					return "Catalogue updated successfully";
@@ -152,14 +145,6 @@ export const useBuilderActions = ({
 
 	/** Keyed so a renamed action is a compile error, not a render-time throw. */
 	const actions: Record<BuilderAction["key"], BuilderAction> = {
-		save: {
-			key: "save",
-			icon: Save,
-			label: "Save",
-			onClick: () => void handleSave(),
-			disabled: false,
-			primary: false,
-		},
 		templates: {
 			key: "templates",
 			icon: LayoutTemplate,
@@ -194,6 +179,8 @@ export const useBuilderActions = ({
 			onClick: () => void handlePublish(),
 			disabled: isPublishDisabled,
 			primary: true,
+			/** Draws the dot on the button: the draft is ahead of the live catalogue. */
+			badge: Boolean(status?.unpublished) && isPublished,
 		},
 	};
 

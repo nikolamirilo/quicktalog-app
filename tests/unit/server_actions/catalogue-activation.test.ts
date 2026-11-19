@@ -5,7 +5,8 @@ const mocks = vi.hoisted(() => ({
 	getVerifiedIdentity: vi.fn(),
 	withUser: vi.fn(),
 	loadOwnedCatalogue: vi.fn(),
-	readOwnedDraft: vi.fn(),
+	loadOwnedDraftRow: vi.fn(),
+	saveOwnedDraft: vi.fn(),
 	getPlanForUpdate: vi.fn(),
 	update: vi.fn(),
 	storedContent: [] as unknown[],
@@ -21,11 +22,18 @@ vi.mock("@/lib/cache/revalidate", () => ({
 	revalidateDashboard: vi.fn(),
 }));
 vi.mock("@/lib/rate-limit", () => ({ withinRateLimit: vi.fn() }));
-vi.mock("@/lib/catalogue/draft-cache", () => ({
-	deleteDrafts: vi.fn(),
+vi.mock("@/lib/catalogue/draft-store", () => ({
+	listDraftVersions: vi.fn(),
 	loadOwnedCatalogue: mocks.loadOwnedCatalogue,
-	readOwnedDraft: mocks.readOwnedDraft,
-	writeOwnedDraft: vi.fn().mockResolvedValue(undefined),
+	loadOwnedDraftRow: mocks.loadOwnedDraftRow,
+	readDraftVersion: vi.fn(),
+	readOwnedDraft: vi.fn(),
+	recordDraftVersion: vi.fn().mockResolvedValue(undefined),
+	saveOwnedDraft: mocks.saveOwnedDraft,
+	writeOwnedDraft: vi.fn().mockResolvedValue({
+		draftUpdatedAt: "2026-11-19T10:00:00Z",
+		unpublished: false,
+	}),
 }));
 vi.mock("@/lib/entitlements/plan", async (importOriginal) => ({
 	...(await importOriginal<object>()),
@@ -74,6 +82,7 @@ const tx = () => {
 describe("going live needs a full fit", () => {
 	beforeEach(() => {
 		mocks.update.mockReset();
+		mocks.loadOwnedDraftRow.mockResolvedValue(null);
 		mocks.getVerifiedIdentity.mockResolvedValue({
 			userId: "u1",
 			sessionId: "s",
@@ -125,16 +134,21 @@ describe("draft saves while over the plan", () => {
 		mocks.withUser.mockImplementation(
 			(_me: unknown, fn: (t: unknown) => unknown) => Promise.resolve(fn(tx())),
 		);
+		mocks.saveOwnedDraft.mockResolvedValue({
+			ok: true,
+			draftUpdatedAt: "2026-11-19T10:00:00Z",
+			unpublished: true,
+		});
 		// Published long ago with nothing in it; the saved draft grew on a bigger plan.
 		mocks.loadOwnedCatalogue.mockResolvedValue({
 			id: "c1",
 			name: "menu",
 			content: [],
 		});
-		mocks.readOwnedDraft.mockResolvedValue({
-			id: "c1",
-			name: "menu",
-			content: items(80),
+		mocks.loadOwnedDraftRow.mockResolvedValue({
+			draft: { content: items(80) },
+			updated_at: "2026-11-19T09:00:00Z",
+			published_at: null,
 		});
 	});
 
@@ -152,5 +166,22 @@ describe("draft saves while over the plan", () => {
 			content: items(81),
 		} as never);
 		expect(result.success).toBe(false);
+		expect(mocks.saveOwnedDraft).not.toHaveBeenCalled();
+	});
+
+	// Two tabs: the second save carries a timestamp the stored draft no longer has.
+	it("a save against an older draft is refused instead of overwriting", async () => {
+		mocks.saveOwnedDraft.mockResolvedValue({
+			ok: false,
+			conflict: true,
+			draftUpdatedAt: "2026-11-19T09:30:00Z",
+		});
+		const result = await updateCatalogue(
+			{ name: "menu", content: items(75) } as never,
+			"2026-11-19T09:00:00Z",
+		);
+		expect(result.success).toBe(false);
+		expect(result.conflict).toBe(true);
+		expect(result.draftUpdatedAt).toBe("2026-11-19T09:30:00Z");
 	});
 });

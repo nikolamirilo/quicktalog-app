@@ -144,7 +144,7 @@ export function BuilderScreen() {
 								</span>
 								<span className="inline-flex h-10 items-center gap-2 rounded-full border border-black/[0.14] bg-white px-4 text-[14px] font-semibold leading-none text-black">
 									<Plus className="h-4 w-4" />
-									Create Your Catalog
+									Create Your Catalogue
 								</span>
 							</span>
 						</div>

@@ -5,13 +5,20 @@ import {
 	revalidateDashboard,
 } from "@/lib/cache/revalidate";
 import { sanitizeCustomThemeColors } from "@/lib/themes/custom-theme";
+import { headingFromName, isHeadingEmpty } from "@/lib/catalogue/heading";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
 import {
-	deleteDrafts,
+	type DraftPayload,
+	type DraftVersion,
+	listDraftVersions,
 	loadOwnedCatalogue,
+	loadOwnedDraftRow,
+	readDraftVersion,
 	readOwnedDraft,
+	recordDraftVersion,
+	saveOwnedDraft,
 	writeOwnedDraft,
-} from "@/lib/catalogue/draft-cache";
+} from "@/lib/catalogue/draft-store";
 import { applyPlanToCatalogue } from "@/lib/entitlements/catalogue";
 import {
 	canActivate,
@@ -53,6 +60,13 @@ function sanitizeAppearance(catalogueData: Catalogue): Catalogue {
 	};
 }
 
+/** A new catalogue opens with its name as the heading rather than "+ Add Heading". */
+function withStartingHeading(catalogueData: Catalogue): Catalogue {
+	if (!isHeadingEmpty(catalogueData.heading)) return catalogueData;
+	const heading = headingFromName(catalogueData.name);
+	return heading ? { ...catalogueData, heading } : catalogueData;
+}
+
 export async function deleteItem(name: string): Promise<boolean> {
 	try {
 		const me = await getVerifiedIdentity();
@@ -66,14 +80,8 @@ export async function deleteItem(name: string): Promise<boolean> {
 		);
 		if (deleted.length === 0) return false;
 
-		// Redis and revalidation run after the transaction: neither may hold a
-		// pooled database connection.
-		await deleteDrafts(deleted.map((row) => row.id)).catch((err) =>
-			Sentry.captureException(err, {
-				level: "warning",
-				tags: { op: "deleteItem", step: "redis" },
-			}),
-		);
+		// The draft and its versions go with the row (FK cascade). Revalidation runs
+		// after the transaction: it may not hold a pooled database connection.
 		revalidateCatalogue(deleted[0].name);
 		revalidateDashboard();
 		return true;
@@ -105,12 +113,6 @@ export async function deleteMultipleItems(ids: string[]): Promise<boolean> {
 			return rows;
 		});
 
-		await deleteDrafts(deleted.map((row) => row.id)).catch((err) =>
-			Sentry.captureException(err, {
-				level: "warning",
-				tags: { op: "deleteMultipleItems", step: "redis" },
-			}),
-		);
 		for (const row of deleted) revalidateCatalogue(row.name);
 		revalidateCatalogue();
 		revalidateDashboard();
@@ -278,7 +280,7 @@ export async function createCatalogue(
 			}
 
 			const shaped = applyPlanToCatalogue(
-				sanitizeAppearance(catalogueData),
+				sanitizeAppearance(withStartingHeading(catalogueData)),
 				tier,
 			);
 			const withinPlan = contentWithinPlan(shaped, null, tier);
@@ -304,17 +306,18 @@ export async function createCatalogue(
 				.returning();
 
 			if (!data) return { success: false, error: "Failed to insert catalogue" };
+
+			// The draft starts as a copy of the row, so the builder has something to
+			// autosave against and the dashboard can count its items from one place.
+			await writeOwnedDraft(tx, me, {
+				catalogueId: data.id,
+				draft: data as DraftPayload,
+			});
 			return { success: true, data: data as Catalogue };
 		});
 
 		if (!result.success || !("data" in result) || !result.data) return result;
 
-		await writeOwnedDraft(result.data as Catalogue).catch((err) =>
-			Sentry.captureException(err, {
-				level: "warning",
-				tags: { op: "createCatalogue", step: "redis" },
-			}),
-		);
 		revalidateCatalogue(slug);
 		revalidateDashboard();
 		return result;
@@ -331,21 +334,48 @@ export async function createCatalogue(
 	}
 }
 
+/** What a draft save tells the builder, on top of the usual result. */
+export type SaveDraftResponse = ActionResult<Catalogue> & {
+	/** The stored draft's timestamp, to send back with the next save. */
+	draftUpdatedAt?: string | null;
+	/** The draft now differs from what visitors see. */
+	unpublished?: boolean;
+	/** Another tab or device saved in between; the builder offers a reload. */
+	conflict?: boolean;
+};
+
+/**
+ * Saves the builder's draft. This is the only write the builder makes: it never touches
+ * the published catalogue, which is what Publish is for.
+ *
+ * `baseUpdatedAt` is the draft timestamp the caller last saw. A different stored
+ * timestamp means somebody else saved since, so the write is refused instead of
+ * silently throwing their work away.
+ */
 export async function updateCatalogue(
 	catalogueData: Catalogue,
-): Promise<ActionResult<Catalogue>> {
+	baseUpdatedAt: string | null = null,
+): Promise<SaveDraftResponse> {
 	try {
 		const me = await getVerifiedIdentity();
 		if (!me) return { success: false, error: "Unauthorized" };
 
-		// The last saved draft, read before the transaction so Redis never holds a
-		// connection. Judging growth against it (not the published row) is what lets
-		// an over-limit catalogue be trimmed one save at a time after a downgrade.
-		const saved = await readOwnedDraft(me, catalogueData.name);
-
-		const prepared = await withUser(me, async (tx) => {
+		const result = await withUser(me, async (tx) => {
 			const row = await loadOwnedCatalogue(tx, me, catalogueData.name);
-			if (!row) return null;
+			if (!row) return { error: "Unauthorized" as const };
+
+			// Judging growth against the stored draft (not the published row) is what
+			// lets an over-limit catalogue be trimmed one save at a time after a
+			// downgrade.
+			const stored = await loadOwnedDraftRow(tx, row.id);
+			const saved = stored?.draft
+				? ({
+						...row,
+						...(typeof stored.draft === "string"
+							? JSON.parse(stored.draft)
+							: stored.draft),
+					} as Catalogue)
+				: null;
 
 			const tier = await getPlanForUpdate(tx, me);
 			const shaped = applyPlanToCatalogue(
@@ -357,30 +387,158 @@ export async function updateCatalogue(
 				return { error: withinPlan.reason ?? "Plan limit reached" };
 			}
 
-			return { row, draft: shaped };
+			const outcome = await saveOwnedDraft(tx, me, {
+				catalogueId: row.id,
+				draft: shaped as DraftPayload,
+				baseUpdatedAt,
+			});
+			if (!outcome.ok) {
+				return {
+					conflict: true as const,
+					draftUpdatedAt: outcome.draftUpdatedAt,
+				};
+			}
+
+			await recordDraftVersion(tx, me, row.id, shaped as DraftPayload);
+			return { row, draft: shaped, meta: outcome };
 		});
 
-		if (!prepared) return { success: false, error: "Unauthorized" };
-		if ("error" in prepared) {
-			return { success: false, error: prepared.error };
+		if ("error" in result) return { success: false, error: result.error };
+		if ("conflict" in result) {
+			return {
+				success: false,
+				conflict: true,
+				draftUpdatedAt: result.draftUpdatedAt,
+				error: "This catalogue was changed somewhere else.",
+			};
 		}
 
-		// The draft is a cache of unsaved edits; the database row stays the source
-		// of the id, name, owner and status.
-		try {
-			await writeOwnedDraft({ ...prepared.draft, id: prepared.row.id });
-		} catch (err) {
-			Sentry.captureException(err, {
-				tags: { op: "updateCatalogue", step: "redis" },
-			});
-			return { success: false, error: "Failed to save the draft" };
-		}
-
-		revalidateCatalogue(prepared.row.name);
-		return { success: true, data: { ...prepared.draft, id: prepared.row.id } };
+		// Revalidation runs outside the transaction: it may not hold a pooled connection.
+		revalidateCatalogue(result.row.name);
+		return {
+			success: true,
+			data: { ...result.draft, id: result.row.id },
+			draftUpdatedAt: result.meta.draftUpdatedAt,
+			unpublished: result.meta.unpublished,
+		};
 	} catch (err) {
 		Sentry.captureException(err, { tags: { op: "updateCatalogue" } });
 		console.error("Unexpected error while updating catalogue:", err);
+		return { success: false, error: "An unexpected error occurred" };
+	}
+}
+
+/** The builder's loader: the catalogue plus what autosave needs to save against it. */
+export async function getBuilderCatalogue(name: string): Promise<{
+	success: boolean;
+	data: Catalogue | null;
+	draftUpdatedAt: string | null;
+	unpublished: boolean;
+	error?: string;
+}> {
+	const empty = {
+		success: false,
+		data: null,
+		draftUpdatedAt: null,
+		unpublished: false,
+	};
+	try {
+		const me = await getVerifiedIdentity();
+		if (!me) return { ...empty, error: "Unauthorized" };
+
+		const found = await readOwnedDraft(me, name);
+		if (!found) return { ...empty, error: "Catalogue not found" };
+
+		return {
+			success: true,
+			data: found.catalogue,
+			draftUpdatedAt: found.draftUpdatedAt,
+			unpublished: found.unpublished,
+		};
+	} catch (err) {
+		Sentry.captureException(err, {
+			level: "warning",
+			tags: { op: "getBuilderCatalogue" },
+		});
+		console.error("Unexpected error while fetching catalogue:", err);
+		return { ...empty, error: "An unexpected error occurred" };
+	}
+}
+
+/** The autosaves kept for one of the caller's catalogues, newest first. */
+export async function getDraftVersions(
+	name: string,
+): Promise<{ versions: DraftVersion[] }> {
+	try {
+		const me = await getVerifiedIdentity();
+		if (!me) return { versions: [] };
+
+		return await withUser(me, async (tx) => {
+			const row = await loadOwnedCatalogue(tx, me, name);
+			if (!row) return { versions: [] };
+			return { versions: await listDraftVersions(tx, row.id) };
+		});
+	} catch (err) {
+		Sentry.captureException(err, {
+			level: "warning",
+			tags: { op: "getDraftVersions" },
+		});
+		return { versions: [] };
+	}
+}
+
+/**
+ * Puts one kept autosave back as the current draft. It is a draft write like any other,
+ * so the published catalogue is untouched until the owner publishes again.
+ */
+export async function restoreDraftVersion(
+	name: string,
+	versionId: string,
+): Promise<SaveDraftResponse> {
+	try {
+		const me = await getVerifiedIdentity();
+		if (!me) return { success: false, error: "Unauthorized" };
+		if (!/^\d{1,19}$/.test(versionId)) {
+			return { success: false, error: "Unknown version" };
+		}
+
+		const result = await withUser(me, async (tx) => {
+			const row = await loadOwnedCatalogue(tx, me, name);
+			if (!row) return { error: "Unauthorized" as const };
+
+			const version = await readDraftVersion(tx, row.id, versionId);
+			if (!version) return { error: "Unknown version" as const };
+
+			const tier = await getPlanForUpdate(tx, me);
+			const shaped = applyPlanToCatalogue(
+				sanitizeAppearance({ ...row, ...version } as Catalogue),
+				tier,
+			);
+			// A restore may not be used to get back over a limit the plan lost since.
+			const withinPlan = contentWithinPlan(shaped, row, tier);
+			if (!withinPlan.ok) {
+				return { error: withinPlan.reason ?? "Plan limit reached" };
+			}
+
+			const meta = await writeOwnedDraft(tx, me, {
+				catalogueId: row.id,
+				draft: shaped as DraftPayload,
+			});
+			return { row, draft: shaped, meta };
+		});
+
+		if ("error" in result) return { success: false, error: result.error };
+
+		revalidateCatalogue(result.row.name);
+		return {
+			success: true,
+			data: { ...result.draft, id: result.row.id },
+			draftUpdatedAt: result.meta.draftUpdatedAt,
+			unpublished: result.meta.unpublished,
+		};
+	} catch (err) {
+		Sentry.captureException(err, { tags: { op: "restoreDraftVersion" } });
+		console.error("Unexpected error while restoring a draft version:", err);
 		return { success: false, error: "An unexpected error occurred" };
 	}
 }
@@ -393,11 +551,11 @@ export async function getCatalogueByName(name: string) {
 			return { success: false, error: "Unauthorized", data: null };
 		}
 
-		const data = await readOwnedDraft(me, name);
-		if (!data) {
+		const found = await readOwnedDraft(me, name);
+		if (!found) {
 			return { success: false, error: "Catalogue not found", data: null };
 		}
-		return { success: true, data, error: null };
+		return { success: true, data: found.catalogue, error: null };
 	} catch (err) {
 		Sentry.captureException(err, {
 			level: "warning",
@@ -470,18 +628,21 @@ export async function publishCatalogue(
 					and(eq(catalogues.id, current.id), eq(catalogues.userId, me.userId)),
 				)
 				.returning();
-			return row ? { row } : { error: "Not found" };
+			if (!row) return { error: "Not found" };
+
+			// The draft becomes a copy of what is now live, stamped published, so the
+			// builder and the dashboard stop saying "Unpublished changes".
+			await writeOwnedDraft(tx, me, {
+				catalogueId: current.id,
+				draft: row as DraftPayload,
+				publish: true,
+			});
+			return { row };
 		});
 
 		if ("error" in published) return { success: false, error: published.error };
 
 		const row = published.row as Catalogue;
-		await writeOwnedDraft(row).catch((err) =>
-			Sentry.captureException(err, {
-				level: "warning",
-				tags: { op: "publishCatalogue", step: "redis" },
-			}),
-		);
 		revalidateCatalogue(row.name);
 		revalidateDashboard();
 		return { success: true };

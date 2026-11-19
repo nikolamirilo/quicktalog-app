@@ -18,6 +18,7 @@ import {
 	starterExtraFeatures,
 	starterTier,
 } from "@/constants/pricing";
+import type { PaddlePrices } from "@/hooks/usePaddlePrices";
 import { usePricingPlans } from "@/hooks/usePricingPlans";
 import { getYearlyNote } from "@/lib/format/price";
 
@@ -32,8 +33,17 @@ const assurances = [
 	{ icon: DollarSign, text: "Prices in USD. Local taxes may apply." },
 ];
 
-/** Pricing page body: billing toggle, starter card, tier grid and comparison table. */
-export function PricingPlans() {
+/**
+ * Pricing page body: billing toggle, starter card, tier grid and comparison table.
+ *
+ * `initialPrices` come from the server, so the prices are in the HTML a crawler or a
+ * link preview sees; Paddle.js then localises them in the browser.
+ */
+export function PricingPlans({
+	initialPrices = {},
+}: {
+	initialPrices?: PaddlePrices;
+}) {
 	const {
 		prices,
 		pricesUnavailable,
@@ -42,7 +52,7 @@ export function PricingPlans() {
 		startCheckout,
 		pendingPriceId,
 		featureInfo,
-	} = usePricingPlans();
+	} = usePricingPlans(initialPrices);
 
 	const starterPriceId = priceIdFor(starterTier, billingCycle);
 

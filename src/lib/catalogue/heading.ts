@@ -21,6 +21,27 @@ export function wrapHeading(innerHtml: string, size: HeadingSize): string {
 	return `<h1 class="${headingSizeMap[size]} font-heading text-heading drop-shadow-sm mb-4 text-center break-words pb-1 md:pb-2 w-full max-w-[98%] mx-auto" data-size="${size}">${inner}</h1>`;
 }
 
+const HTML_ESCAPES: Record<string, string> = {
+	"&": "&amp;",
+	"<": "&lt;",
+	">": "&gt;",
+	'"': "&quot;",
+};
+
+/**
+ * A starting heading for a new catalogue, built from the name the owner typed, so the
+ * builder never opens on "+ Add Heading". The name is plain text from a form field, so
+ * it is escaped rather than sanitized.
+ */
+export function headingFromName(name: string | undefined | null): string {
+	const text = (name ?? "").trim().replace(/\s+/g, " ");
+	if (!text) return "";
+	return wrapHeading(
+		text.replace(/[&<>"]/g, (char) => HTML_ESCAPES[char]),
+		DEFAULT_HEADING_SIZE,
+	);
+}
+
 /** The inner markup and the size of a stored heading, whatever shape it is in. */
 export function parseHeading(stored: string | undefined | null): {
 	inner: string;

@@ -50,7 +50,7 @@ export default function ErrorPage({
 							</Button>
 						</>
 					}
-					description="Oh no! An unexpected error occurred. Our team is working to fix it. Let's get you back to creating amazing digital catalogs."
+					description="Oh no! An unexpected error occurred. Our team is working to fix it. Let's get you back to creating amazing digital catalogues."
 					digits={["5", "0"]}
 					eyebrow="Error 500"
 					icon={<TriangleAlert />}

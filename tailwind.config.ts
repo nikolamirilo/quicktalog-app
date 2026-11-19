@@ -75,6 +75,8 @@ const config = withUt(
 					heading: "var(--catalogue-heading)",
 					text: "var(--catalogue-text)",
 					price: "var(--catalogue-price)",
+					"catalogue-sale": "var(--catalogue-sale)",
+					"catalogue-sale-foreground": "var(--catalogue-sale-foreground)",
 					error: "var(--product-error)",
 					"catalogue-button-text": "var(--catalogue-button-text)",
 					"catalogue-card-background": "var(--catalogue-card-background)",

@@ -10,6 +10,7 @@ import {
 	CatalogueDialogTitle,
 	CatalogueSheetContent,
 } from "@/components/catalogue/modals/CatalogueDialog";
+import { SalePill } from "@/components/catalogue/cards/common/SalePill";
 import { ItemPhotoViewer } from "@/components/catalogue/modals/ItemPhotoViewer";
 import { OptimizedImage } from "@/components/general/OptimizedImage";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -199,11 +200,7 @@ function ItemPriceSummary({ price }: { price: ItemPrice }) {
 						<span className="sr-only">Was </span>
 						{price.original} {price.currency}
 					</span>
-					{price.percentOff ? (
-						<span className="inline-flex h-[22px] items-center rounded-[var(--catalogue-pill-radius)] bg-[#d92d20] px-2 text-xs font-bold text-white">
-							−{price.percentOff}%
-						</span>
-					) : null}
+					{price.percentOff ? <SalePill percentOff={price.percentOff} /> : null}
 				</div>
 			)}
 			<p className="flex flex-wrap items-baseline gap-x-1.5">

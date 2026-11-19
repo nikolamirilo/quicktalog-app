@@ -1,17 +1,40 @@
 "use client";
 
-import { createContext, type ReactNode, useContext } from "react";
+import dynamic from "next/dynamic";
+import { createContext, type ReactNode, useContext, useState } from "react";
 
-import { InitCatalogueModal } from "@/components/catalogue/create/InitCatalogueModal";
-import { LimitsModal } from "@/components/modals/LimitsModal";
 import { useCreateCatalogue } from "@/hooks/useCreateCatalogue";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
+
+/**
+ * Both dialogs are needed only after a click, and between them they pull in the
+ * select, searchable-select and alert-dialog primitives plus the currency and
+ * language lists. Kept out of the first load; `prefetchCreateCatalogueDialogs`
+ * warms the chunk from a hover so the click rarely waits for it.
+ */
+const importInitCatalogueModal = () =>
+	import("@/components/catalogue/create/InitCatalogueModal");
+const importLimitsModal = () => import("@/components/modals/LimitsModal");
+
+const InitCatalogueModal = dynamic(
+	() => importInitCatalogueModal().then((m) => m.InitCatalogueModal),
+	{ ssr: false },
+);
+const LimitsModal = dynamic(
+	() => importLimitsModal().then((m) => m.LimitsModal),
+	{ ssr: false },
+);
+
+export function prefetchCreateCatalogueDialogs() {
+	void importInitCatalogueModal();
+	void importLimitsModal();
+}
 
 type CreateCatalogueContextValue = {
 	/**
 	 * Starts creating a catalogue: signed-out visitors go to sign-up, users at
 	 * their catalogue limit see the limits dialog, everyone else gets the
-	 * "Create a Catalog" dialog.
+	 * "Create a Catalogue" dialog.
 	 */
 	openCreateCatalogue: () => void;
 };
@@ -32,32 +55,43 @@ export function CreateCatalogueProvider({ children }: { children: ReactNode }) {
 		limitsModal,
 		setLimitsModal,
 		loading,
+		prefetchBuilder,
 		handleButtonClick,
 		handleCreateCatalogue,
 	} = useCreateCatalogue();
+	// Latched, not `isOpen`: unmounting on close would cut the exit animation.
+	const [dialogsMounted, setDialogsMounted] = useState(false);
+
+	const openCreateCatalogue = () => {
+		setDialogsMounted(true);
+		handleButtonClick();
+	};
 
 	return (
-		<CreateCatalogueContext.Provider
-			value={{ openCreateCatalogue: handleButtonClick }}
-		>
+		<CreateCatalogueContext.Provider value={{ openCreateCatalogue }}>
 			{children}
-			<InitCatalogueModal
-				isOpen={isModalOpen}
-				loading={loading}
-				onCancel={() => setIsModalOpen(false)}
-				onConfirm={handleCreateCatalogue}
-			/>
-			<LimitsModal
-				currentPlan={userData?.currentPlan}
-				isOpen={limitsModal}
-				onClose={() => setLimitsModal(false)}
-				requiredPlan={
-					userData
-						? getRequiredPlan(userData.currentPlan, "catalogue")
-						: undefined
-				}
-				type="catalogue"
-			/>
+			{dialogsMounted && (
+				<>
+					<InitCatalogueModal
+						isOpen={isModalOpen}
+						loading={loading}
+						onCancel={() => setIsModalOpen(false)}
+						onConfirm={handleCreateCatalogue}
+						onNameSettled={prefetchBuilder}
+					/>
+					<LimitsModal
+						currentPlan={userData?.currentPlan}
+						isOpen={limitsModal}
+						onClose={() => setLimitsModal(false)}
+						requiredPlan={
+							userData
+								? getRequiredPlan(userData.currentPlan, "catalogue")
+								: undefined
+						}
+						type="catalogue"
+					/>
+				</>
+			)}
 		</CreateCatalogueContext.Provider>
 	);
 }

@@ -204,14 +204,14 @@ function QuickTemplateArt() {
 	);
 }
 
-/** One pale tile on the Standard Catalog picture. */
+/** One pale tile on the Standard Catalogue picture. */
 function ArtTile({ x, y }: { x: number; y: number }) {
 	return (
 		<rect fill={ART_GREY} height="30.6" rx="0.5" width="28.8" x={x} y={y} />
 	);
 }
 
-/** Standard Catalog: a monitor showing a six tile grid under an amber bar. */
+/** Standard Catalogue: a monitor showing a six tile grid under an amber bar. */
 function StandardTemplateArt() {
 	return (
 		<svg
@@ -221,7 +221,7 @@ function StandardTemplateArt() {
 			width="200"
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<title>Standard Catalog template preview</title>
+			<title>Standard Catalogue template preview</title>
 
 			<rect fill={ART_LILAC} height="33.5" width="50" x="74.5" y="118.5" />
 			<circle cx="99.5" cy="118.5" fill="#FFFFFF" r="5" />
@@ -449,7 +449,7 @@ export function TemplateScreen() {
 									</>
 								}
 								details={["4 categories", "15 items"]}
-								title="Standard Catalog"
+								title="Standard Catalogue"
 								titleSpot={4}
 							>
 								<StandardTemplateArt />
@@ -458,7 +458,7 @@ export function TemplateScreen() {
 							<TemplateCard
 								description={
 									<>
-										Build your catalog exactly the way you
+										Build your catalogue exactly the way you
 										<br />
 										want it
 									</>

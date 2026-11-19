@@ -13,7 +13,7 @@ export const NotFoundContent = () => {
 				</p>
 				<TickList
 					items={[
-						"Beautiful, mobile-friendly catalogs in minutes",
+						"Beautiful, mobile-friendly catalogues in minutes",
 						"Share via QR codes and get real-time analytics",
 						"No coding required - start today",
 					]}

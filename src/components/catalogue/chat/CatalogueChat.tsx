@@ -15,6 +15,11 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
+import { captureEvent, PRODUCT_EVENTS } from "@/lib/analytics/events";
+import {
+	EMPTY_STATE_SUGGESTIONS,
+	startingPrompt,
+} from "@/lib/catalogue/onboarding";
 import { continueList } from "@/lib/format/list-input";
 import { getRequiredPlan } from "@/lib/entitlements/required-plan";
 import { useCatalogueChat } from "@/hooks/useCatalogueChat";
@@ -33,6 +38,9 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
+/** The id the "Import from a photo" suggestion opens; the composer's own file input. */
+export const CHAT_ATTACH_INPUT_ID = "builder-chat-attach";
 
 /** Deliberately industry-neutral (a cuisine-specific suggestion reads as "not for me" to everyone else); each exercises a different tool group. */
 const SUGGESTIONS = [
@@ -194,11 +202,70 @@ const CatalogueChat = ({
 
 	const submit = (text: string) => {
 		if (!canSubmit(text)) return;
+		if (!askedRef.current && isNewCatalogue) {
+			askedRef.current = true;
+			captureEvent(PRODUCT_EVENTS.quickAiFirstUsed, {
+				catalogue_id: (context?.catalogue as { id?: string } | undefined)?.id,
+			});
+		}
 		setDraft("");
 		send(text);
 	};
 
 	const close = () => setIsOpen?.(false);
+
+	/** A catalogue with nothing in it yet: the chat is the way to fill it. */
+	const isNewCatalogue = (context?.catalogue?.content?.length ?? 0) === 0;
+	const askedRef = useRef(false);
+
+	// Opening on an empty catalogue writes the first ask for the owner, so they can
+	// read it, change it, and press send - instead of facing a blank box.
+	const prefilledFor = useRef<string | null>(null);
+	useEffect(() => {
+		const name = context?.catalogue?.name;
+		if (!isOpen || !isNewCatalogue || !name) return;
+		if (prefilledFor.current === name) return;
+		prefilledFor.current = name;
+		setDraft((current) =>
+			current.trim() ? current : startingPrompt(context.catalogue),
+		);
+	}, [isOpen, isNewCatalogue, context?.catalogue]);
+
+	/** The photo suggestion opens the composer's own file picker. */
+	const openAttachPicker = () => {
+		document.getElementById(CHAT_ATTACH_INPUT_ID)?.click();
+	};
+
+	const runSuggestion = (id: "describe" | "photo" | "template") => {
+		if (id === "photo") {
+			openAttachPicker();
+			return;
+		}
+		if (id === "template") {
+			close();
+			context?.setIsTemplatePickerOpen(true);
+			return;
+		}
+		submit(draft.trim() || startingPrompt(context?.catalogue ?? {}));
+	};
+
+	// A generated catalogue arrives on placeholder images, which is the first thing
+	// an owner notices. Offered once, after the turn that filled an empty catalogue.
+	const photoPromptRef = useRef(false);
+	useEffect(() => {
+		if (loading || photoPromptRef.current) return;
+		if (!askedRef.current || isNewCatalogue) return;
+		photoPromptRef.current = true;
+		toast("Your items are using placeholder photos", {
+			description:
+				"Quick AI can find a photo for each one, or you can upload your own.",
+			action: {
+				label: "Add photos",
+				onClick: () => submit("Find and add a photo for every item"),
+			},
+			duration: 12000,
+		});
+	}, [loading, isNewCatalogue, submit]);
 
 	const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (event.key === "Enter" && !event.shiftKey) {
@@ -362,7 +429,9 @@ const CatalogueChat = ({
 								<div className="space-y-5 pt-1">
 									<div className="space-y-1.5">
 										<h3 className="font-product-heading text-base font-extrabold leading-tight text-product-foreground">
-											What should we change?
+											{isNewCatalogue
+												? "Let's build your catalogue"
+												: "What should we change?"}
 										</h3>
 										<p className="text-sm leading-relaxed text-product-foreground-accent">
 											Describe it in your own words - add or remove sections and
@@ -377,25 +446,54 @@ const CatalogueChat = ({
 									</div>
 									<div className="space-y-2">
 										<p className="text-xs font-semibold text-product-muted">
-											Try one of these
+											{isNewCatalogue
+												? "Start with one of these"
+												: "Try one of these"}
 										</p>
 										<ul className="space-y-2">
-											{SUGGESTIONS.map((suggestion) => (
-												<li key={suggestion}>
-													<button
-														className="group flex min-h-11 w-full items-center gap-2.5 rounded-xl border border-product-border bg-product-card px-3.5 py-2.5 text-left text-sm font-medium text-product-foreground transition-[border-color,background-color,transform] duration-200 hover:-translate-y-px hover:border-product-primary hover:bg-product-primary-soft disabled:pointer-events-none disabled:opacity-50 motion-reduce:hover:translate-y-0"
-														disabled={loading || attachments.scanning}
-														onClick={() => submit(suggestion)}
-														type="button"
-													>
-														<ArrowUp
-															aria-hidden="true"
-															className="h-4 w-4 shrink-0 text-product-primary-ink"
-														/>
-														<span>{suggestion}</span>
-													</button>
-												</li>
-											))}
+											{/*
+											 * An empty catalogue gets suggestions that make content.
+											 * The usual ones ("Raise every price by 10%") assume
+											 * there is already something to change.
+											 */}
+											{isNewCatalogue
+												? EMPTY_STATE_SUGGESTIONS.map((suggestion) => (
+														<li key={suggestion.id}>
+															<button
+																className="group flex min-h-11 w-full flex-col items-start gap-0.5 rounded-xl border border-product-border bg-product-card px-3.5 py-2.5 text-left transition-[border-color,background-color,transform] duration-200 hover:-translate-y-px hover:border-product-primary hover:bg-product-primary-soft disabled:pointer-events-none disabled:opacity-50 motion-reduce:hover:translate-y-0"
+																disabled={loading || attachments.scanning}
+																onClick={() => runSuggestion(suggestion.id)}
+																type="button"
+															>
+																<span className="flex items-center gap-2.5 text-sm font-semibold text-product-foreground">
+																	<ArrowUp
+																		aria-hidden="true"
+																		className="h-4 w-4 shrink-0 text-product-primary-ink"
+																	/>
+																	{suggestion.label}
+																</span>
+																<span className="pl-[26px] text-xs leading-snug text-product-muted">
+																	{suggestion.hint}
+																</span>
+															</button>
+														</li>
+													))
+												: SUGGESTIONS.map((suggestion) => (
+														<li key={suggestion}>
+															<button
+																className="group flex min-h-11 w-full items-center gap-2.5 rounded-xl border border-product-border bg-product-card px-3.5 py-2.5 text-left text-sm font-medium text-product-foreground transition-[border-color,background-color,transform] duration-200 hover:-translate-y-px hover:border-product-primary hover:bg-product-primary-soft disabled:pointer-events-none disabled:opacity-50 motion-reduce:hover:translate-y-0"
+																disabled={loading || attachments.scanning}
+																onClick={() => submit(suggestion)}
+																type="button"
+															>
+																<ArrowUp
+																	aria-hidden="true"
+																	className="h-4 w-4 shrink-0 text-product-primary-ink"
+																/>
+																<span>{suggestion}</span>
+															</button>
+														</li>
+													))}
 										</ul>
 									</div>
 								</div>
@@ -459,6 +557,7 @@ const CatalogueChat = ({
 							<div className="flex items-end gap-1.5 rounded-2xl border-[1.5px] border-product-border-strong bg-product-card p-1.5 transition-[border-color,box-shadow] duration-200 focus-within:border-product-primary focus-within:ring-4 focus-within:ring-product-primary/25 hover:border-product-border-hover focus-within:hover:border-product-primary">
 								<ChatAttachButton
 									disabled={loading}
+									inputId={CHAT_ATTACH_INPUT_ID}
 									onAttach={attachments.attach}
 								/>
 								<Textarea

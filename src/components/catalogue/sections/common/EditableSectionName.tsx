@@ -49,8 +49,9 @@ export function EditableSectionName({
 				title="Rename this section"
 				type="button"
 			>
-				<span className="relative min-w-0 truncate">
-					{name}
+				{/* Truncation sits on the inner span: its overflow:hidden would clip the underline below it. */}
+				<span className="relative min-w-0">
+					<span className="block truncate">{name}</span>
 					<span
 						aria-hidden="true"
 						className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-catalogue-category-accent"

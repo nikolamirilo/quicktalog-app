@@ -30,21 +30,29 @@ function getPriceAmounts(prices: PricePreviewResponse) {
  * Localised plan prices from Paddle. `loading` is true until a preview
  * settles; `unavailable` turns true when Paddle is blocked, fails, or has not
  * answered within a few seconds, so callers can stop showing a loading state.
+ *
+ * `initial` is what the server already rendered into the HTML (USD). Starting from
+ * it means nobody ever sees a dash where a price should be - the localised preview
+ * replaces it when Paddle.js answers, and takes over entirely if it never does.
  */
 export function usePaddlePrices(
 	paddle: Paddle | undefined,
 	country: string,
+	initial: PaddlePrices = {},
+	enabled = true,
 ): { prices: PaddlePrices; loading: boolean; unavailable: boolean } {
-	const [prices, setPrices] = useState<PaddlePrices>({});
+	const [prices, setPrices] = useState<PaddlePrices>(initial);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [failed, setFailed] = useState(false);
 	const [timedOut, setTimedOut] = useState(false);
 
-	// Paddle.js may never load (ad blockers, offline); don't wait forever.
+	// Paddle.js may never load (ad blockers, offline); don't wait forever. The
+	// clock starts with the load, or a deferred view would time out before it.
 	useEffect(() => {
+		if (!enabled) return;
 		const timer = setTimeout(() => setTimedOut(true), PRICE_TIMEOUT_MS);
 		return () => clearTimeout(timer);
-	}, []);
+	}, [enabled]);
 
 	useEffect(() => {
 		if (!paddle) return;

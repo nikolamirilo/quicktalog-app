@@ -36,8 +36,8 @@ const LimitsOverlay = ({
 			>
 				{type === "branding" ? (
 					<>
-						Make your catalog truly yours. Add your logo and brand details, and
-						customize the header and footer. <br />
+						Make your catalogue truly yours. Add your logo and brand details,
+						and customize the header and footer. <br />
 						Upgrade your plan to unlock this feature.
 					</>
 				) : (

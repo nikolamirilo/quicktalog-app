@@ -37,11 +37,11 @@ const sections: LegalSectionContent[] = [
 					</li>
 					<li>
 						<strong>"Service"</strong> refers to the Quicktalog platform,
-						including the website, the catalog builder, hosted catalog pages,
-						and any related tools or features.
+						including the website, the catalogue builder, hosted catalogue
+						pages, and any related tools or features.
 					</li>
 					<li>
-						<strong>"Catalog"</strong> refers to the digital catalog content
+						<strong>"Catalogue"</strong> refers to the digital catalogue content
 						created by a user using the Service.
 					</li>
 					<li>
@@ -235,30 +235,30 @@ const sections: LegalSectionContent[] = [
 			<>
 				<p>
 					You retain full ownership of the content you upload to Quicktalog,
-					including product descriptions, images, pricing, and any other catalog
-					material (<strong>"Your Content"</strong>). By uploading Your Content,
-					you grant us a worldwide, non-exclusive, royalty-free license to host,
-					store, display, reproduce, and deliver Your Content solely to operate
-					the Service, including showing your catalog to people you share it
-					with. This license ends when you delete the content or close your
-					account, except where retention is required by law or for backup
-					purposes.
+					including product descriptions, images, pricing, and any other
+					catalogue material (<strong>"Your Content"</strong>). By uploading
+					Your Content, you grant us a worldwide, non-exclusive, royalty-free
+					license to host, store, display, reproduce, and deliver Your Content
+					solely to operate the Service, including showing your catalogue to
+					people you share it with. This license ends when you delete the
+					content or close your account, except where retention is required by
+					law or for backup purposes.
 				</p>
 				<p>
 					If you are on a <strong>free plan</strong>, you additionally grant us
 					a non-exclusive, royalty-free license to display, reproduce, and
-					reference your catalog (including its name, appearance, and publicly
+					reference your catalogue (including its name, appearance, and publicly
 					visible content) in our marketing materials, website, social media,
 					and other promotional channels for the purpose of showcasing the
-					Service. We will not present your catalog in a misleading way or
+					Service. We will not present your catalogue in a misleading way or
 					attribute it to someone else. You can opt out of this at any time by
 					upgrading to a paid plan or by contacting us at {EMAIL_LINK}.
 				</p>
 				<p>
 					You're solely responsible for Your Content. You confirm that you have
 					the rights to upload, display, and share everything you add to your
-					catalogs, and that none of it infringes the rights of any third party
-					or violates any law.
+					catalogues, and that none of it infringes the rights of any third
+					party or violates any law.
 				</p>
 			</>
 		),
@@ -346,7 +346,7 @@ const sections: LegalSectionContent[] = [
 				<p>
 					Quicktalog is committed to maintaining a safe and lawful platform. The
 					following types of content are strictly prohibited from being uploaded
-					or shared through catalogs created on our platform:
+					or shared through catalogues created on our platform:
 				</p>
 				<ul>
 					<li>
@@ -381,11 +381,12 @@ const sections: LegalSectionContent[] = [
 					</li>
 				</ul>
 				<LegalCallout tone="danger">
-					<strong>Automatic Deletion Policy:</strong> Catalogs found to contain
-					any prohibited content will be automatically deleted from our platform
-					without prior notice. Users who repeatedly violate this policy may
-					have their accounts permanently suspended. We reserve the right to
-					report illegal content to appropriate law enforcement authorities.
+					<strong>Automatic Deletion Policy:</strong> Catalogues found to
+					contain any prohibited content will be automatically deleted from our
+					platform without prior notice. Users who repeatedly violate this
+					policy may have their accounts permanently suspended. We reserve the
+					right to report illegal content to appropriate law enforcement
+					authorities.
 				</LegalCallout>
 			</>
 		),
@@ -620,8 +621,8 @@ export default function TermsAndConditionsPage() {
 				<>
 					Welcome to Quicktalog ({SITE_LINK}), your go-to software-as-a-service
 					(SaaS) platform for creating and sharing mobile-friendly digital
-					catalogs. By using our service, you agree to these terms. If you don't
-					agree, please don't use the platform.
+					catalogues. By using our service, you agree to these terms. If you
+					don't agree, please don't use the platform.
 				</>
 			}
 			sections={sections}

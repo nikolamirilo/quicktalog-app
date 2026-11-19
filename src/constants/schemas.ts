@@ -7,6 +7,9 @@ import {
 	isUploadedLogoUrl,
 	LOGO_URL_MAX,
 } from "@/lib/qr/design";
+import { parsePrice } from "@/lib/format/price";
+import { standardTiers } from "./pricing";
+import { pricingFaqs } from "./pricingFaqs";
 import { faqs } from "./details";
 
 const organizationSchema = {
@@ -36,7 +39,7 @@ const websiteSchema = {
 	name: "Quicktalog",
 	url: "https://www.quicktalog.app",
 	description:
-		"Create stunning digital catalogs in minutes with our free online catalog maker. Perfect for restaurants, salons, gyms, retail & more.",
+		"Create stunning digital catalogues in minutes with our free online catalogue maker. Perfect for restaurants, salons, gyms, retail & more.",
 	publisher: {
 		"@type": "Organization",
 		name: "Quicktalog",
@@ -52,9 +55,9 @@ const websiteSchema = {
 const homePageSchema = {
 	"@context": "https://schema.org",
 	"@type": "WebPage",
-	name: "Quicktalog - Create Stunning Digital Catalogs in Minutes",
+	name: "Quicktalog - Create Stunning Digital Catalogues in Minutes",
 	description:
-		"The best free online catalog maker for businesses. Turn your services, menus, or products into an interactive, mobile-friendly digital catalog. No code or design skills required.",
+		"The best free online catalogue maker for businesses. Turn your services, menus, or products into an interactive, mobile-friendly digital catalogue. No code or design skills required.",
 	url: "https://www.quicktalog.app",
 	mainEntity: {
 		"@type": "SoftwareApplication",
@@ -62,7 +65,7 @@ const homePageSchema = {
 		applicationCategory: "BusinessApplication",
 		operatingSystem: "Web Browser",
 		description:
-			"Free online catalog maker for creating interactive digital catalogs",
+			"Free online catalogue maker for creating interactive digital catalogues",
 		offers: {
 			"@type": "Offer",
 			price: "0",
@@ -70,8 +73,8 @@ const homePageSchema = {
 			description: "Free plan available",
 		},
 		featureList: [
-			"AI-powered catalog creation",
-			"OCR import from paper catalogs",
+			"AI-powered catalogue creation",
+			"OCR import from paper catalogues",
 			"Mobile-friendly design",
 			"QR code sharing",
 			"Real-time analytics",
@@ -82,46 +85,73 @@ const homePageSchema = {
 	},
 };
 
-const pricingPageSchema = {
+/** A plan's monthly offer, priced from what the server fetched; free plans are $0. */
+function tierOffer(
+	tier: (typeof standardTiers)[number],
+	prices: Record<string, string>,
+) {
+	const formatted = prices[tier.priceId.month];
+	const amount = formatted ? parsePrice(formatted)?.amount : undefined;
+	return {
+		"@type": "Offer",
+		name: `${tier.name} plan`,
+		price: String(amount ?? 0),
+		priceCurrency: "USD",
+		url: "https://www.quicktalog.app/pricing",
+		priceSpecification: {
+			"@type": "UnitPriceSpecification",
+			price: String(amount ?? 0),
+			priceCurrency: "USD",
+			billingDuration: 1,
+			billingIncrement: 1,
+			unitCode: "MON",
+		},
+		description: tier.description,
+	};
+}
+
+/** Questions and answers as structured data; the same ones the page renders. */
+const faqSchema = (items: { question: string; answer: string }[]) => ({
+	"@type": "FAQPage",
+	mainEntity: items.map((item) => ({
+		"@type": "Question",
+		name: item.question,
+		acceptedAnswer: { "@type": "Answer", text: item.answer },
+	})),
+});
+
+/**
+ * The pricing page. The offers are built from the real tiers and the prices the
+ * server fetched, so a rich result shows what the page shows; they used to be two
+ * hardcoded entries ($0 and $10) that matched no plan on sale.
+ */
+const pricingPageSchema = (prices: Record<string, string> = {}) => ({
 	"@context": "https://schema.org",
-	"@type": "WebPage",
-	name: "Pricing - Simple, Transparent Pricing | Quicktalog",
-	description:
-		"Start with our free online catalog maker and upgrade as you grow. No hidden fees. Access professional catalog templates, AI generation, OCR import, and analytics.",
-	url: "https://www.quicktalog.app/pricing",
-	mainEntity: {
-		"@type": "Product",
-		name: "Quicktalog Digital Catalogue Creation Service",
-		description: "Digital catalog creation and management service",
-		offers: [
-			{
-				"@type": "Offer",
-				name: "Free Plan",
-				price: "0",
-				priceCurrency: "USD",
-				description: "One digital catalog with basic features",
+	"@graph": [
+		{
+			"@type": "WebPage",
+			name: "Pricing - Simple, Transparent Pricing | Quicktalog",
+			description:
+				"Start with our free online catalogue maker and upgrade as you grow. No hidden fees. Access professional catalogue templates, AI generation, OCR import, and analytics.",
+			url: "https://www.quicktalog.app/pricing",
+			mainEntity: {
+				"@type": "Product",
+				name: "Quicktalog",
+				description:
+					"Digital catalogue creation and management, from a free plan upwards.",
+				offers: standardTiers.map((tier) => tierOffer(tier, prices)),
 			},
-			{
-				"@type": "Offer",
-				name: "Pro Plan",
-				price: "10",
-				priceCurrency: "USD",
-				priceSpecification: {
-					"@type": "RecurringPaymentsPriceSpecification",
-					billingDuration: "P1M",
-				},
-				description: "Multiple catalogs with advanced features",
-			},
-		],
-	},
-};
+		},
+		faqSchema(pricingFaqs),
+	],
+});
 
 const contactPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "ContactPage",
 	name: "Contact Us - Get Help with Your Digital Catalogue | Quicktalog",
 	description:
-		"Need help creating your digital catalog? Contact our support team for assistance with setup, customization, and getting the most out of Quicktalog.",
+		"Need help creating your digital catalogue? Contact our support team for assistance with setup, customization, and getting the most out of Quicktalog.",
 	url: "https://www.quicktalog.app/contact",
 	mainEntity: {
 		"@type": "Organization",
@@ -140,14 +170,14 @@ const demoPageSchema = {
 	"@type": "WebPage",
 	name: "Try the Demo - Test Our Catalogue Maker | Quicktalog",
 	description:
-		"Try our free online catalog maker in the demo. Create a sample catalog and see how easy it is to build professional digital catalogs.",
+		"Try our free online catalogue maker in the demo. Create a sample catalogue and see how easy it is to build professional digital catalogues.",
 	url: "https://www.quicktalog.app/demo",
 	mainEntity: {
 		"@type": "SoftwareApplication",
 		name: "Quicktalog Demo",
 		applicationCategory: "BusinessApplication",
 		operatingSystem: "Web Browser",
-		description: "Interactive demo of Quicktalog's digital catalog maker",
+		description: "Interactive demo of Quicktalog's digital catalogue maker",
 		offers: {
 			"@type": "Offer",
 			price: "0",
@@ -160,14 +190,14 @@ const demoPageSchema = {
 const showcasesPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
-	name: "Showcases - See Digital Catalogs in Action | Quicktalog",
+	name: "Showcases - See Digital Catalogues in Action | Quicktalog",
 	description:
-		"Explore real examples of digital catalogs created with Quicktalog. See how businesses use our platform to showcase their products and services.",
+		"Explore real examples of digital catalogues created with Quicktalog. See how businesses use our platform to showcase their products and services.",
 	url: "https://www.quicktalog.app/showcases",
 	mainEntity: {
 		"@type": "ItemList",
 		name: "Digital Catalogue Examples",
-		description: "Real examples of digital catalogs created with Quicktalog",
+		description: "Real examples of digital catalogues created with Quicktalog",
 	},
 };
 const helpPageSchema = {
@@ -175,7 +205,7 @@ const helpPageSchema = {
 	"@type": "FAQPage",
 	name: "Help Center - FAQs, Guides & Support | Quicktalog",
 	description:
-		"Visit the Quicktalog Help Center to find FAQs, step-by-step guides, and support resources to make the most out of your digital catalog.",
+		"Visit the Quicktalog Help Center to find FAQs, step-by-step guides, and support resources to make the most out of your digital catalogue.",
 	url: "https://www.quicktalog.app/help",
 	mainEntity: faqs.map((faq) => ({
 		"@type": "Question",
@@ -207,7 +237,7 @@ const authenticationPageSchema = {
 	"@type": "WebPage",
 	name: "Login & Sign Up - Access Your Quicktalog Account",
 	description:
-		"Log in or create a Quicktalog account to start building and managing your digital catalogs. Secure authentication with modern encryption.",
+		"Log in or create a Quicktalog account to start building and managing your digital catalogues. Secure authentication with modern encryption.",
 	url: "https://www.quicktalog.app/auth",
 	potentialAction: [
 		{
@@ -224,15 +254,15 @@ const authenticationPageSchema = {
 const articlesPageSchema = {
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
-	name: "Quicktalog Blog - Guides for Digital Menus & Catalogs",
+	name: "Quicktalog Blog - Guides for Digital Menus & Catalogues",
 	description:
-		"Practical guides on digital menus, product catalogs, QR codes, and growing your business with Quicktalog.",
+		"Practical guides on digital menus, product catalogues, QR codes, and growing your business with Quicktalog.",
 	url: "https://www.quicktalog.app/articles",
 	mainEntity: {
 		"@type": "ItemList",
 		name: "Quicktalog articles",
 		description:
-			"Guides and use cases for digital menus and catalogs created with Quicktalog.",
+			"Guides and use cases for digital menus and catalogues created with Quicktalog.",
 	},
 };
 
@@ -345,7 +375,7 @@ const releaseNotesPageSchema = {
 	"@type": "CollectionPage",
 	name: "Release Notes - What's New in Quicktalog",
 	description:
-		"See what's new, improved, and fixed in Quicktalog. Track every update to the digital catalog builder, AI tools, and analytics.",
+		"See what's new, improved, and fixed in Quicktalog. Track every update to the digital catalogue builder, AI tools, and analytics.",
 	url: "https://www.quicktalog.app/release-notes",
 	mainEntity: {
 		"@type": "ItemList",
@@ -354,10 +384,30 @@ const releaseNotesPageSchema = {
 	},
 };
 
-export function getPageSchema(page: string) {
+/**
+ * Structured data for a page. `prices` are the server-rendered plan prices; pages
+ * that do not show prices ignore them.
+ */
+export function getPageSchema(
+	page: string,
+	prices: Record<string, string> = {},
+) {
 	const schemas = {
-		home: homePageSchema,
-		pricing: pricingPageSchema,
+		home: {
+			"@context": "https://schema.org",
+			"@graph": [
+				homePageSchema,
+				faqSchema(faqs),
+				{
+					"@type": "Product",
+					name: "Quicktalog",
+					description:
+						"Digital catalogue creation and management, from a free plan upwards.",
+					offers: standardTiers.map((tier) => tierOffer(tier, prices)),
+				},
+			],
+		},
+		pricing: pricingPageSchema(prices),
 		contact: contactPageSchema,
 		demo: demoPageSchema,
 		showcases: showcasesPageSchema,

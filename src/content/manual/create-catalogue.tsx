@@ -45,7 +45,7 @@ const meta = {
 		"start a catalogue",
 		"new menu",
 		"set up",
-		"make a catalog",
+		"make a catalogue",
 	],
 	related: ["builder-basics", "manage-catalogues", "plans"],
 } satisfies ManualPage["meta"];
@@ -82,7 +82,7 @@ function Body() {
 						>
 							<p>
 								Its tooltip reads <PlaceName>Create catalogue</PlaceName>. The{" "}
-								<PlaceName>Create a Catalog</PlaceName> dialog opens.
+								<PlaceName>Create a Catalogue</PlaceName> dialog opens.
 							</p>
 						</Step>
 						<Step
@@ -106,7 +106,7 @@ function Body() {
 						<Step spot={4} title="Choose your business type">
 							<p>
 								This is the only answer with nothing filled in, so the{" "}
-								<ButtonName>Create Catalog</ButtonName> button stays switched
+								<ButtonName>Create Catalogue</ButtonName> button stays switched
 								off until you pick one.
 							</p>
 						</Step>
@@ -114,7 +114,7 @@ function Body() {
 							done="A toast confirms the catalogue was created, and the builder opens."
 							title={
 								<>
-									Select <ButtonName>Create Catalog</ButtonName>
+									Select <ButtonName>Create Catalogue</ButtonName>
 								</>
 							}
 						>
@@ -215,7 +215,7 @@ function Body() {
 							"Two sections with three example items each, and all prices set to 0. Chosen for you by default.",
 						],
 						[
-							<PlaceName key="t">Standard Catalog</PlaceName>,
+							<PlaceName key="t">Standard Catalogue</PlaceName>,
 							"Five sections and fifteen example items with example prices. The card says four categories, but there are five sections.",
 						],
 						[
@@ -226,7 +226,7 @@ function Body() {
 				/>
 				<Note
 					kind="warn"
-					title="Standard Catalog fills a Starter plan completely"
+					title="Standard Catalogue fills a Starter plan completely"
 				>
 					<p>
 						Its five sections and fifteen items are exactly what the Starter
@@ -297,7 +297,7 @@ function Body() {
 						{
 							text: "A catalogue with this name already exists",
 							cause:
-								"The name was taken between your typing it and selecting Create Catalog.",
+								"The name was taken between your typing it and selecting Create Catalogue.",
 							fix: "Change the name and try again. The dialog stays open with your other answers.",
 						},
 						{
@@ -317,7 +317,7 @@ function Body() {
 					<p>
 						If the availability check itself fails, no hint appears at all and
 						the dialog lets you carry on. The answer then comes from the server
-						when you select <ButtonName>Create Catalog</ButtonName>. Seeing no{" "}
+						when you select <ButtonName>Create Catalogue</ButtonName>. Seeing no{" "}
 						<Message>Great! This name is available.</Message> line does not mean
 						the name is taken.
 					</p>

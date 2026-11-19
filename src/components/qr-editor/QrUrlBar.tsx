@@ -57,7 +57,7 @@ export function QrUrlBar({ url }: { url: string }) {
 			</div>
 			<p className="mx-1 mt-2 flex items-start gap-1.5 text-[12.5px] leading-snug text-product-muted">
 				<Info aria-hidden="true" className="mt-px h-3.5 w-3.5 shrink-0" />
-				This QR code links to your catalog. The URL cannot be changed.
+				This QR code links to your catalogue. The URL cannot be changed.
 			</p>
 		</div>
 	);

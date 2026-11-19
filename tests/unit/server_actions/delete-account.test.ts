@@ -30,9 +30,6 @@ vi.mock("@/lib/cache/revalidate", () => ({
 	revalidateCatalogue: mocks.revalidateCatalogue,
 	revalidateDashboard: vi.fn(),
 }));
-vi.mock("@/lib/catalogue/draft-cache", () => ({
-	deleteDrafts: vi.fn(async () => {}),
-}));
 vi.mock("@/utils/supabase/auth-admin", () => ({
 	authAdmin: () => ({ deleteUser: mocks.deleteUser }),
 }));

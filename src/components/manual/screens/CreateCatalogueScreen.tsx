@@ -43,14 +43,14 @@ function DialogSelect({
 }
 
 /**
- * The "Create a Catalog" dialog: a 600px card floating on the blurred, dimmed
+ * The "Create a Catalogue" dialog: a 600px card floating on the blurred, dimmed
  * page behind it. Four fields in two columns, the name carrying its own
  * availability line, then the address preview and the two buttons.
  */
 export function CreateCatalogueScreen() {
 	return (
 		<Screen
-			caption="The Create a Catalog dialog. It asks for four things, shows the web address your name will give you, and creates the catalogue."
+			caption="The Create a Catalogue dialog. It asks for four things, shows the web address your name will give you, and creates the catalogue."
 			height={480}
 			legend={[
 				"The title and the line under it, which say what the dialog is for",
@@ -70,7 +70,7 @@ export function CreateCatalogueScreen() {
 						<div className="relative flex min-w-0 flex-col gap-1">
 							<SpotMarker n={1} />
 							<p className="font-product-heading text-[20px] font-bold leading-tight tracking-[-0.02em] text-product-foreground">
-								Create a Catalog
+								Create a Catalogue
 							</p>
 							<p className="text-[14px] leading-relaxed text-product-foreground-accent">
 								Please enter the following information to get started
@@ -136,7 +136,7 @@ export function CreateCatalogueScreen() {
 						</Btn>
 						<span className="relative">
 							<SpotMarker n={6} />
-							<Btn className="h-11 px-[22px] text-[15px]">Create Catalog</Btn>
+							<Btn className="h-11 px-[22px] text-[15px]">Create Catalogue</Btn>
 						</span>
 					</div>
 				</div>

@@ -189,7 +189,7 @@ export function PublishedScreen() {
 			caption="A published catalogue on a 390px phone, drawn from the top of the page down to the footer's brand block. Customers can fold a section away, tap an item for a larger view, and search if you switched the search bar on."
 			height={1280}
 			legend={[
-				"The navbar sticks below the top edge as customers scroll. On a phone it holds your logo and the menu button only; the email icon and the Create Your Catalog button move into the menu and come back on wider screens.",
+				"The navbar sticks below the top edge as customers scroll. On a phone it holds your logo and the menu button only; the email icon and the Create Your Catalogue button move into the menu and come back on wider screens.",
 				"Your heading, centred at 30px in normal weight. It turns bold only where you made the words bold yourself.",
 				"The search bar appears only if you switched it on. The slash key badge next to it is hidden on phones.",
 				"Tap a section bar to fold the section away. Open, the title is underlined and the chevron points up; folded, like Coffee & drinks below it, the chevron points down and the items are gone.",

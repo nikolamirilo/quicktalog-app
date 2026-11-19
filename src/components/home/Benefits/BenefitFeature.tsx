@@ -8,20 +8,20 @@ const features = [
 		icon: PenLine,
 		title: "Professional Catalogue Templates",
 		description:
-			"Choose from a variety of professionally designed catalog templates that look great on any device.",
+			"Choose from a variety of professionally designed catalogue templates that look great on any device.",
 	},
 	{
 		icon: Smartphone,
 		title: "Mobile-First Design",
 		description:
-			"Your catalog will look amazing on smartphones, tablets, and desktops, guaranteed.",
+			"Your catalogue will look amazing on smartphones, tablets, and desktops, guaranteed.",
 		highlight: true,
 	},
 	{
 		icon: Share2,
 		title: "Easy Sharing",
 		description:
-			"Share your catalog with a simple link or QR code. No app downloads required.",
+			"Share your catalogue with a simple link or QR code. No app downloads required.",
 	},
 ];
 
@@ -45,7 +45,7 @@ export function BenefitFeature() {
 					Look Professional, Build Trust
 				</h3>
 				<p className="max-w-[52ch] text-[17px] leading-[1.65] text-product-foreground-accent">
-					Your catalog is often the first impression a customer has of your
+					Your catalogue is often the first impression a customer has of your
 					business. Make it a great one with a beautiful, mobile-friendly design
 					that builds trust and drives sales.
 				</p>

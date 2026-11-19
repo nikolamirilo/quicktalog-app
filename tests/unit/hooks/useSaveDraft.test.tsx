@@ -1,7 +1,16 @@
 // @vitest-environment happy-dom
 import { act, cleanup, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	afterAll,
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 
 const mocks = vi.hoisted(() => ({
 	updateCatalogue: vi.fn(),
@@ -15,18 +24,44 @@ vi.mock("@/actions/catalogue", () => ({
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mocks.push }) }));
 vi.mock("sonner", () => ({ toast: { error: mocks.toastError } }));
 
+import { BuilderStatusProvider } from "@/context/BuilderStatusContext";
 import {
 	CatalogueContextProvider,
 	useCatalogueContext,
 } from "@/context/CatalogueContext";
+import { useAutosave } from "@/hooks/useAutosave";
 import { useKeepAiChanges } from "@/hooks/useKeepAiChanges";
 import { useSaveDraft } from "@/hooks/useSaveDraft";
 import { useUpgrade } from "@/hooks/useUpgrade";
 
+// The builder flushes anything still unsaved when it unmounts, through the draft
+// route. Nothing here is testing that request, and a unit test must not make one.
+beforeAll(() => {
+	vi.stubGlobal(
+		"fetch",
+		vi.fn(async () => new Response("{}")),
+	);
+	Object.defineProperty(navigator, "sendBeacon", {
+		configurable: true,
+		value: vi.fn(() => true),
+	});
+});
+afterAll(() => vi.unstubAllGlobals());
+
 afterEach(cleanup);
 
+/** The builder's autosave, which is the one save path these hooks go through. */
+const Autosave = ({ children }: { children: ReactNode }) => {
+	const status = useAutosave({ draftUpdatedAt: null, unpublished: false });
+	return (
+		<BuilderStatusProvider value={status}>{children}</BuilderStatusProvider>
+	);
+};
+
 const wrapper = ({ children }: { children: ReactNode }) => (
-	<CatalogueContextProvider>{children}</CatalogueContextProvider>
+	<CatalogueContextProvider>
+		<Autosave>{children}</Autosave>
+	</CatalogueContextProvider>
 );
 
 const useAll = () => ({
@@ -59,6 +94,15 @@ const seeded = () => {
 	return hook;
 };
 
+const editByHand = (hook: ReturnType<typeof seeded>) =>
+	act(() => {
+		hook.result.current.context.addItem("drinks", {
+			id: "latte",
+			name: "Latte",
+			price: 3,
+		} as never);
+	});
+
 const editByAi = (hook: ReturnType<typeof seeded>) =>
 	act(() => {
 		hook.result.current.context.applyAiOperations(
@@ -75,7 +119,10 @@ const editByAi = (hook: ReturnType<typeof seeded>) =>
 
 describe("useSaveDraft", () => {
 	beforeEach(() => {
-		mocks.updateCatalogue.mockReset().mockResolvedValue({ success: true });
+		mocks.updateCatalogue.mockReset().mockResolvedValue({
+			success: true,
+			draftUpdatedAt: "2026-11-19T10:00:00Z",
+		});
 		mocks.push.mockReset();
 		mocks.toastError.mockReset();
 	});
@@ -90,7 +137,7 @@ describe("useSaveDraft", () => {
 
 	it("saves and marks saved", async () => {
 		const hook = seeded();
-		editByAi(hook);
+		editByHand(hook);
 		await act(async () => {
 			await hook.result.current.save();
 		});
@@ -104,7 +151,7 @@ describe("useSaveDraft", () => {
 			error: "Your plan allows 30 items per catalogue",
 		});
 		const hook = seeded();
-		editByAi(hook);
+		editByHand(hook);
 		let result: unknown;
 		await act(async () => {
 			result = await hook.result.current.save();
@@ -115,11 +162,26 @@ describe("useSaveDraft", () => {
 		});
 		expect(hook.result.current.context.isDirty).toBe(true);
 	});
+
+	// A proposal is not the owner's work until they press Keep, so saving it would
+	// make Reject put back something that was already stored.
+	it("leaves a Quick AI proposal unsaved", async () => {
+		const hook = seeded();
+		editByAi(hook);
+		await act(async () => {
+			expect(await hook.result.current.save()).toEqual({ ok: true });
+		});
+		expect(mocks.updateCatalogue).not.toHaveBeenCalled();
+		expect(hook.result.current.context.isDirty).toBe(true);
+	});
 });
 
 describe("useKeepAiChanges", () => {
 	beforeEach(() => {
-		mocks.updateCatalogue.mockReset().mockResolvedValue({ success: true });
+		mocks.updateCatalogue.mockReset().mockResolvedValue({
+			success: true,
+			draftUpdatedAt: "2026-11-19T10:00:00Z",
+		});
 	});
 
 	it("Keep saves the AI changes", async () => {
@@ -136,14 +198,17 @@ describe("useKeepAiChanges", () => {
 
 describe("useUpgrade", () => {
 	beforeEach(() => {
-		mocks.updateCatalogue.mockReset().mockResolvedValue({ success: true });
+		mocks.updateCatalogue.mockReset().mockResolvedValue({
+			success: true,
+			draftUpdatedAt: "2026-11-19T10:00:00Z",
+		});
 		mocks.push.mockReset();
 		mocks.toastError.mockReset();
 	});
 
 	it("saves before leaving", async () => {
 		const hook = seeded();
-		editByAi(hook);
+		editByHand(hook);
 		await act(async () => {
 			await hook.result.current.upgrade();
 		});
@@ -158,7 +223,7 @@ describe("useUpgrade", () => {
 		});
 		const open = vi.spyOn(window, "open").mockReturnValue(null);
 		const hook = seeded();
-		editByAi(hook);
+		editByHand(hook);
 		await act(async () => {
 			await hook.result.current.upgrade();
 		});

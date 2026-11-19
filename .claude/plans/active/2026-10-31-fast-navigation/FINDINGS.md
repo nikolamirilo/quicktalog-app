@@ -26,8 +26,8 @@ The browser waits longer than these numbers: they leave out the browser-to-serve
 ## F2. The server functions run in the US, the database in Ireland
 
 - Vercel project `quicktalog`: `serverlessFunctionRegion: "iad1"` (Washington DC), `fluid: false`.
-- TEST Supabase: `region: "eu-west-1"` (Ireland). **PROD region not checked** (needs the owner's go-ahead or a look at the dashboard).
-- Every database statement crosses the Atlantic. A typical us-east-1 ↔ eu-west-1 round trip is ~70 ms (published AWS figure, not measured here).
+- TEST Supabase: `region: "eu-west-1"` (Ireland). PROD Supabase: `region: "eu-central-1"` (Frankfurt) - read from the project list on 2026-11-19, metadata only, no PROD data queried. **The two are not in the same region**, which is why D1's destination is `fra1` and not `dub1`.
+- Every database statement crosses the Atlantic. A typical us-east-1 ↔ eu-west-1 round trip is ~70 ms and us-east-1 ↔ eu-central-1 ~90 ms (published AWS figures, not measured here), so PROD pays the larger one.
 - Each `withUser` block is a transaction (`src/utils/db/rls.ts:26`): `BEGIN`, the `set_config` statement, its queries, then `COMMIT`. Every step waits for the one before it.
 - The critical path of one dashboard render:
   - the admin layout's consent check (`src/app/admin/layout.tsx:23-27`, `lib/auth/consent.ts:40`): 4 round trips;
@@ -71,3 +71,23 @@ The browser waits longer than these numbers: they leave out the browser-to-serve
 - The dashboard's own client code is split per tab (`components/dashboard/Dashboard.tsx:16-35`).
 - Middleware's maintenance flag read (`middleware.ts:30`): sub-10 ms on most requests (`http.server.middleware` p50 8 ms when it makes no auth call).
 - Bundle weight on the public site (63 scripts in one trace) is real but belongs to [codebase-cleanup](../2026-10-25-codebase-cleanup/PLAN.md).
+
+## Re-verification, 2026-11-19
+
+Checked against the working tree (branch `test`): `vercel.json` still sets no region and no
+`fluid`; `src/app/loading.tsx` is still the full-screen spinner; there is no `useLinkStatus`
+and no progress bar anywhere in `src/`; `src/context/UserContext.tsx:37` still calls the
+`getUserData` server action on mount; `src/actions/users.ts:26` still schedules
+`sendWelcomeEmailOnce` unconditionally; `src/components/auth/session/SupabaseAuthProvider.tsx:46`
+still starts `seenUserId` at `null`, so the first auth event still counts as a change. F1-F6
+all stand.
+
+Sentry trace `82c99fa8064042ad8fbd3aa9f3fe5d10` (2026-11-16, `/admin/dashboard`, 205 spans)
+shows the whole pattern in one 15.3 s pageload:
+
+- `GET /admin/dashboard` **4.84 s** - the first server render, with a 1.22 s `http.client` span inside it;
+- then a nested `GET /admin/dashboard` **3.56 s** - the second full render, the `router.refresh()` of F4;
+- `POST /admin/dashboard` 578 ms - the user-data server action of F5;
+- 84 `resource.script` spans, avg 162 ms.
+
+So the two renders alone account for 8.4 s of server time on that load.

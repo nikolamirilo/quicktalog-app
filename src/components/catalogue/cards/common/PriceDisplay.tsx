@@ -1,5 +1,6 @@
 import { cn } from "@/lib/ui/cn";
 import { Item } from "@quicktalog/common";
+import { SalePill } from "./SalePill";
 
 interface PriceDisplayProps {
 	price: string | number;
@@ -8,6 +9,8 @@ interface PriceDisplayProps {
 	denominator?: string;
 	className?: string;
 	layout?: "vertical" | "horizontal";
+	/** Set only on cards with no photo to put the pill on; the rest overlay it. */
+	percentOff?: number;
 }
 
 const PriceDisplay = ({
@@ -17,10 +20,15 @@ const PriceDisplay = ({
 	denominator,
 	className,
 	layout = "vertical",
+	percentOff,
 }: PriceDisplayProps) => {
 	const isOnDiscount = discount?.isOnDiscount;
 	const finalPrice = isOnDiscount ? discount.discountedPrice : price;
 	const delimiterText = denominator ? ` / ${denominator}` : "";
+	const salePill =
+		isOnDiscount && percentOff ? (
+			<SalePill percentOff={percentOff} size="small" />
+		) : null;
 
 	// An item with no price renders no price row at all.
 	if (finalPrice === "" || finalPrice === undefined || finalPrice === null) {
@@ -33,6 +41,7 @@ const PriceDisplay = ({
 				<span className="text-[13px] sm:text-[16px] line-through text-gray-400 font-body">
 					{price} {currency}
 				</span>
+				{salePill}
 				<span
 					aria-label={`Price: ${finalPrice} ${currency}${delimiterText}`}
 					className="font-bold text-price font-heading tracking-heading"
@@ -47,8 +56,11 @@ const PriceDisplay = ({
 	return (
 		<div className={cn("flex flex-col items-end", className)}>
 			{isOnDiscount && (
-				<span className="text-[13px] sm:text-[16px] line-through text-gray-400 font-body">
-					{price} {currency}
+				<span className="flex items-center gap-1.5">
+					<span className="text-[13px] sm:text-[16px] line-through text-gray-400 font-body">
+						{price} {currency}
+					</span>
+					{salePill}
 				</span>
 			)}
 			<span

@@ -48,6 +48,13 @@ interface CatalogueContextType {
 	isTemplatePickerOpen: boolean;
 	setIsTemplatePickerOpen: (open: boolean) => void;
 	/**
+	 * A one-time nudge towards Quick AI on a phone, where opening the sheet by
+	 * itself would cover the catalogue the owner has just created. It pulses the
+	 * Quick AI button and shows a short hint next to it.
+	 */
+	quickAiHint: boolean;
+	setQuickAiHint: (show: boolean) => void;
+	/**
 	 * Content edits address a section and an item by id, never by position: the
 	 * agent's edits land on the draft while a dialog is open, so a position read
 	 * when it opened can be pointing at a different section by the time it
@@ -75,6 +82,12 @@ interface CatalogueContextType {
 	 * the draft straight away and are highlighted; Reject puts back `before`.
 	 */
 	aiReview: AiReview | null;
+	/**
+	 * The review as it is *now*, not as of the last render. Keep clears the review
+	 * and saves in the same tick, and autosave must not see a review that the user
+	 * has just accepted - it would skip the save and leave the work unstored.
+	 */
+	getAiReview: () => AiReview | null;
 	/**
 	 * `applyOperations` for the AI chat: the edits also go up for review. The
 	 * limits are required, so an agent edit can never land on the draft ungated.
@@ -118,6 +131,7 @@ export const CatalogueContextProvider = ({
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [isChatOpen, setIsChatOpen] = useState(false);
 	const [isTemplatePickerOpen, setIsTemplatePickerOpen] = useState(false);
+	const [quickAiHint, setQuickAiHint] = useState(false);
 
 	/**
 	 * The draft itself, not a mirror of the last render: every writer reads and
@@ -407,6 +421,8 @@ export const CatalogueContextProvider = ({
 				setIsChatOpen,
 				isTemplatePickerOpen,
 				setIsTemplatePickerOpen,
+				quickAiHint,
+				setQuickAiHint,
 				addBlock,
 				removeBlock,
 				updateBlock,
@@ -418,6 +434,7 @@ export const CatalogueContextProvider = ({
 				moveItemToBlock,
 				applyOperations,
 				aiReview,
+				getAiReview: () => aiReviewRef.current,
 				applyAiOperations,
 				getCatalogue: () => catalogueRef.current,
 				seedCatalogue,

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 
 import {
 	CreateCatalogueProvider,
+	prefetchCreateCatalogueDialogs,
 	useCreateCatalogueDialog,
 } from "@/components/catalogue/create/CreateCatalogueProvider";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,8 @@ export function CreateCatalogueButton(props: CreateCatalogueButtonProps) {
 						onClick={() => {
 							if (!disabled) dialog.openCreateCatalogue();
 						}}
+						onFocus={prefetchCreateCatalogueDialogs}
+						onPointerEnter={prefetchCreateCatalogueDialogs}
 						size={size === "hero" ? "lg" : "default"}
 					>
 						{children ??

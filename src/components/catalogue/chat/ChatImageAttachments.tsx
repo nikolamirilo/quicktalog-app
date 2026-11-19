@@ -7,6 +7,8 @@ import { AlertTriangle, ImagePlus, Loader2, X } from "lucide-react";
 interface AttachButtonProps {
 	disabled: boolean;
 	onAttach: (files: File[]) => void;
+	/** So the empty-state "Import from a photo" suggestion can open this picker. */
+	inputId?: string;
 }
 
 /**
@@ -14,7 +16,11 @@ interface AttachButtonProps {
  * rather than a button, so the file picker opens without a click handler; the
  * input stays focusable, and the label draws the focus ring for it.
  */
-export const ChatAttachButton = ({ disabled, onAttach }: AttachButtonProps) => (
+export const ChatAttachButton = ({
+	disabled,
+	onAttach,
+	inputId,
+}: AttachButtonProps) => (
 	<label
 		className={cn(
 			"flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-product-foreground-accent transition-colors focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-product-secondary md:h-10 md:w-10",
@@ -30,6 +36,7 @@ export const ChatAttachButton = ({ disabled, onAttach }: AttachButtonProps) => (
 			accept="image/*"
 			className="sr-only"
 			disabled={disabled}
+			id={inputId}
 			multiple
 			onChange={(event) => {
 				const files = Array.from(event.target.files ?? []);

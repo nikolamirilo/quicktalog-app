@@ -1,6 +1,14 @@
 import { layouts, themes } from "@quicktalog/common";
 
 /** Hexus product tour shown on /demo. */
+/**
+ * The tags on every link out of a published catalogue's Quicktalog footer, so the
+ * badge shows up as its own channel in the acquisition funnel rather than as a
+ * referral from our own domain.
+ */
+export const CATALOGUE_BADGE_UTM =
+	"utm_source=catalogue&utm_medium=referral&utm_campaign=badge";
+
 export const TOUR_URL =
 	"https://app.usehexus.com/embed/254bfe62-3496-414e-93e8-5447b8fa54a9";
 
@@ -11,7 +19,7 @@ export const showcaseUrls = [
 	"https://www.quicktalog.app/catalogues/m-motors-taller-y-venta-de-sensores",
 	"https://www.quicktalog.app/catalogues/montre-shop",
 	"https://www.quicktalog.app/catalogues/electronic-sale",
-	"https://www.quicktalog.app/catalogues/watches-established-stock-catalog",
+	"https://www.quicktalog.app/catalogues/watches-established-stock-catalogue",
 	"https://www.quicktalog.app/catalogues/gonvitech",
 ];
 
@@ -68,7 +76,7 @@ export type Problem = {
 export const problems: Problem[] = [
 	{
 		topic: "01 · Design",
-		title: "Designing a catalog shouldn't need a designer",
+		title: "Designing a catalogue shouldn't need a designer",
 		before: {
 			text: "You hire a designer or fight complex software, and still end up with a plain PDF.",
 			points: [
@@ -78,7 +86,7 @@ export const problems: Problem[] = [
 			],
 		},
 		after: {
-			text: "Pick a template, add your items, and publish a professional catalog yourself.",
+			text: "Pick a template, add your items, and publish a professional catalogue yourself.",
 			points: [
 				`${themes.length} designer themes × ${layouts.length} layouts`,
 				"No design or code skills",
@@ -110,9 +118,9 @@ export const problems: Problem[] = [
 	},
 	{
 		topic: "03 · Sharing",
-		title: "Paper catalogs cost money and tell you nothing",
+		title: "Paper catalogues cost money and tell you nothing",
 		before: {
-			text: "Printing and handing out catalogs is expensive, they get lost, and you never know who looked.",
+			text: "Printing and handing out catalogues is expensive, they get lost, and you never know who looked.",
 			points: [
 				"Printing and delivery costs",
 				"Lost or thrown away",
@@ -120,7 +128,7 @@ export const problems: Problem[] = [
 			],
 		},
 		after: {
-			text: "Share one link or QR code anywhere, and see how many people open your catalog.",
+			text: "Share one link or QR code anywhere, and see how many people open your catalogue.",
 			points: [
 				"Link, QR code or website embed",
 				"Styled QR code on every plan",

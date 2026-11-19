@@ -9,6 +9,7 @@ vi.mock("@/context/CatalogueContext", () => ({
 }));
 
 import CatalogueFooter from "@/components/catalogue/view/CatalogueFooter";
+import { CATALOGUE_BADGE_UTM } from "@/constants/marketing";
 
 afterEach(cleanup);
 
@@ -40,7 +41,8 @@ describe("CatalogueFooter brand", () => {
 			/>,
 		);
 		const link = screen.getByRole("link", { name: /Quicktalog homepage/ });
-		expect(link.getAttribute("href")).toBe("/");
+		// Tagged, so a signup that started on somebody's catalogue is counted as one.
+		expect(link.getAttribute("href")).toBe(`/?${CATALOGUE_BADGE_UTM}`);
 	});
 
 	it("sends the owner's logo to the owner's website", () => {

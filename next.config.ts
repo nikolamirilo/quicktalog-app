@@ -61,6 +61,16 @@ const nextConfig: NextConfig = {
 				source: "/:path*",
 				headers: [{ key: "Content-Security-Policy-Report-Only", value: csp }],
 			},
+			{
+				// Immutable: a changed image ships under a new filename.
+				source: "/:dir(images|animations)/:path*",
+				headers: [
+					{
+						key: "Cache-Control",
+						value: "public, max-age=31536000, immutable",
+					},
+				],
+			},
 		];
 	},
 	async rewrites() {

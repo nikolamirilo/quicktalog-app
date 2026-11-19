@@ -22,10 +22,14 @@ vi.mock("@/lib/cache/revalidate", () => ({
 	revalidateDashboard: vi.fn(),
 }));
 vi.mock("@/lib/rate-limit", () => ({ withinRateLimit: vi.fn() }));
-vi.mock("@/lib/catalogue/draft-cache", () => ({
-	deleteDrafts: vi.fn(),
+vi.mock("@/lib/catalogue/draft-store", () => ({
+	listDraftVersions: vi.fn(),
 	loadOwnedCatalogue: vi.fn(),
+	loadOwnedDraftRow: vi.fn(),
+	readDraftVersion: vi.fn(),
 	readOwnedDraft: vi.fn(),
+	recordDraftVersion: vi.fn(),
+	saveOwnedDraft: vi.fn(),
 	writeOwnedDraft: mocks.writeOwnedDraft,
 }));
 vi.mock("@/lib/entitlements/plan", async (importOriginal) => ({
@@ -100,6 +104,24 @@ describe("createCatalogue", () => {
 		expect(mocks.revalidateCatalogue).toHaveBeenCalledWith("bean-there-cafe");
 	});
 
+	it("opens the builder on the catalogue's name instead of an empty heading", async () => {
+		await createCatalogue(form());
+
+		expect(mocks.insertValues).toHaveBeenCalledWith(
+			expect.objectContaining({
+				heading: expect.stringContaining("Bean There Cafe"),
+			}),
+		);
+	});
+
+	it("keeps a heading the caller already set", async () => {
+		await createCatalogue(form({ heading: "<h1>Our menu</h1>" }));
+
+		expect(mocks.insertValues).toHaveBeenCalledWith(
+			expect.objectContaining({ heading: "<h1>Our menu</h1>" }),
+		);
+	});
+
 	it("refuses a signed-out caller without opening a database block", async () => {
 		mocks.getVerifiedIdentity.mockResolvedValue(null);
 
@@ -138,9 +160,11 @@ describe("createCatalogue", () => {
 		});
 	});
 
-	it("still creates the catalogue when the draft cache is down", async () => {
-		mocks.writeOwnedDraft.mockRejectedValue(new Error("redis down"));
+	// The draft is durable storage now, not a cache: a catalogue whose draft was not
+	// written would open the builder empty, which is the bug this replaced.
+	it("fails the creation when the draft cannot be written", async () => {
+		mocks.writeOwnedDraft.mockRejectedValue(new Error("write failed"));
 
-		expect((await createCatalogue(form())).success).toBe(true);
+		expect((await createCatalogue(form())).success).toBe(false);
 	});
 });

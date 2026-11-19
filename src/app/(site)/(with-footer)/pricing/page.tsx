@@ -14,6 +14,7 @@ import { generatePageMetadata } from "@/constants/metadata";
 import { starterTier } from "@/constants/pricing";
 import { pricingFaqs } from "@/constants/pricingFaqs";
 import { getPageSchema } from "@/constants/schemas";
+import { getServerPrices } from "@/lib/paddle/prices";
 
 export const metadata: Metadata = generatePageMetadata("pricing");
 
@@ -23,8 +24,11 @@ const planBasics = [
 	"10-day money-back guarantee",
 ];
 
-const page = () => {
-	const pricingPageSchema = getPageSchema("pricing");
+const page = async () => {
+	// Rendered into the HTML: a crawler, a Slack or WhatsApp preview and AI search
+	// all used to see "Price loading" here.
+	const prices = await getServerPrices();
+	const pricingPageSchema = getPageSchema("pricing", prices);
 
 	return (
 		<>
@@ -45,7 +49,7 @@ const page = () => {
 				/>
 			</PageHero>
 
-			<PricingPlans />
+			<PricingPlans initialPrices={prices} />
 
 			<Section
 				className="pt-6 lg:pt-6"

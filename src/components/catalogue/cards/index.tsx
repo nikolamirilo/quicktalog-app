@@ -105,6 +105,7 @@ const CardsSwitcher = ({
 				onEdit={onEdit}
 				onMoveDown={onMoveDown}
 				onMoveUp={onMoveUp}
+				percentOff={detailPrice?.percentOff}
 				record={validatedRecord}
 			/>
 			<ItemDetailModal

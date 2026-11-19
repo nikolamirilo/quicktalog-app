@@ -2,8 +2,9 @@ export const MAX_RETRIES = 3;
 export const RETRY_DELAY = 1000;
 
 /**
- * Self-reported acquisition channels, asked once in a dashboard modal. The value is what lands in `users.acquisition_source`, except
- * for "other": there the user's own words are stored instead of the slug.
+ * Self-reported acquisition channels, asked once in a dashboard modal. The value lands in
+ * `users.self_reported_source`, never in `acquisition_source`, which holds the tracked
+ * channel. For "other" the user's own words are stored instead of the slug.
  */
 export const ACQUISITION_SOURCES = [
 	{ value: "google", label: "Google" },

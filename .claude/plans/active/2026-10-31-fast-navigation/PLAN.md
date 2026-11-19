@@ -1,5 +1,7 @@
 Status: proposed
 
+Re-verified against the codebase on 2026-11-19: none of the ten tasks has been implemented, and every finding in [FINDINGS.md](FINDINGS.md) still holds. One decision changed - see D1: PROD's database is in Frankfurt, not Ireland, so the function region is `fra1`.
+
 # Fast navigation with visible progress: implementation plan
 
 **Goal:** A click on Dashboard, Log In, Start free or any other internal link shows feedback at once. For a signed-in user, the page it opens arrives in well under a second, instead of today's 1.3-4 s with nothing on screen.
@@ -21,7 +23,7 @@ Status: proposed
 
 | # | Decision | Why / cost |
 |---|---|---|
-| D1 | **Server functions move from `iad1` (Washington) to `dub1` (Dublin)**, the same region as the database. Only if PROD's database is in `eu-west-1` like TEST's | One dashboard render makes about 11 database round trips one after another, but only one trip to the browser. Moving next to the database saves ~0.7 s per render. Cost: visitors in the Americas wait ~70-100 ms longer per uncached server request. Cached public pages (ISR catalogues, marketing pages) come from the CDN and are unaffected. One region applies to both preview and production, which is fine while TEST and PROD share a region |
+| D1 | **Server functions move from `iad1` (Washington) to `fra1` (Frankfurt)**, the same region as the PROD database | One dashboard render makes about 11 database round trips one after another, but only one trip to the browser. Moving next to the database saves ~1 s per render. **Checked 2026-11-19: PROD is `eu-central-1` (Frankfurt), TEST is `eu-west-1` (Ireland)** - they do *not* share a region, so this plan's original `dub1` is wrong. `fra1` puts PROD functions beside the PROD database (~1-5 ms) and leaves preview/TEST on a Frankfurt-Ireland hop (~25 ms), still a third of today's Atlantic crossing. Cost: visitors in the Americas wait ~70-100 ms longer per uncached server request. Cached public pages (ISR catalogues, marketing pages) come from the CDN and are unaffected. One region applies to both preview and production, so PROD wins the tie |
 | D2 | **Fluid compute on** | Instances get reused, so fewer requests pay a cold start (p95 1.1 s today), and the warm database pool and signing-key cache survive between requests. Cost: Vercel bills active CPU instead of wall-clock time; Hobby's included allowance still applies. The 60 s route budget we design for does not change |
 | D3 | **PROD switches to asymmetric JWT signing keys**, rotated but with the legacy secret kept as "previously used", never revoked. The owner does this in the Supabase dashboard | Removes a 300-850 ms auth-server call from every protected request, every prefetch and every server action on PROD. TEST already works this way. Cost: the PROD edge functions and the backend worker must be checked first (task 9). Revoking the legacy secret would break the legacy `anon`/`service_role` keys, so it stays |
 | D4 | **The progress bar is written in-house, with no new package** | About 80 lines, and the cleanup plan is removing libraries rather than adding them. `nextjs-toploader` and `@bprogress/next` do the same thing with a global click listener |
@@ -65,17 +67,17 @@ The "after" figures are estimates from the round-trip count in FINDINGS F2. Task
 
 **Pre-checks (all before changing anything):**
 
-1. PROD Supabase region. The owner looks it up, or allows a read of the PROD project's metadata. If it isn't `eu-west-1`, stop and revisit D1.
-2. Upstash Redis region (Upstash console). If it is in `us-east-1`, move it, or add an `eu-west-1` read region, in the same change. Otherwise draft-cache calls become the new cross-region hop.
+1. ~~PROD Supabase region.~~ Done 2026-11-19 from the project list (metadata only, no PROD data read): PROD `uhfbapjuzvlyzyodxhqn` is `eu-central-1`, TEST `imhinsgyzzyblghwnedk` is `eu-west-1`. Hence `fra1`, not `dub1`.
+2. Upstash Redis region (Upstash console). If it is in `us-east-1`, move it, or add an `eu-central-1` read region, in the same change. Otherwise draft-cache calls become the new cross-region hop.
 3. Nothing else the server calls on every request is US-only. Paddle, Resend, UploadThing and DeepSeek are per-action and not latency-critical.
 
-**Change:** `vercel.json` gets `"regions": ["dub1"]` and `"fluid": true`, so the setting lives in code and is reviewed. The project setting in the Vercel dashboard must not contradict it. Redeploy the `test` preview.
+**Change:** `vercel.json` gets `"regions": ["fra1"]` and `"fluid": true`, so the setting lives in code and is reviewed. The project setting in the Vercel dashboard must not contradict it. Redeploy the `test` preview.
 
 **Check:**
 
 - Sentry `GET /admin/dashboard` p50/p95 on preview before and after;
 - the `db.transaction` spans from task 1;
-- a dashboard response header `x-vercel-id` naming `dub1`.
+- a dashboard response header `x-vercel-id` naming `fra1`.
 
 **Rollback:** revert the `vercel.json` lines and redeploy.
 

@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
 	createCatalogue: vi.fn(),
 	checkCatalogueName: vi.fn(),
 	push: vi.fn(),
+	prefetch: vi.fn(),
 	refreshUserData: vi.fn(),
 	toastError: vi.fn(),
 	userData: null as unknown,
@@ -29,7 +30,9 @@ vi.mock("@/context/UserContext", () => ({
 		refreshUserData: mocks.refreshUserData,
 	}),
 }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mocks.push }) }));
+vi.mock("next/navigation", () => ({
+	useRouter: () => ({ push: mocks.push, prefetch: mocks.prefetch }),
+}));
 vi.mock("sonner", () => ({
 	toast: { error: mocks.toastError, success: vi.fn() },
 }));
@@ -85,8 +88,14 @@ const open = async () => {
 	});
 };
 
+/** The dialogs are loaded on demand, so they arrive a tick after the click. */
+const openCreateDialog = async () => {
+	await open();
+	await screen.findByText("Create a Catalogue");
+};
+
 const submitButton = () =>
-	screen.getByRole("button", { name: /^create catalog$/i });
+	screen.getByRole("button", { name: /^create catalogue$/i });
 
 describe("creating a catalogue", () => {
 	beforeEach(() => {
@@ -101,9 +110,8 @@ describe("creating a catalogue", () => {
 			data: { name: "bean-there" },
 		});
 		setup();
-		await open();
+		await openCreateDialog();
 
-		expect(screen.getByText("Create a Catalog")).toBeTruthy();
 		expect(submitButton().hasAttribute("disabled")).toBe(true);
 
 		await act(async () => {
@@ -126,7 +134,15 @@ describe("creating a catalogue", () => {
 			}),
 		);
 		expect(mocks.push).toHaveBeenCalledWith("/admin/bean-there/builder");
-		expect(screen.queryByText("Create a Catalog")).toBeNull();
+		// The dialog stays up, still loading, until the builder replaces the page:
+		// closing it first left the home page on screen with nothing happening.
+		expect(screen.queryByText("Create a Catalogue")).toBeTruthy();
+		expect(
+			screen
+				.getByRole("button", { name: /creating/i })
+				.hasAttribute("disabled"),
+		).toBe(true);
+		expect(mocks.prefetch).toHaveBeenCalledWith("/admin/bean-there/builder");
 	});
 
 	it("keeps the dialog open and shows the server's reason when creation fails", async () => {
@@ -135,7 +151,7 @@ describe("creating a catalogue", () => {
 			error: "A catalogue with this name already exists",
 		});
 		setup();
-		await open();
+		await openCreateDialog();
 		await act(async () => {
 			fireEvent.change(document.getElementById("catalogName")!, {
 				target: { value: "Bean There" },
@@ -151,7 +167,7 @@ describe("creating a catalogue", () => {
 			"A catalogue with this name already exists",
 		);
 		expect(mocks.push).not.toHaveBeenCalled();
-		expect(screen.getByText("Create a Catalog")).toBeTruthy();
+		expect(screen.getByText("Create a Catalogue")).toBeTruthy();
 	});
 
 	it("shows the limits dialog instead once the plan is full", async () => {
@@ -159,8 +175,8 @@ describe("creating a catalogue", () => {
 		setup();
 		await open();
 
-		expect(screen.queryByText("Create a Catalog")).toBeNull();
-		expect(screen.getByRole("alertdialog")).toBeTruthy();
+		expect(await screen.findByRole("alertdialog")).toBeTruthy();
+		expect(screen.queryByText("Create a Catalogue")).toBeNull();
 	});
 
 	it("sends a signed-out visitor to sign up", async () => {

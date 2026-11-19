@@ -14,7 +14,6 @@ import {
 	requireIdentity,
 	UnauthorizedError,
 } from "@/lib/auth/identity";
-import { deleteDrafts } from "@/lib/catalogue/draft-cache";
 import { withinRateLimit } from "@/lib/rate-limit";
 import { loadUserFootprint } from "@/lib/users/footprint";
 import { withUser } from "@/utils/db";
@@ -121,12 +120,6 @@ export async function deleteAccount(): Promise<AccountResult> {
 			};
 		}
 
-		await deleteDrafts(footprint.catalogueIds).catch((err) =>
-			Sentry.captureException(err, {
-				level: "warning",
-				tags: { op: "deleteAccount", step: "redis" },
-			}),
-		);
 		// Any revalidation inside the action makes Next re-render the still-mounted
 		// dashboard with the deleted user's token (getUserData: not_found), so it
 		// runs in `after`, once the response is sent. No revalidateDashboard(): the

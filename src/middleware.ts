@@ -10,14 +10,14 @@ import { type NextRequest, NextResponse } from "next/server";
  * must come back without `Set-Cookie`, so a CDN can cache it.
  */
 const NEEDS_SESSION =
-	/^\/(admin|auth)(\/|$)|^\/catalogues\/[^/]+\/preview$|^\/api\/(dashboard|agent|items\/uploadthing)(\/|$)/;
+	/^\/(admin|auth)(\/|$)|^\/catalogues\/[^/]+\/preview$|^\/api\/(dashboard|agent|catalogue|items\/uploadthing)(\/|$)/;
 
 /** Paths a signed-out visitor is redirected away from. */
 const PROTECTED = /^\/admin(\/|$)|^\/catalogues\/[^/]+\/preview$/;
 
 /** Paths that change data, and are therefore refused during maintenance. */
 const WRITE_PATHS =
-	/^\/(admin|auth)(\/|$)|^\/api\/(dashboard|agent|items\/uploadthing)(\/|$)/;
+	/^\/(admin|auth)(\/|$)|^\/api\/(dashboard|agent|catalogue|items\/uploadthing)(\/|$)/;
 
 export default async function middleware(request: NextRequest) {
 	const path = request.nextUrl.pathname;

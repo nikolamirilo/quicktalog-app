@@ -25,8 +25,8 @@ export function CTA() {
 						</Button>
 					</>
 				}
-				checks={["Free online catalog maker", "Cancel anytime"]}
-				description="Launch a professional digital catalog with our catalog templates in minutes. The best free online catalog maker for businesses-no credit card required."
+				checks={["Free online catalogue maker", "Cancel anytime"]}
+				description="Launch a professional digital catalogue with our catalogue templates in minutes. The best free online catalogue maker for businesses-no credit card required."
 				kicker={
 					<LottiePlayer
 						animation="qr-scan"

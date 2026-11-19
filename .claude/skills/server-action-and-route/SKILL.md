@@ -1,6 +1,6 @@
 ---
 name: server-action-and-route
-description: Use when adding or editing a server-side mutation in Quicktalog - a server action in actions/*.ts or an API route handler in app/api/*/route.ts. Covers the identity check, the RLS wrapper that every query runs in, owner predicates, Redis sync, Sentry error capture, cache revalidation, and return-shape conventions.
+description: Use when adding or editing a server-side mutation in Quicktalog - a server action in actions/*.ts or an API route handler in app/api/*/route.ts. Covers the identity check, the RLS wrapper that every query runs in, owner predicates, Sentry error capture, cache revalidation, and return-shape conventions.
 ---
 
 # Server Action & API Route
@@ -67,9 +67,8 @@ export async function updateThing(data: SomeType): Promise<boolean> {
     );
     if (!row) return false;   // not theirs, or gone
 
-    // 3. Redis and revalidation AFTER the transaction: neither may hold a
+    // 3. Revalidation AFTER the transaction: it may not hold a
     //    pooled connection open
-    await writeOwnedDraft({ ...data, id: row.id });
     revalidateCatalogue(row.name);
     revalidateDashboard();
 
@@ -112,6 +111,6 @@ Export named `GET`/`POST`/`PATCH`, add `export const dynamic = "force-dynamic"` 
 - **Query outside a block** → `42501`. Wrap it, don't work around it.
 - **Missing owner predicate** → works today because RLS saves you, but the next reader cannot tell the query is safe.
 - **`await` on something slow inside the block** → a pooled connection is held open for the whole request.
-- **Forgot Redis sync** → the builder shows a stale draft; drafts are keyed by catalogue **id** (`src/lib/catalogue/draft-cache.ts`), never by name.
+- **Forgot the draft write** → the builder shows the old draft; drafts are rows in `public.catalogue_drafts` keyed by catalogue **id** (`src/lib/catalogue/draft-store.ts`), never by name.
 - **Forgot revalidate** → dashboard or public page shows old data until a hard reload.
 - **Error swallowed** → no `Sentry.captureException` in the catch, so production errors are invisible.

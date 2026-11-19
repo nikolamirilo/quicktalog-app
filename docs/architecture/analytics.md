@@ -106,3 +106,13 @@ The route runs on Vercel Hobby, capped at 60 seconds. Each query has a 20-second
 ## Settings
 
 `NEXT_PUBLIC_POSTHOG_HOST`, `POSTHOG_PROJECT_ID` and `POSTHOG_API_KEY` (a personal API key with query read access; server only). `NEXT_PUBLIC_BASE_URL` gives the host and path to match.
+
+## Product events
+
+Separate from catalogue traffic: `lib/analytics/events.ts` records the activation funnel
+in PostHog - `builder_opened_empty`, `quick_ai_first_used`, `first_section_created`,
+`first_publish`. They are fired from the builder (`useEmptyCatalogueOnboarding`,
+`CatalogueChat`, `useBuilderActions`) and never throw, because an ad blocker can stop
+PostHog at any time.
+
+Where a signup came from is its own thing: see [acquisition.md](acquisition.md).
