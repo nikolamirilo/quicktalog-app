@@ -31,10 +31,12 @@ import {
 import { useUserContext } from "@/context/UserContext";
 
 /**
- * Asked once, on the dashboard, while `users.acquisition_source` is null: the
- * channel the user came from. The signup form cannot carry it (the Google
- * button skips the form entirely), and referrer data never shows word of mouth.
- * Skipping answers it too, so neither path leaves the question open.
+ * Asked once, on the dashboard, while `users.self_reported_source` is null: the
+ * channel the user came from, in their own words. The tracked first touch
+ * (`acquisition_source`) is recorded separately and never replaced by this, because
+ * the two answer different questions - tracking never shows word of mouth, and people
+ * misremember which link they clicked. Skipping answers it too, so neither path leaves
+ * the question open.
  */
 export function AcquisitionSourceModal() {
 	const { userData, loading, refreshUserData } = useUserContext();
@@ -47,8 +49,8 @@ export function AcquisitionSourceModal() {
 	// From the context, not a server-rendered prop: a tab switch remounts this,
 	// and only the context copy is refreshed after an answer is saved.
 	// The cast goes away once `drizzle-kit pull` puts the column on `User`.
-	const answer = (userData as { acquisitionSource?: string | null } | null)
-		?.acquisitionSource;
+	const answer = (userData as { selfReportedSource?: string | null } | null)
+		?.selfReportedSource;
 
 	async function save(value: string) {
 		setBusy(true);

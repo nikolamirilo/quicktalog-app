@@ -646,3 +646,168 @@ describe("plan tools through the real wiring", () => {
 		});
 	});
 });
+
+describe("setItemDiscount", () => {
+	/** Items as they stand on the session, with their sale state. */
+	const saleItems = (session: CatalogueSession) =>
+		(
+			session.working.content[0] as {
+				items: {
+					name: string;
+					price: number;
+					discount?: {
+						isOnDiscount: boolean;
+						discountPercentage: number;
+						discountedPrice: number;
+					};
+				}[];
+			}
+		).items;
+
+	const withDrinks = async () => {
+		const session = new CatalogueSession(catalogue);
+		const tools = buildTools(session);
+		await run(tools, "addSection", {
+			sectionType: "items",
+			name: "Drinks",
+			items: [
+				{ name: "Espresso", price: 2.5 },
+				{ name: "Latte", price: 4 },
+				{ name: "Tap water", price: 0, isFree: true },
+			],
+		});
+		return { session, tools };
+	};
+
+	it("works the sale price out from a percentage off", async () => {
+		const { session, tools } = await withDrinks();
+
+		const result = await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 1, percentOff: 25 }],
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(saleItems(session)[1].discount).toEqual({
+			isOnDiscount: true,
+			discountPercentage: 25,
+			discountedPrice: 3,
+		});
+	});
+
+	it("works the percentage out from a sale price the user named", async () => {
+		const { session, tools } = await withDrinks();
+
+		await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 0, salePrice: 2 }],
+		});
+
+		expect(saleItems(session)[0].discount).toEqual({
+			isOnDiscount: true,
+			discountPercentage: 20,
+			discountedPrice: 2,
+		});
+	});
+
+	it("puts a whole section on sale in one edit", async () => {
+		const { session, tools } = await withDrinks();
+
+		const result = await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [
+				{ item: 0, percentOff: 10 },
+				{ item: 1, percentOff: 50 },
+			],
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(session.operations).toHaveLength(2); // the section, then the sale
+		expect(
+			saleItems(session).map((item) => item.discount?.discountedPrice),
+		).toEqual([2.25, 2, undefined]);
+	});
+
+	it("ends a sale and leaves the normal price showing", async () => {
+		const { session, tools } = await withDrinks();
+		await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 1, percentOff: 25 }],
+		});
+
+		const result = await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 1, clear: true }],
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(saleItems(session)[1].discount).toBeUndefined();
+		expect(saleItems(session)[1].price).toBe(4);
+	});
+
+	// A free item has nothing to take off, and a struck-through 0 reads as a bug.
+	it("refuses to discount an item with no price", async () => {
+		const { session, tools } = await withDrinks();
+
+		const result = await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 2, percentOff: 20 }],
+		});
+
+		expect(result).toMatchObject({ ok: false });
+		expect(saleItems(session)[2].discount).toBeUndefined();
+	});
+
+	it("refuses a sale price at or above the normal price", async () => {
+		const { session, tools } = await withDrinks();
+
+		const result = await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 1, salePrice: 4 }],
+		});
+
+		expect(result).toMatchObject({ ok: false });
+		expect(saleItems(session)[1].discount).toBeUndefined();
+	});
+
+	it("tells the model when both a percentage and a sale price are sent", async () => {
+		const { tools } = await withDrinks();
+
+		const result = await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 1, percentOff: 20, salePrice: 3 }],
+		});
+
+		expect(result).toMatchObject({
+			ok: false,
+			error: expect.stringContaining("one of the two"),
+		});
+	});
+
+	// Same bargain as addItemImages: one wrong index must not cost the rest.
+	it("keeps the sale it could apply when one item's index is wrong", async () => {
+		const { session, tools } = await withDrinks();
+
+		const result = await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [
+				{ item: 0, percentOff: 20 },
+				{ item: 9, percentOff: 20 },
+			],
+		});
+
+		expect(result).toMatchObject({ ok: true });
+		expect(result).toHaveProperty("itemMisses");
+		expect(saleItems(session)[0].discount?.discountedPrice).toBe(2);
+	});
+
+	it("shows an item's sale in the snapshot", async () => {
+		const { session, tools } = await withDrinks();
+		await run(tools, "setItemDiscount", {
+			section: 0,
+			items: [{ item: 1, percentOff: 25 }],
+		});
+
+		expect(session.snapshot()).toContain("[sale 3, 25% off]");
+	});
+});

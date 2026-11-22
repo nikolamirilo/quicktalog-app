@@ -12,8 +12,8 @@ type Props = {
 
 /** Dark closing CTA used at the foot of the articles, docs and release-notes pages. */
 export function ResourcesCta({
-	title = "Launch your first interactive catalog today",
-	description = "Turn your menu, services, or products into a beautiful digital catalog in minutes. Free forever plan included.",
+	title = "Launch your first interactive catalogue today",
+	description = "Turn your menu, services, or products into a beautiful digital catalogue in minutes. Free forever plan included.",
 }: Props) {
 	return (
 		<section aria-label="Get started" className="pb-4 pt-6">
@@ -27,7 +27,7 @@ export function ResourcesCta({
 								size="lg"
 							>
 								<Link href="/auth?mode=signup">
-									Create free catalog
+									Create free catalogue
 									<ArrowRight
 										aria-hidden="true"
 										className="transition-transform group-hover:translate-x-[3px]"

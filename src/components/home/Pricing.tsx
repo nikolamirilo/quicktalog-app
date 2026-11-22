@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef } from "react";
+
 import { Rise } from "@/components/general/Rise";
 import { BillingToggle } from "@/components/pricing/BillingToggle";
 import { FeatureInfoDialog } from "@/components/pricing/FeatureInfoDialog";
@@ -11,10 +13,25 @@ import {
 	priceIdFor,
 	starterTier,
 } from "@/constants/pricing";
+import { useNearViewport } from "@/hooks/useNearViewport";
+import type { PaddlePrices } from "@/hooks/usePaddlePrices";
 import { usePricingPlans } from "@/hooks/usePricingPlans";
 
-/** Home pricing: starter row, the four paid tiers and the custom-plan strip. */
-export function Pricing() {
+/**
+ * Home pricing: starter row, the four paid tiers and the custom-plan strip.
+ * `initialPrices` are rendered by the server, so the home page carries real prices
+ * in its HTML rather than a dash.
+ *
+ * Far below the hero, so Paddle.js waits until this comes into reach instead of
+ * loading during the first paint.
+ */
+export function Pricing({
+	initialPrices = {},
+}: {
+	initialPrices?: PaddlePrices;
+}) {
+	const sectionRef = useRef<HTMLDivElement>(null);
+	const near = useNearViewport(sectionRef);
 	const {
 		prices,
 		pricesUnavailable,
@@ -23,12 +40,12 @@ export function Pricing() {
 		startCheckout,
 		pendingPriceId,
 		featureInfo,
-	} = usePricingPlans();
+	} = usePricingPlans(initialPrices, near);
 
 	const starterPriceId = priceIdFor(starterTier, billingCycle);
 
 	return (
-		<>
+		<div ref={sectionRef}>
 			<BillingToggle
 				className="mb-7"
 				cycle={billingCycle}
@@ -65,6 +82,6 @@ export function Pricing() {
 			</div>
 			<MiniCTA />
 			<FeatureInfoDialog state={featureInfo} />
-		</>
+		</div>
 	);
 }

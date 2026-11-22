@@ -151,6 +151,16 @@ const ensureContrast = (
 const CARD_TEXT_CONTRAST = 4.5;
 
 /**
+ * A sale badge is a semantic colour, not a brand one: it stays this red through
+ * every palette an owner picks, moved only as far as it takes to read as a
+ * separate shape on their card. There is no seventh swatch to seed it from, and
+ * seeding it from Primary would make it blend into the price beside it.
+ */
+const SALE_COLOR = "#d92d20";
+/** WCAG AA for a non-text element: what the badge's fill has to reach on the card. */
+const SALE_CONTRAST = 3;
+
+/**
  * `foreground` moved toward the on-colour of `background` just far enough to
  * reach `target`. A colour that already reads is returned exactly as picked.
  */
@@ -233,6 +243,7 @@ export const deriveCatalogueVars = (
 	const navBackground = mix(cardBackground, background, 0.2);
 	const onNav = onColor(navBackground);
 	const navBorder = mix(cardBorder, background, 0.2);
+	const sale = readableOn(SALE_COLOR, cardBackground, SALE_CONTRAST);
 
 	return {
 		"--catalogue-background": background,
@@ -247,6 +258,8 @@ export const deriveCatalogueVars = (
 		"--catalogue-button-text": onColor(primary),
 		"--catalogue-accent": mix(cardBackground, primary, 0.15),
 		"--catalogue-price": ensureContrast(primary, cardBackground),
+		"--catalogue-sale": sale,
+		"--catalogue-sale-foreground": onColor(sale),
 
 		"--catalogue-card-background": cardBackground,
 		"--catalogue-card-heading": cardText,

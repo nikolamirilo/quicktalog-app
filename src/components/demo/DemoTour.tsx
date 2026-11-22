@@ -52,7 +52,7 @@ export function DemoTour() {
 					</div>
 					<div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-product-background/35 p-4 text-center backdrop-blur-[2px]">
 						<p className="max-w-[820px] font-product-heading text-[clamp(16px,2.6vw,30px)] font-extrabold leading-[1.2] tracking-[-0.025em]">
-							Quicktalog - Create Stunning Digital Catalogs in Minutes
+							Quicktalog - Create Stunning Digital Catalogues in Minutes
 						</p>
 						<span className="inline-flex h-11 items-center gap-2 rounded-full bg-product-primary px-[22px] text-[15px] font-semibold shadow-product-primary">
 							<Play className="h-4 w-4 fill-current" />

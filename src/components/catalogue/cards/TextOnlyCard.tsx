@@ -10,8 +10,7 @@ const TextOnlyCard = (props: CardProps) => {
 		<BaseCard
 			{...props}
 			className="p-2 sm:p-4 flex flex-col sm:flex-row sm:flex-wrap gap-1.5 sm:gap-2 sm:items-center sm:justify-between"
-			discountPosition="right"
-			discountSize="small"
+			showSalePill={false}
 		>
 			{(slugId) => (
 				<>
@@ -34,6 +33,7 @@ const TextOnlyCard = (props: CardProps) => {
 							currency={props.currency}
 							denominator={props.record.denominator}
 							discount={props.record.discount}
+							percentOff={props.percentOff}
 							price={props.record.price}
 						/>
 					</div>

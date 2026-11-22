@@ -13,11 +13,15 @@ import { Pricing } from "@/components/home/Pricing";
 import { ProblemSection } from "@/components/home/problems/ProblemSection";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
+import { getServerPrices } from "@/lib/paddle/prices";
 
 export const metadata: Metadata = generatePageMetadata("home");
 
-const page = () => {
-	const homePageSchema = getPageSchema("home");
+const page = async () => {
+	// Rendered into the HTML, so link previews, crawlers and AI search see real
+	// prices instead of the dash Paddle.js leaves until it has run.
+	const prices = await getServerPrices();
+	const homePageSchema = getPageSchema("home", prices);
 	return (
 		// One provider for the page, so both create buttons share one set of dialogs.
 		<CreateCatalogueProvider>
@@ -31,16 +35,16 @@ const page = () => {
 
 				<Section
 					containerClassName="px-0"
-					description="Replace printed catalogs with an interactive, mobile-friendly online catalog you can update in real time."
+					description="Replace printed catalogues with an interactive, mobile-friendly online catalogue you can update in real time."
 					id="problems"
-					title="Stop Losing Customers to Outdated Catalogs"
+					title="Stop Losing Customers to Outdated Catalogues"
 				>
 					<ProblemSection />
 				</Section>
 
 				<Section
 					containerClassName="px-0"
-					description="Create a professional digital catalog with our free online catalog maker in a few simple steps, or let AI generate it for you. No design or code required."
+					description="Create a professional digital catalogue with our free online catalogue maker in a few simple steps, or let AI generate it for you. No design or code required."
 					id="how-it-works"
 					title="Go Live in Minutes"
 				>
@@ -52,18 +56,18 @@ const page = () => {
 				<Section
 					className="pt-0 lg:pt-0"
 					containerClassName="px-0"
-					description="Start with our free online catalog maker and upgrade as you grow. No hidden fees. Access professional catalog templates, AI generation, OCR import, and analytics on higher tiers."
+					description="Start with our free online catalogue maker and upgrade as you grow. No hidden fees. Access professional catalogue templates, AI generation, OCR import, and analytics on higher tiers."
 					id="pricing"
 					title="Simple, Transparent Pricing"
 				>
-					<Pricing />
+					<Pricing initialPrices={prices} />
 				</Section>
 
 				<CTA />
 
 				<Section
 					containerClassName="px-0"
-					description="Learn how digital catalogs differ from websites, how updates work, and how AI/OCR help you launch faster."
+					description="Learn how digital catalogues differ from websites, how updates work, and how AI/OCR help you launch faster."
 					id="faq"
 					title="Got Questions? We've Got Answers"
 				>

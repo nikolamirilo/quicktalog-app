@@ -5,6 +5,7 @@ import { MainContextProvider } from "@/context/MainContext";
 import { UserContextProvider } from "@/context/UserContext";
 import { SupabaseAuthProvider } from "@/components/auth/session/SupabaseAuthProvider";
 import { CookieBanner } from "@/components/general/CookieBanner";
+import { FirstTouch } from "@/components/general/FirstTouch";
 
 export const PageWrapperClient = ({
 	children,
@@ -13,6 +14,7 @@ export const PageWrapperClient = ({
 }>) => {
 	return (
 		<SupabaseAuthProvider>
+			<FirstTouch />
 			<UserContextProvider>
 				<CatalogueContextProvider>
 					<MainContextProvider>{children}</MainContextProvider>

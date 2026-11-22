@@ -62,4 +62,6 @@ export type CardProps = {
 	isLast?: boolean;
 	/** The section this card belongs to; edits address it by id, never by position. */
 	blockId?: string;
+	/** How much off, from `getItemPrice`, so the card and the item sheet always agree. */
+	percentOff?: number;
 };

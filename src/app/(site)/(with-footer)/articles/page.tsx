@@ -31,7 +31,7 @@ export default function ArticlesIndexPage() {
 				kicker={
 					<HeroKicker icon={<FileText />}>The Quicktalog Journal</HeroKicker>
 				}
-				lead="Practical advice on digital menus, product catalogs, QR codes, and getting more out of Quicktalog. Written for owners and teams, not developers."
+				lead="Practical advice on digital menus, product catalogues, QR codes, and getting more out of Quicktalog. Written for owners and teams, not developers."
 				title="Guides for going digital"
 			/>
 

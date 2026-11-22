@@ -2,7 +2,9 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { cookies } from "next/headers";
+import { FIRST_TOUCH_COOKIE } from "@/lib/analytics/first-touch";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
+import { claimFirstTouch } from "@/lib/users/acquisition";
 import { clientIp } from "@/lib/http/client-ip";
 import { withinRateLimit } from "@/lib/rate-limit";
 import {
@@ -63,6 +65,20 @@ export async function confirmEmailToken(): Promise<ConfirmResult> {
 		const auth = await createForwardedAuthClient();
 		const { data, error } = await auth.verifyOtp({ type, token_hash: hash });
 		if (error || !data.user) return { ok: false, code: "link" };
+
+		// Where this account came from. The row is created by a trigger on the auth
+		// user, which never sees a cookie, so it is claimed here - the first moment
+		// there is both a session and a request to read the cookie from. Never worth
+		// failing a confirmation for.
+		try {
+			const me = await getVerifiedIdentity();
+			if (me && (await claimFirstTouch(me))) jar.delete(FIRST_TOUCH_COOKIE);
+		} catch (err) {
+			Sentry.captureException(err, {
+				level: "warning",
+				tags: { op: "confirmEmailToken", step: "acquisition" },
+			});
+		}
 
 		return {
 			ok: true,

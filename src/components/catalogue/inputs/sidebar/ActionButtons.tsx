@@ -1,5 +1,6 @@
 "use client";
 import { QuickAiMark } from "@/components/catalogue/chat/QuickAiMark";
+import { SaveStatus } from "@/components/catalogue/builder/SaveStatus";
 import type { BuilderAction } from "@/components/catalogue/builder/useBuilderActions";
 import { CHAT_PANEL_ID } from "@/components/catalogue/chat/CatalogueChat";
 import SelectTemplateModal from "@/components/catalogue/modals/SelectTemplateModal";
@@ -25,26 +26,33 @@ const barLabelClass = "max-w-full truncate text-[11px] font-semibold";
 
 /**
  * The phone bottom bar (below `md`). Quick AI and Templates, then the editor
- * button in the middle, then Save and a Publish slot whose menu also holds
- * Preview and the QR code. The editor button sits in the bar rather than
- * floating over it, so it never covers the catalogue.
+ * button in the middle, then the autosave status and a Publish slot whose menu
+ * also holds Preview and the QR code. The editor button sits in the bar rather
+ * than floating over it, so it never covers the catalogue. There is no Save:
+ * edits are written by themselves, and the status slot says so and opens the
+ * kept versions.
  */
 export const BuilderBottomBar = ({
 	isPanelOpen,
 	onTogglePanel,
+	onOpenHistory,
 	panelId,
 	onAskAi,
 	isChatOpen,
+	highlightAi = false,
 	actions,
 }: {
 	isPanelOpen: boolean;
 	onTogglePanel: () => void;
+	onOpenHistory: () => void;
 	panelId: string;
 	onAskAi: () => void;
 	isChatOpen: boolean;
+	/** A new, empty catalogue: Quick AI is what fills it, so it is pointed out once. */
+	highlightAi?: boolean;
 	actions: Record<BuilderAction["key"], BuilderAction>;
 }) => {
-	const { templates, save, preview, publish, qr } = actions;
+	const { templates, preview, publish, qr } = actions;
 	const PublishIcon = publish.icon;
 	const PreviewIcon = preview.icon;
 	const QrIcon = qr.icon;
@@ -59,11 +67,31 @@ export const BuilderBottomBar = ({
 				aria-controls={isChatOpen ? CHAT_PANEL_ID : undefined}
 				aria-expanded={isChatOpen}
 				aria-label="Quick AI"
-				className={barItemClass}
+				className={cn(
+					barItemClass,
+					highlightAi && "relative text-product-primary-ink",
+				)}
 				onClick={onAskAi}
 				type="button"
 			>
-				<QuickAiMark className="h-5 w-5" />
+				{highlightAi && (
+					// The sheet is not opened on a phone (it would cover the catalogue),
+					// so the button says where to start instead.
+					<span
+						className="pointer-events-none absolute -top-9 left-1 z-10 w-max max-w-[64vw] animate-in rounded-full bg-product-dark px-3 py-1.5 text-[11px] font-semibold text-product-on-dark shadow-product fade-in slide-in-from-bottom-1 motion-reduce:animate-none"
+						role="status"
+					>
+						Build your menu with AI
+					</span>
+				)}
+				<span
+					className={cn(
+						"relative",
+						highlightAi && "animate-pulse motion-reduce:animate-none",
+					)}
+				>
+					<QuickAiMark className="h-5 w-5" />
+				</span>
 				<span className={barLabelClass}>Quick AI</span>
 			</button>
 
@@ -104,25 +132,23 @@ export const BuilderBottomBar = ({
 				</span>
 			</button>
 
-			<button
-				className={barItemClass}
-				disabled={save.disabled}
-				onClick={save.onClick}
-				type="button"
-			>
-				<save.icon className="h-5 w-5" />
-				<span className={barLabelClass}>{save.label}</span>
-			</button>
+			<SaveStatus onOpenHistory={onOpenHistory} variant="bar" />
 
 			{/* Preview and publish share one slot; both are gated by the same condition. */}
 			<DropdownMenu>
 				<DropdownMenuTrigger
-					aria-label={`${publish.label} or preview`}
+					aria-label={`${publish.label} or preview${publish.badge ? ", unpublished changes" : ""}`}
 					className={barItemClass}
 					disabled={publish.disabled}
 				>
 					<span className="relative flex items-center">
 						<PublishIcon className="h-5 w-5" />
+						{publish.badge && (
+							<span
+								aria-hidden="true"
+								className="absolute -right-1 -top-1 size-2 rounded-full bg-product-error"
+							/>
+						)}
 						<ChevronUp className="-mr-2 ml-0.5 h-3 w-3" />
 					</span>
 					<span className={barLabelClass}>{publish.label}</span>

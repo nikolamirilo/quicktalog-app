@@ -43,7 +43,7 @@ const templates = [
 	},
 	{
 		id: "standard",
-		title: "Standard Catalog",
+		title: "Standard Catalogue",
 		badge: null,
 		description: "A flexible layout that works for everyone",
 		image: "/images/templates/standard-template.png",
@@ -56,7 +56,7 @@ const templates = [
 		id: "scratch",
 		title: "Start from Scratch",
 		badge: null,
-		description: "Build your catalog exactly the way you want it",
+		description: "Build your catalogue exactly the way you want it",
 		details: ["Blank Catalogue"],
 		icon: Plus,
 		visual: "dash",

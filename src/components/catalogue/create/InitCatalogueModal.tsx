@@ -49,14 +49,16 @@ const CURRENCY_SELECT_OPTIONS: SearchableSelectOption[] = CURRENCIES.map(
 
 interface InitCatalogueModalProps {
 	isOpen: boolean;
-	/** Creates the catalogue; resolves once the server has answered. */
-	onConfirm: () => unknown | Promise<unknown>;
+	/** Creates the catalogue; resolves to true once the builder is being opened. */
+	onConfirm: () => Promise<boolean>;
 	onCancel?: () => void;
 	loading?: boolean;
+	/** Warms the builder route while the form is being filled in. */
+	onNameSettled?: (name: string) => void;
 }
 
 /**
- * "Create a Catalog" dialog. The values live in CatalogueContext, which the
+ * "Create a Catalogue" dialog. The values live in CatalogueContext, which the
  * create hook sends to the server; the server derives the slug again and
  * decides whether the name is free.
  */
@@ -65,6 +67,7 @@ export function InitCatalogueModal({
 	onConfirm,
 	onCancel,
 	loading = false,
+	onNameSettled,
 }: InitCatalogueModalProps) {
 	const { catalogue, updateCatalogue } = useCatalogueContext();
 	const nameField = useCatalogueNameField({
@@ -80,6 +83,11 @@ export function InitCatalogueModal({
 		if (isOpen) resetNameField();
 	}, [isOpen, resetNameField]);
 
+	const typedName = catalogue.name ?? "";
+	useEffect(() => {
+		if (isOpen && typedName.trim()) onNameSettled?.(typedName);
+	}, [isOpen, typedName, onNameSettled]);
+
 	const isFormValid = Boolean(
 		catalogue.name?.trim() &&
 			catalogue.language &&
@@ -89,14 +97,14 @@ export function InitCatalogueModal({
 	);
 
 	const handleConfirm = async (event: MouseEvent) => {
-		// Stay open while the catalogue is created: the hook closes the dialog
-		// on success and keeps the values when it fails.
+		// Stay open and loading until the builder replaces the page: closing first
+		// left the home page on screen with nothing happening.
 		event.preventDefault();
 		if (!isFormValid || loading) return;
-		await onConfirm();
+		const created = await onConfirm();
 		// If it failed (the name may have been taken meanwhile), the hint must
-		// not keep saying "available": ask again. A closed dialog skips this.
-		nameField.revalidate();
+		// not keep saying "available": ask again.
+		if (!created) nameField.revalidate();
 	};
 
 	return (
@@ -109,7 +117,7 @@ export function InitCatalogueModal({
 			<AppDialogContent>
 				<div className="flex items-start justify-between gap-3">
 					<div className="flex flex-col gap-1">
-						<AlertDialogTitle>Create a Catalog</AlertDialogTitle>
+						<AlertDialogTitle>Create a Catalogue</AlertDialogTitle>
 						<AlertDialogDescription className="text-sm">
 							Please enter the following information to get started
 						</AlertDialogDescription>
@@ -198,7 +206,7 @@ export function InitCatalogueModal({
 						disabled={loading || !isFormValid}
 						onClick={handleConfirm}
 					>
-						{loading ? "Creating..." : "Create Catalog"}
+						{loading ? "Creating..." : "Create Catalogue"}
 					</AlertDialogAction>
 				</AppDialogFooter>
 			</AppDialogContent>

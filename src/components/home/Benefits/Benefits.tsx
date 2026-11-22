@@ -16,7 +16,7 @@ import {
 const ideaToLive: BenefitData = {
 	title: "Go from Idea to Live in Minutes",
 	description:
-		"You don't have time for complicated software. Our platform is designed for speed. Create a beautiful, professional catalog in less time than it takes to make a cup of coffee.",
+		"You don't have time for complicated software. Our platform is designed for speed. Create a beautiful, professional catalogue in less time than it takes to make a cup of coffee.",
 	bullets: [
 		{
 			icon: Check,
@@ -28,13 +28,13 @@ const ideaToLive: BenefitData = {
 			icon: Clock,
 			title: "Instant Updates",
 			description:
-				"Change prices, add new services, or run a promotion in seconds. Your catalog is always up-to-date.",
+				"Change prices, add new services, or run a promotion in seconds. Your catalogue is always up-to-date.",
 		},
 		{
 			icon: Zap,
 			title: "AI-Powered Creation",
 			description:
-				"Let our AI build your entire catalog for you. Just describe your business and watch the magic happen.",
+				"Let our AI build your entire catalogue for you. Just describe your business and watch the magic happen.",
 		},
 	],
 	image: {

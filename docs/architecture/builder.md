@@ -12,12 +12,12 @@ Sizes live in `components/catalogue/builder/frame.ts`: rail 72px, panel 440px, a
 
 | Width | Layout |
 |---|---|
-| < 720px (phone) | Catalogue full width with bottom padding for the **bottom bar**: Ask AI, Templates, Editor, Save, Publish. The **editor panel** opens as a full-height sheet with its own header (Dashboard link, title, close). |
-| 720–1279px | The catalogue reserves the **rail** width (`md:pr-[72px]`). The rail holds Editor, Save, Templates, Preview, Publish, Ask AI and Dashboard. The panel opens **over** the catalogue with a scrim; it is a modal dialog (focus trapped, Esc or scrim closes). |
+| < 720px (phone) | Catalogue full width with bottom padding for the **bottom bar**: Ask AI, Templates, Editor, the save status, Publish. The **editor panel** opens as a full-height sheet with its own header (Dashboard link, title, close). |
+| 720–1279px | The catalogue reserves the **rail** width (`md:pr-[72px]`). The rail holds Editor, Templates, Preview, QR code, Publish, the save status and Dashboard. The panel opens **over** the catalogue with a scrim; it is a modal dialog (focus trapped, Esc or scrim closes). |
 | ≥ 1280px | The panel opens **beside** the catalogue, which gets extra right padding and shrinks. It is not modal. |
 
 - **Padding is edit-mode only.** The extra padding is added only when `type === "edit"`, so view and demo output are unchanged.
-- **Shared actions.** Save, Templates, Preview and Publish run through `useBuilderActions`, which both the rail and the bottom bar use.
+- **Shared actions.** Templates, Preview, QR code and Publish run through `useBuilderActions`, which both the rail and the bottom bar use. There is no Save: see [Saving](#saving).
 - **Panel shell.** `BuilderPanel` handles the header, focus in and out, and Esc. Esc ignores key presses coming from portaled menus.
 - **AI chat.** On desktop it is a floating panel at the bottom left, clear of the rail. On phones it is a full-height sheet that follows the visual viewport, so the keyboard never covers the composer. It opens only from the rail or bar Ask AI buttons, which carry `aria-controls` pointing at `CHAT_PANEL_ID`.
 
@@ -103,16 +103,60 @@ content says *which* section and *which* item it means:
 - **A template is instantiated, not shared.** `catalogueTemplates.ts` mints fresh
   ids and 0-based order per application.
 
-## Unsaved changes
+## Saving
 
-`CatalogueContext` tracks what was last seeded or saved (`seedCatalogue`, `markSaved`,
-`isDirty`).
+**There is no Save button.** Edits write themselves to a durable draft, and Publish is
+the only thing that changes what a visitor sees.
 
-- **Keep saves.** Keeping the AI's changes (the Keep button, or sending a new ask while
-  a review is open) saves the draft through `useSaveDraft`.
-- **Upgrade saves first.** `useUpgrade` saves before going to `/pricing`. If the save is
-  refused, it opens pricing in a new tab and keeps the builder open.
-- **Leaving warns.** The builder renders `NavigationGuard`. Choosing Leave discards the
-  draft.
+- **Where a draft lives.** One row per catalogue in `public.catalogue_drafts`
+  (`lib/catalogue/draft-store.ts`), holding the whole editable payload as `jsonb` -
+  content, heading, appearance, header, footer. The published catalogue stays in
+  `public.catalogues`. Drafts were a Redis cache until November 2026, which is why
+  `catalogues.content` on older rows can be `[]` while the builder shows a full menu.
+- **Autosave.** `useAutosave` writes about 1.5s after the last edit, retries with
+  backoff while offline, and flushes through `POST /api/catalogue/draft` on
+  `visibilitychange` (hidden) and `pagehide` - a server action started from `pagehide`
+  is usually cancelled with the page, so that path uses `keepalive` / `sendBeacon`.
+- **A Quick AI proposal is never autosaved.** While `aiReview` is open the draft on
+  screen is a proposal: Keep saves it (`useKeepAiChanges` → `useSaveDraft` →
+  `status.flush()`), Reject puts back `before`. Autosave reads the review through
+  `getAiReview()`, not through the render's value, because Keep clears it and saves in
+  the same tick.
+- **One saver.** Everything that has to store the draft now - Keep, Preview, Publish,
+  `useUpgrade` - goes through the autosave's `flush()`. Two savers would each hold their
+  own base timestamp and read as two devices editing.
+- **Conflicts.** Each save carries the `updated_at` the browser last saw. A newer stored
+  draft means another tab or device saved in between, so the write is refused and the
+  builder offers a reload rather than overwriting work the owner cannot see.
+- **Status.** `SaveStatus` sits in the rail and the phone bar: Saving… / All changes
+  saved / Saved, not published / Offline – retrying. It also opens
+  `VersionHistoryDialog`.
+- **Version history.** `catalogue_draft_versions` keeps the last 10 autosaves per
+  catalogue, one every few minutes rather than one per keystroke
+  (`DRAFT_VERSION_MIN_GAP`). Restoring writes a draft like any other, so the live
+  catalogue is untouched until the next publish.
+- **Unpublished changes.** `catalogue_drafts.published_at` is stamped by Publish;
+  `updated_at > published_at` is what puts the dot on the Publish button, and on the
+  dashboard card the line "Changes not published yet" plus a dot on its Options
+  button. The card says it only for a live catalogue: a Draft or Inactive badge
+  already means the catalogue is not published
+  ([the card](dashboard-card.md)).
+- **Leaving still warns.** `NavigationGuard` stays as a last resort, for the second
+  between a keystroke and the write or while a save is being retried.
 - **Remounts keep the draft.** `useSeedCatalogue` loads the server copy for a new
   catalogue or a clean draft, and keeps an unsaved draft of the same catalogue.
+
+## An empty catalogue
+
+A new catalogue opens on Quick AI rather than on an empty box
+(`useEmptyCatalogueOnboarding`):
+
+- **Desktop** (≥768px): the chat opens with the first ask already written from the
+  business type, name and currency (`lib/catalogue/onboarding.ts`).
+- **Phone**: the chat stays closed - the sheet would cover the catalogue - and the Quick
+  AI button pulses with a one-time hint instead, retired on the first tap.
+- **The suggestions create content** ("Build it from a description", "Import from a photo
+  of my menu", "Start from a template") instead of assuming there is some.
+- **The heading is filled from the name** at creation (`headingFromName`).
+- **PostHog events**: `builder_opened_empty`, `quick_ai_first_used`,
+  `first_section_created`, `first_publish` (`lib/analytics/events.ts`).

@@ -108,6 +108,7 @@ function catalogueContext(
 
 	const lines = [
 		`- Prices are plain numbers in ${catalogue.currency} with no symbols. Use 0 when there is no price, and isFree only when something is explicitly free.`,
+		"- A discount is never typed into the price. Leave the normal price where it is and call setItemDiscount, which shows the old price struck through next to the new one; it takes percentOff or salePrice, and clear: true ends a sale. A percentage off an item already marked [sale] is worked out from its normal price, not from the sale price it is on now.",
 		`- Write all user-visible text in ${catalogue.language || "the language of the catalogue"} and match the tone of the existing content.`,
 	];
 

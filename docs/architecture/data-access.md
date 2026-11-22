@@ -70,7 +70,7 @@ silent full-table read, and it is what
 | `src/utils/db/admin.ts` | `asAdmin`, for system writes only |
 | `src/utils/db/pool.ts` | the two connection pools; nothing else may open one |
 | `src/lib/catalogue/public.ts` | visitor-facing reads |
-| `src/lib/catalogue/draft-cache.ts` | Redis drafts, keyed by catalogue **id** so a reused name cannot show a previous owner's draft |
+| `src/lib/catalogue/draft-store.ts` | Builder drafts in `public.catalogue_drafts`, keyed by catalogue **id** so a reused name cannot show a previous owner's draft. A draft is the owner's unsaved work, not a cache: it is read and written inside the same `withUser` block as the row ([builder.md](builder.md#saving)) |
 | `src/lib/entitlements/` | plan limits, read from the database with the user's row locked |
 | `src/lib/ai/metering.ts` | AI turns, charged before any model call |
 

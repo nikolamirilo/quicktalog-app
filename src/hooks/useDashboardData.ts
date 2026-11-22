@@ -1,9 +1,12 @@
 "use client";
-import type { Catalogue, OverallAnalytics } from "@quicktalog/common";
+import type { OverallAnalytics } from "@quicktalog/common";
 import { useEffect } from "react";
 import useSWR, { mutate } from "swr";
 
-import type { DashboardOverview } from "@/lib/dashboard/overview";
+import type {
+	CatalogueWithDraft,
+	DashboardOverview,
+} from "@/lib/dashboard/overview";
 import type { NewsletterSubscriber } from "@/types/shared";
 
 const KEYS = {
@@ -75,7 +78,7 @@ export function useDashboardData(
 			fallbackData: initial?.analytics as OverallAnalytics | undefined,
 		},
 	);
-	const catalogues = useSWR<Catalogue[]>(
+	const catalogues = useSWR<CatalogueWithDraft[]>(
 		shouldFetch ? KEYS.catalogues : null,
 		fetcher,
 		{ ...OPTIONS, ...seeded, fallbackData: initial?.catalogues },

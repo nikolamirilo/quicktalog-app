@@ -1,6 +1,5 @@
 "use client";
 import type {
-	Catalogue,
 	OverallAnalytics as OverallAnalyticsData,
 	PricingPlan,
 	Status,
@@ -22,6 +21,7 @@ import { CatalogueGrid } from "@/components/dashboard/overview/CatalogueGrid";
 import { DeleteMultipleItemsModal } from "@/components/dashboard/overview/DeleteMultipleItemsModal";
 import { LimitCTAs } from "@/components/dashboard/overview/LimitCTAs";
 import { NewsletterTable } from "@/components/dashboard/overview/NewsletterTable";
+import { PublishNudge } from "@/components/dashboard/overview/PublishNudge";
 import {
 	OverallAnalytics,
 	STAT_EXPLAINERS,
@@ -31,12 +31,13 @@ import { UserProfile } from "@/components/dashboard/overview/UserProfile";
 import { InformModal } from "@/components/modals/InformModal";
 import { useCatalogueContext } from "@/context/CatalogueContext";
 import { useUserContext } from "@/context/UserContext";
+import type { CatalogueWithDraft } from "@/lib/dashboard/overview";
 import type { NewsletterSubscriber } from "@/types/shared";
 
 type OverviewProps = {
 	user: User;
 	overallAnalytics: OverallAnalyticsData;
-	catalogues: Catalogue[];
+	catalogues: CatalogueWithDraft[];
 	newsletterSubscribers: NewsletterSubscriber[];
 	newsletterError: boolean;
 	currentPlan: PricingPlan;
@@ -177,6 +178,8 @@ export function Overview({
 				</AppSectionTitle>
 
 				<LimitCTAs currentPlan={currentPlan} usage={usage} />
+
+				<PublishNudge catalogues={catalogues} />
 
 				<CatalogueGrid
 					catalogues={catalogues}

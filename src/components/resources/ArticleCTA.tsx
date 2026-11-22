@@ -10,8 +10,8 @@ interface Props {
 
 /** Amber call-to-action strip placed inside article and doc bodies. */
 export function ArticleCTA({
-	heading = "Publish your own digital catalog in minutes",
-	body = "Create an interactive catalog, preview it instantly on mobile, and launch without writing a single line of code.",
+	heading = "Publish your own digital catalogue in minutes",
+	body = "Create an interactive catalogue, preview it instantly on mobile, and launch without writing a single line of code.",
 }: Props) {
 	return (
 		<aside
@@ -35,7 +35,7 @@ export function ArticleCTA({
 			<div className="flex flex-wrap gap-2.5">
 				<Button asChild className="group w-full min-[480px]:w-auto">
 					<Link href="/auth?mode=signup">
-						Create free catalog
+						Create free catalogue
 						<ArrowRight
 							aria-hidden="true"
 							className="transition-transform group-hover:translate-x-[3px]"

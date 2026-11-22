@@ -144,7 +144,7 @@ export function BuilderScreen() {
 								</span>
 								<span className="inline-flex h-10 items-center gap-2 rounded-full border border-black/[0.14] bg-white px-4 text-[14px] font-semibold leading-none text-black">
 									<Plus className="h-4 w-4" />
-									Create Your Catalog
+									Create Your Catalogue
 								</span>
 							</span>
 						</div>
@@ -165,8 +165,11 @@ export function BuilderScreen() {
 							<div className="mb-5">
 								{/* Section header. No chevron and no shadow in edit mode. */}
 								<div className="relative flex w-full items-center justify-between gap-2 overflow-hidden rounded-[12px] border border-[#e0e0e0] bg-[linear-gradient(135deg,#ffffff_0%,#f3f3f3_100%)] py-3 pl-3 pr-14 text-[30px] font-semibold leading-9 text-[#1a1a1a]">
-									<span className="inline-flex min-w-0 items-center gap-2 border-b-2 border-dashed border-black/80">
-										<span className="truncate">Breakfast</span>
+									<span className="inline-flex min-w-0 items-center gap-2">
+										<span className="relative truncate">
+											Breakfast
+											<span className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-black/80" />
+										</span>
 										<Pencil className="h-[15px] w-[15px] flex-none opacity-60" />
 									</span>
 									{/* A section menu is always on show; a card menu is not. */}

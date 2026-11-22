@@ -12,30 +12,41 @@ export const defaultCookiePreferences: CookiePreferences = {
 
 export const COOKIE_KEY = "cookiePreferences";
 
+/**
+ * The only place that still carries the US spelling. The product says "catalogue"
+ * everywhere a person reads it; these are search terms, and most of the people
+ * looking for this product type "catalog".
+ */
 export const KEYWORDS = [
+	"digital catalogue",
 	"digital catalog",
+	"online catalogue maker",
 	"online catalog maker",
+	"catalogue template",
 	"catalog template",
 	"free online maker",
 	"price list",
+	"interactive catalogue",
 	"interactive catalog",
-	"mobile-friendly catalog",
+	"mobile-friendly catalogue",
 	"QR code sharing",
 	"AI-powered creation",
 	"OCR import",
+	"catalogue templates",
 	"catalog templates",
 	"real-time analytics",
-	"business catalog",
+	"business catalogue",
+	"service catalogue",
 	"service catalog",
 	"product showcase",
-	"menu catalog",
+	"menu catalogue",
 	"restaurant menu",
 	"beauty salon services",
 	"fitness gym classes",
 	"café menu",
 	"retail products",
 	"spa services",
-	"electronics catalog",
+	"electronics catalogue",
 	"hospitality",
 	"no code required",
 	"no design skills",

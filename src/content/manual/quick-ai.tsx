@@ -57,8 +57,9 @@ function Body() {
 						Quick AI sits in the builder and edits the catalogue you have open.
 						You describe a change in ordinary words and it makes it. It can add,
 						change, move and remove sections and items, rewrite your text,
-						change prices, find photos, switch the theme, set your colours and
-						fonts, and fill in your header, footer and contact details.
+						change prices, put items on sale, find photos, switch the theme, set
+						your colours and fonts, and fill in your header, footer and contact
+						details.
 					</p>
 					<p>
 						It can also read a printed menu from photos you attach, and read a

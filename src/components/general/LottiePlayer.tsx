@@ -5,12 +5,7 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/ui/cn";
 
-export type LottieAnimation =
-	| "ai-build"
-	| "growth"
-	| "idea-live"
-	| "qr-scan"
-	| "sparkle";
+export type LottieAnimation = "ai-build" | "growth" | "idea-live" | "qr-scan";
 
 type LottiePlayerProps = {
 	animation: LottieAnimation;

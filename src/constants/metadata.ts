@@ -6,7 +6,7 @@ import { Metadata } from "next";
 const siteMetadata = {
 	title: "Quicktalog - Free Online Catalogue Maker",
 	description:
-		"Create stunning digital catalogs in minutes with our free online catalog maker. Perfect for restaurants, salons, gyms, retail & more. No code required, mobile-friendly, QR code sharing.",
+		"Create stunning digital catalogues in minutes with our free online catalogue maker. Perfect for restaurants, salons, gyms, retail & more. No code required, mobile-friendly, QR code sharing.",
 	keywords: KEYWORDS,
 	authors: [{ name: "Quicktalog" }],
 	creator: "Quicktalog",
@@ -29,33 +29,33 @@ const siteMetadata = {
 
 export const pageMetadata = {
 	home: {
-		title: "Quicktalog - Create Stunning Digital Catalogs in Minutes",
+		title: "Quicktalog - Create Stunning Digital Catalogues in Minutes",
 		description:
-			"The best free online catalog maker for businesses. Turn your services, menus, or products into an interactive, mobile-friendly digital catalog. No code or design skills required.",
+			"The best free online catalogue maker for businesses. Turn your services, menus, or products into an interactive, mobile-friendly digital catalogue. No code or design skills required.",
 		url: "https://www.quicktalog.app",
 	},
 	pricing: {
 		title: "Pricing - Simple, Transparent Pricing | Quicktalog",
 		description:
-			"Start with our free online catalog maker and upgrade as you grow. No hidden fees. Access professional catalog templates, AI generation, OCR import, and analytics.",
+			"Start with our free online catalogue maker and upgrade as you grow. No hidden fees. Access professional catalogue templates, AI generation, OCR import, and analytics.",
 		url: "https://www.quicktalog.app/pricing",
 	},
 	contact: {
 		title: "Contact Us - Get Help with Your Digital Catalogue| Quicktalog",
 		description:
-			"Need help creating your digital catalog? Contact our support team for assistance with setup, customization, and getting the most out of Quicktalog.",
+			"Need help creating your digital catalogue? Contact our support team for assistance with setup, customization, and getting the most out of Quicktalog.",
 		url: "https://www.quicktalog.app/contact",
 	},
 	demo: {
 		title: "Try the Demo - Test Our CatalogueMaker | Quicktalog",
 		description:
-			"Try our free online catalog maker in the demo. Create a sample catalog and see how easy it is to build professional digital catalogs.",
+			"Try our free online catalogue maker in the demo. Create a sample catalogue and see how easy it is to build professional digital catalogues.",
 		url: "https://www.quicktalog.app/demo",
 	},
 	showcases: {
-		title: "Showcases - See Digital Catalogs in Action | Quicktalog",
+		title: "Showcases - See Digital Catalogues in Action | Quicktalog",
 		description:
-			"Explore real examples of digital catalogs created with Quicktalog. See how businesses use our platform to showcase their products and services.",
+			"Explore real examples of digital catalogues created with Quicktalog. See how businesses use our platform to showcase their products and services.",
 		url: "https://www.quicktalog.app/showcases",
 	},
 	privacy: {
@@ -67,7 +67,7 @@ export const pageMetadata = {
 	terms: {
 		title: "Terms and Conditions - Quicktalog Service Agreement",
 		description:
-			"Read our terms and conditions for using Quicktalog. Understand your rights and responsibilities when creating digital catalogs with our platform.",
+			"Read our terms and conditions for using Quicktalog. Understand your rights and responsibilities when creating digital catalogues with our platform.",
 		url: "https://www.quicktalog.app/terms-and-conditions",
 	},
 	refund: {
@@ -79,7 +79,7 @@ export const pageMetadata = {
 	help: {
 		title: "Help Center - FAQs, Guides & Support | Quicktalog",
 		description:
-			"Visit the Quicktalog Help Center to find FAQs, step-by-step guides, and support resources to make the most out of your digital catalog.",
+			"Visit the Quicktalog Help Center to find FAQs, step-by-step guides, and support resources to make the most out of your digital catalogue.",
 		url: "https://www.quicktalog.app/help",
 	},
 	docs: {
@@ -89,21 +89,21 @@ export const pageMetadata = {
 		url: "https://www.quicktalog.app/docs",
 	},
 	articles: {
-		title: "Quicktalog Blog - Guides for Digital Menus & Catalogs",
+		title: "Quicktalog Blog - Guides for Digital Menus & Catalogues",
 		description:
-			"Practical guides on digital menus, product catalogs, QR codes, and growing your business with Quicktalog.",
+			"Practical guides on digital menus, product catalogues, QR codes, and growing your business with Quicktalog.",
 		url: "https://www.quicktalog.app/articles",
 	},
 	releaseNotes: {
 		title: "Release Notes - What's New in Quicktalog",
 		description:
-			"See what's new, improved, and fixed in Quicktalog. Track every update to the digital catalog builder, AI tools, and analytics.",
+			"See what's new, improved, and fixed in Quicktalog. Track every update to the digital catalogue builder, AI tools, and analytics.",
 		url: "https://www.quicktalog.app/release-notes",
 	},
 	authentication: {
 		title: "Login & Sign Up - Access Your Quicktalog Account",
 		description:
-			"Log in or create a Quicktalog account to start building and managing your digital catalogs. Secure authentication with modern encryption.",
+			"Log in or create a Quicktalog account to start building and managing your digital catalogues. Secure authentication with modern encryption.",
 		url: "https://www.quicktalog.app/authentication",
 	},
 };

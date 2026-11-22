@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 import { getVerifiedIdentity } from "@/lib/auth/identity";
-import { selectMyCatalogues } from "@/lib/dashboard/overview";
+import { selectMyCataloguesWithDrafts } from "@/lib/dashboard/overview";
 import { withUser } from "@/utils/db";
 
 export async function GET() {
@@ -11,7 +11,9 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		const data = await withUser(me, (tx) => selectMyCatalogues(tx, me));
+		const data = await withUser(me, (tx) =>
+			selectMyCataloguesWithDrafts(tx, me),
+		);
 
 		return NextResponse.json(data);
 	} catch (error) {

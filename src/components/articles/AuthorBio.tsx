@@ -25,7 +25,7 @@ export function AuthorBio({ author }: { author: string }) {
 				</b>
 				<p className="mt-1.5 text-[15px] leading-[1.6] text-product-foreground-accent">
 					We build Quicktalog, the fastest way to turn a menu, service list, or
-					product range into an interactive digital catalog. We write about
+					product range into an interactive digital catalogue. We write about
 					doing it well.
 				</p>
 			</div>

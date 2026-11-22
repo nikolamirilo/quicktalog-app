@@ -25,7 +25,7 @@ export function AiShortcut() {
 					<span className="sr-only">Or </span>Let AI do the work
 				</h2>
 				<p className="mt-2 text-base text-product-foreground-accent">
-					Describe your business and generate a ready-to-edit catalog in
+					Describe your business and generate a ready-to-edit catalogue in
 					seconds.
 				</p>
 			</Rise>
@@ -72,10 +72,10 @@ export function AiShortcut() {
 					<div>
 						<span className="inline-flex items-center gap-[7px] rounded-full border border-product-primary/30 bg-product-primary/[0.12] px-3 py-1.5 text-[12.5px] font-bold text-product-primary-bright">
 							<Zap aria-hidden="true" className="h-3.5 w-3.5" />
-							AI catalog builder
+							AI catalogue builder
 						</span>
 						<h3 className="mt-3.5 text-[clamp(22px,2.4vw,30px)] font-extrabold tracking-[-0.025em] text-white">
-							Generate your catalog with AI
+							Generate your catalogue with AI
 						</h3>
 						<p className="mt-2 text-base text-product-on-dark-muted">
 							Describe your business and get auto‑built categories, items, and

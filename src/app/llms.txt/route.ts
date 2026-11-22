@@ -1,9 +1,9 @@
 export async function GET() {
 	const content = `# Quicktalog
 
-> Stop Losing Customers to Outdated Catalogs
+> Stop Losing Customers to Outdated Catalogues
 
-Replace printed catalogs with an interactive, mobile-friendly online catalog you can update in real time.
+Replace printed catalogues with an interactive, mobile-friendly online catalogue you can update in real time.
 
 ## Overview
 
@@ -12,16 +12,16 @@ Quicktalog empowers businesses to create, manage, and share interactive digital 
 ### Why Digital?
 
 - **No Code Required**: No design skills needed. Professional results, zero experience needed.
-- **Instant Updates**: Change prices, add new services, or run a promotion in seconds. Your catalog is always up-to-date.
-- **Share Anywhere**: Share your catalog instantly with a link or QR code. Track views and reach unlimited customers.
+- **Instant Updates**: Change prices, add new services, or run a promotion in seconds. Your catalogue is always up-to-date.
+- **Share Anywhere**: Share your catalogue instantly with a link or QR code. Track views and reach unlimited customers.
 
 ## Key Features
 
-- **Quick AI**: An assistant in the builder that drafts and edits your catalog from a description. You see what it changed and accept or reject it.
-- **Photo import**: Attach up to 10 photos of a printed menu or price list to a Quick AI message and it reads the items and prices into your catalog.
-- **Mobile-First Design**: Your catalog will look amazing on smartphones, tablets, and desktops, guaranteed.
+- **Quick AI**: An assistant in the builder that drafts and edits your catalogue from a description. You see what it changed and accept or reject it.
+- **Photo import**: Attach up to 10 photos of a printed menu or price list to a Quick AI message and it reads the items and prices into your catalogue.
+- **Mobile-First Design**: Your catalogue will look amazing on smartphones, tablets, and desktops, guaranteed.
 - **Real-Time Analytics**: See what's popular, what's not, and what your customers are looking for to make data-driven decisions.
-- **Professional Templates**: Choose from a variety of professionally designed catalog templates.
+- **Professional Templates**: Choose from a variety of professionally designed catalogue templates.
 
 ## How It Works
 
@@ -32,29 +32,29 @@ Quicktalog empowers businesses to create, manage, and share interactive digital 
 ## Pricing
 
 Start with our **Free Plan**.
-- One digital catalog
+- One digital catalogue
 - Basic customization
 - QR code sharing
 - Email support
 
 Upgrade for:
-- More catalogs
+- More catalogues
 - More AI credits per month
 - Advanced analytics
 
 ## Common Questions
 
-**Q: What exactly is a digital catalog and how is it different from a website?**
-A: A digital catalog is a mobile-friendly, interactive showcase of your products or services specifically designed for showcasing your offerings with easy updates, QR code sharing, and customer engagement features.
+**Q: What exactly is a digital catalogue and how is it different from a website?**
+A: A digital catalogue is a mobile-friendly, interactive showcase of your products or services specifically designed for showcasing your offerings with easy updates, QR code sharing, and customer engagement features.
 
 **Q: Do I need technical skills?**
-A: Not at all! Our platform is designed for non-technical users. Most users create their first catalog in under 5 minutes.
+A: Not at all! Our platform is designed for non-technical users. Most users create their first catalogue in under 5 minutes.
 
-**Q: Can I update my catalog easily?**
+**Q: Can I update my catalogue easily?**
 A: Absolutely! Changes go live instantly, so your customers always see the most current information.
 
 **Q: Is my data secure?**
-A: We use industry-standard encryption and security measures. Your catalog information is private and secure.
+A: We use industry-standard encryption and security measures. Your catalogue information is private and secure.
 `;
 
 	return new Response(content, {

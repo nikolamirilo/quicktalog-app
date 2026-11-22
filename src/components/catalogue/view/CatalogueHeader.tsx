@@ -118,7 +118,7 @@ const CatalogueHeader: React.FC<CatalogueHeaderProps> = ({
 		type === "default"
 			? {
 					href: "/auth?mode=signup",
-					label: "Create Your Catalog",
+					label: "Create Your Catalogue",
 					icon: <FiPlus aria-hidden="true" />,
 				}
 			: activeData?.header?.cta?.isEnabled && activeData.header.cta.url

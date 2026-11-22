@@ -171,7 +171,7 @@ function Body() {
 							spot={6}
 							title={
 								<>
-									Select <ButtonName>Create Catalog</ButtonName>
+									Select <ButtonName>Create Catalogue</ButtonName>
 								</>
 							}
 						/>
@@ -207,7 +207,7 @@ function Body() {
 						/>
 					</Steps>
 				</FollowAlong>
-				<Note kind="warn" title="Avoid Standard Catalog on the free plan">
+				<Note kind="warn" title="Avoid Standard Catalogue on the free plan">
 					<p>
 						Its five sections and fifteen items are exactly what Starter allows,
 						so you would not be able to add anything else without deleting

@@ -11,7 +11,7 @@ const page = () => {
 	return (
 		<>
 			<PageHero
-				lead="Discover how businesses across industries are using Quicktalog to create stunning digital catalogs. From fashion boutiques to electronics stores, see the possibilities for your own catalog."
+				lead="Discover how businesses across industries are using Quicktalog to create stunning digital catalogues. From fashion boutiques to electronics stores, see the possibilities for your own catalogue."
 				short
 				title="Explore Real Catalogue Examples"
 			/>

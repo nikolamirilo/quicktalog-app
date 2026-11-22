@@ -34,8 +34,12 @@ export async function getUserData() {
 /**
  * Records the signed-in user's answer to "how did you hear about us?": a slug
  * from `ACQUISITION_SOURCES`, their own words when they picked "Other", or
- * `ACQUISITION_SKIPPED`. The `is null` predicate makes the first answer final,
- * so a second call cannot overwrite it.
+ * `ACQUISITION_SKIPPED`.
+ *
+ * It lands in `self_reported_source` and never in `acquisition_source`, which is now
+ * the channel derived from the first touch: word of mouth is the thing tracking can
+ * never see, and the tracked channel is the thing a person misremembers. The `is null`
+ * predicate makes the first answer final.
  */
 export async function saveAcquisitionSource(source: string): Promise<boolean> {
 	try {
@@ -50,9 +54,9 @@ export async function saveAcquisitionSource(source: string): Promise<boolean> {
 		const rows = await withUser(me, (tx) =>
 			tx.execute<{ id: string }>(sql`
 				update public.users
-				   set acquisition_source = ${value}
+				   set self_reported_source = ${value}
 				 where id = ${me.userId}
-				   and acquisition_source is null
+				   and self_reported_source is null
 				returning id`),
 		);
 		return [...rows].length > 0;

@@ -34,6 +34,13 @@ export const sectionTools = ({ session, images, fail }: ToolContext) => ({
 								description: item.description ?? "",
 								price: item.price ?? 0,
 								isFree: item.isFree ?? false,
+								onSale: item.discount?.isOnDiscount ?? false,
+								salePrice: item.discount?.isOnDiscount
+									? item.discount.discountedPrice
+									: null,
+								percentOff: item.discount?.isOnDiscount
+									? item.discount.discountPercentage
+									: null,
 								hasImage: hasItemPhoto(item.image),
 							})),
 						}

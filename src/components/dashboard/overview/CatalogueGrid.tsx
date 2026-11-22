@@ -1,14 +1,15 @@
 "use client";
-import type { Catalogue, PricingPlan, Status, Usage } from "@quicktalog/common";
+import type { PricingPlan, Status, Usage } from "@quicktalog/common";
 import { useState } from "react";
 
 import { DashboardItem } from "@/components/dashboard/overview/DashboardItem";
 import { parseTimestamp } from "@/components/dashboard/overview/timestamps";
 import { Button } from "@/components/ui/button";
 import { statusOrder } from "@/constants/sort";
+import type { CatalogueWithDraft } from "@/lib/dashboard/overview";
 
 type CatalogueGridProps = {
-	catalogues: Catalogue[];
+	catalogues: CatalogueWithDraft[];
 	currentPlan: PricingPlan;
 	usage: Usage;
 	deleteDialogOpen: boolean;
@@ -50,7 +51,8 @@ export function CatalogueGrid({
 
 	return (
 		<>
-			<div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 min-[1200px]:grid-cols-3">
+			{/* One column again from 768px, where the sidebar appears and two would leave 201px. */}
+			<div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-1 min-[900px]:grid-cols-2 min-[1200px]:grid-cols-3">
 				{visible.map((catalogue) => (
 					<DashboardItem
 						catalogue={catalogue}

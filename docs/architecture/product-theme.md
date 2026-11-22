@@ -81,6 +81,7 @@ The product theme is global: `<body class="product">`. So the catalogue explicit
 2. **Catalogue-owned copies of shared UI.**
    - `CatalogueButton` (`components/catalogue/view/components/`) is a frozen copy of the pre-redesign `ui/button` outline style.
    - `CatalogueDialog` (`components/catalogue/modals/`) holds the catalogue's dialog parts. `CatalogueDialogContent` is a frozen copy of the pre-redesign `ui/dialog`. `CatalogueSheetContent` is the item modal's frame: a bottom sheet below `md` and a centred 520px dialog from `md`, in the redesign's shape (layered shadow, blurred backdrop) but only catalogue colours. Its corners follow the corner setting: `--catalogue-sheet-radius` is twice `--border-radius`, capped at 28px, and `--catalogue-pill-radius` is a pill that turns square when the setting is 0. `CatalogueLightboxContent` shows one photo full screen.
+   - `SalePill` (`components/catalogue/cards/common/`) is the one sale marker, shared by the item cards and the item sheet. It is filled with `--catalogue-sale` / `--catalogue-sale-foreground`, which every theme in `themes.css` sets and `deriveCatalogueVars` derives for a custom palette, and its corners follow `--border-radius` so it works inside the root and in the portaled sheet alike.
    - The section header keeps its own class string.
    - The published catalogue does not import `ui/button` or `ui/dialog`. `ui/sheet` is used only by the catalogue sidebar, so treat it as catalogue-owned.
 3. **`--radius` and the generic Tailwind colours stay catalogue-only.**

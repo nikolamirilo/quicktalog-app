@@ -484,7 +484,7 @@ export function QrEditorScreen() {
 											aria-hidden="true"
 											className="mt-px h-3.5 w-3.5 shrink-0"
 										/>
-										This QR code links to your catalog. The URL cannot be
+										This QR code links to your catalogue. The URL cannot be
 										changed.
 									</p>
 								</div>

@@ -54,7 +54,7 @@
 | Auth | Supabase Auth via `@supabase/ssr` / supabase-js, read through `useAuth()` | Sign-in, sign-up, Google login, sessions. supabase-js is used for auth only, never data queries |
 | Shared package | `@quicktalog/common` (`../quicktalog-packages`) | Shared types, constants (pricing `tiers`), Drizzle schema |
 | Background jobs | Cloudflare Worker (`../quicktalog-backend`) | Cron at 03:00 UTC (analytics ingestion, then plan checks) and 11:00 + 19:00 UTC (plan checks only): traffic limit, switching off catalogues that no longer fit their plan; image cleanup |
-| Cache | Upstash Redis | Catalogue draft cache for the builder and preview |
+| Cache | Upstash Redis | Rate limiting, maintenance flags and the stock-photo lookup cache. **Not** builder drafts: those are rows in `public.catalogue_drafts` ([docs/architecture/builder.md](../docs/architecture/builder.md#saving)) |
 | Payments | Paddle (Billing) | Checkout, subscriptions, webhooks that set the user's plan |
 | File uploads | UploadThing | Catalogue images |
 | Email | Resend (+ React Email) | Transactional emails (welcome, cancellation, contact) |

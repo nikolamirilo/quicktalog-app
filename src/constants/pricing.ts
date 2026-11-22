@@ -161,21 +161,21 @@ const explanations: Record<string, string> = {
 	support:
 		"Technical assistance when you need help. Email support provides responses within 24-48 hours. Priority Support includes email, live chat, and scheduled calls for immediate assistance.",
 	catalogues:
-		"Number of digital catalogs you can create. Each catalog displays your services with pricing, descriptions, images, and contact information on a shareable public page.",
+		"Number of digital catalogues you can create. Each catalogue displays your services with pricing, descriptions, images, and contact information on a shareable public page.",
 	analytics:
-		"Track visitor engagement on your catalogs. Basic analytics show page views and visitor counts. Advanced analytics provide detailed insights on popular services and visitor behavior patterns.",
+		"Track visitor engagement on your catalogues. Basic analytics show page views and visitor counts. Advanced analytics provide detailed insights on popular services and visitor behavior patterns.",
 	"traffic-limit":
-		"Page view allowance across all your catalogs for one 30-day period, counted from the day you signed up. This counts every time someone visits your catalog pages. Higher limits accommodate more customer traffic.",
+		"Page view allowance across all your catalogues for one 30-day period, counted from the day you signed up. This counts every time someone visits your catalogue pages. Higher limits accommodate more customer traffic.",
 	custom_features:
-		"Branding control for your catalogs. Basic includes themes and colors. Moderate adds logo upload. Advanced provides full branding with legal information, contact details, and action buttons.",
+		"Branding control for your catalogues. Basic includes themes and colors. Moderate adds logo upload. Advanced provides full branding with legal information, contact details, and action buttons.",
 	"ocr-ai-import":
-		"AI-powered feature that extracts text from uploaded images or documents to automatically create catalog items. Streamlines the process of digitizing existing price lists or menus.",
+		"AI-powered feature that extracts text from uploaded images or documents to automatically create catalogue items. Streamlines the process of digitizing existing price lists or menus.",
 	"ai-catalogue-generation":
-		"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into sections for your catalog.",
+		"AI assistance that helps create & edit your digital catalogues. Describe your services and the AI generates professional descriptions and organizes items into sections for your catalogue.",
 	newsletter:
-		"Email collection system integrated into your catalogs. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
+		"Email collection system integrated into your catalogues. Visitors can subscribe to receive updates, and you can send newsletters to your subscriber list.",
 	"custom-features":
-		"Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalog features.",
+		"Direct access to our development team to request custom features and integrations tailored to your specific business needs. Contact us to discuss specialized functionality beyond standard catalogue features.",
 	sections_and_items:
 		"The number of sections allowed in each catalogue. Higher tiers allow more for complex menus or product lists.",
 	items_per_catalogue:
@@ -336,7 +336,7 @@ export const starterExtraFeatures = [
 /** Features listed on the custom-plan strips. */
 export const customPlanFeatures = {
 	home: [
-		"Unlimited catalogs",
+		"Unlimited catalogues",
 		"Custom branding",
 		"Advanced analytics",
 		"Priority support",

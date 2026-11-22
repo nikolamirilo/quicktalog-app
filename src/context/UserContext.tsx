@@ -2,6 +2,7 @@
 
 import { getUserData } from "@/actions/users";
 import { useAuth } from "@/context/AuthContext";
+import { identifyUser } from "@/lib/analytics/events";
 import { UserData } from "@quicktalog/common";
 import {
 	createContext,
@@ -47,6 +48,12 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
 			fetchUserData();
 		}
 	}, [isAuthLoaded, authUser?.id]);
+
+	// Ties the visit history PostHog recorded before signup - including the first
+	// touch - to the account, so the acquisition funnel is not split in two.
+	useEffect(() => {
+		if (authUser?.id) identifyUser(authUser.id);
+	}, [authUser?.id]);
 
 	const refreshUserData = async () => {
 		await fetchUserData();

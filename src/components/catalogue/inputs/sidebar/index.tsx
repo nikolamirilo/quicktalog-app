@@ -2,10 +2,12 @@
 
 import { BuilderPanel } from "@/components/catalogue/builder/BuilderPanel";
 import { BuilderRail } from "@/components/catalogue/builder/BuilderRail";
+import { VersionHistoryDialog } from "@/components/catalogue/builder/VersionHistoryDialog";
 import { useBuilderActions } from "@/components/catalogue/builder/useBuilderActions";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCatalogueContext } from "@/context/CatalogueContext";
+import { QUICK_AI_HINT_KEY } from "@/lib/catalogue/onboarding";
 import { cn } from "@/lib/ui/cn";
 import type { UserData } from "@quicktalog/common";
 import { FileText, Home, Layout, Palette } from "lucide-react";
@@ -46,8 +48,11 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const setIsOpen = context?.setIsSidebarOpen ?? (() => {});
 	const isChatOpen = context?.isChatOpen ?? false;
 	const setIsChatOpen = context?.setIsChatOpen ?? (() => {});
+	const quickAiHint = context?.quickAiHint ?? false;
+	const dismissQuickAiHint = context?.setQuickAiHint ?? (() => {});
 	const closePanel = () => setIsOpen(false);
 	const [tab, setTab] = useState<TabKey>("general");
+	const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 	const openPanelSection = (key: TabKey, panelId: string) => {
 		setTab(key);
 		// The tab mounts on the next frame; scroll once it is there.
@@ -65,6 +70,17 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 	const { actions, catalogueName, ...modals } = useBuilderActions({
 		closePanel,
 	});
+
+	/** The phone hint is a one-time nudge: tapping Quick AI is what retires it. */
+	const markQuickAiHintSeen = () => {
+		if (!quickAiHint) return;
+		dismissQuickAiHint(false);
+		try {
+			window.localStorage.setItem(QUICK_AI_HINT_KEY, "1");
+		} catch {
+			// Blocked storage just means the hint may come back; harmless.
+		}
+	};
 
 	const TABS: {
 		key: TabKey;
@@ -131,13 +147,13 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 			<BuilderRail
 				actions={[
-					actions.save,
 					actions.templates,
 					actions.preview,
 					actions.qr,
 					actions.publish,
 				]}
 				isPanelOpen={isOpen}
+				onOpenHistory={() => setIsHistoryOpen(true)}
 				onTogglePanel={() => setIsOpen(!isOpen)}
 				panelId={PANEL_ID}
 			/>
@@ -184,17 +200,25 @@ const BuilderSidebar: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 			<BuilderBottomBar
 				actions={actions}
+				highlightAi={quickAiHint}
 				isChatOpen={isChatOpen}
 				isPanelOpen={isOpen}
 				onAskAi={() => {
 					closePanel();
+					markQuickAiHintSeen();
 					setIsChatOpen(true);
 				}}
+				onOpenHistory={() => setIsHistoryOpen(true)}
 				onTogglePanel={() => setIsOpen(!isOpen)}
 				panelId={PANEL_ID}
 			/>
 
 			<BuilderActionModals catalogueName={catalogueName} {...modals} />
+			<VersionHistoryDialog
+				catalogueName={catalogueName}
+				isOpen={isHistoryOpen}
+				onClose={() => setIsHistoryOpen(false)}
+			/>
 		</aside>
 	);
 };

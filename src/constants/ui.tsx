@@ -60,7 +60,7 @@ export const footerFeatures = [
 	{
 		icon: <FiZap className="w-4 h-4" />,
 		title: "OCR Import Technology",
-		description: "Scan existing catalogs",
+		description: "Scan existing catalogues",
 	},
 	{
 		icon: <FiShield className="w-4 h-4" />,

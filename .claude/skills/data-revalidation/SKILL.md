@@ -1,6 +1,6 @@
 ---
 name: data-revalidation
-description: Use when a Quicktalog mutation needs to refresh data - deciding which cache to invalidate and how the UI updates after a create/update/delete/publish. Covers the two server-side revalidation helpers, Redis cache sync, and the client-side router.refresh / refreshDashboardData / refreshUserData split, so you avoid redundant or missing refreshes.
+description: Use when a Quicktalog mutation needs to refresh data - deciding which cache to invalidate and how the UI updates after a create/update/delete/publish. Covers the two server-side revalidation helpers, the builder's draft table, and the client-side router.refresh / refreshDashboardData / refreshUserData split, so you avoid redundant or missing refreshes.
 ---
 
 # Data Revalidation
@@ -11,7 +11,7 @@ Quicktalog has **four** independent freshness mechanisms. Calling the wrong ones
 
 **The server action owns cache invalidation. The client only triggers a re-render.**
 
-A mutation changes data → it invalidates the caches it touched (Next.js + Redis) → the client re-renders. The client should not re-invalidate what the server already invalidated.
+A mutation changes data → it invalidates the caches it touched → the client re-renders. The client should not re-invalidate what the server already invalidated.
 
 ## The four mechanisms
 
@@ -19,7 +19,7 @@ A mutation changes data → it invalidates the caches it touched (Next.js + Redi
 |---|---|---|---|
 | `revalidateCatalogue(name?)` | [lib/cache/revalidate.ts](../../../src/lib/cache/revalidate.ts) | **Server action** | Any create/update/publish/delete of a catalogue |
 | `revalidateDashboard()` | [lib/cache/revalidate.ts](../../../src/lib/cache/revalidate.ts) | **Server action** | Anything that changes dashboard stats (status, delete, create, duplicate) |
-| `writeOwnedDraft` / `deleteDrafts` | inside the server action, **after** the transaction | **Server action** | Builder drafts live in Redis keyed by catalogue **id** (`src/lib/catalogue/draft-cache.ts`), so a reused name cannot surface a previous owner's draft. Never call Redis inside a `withUser` block: it would hold a pooled connection open |
+| `saveOwnedDraft` / `writeOwnedDraft` | **inside** the `withUser` transaction | **Server action** | Builder drafts are rows in `public.catalogue_drafts` (`src/lib/catalogue/draft-store.ts`), not a cache: the draft **is** the owner's unsaved work. Deleting a catalogue takes its draft with it through the foreign key, so there is nothing to clean up separately |
 | `router.refresh()` | client component | **Client** | After awaiting the action, to re-render server components with fresh data |
 
 Two client helpers exist on top of `router.refresh()` - use them only when their specific condition holds:
@@ -47,7 +47,7 @@ Rule of thumb: pass the **name** whenever a single catalogue changed; add **`rev
 
 ```typescript
 // In a dashboard component, after a mutation that changes plan usage:
-await deleteItem(name);   // server action already invalidated Next.js + the draft
+await deleteItem(name);   // server action already invalidated Next.js; the draft went with the row
 await refreshDashboardData(); // SWR: dashboard caches
 await refreshUserData();  // usage/limit changed (create/delete only)
 router.refresh();         // re-render server components
@@ -64,7 +64,7 @@ Server actions write via **Drizzle**; `src/app/api/items/route.ts` writes the sa
 - **Client re-invalidates what the server already did** - e.g. calling a `revalidateData()`-style purge from the component after the action already revalidated. Redundant; the action owns it.
 - **Mounting `useDashboardData` just to refresh** - it subscribes and fetches all three endpoints. Call `refreshDashboardData()` instead.
 - **`refreshUserData()` on a content edit** - usage didn't change, so it's a wasted re-fetch. Reserve it for create/delete/plan-gate operations.
-- **Forgot the draft sync in the action** - the builder reads the draft on top of the database row (`readOwnedDraft`), so the editor keeps showing stale edits even after `revalidateCatalogue`. Write or delete the draft on every write.
+- **Forgot the draft write in the action** - the builder reads the draft on top of the database row (`readOwnedDraft`), so an action that publishes or restores without writing the draft leaves the editor showing the old one. Publish writes it with `publish: true`, which is also what clears "Unpublished changes".
 - **Nuclear revalidation** - purging the root layout for a single-catalogue edit. Pass the `name` and target it instead.
 - **Missing `revalidateDashboard()`** - a status change or delete that doesn't refresh dashboard stats.
 - **`router.refresh()` after a sign-in/sign-out navigation** - `SupabaseAuthProvider` already refreshes when the user changes. A second refresh queued behind `router.push/replace` never settles in Next 15's router, so the page hangs (spinner forever). After changing the session, only navigate (see [SignInForm.tsx](../../../src/components/auth/forms/SignInForm.tsx)).

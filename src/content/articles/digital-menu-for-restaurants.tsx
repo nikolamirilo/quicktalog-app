@@ -91,9 +91,9 @@ function Body() {
 			/>
 
 			<ArticleImage
-				alt="A Quicktalog digital menu open on a smartphone"
+				alt="A Quicktalog coffee menu on a phone, beside the same menu open in the builder on a laptop"
 				caption="A digital menu adapts to whatever screen your guest is holding."
-				src="/images/marketing/hero-mockup.png"
+				src="/images/marketing/hero-1100.webp"
 			/>
 
 			<Prose>

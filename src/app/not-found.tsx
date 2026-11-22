@@ -9,7 +9,7 @@ import Link from "next/link";
 export const metadata = {
 	title: "Page Not Found - Quicktalog",
 	description:
-		"The page you're looking for doesn't exist. Return to our homepage to create your digital catalog.",
+		"The page you're looking for doesn't exist. Return to our homepage to create your digital catalogue.",
 };
 
 const quickLinks = [
@@ -50,7 +50,7 @@ export default function NotFound() {
 							</Button>
 						</>
 					}
-					description="Oops! The page you're looking for seems to have wandered off. Let's get you back to creating amazing digital catalogs."
+					description="Oops! The page you're looking for seems to have wandered off. Let's get you back to creating amazing digital catalogues."
 					detail={<MissingPath />}
 					digits={["4", "4"]}
 					eyebrow="Error 404"

@@ -1,26 +1,21 @@
 "use client";
-import { updateCatalogue } from "@/actions/catalogue";
-import { useCatalogueContext } from "@/context/CatalogueContext";
-import type { Catalogue } from "@quicktalog/common";
+import { useBuilderStatus } from "@/context/BuilderStatusContext";
 
 export type SaveDraftResult = { ok: boolean; error?: string };
 
-/** Saves the builder draft if it has unsaved changes. The one save path for autosaves. */
+/**
+ * Writes the builder draft now, for the places that cannot wait out the autosave
+ * debounce: Keep, and the upgrade flow that leaves the page.
+ *
+ * It goes through the builder's autosave rather than calling the action itself, so
+ * there is one place holding the timestamp a save is made against. Two savers with two
+ * timestamps would read as two devices editing and refuse each other.
+ */
 export function useSaveDraft(): () => Promise<SaveDraftResult> {
-	const context = useCatalogueContext();
+	const status = useBuilderStatus();
 
 	return async () => {
-		if (!context?.isDirty) return { ok: true };
-		const draft = context.getCatalogue();
-		const result = await updateCatalogue(draft as Catalogue);
-		if (!result.success) {
-			return {
-				ok: false,
-				error: result.error ?? "Could not save your changes",
-			};
-		}
-		// The object that was sent, so an edit made while saving stays unsaved.
-		context.markSaved(draft);
-		return { ok: true };
+		if (!status) return { ok: true };
+		return status.flush();
 	};
 }

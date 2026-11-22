@@ -1,6 +1,9 @@
 import * as Sentry from "@sentry/nextjs";
 import { type NextRequest, NextResponse } from "next/server";
+import { FIRST_TOUCH_COOKIE } from "@/lib/analytics/first-touch";
+import { getVerifiedIdentity } from "@/lib/auth/identity";
 import { safeNext } from "@/lib/auth/redirects";
+import { claimFirstTouch } from "@/lib/users/acquisition";
 import {
 	AuthConfigError,
 	createForwardedAuthClient,
@@ -58,7 +61,24 @@ export async function GET(req: NextRequest) {
 	}
 
 	// `next` is attacker-controllable, so it only ever becomes a same-origin path.
-	return NextResponse.redirect(
+	const response = NextResponse.redirect(
 		new URL(safeNext(searchParams.get("next"), origin), origin),
 	);
+
+	// Where this account came from. The row is created by a trigger on the auth user,
+	// which never sees a cookie, so it is claimed here - the first moment there is both
+	// a session and a request to read the cookie from. Never worth failing sign-in for.
+	try {
+		const me = await getVerifiedIdentity();
+		if (me && (await claimFirstTouch(me))) {
+			response.cookies.delete(FIRST_TOUCH_COOKIE);
+		}
+	} catch (err) {
+		Sentry.captureException(err, {
+			level: "warning",
+			tags: { op: "authCallback", step: "acquisition" },
+		});
+	}
+
+	return response;
 }
