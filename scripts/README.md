@@ -12,6 +12,7 @@ Vercel or in CI. Each file's header comment has the full usage.
 | `supabase/backfill-acquisition.ts` | One-off: fills `users.acquisition_source` for accounts that signed up before first-touch tracking, from PostHog's `$initial_utm_source` and `$initial_referring_domain`, through the app's own channel mapping. Never overwrites a channel that is already there. Dry run unless `DRY_RUN=0`. |
 | `paddle/rewrite-legacy-custom-data.ts` | One-off: rewrites the Clerk ids that pre-cutover checkouts left in Paddle subscription `custom_data` to the user's uuid, re-signed. Run per environment before `drop_clerk_migration_schema`, which deletes the map it reads. Dry run unless `DRY_RUN=0`. |
 | `test-emails.ts` | Sends every transactional and auth email to one test inbox for a visual check. |
+| `images/build-social.ts` | Rebuilds `public/images/brand/opengraph-image.png` and `twitter-image.png` from the same hero source plus `assets/marketing/social-text.png`. `npm run images:social`. Run it whenever the hero artwork changes, so a shared link shows what the home page shows. |
 | `images/build-hero.ts` | Rebuilds the home hero's served images from `assets/marketing/hero-source.png`: trims the transparent padding, then writes AVIF and WebP at 760/1100/1520 px into `public/images/marketing/`. `npm run images:hero`. Run it after changing the hero artwork and commit the output - `images.unoptimized` is on outside localhost, so nothing resizes at request time. |
 
 Never use `supabase config push` against a hosted project; it overwrites every

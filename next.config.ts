@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
 			"img-src 'self' data: blob: https:",
 			"media-src 'self' blob: https:",
 			"connect-src 'self' https://*.facebook.com https://connect.facebook.net https://*.supabase.co wss://*.supabase.co https://*.ingest.sentry.io https://*.posthog.com https://*.clarity.ms https://*.google-analytics.com https://*.googletagmanager.com https://*.paddle.com https://*.uploadthing.com https://uploadthing.com https://api.deepseek.com",
-			"frame-src 'self' https://challenges.cloudflare.com https://*.paddle.com",
+			"frame-src 'self' https://challenges.cloudflare.com https://*.paddle.com https://www.youtube-nocookie.com",
 			"worker-src 'self' blob:",
 			"object-src 'none'",
 			"base-uri 'self'",

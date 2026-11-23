@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { CreateCatalogueProvider } from "@/components/catalogue/create/CreateCatalogueProvider";
+import { DemoVideo } from "@/components/demo/DemoVideo";
 import { Container } from "@/components/general/Container";
 import { Section } from "@/components/general/Section";
 import { AiShortcut } from "@/components/home/ai/AiShortcut";
@@ -11,6 +12,7 @@ import { Hero } from "@/components/home/Hero";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Pricing } from "@/components/home/Pricing";
 import { ProblemSection } from "@/components/home/problems/ProblemSection";
+import { YOUTUBE_DEMO_URL } from "@/constants/marketing";
 import { generatePageMetadata } from "@/constants/metadata";
 import { getPageSchema } from "@/constants/schemas";
 import { getServerPrices } from "@/lib/paddle/prices";
@@ -52,6 +54,18 @@ const page = async () => {
 				</Section>
 
 				<AiShortcut />
+
+				{YOUTUBE_DEMO_URL && (
+					<Section
+						className="pt-0 lg:pt-0"
+						containerClassName="px-0"
+						description="A short walkthrough: an empty page to a published catalogue with its own link and QR code."
+						id="demo-video"
+						title="See Quicktalog in Action"
+					>
+						<DemoVideo />
+					</Section>
+				)}
 
 				<Section
 					className="pt-0 lg:pt-0"

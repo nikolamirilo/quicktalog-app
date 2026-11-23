@@ -4,7 +4,7 @@ import { Lock, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { BrowserChrome } from "@/components/general/BrowserChrome";
-import { TOUR_URL } from "@/constants/marketing";
+import { PRODUCT_TOUR_URL } from "@/constants/marketing";
 import { cn } from "@/lib/ui/cn";
 
 /** Extra time after `load` so the tour has painted before the skeleton fades. */
@@ -29,6 +29,8 @@ export function DemoTour() {
 		clearTimeout(revealTimer.current);
 		revealTimer.current = setTimeout(() => setIsLoaded(true), REVEAL_DELAY_MS);
 	};
+
+	if (!PRODUCT_TOUR_URL) return null;
 
 	return (
 		<div className="relative mx-auto aspect-[4/5] max-w-[1152px] overflow-hidden rounded-product-panel border border-product-border bg-product-card shadow-[0_30px_60px_-30px_rgb(var(--product-foreground-rgb)/0.28),var(--product-shadow)] min-[600px]:aspect-video">
@@ -76,7 +78,7 @@ export function DemoTour() {
 						isLoaded ? "opacity-100" : "opacity-0",
 					)}
 					onLoad={onLoad}
-					src={TOUR_URL}
+					src={PRODUCT_TOUR_URL}
 					title="Quicktalog interactive demo"
 				/>
 			)}

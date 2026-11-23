@@ -144,10 +144,9 @@ wait 15 seconds and check from two separate requests before relying on it.
 
 ## Every environment variable
 
-There is no `.env.example` in this repo: a git hook refuses to write any
-`.env*` path, so the list lives here instead. For local work, create
-`.env.local` by hand from the tables below - only the **App runtime** section is
-needed to boot the app.
+`.env.example` holds the same keys with placeholder values; copy it to
+`.env.local` and fill it in. Only the **App runtime** section is needed to boot
+the app. This page is the reference for what each key is for.
 
 Audited against the code on 2026-09-22 (`grep` for `process.env.*` plus the
 dynamic lookups in `scripts/supabase/auth-config.ts`).
@@ -174,6 +173,8 @@ never give one to a key that grants more than a visitor already has.
 | `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`, `NEXT_PUBLIC_PADDLE_ENV` | Paddle.js in the browser. |
 | `DEEPSEEK_API_KEY`, `FIRECRAWL_API_KEY` | The catalogue builder agent and web page fetching. |
 | `NEXT_PUBLIC_BASE_URL` | Canonical origin: catalogue links, QR codes, sitemap, emails, checkout return URL. |
+| `NEXT_PUBLIC_PRODUCT_TOUR_URL` | Hexus product tour iframed on `/demo`. Unset hides the tour and its heading. |
+| `NEXT_PUBLIC_YOUTUBE_DEMO_URL` | Demo video framed on the home page; the embed and poster are derived from its `v=` id. Unset hides the section. |
 
 Analytics and monitoring, all optional and inert when unset:
 `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` (build-time source maps),
