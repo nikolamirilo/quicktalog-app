@@ -112,11 +112,11 @@ export function Hero() {
 							className="relative w-full max-w-[720px] drop-shadow-[0_30px_40px_rgb(var(--product-foreground-rgb)/0.18)] lg:-mr-10 lg:max-w-[760px] xl:-mr-20"
 							decoding="async"
 							fetchPriority="high"
-							height={946}
+							height={2099}
 							sizes={HERO_SIZES}
 							src="/images/marketing/hero-1100.webp"
 							srcSet={heroSrcSet("webp")}
-							width={1360}
+							width={3019}
 						/>
 					</picture>
 				</div>

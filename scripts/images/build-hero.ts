@@ -1,7 +1,7 @@
 /**
  * Builds the home hero's served images from `assets/marketing/hero-source.png`.
  *
- * The source is 3152x2987 and 5.6 MB, of which roughly a third is transparent
+ * The source is 3152x2987 and 4.3 MB, of which roughly a third is transparent
  * padding, and it is shown at most 760 CSS px wide. `images.unoptimized` is on
  * for every non-localhost environment, so nothing resizes it at request time:
  * the widths and formats a browser can choose from have to exist as files.
@@ -22,7 +22,7 @@ const OUT_DIR = path.join("public", "images", "marketing");
 const WIDTHS = [760, 1100, 1520] as const;
 
 /** Quality per format, chosen so 1520w stays comfortably inside ~120 KB. */
-const AVIF_QUALITY = 55;
+const AVIF_QUALITY = 62;
 const WEBP_QUALITY = 80;
 
 async function main() {
