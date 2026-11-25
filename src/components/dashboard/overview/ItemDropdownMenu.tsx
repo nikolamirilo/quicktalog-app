@@ -1,18 +1,18 @@
 "use client";
 import type { Catalogue, PricingPlan, Status, Usage } from "@quicktalog/common";
 import {
-    ChevronDown,
-    CircleCheck,
-    Code,
-    Copy,
-    FileText,
-    Pencil,
-    Power,
-    PowerOff,
-    QrCode,
-    Rocket,
-    Share2,
-    Trash2,
+	ChevronDown,
+	CircleCheck,
+	Code,
+	Copy,
+	FileText,
+	Pencil,
+	Power,
+	PowerOff,
+	QrCode,
+	Rocket,
+	Share2,
+	Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment, type ReactNode, useRef, useState } from "react";
@@ -22,11 +22,11 @@ import { parseTimestamp } from "@/components/dashboard/overview/timestamps";
 import { LimitsModal } from "@/components/modals/LimitsModal";
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCopyLink } from "@/hooks/useCopyLink";
 import { useDuplicateCatalogue } from "@/hooks/useDuplicateCatalogue";
