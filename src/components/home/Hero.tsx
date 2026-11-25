@@ -108,7 +108,7 @@ export function Hero() {
 							type="image/webp"
 						/>
 						<img
-							alt="Interactive digital catalogue"
+							alt="A Quicktalog coffee menu on a phone, beside the same catalogue open in the builder on a laptop"
 							className="relative w-full max-w-[720px] drop-shadow-[0_30px_40px_rgb(var(--product-foreground-rgb)/0.18)] lg:-mr-10 lg:max-w-[760px] xl:-mr-20"
 							decoding="async"
 							fetchPriority="high"

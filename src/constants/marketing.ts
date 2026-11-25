@@ -1,6 +1,5 @@
 import { layouts, themes } from "@quicktalog/common";
 
-/** Hexus product tour shown on /demo. */
 /**
  * The tags on every link out of a published catalogue's Quicktalog footer, so the
  * badge shows up as its own channel in the acquisition funnel rather than as a
@@ -9,8 +8,15 @@ import { layouts, themes } from "@quicktalog/common";
 export const CATALOGUE_BADGE_UTM =
 	"utm_source=catalogue&utm_medium=referral&utm_campaign=badge";
 
-export const TOUR_URL =
-	"https://app.usehexus.com/embed/254bfe62-3496-414e-93e8-5447b8fa54a9";
+/** Hexus product tour shown on /demo. Empty hides the tour rather than framing nothing. */
+export const PRODUCT_TOUR_URL = process.env.NEXT_PUBLIC_PRODUCT_TOUR_URL ?? "";
+
+/** Platform walkthrough framed on the home page. Empty hides the section. */
+export const YOUTUBE_DEMO_URL = process.env.NEXT_PUBLIC_YOUTUBE_DEMO_URL ?? "";
+
+/** The embed and the poster frame both address the video by bare id. */
+export const YOUTUBE_DEMO_ID =
+	YOUTUBE_DEMO_URL.match(/[?&]v=([\w-]+)/)?.[1] ?? "";
 
 /** Published catalogues shown on /showcases, in display order. */
 export const showcaseUrls = [

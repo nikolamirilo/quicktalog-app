@@ -3,6 +3,7 @@ import { DemoTour } from "@/components/demo/DemoTour";
 import { Container } from "@/components/general/Container";
 import { GetStartedCTA } from "@/components/general/GetStartedCTA";
 import { PageHero } from "@/components/general/PageHero";
+import { PRODUCT_TOUR_URL } from "@/constants/marketing";
 
 const Page = () => {
 	return (
@@ -21,10 +22,14 @@ const Page = () => {
 				<DemoPreview />
 			</Container>
 			<Container as="section" className="pb-10 pt-6">
-				<h2 className="mb-5 text-center text-[clamp(21px,2.4vw,27px)] font-bold leading-[1.2] tracking-[-0.02em]">
-					Take the interactive tour
-				</h2>
-				<DemoTour />
+				{PRODUCT_TOUR_URL && (
+					<>
+						<h2 className="mb-5 text-center text-[clamp(21px,2.4vw,27px)] font-bold leading-[1.2] tracking-[-0.02em]">
+							Take the interactive tour
+						</h2>
+						<DemoTour />
+					</>
+				)}
 				<GetStartedCTA />
 			</Container>
 		</>

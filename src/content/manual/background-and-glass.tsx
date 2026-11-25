@@ -220,8 +220,12 @@ function Body() {
 					</Option>
 					<Option limit="Max 3 emoji" name="Overlay icon">
 						<p>
-							The emoji to fall. Only emoji are accepted, and the field refuses
-							anything else as you type. A counter shows how many you have used.
+							The emoji to fall. Type them, or use the smiley button beside the
+							field to pick from a searchable list grouped by occasion. Picking
+							an emoji that is already in use removes it, and the{" "}
+							<FieldName>Clear</FieldName> button empties the field. Only emoji
+							are accepted, and the field refuses anything else as you type. A
+							counter shows how many you have used.
 						</p>
 					</Option>
 				</Options>
