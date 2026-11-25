@@ -15,7 +15,8 @@
 		"prepare": "husky",
 		"test:integration": "vitest run --config vitest.integration.config.ts",
 		"images:hero": "tsx scripts/images/build-hero.ts",
-		"images:social": "tsx scripts/images/build-social.ts"
+		"images:social": "tsx scripts/images/build-social.ts",
+		"images:logos": "tsx scripts/images/build-brand-logos.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/deepseek": "^3.0.42",

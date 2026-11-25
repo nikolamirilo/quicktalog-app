@@ -1,32 +1,32 @@
 "use client";
 import type { Catalogue, PricingPlan, Status, Usage } from "@quicktalog/common";
 import {
-	ChevronDown,
-	CircleCheck,
-	Code,
-	Copy,
-	FileText,
-	Pencil,
-	Power,
-	PowerOff,
-	QrCode,
-	Rocket,
-	Share2,
-	Trash2,
+    ChevronDown,
+    CircleCheck,
+    Code,
+    Copy,
+    FileText,
+    Pencil,
+    Power,
+    PowerOff,
+    QrCode,
+    Rocket,
+    Share2,
+    Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Fragment, type ReactNode, useState } from "react";
+import { Fragment, type ReactNode, useRef, useState } from "react";
 
 import { DuplicateCatalogueDialog } from "@/components/dashboard/overview/DuplicateCatalogueDialog";
 import { parseTimestamp } from "@/components/dashboard/overview/timestamps";
 import { LimitsModal } from "@/components/modals/LimitsModal";
 import { Button } from "@/components/ui/button";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useCopyLink } from "@/hooks/useCopyLink";
 import { useDuplicateCatalogue } from "@/hooks/useDuplicateCatalogue";
@@ -108,6 +108,9 @@ export function ItemDropdownMenu({
 	// judged against the time the menu was opened, not the page load.
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [openedAt, setOpenedAt] = useState(() => Date.now());
+	// Radix hands focus back to the trigger on close, and the browser then paints
+	// the keyboard focus ring even when the menu was opened by a click.
+	const openedByPointer = useRef(false);
 	const { copied, copy } = useCopyLink();
 
 	const atTrafficLimit =
@@ -165,7 +168,7 @@ export function ItemDropdownMenu({
 		{
 			key: "qr",
 			icon: <QrCode />,
-			label: "QR code",
+			label: "QR Code Editor",
 			// The QR editor has no status guard, so a draft can be designed before it goes live.
 			disabled,
 			onSelect: () => router.push(`/admin/${catalogue.name}/qr-editor`),
@@ -221,6 +224,12 @@ export function ItemDropdownMenu({
 							showPublishDot ? " — changes not published yet" : ""
 						}`}
 						className={cn("gap-1.5", className)}
+						onKeyDown={() => {
+							openedByPointer.current = false;
+						}}
+						onPointerDown={() => {
+							openedByPointer.current = true;
+						}}
 						size="sm"
 						variant="outline"
 					>
@@ -235,7 +244,13 @@ export function ItemDropdownMenu({
 					</Button>
 				</DropdownMenuTrigger>
 
-				<DropdownMenuContent align="end" className={MENU_CLASS}>
+				<DropdownMenuContent
+					align="end"
+					className={MENU_CLASS}
+					onCloseAutoFocus={(e) => {
+						if (openedByPointer.current) e.preventDefault();
+					}}
+				>
 					{menuItems.map((item) => (
 						<Fragment key={item.key}>
 							{item.danger && <DropdownMenuSeparator />}
